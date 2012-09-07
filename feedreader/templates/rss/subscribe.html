@@ -2,9 +2,9 @@
 
 
 {% block content%}
-<form method="post" >
+<form method="post" class="form-inline">
 {% csrf_token%}
-{{form}}
-<input type="submit"  />
+<input id="id_url" type="text" name="url" maxlength="200" class="span4" placeholder="آدرس فید" />
+<input type="submit" class="btn btn-primary" value="اشتراک"  />
 </form>
 {% endblock content%}
