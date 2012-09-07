@@ -1,0 +1,45 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html>
+<head>
+	<title>main</title>
+
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css">
+<script type="text/javascript" src="{{MEDIA_URL}}/js/jquery.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/js/bootstrap.js"></script>
+</head>
+
+	<body dir="rtl">
+		
+		<div id="wrapper">
+			
+				<ul class="nav nav-tabs">
+					<li class="nav-right"><a href="{% url home %}">صفحه اصلی</a></li>
+					<li class="nav-right"><a href="{% url rss-subs %}">اشتراک فید</a></li>
+					{% if user.is_authenticated %}
+						<li class="nav-right">
+				<a href="/accounts/logout/" title="Log out" onclick="return confirm('Are you sure you want to log out?');"> <i class="icon-off icon-black"></i> خروج</a>
+			</li>
+					{%else%}
+						<li class="nav-right">
+				<a href="{% url registration_register %}"><i class="icon-user icon-black"></i> عضویت</a>
+			</li>
+			<li class="nav-right">
+				<a href="/accounts/login/"><i class="icon-user icon-black"></i> ورود</a>
+			</li>
+					{%endif%}
+				</ul>
+			
+			
+			<div id="content">
+				{% block content %}
+				{% endblock content %}
+			</div>
+		</div>
+
+	</body>
+</html>

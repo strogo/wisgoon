@@ -1,0 +1,49 @@
+{% extends "base/main.html"%}
+{% load rss_tags %}
+{%load cache %}
+{% block content %}
+
+<script type="text/javascript">
+var start_loading=0
+</script>
+
+<div class="row">
+	<div class="span3">
+		<div class="well" style="padding: 8px 0">
+			<ul class="nav nav-list">
+				<li class="nav-header">فیدهای شما</li>
+					{% cache 10 sidebar user.username %}
+						{% get_user_feeds %}
+						{% for sub in user_feeds %}
+							<li><a href="{% url rss-feed sub.feed.id %}">{{sub.feed.title|default:sub.feed.url}}</a></li>
+						{% endfor %}
+					{% endcache %}
+			</ul>
+		</div>
+		
+		<div class="well" style="padding: 8px 0">
+			<ul class="nav nav-list">
+				<li class="nav-header">فیدهای پیشنهادی</li>
+						{% get_recomend_feeds %}
+						{% for f in recomend_feeds %}
+							<li><a href="#">{{f.title}}</a></li>
+						{% endfor %}
+				
+			</ul>
+			<a href="#" id="example" class="btn btn-large btn-danger" rel="popover" data-content="And here's some amazing content. It's very engaging. right?" data-original-title="A Title">Click to toggle popover</a>
+			<script type="text/javascript">
+				$('#example').popover('left');
+			</script>
+		</div>
+		
+		
+	</div>
+	<div class="span10">
+	<ul id="feed-ul">
+		{% include "rss/_items.html"%}
+	</ul>
+	</div>
+</div>
+{% include "rss/paging_items.html" %}
+
+{% endblock content %}

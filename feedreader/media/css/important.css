@@ -1,0 +1,29 @@
+body{
+	margin: 8px;
+	font-family: tahoma;
+}
+
+[class*="span"] {
+	float: right;
+	margin-right: 20px;
+}
+
+.nav-right  {
+	float: right!important;
+}
+
+.form-horizontal .control-label {
+	float: right;
+	text-align: left;
+}
+
+.form-horizontal .controls {
+	margin-right: 160px;
+}
+
+.help-inline {
+	padding-right: 5px;
+}
+.table th, .table td {
+	text-align: right;
+}

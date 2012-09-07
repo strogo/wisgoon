@@ -1,0 +1,28 @@
+<script type="text/javascript">
+function load_posts(page) {
+    var url = "{{current_url}}";
+    if (page) {
+        url += '?older=' + page;
+    }
+    $.get(
+        url,
+        function(response) {
+            $('#feed-ul').append(response);
+            start_loading=0;
+        }
+    );
+}
+$(document).ready(function() {
+    //load_posts();  // Get initial set
+    $(window).scroll(function() {
+        var break_point = $(document).height() - ($(window).height() * 1.02);
+        if ($(window).scrollTop() >= break_point) {
+            var next_page = $('#feed-ul li:last').attr('data-next');
+            if (next_page && start_loading==0) {
+            	start_loading=1;
+                load_posts(next_page);
+            }
+        }
+    });
+});
+</script>
