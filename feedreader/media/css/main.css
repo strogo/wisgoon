@@ -49,6 +49,11 @@ a {
 	padding: 5px 15px 10px;
 }
 
+.loading{
+	margin: 10px;
+	text-align: center;
+	display: none;
+}
 
 #google-oauth{
 	background: #fff url(../img/openid-logos.png); background-position: -1px -1px;

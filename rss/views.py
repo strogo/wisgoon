@@ -4,7 +4,7 @@ from django.template.context import RequestContext
 from rss.forms import FeedForm
 from django.http import HttpResponseRedirect  #, HttpResponse
 from django.contrib.auth.decorators import login_required
-
+import time
 
 def home(request):
     

@@ -7,6 +7,7 @@ function load_posts(page) {
     $.get(
         url,
         function(response) {
+        	$(".loading").hide();
             $('#feed-ul').append(response);
             start_loading=0;
         }
@@ -20,6 +21,7 @@ $(document).ready(function() {
             var next_page = $('#feed-ul li:last').attr('data-next');
             if (next_page && start_loading==0) {
             	start_loading=1;
+            	$(".loading").show();
                 load_posts(next_page);
             }
         }
