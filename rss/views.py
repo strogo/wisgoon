@@ -17,10 +17,11 @@ def home(request):
         latest_items = Item.objects.select_related().all().order_by('-timestamp')[:10]
     else:
         latest_items = Item.objects.select_related().all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:10]
+    
     try:   
         user_feeds = Subscribe.objects.filter(user=request.user).all()
     except :
-	user_feeds = ""
+        user_feeds = ""
     
     if request.is_ajax():
         return render_to_response('rss/_items.html', 

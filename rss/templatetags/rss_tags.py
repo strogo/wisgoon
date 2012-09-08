@@ -28,10 +28,10 @@ class UserFeeds(Node):
         
     def render(self, context):
         user=context['user']
-	try:
+        try:
             context['user_feeds'] = Subscribe.objects.filter(user=user).all()
-	except:
-	    context['user_feeds'] = ""
+        except:
+            context['user_feeds'] = ""
         return ''
 
 register.tag('get_user_feeds', user_feeds)
@@ -47,3 +47,6 @@ class RecomendFeeds(Node):
         return ''
 
 register.tag('get_recomend_feeds', recomend_feeds)
+
+
+
