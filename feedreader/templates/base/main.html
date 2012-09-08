@@ -4,7 +4,9 @@
 
 <html>
 <head>
-	<title>Wisgoon - ویسگون</title>
+	<title>ویسگون {% block title%}{% endblock%}</title>
+	<meta name="keywords" content="social,rss,reader" />
+	<meta name="description" content="what is going on, social rss reader" />
 
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap.css">
@@ -15,7 +17,7 @@
 
 	<body dir="rtl">
 		
-		<div id="wrapper">
+		<div class="container row-fluid" id="wrapper">
 			
 				<ul class="nav nav-tabs">
 					<li class="nav-right"><a href="{% url home %}">صفحه اصلی</a></li>
@@ -35,7 +37,7 @@
 				</ul>
 			
 			
-			<div id="content">
+			<div id="content" class="container row-fluid">
 				{% block content %}
 				{% endblock content %}
 			</div>

@@ -51,7 +51,7 @@ def feed(request, feed_id):
                               {'latest_items': latest_items},
                               context_instance=RequestContext(request))
     else:
-        return render_to_response('rss/home.html', 
+        return render_to_response('rss/feed.html', 
                               {'latest_items': latest_items},
                               context_instance=RequestContext(request))
 

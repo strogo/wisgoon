@@ -3,10 +3,6 @@ body{
 	font-family: tahoma;
 }
 
-[class*="span"] {
-	float: right;
-	margin-right: 20px;
-}
 
 input, button, select, textarea {
 	font-family: tahoma, Helvetica, Arial, sans-serif;
