@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from rss.models import Item, Feed, Subscribe
 from django.template.context import RequestContext
 from rss.forms import FeedForm
@@ -55,6 +55,15 @@ def feed(request, feed_id):
                               {'latest_items': latest_items},
                               context_instance=RequestContext(request))
 
+def feed_item(request, feed_id, item_id):
+    item = get_object_or_404(Item.objects.filter(feed=feed_id,id=item_id)[:1])
+    
+    return render_to_response('rss/item.html', 
+                              {'item': item},
+                              context_instance=RequestContext(request))
+
+        
+    
 
 @login_required       
 def subscribe(request):

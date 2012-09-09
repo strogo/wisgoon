@@ -12,6 +12,7 @@
 				<div class="feed-item-actions">
 		            <div class="feed-item-date">{{item.timestamp|date_from_timestamp}}</div>
 		            <div>{{item.url|get_host}}</div>
+		            <div><a href="{% url rss-item item.feed.id item.id %}">permalink</a></div>
 				</div>
 			</div>
 		</div>

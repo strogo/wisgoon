@@ -1,0 +1,61 @@
+{% extends "base/main.html"%}
+
+{% load rss_tags %}
+{%load cache %}
+{% block content %}
+
+<script type="text/javascript">
+var start_loading=0
+</script>
+
+<div class="row row-fluid">
+	<div class="span3">
+		{% if user.is_authenticated%}
+		<div class="well" style="padding: 8px 0">
+			<ul class="nav nav-list">
+				<li class="nav-header">فیدهای شما</li>
+					{% cache 10 sidebar user.username %}
+						{% get_user_feeds %}
+						{% for sub in user_feeds %}
+							<li><a href="{% url rss-feed sub.feed.id %}">{{sub.feed.title|default:sub.feed.url}}</a></li>
+						{% endfor %}
+					{% endcache %}
+			</ul>
+		</div>
+		{% endif %}
+		
+		<div class="well" style="padding: 8px 0">
+			<ul class="nav nav-list">
+				<li class="nav-header">فیدهای پیشنهادی</li>
+						{% get_recomend_feeds %}
+						{% for f in recomend_feeds %}
+							<li><a href="{% url rss-feed f.id %}">{{f.title}}</a></li>
+						{% endfor %}
+				
+			</ul>
+		</div>
+		
+		
+	</div>
+	<div class="span9">
+	<ul id="feed-ul">
+		<li data-next="{{item.timestamp}}">
+		<div class="feed-card" id="">
+			<div class="feed-item">
+				<a class="feed-item-title" target="_blank" href="{{item.url}}">{{item.title}}</a>
+				<div class="feed-item-desc">{{item.description|safe|linebreaksbr}}</div>		
+			</div>
+			<div class="feed-item-bottom">
+				<div class="feed-item-actions">
+		            <div class="feed-item-date">{{item.timestamp|date_from_timestamp}}</div>
+		            <div>{{item.url|get_host}}</div>
+				</div>
+			</div>
+		</div>
+	</li>
+	</ul>
+	</div>
+</div>
+
+
+{% endblock content %}
