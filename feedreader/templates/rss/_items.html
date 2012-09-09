@@ -9,10 +9,13 @@
 				<div class="feed-item-desc">{{item.description|safe|linebreaksbr}}</div>		
 			</div>
 			<div class="feed-item-bottom">
-				<div class="feed-item-actions">
-		            <div class="feed-item-date">{{item.timestamp|date_from_timestamp}}</div>
-		            <div>{{item.url|get_host}}</div>
-		            <div><a href="{% url rss-item item.feed.id item.id %}">permalink</a></div>
+				<div class="row row-fluid">
+				
+		            
+		            <div class="span2"><a href="http://{{item.url|get_host}}" class="btn" target="_blank">{{item.url|get_host}}</a></div>
+		            <div class="span1"><a href="{% url rss-item item.feed.id item.id %}" class="btn">
+		            	<i class="icon-eye-open"></i></a></div>
+					<div class="span2 offset7">{{item.timestamp|date_from_timestamp}}</div>
 				</div>
 			</div>
 		</div>
