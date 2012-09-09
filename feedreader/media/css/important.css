@@ -12,6 +12,11 @@ input, button, select, textarea {
 	float: right!important;
 }
 
+.nav a{
+	font-family: 'afsfont';
+	font-size:16px;
+}
+
 .form-horizontal .control-label {
 	float: right;
 	text-align: left;
