@@ -37,16 +37,18 @@ def home(request):
         user_feeds = ""
         
     for item in latest_items:
-        
-        tree = lxml.html.fromstring(item.description)
-        images = tree.xpath("//img/@src")
-        
-        for img in images:
-            img =get_thumbnail(img, '150', quality=90)
-        
-        item.description = remove_img_tags(lxml.html.tostring(tree))
-        
-        item.images = images
+        try:
+            tree = lxml.html.fromstring(item.description)
+            images = tree.xpath("//img/@src")
+            
+            for img in images:
+                img =get_thumbnail(img, '150', quality=90)
+            
+            item.description = remove_img_tags(lxml.html.tostring(tree))
+            
+            item.images = images
+        except:
+            pass
     
     if request.is_ajax():
         return render_to_response('rss/_items.html', 
@@ -70,7 +72,6 @@ def feed(request, feed_id):
         latest_items = Item.objects.select_related().filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
     
     for item in latest_items:
-        
         try:
             tree = lxml.html.fromstring(item.description)
             images = tree.xpath("//img/@src")
@@ -82,8 +83,8 @@ def feed(request, feed_id):
             
             item.images = images
         except:
-            pass      
-    
+            pass
+        
     if request.is_ajax():
         return render_to_response('rss/_items.html', 
                               {'latest_items': latest_items},
