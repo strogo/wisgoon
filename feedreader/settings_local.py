@@ -2,6 +2,7 @@
 import os
 
 DEBUG = True
+THUMBNAIL_DEBUG = DEBUG
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ROOT = os.path.dirname(__file__)
@@ -135,6 +136,7 @@ INSTALLED_APPS = (
     'south',
     'debug_toolbar',
     'social_auth',
+    'sorl.thumbnail',
 )
 
 AUTHENTICATION_BACKENDS = (

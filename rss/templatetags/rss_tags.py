@@ -3,6 +3,7 @@ from urlparse import urlparse
 import datetime
 from rss.models import Subscribe, Feed
 from django.contrib.auth.models import User
+from django.template.base import TemplateSyntaxError
 
 register = Library()
 
@@ -47,6 +48,4 @@ class RecomendFeeds(Node):
         return ''
 
 register.tag('get_recomend_feeds', recomend_feeds)
-
-
 

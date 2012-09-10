@@ -135,6 +135,7 @@ INSTALLED_APPS = (
     'south',
     #'debug_toolbar',
     'social_auth',
+    'sorl.thumbnail',
 )
 
 AUTHENTICATION_BACKENDS = (
