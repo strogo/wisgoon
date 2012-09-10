@@ -71,15 +71,18 @@ def feed(request, feed_id):
     
     for item in latest_items:
         
-        tree = lxml.html.parse(item.description)
-        images = tree.xpath("//img/@src")
-        
-        for img in images:
-            img =get_thumbnail(img, '150', quality=90)
-        
-        item.description = remove_img_tags(lxml.html.tostring(tree))
-        
-        item.images = images      
+        try:
+            tree = lxml.html.fromstring(item.description)
+            images = tree.xpath("//img/@src")
+            
+            for img in images:
+                img =get_thumbnail(img, '150', quality=90)
+            
+            item.description = remove_img_tags(lxml.html.tostring(tree))
+            
+            item.images = images
+        except:
+            pass      
     
     if request.is_ajax():
         return render_to_response('rss/_items.html', 
