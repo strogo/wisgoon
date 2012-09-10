@@ -71,7 +71,7 @@ def feed(request, feed_id):
     
     for item in latest_items:
         
-        tree = lxml.html.fromstring(item.description)
+        tree = lxml.html.parse(item.description)
         images = tree.xpath("//img/@src")
         
         for img in images:
