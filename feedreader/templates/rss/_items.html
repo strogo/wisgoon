@@ -2,22 +2,9 @@
 {% load humanize %} 
 
 {% for item in latest_items %}
-	<li data-next="{{item.timestamp}}">
-		<div class="feed-card" id="">
-			<div class="feed-item">
-				<a class="feed-item-title" target="_blank" href="{{item.url}}">{{item.title}}</a>
-				<div class="feed-item-desc">{{item.description|safe|linebreaksbr}}</div>		
-			</div>
-			<div class="feed-item-bottom">
-				<div class="row row-fluid">
-				
-		            
-		            <div class="span2"><a href="http://{{item.url|get_host}}" class="btn" target="_blank">{{item.url|get_host}}</a></div>
-		            <div class="span1"><a href="{% url rss-item item.feed.id item.id %}" class="btn">
-		            	<i class="icon-eye-open"></i></a></div>
-					<div class="span2 offset7">{{item.timestamp|date_from_timestamp}}</div>
-				</div>
-			</div>
-		</div>
-	</li>
+	<div class="feed-item" >
+		<a target="_blank" href="{{item.url}}">{{item.title}}</a>
+		<div>{{item.description|safe|linebreaksbr}}</div>				
+		<span data-next="{{item.timestamp}}" ></span>
+	</div>
 {%endfor%}

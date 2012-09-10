@@ -8,7 +8,10 @@ function load_posts(page) {
         url,
         function(response) {
         	$(".loading").hide();
-            $('#feed-ul').append(response);
+        	var $boxes = $(response);
+			$('#feed-ul').append( $boxes ).masonry( 'appended', $boxes );
+        	//$('#feed-ul').masonry( 'appended', response );
+            //$('#feed-ul').append(response);
             start_loading=0;
         }
     );
@@ -18,7 +21,7 @@ $(document).ready(function() {
     $(window).scroll(function() {
         var break_point = $(document).height() - ($(window).height() * 1.02);
         if ($(window).scrollTop() >= break_point) {
-            var next_page = $('#feed-ul li:last').attr('data-next');
+            var next_page = $('#feed-ul span:last').attr('data-next');
             if (next_page && start_loading==0) {
             	start_loading=1;
             	$(".loading").show();

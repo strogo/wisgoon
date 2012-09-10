@@ -14,7 +14,7 @@ def home(request):
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Item.objects.select_related().all().order_by('-timestamp')[:10]
+        latest_items = Item.objects.select_related().all().order_by('-timestamp')[:20]
     else:
         latest_items = Item.objects.select_related().all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:10]
     

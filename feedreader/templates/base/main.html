@@ -1,3 +1,4 @@
+{% load rss_tags %}
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
@@ -13,6 +14,10 @@
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css">
 <script type="text/javascript" src="{{MEDIA_URL}}js/jquery.js"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}js/bootstrap.js"></script>
+
+{% block extra_js %}
+
+{% endblock extra_js %}
 
 <style type="text/css">
 /* thanks to http://afsaran.ir/ */
@@ -50,6 +55,33 @@
 			</li>
 					{%endif%}
 				</ul>
+			
+			<ul class="nav nav-tabs">
+			  <li class="dropdown nav-right">
+			    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+			        فیدهای شما
+			        <b class="caret"></b>
+			      </a>
+			    <ul class="dropdown-menu">
+			    	{% get_user_feeds %}
+			      {% for sub in user_feeds %}
+					<li><a href="{% url rss-feed sub.feed.id %}">{{sub.feed.title|default:sub.feed.url}}</a></li>
+				  {% endfor %}
+			    </ul>
+			  </li>
+			  <li class="dropdown nav-right">
+			    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+			        فیدهای پیشنهادی
+			        <b class="caret"></b>
+			      </a>
+			    <ul class="dropdown-menu">
+			    	{% get_recomend_feeds %}
+			      {% for f in recomend_feeds %}
+							<li><a href="{% url rss-feed f.id %}">{{f.title}}</a></li>
+						{% endfor %}
+			    </ul>
+			  </li>
+			</ul>
 			
 			
 			<div id="content" class="container row-fluid">

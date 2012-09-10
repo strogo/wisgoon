@@ -32,3 +32,7 @@ input, button, select, textarea {
 .table th, .table td {
 	text-align: right;
 }
+
+.dropdown-menu{
+	right: 0;
+}

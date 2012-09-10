@@ -7,6 +7,17 @@ body{
 	margin:0;
 	padding:0;
 }
+
+#feed-ul .feed-item{
+	width : 192px;
+	-webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+	overflow: hidden;
+}
+
+#feed-ul img{
+	display: block;
+}
+
 .feed-card {
 	background-color: white;
 	border-top: 2px solid #0282B8;
