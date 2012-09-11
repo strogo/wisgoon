@@ -69,18 +69,13 @@ def feed(request, feed_id):
         latest_items = Item.objects.select_related().filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
     
     for item in latest_items:
-        try:
+        item.images = []
+        if item.description != '':
             tree = lxml.html.fromstring(item.description)
-            images = tree.xpath("//img/@src")
-            
-            for img in images:
-                img =get_thumbnail(img, '150', quality=90)
-            
+            for images in tree.xpath("//img/@src"):
+                item.images.append(get_thumbnail(images, '192'))
+                
             item.description = remove_img_tags(lxml.html.tostring(tree))
-            
-            item.images = images
-        except:
-            pass
         
     if request.is_ajax():
         return render_to_response('rss/_items.html', 
