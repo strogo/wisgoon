@@ -5,6 +5,7 @@ import feedparser
 from rss.models import Item
 
 from django.db.utils import IntegrityError
+import _mysql_exceptions
 
 
 def parse_feed(feedObj):
@@ -40,6 +41,9 @@ def parse_feed(feedObj):
         if i==1 and feedObj.priority != 100:
             feedObj.priority = feedObj.priority+1
             duplicate=1
+    
+    except _mysql_exceptions.Warning:
+        print feedObj
     
     if duplicate == 0:
         if feedObj.priority <= 5:
