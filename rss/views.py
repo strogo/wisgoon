@@ -43,7 +43,7 @@ def home(request):
             for images in tree.xpath("//img/@src"):
                 item.images.append(get_thumbnail(images, '192'))
                 
-            item.description = remove_img_tags(lxml.html.tostring(tree))
+            item.description = remove_img_tags(lxml.html.tostring(tree, encoding='utf-8'))
                 
             #item.images = images
         
@@ -75,7 +75,7 @@ def feed(request, feed_id):
             for images in tree.xpath("//img/@src"):
                 item.images.append(get_thumbnail(images, '192'))
                 
-            item.description = remove_img_tags(lxml.html.tostring(tree))
+            item.description = remove_img_tags(lxml.html.tostring(tree, encoding='utf-8'))
         
     if request.is_ajax():
         return render_to_response('rss/_items.html', 
