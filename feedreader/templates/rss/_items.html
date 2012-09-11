@@ -4,7 +4,7 @@
 {% for item in latest_items %}
 	<div class="feed-item" >
 		<a target="_blank" href="{{item.url}}">{{item.title}}</a>
-		<div>{{item.description|safe|linebreaksbr}}</div>
+		<div>{{item.description|slice:"300"|safe|linebreaksbr}}</div>
 		<div class="img-block">
 			{% for im in item.images %}
 				<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
