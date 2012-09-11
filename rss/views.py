@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 import lxml.html
 import re
 from sorl.thumbnail.shortcuts import get_thumbnail
+from urllib2 import HTTPError
 
 def remove_img_tags(data):
     p = re.compile(r'<img.*?>')
@@ -73,7 +74,10 @@ def feed(request, feed_id):
         if item.description != '':
             tree = lxml.html.fromstring(item.description)
             for images in tree.xpath("//img/@src"):
-                item.images.append(get_thumbnail(images, '192'))
+                try:
+                    item.images.append(get_thumbnail(images, '192'))
+                except HTTPError:
+                    pass
                 
             item.description = remove_img_tags(lxml.html.tostring(tree, encoding='utf-8'))
         
