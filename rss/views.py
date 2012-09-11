@@ -42,7 +42,11 @@ def home(request):
         if item.description != '':
             tree = lxml.html.fromstring(item.description)
             for images in tree.xpath("//img/@src"):
-                item.images.append(get_thumbnail(images, '192'))
+                try:
+                    item.images.append(get_thumbnail(images, '192'))
+                    break
+                except HTTPError:
+                    pass
                 
             item.description = remove_img_tags(lxml.html.tostring(tree, encoding='utf-8'))
                 
@@ -76,6 +80,7 @@ def feed(request, feed_id):
             for images in tree.xpath("//img/@src"):
                 try:
                     item.images.append(get_thumbnail(images, '192'))
+                    break
                 except HTTPError:
                     pass
                 
