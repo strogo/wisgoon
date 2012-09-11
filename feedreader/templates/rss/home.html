@@ -20,12 +20,17 @@ var start_loading=0
 	</div>
 </div>
 <script type="text/javascript">
-$('#feed-ul').masonry({
-    // options
+
+var $container = $('#feed-ul');
+
+$container.imagesLoaded( function(){
+  $container.masonry({
     itemSelector : '.feed-item',
     isRTL: true,
     isAnimated: true,
+  });
 });
+
 </script>
 
 

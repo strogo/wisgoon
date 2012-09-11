@@ -9,11 +9,16 @@ function load_posts(page) {
         function(response) {
         	$(".loading").hide();
         	var $boxes = $(response);
-			$('#feed-ul').append( $boxes ).masonry( 'appended', $boxes );
-			$("#feed-ul").masonry('reload');
+
+			$boxes.imagesLoaded( function(){
+			  	$('#feed-ul').append( $boxes ).masonry( 'appended', $boxes );
+				$("#feed-ul").masonry('reload');
+				start_loading=0;
+			});
+						
         	//$('#feed-ul').masonry( 'appended', response );
             //$('#feed-ul').append(response);
-            start_loading=0;
+            
         }
     );
 }
