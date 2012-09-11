@@ -37,19 +37,16 @@ def home(request):
         user_feeds = ""
         
     for item in latest_items:
-        try:
+        item.images = []
+        if item.description != '':
             tree = lxml.html.fromstring(item.description)
-            images = tree.xpath("//img/@src")
-            
-            for img in images:
-                img =get_thumbnail(img, '150', quality=90)
-            
+            for images in tree.xpath("//img/@src"):
+                item.images.append(get_thumbnail(images, '192'))
+                
             item.description = remove_img_tags(lxml.html.tostring(tree))
-            
-            item.images = images
-        except:
-            pass
-    
+                
+            #item.images = images
+        
     if request.is_ajax():
         return render_to_response('rss/_items.html', 
                               {'latest_items': latest_items},
