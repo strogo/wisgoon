@@ -7,14 +7,13 @@ function load_posts(page) {
     $.get(
         url,
         function(response) {
-        	
+        	$(".loading").hide();
         	var $boxes = $(response);
 
 			$boxes.imagesLoaded( function(){
 			  	$('#feed-ul').append( $boxes ).masonry( 'appended', $boxes );
 				$("#feed-ul").masonry('reload');
 				start_loading=0;
-				$(".loading").hide();
 			});
 						
         	//$('#feed-ul').masonry( 'appended', response );
