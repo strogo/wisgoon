@@ -10,6 +10,7 @@ function load_posts(page) {
         	$(".loading").hide();
         	var $boxes = $(response);
 			$('#feed-ul').append( $boxes ).masonry( 'appended', $boxes );
+			$("#feed-ul").masonry('reload');
         	//$('#feed-ul').masonry( 'appended', response );
             //$('#feed-ul').append(response);
             start_loading=0;
