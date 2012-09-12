@@ -3,3 +3,4 @@
 /.pydevproject
 /feedreader/media/cache/*
 /feedreader/media/pin/*
+/feedreader/media/rss/*

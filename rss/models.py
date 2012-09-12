@@ -12,6 +12,7 @@ class Feed(models.Model):
     followers = models.IntegerField(default=0)
     view = models.IntegerField(default=0)
     status = models.IntegerField(default=1)
+    lock = models.BooleanField(default=False)
     
     def __unicode__(self):
         return self.url
@@ -24,6 +25,7 @@ class Item(models.Model):
     date = models.DateTimeField()
     timestamp = models.IntegerField(db_index=True)
     feed = models.ForeignKey(Feed)
+    image = models.CharField(max_length=250, blank=True)
     
     def __unicode__(self):
         return self.title

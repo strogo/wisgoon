@@ -6,20 +6,7 @@ from django.template.context import RequestContext
 from rss.forms import FeedForm
 from django.http import HttpResponseRedirect  #, HttpResponse
 from django.contrib.auth.decorators import login_required
-import lxml.html
-import re
-from sorl.thumbnail.shortcuts import get_thumbnail
-from urllib2 import HTTPError
 
-def remove_img_tags(data):
-    p = re.compile(r'<img.*?>')
-    data = p.sub('', data)
-
-    p = re.compile(r'<img.*?/>')
-    data = p.sub('', data)
-    
-    return data
-    
 def home(request):
     
     try:
@@ -37,20 +24,6 @@ def home(request):
     except :
         user_feeds = ""
         
-    for item in latest_items:
-        item.images = []
-        if item.description != '':
-            tree = lxml.html.fromstring(item.description)
-            for images in tree.xpath("//img/@src"):
-                try:
-                    item.images.append(get_thumbnail(images, '192'))
-                    break
-                except HTTPError:
-                    pass
-                
-            item.description = remove_img_tags(lxml.html.tostring(tree, encoding='utf-8'))
-                
-            #item.images = images
         
     if request.is_ajax():
         return render_to_response('rss/_items.html', 
@@ -73,20 +46,7 @@ def feed(request, feed_id):
         latest_items = Item.objects.select_related().filter(feed=feed_id).all().order_by('-timestamp')[:30]
     else:
         latest_items = Item.objects.select_related().filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
-    
-    for item in latest_items:
-        item.images = []
-        if item.description != '':
-            tree = lxml.html.fromstring(item.description)
-            for images in tree.xpath("//img/@src"):
-                try:
-                    item.images.append(get_thumbnail(images, '192'))
-                    break
-                except HTTPError:
-                    pass
-                
-            item.description = remove_img_tags(lxml.html.tostring(tree, encoding='utf-8'))
-        
+            
     if request.is_ajax():
         return render_to_response('rss/_items.html', 
                               {'latest_items': latest_items},
