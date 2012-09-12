@@ -10,7 +10,7 @@ setup_environ(settings)
 from rss.models import Feed
 from feedreader.parser import parse_feed
 
-feedObj = Feed.objects.filter(lock=False).all()
+feedObj = Feed.objects.filter(lock=False).all().order_by('-last_fetch')
 
 for i in feedObj:
     parse_feed(i)

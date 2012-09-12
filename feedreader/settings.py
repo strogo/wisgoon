@@ -163,16 +163,16 @@ AUTHENTICATION_BACKENDS = (
 LOGIN_REDIRECT_URL = '/'
 
 SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
-"""
+
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211' # can also be a list of locations
     }
 }
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
-"""
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

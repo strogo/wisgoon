@@ -179,15 +179,15 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.signals.SignalDebugPanel',
     'debug_toolbar.panels.logger.LoggingPanel',
 )
-"""
+
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211' # can also be a list of locations
     }
 }
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
-"""
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

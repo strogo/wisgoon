@@ -4,7 +4,7 @@
 
 {% for item in latest_items %}
 	<div class="feed-item" >
-		<a target="_blank" href="{{item.url}}">{{item.title}}</a>
+		<a target="_blank" rel="nofollow" href="{{item.url}}">{{item.title}}</a>
 		<p>{{item.description|striptags|truncatewords:25}}</p>
 		<div class="img-block">
 			{% thumbnail item.image "192" as im %}
