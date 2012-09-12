@@ -11,6 +11,7 @@ import _mysql_exceptions
 def parse_feed(feedObj):
     print "going to parse %s" % feedObj.url
     feed = feedparser.parse(feedObj.url)
+    print "end of getting url"
     i=0
     duplicate=0
     try:
@@ -51,7 +52,9 @@ def parse_feed(feedObj):
             feedObj.priority = 1
         else:
             feedObj.priority = feedObj.priority-5        
-    
-    feedObj.title=feed['channel']['title']
+    try:
+        feedObj.title=feed['channel']['title']
+    except KeyError:
+        pass
     feedObj.last_fetch = datetime.now()
     feedObj.save()
