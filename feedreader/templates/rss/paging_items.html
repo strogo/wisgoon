@@ -15,15 +15,10 @@ function load_posts(page) {
 				$("#feed-ul").masonry('reload');
 				start_loading=0;
 			});
-						
-        	//$('#feed-ul').masonry( 'appended', response );
-            //$('#feed-ul').append(response);
-            
         }
     );
 }
 $(document).ready(function() {
-    //load_posts();  // Get initial set
     $(window).scroll(function() {
         var break_point = $(document).height() - ($(window).height() * 1.02);
         if ($(window).scrollTop() >= break_point) {
