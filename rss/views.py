@@ -69,6 +69,7 @@ def feed(request, feed_id):
         timestamp = 0
     
     if timestamp == 0:
+        feed = Feed.objects.get(pk=feed_id)
         latest_items = Item.objects.select_related().filter(feed=feed_id).all().order_by('-timestamp')[:30]
     else:
         latest_items = Item.objects.select_related().filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
@@ -92,7 +93,7 @@ def feed(request, feed_id):
                               context_instance=RequestContext(request))
     else:
         return render_to_response('rss/feed.html', 
-                              {'latest_items': latest_items},
+                              {'latest_items': latest_items, 'feed':feed},
                               context_instance=RequestContext(request))
 
 def feed_item(request, feed_id, item_id):

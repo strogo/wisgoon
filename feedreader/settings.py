@@ -1,7 +1,7 @@
 # Django settings for feedreader project.
 import os
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ROOT = os.path.dirname(__file__)
@@ -131,6 +131,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.humanize',
     'rss',
+    'pin',
     'registration',
     'south',
     #'debug_toolbar',

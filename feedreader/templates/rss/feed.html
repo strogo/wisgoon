@@ -3,6 +3,8 @@
 {% load rss_tags %}
 {%load cache %}
 
+{% block title %} - {{feed.title}} {% endblock title %}
+
 {% block extra_js %}
 <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
 {% endblock extra_js %}

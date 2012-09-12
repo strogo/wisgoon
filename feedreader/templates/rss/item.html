@@ -9,39 +9,11 @@ var start_loading=0
 </script>
 
 <div class="row row-fluid">
-	<div class="span3">
-		{% if user.is_authenticated%}
-		<div class="well" style="padding: 8px 0">
-			<ul class="nav nav-list">
-				<li class="nav-header">فیدهای شما</li>
-					{% cache 10 sidebar user.username %}
-						{% get_user_feeds %}
-						{% for sub in user_feeds %}
-							<li><a href="{% url rss-feed sub.feed.id %}">{{sub.feed.title|default:sub.feed.url}}</a></li>
-						{% endfor %}
-					{% endcache %}
-			</ul>
-		</div>
-		{% endif %}
-		
-		<div class="well" style="padding: 8px 0">
-			<ul class="nav nav-list">
-				<li class="nav-header">فیدهای پیشنهادی</li>
-						{% get_recomend_feeds %}
-						{% for f in recomend_feeds %}
-							<li><a href="{% url rss-feed f.id %}">{{f.title}}</a></li>
-						{% endfor %}
-				
-			</ul>
-		</div>
-		
-		
-	</div>
-	<div class="span9">
+	<div class="span12">
 	<ul id="feed-ul">
 		<li data-next="{{item.timestamp}}">
 		<div class="feed-card" id="">
-			<div class="feed-item">
+			<div class="feed-inner">
 				<a class="feed-item-title" target="_blank" href="{{item.url}}">{{item.title}}</a>
 				<div class="feed-item-desc">{{item.description|safe|linebreaksbr}}</div>		
 			</div>

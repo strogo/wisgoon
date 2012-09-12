@@ -2,7 +2,7 @@
 import os
 
 DEBUG = True
-THUMBNAIL_DEBUG = DEBUG
+THUMBNAIL_DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ROOT = os.path.dirname(__file__)
@@ -132,6 +132,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.humanize',
     'rss',
+    'pin',
+    'avval',
     'registration',
     'south',
     'debug_toolbar',

@@ -4,12 +4,15 @@
 {% for item in latest_items %}
 	<div class="feed-item" >
 		<a target="_blank" href="{{item.url}}">{{item.title}}</a>
-		<div>{{item.description|slice:"300"|striptags}}</div>
+		<p>{{item.description|slice:"300"|striptags}}</p>
 		<div class="img-block">
 			{% for im in item.images %}
 				<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
 			{% endfor %}
-		</div>	
+		</div>
+		<div>
+			<a href="{% url rss-item item.feed.id item.id%}"><i class="icon-flag"></i></a>
+		</div>
 		<span data-next="{{item.timestamp}}" ></span>
 	</div>
 {%endfor%}
