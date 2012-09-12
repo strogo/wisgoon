@@ -131,7 +131,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.humanize',
     'rss',
-    'pin',
+    #'pin',
     'registration',
     'south',
     #'debug_toolbar',
