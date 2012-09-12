@@ -9,6 +9,7 @@ import _mysql_exceptions
 
 
 def parse_feed(feedObj):
+    print "going to parse %s" % feedObj.url
     feed = feedparser.parse(feedObj.url)
     i=0
     duplicate=0
