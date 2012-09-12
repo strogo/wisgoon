@@ -7,7 +7,7 @@
 		<p>{{item.description|slice:"300"|striptags}}</p>
 		<div class="img-block">
 			{% for im in item.images %}
-				<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="img-rounded">
+				<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
 			{% endfor %}
 		</div>
 		<div>
