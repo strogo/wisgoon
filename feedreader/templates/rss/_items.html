@@ -12,38 +12,10 @@
 			{% endthumbnail %}
 		</div>
 		<div class="feed-actions">
-			<a href="{% url rss-item item.feed.id item.id%}"><i class="icon-flag"></i></a>
-			<div class="a2a_kit a2a_default_style">
-				<a class="a2a_dd" href="http://www.addtoany.com/share_save">Share</a>
-				<span class="a2a_divider"></span>
-				<a class="a2a_button_facebook"></a>
-				<a class="a2a_button_twitter"></a>
-				<a class="a2a_button_email"></a>
-			</div>
-			
+			<a href="{% url rss-item item.feed.id item.id%}"><i class="icon-flag"></i></a>			
 		</div>
 		<span data-next="{{item.timestamp}}" ></span>
 		
 
-{% if forloop.first%}
-<script type="text/javascript">
-a2a_config = {
-    linkname: '{{item.title}}',
-    linkurl: '{{item.url}}',
-    locale: "fa",
-    static_server:"{{MEDIA_URL}}sharing/",
-};
-</script>
-<script type="text/javascript" src="{{MEDIA_URL}}sharing/page.js"></script>
-
-{%else%}
-<script type="text/javascript">
-a2a_config.static_server = "{{MEDIA_URL}}sharing/";
-a2a_config.locale = "fa";
-a2a_config.linkname = '{{item.title}}';
-a2a_config.linkurl = '{{item.url}}';
-a2a.init('page');
-</script>
-{%endif%}
 	</div>
 {%endfor%}
