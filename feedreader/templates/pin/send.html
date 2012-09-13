@@ -14,7 +14,7 @@
 			</div>
 		</div>
     </div>
-
+	<div class="uploaded-image"></div>
 	<div class="control-group ">
             
         <label class="control-label">Text</label>
@@ -31,16 +31,23 @@
 </form>
 
 <script src="{{MEDIA_URL}}js/fileuploader.js" type="text/javascript"></script>
-    <script>
+     <script>
         function createUploader(){            
             var uploader = new qq.FileUploader({
                 element: document.getElementById('file-uploader'),
                 action: '{% url pin-upload%}',
                 debug: true,
                 multiple: false,
+                allowedExtensions : ['wmv','jpg'],
+                sizeLimit : 1024,
+                messages : {'typeError':'{file} برای بارگذاری مناسب نیست. تنها {extensions} فرمت ها مجاز هستند.','sizeError':'{file} بسیار حجیم است. فایل شما باید کمتر از {sizeLimit} باشد.','minSizeError':'{file} بسیار کوچک است. فایل شما باید بیشتر از {minSizeLimit} باشد.','emptyError':'{file} فایل خالی است!','onLeave':'فایل در حال بارگذاری است. در صورت ترک صفحه این عملیات لغو می شود.'},
+                showMessage:function(message){ 
+                	alert(message); 
+                	},
+                onComplete : function(id, fileName, responseJSON){
+                	$('.uploaded-image').html('<>');}
             });           
         }
-        
         // in your app create uploader as soon as the DOM is ready
         // don't wait for the window to load  
         window.onload = createUploader;     
