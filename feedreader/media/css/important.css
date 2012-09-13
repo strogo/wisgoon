@@ -37,3 +37,5 @@ input, button, select, textarea {
 	right: 0;
 	min-width: 280px;
 }
+
+#a2apage_PTZ { display:none !important; }

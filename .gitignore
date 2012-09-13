@@ -5,3 +5,4 @@
 /feedreader/media/pin/*
 /feedreader/media/rss/*
 /addtoany_updater.log
+/build/*
