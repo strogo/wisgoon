@@ -23,6 +23,9 @@ body{
 #feed-ul img{
 	display: block;
 }
+.feed-actions{
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 
 .feed-card {
 	background-color: white;
