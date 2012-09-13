@@ -41,6 +41,7 @@
 			
 				<ul class="nav nav-tabs">
 					<li class="nav-right"><a href="{% url home %}">صفحه اصلی</a></li>
+					<li class="nav-right"><a href="{% url pin-home %}">پین</a></li>
 					<li class="nav-right"><a href="{% url rss-subs %}">اشتراک فید</a></li>
 					{% if user.is_authenticated %}
 						<li class="nav-right">
