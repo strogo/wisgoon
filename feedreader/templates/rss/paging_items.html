@@ -20,7 +20,7 @@ function load_posts(page) {
 }
 $(document).ready(function() {
     $(window).scroll(function() {
-        var break_point = $(document).height() - ($(window).height() * 1.02);
+        var break_point = $(document).height() - ($(window).height() * 2.02);
         if ($(window).scrollTop() >= break_point) {
             var next_page = $('#feed-ul span:last').attr('data-next');
             if (next_page && start_loading==0) {
