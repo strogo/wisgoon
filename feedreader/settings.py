@@ -119,6 +119,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
+    "allauth.account.context_processors.account",
+    "allauth.socialaccount.context_processors.socialaccount",
     'rss.context_processors.c_url',
 )
 
@@ -136,41 +138,29 @@ INSTALLED_APPS = (
     'registration',
     'south',
     #'debug_toolbar',
-    'social_auth',
+    #'social_auth',
     'sorl.thumbnail',
+    
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    #'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
+    #'allauth.socialaccount.providers.github',
+    #'allauth.socialaccount.providers.linkedin',
+    #'allauth.socialaccount.providers.openid',
+    #'allauth.socialaccount.providers.soundcloud',
+    #'allauth.socialaccount.providers.twitter'
 )
 
 AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.twitter.TwitterBackend',
-    'social_auth.backends.facebook.FacebookBackend',
-    'social_auth.backends.google.GoogleOAuthBackend',
-    'social_auth.backends.google.GoogleOAuth2Backend',
-    'social_auth.backends.google.GoogleBackend',
-    'social_auth.backends.yahoo.YahooBackend',
-    'social_auth.backends.browserid.BrowserIDBackend',
-    'social_auth.backends.contrib.linkedin.LinkedinBackend',
-    'social_auth.backends.contrib.livejournal.LiveJournalBackend',
-    'social_auth.backends.contrib.orkut.OrkutBackend',
-    'social_auth.backends.contrib.foursquare.FoursquareBackend',
-    'social_auth.backends.contrib.github.GithubBackend',
-    'social_auth.backends.contrib.vkontakte.VKontakteBackend',
-    'social_auth.backends.contrib.live.LiveBackend',
-    'social_auth.backends.contrib.skyrock.SkyrockBackend',
-    'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
-    'social_auth.backends.OpenIDBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
+    "allauth.account.auth_backends.AuthenticationBackend", )
 
-LOGIN_REDIRECT_URL = '/'
+SOCIALACCOUNT_PROVIDERS = \
+    { 'google':
+        { 'SCOPE': ['https://www.googleapis.com/auth/userinfo.profile'] } }
 
-#SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
-
-SOCIAL_AUTH_PIPELINE = (
-    'social_auth.backends.pipeline.social.social_auth_user',
-    'social_auth.backends.pipeline.social.associate_user',
-    'social_auth.backends.pipeline.social.load_extra_data',
-    'social_auth.backends.pipeline.user.update_user_details'
-)
+ACCOUNT_EMAIL_REQUIRED = True
 
 
 CACHES = {
