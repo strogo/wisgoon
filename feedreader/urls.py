@@ -10,5 +10,6 @@ urlpatterns = patterns('',
     url(r'^pin/', include('pin.urls')),
     url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'', include('social_auth.urls')),
+    url(r'^acc/', include('allauth.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )
