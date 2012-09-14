@@ -26,6 +26,7 @@ class Item(models.Model):
     timestamp = models.IntegerField(db_index=True)
     feed = models.ForeignKey(Feed)
     image = models.CharField(max_length=250, blank=True)
+    goto = models.IntegerField(default=0)
     
     def __unicode__(self):
         return self.title

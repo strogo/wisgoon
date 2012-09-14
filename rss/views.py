@@ -63,9 +63,13 @@ def feed_item(request, feed_id, item_id):
                               {'item': item},
                               context_instance=RequestContext(request))
 
-        
+def feed_item_goto(request, item_id):
+    item = get_object_or_404(Item.objects.filter(id=item_id)[:1])
+    item.goto = item.goto+1
+    item.save()
     
-
+    return HttpResponseRedirect(item.url)
+    
 @login_required       
 def subscribe(request):
     
