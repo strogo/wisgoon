@@ -76,7 +76,9 @@ def upload(request):
         # save the file
         success = save_upload( upload, filename, is_raw )
 
-    
+        if not success:
+            success=''
+            
         import json
         ret_json = {'success': success, }
         return HttpResponse( json.dumps( ret_json ) )
