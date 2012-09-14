@@ -2,7 +2,9 @@
 {% load humanize %}
 {% load thumbnail %}
 
+{% spaceless %}
 {% for item in latest_items %}
+
 	<div class="feed-item" >
 		<a target="_blank" rel="nofollow" href="{% url rss-item-goto item.id %}">{{item.title}}</a>
 		<p class="feed-description">{{item.description|striptags|truncatewords:25}}</p>
@@ -13,7 +15,7 @@
 		</div>
 		<div class="feed-actions">
 			<a href="{% url rss-item item.feed.id item.id%}"><i class="icon-flag"></i></a>
-				
+			<div class="sharing-actions">
 				<div class="a2a_kit a2a_default_style">
 					<a class="a2a_dd" href="http://www.addtoany.com/share_save">Share</a>
 					<span class="a2a_divider"></span>
@@ -21,7 +23,7 @@
 					<a class="a2a_button_twitter"></a>
 					<a class="a2a_button_email"></a>
 				</div>
-							
+			</div>
 		</div>
 		<span data-next="{{item.timestamp}}" ></span>
 		
@@ -55,6 +57,5 @@
 	{%endif%}
 {%endif%}
 
-
-
 {%endfor%}
+{% endspaceless %}

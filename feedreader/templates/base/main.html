@@ -1,5 +1,4 @@
 {% load rss_tags %}
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -13,32 +12,24 @@
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css">
 <script type="text/javascript" src="{{MEDIA_URL}}js/jquery.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}js/bootstrap.js"></script>
-
-{% block extra_js %}
-
-{% endblock extra_js %}
-
+<script type="text/javascript" src="{{MEDIA_URL}}js/bootstrap.min.js"></script>
+{% block extra_js %}{% endblock extra_js %}
 <style type="text/css">
 /* thanks to http://afsaran.ir/ */
 /*<![CDATA[*/
-			@font-face
-			{
-				font-family: afsFont;
-				src: local('Koodak Bold'),
-					 url('{{MEDIA_URL}}/fonts/BKoodakBold.woff') format('woff'),
-					 url('{{MEDIA_URL}}/fonts/BKoodakBold.ttf') format('truetype'),
-					 url('{{MEDIA_URL}}/fonts/BKoodakBold.eot');
-			}
+@font-face
+{
+	font-family: afsFont;
+	src: local('Koodak Bold'),
+	url('{{MEDIA_URL}}/fonts/BKoodakBold.woff') format('woff'),
+	url('{{MEDIA_URL}}/fonts/BKoodakBold.ttf') format('truetype'),
+	url('{{MEDIA_URL}}/fonts/BKoodakBold.eot');
+}
 /*]]>*/
 </style>
-
 </head>
-
 	<body dir="rtl">
-		
 		<div class="container" id="wrapper">
-			
 				<ul class="nav nav-tabs">
 					<li class="nav-right"><a href="{% url home %}">صفحه اصلی</a></li>
 					<li class="nav-right"><a href="{% url pin-home %}">پین</a></li>
@@ -84,7 +75,6 @@
 			  </li>
 			</ul>
 			
-			
 			<div id="content" class="container row-fluid">
 				{% block content %}
 				{% endblock content %}
@@ -93,6 +83,5 @@
 				<img src="{{MEDIA_URL}}img/loader.gif" />
 			</div>
 		</div>
-
 	</body>
 </html>
