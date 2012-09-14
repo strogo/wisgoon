@@ -42,10 +42,10 @@ def save_upload( uploaded, filename, raw_data ):
             else:
                 for c in uploaded.chunks( ):
                     dest.write( c )
-            return True
+            return 1
     except IOError:
         # could not open the file most likely
-        return False
+        return 0
 
 @csrf_exempt
 def upload(request):
@@ -75,12 +75,9 @@ def upload(request):
          
         # save the file
         success = save_upload( upload, filename, is_raw )
-
-        if not success:
-            success=''
             
         import json
-        ret_json = {'success': success, }
+        ret_json = success
         return HttpResponse( json.dumps( ret_json ) )
         
     
