@@ -45,7 +45,7 @@
                 	alert(message); 
                 	},
                 onComplete : function(id, fileName, responseJSON){
-                	if(responseJSON)
+                	if(responseJSON.success)
                 		{
                 			$('.uploaded-image').html('<img src="/media/pin/'+fileName+'" style="width:100px;height:100px;">');
                 		}else{
