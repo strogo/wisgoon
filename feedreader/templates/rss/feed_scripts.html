@@ -37,12 +37,13 @@ function load_posts(page) {
         url,
         function(response) {
         	$(".loading").hide();
+        	start_loading=0;
         	var $boxes = $(response);
 
 			$boxes.imagesLoaded( function(){
 			  	$('#feed-ul').append( $boxes ).masonry( 'appended', $boxes );
 				$("#feed-ul").masonry('reload');
-				start_loading=0;
+				
 			});
         }
     );
