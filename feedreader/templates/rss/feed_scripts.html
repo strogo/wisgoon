@@ -1,7 +1,7 @@
 
 <script type="text/javascript">
 var feedobj = $('#feed-ul');
-var loadingobj = $(".loading");
+var loadingobj ;
 
 feedobj.imagesLoaded( function(){
   feedobj.masonry({
@@ -50,6 +50,7 @@ function load_posts(page) {
     );
 }
 $(document).ready(function() {
+	loadingobj = $(".loading");
     $(window).scroll(function() {
         var break_point = $(document).height() - ($(window).height() * 2.02);
         if ($(window).scrollTop() >= break_point) {
