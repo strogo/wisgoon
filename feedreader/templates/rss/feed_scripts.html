@@ -1,5 +1,33 @@
 
 <script type="text/javascript">
+
+var $container = $('#feed-ul');
+
+$container.imagesLoaded( function(){
+  $container.masonry({
+    itemSelector : '.feed-item',
+    isRTL: true,
+    isAnimated: true,
+  });
+});
+
+$('.feed-item').live({
+    mouseenter:
+       function()
+       {
+    	$(".feed-actions", this).stop().animate({bottom:'5px'},{queue:false,duration:160});
+       },
+    mouseleave:
+       function()
+       {
+    	$(".feed-actions", this).removeAttr('style');
+		$(".feed-actions", this).stop().animate({},{queue:false,duration:160});
+       }
+   }
+);
+</script>
+
+<script type="text/javascript">
 function load_posts(page) {
     var url = "{{current_url}}";
     if (page) {
