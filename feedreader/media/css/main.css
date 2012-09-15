@@ -28,6 +28,8 @@ body{
 	display: block;
 }
 .feed-actions{
+	bottom:-40px;
+	position:absolute;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	padding-bottom: 10px;
 }

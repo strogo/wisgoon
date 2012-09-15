@@ -29,7 +29,14 @@
 		
 
 	</div>
-
+<script type="text/javascript">
+	$('.feed-item').live('hover', function(){
+	$(".feed-actions", this).stop().animate({bottom:'5px'},{queue:false,duration:160});
+	}, function() {
+	$(".feed-actions", this).removeAttr('style');
+	$(".feed-actions", this).stop().animate({},{queue:false,duration:160});
+	}); 
+</script>
 {% if request.is_ajax %}
 	<script type="text/javascript">
 		a2a_config.linkname = '{{item.title}}';
