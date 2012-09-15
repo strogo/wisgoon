@@ -1,7 +1,7 @@
 # Django settings for feedreader project.
 import os
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ROOT = os.path.dirname(__file__)
@@ -162,6 +162,7 @@ SOCIALACCOUNT_PROVIDERS = \
 
 ACCOUNT_EMAIL_REQUIRED = True
 
+LOGIN_REDIRECT_URL = '/'
 
 CACHES = {
     'default': {

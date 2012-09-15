@@ -49,6 +49,7 @@
 				</ul>
 			
 			<ul class="nav nav-tabs">
+			{% if user.is_authenticated %}
 			  <li class="dropdown nav-right">
 			    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
 			        فیدهای شما
@@ -61,6 +62,7 @@
 				  {% endfor %}
 			    </ul>
 			  </li>
+			  {%endif%}
 			  <li class="dropdown nav-right">
 			    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
 			        فیدهای پیشنهادی
