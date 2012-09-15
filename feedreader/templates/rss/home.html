@@ -31,6 +31,12 @@ $container.imagesLoaded( function(){
   });
 });
 
+$('.feed-item').hover(function(){
+	$(".feed-actions", this).stop().animate({bottom:'5px'},{queue:false,duration:160});
+		}, function() {
+			$(".feed-actions", this).removeAttr('style');
+			$(".feed-actions", this).stop().animate({},{queue:false,duration:160});
+}); 
 </script>
 
 
