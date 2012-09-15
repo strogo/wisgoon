@@ -37,12 +37,20 @@ $container.imagesLoaded( function(){
   });
 });
 
-$('.feed-item').hover(function(){
-	$(".feed-actions", this).stop().animate({bottom:'5px'},{queue:false,duration:160});
-		}, function() {
-			$(".feed-actions", this).removeAttr('style');
-			$(".feed-actions", this).stop().animate({},{queue:false,duration:160});
-}); 
+$('.feed-item').live({
+    mouseenter:
+       function()
+       {
+    	$(".feed-actions", this).stop().animate({bottom:'5px'},{queue:false,duration:160});
+       },
+    mouseleave:
+       function()
+       {
+    	$(".feed-actions", this).removeAttr('style');
+		$(".feed-actions", this).stop().animate({},{queue:false,duration:160});
+       }
+   }
+);
 </script>
 {% include "rss/paging_items.html" %}
 
