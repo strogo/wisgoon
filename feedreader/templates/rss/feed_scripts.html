@@ -1,10 +1,10 @@
 
 <script type="text/javascript">
+var feedobj = $('#feed-ul');
+var loadingobj = $(".loading");
 
-var $container = $('#feed-ul');
-
-$container.imagesLoaded( function(){
-  $container.masonry({
+feedobj.imagesLoaded( function(){
+  feedobj.masonry({
     itemSelector : '.feed-item',
     isRTL: true,
     isAnimated: true,
@@ -28,6 +28,7 @@ $('.feed-item').live({
 </script>
 
 <script type="text/javascript">
+
 function load_posts(page) {
     var url = "{{current_url}}";
     if (page) {
@@ -36,14 +37,14 @@ function load_posts(page) {
     $.get(
         url,
         function(response) {
-        	$(".loading").hide();
-        	start_loading=0;
+        	
         	var $boxes = $(response);
 
 			$boxes.imagesLoaded( function(){
-			  	$('#feed-ul').append( $boxes ).masonry( 'appended', $boxes );
-				$("#feed-ul").masonry('reload');
-				
+			  	feedobj.append( $boxes ).masonry( 'appended', $boxes );
+				feedobj.masonry('reload');
+				loadingobj.hide();
+				start_loading=0;
 			});
         }
     );
@@ -55,7 +56,7 @@ $(document).ready(function() {
             var next_page = $('#feed-ul span:last').attr('data-next');
             if (next_page && start_loading==0) {
             	start_loading=1;
-            	$(".loading").show();
+            	loadingobj.show();
                 load_posts(next_page);
             }
         }
