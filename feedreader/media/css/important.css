@@ -3,6 +3,10 @@ body{
 	font-family: tahoma;
 }
 
+h1{
+	font-size:19px;
+	font-family: "afsfont";
+}
 
 input, button, select, textarea {
 	font-family: tahoma, Helvetica, Arial, sans-serif;
