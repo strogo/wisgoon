@@ -94,19 +94,20 @@ def parse_feed(feedObj):
     except _mysql_exceptions.Warning:
         print feedObj
     
-    if duplicate == 0:
-        if feedObj.priority <= 5:
-            feedObj.priority = 1
-        else:
-            feedObj.priority = feedObj.priority-5        
-    try:
-        feedObj.title=feed['channel']['title']
-    except KeyError:
-        pass
-    
-    feedObj.last_fetch = datetime.now()
-    feedObj.lock = False
-    feedObj.save()
+    finally:
+        if duplicate == 0:
+            if feedObj.priority <= 5:
+                feedObj.priority = 1
+            else:
+                feedObj.priority = feedObj.priority-5        
+        try:
+            feedObj.title=feed['channel']['title']
+        except KeyError:
+            pass
+        
+        feedObj.last_fetch = datetime.now()
+        feedObj.lock = False
+        feedObj.save()
     
     
     
