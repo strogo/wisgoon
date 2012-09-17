@@ -2,6 +2,14 @@
 {% block title%}{{item.title}}{% endblock title%}
 {% load rss_tags %}
 {%load cache %}
+
+{% block current_feed %}
+<li class="nav-right">
+	<a href="{{feed.get_absolute_url}}"><h2>{{feed.title}}</h2></a>
+</li>
+{% endblock current_feed %}
+
+
 {% block content %}
 
 <script type="text/javascript">

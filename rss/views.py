@@ -1,11 +1,13 @@
 # -*- coding: utf8 -*- 
 
 from django.shortcuts import render_to_response, get_object_or_404
-from rss.models import Item, Feed, Subscribe
+from rss.models import Item, Feed, Subscribe, Likes
 from django.template.context import RequestContext
 from rss.forms import FeedForm
 from django.http import HttpResponseRedirect  #, HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.core.urlresolvers import reverse
 
 def home(request):
     
@@ -57,16 +59,17 @@ def feed(request, feed_id):
                               context_instance=RequestContext(request))
 
 def feed_item(request, feed_id, item_id):
+    feed = Feed.objects.get(pk=feed_id)
     item = get_object_or_404(Item.objects.filter(feed=feed_id,id=item_id)[:1])
     
     return render_to_response('rss/item.html', 
-                              {'item': item},
+                              {'item': item, 'feed':feed},
                               context_instance=RequestContext(request))
 
 def feed_item_goto(request, item_id):
     item = get_object_or_404(Item.objects.filter(id=item_id)[:1])
-    item.goto = item.goto+1
-    item.save()
+    
+    Item.objects.filter(id=item_id).update(goto=item.goto+1)
     
     return HttpResponseRedirect(item.url)
     
@@ -92,7 +95,33 @@ def subscribe(request):
     
     return render_to_response('rss/subscribe.html',{'form':form},context_instance=RequestContext(request))
 
-
+@login_required
+def like(request, item_id):
+    
+    try:
+        item = Item.objects.get(pk=item_id)
+        
+        liked = Likes.objects.filter(user=request.user, item=item).count()
+        
+        if not liked:
+            like = Likes()
+            like.user = request.user
+            like.item = item
+            like.save()
+            
+            Item.objects.filter(id=item_id).update(likes=item.likes+1)
+            
+            #item.likes = item.likes+1
+            #item.update()
+        
+        if request.is_ajax():
+            return HttpResponse(item.likes)
+        else:
+            return HttpResponseRedirect(reverse('rss-item', args=[item.feed.id, item.id]))
+            
+    except Item.DoesNotExist:
+        return HttpResponseRedirect('/')
+        
 
 
 

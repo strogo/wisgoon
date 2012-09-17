@@ -26,6 +26,7 @@ body{
 
 #feed-ul img{
 	display: block;
+	padding-bottom: 5px;
 }
 .feed-actions{
 	right:0;
@@ -33,7 +34,7 @@ body{
 	bottom:-40px;
 	position:absolute;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	padding-bottom: 10px;
+	padding-bottom: 5px;
 }
 
 .feed-description{

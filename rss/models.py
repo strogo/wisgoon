@@ -17,6 +17,10 @@ class Feed(models.Model):
     def __unicode__(self):
         return self.url
     
+    @models.permalink
+    def get_absolute_url(self):
+        return ('rss-feed', [str(self.id)])
+    
 class Item(models.Model):
     title = models.CharField(max_length=250)
     description = models.TextField()
@@ -27,12 +31,19 @@ class Item(models.Model):
     feed = models.ForeignKey(Feed)
     image = models.CharField(max_length=250, blank=True)
     goto = models.IntegerField(default=0)
+    likes = models.IntegerField(default=0)
     
     def __unicode__(self):
         return self.title
     
+    @models.permalink
+    def get_absolute_url(self):
+        return ('rss-item', [str(self.feed.id), str(self.id)])
+        
     class Meta:
         unique_together = (("feed", "url_crc"),)
+        
+    
     
 class Subscribe(models.Model):
     user = models.ForeignKey(User)
@@ -40,4 +51,19 @@ class Subscribe(models.Model):
     
     class Meta:
         unique_together = (("feed", "user"),)
+    
+class Likes(models.Model):
+    user = models.ForeignKey(User)
+    item = models.ForeignKey(Item, related_name="post_item")
+    
+    class Meta:
+        unique_together = (("item", "user"),)
+    
+    
+    
+    
+    
+    
+    
+    
     

@@ -16,7 +16,7 @@
 		<div class="feed-actions">
 			<div class="sharing-actions">
 				<div class="a2a_kit a2a_default_style">
-					<a target="_blank" href="{% url rss-item item.feed.id item.id%}"><i class="icon-flag"></i></a>
+					<a target="_blank" href="{{item.get_absolute_url}}"><i class="icon-flag"></i></a>
 					<span class="a2a_divider"></span>
 					<a class="a2a_dd" href="http://www.addtoany.com/share_save">Share</a>
 					<span class="a2a_divider"></span>
