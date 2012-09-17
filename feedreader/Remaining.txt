@@ -1,0 +1,11 @@
+Remaining items for wisgoon application
+
+* Social auth - Global
+* Like items - Rss
+* Comment items - Rss
+* Following users - Rss
+* Pagination SEO - Rss
+* Subscribe actions - Rss
+* Search - Rss
+* Favorites - Rss
+* Ping upload image - Pin
