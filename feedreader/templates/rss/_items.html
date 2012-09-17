@@ -20,9 +20,11 @@
 					<span class="a2a_divider"></span>
 					<a class="a2a_dd" href="http://www.addtoany.com/share_save">Share</a>
 					<span class="a2a_divider"></span>
-					<a class="a2a_button_facebook"></a>
-					<a class="a2a_button_twitter"></a>
-					<a class="a2a_button_email"></a>
+					
+					<a href="{% url rss-item-like item.id%}" class="btn btn_like">
+					<i class="icon-heart"></i>
+					{{item.likes}}
+				</a>
 				</div>
 			</div>
 		</div>

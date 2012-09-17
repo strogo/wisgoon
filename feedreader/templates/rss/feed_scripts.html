@@ -65,3 +65,29 @@ $(document).ready(function() {
 });
 
 </script>
+{% if user.is_authenticated%}
+<script type="text/javascript">
+	$(".btn_like").live('click',function(){
+		var obj = $(this);
+		obj.addClass('disabled');
+		var like_url=obj.attr('href');
+		$.ajax({
+            url: like_url,
+            success: function(html) {
+            	ret = html;
+            	obj.html('<i class="icon-heart"></i>'+ret);
+            	obj.removeClass('disabled');
+            }
+        });
+        return false;
+	});
+</script>
+{%else%}
+
+<script type="text/javascript">
+	$(".btn_like").live('click',function(){
+		alert('ابتدا وارد سایت شوید');
+        return false;
+	});
+</script>
+{%endif%}

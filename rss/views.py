@@ -97,9 +97,10 @@ def subscribe(request):
 
 @login_required
 def like(request, item_id):
-    
+
     try:
         item = Item.objects.get(pk=item_id)
+        current_like = item.likes
         
         liked = Likes.objects.filter(user=request.user, item=item).count()
         
@@ -109,13 +110,12 @@ def like(request, item_id):
             like.item = item
             like.save()
             
-            Item.objects.filter(id=item_id).update(likes=item.likes+1)
+            current_like = current_like+1
             
-            #item.likes = item.likes+1
-            #item.update()
+            Item.objects.filter(id=item_id).update(likes=current_like)
         
         if request.is_ajax():
-            return HttpResponse(item.likes)
+            return HttpResponse(current_like)
         else:
             return HttpResponseRedirect(reverse('rss-item', args=[item.feed.id, item.id]))
             
