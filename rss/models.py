@@ -38,7 +38,7 @@ class Item(models.Model):
     
     @models.permalink
     def get_absolute_url(self):
-        return ('rss-item', [str(self.feed.id), str(self.id)])
+        return ('rss-item', [str(self.feed), str(self.id)])
         
     class Meta:
         unique_together = (("feed", "url_crc"),)

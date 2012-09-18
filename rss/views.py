@@ -18,9 +18,9 @@ def home(request):
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Item.objects.select_related().all().order_by('-timestamp')[:30]
+        latest_items = Item.objects.all().order_by('-timestamp')[:30]
     else:
-        latest_items = Item.objects.select_related().all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
+        latest_items = Item.objects.all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
     
     try:   
         user_feeds = Subscribe.objects.filter(user=request.user).all()
@@ -46,9 +46,9 @@ def feed(request, feed_id):
     
     if timestamp == 0:
         feed = Feed.objects.get(pk=feed_id)
-        latest_items = Item.objects.select_related().filter(feed=feed_id).all().order_by('-timestamp')[:30]
+        latest_items = Item.objects.filter(feed=feed_id).all().order_by('-timestamp')[:30]
     else:
-        latest_items = Item.objects.select_related().filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
+        latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
             
     if request.is_ajax():
         return render_to_response('rss/_items.html', 

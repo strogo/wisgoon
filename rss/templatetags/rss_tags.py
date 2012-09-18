@@ -23,7 +23,7 @@ class UserItemLike(template.Node):
 
     def render(self, context):
         try:
-            item = self.item.resolve(context)
+            item = int(self.item.resolve(context))
             user=context['user']
             liked = Likes.objects.filter(user=user, item=item).count()
             if liked :

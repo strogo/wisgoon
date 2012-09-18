@@ -98,6 +98,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'johnny.middleware.LocalStoreClearMiddleware',
+    'johnny.middleware.QueryCacheMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -183,11 +185,13 @@ DEBUG_TOOLBAR_PANELS = (
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211' # can also be a list of locations
+        'LOCATION': '127.0.0.1:11211', # can also be a list of locations
+        #'JOHNNY_CACHE' : True,
     }
 }
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
+JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_myproj2'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
