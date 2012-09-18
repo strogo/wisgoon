@@ -75,8 +75,17 @@ $(document).ready(function() {
             url: like_url,
             success: function(html) {
             	ret = html;
-            	obj.html('<i class="icon-heart"></i>'+ret);
+            	
+            	var o = jQuery.parseJSON(ret);
+            	
+            	obj.html('<i class="icon-heart"></i>'+o[0].likes);
             	obj.removeClass('disabled');
+            	
+            	if (o[0].user_act == 1){
+            		obj.addClass('btn-danger');
+            	}else{
+            		obj.removeClass('btn-danger');
+            	}
             }
         });
         return false;

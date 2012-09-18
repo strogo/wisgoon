@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect  #, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
+import json
 
 def home(request):
     
@@ -104,6 +105,8 @@ def like(request, item_id):
         
         liked = Likes.objects.filter(user=request.user, item=item).count()
         
+        user_act = 0
+        
         if not liked:
             like = Likes()
             like.user = request.user
@@ -111,11 +114,20 @@ def like(request, item_id):
             like.save()
             
             current_like = current_like+1
+            user_act = 1
             
-            Item.objects.filter(id=item_id).update(likes=current_like)
+        else:
+            current_like = current_like-1
+            Likes.objects.filter(user=request.user,item=item).delete()
+            user_act = -1
+        
+        Item.objects.filter(id=item_id).update(likes=current_like)
         
         if request.is_ajax():
-            return HttpResponse(current_like)
+            
+            data = [{'likes': current_like, 'user_act':user_act}]
+                       
+            return HttpResponse(json.dumps(data))
         else:
             return HttpResponseRedirect(reverse('rss-item', args=[item.feed.id, item.id]))
             

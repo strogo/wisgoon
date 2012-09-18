@@ -21,7 +21,7 @@
 					<a class="a2a_dd" href="http://www.addtoany.com/share_save">Share</a>
 					<span class="a2a_divider"></span>
 					
-					<a href="{% url rss-item-like item.id%}" class="btn btn_like">
+					<a href="{% url rss-item-like item.id%}" class="btn btn_like {% user_item_like item.id %}">
 					<i class="icon-heart"></i>
 					{{item.likes}}
 				</a>

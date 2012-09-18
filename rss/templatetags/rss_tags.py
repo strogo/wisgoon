@@ -1,11 +1,40 @@
 from django.template import Library,Node
 from urlparse import urlparse
 import datetime
-from rss.models import Subscribe, Feed
+from rss.models import Subscribe, Feed, Likes
 from django.contrib.auth.models import User
 from django.template.base import TemplateSyntaxError
+from django import template
 
 register = Library()
+
+def user_item_like(parser, token):
+    try:
+        # split_contents() knows not to split quoted strings.
+        tag_name, item = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError("%r tag requires exactly two arguments" % token.contents.split()[0])
+    
+    return UserItemLike(item)
+
+class UserItemLike(template.Node):
+    def __init__(self, item):
+        self.item = template.Variable(item)
+
+    def render(self, context):
+        try:
+            item = self.item.resolve(context)
+            user=context['user']
+            liked = Likes.objects.filter(user=user, item=item).count()
+            if liked :
+                return 'btn-danger'
+            else:
+                return ''
+        except template.VariableDoesNotExist:
+            return ''
+
+register.tag('user_item_like', user_item_like)
+
 
 @register.filter
 def get_host(value):
