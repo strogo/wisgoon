@@ -11,7 +11,7 @@
 		<p class="feed-description">{{item.description|striptags|truncatewords:25}}</p>
 		<div class="img-block">
 			{% thumbnail item.image "192" as im %}
-				<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+				<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item.title}}">
 			{% endthumbnail %}
 		</div>
 		<div class="feed-actions">
