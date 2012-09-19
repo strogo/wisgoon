@@ -121,8 +121,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
-    "allauth.account.context_processors.account",
-    "allauth.socialaccount.context_processors.socialaccount",
+    'social_auth.context_processors.social_auth_by_name_backends',
+    'social_auth.context_processors.social_auth_backends',
+    'social_auth.context_processors.social_auth_by_type_backends',
+    'social_auth.context_processors.social_auth_login_redirect',
     'rss.context_processors.c_url',
 )
 
@@ -140,27 +142,21 @@ INSTALLED_APPS = (
     'registration',
     'south',
     #'debug_toolbar',
-    #'social_auth',
+    'social_auth',
     'sorl.thumbnail',
     
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    #'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.google',
-    #'allauth.socialaccount.providers.github',
-    #'allauth.socialaccount.providers.linkedin',
-    'allauth.socialaccount.providers.openid',
-    #'allauth.socialaccount.providers.soundcloud',
-    #'allauth.socialaccount.providers.twitter'
 )
 
 AUTHENTICATION_BACKENDS = (
-    "allauth.account.auth_backends.AuthenticationBackend", )
-
-SOCIALACCOUNT_PROVIDERS = \
-    { 'google':
-        { 'SCOPE': ['https://www.googleapis.com/auth/userinfo.profile'] } }
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.facebook.FacebookBackend',
+    'social_auth.backends.google.GoogleOAuthBackend',
+    'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_auth.backends.google.GoogleBackend',
+    'social_auth.backends.yahoo.YahooBackend',
+    'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 ACCOUNT_EMAIL_REQUIRED = True
 

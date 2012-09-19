@@ -1,6 +1,7 @@
 {% extends "base/main.html" %}
 {% block content %}
 <div class="well form-horizontal">
+{% include "registration/social.html"%}
 <form method="post" >
 {% csrf_token %}
 {{form.as_p}}
