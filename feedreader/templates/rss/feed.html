@@ -9,6 +9,7 @@
 <li class="nav-right active">
 	<a href="{{feed.get_absolute_url}}"><h1>{{feed.title}}</h1></a>
 </li>
+
 {% endblock current_feed %}
 
 {% block extra_js %}
@@ -25,6 +26,7 @@ var start_loading=0
 <div class="row row-fluid">
 
 	<div class="span12">
+		{% include 'rss/feed_subscribe.html'%}
 		
 	<div id="feed-ul">
 		{% include "rss/_items.html"%}

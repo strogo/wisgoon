@@ -8,6 +8,34 @@ from django import template
 
 register = Library()
 
+def user_feed_subs(parser, token):
+    try:
+        tag_name, feed = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError("%r tag requires exactly two arguments" % token.contents.split()[0])
+    
+    return UserFeedSubs(feed)
+
+class UserFeedSubs(template.Node):
+    def __init__(self, feed):
+        self.feed = template.Variable(feed)
+    
+    def render(self, context):
+        try:
+            feed = int(self.feed.resolve(context))
+            user = context['user']
+            subs = Subscribe.objects.filter(user=user,feed=feed).count()
+            if subs:
+                context['user_feed_subs'] = 1
+                return 1
+            else:
+                context['user_feed_subs'] = 0
+                return 0
+        except template.VariableDoesNotExist:
+            return ''
+    
+register.tag('user_feed_subs', user_feed_subs)
+
 def user_item_like(parser, token):
     try:
         # split_contents() knows not to split quoted strings.
