@@ -8,6 +8,9 @@ from django.http import HttpResponseRedirect, HttpResponseBadRequest, Http404,\
 from django.views.decorators.csrf import csrf_exempt
 from django.conf.global_settings import MEDIA_ROOT
 
+import pin_image
+import time
+
 def home(request):
     return render_to_response('pin/home.html',context_instance=RequestContext(request))
 
@@ -31,7 +34,7 @@ def save_upload( uploaded, filename, raw_data ):
         as the file, rather than a Django UploadedFile from request.FILES '''
     try:
         from io import FileIO, BufferedWriter
-        with BufferedWriter( FileIO( "feedreader/media/pin/%s" % ( filename), "wb" ) ) as dest:
+        with BufferedWriter( FileIO( "feedreader/media/pin/temp/o/%s" % ( filename), "wb" ) ) as dest:
 
             if raw_data:
                 foo = uploaded.read( 1024 )
@@ -72,9 +75,15 @@ def upload(request):
             else:
                 raise Http404( "Bad Upload" )
             filename = upload.name
-         
+        
         # save the file
         success = save_upload( upload, filename, is_raw )
+        
+        if success:
+            image_o = "feedreader/media/pin/temp/o/%s" % (filename)
+            image_t = "feedreader/media/pin/temp/t/%s" % (filename)
+            
+            pin_image.resize(image_o, image_t)
             
         import json
         ret_json = {'success':success,}
