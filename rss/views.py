@@ -44,8 +44,9 @@ def feed(request, feed_id):
     except ValueError:
         timestamp = 0
     
+    feed = Feed.objects.get(pk=feed_id)
+    
     if timestamp == 0:
-        feed = Feed.objects.get(pk=feed_id)
         latest_items = Item.objects.filter(feed=feed_id).all().order_by('-timestamp')[:30]
     else:
         latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
