@@ -170,13 +170,6 @@ def search(request):
     if cl.GetLastWarning():
         print 'WARNING: %s\n' % cl.GetLastWarning()
     
-    print 'Query \'%s\' retrieved %d of %d matches in %s sec' % (q, res['total'], res['total_found'], res['time'])
-    print 'Query stats:'
-    
-    if res.has_key('words'):
-        for info in res['words']:
-            print '\t\'%s\' found %d times in %d documents' % (info['word'], info['hits'], info['docs'])
-    
     docs =[]
     for item in res['matches']:
         docs.append(item['id'])
