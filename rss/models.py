@@ -33,6 +33,21 @@ class Item(models.Model):
     goto = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
     
+    #search  = SphinxSearch(index="rss_item")
+    
+    """
+    search = SphinxSearch(
+        index='rss_item',
+        weights={
+            'title': 100,
+            'description': 10,
+            #'tags': 80,
+        },
+        mode='SPH_MATCH_ALL',
+        rankmode='SPH_RANK_NONE',
+    )
+    """
+    
     def __unicode__(self):
         return self.title
     

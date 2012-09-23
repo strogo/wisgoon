@@ -144,6 +144,7 @@ INSTALLED_APPS = (
     #'debug_toolbar',
     'social_auth',
     'sorl.thumbnail',
+    'djangosphinx',
     
 )
 
@@ -173,6 +174,10 @@ CACHES = {
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 JOHNNY_MIDDLEWARE_KEY_PREFIX='wis_cac'
+
+
+SPHINX_SERVER = 'localhost'
+SPHINX_PORT = 9312
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

@@ -9,6 +9,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 import json
+from rss.sphinxapi import SPH_MATCH_ALL, SphinxClient, SPH_ATTR_TIMESTAMP,\
+    SPH_MATCH_EXTENDED
+import sys
+
+import time
 
 def home(request):
     
@@ -135,7 +140,50 @@ def like(request, item_id):
     except Item.DoesNotExist:
         return HttpResponseRedirect('/')
         
+def search(request):
+    q = request.GET.get('q', '')
 
+    mode = SPH_MATCH_EXTENDED
+    host = 'localhost'
+    port = 9312
+    index = 'rss_item'
+    filtercol = 'group_id'
+    filtervals = []
+    sortby = '-@weights'
+    groupby = 'id'
+    groupsort = '@group desc'
+    limit = 30
+    
+    # do query
+    cl = SphinxClient()
+    cl.SetServer ( host, port )
+    cl.SetWeights ( [100, 1] )
+    cl.SetMatchMode ( mode )
+    if limit:
+        cl.SetLimits ( 0, limit, max(limit,1000) )
+    res = cl.Query ( q, index )
+    
+    if not res:
+        print 'query failed: %s' % cl.GetLastError()
+        sys.exit(1)
+    
+    if cl.GetLastWarning():
+        print 'WARNING: %s\n' % cl.GetLastWarning()
+    
+    print 'Query \'%s\' retrieved %d of %d matches in %s sec' % (q, res['total'], res['total_found'], res['time'])
+    print 'Query stats:'
+    
+    if res.has_key('words'):
+        for info in res['words']:
+            print '\t\'%s\' found %d times in %d documents' % (info['word'], info['hits'], info['docs'])
+    
+    docs =[]
+    for item in res['matches']:
+        docs.append(item['id'])
+    
+    result = Item.objects.filter(id__in=docs).all()
+    
+    return render_to_response('rss/search.html',{'latest_items':result},context_instance=RequestContext(request))
 
 
 
