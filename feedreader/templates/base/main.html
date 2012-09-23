@@ -32,11 +32,7 @@
 	<body dir="rtl">
 		<div class="" id="wrapper">
 				<ul class="nav nav-tabs nav-first">
-					<li>
-						<form class="navbar-search pull-left" action="{% url rss-search%}" method="get">
-							<input type="text" name="q" class="search-query span2" placeholder="جستجو">
-                    	</form>
-					</li>
+					
 					<li>
 						<img src="{{MEDIA_URL}}img/wisgoon_logo.png" height="38px" style="height: 38px" alt="wisgoon what is going on" />
 					</li>
@@ -59,6 +55,12 @@
 				</ul>
 			
 			<ul class="nav nav-tabs">
+				<li>
+						<form class="navbar-search pull-left" action="{% url rss-search%}" method="get">
+							<input type="text" name="q" class="search-query span2" placeholder="جستجو">
+							
+                    	</form>
+					</li>
 			{% if user.is_authenticated %}
 			  <li class="dropdown nav-right">
 			    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
