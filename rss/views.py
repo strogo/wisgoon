@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 import json
 from rss.sphinxapi import SPH_MATCH_ALL, SphinxClient, SPH_ATTR_TIMESTAMP,\
-    SPH_MATCH_EXTENDED
+    SPH_MATCH_EXTENDED, SPH_SORT_TIME_SEGMENTS
 import sys
 
 import time
@@ -69,8 +69,12 @@ def feed_item(request, feed_id, item_id):
     feed = Feed.objects.get(pk=feed_id)
     item = get_object_or_404(Item.objects.filter(feed=feed_id,id=item_id)[:1])
     
+    docs=search_query(item.title)
+        
+    result = Item.objects.filter(id__in=docs).all()
+    
     return render_to_response('rss/item.html', 
-                              {'item': item, 'feed':feed},
+                              {'item': item, 'feed':feed, 'latest_items':result},
                               context_instance=RequestContext(request))
 
 def feed_item_goto(request, item_id):
@@ -139,10 +143,9 @@ def like(request, item_id):
             
     except Item.DoesNotExist:
         return HttpResponseRedirect('/')
-        
-def search(request):
-    q = request.GET.get('q', '')
 
+def search_query(query):
+    
     mode = SPH_MATCH_EXTENDED
     host = 'localhost'
     port = 9312
@@ -159,21 +162,22 @@ def search(request):
     cl.SetServer ( host, port )
     cl.SetWeights ( [100, 1] )
     cl.SetMatchMode ( mode )
+    #cl.SetSortMode(SPH_SORT_TIME_SEGMENTS)
     if limit:
         cl.SetLimits ( 0, limit, max(limit,1000) )
-    res = cl.Query ( q, index )
-    
-    if not res:
-        print 'query failed: %s' % cl.GetLastError()
-        sys.exit(1)
-    
-    if cl.GetLastWarning():
-        print 'WARNING: %s\n' % cl.GetLastWarning()
+    res = cl.Query ( query, index )
     
     docs =[]
     for item in res['matches']:
         docs.append(item['id'])
     
+    return docs
+
+
+def search(request):
+    q = request.GET.get('q', '')
+    docs=search_query(q)
+        
     result = Item.objects.filter(id__in=docs).all()
     
     return render_to_response('rss/search.html',{'latest_items':result},context_instance=RequestContext(request))
