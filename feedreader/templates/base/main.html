@@ -70,7 +70,7 @@
 			    <ul class="dropdown-menu">
 			    	{% get_user_feeds %}
 			      {% for sub in user_feeds %}
-					<li><a href="{% url rss-feed sub.feed.id %}">{{sub.feed.title|default:sub.feed.url}}</a></li>
+					<li><a href="{% url rss-feed sub.feed.id %}">{{sub.feed.title|default:sub.feed.url|truncatechars:15}}</a></li>
 				  {% endfor %}
 			    </ul>
 			  </li>
@@ -83,7 +83,7 @@
 			    <ul class="dropdown-menu">
 			    	{% get_recomend_feeds %}
 			      {% for f in recomend_feeds %}
-							<li><a href="{% url rss-feed f.id %}">{{f.title}}</a></li>
+							<li><a href="{% url rss-feed f.id %}">{{f.title|truncatechars:15}}</a></li>
 						{% endfor %}
 			    </ul>
 			  </li>
