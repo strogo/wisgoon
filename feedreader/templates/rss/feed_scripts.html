@@ -87,6 +87,37 @@ $(document).ready(function() {
         });
         return false;
 	});
+	
+	var sub_exec = 0;
+	var sub_obj;
+	$(".feed-sub").click(function(){
+		if (!sub_exec){
+			sub_exec=1;
+			sub_obj = $(this)
+			link = sub_obj.attr('rel');
+			$.ajax({
+				url:link,
+				success:function(res){
+					var o =jQuery.parseJSON(res);
+					
+					if (o[0].status){
+						sub_obj.removeClass('label-success');
+						sub_obj.addClass('label-inverse');
+						sub_obj.html('لغو اشتراک');
+					}else{
+						sub_obj.removeClass('label-inverse');
+						sub_obj.addClass('label-success');
+						sub_obj.html('اشتراک');
+					}
+					sub_exec=0;
+					link=0;
+					sub_obj=null;
+				}
+			});
+		}
+	});
+	
+	
 </script>
 {%else%}
 

@@ -26,13 +26,15 @@ class UserFeedSubs(template.Node):
             user = context['user']
             subs = Subscribe.objects.filter(user=user,feed=feed).count()
             if subs:
-                context['user_feed_subs'] = 1
-                return 1
+                context['user_feed_subs_status'] = 1
+                #return 1
             else:
-                context['user_feed_subs'] = 0
-                return 0
+                context['user_feed_subs_status'] = 0
+                #return 0
         except template.VariableDoesNotExist:
             return ''
+        
+        return ''
     
 register.tag('user_feed_subs', user_feed_subs)
 

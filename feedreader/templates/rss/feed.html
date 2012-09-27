@@ -7,7 +7,16 @@
 
 {% block current_feed %}
 <li class="nav-right active">
-	<a href="{{feed.get_absolute_url}}"><h1>{{feed.title}}</h1></a>
+	<a href="#"><h1 style="display: inline">{{feed.title}}</h1>
+	{%if user.is_authenticated%}
+		{% user_feed_subs feed.id %}
+		{% if user_feed_subs_status == 0 %}
+		<span rel="{% url rss-feed-sub feed.id%}" class="feed-sub label label-success">اشتراک</span>
+		{%else%}
+		<span rel="{% url rss-feed-sub feed.id%}" class="feed-sub label label-inverse">لغو اشتراک</span>
+		{%endif%}		
+	{%endif%}
+	</a>
 </li>
 
 {% endblock current_feed %}

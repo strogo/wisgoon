@@ -65,6 +65,10 @@ body{
 	color: #069;
 	display: block;
 }
+.feed-sub{
+	font-family: Tahoma;
+	cursor: pointer;
+}
 a {
 	text-decoration: none;
 	color: #4F4F4F;

@@ -107,6 +107,22 @@ def subscribe(request):
     return render_to_response('rss/subscribe.html',{'form':form},context_instance=RequestContext(request))
 
 @login_required
+def a_sub(request, feed_id):
+    feed = get_object_or_404(Feed.objects.filter(id=feed_id)[:1])
+    
+    sub, sub_created = Subscribe.objects.get_or_create(user=request.user,feed=feed)
+    if not sub_created:
+        sub.delete()
+    
+    if request.is_ajax():
+        data = [{'status':sub_created}]
+        return HttpResponse(json.dumps(data))
+    else:
+        return HttpResponseRedirect(reverse('rss-feed', args=[feed_id]))
+    
+        
+
+@login_required
 def like(request, item_id):
 
     try:
