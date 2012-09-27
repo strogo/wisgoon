@@ -93,7 +93,8 @@ $(document).ready(function() {
 	$(".feed-sub").click(function(){
 		if (!sub_exec){
 			sub_exec=1;
-			sub_obj = $(this)
+			sub_obj = $(this);
+			sub_obj.html('صبر کنید...');
 			link = sub_obj.attr('rel');
 			$.ajax({
 				url:link,
