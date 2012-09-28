@@ -14,7 +14,9 @@ urlpatterns = patterns('rss.views',
     url(r'^feed/like/(?P<item_id>\d+)', 'like', name="rss-item-like"),
     url(r'^feed/sub/(?P<feed_id>\d+)', 'a_sub', name="rss-feed-sub"),
     url(r'^search', 'search', name="rss-search"),
+    url(r'^comments/posted/$', 'comment_posted'),
     
-    
-    #url(r'^', include('rss.urls')),
+)
+urlpatterns += patterns('', 
+    url(r'^comments/', include('django.contrib.comments.urls')),
 )

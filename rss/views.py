@@ -14,6 +14,7 @@ from rss.sphinxapi import SPH_MATCH_ALL, SphinxClient, SPH_ATTR_TIMESTAMP,\
 import sys
 
 import time
+from django.contrib.comments.models import Comment
 
 def home(request):
     
@@ -69,12 +70,8 @@ def feed_item(request, feed_id, item_id):
     feed = Feed.objects.get(pk=feed_id)
     item = get_object_or_404(Item.objects.filter(feed=feed_id,id=item_id)[:1])
     
-    docs=search_query(item.title)
-        
-    result = Item.objects.filter(id__in=docs).all()
-    
     return render_to_response('rss/item.html', 
-                              {'item': item, 'feed':feed, 'latest_items':result},
+                              {'item': item, 'feed':feed},
                               context_instance=RequestContext(request))
 
 def feed_item_goto(request, item_id):
@@ -198,5 +195,12 @@ def search(request):
     
     return render_to_response('rss/search.html',{'latest_items':result},context_instance=RequestContext(request))
 
-
+def comment_posted(request):
+    if request.GET['c']:
+        comment_id = request.GET['c'] #B
+        comment = Comment.objects.get( pk=comment_id )
+        entry = Item.objects.get(id=comment.object_pk) #C
+        if entry:
+            return HttpResponseRedirect( entry.get_absolute_url() ) #D
+    return HttpResponseRedirect( "/" )    
 

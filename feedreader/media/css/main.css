@@ -52,6 +52,7 @@ body{
 	border-top: 2px solid #0282B8;
 	box-shadow: 0 2px 4px #86898C;
 	margin-bottom: 15px;
+	padding: 15px;
 }
 .feed-item {
 	padding: 5px;
@@ -91,6 +92,27 @@ a {
 	border-top: 1px solid gainsboro;
 	min-height: 25px;
 	padding: 5px 15px 10px;
+}
+
+#comments{
+	list-style: none;
+}
+
+.comment_box {
+border-top: 1px solid #E7ECEF;
+padding: 15px 0;
+}
+
+.comment_box .comment {
+border-right: 3px solid #BBB;
+min-height: 35px;
+padding: 5px 10px;
+position: relative;
+}
+
+.comment .comment_side {
+float: right;
+width: 40px;
 }
 
 .loading{

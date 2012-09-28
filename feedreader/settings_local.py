@@ -100,6 +100,7 @@ MIDDLEWARE_CLASSES = (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'johnny.middleware.LocalStoreClearMiddleware',
     'johnny.middleware.QueryCacheMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -146,8 +147,10 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'sorl.thumbnail',
     'social_auth',
-    
+    'django.contrib.flatpages',
+    'django.contrib.comments',
     'djangosphinx',
+    'daddy_avatar',
     
     'ban',
 )

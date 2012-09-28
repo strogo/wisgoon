@@ -1,15 +1,14 @@
 {% extends "base/main.html"%}
 {% block title%}{{item.title}}{% endblock title%}
 {% load rss_tags %}
-{%load cache %}
+{% load daddy_avatar %}
+{%load comments%}
 
 {% block current_feed %}
 <li class="nav-right">
 	<a href="{{feed.get_absolute_url}}"><h2>{{feed.title}}</h2></a>
 </li>
 {% endblock current_feed %}
-
-
 {% block content %}
 
 <script type="text/javascript">
@@ -31,11 +30,54 @@ var start_loading=0
 		            <div>{{item.url|get_host}}</div>
 				</div>
 			</div>
+			<div class="comments">
+				{% get_comment_count for rss.item 14 as comment_count %}
+				{% get_comment_form for item as form %}
+<legend>ارسال نظر</legend>
+  <form action="{% comment_form_target %}" method="post" class="form-inline">
+
+    {% csrf_token %}
+    
+    <textarea id="id_comment" rows="3" cols="40" name="comment" placeholder="نظر خود را وارد کنید" ></textarea>
+	
+	
+        <input type="submit" class="btn btn-primary" name="submit" value="ارسال">
+    
+    {{form.content_type}}
+    {{form.object_pk}}
+    {{form.timestamp}}
+    {{form.security_hash}}
+  </form>
+
+<ul id="comments">
+{% get_comment_list for item as comment_list %}
+{% for comment in comment_list %}
+<li class="comment_box">
+	<div class="comment">
+        <div class="arrow reply_arrow icon_link"></div>
+    	<div class="comment_side">
+        	<div class="avatar">
+            	
+            		<img src="{{comment.email|daddy_avatar:36}}" alt="">
+            	
+            </div>
+        </div>
+        <div class="comment_main">
+        	<div class="comment_header">
+           		<div class="author">
+					{{comment.user_name}}
+				</div>
+            </div>
+            <div class="comment_content"> {{comment.comment}}</div>
+        </div>
+    </div>
+</li>
+{% endfor %}
+</ul>
+			</div>
 		</div>
 	</li>
 	</ul>
 	</div>
 </div>
-
-
 {% endblock content %}
