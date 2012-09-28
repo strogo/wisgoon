@@ -2,6 +2,7 @@
 /.project
 /.pydevproject
 /feedreader/media/cache/*
+/feedreader/media/daddy_avatar/*
 /feedreader/media/pin/*
 /feedreader/media/rss/*
 /addtoany_updater.log
