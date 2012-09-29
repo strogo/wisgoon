@@ -16,7 +16,10 @@ class FeedAdmin(admin.ModelAdmin):
         
 
 class FeedItemAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id','title','feed', 'date', 'goto')
+    search_fields = ['id']
+    date_hierarchy = 'date'
+    list_filter = ('date','feed__title')
 
 class SubscribeAdmin(admin.ModelAdmin):
     list_display = ('user','feed')
