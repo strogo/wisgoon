@@ -149,7 +149,7 @@ INSTALLED_APPS = (
     'social_auth',
     'django.contrib.flatpages',
     'django.contrib.comments',
-    'djangosphinx',
+    #'djangosphinx',
     'daddy_avatar',
     
     'ban',
