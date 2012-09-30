@@ -206,3 +206,21 @@ def comment_posted(request):
             return HttpResponseRedirect( entry.get_absolute_url() ) #D
     return HttpResponseRedirect( "/" )    
 
+@login_required
+def report(request, item_id):
+
+    try:
+        
+        reported = Report.objects.filter(user=request.user, item=item).count()
+        
+        if not reported :
+            report = Report()    
+            report.user = request.user
+            report.item = item_id
+            report.save()
+
+        return HttpResponseRedirect('/')
+    
+    except Item.DoesNotExist:
+        return HttpResponseRedirect('/')
+ 

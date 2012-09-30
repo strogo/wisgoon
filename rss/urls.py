@@ -15,6 +15,7 @@ urlpatterns = patterns('rss.views',
     url(r'^feed/sub/(?P<feed_id>\d+)', 'a_sub', name="rss-feed-sub"),
     url(r'^search', 'search', name="rss-search"),
     url(r'^comments/posted/$', 'comment_posted'),
+    url(r'^feed/report/(?P<item_id>\d+)', 'report', name="rss-item-report"),
     
 )
 urlpatterns += patterns('', 
