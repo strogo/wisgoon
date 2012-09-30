@@ -70,8 +70,10 @@ def feed_item(request, feed_id, item_id):
     feed = Feed.objects.get(pk=feed_id)
     item = get_object_or_404(Item.objects.filter(feed=feed_id,id=item_id)[:1])
     
+    latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
+    
     return render_to_response('rss/item.html', 
-                              {'item': item, 'feed':feed},
+                              {'item': item, 'feed':feed, 'latest_items': latest_items},
                               context_instance=RequestContext(request))
 
 def feed_item_goto(request, item_id):
