@@ -17,7 +17,7 @@
 {% block content %}
 
 <script type="text/javascript">
-var start_loading=1
+var start_loading=0
 </script>
 
 <div class="row row-fluid">
@@ -90,7 +90,9 @@ var start_loading=1
 	
 	
 </div>
-
+<script type="text/javascript">
+var a_url = '../../../feed/{{feed.id}}'
+</script>
 {% include "rss/feed_scripts.html" %}
 
 {% endblock content %}

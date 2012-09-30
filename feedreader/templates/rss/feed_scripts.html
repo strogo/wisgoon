@@ -2,6 +2,7 @@
 <script type="text/javascript">
 var feedobj = $('#feed-ul');
 var loadingobj ;
+var a_url = a_url || "";
 
 feedobj.imagesLoaded( function(){
   feedobj.masonry({
@@ -27,12 +28,12 @@ $('.feed-item').live({
 );
 
 function load_posts(page) {
-    var url = "{{current_url}}";
+    
     if (page) {
-        url += '?older=' + page;
+        //a_url += '?older=' + page;
     }
     $.get(
-        url,
+        a_url+'?older=' + page,
         function(response) {
         	
         	var $boxes = $(response);
