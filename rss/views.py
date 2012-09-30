@@ -210,6 +210,7 @@ def comment_posted(request):
 def report(request, item_id):
 
     try:
+        
         item = Item.objects.get(pk=item_id)
         reported = Report.objects.filter(user=request.user, item=item).count()
         
