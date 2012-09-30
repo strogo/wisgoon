@@ -217,7 +217,7 @@ def report(request, item_id):
         if not reported :
             report = Report()    
             report.user = request.user
-            report.item = item_id
+            report.item = item
             report.save()
 
         return HttpResponseRedirect('/')
