@@ -25,7 +25,12 @@
 					<a href="{% url rss-item-like item.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_item_like item.id %}{% endif %}">
 					<i class="icon-heart"></i>
 					{{item.likes}}
-				</a>
+					</a>
+					
+					<a href="{% url rss-item-report item.id%}" class="btn btn_report {% if user.is_authenticated%}{% user_item_like item.id %}{% endif %}">
+					send report
+					</a>
+					
 				</div>
 			</div>
 		</div>

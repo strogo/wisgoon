@@ -119,7 +119,18 @@ $(document).ready(function() {
 		}
 	});
 	
-	
+	$(".btn_report").live('click',function(){
+		var obj = $(this);
+		obj.addClass('disabled');
+		var like_url=obj.attr('href');
+		$.ajax({
+            url: like_url,
+            success: function(html) {
+
+            }
+        });
+        return false;
+	});	
 </script>
 {%else%}
 
