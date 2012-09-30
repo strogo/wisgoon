@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*- 
 
 from django.shortcuts import render_to_response, get_object_or_404
-from rss.models import Item, Feed, Subscribe, Likes
+from rss.models import Item, Feed, Subscribe, Likes ,Report
 from django.template.context import RequestContext
 from rss.forms import FeedForm
 from django.http import HttpResponseRedirect  #, HttpResponse
@@ -210,7 +210,7 @@ def comment_posted(request):
 def report(request, item_id):
 
     try:
-        
+        item = Item.objects.get(pk=item_id)
         reported = Report.objects.filter(user=request.user, item=item).count()
         
         if not reported :
