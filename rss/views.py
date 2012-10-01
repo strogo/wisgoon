@@ -3,7 +3,7 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from rss.models import Item, Feed, Subscribe, Likes ,Report
 from django.template.context import RequestContext
-from rss.forms import FeedForm
+from rss.forms import FeedForm ,ReportForm 
 from django.http import HttpResponseRedirect  #, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -209,19 +209,23 @@ def comment_posted(request):
 @login_required
 def report(request, item_id):
 
-    try:
+        if request.method=="POST":
+            form = ReportForm(request.POST)
+            if form.is_valid():
+                
+                item = Item.objects.get(pk=item_id)
+                reported = Report.objects.filter(user=request.user, item=item).count()
+                
+                if not reported :
+                    report = Report()    
+                    report.user = request.user
+                    report.item = item
+                    report.mode = form.Meta
+                    report.save()
         
-        item = Item.objects.get(pk=item_id)
-        reported = Report.objects.filter(user=request.user, item=item).count()
-        
-        if not reported :
-            report = Report()    
-            report.user = request.user
-            report.item = item
-            report.save()
+                return HttpResponseRedirect('/') 
 
-        return HttpResponseRedirect('/')
+        form = ReportForm()
+
+        return render_to_response('rss/report.html',{'form':form},context_instance=RequestContext(request))
     
-    except Item.DoesNotExist:
-        return HttpResponseRedirect('/')
- 

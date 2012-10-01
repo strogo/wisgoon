@@ -1,0 +1,10 @@
+{% extends "base/main.html" %}
+{% block title%}گزارش تخلف{% endblock title%}
+
+{% block content%}
+<form method="post" class="form-inline">
+{% csrf_token%}
+{{form}}
+<input type="submit" class="btn btn-primary" value="ارسال"  />
+</form>
+{% endblock content%}
