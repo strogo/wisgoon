@@ -121,6 +121,10 @@ width: 40px;
 	display: none;
 }
 
+.img-block{
+	background: #86898C;
+}
+
 #google-oauth{
 	background: #fff url(../img/openid-logos.png); background-position: -1px -1px;
 	width: 100px;
