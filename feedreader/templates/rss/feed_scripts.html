@@ -4,13 +4,13 @@ var feedobj = $('#feed-ul');
 var loadingobj ;
 var a_url = a_url || "";
 
-feedobj.imagesLoaded( function(){
+//feedobj.imagesLoaded( function(){
   feedobj.masonry({
     itemSelector : '.feed-item',
     isRTL: true,
     isAnimated: false,
   });
-});
+//});
 
 $('.feed-item').live({
     mouseenter:
@@ -36,14 +36,14 @@ function load_posts(page) {
         a_url+'?older=' + page,
         function(response) {
         	
-        	var $boxes = $(response);
-
-			$boxes.imagesLoaded( function(){
+        	//var $boxes = $(response);
+			var $boxes = $(response);
+			//$boxes.imagesLoaded( function(){
 			  	feedobj.append( $boxes ).masonry( 'appended', $boxes );
 				feedobj.masonry('reload');
 				loadingobj.hide();
 				start_loading=0;
-			});
+			//});
         }
     );
 }
