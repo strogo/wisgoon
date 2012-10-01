@@ -35,8 +35,8 @@ function load_posts(page) {
     );
 }
 
-loadingobj = $(".loading");
 $(window).scroll(function() {
+	loadingobj = $(".loading");
 	var break_point = $(document).height() - ($(window).height() * 2.02);
     if ($(window).scrollTop() >= break_point) {
     	var next_page = $('#feed-ul span:last').attr('data-next');
