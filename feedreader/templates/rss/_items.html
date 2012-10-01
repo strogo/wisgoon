@@ -10,7 +10,7 @@
 		<a target="_blank" rel="nofollow" href="{% url rss-item-goto item.id %}">{{item.title}}</a>
 		<p class="feed-description">{{item.description|striptags|safe|truncatewords:25}}</p>
 		{% thumbnail item.image "192" as im %}
-		<div class="img-block" style="height: {{im.height}}px">
+		<div class="img-block" style="height: {{im.height}}px; width: {{im.width}}px">
 			<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item.title}}">
 		</div>
 		{% endthumbnail %}
