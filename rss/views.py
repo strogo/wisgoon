@@ -159,7 +159,7 @@ def like(request, item_id):
     except Item.DoesNotExist:
         return HttpResponseRedirect('/')
 
-def search_query(query):
+def search_query(query, offset=0):
     
     mode = SPH_MATCH_EXTENDED
     host = 'localhost'
@@ -177,9 +177,10 @@ def search_query(query):
     cl.SetServer ( host, port )
     cl.SetWeights ( [100, 1] )
     cl.SetMatchMode ( mode )
+
     #cl.SetSortMode(SPH_SORT_TIME_SEGMENTS)
     if limit:
-        cl.SetLimits ( 0, limit, max(limit,1000) )
+        cl.SetLimits ( offset, limit, max(limit,1000) )
     res = cl.Query ( query, index )
     
     docs =[]
@@ -191,11 +192,25 @@ def search_query(query):
 
 def search(request):
     q = request.GET.get('q', '')
-    docs=search_query(q)
+    offset = int(request.GET.get('older', 0))
+    docs=search_query(q, offset)
         
     result = Item.objects.filter(id__in=docs).all()
     
-    return render_to_response('rss/search.html',{'latest_items':result},context_instance=RequestContext(request))
+    objects = dict([(obj.id, obj) for obj in result])
+    sorted_objects = [objects[id] for id in docs]
+    
+    result = sorted_objects
+    
+    if request.is_ajax():
+        return render_to_response('rss/_items.html',
+                              {'latest_items':result, 'offset':offset+30,'q':q},
+                              context_instance=RequestContext(request))
+
+    else:
+        return render_to_response('rss/search.html',
+                              {'latest_items':result, 'offset':offset+30,'q':q},
+                              context_instance=RequestContext(request))
 
 def comment_posted(request):
     if request.GET['c']:

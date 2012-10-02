@@ -7,7 +7,7 @@
 {% block content%}
 
 <script type="text/javascript">
-var start_loading=1
+var start_loading=0;
 </script>
 
 <div class="row row-fluid">
@@ -20,6 +20,12 @@ var start_loading=1
 	</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+var a_url = 'search';
+var extend_query='q={{q|safe}}'
+</script>
+
 
 {% include "rss/feed_scripts.html" %}
 

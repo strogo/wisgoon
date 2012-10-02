@@ -34,7 +34,11 @@
 				</div>
 			</div>
 		</div>
+		{% if offset %}
+		<span data-next="{{offset}}" ></span>
+		{%else%}
 		<span data-next="{{item.timestamp}}" ></span>
+		{%endif%}
 		
 
 	</div>

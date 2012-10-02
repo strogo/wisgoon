@@ -201,6 +201,8 @@ JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_myproj2'
 SPHINX_SERVER = 'localhost'
 SPHINX_PORT = 9312
 
+THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.

@@ -3,6 +3,7 @@
 var feedobj = $('#feed-ul');
 var loadingobj ;
 var a_url = a_url || "";
+var extend_query = extend_query || "";
 
 feedobj.masonry({
     itemSelector : '.feed-item',
@@ -24,7 +25,7 @@ $('.feed-item').live({
 
 function load_posts(page) {
     $.get(
-        a_url+'?older=' + page,
+        a_url+'?older=' + page + '&'+extend_query,
         function(response) {
 			var $boxes = $(response);
 			feedobj.append( $boxes ).masonry( 'appended', $boxes );
