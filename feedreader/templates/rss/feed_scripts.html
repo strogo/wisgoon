@@ -114,11 +114,32 @@ $(window).scroll(function() {
 		$.ajax({
             url: like_url,
             success: function(html) {
-
+            	
+            	$('body').append('<div class="reportBox">'+html+'</div>');
+            	$('.reportBox').fadeIn(300);
+            	var popMargTop = ($('.reportBox').height() + 24) / 2; 
+        		var popMargLeft = ($('.reportBox').width() + 24) / 2; 
+        		
+        		$('.reportBox').css({ 
+        			'margin-top' : -popMargTop,
+        			'margin-left' : -popMargLeft
+        		});
+            	$('body').append('<div id="mask"></div>');
+            	
+        		$('#mask').fadeIn(300);
             }
         });
         return false;
-	});	
+	});
+	
+	$('#mask').live('click', function() { 
+		  $('#mask').fadeOut(300 , function() {
+			$('.reportBox').remove();
+			$('#mask').remove();
+		}); 
+		return false;
+		});
+
 </script>
 {%else%}
 
