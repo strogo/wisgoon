@@ -224,6 +224,8 @@ def comment_posted(request):
 @login_required
 def report(request, item_id):
 
+#if request is not ajax display from in this page with template
+
         if request.method=="POST":
             form = ReportForm(request.POST)
             if form.is_valid():

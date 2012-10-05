@@ -61,9 +61,9 @@ class Likes(models.Model):
     
 class Report(models.Model):
     MODES = (
-        (1, 'None'),
-        (2, 'Political'),
-        (3, 'Sexual'),
+        (1, 'توهین به مقدسات'),
+        (2, 'توهین به مسوولین'),
+        (3, 'محتوای غیر اخلاقی'),
     )
     
     user = models.ForeignKey(User)
