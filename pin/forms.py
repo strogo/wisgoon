@@ -4,5 +4,5 @@ from pin.models import Post
 class PinForm(ModelForm):
     class Meta:
         model=Post
-        exclude = ('user', 'like')
+        exclude = ('user', 'like', 'timestamp')
         

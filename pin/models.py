@@ -7,6 +7,7 @@ class Post(models.Model):
     image = models.CharField(max_length=500)
     create_date = models.DateField(auto_now_add=True)
     create = models.DateTimeField(auto_now_add=True)
+    timestamp = models.IntegerField(db_index=True, default=1347546432)
     user = models.ForeignKey(User)
     like = models.IntegerField(default=0)
     

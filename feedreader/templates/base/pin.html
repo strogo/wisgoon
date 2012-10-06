@@ -38,29 +38,11 @@
 	<body dir="rtl">
 		
 		<div class="container row-fluid" id="wrapper">
-			
-				<ul class="nav nav-tabs">
-					<li class="nav-right"><a href="{% url home %}">صفحه اصلی</a></li>
-					<li class="nav-right"><a href="{% url pin-home %}">پین</a></li>
-					<li class="nav-right"><a href="{% url rss-subs %}">اشتراک فید</a></li>
-					{% if user.is_authenticated %}
-						<li class="nav-right">
-				<a href="/accounts/logout/" title="Log out" onclick="return confirm('Are you sure you want to log out?');"> <i class="icon-off icon-black"></i> خروج</a>
-			</li>
-					{%else%}
-						<li class="nav-right">
-				<a href="{% url registration_register %}"><i class="icon-user icon-black"></i> عضویت</a>
-			</li>
-			<li class="nav-right">
-				<a href="/accounts/login/"><i class="icon-user icon-black"></i> ورود</a>
-			</li>
-					{%endif%}
-				</ul>
+			{% include "base/bar_first.html" %}
 			
 			<ul class="nav nav-tabs">
 			  <li class="nav-right"><a href="{% url pin-send%}">ارسال مطلب جدید</a></li>
 			</ul>
-			
 			
 			<div id="content" class="container row-fluid">
 				{% block content %}

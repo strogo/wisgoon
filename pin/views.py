@@ -10,9 +10,33 @@ from django.conf.global_settings import MEDIA_ROOT
 
 import pin_image
 import time
+from shutil import copyfile
+from glob import glob
+from pin.models import Post
 
 def home(request):
-    return render_to_response('pin/home.html',context_instance=RequestContext(request))
+    
+    try:
+        timestamp = int(request.GET.get('older', 0))
+    except ValueError:
+        timestamp = 0
+    
+    if timestamp == 0:
+        latest_items = Post.objects.all().order_by('-timestamp')[:30]
+    else:
+        latest_items = Post.objects.all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
+    
+        
+    if request.is_ajax():
+        return render_to_response('pin/_items.html', 
+                              {'latest_items': latest_items},
+                              context_instance=RequestContext(request))
+    else:
+        return render_to_response('pin/home.html', 
+                              {'latest_items': latest_items},
+                              context_instance=RequestContext(request))
+    
+    #return render_to_response('pin/home.html',context_instance=RequestContext(request))
 
 @login_required
 def send(request):
@@ -20,6 +44,18 @@ def send(request):
         form = PinForm(request.POST)
         if form.is_valid():
             model = form.save(commit=False)
+            
+            filename= model.image
+            
+            image_o = "feedreader/media/pin/temp/o/%s" % (filename)
+            image_t = "feedreader/media/pin/temp/t/%s" % (filename)
+            
+            image_on = "feedreader/media/pin/images/o/%s" % (filename)
+            
+            copyfile(image_o, image_on)
+            
+            model.image = "pin/images/o/%s" % (filename)
+            model.timestamp = time.time()
             model.user = request.user
             model.save()
             
