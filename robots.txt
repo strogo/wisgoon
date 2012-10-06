@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /accounts/login/
-Disallow: /feedreader/feed/report/
-Disallow: /feedreader/feed/like/
+Disallow: /feedreader/feed/report/*
+Disallow: /feedreader/feed/like/*

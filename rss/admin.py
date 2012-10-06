@@ -2,7 +2,7 @@ from django.contrib import admin
 from rss.models import Feed, Item, Subscribe
 
 class FeedAdmin(admin.ModelAdmin):
-    list_display = ('url','title','last_fetch','followers','view','priority','creator','status')
+    list_display = ('url','title','last_fetch','followers','view','priority','creator','status','lock')
     fields = ('url',)
     
     def save_model(self, request, obj, form, change):
