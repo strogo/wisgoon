@@ -35,9 +35,12 @@ def home(request):
         
         
     if request.is_ajax():
-        return render_to_response('rss/_items.html', 
+        if latest_items.exists():
+            return render_to_response('rss/_items.html', 
                               {'latest_items': latest_items},
                               context_instance=RequestContext(request))
+        else:
+            return HttpResponse(0)
     else:
         return render_to_response('rss/home.html', 
                               {'latest_items': latest_items,'user_feeds':user_feeds},
@@ -58,9 +61,12 @@ def feed(request, feed_id):
         latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
             
     if request.is_ajax():
-        return render_to_response('rss/_items.html', 
+        if latest_items.exists():
+            return render_to_response('rss/_items.html', 
                               {'latest_items': latest_items},
                               context_instance=RequestContext(request))
+        else:
+            return HttpResponse(0)
     else:
         return render_to_response('rss/feed.html', 
                               {'latest_items': latest_items, 'feed':feed},

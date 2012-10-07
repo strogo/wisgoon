@@ -32,9 +32,12 @@ def home(request):
     form = PinForm()
     
     if request.is_ajax():
-        return render_to_response('pin/_items.html', 
+        if latest_items.exists():
+            return render_to_response('pin/_items.html', 
                               {'latest_items': latest_items,'pin_form':form},
                               context_instance=RequestContext(request))
+        else:
+            return HttpResponse(0)
     else:
         return render_to_response('pin/home.html', 
                               {'latest_items': latest_items},
