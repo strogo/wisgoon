@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('rss.views',
     # Examples:
-    url(r'^$', 'home', name='home'),
+    url(r'^$', 'home', name='rss'),
     url(r'^subscribe/$', 'subscribe', name="rss-subs"),
     url(r'^feed/(?P<feed_id>\d+)/$', 'feed', name="rss-feed"),
     url(r'^feed/(?P<feed_id>\d+)/(?P<item_id>\d+)/$', 'feed_item', name="rss-item"),
