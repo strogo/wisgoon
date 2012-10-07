@@ -41,7 +41,9 @@
 			{% include "base/bar_first.html" %}
 			
 			<ul class="nav nav-tabs">
-			  <li class="nav-right"><a href="{% url pin-send%}">ارسال مطلب جدید</a></li>
+			  <li class="nav-right">
+			  	<a data-toggle="modal" data-target="#myModal" href="#myModal">ارسال مطلب جدید</a>
+			  </li>
 			</ul>
 			
 			<div id="content" class="container row-fluid">
@@ -52,6 +54,18 @@
 				<img src="{{MEDIA_URL}}img/loader.gif" />
 			</div>
 		</div>
+
+
+<div style="display: none;" class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h2 id="myModalLabel">ارسال مطلب جدید</h2>
+  </div>
+  <div class="modal-body">
+    {% include "pin/_send.html"%}
+  </div>
+</div>
+
 
 	</body>
 </html>

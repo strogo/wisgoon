@@ -53,3 +53,7 @@ input, button, select, textarea {
 #a2apage_PTZ { display:none !important; }
 
 .a2a_default_style .a2a_divider{margin: 0 20px !important; }
+
+.close{
+	float:left!important;
+}

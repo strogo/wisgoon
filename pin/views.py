@@ -29,10 +29,11 @@ def home(request):
     else:
         latest_items = Post.objects.all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
     
-        
+    form = PinForm()
+    
     if request.is_ajax():
         return render_to_response('pin/_items.html', 
-                              {'latest_items': latest_items},
+                              {'latest_items': latest_items,'pin_form':form},
                               context_instance=RequestContext(request))
     else:
         return render_to_response('pin/home.html', 
@@ -68,7 +69,11 @@ def send(request):
             return HttpResponseRedirect('/pin/')
     else:
         form = PinForm()
-    return render_to_response('pin/send.html',{'form': form}, context_instance=RequestContext(request))
+        
+    if request.is_ajax():
+        return render_to_response('pin/_send.html',{'form': form}, context_instance=RequestContext(request))
+    else:
+        return render_to_response('pin/send.html',{'form': form}, context_instance=RequestContext(request))
 
 
 def save_upload( uploaded, filename, raw_data ):
@@ -125,7 +130,7 @@ def upload(request):
             image_o = "%s/pin/temp/o/%s" % (MEDIA_ROOT, filename)
             image_t = "%s/pin/temp/t/%s" % (MEDIA_ROOT, filename)
             
-            pin_image.resize(image_o, image_t)
+            pin_image.resize(image_o, image_t, 99)
             
         import json
         ret_json = {'success':success,}

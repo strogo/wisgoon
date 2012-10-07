@@ -1,66 +1,7 @@
 {% extends 'base/pin.html'%}
 
 {% block content%}
-<form method="post" class="form-horizontal" >
-{% csrf_token%}
-	<div class="control-group">
-      	{{ form.errors}}
-        <label class="control-label">Image</label>
-		<div class="controls">
-			<div class="uploaded-image"></div>
-			<input type="hidden" value="" id="image_field" name="image" />
-			<div id="file-uploader">       
-			    <noscript>          
-			        <p>Please enable JavaScript to use file uploader.</p>
-			        <!-- or put a simple form for upload here -->
-			    </noscript>         
-			</div>
-		</div>
-    </div>
-	
-	<div class="control-group ">
-            
-        <label class="control-label">Text</label>
-		<div class="controls">
-			<textarea id="id_text" rows="5" cols="40" name="text"></textarea>
-		<span class="help-inline"></span>
-		</div>
-    </div>
 
-
-<div class="form-actions">
-	<input type="submit" class="btn btn-primary" value="ذخیره" />
-</div>
-</form>
-
-<script src="{{MEDIA_URL}}js/fileuploader.js" type="text/javascript"></script>
-<script>
-function createUploader(){            
-	var uploader = new qq.FileUploader({
-	element: document.getElementById('file-uploader'),
-	action: '{% url pin-upload%}',
-	debug: true,
-	multiple: false,
-	allowedExtensions : ['png','jpg'],
-	sizeLimit : 1024*1024*10,
-	messages : {'typeError':'{file} برای بارگذاری مناسب نیست. تنها {extensions} فرمت ها مجاز هستند.','sizeError':'{file} بسیار حجیم است. فایل شما باید کمتر از {sizeLimit} باشد.','minSizeError':'{file} بسیار کوچک است. فایل شما باید بیشتر از {minSizeLimit} باشد.','emptyError':'{file} فایل خالی است!','onLeave':'فایل در حال بارگذاری است. در صورت ترک صفحه این عملیات لغو می شود.'},
-	showMessage:function(message){ 
-		alert(message); 
-	},
-	onComplete : function(id, fileName, responseJSON){
-		if(responseJSON.success)
-		{
-			$('#file-uploader').hide();
-            $('.uploaded-image').html('<img src="/media/pin/temp/t/'+fileName+'">');
-			$('#image_field').val(fileName);
-		}else{
-			alert('خطا هنگام ذخیره فایل.');
-        }
-	}
-	});           
-}
-window.onload = createUploader;     
-</script>    
-
+{% include "pin/_send.html"%}
 
 {% endblock content%}
