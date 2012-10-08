@@ -6,6 +6,13 @@ admin.autodiscover()
 
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
+    url(r'^(?P<item_id>\d+)/$', 'item', name="pin-item"),
     url(r'^send/$', 'send', name="pin-send"),
     url(r'^ajax_upload/$', 'upload', name="pin-upload" ),
+    url(r'^comments/posted/$', 'comment_posted'),
+)
+
+
+urlpatterns += patterns('', 
+    url(r'^comments/', include('django.contrib.comments.urls')),
 )

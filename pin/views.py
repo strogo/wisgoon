@@ -1,5 +1,5 @@
 # Create your views here.
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from pin.forms import PinForm
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect, HttpResponseBadRequest, Http404,\
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
+from django.contrib.comments.models import Comment
 
 import pin_image
 import time
@@ -44,6 +45,15 @@ def home(request):
                               context_instance=RequestContext(request))
     
     #return render_to_response('pin/home.html',context_instance=RequestContext(request))
+
+def item(request, item_id):
+    item = get_object_or_404(Post.objects.filter(id=item_id)[:1])
+    
+    latest_items = Post.objects.all().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
+    
+    return render_to_response('pin/item.html', 
+                              {'item': item, 'latest_items': latest_items},
+                              context_instance=RequestContext(request))
 
 @login_required
 def send(request):
@@ -138,5 +148,13 @@ def upload(request):
         import json
         ret_json = {'success':success,}
         return HttpResponse( json.dumps( ret_json ) )
-        
+
+def comment_posted(request):
+    if request.GET['c']:
+        comment_id = request.GET['c'] #B
+        comment = Comment.objects.get( pk=comment_id )
+        entry = Post.objects.get(id=comment.object_pk) #C
+        if entry:
+            return HttpResponseRedirect( entry.get_absolute_url() ) #D
+    return HttpResponseRedirect( "/" )     
     

@@ -14,6 +14,10 @@ class Post(models.Model):
     like = models.IntegerField(default=0)
     
     def __unicode__(self):
-        return self.title
+        return self.text
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ('pin-item', [str(self.id)])
     
     

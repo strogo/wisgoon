@@ -18,6 +18,7 @@ urlpatterns = patterns('rss.views',
     url(r'^feed/report/(?P<item_id>\d+)', 'report', name="rss-item-report"),
     
 )
+
 urlpatterns += patterns('', 
     url(r'^comments/', include('django.contrib.comments.urls')),
 )
