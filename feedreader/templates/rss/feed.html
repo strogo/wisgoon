@@ -4,6 +4,7 @@
 {%load cache %}
 
 {% block title %} - {{feed.title}} {% endblock title %}
+{%block description%}{{feed.title}}{%endblock%}
 
 {% block current_feed %}
 <li class="nav-right active">

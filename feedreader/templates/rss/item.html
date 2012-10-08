@@ -1,5 +1,8 @@
 {% extends "base/main.html"%}
+
 {% block title%}{{item.title}}{% endblock title%}
+{%block description%}{{item.title}} - {{item.description|striptags|truncatewords:25}}{%endblock%}
+
 {% load rss_tags %}
 {% load daddy_avatar %}
 {%load comments%}
