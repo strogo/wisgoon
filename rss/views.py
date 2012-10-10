@@ -45,7 +45,43 @@ def home(request):
         return render_to_response('rss/home.html', 
                               {'latest_items': latest_items,'user_feeds':user_feeds},
                               context_instance=RequestContext(request))
+
+def user_likes(request, user_id):
+    
+    try:
+        offset = int(request.GET.get('older', 0))
+    except ValueError:
+        offset = 0
+    
+    if offset > 0:
+        likes = Likes.objects.filter(user=user_id).all().order_by('-id')[offset:offset+30]
+    else:
+        likes = Likes.objects.filter(user=user_id).all().order_by('-id')[:30]
+    lss = []
+    for l in likes:
+        lss.append(l.item_id)
+    latest_items = Item.objects.filter(id__in=lss).all().order_by('-timestamp')[:30]
+    
         
+    
+    try:   
+        user_feeds = Subscribe.objects.filter(user=request.user).all()
+    except :
+        user_feeds = ""
+        
+        
+    if request.is_ajax():
+        if latest_items.exists():
+            return render_to_response('rss/_items.html', 
+                              {'latest_items': latest_items,'offset':offset+30},
+                              context_instance=RequestContext(request))
+        else:
+            return HttpResponse(0)
+    else:
+        return render_to_response('rss/user_likes.html', 
+                              {'latest_items': latest_items,'user_feeds':user_feeds,'offset':offset+30},
+                              context_instance=RequestContext(request))
+     
 def feed(request, feed_id):
     
     try:
