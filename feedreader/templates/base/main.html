@@ -36,7 +36,7 @@
 </head>
 	<body dir="rtl">
 		<div class="" id="wrapper">
-			{% include "base/bar_first.html" %}
+			{% include "base/bar_first.html" with rssactive="active" %}
 			
 
 
@@ -62,7 +62,7 @@
 			{% endfor %}
 		</ul>
 	</li>
-	<li class="nav-right"><a title="علاقه مندیهای شما" href="{% url rss-item-likes user.id%}"><i class="icon-heart"></i></a></li>
+	
 	{%endif%}
 	<li class="dropdown nav-right">
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#"> فیدهای پیشنهادی <b class="caret"></b> </a>
@@ -76,6 +76,14 @@
 		</ul>
 	</li>
 	{% block current_feed %}{% endblock current_feed %}
+	
+	{% if user.is_authenticated%}
+	<li class="nav-right">
+		<a class="tooltips" data-placement="bottom" rel="tooltip" title="علاقه مندیهای شما" href="{% url rss-item-likes user.id%}">
+			<i class="icon-heart"></i>
+		</a>
+	</li>
+	{%endif%}
 </ul>
 			
 			<div id="content" class="container row-fluid">
@@ -86,5 +94,8 @@
 				<img src="{{MEDIA_URL}}img/loader.gif" />
 			</div>
 		</div>
+
+{% include 'base/all_footer.html'%}
+
 	</body>
 </html>

@@ -1,0 +1,12 @@
+
+<button id="ScrollToTop" class="Button WhiteButton Indicator" type="button">
+    <i class="icon-arrow-up"></i>
+</button>
+
+<script type="text/javascript">
+$('.tooltips').tooltip();
+$("#ScrollToTop").click(function(){
+	$('html, body').animate({scrollTop: $("#wrapper").offset().top}, 2000);
+});
+</script>
+

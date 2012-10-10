@@ -38,7 +38,7 @@
 	<body dir="rtl">
 		
 		<div class="container row-fluid" id="wrapper">
-			{% include "base/bar_first.html" %}
+			{% include "base/bar_first.html" with pinactive="active" %}
 			
 			<ul class="nav nav-tabs">
 			  <li class="nav-right">
@@ -70,6 +70,8 @@
   </div>
 </div>
 {%endif%}
+
+{% include 'base/all_footer.html'%}
 
 	</body>
 </html>

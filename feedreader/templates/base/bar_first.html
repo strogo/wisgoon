@@ -1,3 +1,4 @@
+{%spaceless%}
 {% load flatpages %}
 {% load daddy_avatar %}
 {% get_flatpages as flatpages %}
@@ -10,8 +11,9 @@
 	<li class="pull-right">
 		<a href="{% url home %}">صفحه اصلی</a>
 	</li>
-	<li class="nav-right"><a href="{% url pin-home %}">پین</a></li>
-	<li class="pull-right">
+	<li class="nav-right {{pinactive}}">
+		<a href="{% url pin-home %}">پین</a></li>
+	<li class="pull-right {{rssactive}}">
 		<a href="{% url rss %}">فید خوان</a>
 	</li>
 	{% for page in flatpages %}
@@ -19,7 +21,7 @@
     {% endfor %}
 	{% if user.is_authenticated %}
 	<li class="pull-right">
-		<a href="/accounts/logout/" title="Log out" onclick="return confirm('Are you sure you want to log out?');">
+		<a data-dismiss="alert" href="/accounts/logout/" title="Log out" onclick="return confirm('Are you sure you want to log out?');">
 			  <img src="{{user.email|daddy_avatar:20}}"><i class="icon-off icon-black"></i> خروج</a>
 	</li>
 	{%else%}
@@ -31,3 +33,4 @@
 	</li>
 	{%endif%}
 </ul>
+{%endspaceless%}

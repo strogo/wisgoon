@@ -103,7 +103,7 @@ def recomend_feeds(parser, token):
 
 class RecomendFeeds(Node):
     def render(self, context):
-        context['recomend_feeds'] = Feed.objects.all().order_by('-followers')
+        context['recomend_feeds'] = Feed.objects.all().order_by('-followers')[:10]
         return ''
 
 register.tag('get_recomend_feeds', recomend_feeds)
