@@ -33,7 +33,8 @@ def home(request):
     except :
         user_feeds = ""
         
-        
+    form = ReportForm()
+    
     if request.is_ajax():
         if latest_items.exists():
             return render_to_response('rss/_items.html', 
@@ -43,7 +44,7 @@ def home(request):
             return HttpResponse(0)
     else:
         return render_to_response('rss/home.html', 
-                              {'latest_items': latest_items,'user_feeds':user_feeds},
+                              {'latest_items': latest_items,'user_feeds':user_feeds,'form':form},
                               context_instance=RequestContext(request))
 
 def user_likes(request, user_id):
@@ -69,7 +70,7 @@ def user_likes(request, user_id):
     except :
         user_feeds = ""
         
-        
+    form = ReportForm()
     if request.is_ajax():
         if latest_items.exists():
             return render_to_response('rss/_items.html', 
@@ -79,7 +80,7 @@ def user_likes(request, user_id):
             return HttpResponse(0)
     else:
         return render_to_response('rss/user_likes.html', 
-                              {'latest_items': latest_items,'user_feeds':user_feeds,'offset':offset+30},
+                              {'latest_items': latest_items,'user_feeds':user_feeds,'offset':offset+30,'form':form},
                               context_instance=RequestContext(request))
      
 def feed(request, feed_id):
@@ -96,6 +97,8 @@ def feed(request, feed_id):
     else:
         latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
             
+    form = ReportForm()
+    
     if request.is_ajax():
         if latest_items.exists():
             return render_to_response('rss/_items.html', 
@@ -105,7 +108,7 @@ def feed(request, feed_id):
             return HttpResponse(0)
     else:
         return render_to_response('rss/feed.html', 
-                              {'latest_items': latest_items, 'feed':feed},
+                              {'latest_items': latest_items, 'feed':feed,'form':form},
                               context_instance=RequestContext(request))
 
 def feed_item(request, feed_id, item_id):
@@ -113,9 +116,9 @@ def feed_item(request, feed_id, item_id):
     item = get_object_or_404(Item.objects.filter(feed=feed_id,id=item_id)[:1])
     
     latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
-    
+    form = ReportForm()
     return render_to_response('rss/item.html', 
-                              {'item': item, 'feed':feed, 'latest_items': latest_items},
+                              {'item': item, 'feed':feed, 'latest_items': latest_items,'form':form},
                               context_instance=RequestContext(request))
 
 def feed_item_goto(request, item_id):
@@ -264,7 +267,7 @@ def comment_posted(request):
     return HttpResponseRedirect( "/" )    
 
 @login_required
-def report(request, item_id):
+def report(request):
 
 #if request is not ajax display from in this page with template
 
@@ -272,6 +275,7 @@ def report(request, item_id):
             form = ReportForm(request.POST)
             if form.is_valid():
                 
+                item_id=request.item_id
                 item = Item.objects.get(pk=item_id)
                 reported = Report.objects.filter(user=request.user, item=item).count()
                 
