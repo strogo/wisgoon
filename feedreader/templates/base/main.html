@@ -94,6 +94,18 @@
 				<img src="{{MEDIA_URL}}img/loader.gif" />
 			</div>
 		</div>
+{% if user.is_authenticated%}
+<div style="display: none;" class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h2 id="myModalLabel">ارسال گزارش تخلف</h2>
+  </div>
+  <div class="modal-body">
+    {% include "rss/report.html"%}
+  </div>
+</div>
+{%endif%}
+
 
 {% include 'base/all_footer.html'%}
 
