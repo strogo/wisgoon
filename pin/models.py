@@ -12,6 +12,7 @@ class Post(models.Model):
     timestamp = models.IntegerField(db_index=True, default=1347546432)
     user = models.ForeignKey(User)
     like = models.IntegerField(default=0)
+    url = models.URLField(blank=True)
     
     def __unicode__(self):
         return self.text

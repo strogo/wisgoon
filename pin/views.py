@@ -15,6 +15,10 @@ import time
 from shutil import copyfile
 from glob import glob
 from pin.models import Post
+from pin.crawler import get_images
+import json
+import urllib
+import os
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -54,6 +58,47 @@ def item(request, item_id):
     return render_to_response('pin/item.html', 
                               {'item': item, 'latest_items': latest_items},
                               context_instance=RequestContext(request))
+
+@login_required
+def sendurl(request):
+    if request.method == "POST":
+        form = PinForm(request.POST)
+        if form.is_valid():
+            model = form.save(commit=False)
+            
+            image_url= model.image
+            
+            filename = image_url.split('/')[-1]
+                            
+            
+            image_on = "%s/pin/images/o/%s" % ( MEDIA_ROOT, filename)
+                                 
+            urllib.urlretrieve(image_url, image_on)
+            
+            model.image = "pin/images/o/%s" % (filename)
+            model.timestamp = time.time()
+            model.user = request.user
+            model.save()
+            
+            return HttpResponseRedirect('/pin/')
+    else:
+        form = PinForm()
+            
+    return render_to_response('pin/sendurl.html',{'form':form}, 
+                              context_instance=RequestContext(request)) 
+@login_required
+@csrf_exempt
+def a_sendurl(request):
+    if request.method == "POST":
+        url = request.POST['url']
+        
+        images = get_images(url)
+        if images == 0:
+            return HttpResponse(0)
+        
+        return HttpResponse(json.dumps(images))
+    else:
+        return HttpResponse(0)
 
 @login_required
 def send(request):
