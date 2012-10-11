@@ -279,7 +279,7 @@ width: 40px;
 #ScrollToTop {
 right: 15px;
 bottom: -10px;
-width: 70px;
+width: 40px;
 padding: 20px 10px 30px;
 -moz-transition: bottom 250ms ease-in-out;
 -webkit-transition: bottom 250ms ease-in-out;
@@ -328,4 +328,17 @@ text-align: center;
 -moz-transition: all .05s ease-in-out;
 -o-transition: all .05s ease-in-out;
 -webkit-transition: all .05s ease-in-out;
+}
+
+.corner-stamp {
+width: 280px;
+height: 340px;
+padding: 10px;
+margin: 10px;
+/*float: right;*/
+background: red;
+color: white;
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
 }
