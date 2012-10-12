@@ -112,11 +112,26 @@ $(window).scroll(function() {
 			});
 		}
 	});
-	$('.reportBottom').live('click',function(){
-		$('.reportForm form').append('<input type="hidden" value="'+this.id+'" name="feedId"/>');
+	$('.reportButton').live('click',function(){
+		$('.reportForm').append('<input type="hidden" value="'+this.id+'" id="feedId" name="feedId"/>');
+	});
+	$('#reportButton').live('click',function(){
+			var feedId		=	$('#feedId').val();
+			var mode 		= 	$('#id_mode').val();
+			var reportUrl	=	$('#reportUrl').val();
+			$.ajax({
+				url:reportUrl,
+				data:'&feedId='+feedId+'&mode='+mode,
+				type:'post',
+				success:function(a){
+					$('.close').trigger('click');
+				},
+				error:function(){
+					$('.close').trigger('click');
+				}
+			});
 	});
 	
-
 </script>
 {%else%}
 
