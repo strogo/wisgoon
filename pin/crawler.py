@@ -2,6 +2,7 @@ import socket
 import urllib2
 import lxml.html
 import urlparse
+import httplib
 
 
 
@@ -16,15 +17,35 @@ def get_url_content(url):
     except:
         return 0
 
-def get_images(url):
-    content = get_url_content(url)
-    if content == 0:
-        return 0
-    tree = lxml.html.fromstring(content)
-    images = []
-    for image in tree.xpath("//img/@src"):
-        if not image.startswith('http://'):
-            image = urlparse.urljoin(url, image)
-        images.append(image)
+def check_content_type(url):
+    try:
+        o=urlparse.urlparse(url)
+        
+        conn = httplib.HTTPConnection(o.netloc)
+        conn.request("HEAD", o.path)
+        res = conn.getresponse()
     
+        content_type = res.getheader('content-type')
+        if content_type.startswith('image'):
+            return 'image'
+        else:
+            return 'text'
+    except:
+        return 'text'
+
+def get_images(url):
+    images = []
+    if check_content_type(url) == 'image':
+        images.append(url)
+    else:
+        content = get_url_content(url)
+        if content == 0:
+            return 0
+        tree = lxml.html.fromstring(content)
+        
+        for image in tree.xpath("//img/@src"):
+            if not image.startswith('http://'):
+                image = urlparse.urljoin(url, image)
+            images.append(image)
+        
     return images
