@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 
 class Post(models.Model):
     #title = models.CharField(max_length=250, blank=True)
@@ -20,5 +21,34 @@ class Post(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('pin-item', [str(self.id)])
+    
+class Follow(models.Model):
+    follower = models.ForeignKey(User ,related_name='follower')
+    following = models.ForeignKey(User, related_name='following')
+
+class Stream(models.Model):
+    following = models.ForeignKey(User, related_name='stream_following')
+    user = models.ForeignKey(User ,related_name='user')
+    post = models.ForeignKey(Post)
+    date = models.IntegerField(default=0)
+    
+def add_post_to_stream(sender, **kwargs):
+    post = kwargs['instance']
+    user = post.user
+    followers = Follow.objects.all().filter(following=user)
+    for follower in followers:
+        stream = Stream(post=post, user=follower.follower, date=post.timestamp, following=user)
+        stream.save()
+    
+post_save.connect(add_post_to_stream, sender=Post)
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     

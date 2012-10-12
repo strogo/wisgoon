@@ -57,7 +57,17 @@
 			  	<a href="/accounts/login/?next=/pin">ارسال از وب</a>
 			  {%endif%}
 			  </li>
+			  
+			  {% if user.is_authenticated%}
+			  <li class="nav-right">
+			  	<a href="{% url pin-following%}">دنبال شوندگان</a>
+			  </li>
+			  
+			  {%endif%}
+			  
 			  {%block pin-ex-nav%}{%endblock pin-ex-nav%}
+			  
+			  
 			</ul>
 			
 			<div id="content" class="container row-fluid">

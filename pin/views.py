@@ -14,11 +14,14 @@ import pin_image
 import time
 from shutil import copyfile
 from glob import glob
-from pin.models import Post
+from pin.models import Post, Follow, Stream
 from pin.crawler import get_images
 import json
 import urllib
 import os
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.db import transaction
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -71,11 +74,76 @@ def user(request, user_id):
         else:
             return HttpResponse(0)
     else:
+        
+        follow_status = Follow.objects.filter(follower=request.user.id, following=latest_items[0].user.id).count()
+        
         return render_to_response('pin/user.html', 
-                              {'latest_items': latest_items},
+                              {'latest_items': latest_items, 'follow_status':follow_status},
                               context_instance=RequestContext(request))
+
+@login_required
+def following(request):
     
-    #return render_to_response('pin/home.html',context_instance=RequestContext(request))
+    try:
+        timestamp = int(request.GET.get('older', 0))
+    except ValueError:
+        timestamp = 0
+    
+    if timestamp == 0:
+        stream = Stream.objects.filter(user=request.user).order_by('-date')[:30]
+    else:
+        stream = Stream.objects.filter(user=request.user).extra(where=['date<%s'], params=[timestamp]).order_by('-date')[:30]
+    
+    idis = []
+    for p in stream:
+        idis.append(p.post_id)
+    
+    latest_items = Post.objects.filter(id__in=idis).all()
+    
+    objects = dict([(obj.id, obj) for obj in latest_items])
+    sorted_objects = [objects[id] for id in idis]
+    
+    form = PinForm()
+    
+    if request.is_ajax():
+        if latest_items.exists():
+            return render_to_response('pin/_items.html', 
+                              {'latest_items': sorted_objects,'pin_form':form},
+                              context_instance=RequestContext(request))
+        else:
+            return HttpResponse(0)
+    else:
+        return render_to_response('pin/home.html', 
+                              {'latest_items': sorted_objects},
+                              context_instance=RequestContext(request))
+
+@login_required
+def follow(request, following, action):
+    
+    if int(following) == request.user.id:
+        return HttpResponseRedirect(reverse('pin-home'))
+    
+    try:
+        following = User.objects.get(pk=int(following))
+        
+        follow, created = Follow.objects.get_or_create(follower=request.user, following=following)
+        
+        if int(action) == 0:
+            follow.delete()
+            
+            Stream.objects.filter(following=following, user=request.user).all().delete()
+            
+        else:
+            posts = Post.objects.all().filter(user=following)[:100]
+            
+            with transaction.commit_on_success():
+                for post in posts:
+                    stream = Stream(post=post, user=request.user, date=post.timestamp, following=following)
+                    stream.save()
+        
+        return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
+    except User.DoesNotExist:
+        return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
 
 def item(request, item_id):
     item = get_object_or_404(Post.objects.filter(id=item_id)[:1])
