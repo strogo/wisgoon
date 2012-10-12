@@ -12,6 +12,7 @@ urlpatterns = patterns('pin.views',
     url(r'^ajax_url/$', 'a_sendurl', name="pin-sendurl-a"),
     url(r'^ajax_upload/$', 'upload', name="pin-upload" ),
     url(r'^comments/posted/$', 'comment_posted'),
+    url(r'^user/(?P<user_id>\d+)/$', 'user', name='pin-user'),
 )
 
 

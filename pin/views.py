@@ -50,6 +50,33 @@ def home(request):
     
     #return render_to_response('pin/home.html',context_instance=RequestContext(request))
 
+def user(request, user_id):
+    try:
+        timestamp = int(request.GET.get('older', 0))
+    except ValueError:
+        timestamp = 0
+    
+    if timestamp == 0:
+        latest_items = Post.objects.all().filter(user=user_id).order_by('-timestamp')[:30]
+    else:
+        latest_items = Post.objects.all().filter(user=user_id).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
+    
+    form = PinForm()
+    
+    if request.is_ajax():
+        if latest_items.exists():
+            return render_to_response('pin/_items.html', 
+                              {'latest_items': latest_items,'pin_form':form},
+                              context_instance=RequestContext(request))
+        else:
+            return HttpResponse(0)
+    else:
+        return render_to_response('pin/user.html', 
+                              {'latest_items': latest_items},
+                              context_instance=RequestContext(request))
+    
+    #return render_to_response('pin/home.html',context_instance=RequestContext(request))
+
 def item(request, item_id):
     item = get_object_or_404(Post.objects.filter(id=item_id)[:1])
     

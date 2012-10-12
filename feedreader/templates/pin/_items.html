@@ -18,7 +18,9 @@
 		
 		<div style="height: 30px">
 		<img src="{{item.user.email|daddy_avatar:25}}" style="display: inline;margin-left: 5px" > 
-		<b>{{item.user.username}}</b>
+		<a href="{% url pin-user item.user.id %}">
+			<b>{{item.user.username}}</b>
+		</a>
 		</div>
 		{% if offset %}
 		<span data-next="{{offset}}" ></span>
