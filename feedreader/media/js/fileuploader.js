@@ -572,10 +572,10 @@ qq.FileUploader = function(o){
         element: null,
         // if set, will be used instead of qq-upload-list in template
         listElement: null,
-        dragText: 'Drop files here to upload',
-        uploadButtonText: 'Upload a file',
-        cancelButtonText: 'Cancel',
-        failUploadText: 'Upload failed',
+        dragText: 'فایل بکشید و در اینجا رها کنید',
+        uploadButtonText: 'ارسال فایل',
+        cancelButtonText: 'انصراف',
+        failUploadText: 'نا موفق',
 
         template: '<div class="qq-uploader">' +
             '<div class="qq-upload-drop-area"><span>{dragText}</span></div>' +
