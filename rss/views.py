@@ -269,13 +269,11 @@ def comment_posted(request):
 @login_required
 def report(request):
 
-#if request is not ajax display from in this page with template
-
         if request.method=="POST":
             form = ReportForm(request.POST)
             if form.is_valid():
                 
-                item_id=request.item_id
+                item_id=request.POST['feedId']
                 item = Item.objects.get(pk=item_id)
                 reported = Report.objects.filter(user=request.user, item=item).count()
                 
@@ -285,10 +283,5 @@ def report(request):
                     report.item = item
                     report.mode = form.Meta
                     report.save()
-        
-                return HttpResponseRedirect('/') 
-
-        form = ReportForm()
-
-        return render_to_response('rss/report.html',{'form':form},context_instance=RequestContext(request))
-    
+                    
+        return HttpResponseRedirect('/feedreader/')
