@@ -14,7 +14,11 @@
 			</a>
 		</div>
 		{% endthumbnail %}
-		<p>{{item.text}}</p>
+		<p>{{item.text}} 
+		{% if item.url %}
+		<a href="{{item.url}}"><i class="icon-globe"></i></a>
+		{%endif%}</p>
+		
 		
 		<div style="height: 30px">
 		<img src="{{item.user.email|daddy_avatar:25}}" style="display: inline;margin-left: 5px" > 
