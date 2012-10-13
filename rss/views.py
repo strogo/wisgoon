@@ -15,6 +15,8 @@ import sys
 
 import time
 from django.contrib.comments.models import Comment
+from feedreader.parser import parse_feed_web
+from django.views.decorators.csrf import csrf_exempt
 
 def home(request):
     
@@ -149,6 +151,38 @@ def subscribe(request):
     form = FeedForm()
     
     return render_to_response('rss/subscribe.html',{'form':form},context_instance=RequestContext(request))
+
+@csrf_exempt
+def subscribe_modal(request):
+    if request.is_ajax() and request.method=="POST":
+        form = FeedForm(request.POST)
+        if form.is_valid():
+            url = form.cleaned_data['url']
+            
+            feed, created = Feed.objects.get_or_create(url=url,defaults={'creator': request.user})
+            if created:
+                feed_status = parse_feed_web(feed)
+                
+                if feed_status == 1:
+                    sub, sub_created = Subscribe.objects.get_or_create(user=request.user,feed=feed)
+                    
+                    if sub_created:
+                        feed.followers = feed.followers+1
+                        feed.save()
+                    
+                    data = [{'url':feed.get_absolute_url()}]
+                    
+                    return HttpResponse(json.dumps(data))
+                else:
+                    feed.delete()
+                    return HttpResponse(0)
+            else:
+                data = [{'url':feed.get_absolute_url()}]
+                    
+                return HttpResponse(json.dumps(data))
+            
+    return HttpResponse(0)
+            
 
 @login_required
 def a_sub(request, feed_id):

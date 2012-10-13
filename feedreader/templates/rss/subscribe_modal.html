@@ -1,0 +1,44 @@
+<form method="post" class="form-inline">
+	
+	<div id="sub-alert" class="alert alert-error" style="display: none">
+	  <button type="button" class="close" data-dismiss="alert">×</button>
+	  لطفا آدرس را با دقت وارد کنید.
+	</div>
+	
+	<div id="sub-success" class="alert alert-success" style="display: none">
+	  <button type="button" class="close" data-dismiss="alert">×</button>
+	  برای خواندن فید بر روی لینک زیر کلیک کنید.<br />
+	  <a id="sub-redirect" href="#"></a>
+	</div>
+	
+	
+	
+	<div id="sub-ac">
+	{% csrf_token%}
+	<input id="id_url" type="text" name="url" maxlength="200" class="span4 ltr" placeholder="آدرس فید" />
+	<input id="rss-check" type="button" class="btn btn-primary" value="بررسی آدرس"  />
+	<input type="submit" style="display: none" class="btn btn-primary" value="اشتراک"  />
+	</div>
+</form>
+
+<script type="text/javascript">
+$("#rss-check").click(function(){
+	$(this).val('لطفا صبر کنید').addClass('disabled');
+	var url=$("#id_url").val();
+	$.post('{% url rss-subs-modal%}',{'url':url},function(data){
+		if(data==0){
+			$("#sub-alert").fadeIn();
+			$("#rss-check").val('بررسی آدرس').removeClass('disabled');
+		}else{
+			$.each(data, function(index, el){
+				url = el['url'];
+				$("#sub-ac").fadeOut();
+				$("#sub-success").fadeIn();
+				$("#sub-redirect").attr('href', url).html(url);
+				
+			});
+		}
+	},'json');
+});
+
+</script>

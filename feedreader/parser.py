@@ -26,6 +26,82 @@ def remove_img_tags(data):
     
     return data
 
+def parse_feed_web(feedObj):
+    
+    feedObj.lock = True
+    feedObj.save()
+    
+    try:
+        feed = feedparser.parse(feedObj.url)
+    except:
+        return 0
+    i=0
+    duplicate=0
+    try:
+        for item in feed.entries:
+            i=i+1
+            #print "title: %s" % item.title
+            #print "date: %s" % item.updated_parsed
+            fi = Item()
+            fi.title = item.title
+            if hasattr(item, 'description'):
+                fi.description = item.description
+                if fi.description != '':
+                    tree = lxml.html.fromstring(fi.description)
+                    for image in tree.xpath("//img/@src"):
+                        try:
+                            
+                            filename = image.split('/')[-1]
+                            
+                            fi.image = "rss/%d/%s" % (feedObj.id, filename)
+                            
+                            project = os.path.join(os.path.dirname(__file__),'media/rss')
+                            
+                            directory = "%s/%d/" % (project, feedObj.id)
+                            if not os.path.exists(directory):
+                                os.makedirs(directory)
+                            filename= "%s%s" % (directory, filename)
+                            
+                            urllib.urlretrieve(image, filename)
+                            
+                            break
+                        except HTTPError:
+                            pass
+                        
+                    #fi.description = remove_img_tags(lxml.html.tostring(tree, encoding='utf-8'))
+                
+            fi.url = item.link
+            fi.url_crc = binascii.crc32(item.link.encode('utf-8'))
+            
+            if item.published_parsed != None:
+                fi.date = datetime.fromtimestamp(mktime(item.updated_parsed))
+                fi.timestamp = mktime(item.updated_parsed)
+            else:
+                fi.date = datetime.now()
+                fi.timestamp = time()
+                
+            fi.feed = feedObj
+            
+            fi.save()
+    
+    except _mysql_exceptions.Warning:
+        pass
+    
+    finally:
+        try:
+            feedObj.title=feed['channel']['title']
+        except KeyError:
+            pass
+        
+        feedObj.last_fetch = datetime.now()
+        feedObj.lock = False
+        feedObj.save()
+    
+    if i==0:
+        return 0
+    else:
+        return 1
+
 def parse_feed(feedObj):
     
     feedObj.lock = True

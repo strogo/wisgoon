@@ -48,7 +48,12 @@
 		</form>
 	</li>
 	<li class="pull-right">
-		<a href="{% url rss-subs %}">اشتراک فید</a>
+		{% if user.is_authenticated%}
+			  	<a data-toggle="modal" data-target="#subModal" href="#subModal">اشتراک فید</a>
+			  {%else%}
+			  	<a href="/accounts/login/?next=/feedreader">اشتراک فید</a>
+			  {%endif%}
+		<!--<a href="{% url rss-subs %}">اشتراک فید</a>-->
 	</li>
 	{% if user.is_authenticated %}
 	<li class="dropdown nav-right">
@@ -104,6 +109,19 @@
     {% include "rss/report.html"%}
   </div>
 </div>
+
+<div style="display: none;" class="modal" id="subModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h2 id="myModalLabel">اشتراک فید</h2>
+  </div>
+  <div class="modal-body">
+    {%include "rss/subscribe_modal.html"%}
+  </div>
+</div>
+
+
+
 {%endif%}
 
 
