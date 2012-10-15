@@ -8,7 +8,7 @@
 <div class="feed-item" >
 	<small>{{item.feed.title}}</small>
 	<br>
-	<a target="_blank" rel="nofollow" href="{% url rss-item-goto item.id %}">{{item.title}}</a>
+	<a target="_blank" rel="nofollow" href="{% url rss-item-goto item.id %}">{{item.title|escape}}</a>
 	<p class="feed-description">
 		{{item.description|striptags|safe|truncatewords:25}}
 	</p>
@@ -43,7 +43,7 @@
 </div>
 {% if request.is_ajax %}
 <script type="text/javascript">
-	a2a_config.linkname = '{{item.title}}';
+	a2a_config.linkname = '{{item.title|remove_newlines}}';
 	a2a_config.linkurl = '{{item.url}}';
 	a2a_config.onclick = 1;
 	a2a.init('page'); 
@@ -53,7 +53,7 @@
 {% if forloop.first%}
 <script type="text/javascript">
 	a2a_config = {
-		linkname : '{{item.title}}',
+		linkname : '{{item.title|remove_newlines}}',
 		linkurl : '{{item.url}}',
 		static_server : "{{MEDIA_URL}}sharing/",
 		onclick : 1,
@@ -63,7 +63,7 @@
 <script type="text/javascript" src="{{MEDIA_URL}}sharing/page.js"></script>
 {%else%}
 <script type="text/javascript">
-	a2a_config.linkname = '{{item.title}}';
+	a2a_config.linkname = '{{item.title|remove_newlines}}';
 	a2a_config.linkurl = '{{item.url}}';
 	a2a_config.onclick = 1;
 	a2a.init('page'); 

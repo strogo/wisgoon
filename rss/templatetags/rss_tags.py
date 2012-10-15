@@ -5,6 +5,9 @@ from rss.models import Subscribe, Feed, Likes
 from django.contrib.auth.models import User
 from django.template.base import TemplateSyntaxError
 from django import template
+from django.utils.text import normalize_newlines
+from django.utils.safestring import mark_safe
+from django.template.defaultfilters import stringfilter
 
 register = Library()
 
@@ -108,3 +111,15 @@ class RecomendFeeds(Node):
 
 register.tag('get_recomend_feeds', recomend_feeds)
 
+
+def remove_newlines(text):
+    """
+    Removes all newline characters from a block of text.
+    """
+    # First normalize the newlines using Django's nifty utility
+    normalized_text = normalize_newlines(text)
+    # Then simply remove the newlines like so.
+    return mark_safe(normalized_text.replace('\n', ' '))
+remove_newlines.is_safe = True
+remove_newlines = stringfilter(remove_newlines)
+register.filter(remove_newlines)
