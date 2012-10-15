@@ -3,8 +3,7 @@ import urllib2
 import lxml.html
 import urlparse
 import httplib
-
-
+from urllib2 import URLError, HTTPError
 
 socket.setdefaulttimeout(10)
 
@@ -14,11 +13,13 @@ def get_url_content(url):
         f = urllib2.urlopen(url)
         content = f.read()
         return content
-    except:
+    except HTTPError:
+        return 0
+    except URLError:
         return 0
 
 def check_content_type(url):
-    try:
+    #try:
         o=urlparse.urlparse(url)
         
         conn = httplib.HTTPConnection(o.netloc)
@@ -30,7 +31,7 @@ def check_content_type(url):
             return 'image'
         else:
             return 'text'
-    except:
+    #except:
         return 'text'
 
 def get_images(url):
@@ -46,6 +47,8 @@ def get_images(url):
         for image in tree.xpath("//img/@src"):
             if not image.startswith('http://'):
                 image = urlparse.urljoin(url, image)
-            images.append(image)
+            
+            if image not in images:
+                images.append(image)
         
     return images
