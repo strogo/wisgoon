@@ -13,4 +13,5 @@ urlpatterns = patterns('',
     url(r'^acc/', include('allauth.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^pages/', include('django.contrib.flatpages.urls')),
+    url(r'^socialacc/', include('socialacc.urls')),
 )

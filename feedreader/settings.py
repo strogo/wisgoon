@@ -150,6 +150,7 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'djangosphinx',
     'daddy_avatar',
+    'socialacc',
     
 )
 

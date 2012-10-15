@@ -153,6 +153,7 @@ INSTALLED_APPS = (
     #'djangosphinx',
     'daddy_avatar',
     'ban',
+    'socialacc',
 )
 
 AUTHENTICATION_BACKENDS = (
