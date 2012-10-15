@@ -14,7 +14,7 @@ import pin_image
 import time
 from shutil import copyfile
 from glob import glob
-from pin.models import Post, Follow, Stream
+from pin.models import Post, Follow, Stream, Likes
 from pin.crawler import get_images
 import json
 import urllib
@@ -297,4 +297,44 @@ def comment_posted(request):
         if entry:
             return HttpResponseRedirect( entry.get_absolute_url() ) #D
     return HttpResponseRedirect( "/" )     
+
+
+@login_required
+def like(request, item_id):
+
+    try:
+        post = Post.objects.get(pk=item_id)
+        current_like = post.like
+        
+        liked = Likes.objects.filter(user=request.user, post=post).count()
+        
+        user_act = 0
+        
+        if not liked:
+            like = Likes()
+            like.user = request.user
+            like.post = post
+            like.save()
+            
+            current_like = current_like+1
+            user_act = 1
+            
+        else:
+            current_like = current_like-1
+            Likes.objects.filter(user=request.user,post=post).delete()
+            user_act = -1
+        
+        Post.objects.filter(id=item_id).update(like=current_like)
+        
+        if request.is_ajax():
+            
+            data = [{'likes': current_like, 'user_act':user_act}]
+                       
+            return HttpResponse(json.dumps(data))
+        else:
+            return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
+            
+    except Post.DoesNotExist:
+        return HttpResponseRedirect('/')
+
     

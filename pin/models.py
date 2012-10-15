@@ -32,6 +32,15 @@ class Stream(models.Model):
     post = models.ForeignKey(Post)
     date = models.IntegerField(default=0)
     
+class Likes(models.Model):
+    user = models.ForeignKey(User,related_name='pin_post_user_like')
+    post = models.ForeignKey(Post, related_name="post_item")
+    
+    class Meta:
+        unique_together = (("post", "user"),)    
+
+
+
 def add_post_to_stream(sender, **kwargs):
     post = kwargs['instance']
     user = post.user

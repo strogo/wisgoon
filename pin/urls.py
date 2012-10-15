@@ -15,6 +15,7 @@ urlpatterns = patterns('pin.views',
     url(r'^user/(?P<user_id>\d+)/$', 'user', name='pin-user'),
     url(r'^follow/(?P<following>\d+)/(?P<action>\d+)$', 'follow', name='pin-follow'),
     url(r'^following/$','following', name='pin-following'),
+    url(r'^like/(?P<item_id>\d+)', 'like', name="pin-item-like"),
 )
 
 

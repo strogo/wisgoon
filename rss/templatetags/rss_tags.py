@@ -2,6 +2,7 @@ from django.template import Library,Node
 from urlparse import urlparse
 import datetime
 from rss.models import Subscribe, Feed, Likes
+from pin.models import Likes as pin_likes
 from django.contrib.auth.models import User
 from django.template.base import TemplateSyntaxError
 from django import template
@@ -67,6 +68,33 @@ class UserItemLike(template.Node):
             return ''
 
 register.tag('user_item_like', user_item_like)
+
+def user_post_like(parser, token):
+    try:
+        # split_contents() knows not to split quoted strings.
+        tag_name, item = token.split_contents()
+    except ValueError:
+        raise template.TemplateSyntaxError("%r tag requires exactly two arguments" % token.contents.split()[0])
+    
+    return UserPostLike(item)
+
+class UserPostLike(template.Node):
+    def __init__(self, item):
+        self.item = template.Variable(item)
+
+    def render(self, context):
+        try:
+            item = int(self.item.resolve(context))
+            user=context['user']
+            liked = pin_likes.objects.filter(user=user, post=item).count()
+            if liked :
+                return 'btn-danger'
+            else:
+                return ''
+        except template.VariableDoesNotExist:
+            return ''
+
+register.tag('user_post_like', user_post_like)
 
 
 @register.filter
