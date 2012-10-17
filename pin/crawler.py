@@ -17,6 +17,10 @@ def get_url_content(url):
         return 0
     except URLError:
         return 0
+    except ValueError:
+        return 0
+    
+    return 0
 
 def check_content_type(url):
     #try:

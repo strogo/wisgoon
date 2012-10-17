@@ -10,17 +10,18 @@
 		</div>
 	</div>
 	<input type="hidden" name="image" id="image_url">
-	
-	<div class="control-group" id="image_control" style="display: none">
+
+<div id="hidden_actions" style="display: none">
+	<div class="control-group" id="image_control" >
 		<label class="control-label">انتخاب تصویر</label>
 		<div class="controls">
-			<div id="images" style="width:180px;">
-				<div class="" style="width: 150px;">
+			<div id="images" style="width:210px;text-align: center">
+				<div class="" style="width: 100%;">
 				<a style="float: right" class="img-move btn" rel="next" href="#"><i class="icon-forward"></i></a>
 				<a style="float: left" class="img-move btn" rel="back" href="#"><i class="icon-backward"></i></a>
 				</div><br>
 				<div class="clearfix"></div>
-				<img src="" id="ajx-img" style="max-height: 100px;max-width: 150px">
+				<img src="" id="ajx-img" style="max-height: 100px;max-width: 150px;margin-top: 10px">
 			</div>
 		</div>
 	</div>
@@ -35,6 +36,7 @@
 	<div class="form-actions">
 		<input id="pin-submit" type="submit" class="btn btn-primary disabled" value="ارسال" style="display: none" />
 	</div>
+</div>
 </form>
 
 
@@ -93,7 +95,7 @@ function parse_data(data){
 function start_images(){
 	$("#btn-pin-url").fadeOut();
 	$('#pin-submit').removeClass('disabled').fadeIn();
-	$("#image_control").fadeIn();
+	$("#hidden_actions").fadeIn();
 	$("#ajx-img").attr('src', images[0]);
 	$("#image_url").val(images[0]);
 	cur_id=0;

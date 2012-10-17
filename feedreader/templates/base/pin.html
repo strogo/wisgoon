@@ -43,6 +43,8 @@
 			{% include "base/bar_first.html" with pinactive="active" %}
 			
 			<ul class="nav nav-tabs">
+				<li class="nav-right">
+					<a href="{% url pin-home %}">آخرین مطالب</a></li>
 			  <li class="nav-right">
 			  {% if user.is_authenticated%}
 			  	<a data-toggle="modal" data-target="#myModal" href="#myModal">ارسال مطلب جدید</a>

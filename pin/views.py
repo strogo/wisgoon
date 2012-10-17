@@ -187,6 +187,9 @@ def a_sendurl(request):
     if request.method == "POST":
         url = request.POST['url']
         
+        if url == '':
+            return HttpResponse(0)
+        
         images = get_images(url)
         if images == 0:
             return HttpResponse(0)
