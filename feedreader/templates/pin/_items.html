@@ -38,8 +38,10 @@
 		{%else%}
 		<span data-next="{{item.timestamp}}" ></span>
 		{%endif%}
-		
-
+	
 	</div>
+	{% if display_item and forloop.counter == 1 %}
+	{% include "pin/item_inner.html"%}
+	{%endif%}
 {%endfor%}
 {% endspaceless %}
