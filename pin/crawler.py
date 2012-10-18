@@ -4,6 +4,8 @@ import lxml.html
 import urlparse
 import httplib
 from urllib2 import URLError, HTTPError
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 
 socket.setdefaulttimeout(10)
 
@@ -38,21 +40,33 @@ def check_content_type(url):
     #except:
         return 'text'
 
+def validate_url(url):
+    valid_url = URLValidator(verify_exists=False)
+    
+    try:
+        valid_url(url)
+    except ValidationError:
+        return 0
+    
+    return 1
+
 def get_images(url):
-    images = []
-    if check_content_type(url) == 'image':
-        images.append(url)
-    else:
-        content = get_url_content(url)
-        if content == 0:
-            return 0
-        tree = lxml.html.fromstring(content)
-        
-        for image in tree.xpath("//img/@src"):
-            if not image.startswith('http://'):
-                image = urlparse.urljoin(url, image)
+    if validate_url(url):
+        images = []
+        if check_content_type(url) == 'image':
+            images.append(url)
+        else:
+            content = get_url_content(url)
+            if content == 0:
+                return 0
+            tree = lxml.html.fromstring(content)
             
-            if image not in images:
-                images.append(image)
-        
-    return images
+            for image in tree.xpath("//img/@src"):
+                if not image.startswith('http://'):
+                    image = urlparse.urljoin(url, image)
+                
+                if image not in images:
+                    images.append(image)
+            
+        return images
+    return 0

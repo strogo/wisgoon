@@ -5,7 +5,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', 'rss.views.home', name='home'),
+    url(r'^$', 'pin.views.home', name='home'),
     url(r'^feedreader/', include('rss.urls')),
     url(r'^pin/', include('pin.urls')),
     url(r'^accounts/', include('registration.backends.default.urls')),
