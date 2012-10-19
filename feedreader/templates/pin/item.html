@@ -1,6 +1,6 @@
 {% extends "base/pin.html"%}
 
-{% block title%} - {{item.text}}{% endblock title%}
+{% block title%} - {{item_inner.text}}{% endblock title%}
 {%block description%}{{item.text}} - {{item.text|striptags|truncatewords:25}}{%endblock%}
 
 {% block extra_js %}
