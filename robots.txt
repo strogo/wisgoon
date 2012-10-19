@@ -3,4 +3,4 @@ Disallow: /accounts/login/
 Disallow: /feedreader/feed/report/*
 Disallow: /feedreader/feed/like/*
 Disallow: /pin/like/*
-
+Disallow: /pin/ajax_upload/

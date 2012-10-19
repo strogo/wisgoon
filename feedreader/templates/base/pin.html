@@ -1,5 +1,4 @@
 {% load rss_tags %}
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -43,6 +42,12 @@
 			{% include "base/bar_first.html" with pinactive="active" %}
 			
 			<ul class="nav nav-tabs">
+				<li>
+					<form class="navbar-search pull-left" action="{% url rss-search%}" method="get">
+						<input type="text" name="q" class="search-query" placeholder="جستجو">
+			
+					</form>
+				</li>
 				<li class="nav-right">
 					<a href="{% url pin-home %}">آخرین مطالب</a></li>
 			  <li class="nav-right">
