@@ -62,3 +62,7 @@ input, button, select, textarea {
 	text-align: left;
 	direction: ltr;
 }
+
+.feed-item-notportrait{
+	width: 423px!important;
+}

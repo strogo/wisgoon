@@ -6,14 +6,24 @@
 {% spaceless %}
 {% for item in latest_items %}
 
-	<div class="feed-item" >
-		{% thumbnail item.image "192" as im %}
-		<div class="img-block" style="height: {{im.height}}px; width: {{im.width}}px">
-			<a href="{% url pin-item item.id%}">
-			<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item.text}}">
-			</a>
-		</div>
-		{% endthumbnail %}
+	<div class="feed-item {% if not item.image|is_portrait %}feed-item-notportrait{%endif%}" >
+		{% if item.image|is_portrait %}
+			{% thumbnail item.image "192" as im %}
+			<div class="img-block" style="height: {{im.height}}px; width: {{im.width}}px">
+				<a href="{% url pin-item item.id%}">
+				<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item.text}}">
+				</a>
+			</div>
+			{% endthumbnail %}
+		{% else%}
+			{% thumbnail item.image "384" as im %}
+			<div class="img-block" style="height: {{im.height}}px; width: {{im.width}}px">
+				<a href="{% url pin-item item.id%}">
+				<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item.text}}">
+				</a>
+			</div>
+			{% endthumbnail %}
+		{%endif%}
 		<p>{{item.text}} 
 		{% if item.url %}
 		<a target="_blank" rel="nofollow" href="{{item.url}}"><i class="icon-globe"></i></a>
