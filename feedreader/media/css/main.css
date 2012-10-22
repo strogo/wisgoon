@@ -2,7 +2,7 @@ body{
 	direction: rtl;
 	text-align: right;
 	/*background: url('../img/paper.jpg') repeat ;*/
-	background: #CDCDCD;
+	background-color: #CDCDCD!important;
 }
 #feed-ul{
 	list-style: none;
