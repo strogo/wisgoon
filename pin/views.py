@@ -164,6 +164,11 @@ def sendurl(request):
             image_url= model.image
             
             filename = image_url.split('/')[-1]
+            
+            str = "%f" % time.time()
+            str = str.replace('.', '')
+        
+            filename = "%s%s" % (str, filename)
                             
             
             image_on = "%s/pin/images/o/%s" % ( MEDIA_ROOT, filename)
@@ -279,6 +284,11 @@ def upload(request):
                 raise Http404( "Bad Upload" )
             filename = upload.name
         
+        str = "%f" % time.time()
+        str = str.replace('.', '')
+        
+        filename = "%s%s" % (str, filename)
+        
         # save the file
         success = save_upload( upload, filename, is_raw )
         
@@ -289,7 +299,7 @@ def upload(request):
             pin_image.resize(image_o, image_t, 99)
             
         import json
-        ret_json = {'success':success,}
+        ret_json = {'success':success,'file':filename}
         return HttpResponse( json.dumps( ret_json ) )
 
 def comment_posted(request):

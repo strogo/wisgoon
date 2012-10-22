@@ -60,8 +60,8 @@ function createUploader(){
 		if(responseJSON.success)
 		{
 			$('#file-uploader').hide();
-            $('.uploaded-image').html('<img src="/media/pin/temp/t/'+fileName+'">');
-			$('#image_field').val(fileName);
+            $('.uploaded-image').html('<img src="/media/pin/temp/t/'+responseJSON.file+'">');
+			$('#image_field').val(responseJSON.file);
 		}else{
 			alert('خطا هنگام ذخیره فایل.');
         }
