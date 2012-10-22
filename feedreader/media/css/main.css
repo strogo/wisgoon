@@ -1,7 +1,8 @@
 body{
 	direction: rtl;
 	text-align: right;
-	background: url('../img/paper.jpg') repeat ;
+	/*background: url('../img/paper.jpg') repeat ;*/
+	background: #CDCDCD;
 }
 #feed-ul{
 	list-style: none;
