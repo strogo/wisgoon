@@ -19,12 +19,19 @@
 	</div>
 	<div class="feed-item-bottom">
 		<div class="feed-item-actions">
+			<div style="height: 70px;float: left">
+				<a href="{% url pin-user item_inner.user.id %}">
+				<img src="{{item_inner.user.email|daddy_avatar:50}}" style="display: inline;margin-left: 5px" >
+				</a> 
+			</div>
 			<div class="feed-item-date">
 				{{item_inner.timestamp|date_from_timestamp}}
 			</div>
+			
 			<div>
 				<a rel="nofollow" target="_blank" href="{{item_inner.url}}">{{item_inner.url|get_host}}</a>
 			</div>
+			
 		</div>
 	</div>
 	<div class="comments">
@@ -56,17 +63,13 @@
 					<div class="arrow reply_arrow icon_link"></div>
 					<div class="comment_side">
 						<div class="avatar">
-
+							<a href="{% url pin-user comment.user.id %}">
 							<img src="{{comment.email|daddy_avatar:36}}" alt="">
-
+							</a>
 						</div>
 					</div>
 					<div class="comment_main">
-						<div class="comment_header">
-							<div class="author">
-								{{comment.user_name}}
-							</div>
-						</div>
+						
 						<div class="comment_content">
 							{{comment.comment}}
 						</div>
