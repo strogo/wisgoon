@@ -1,5 +1,5 @@
 {% load daddy_avatar%}
 <div class="feed-item" style="height: 210px">
-	<img src="{{user.email|daddy_avatar:192}}"> <br />
+	<img src="{{latest_items.0.user.email|daddy_avatar:192}}"> <br />
 	{{latest_items.0.user.username}}
 </div>
