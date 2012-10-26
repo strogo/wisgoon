@@ -62,11 +62,14 @@
 				<div class="comment">
 					<div class="arrow reply_arrow icon_link"></div>
 					<div class="comment_side">
+						{% if comment.user %}
 						<div class="avatar">
+							
 							<a href="{% url pin-user comment.user.id %}">
 							<img src="{{comment.email|daddy_avatar:36}}" alt="">
 							</a>
 						</div>
+						{% endif%}
 					</div>
 					<div class="comment_main">
 						
