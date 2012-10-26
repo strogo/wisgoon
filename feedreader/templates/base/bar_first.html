@@ -16,6 +16,10 @@
 	<li class="pull-right {{rssactive}}">
 		<a href="{% url rss %}">فید خوان</a>
 	</li>
+	<li class="pull-right">
+		<a href="{% url contactus-home %}">ارتباط با ما</a>
+	</li>
+	
 	{% for page in flatpages %}
         <li class="pull-right"><a href="{{ page.url }}">{{ page.title }}</a></li>
     {% endfor %}

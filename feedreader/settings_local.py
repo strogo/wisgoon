@@ -154,6 +154,7 @@ INSTALLED_APPS = (
     'daddy_avatar',
     'ban',
     'socialacc',
+    'contactus',
 )
 
 AUTHENTICATION_BACKENDS = (

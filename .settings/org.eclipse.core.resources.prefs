@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//contactus/models.py=utf-8
 encoding//pin/models.py=utf8
 encoding//rss/models.py=utf8
 encoding//rss/views.py=utf8
