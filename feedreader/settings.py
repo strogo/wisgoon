@@ -151,7 +151,7 @@ INSTALLED_APPS = (
     'djangosphinx',
     'daddy_avatar',
     'socialacc',
-    
+    'contactus',   
 )
 
 AUTHENTICATION_BACKENDS = (
