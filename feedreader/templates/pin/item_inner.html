@@ -31,12 +31,14 @@
 			<div>
 				<a rel="nofollow" target="_blank" href="{{item_inner.url}}">{{item_inner.url|get_host}}</a>
 			</div>
+			<div>
+				<a href="{% url pin-item-like item_inner.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like item_inner.id %}{% endif %}"> <i class="icon-heart"></i> {{item_inner.like}} </a>
+			</div>
 			
 		</div>
 	</div>
 	<div class="comments">
-		{% get_comment_count for rss.item 14 as comment_count %}
-		{% get_comment_form for item_inner as form %}
+		
 		<legend>
 			ارسال نظر
 		</legend>
@@ -44,7 +46,7 @@
 
 			{% csrf_token %}
 			<textarea id="id_comment" rows="3" cols="40" name="comment" placeholder="نظر خود را وارد کنید" ></textarea>			
-				
+			<br>
 	
 	
  <input type="submit" class="btn btn-primary" name="submit" value="ارسال">
