@@ -37,7 +37,19 @@
 			
 		</div>
 	</div>
-	<div class="comments">
+	<div class="row">
+		<div class="span6">
+			<legend>
+				علاقه مندان
+			</legend>
+			{% for like in likes%}
+			<a href="{% url pin-user like.user.id %}">
+				<img src="{{like.user.email|daddy_avatar:50}}" style="display: inline;margin-left: 5px" >
+			</a>
+			{% endfor %}
+		</div>	
+		
+		<div class="comments span6">
 		
 		<legend>
 			ارسال نظر
@@ -84,6 +96,6 @@
 			{% endfor %}
 		</ul>
 	</div>
-
+	</div>
 </div>
 <!-- end feed-item -->

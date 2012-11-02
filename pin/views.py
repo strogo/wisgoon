@@ -149,9 +149,10 @@ def item(request, item_id):
     item = get_object_or_404(Post.objects.filter(id=item_id)[:1])
     
     latest_items = Post.objects.all().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
+    likes = Likes.objects.filter(post=item).all()
     
     return render_to_response('pin/item.html', 
-                              {'item_inner': item, 'latest_items': latest_items},
+                              {'item_inner': item, 'latest_items': latest_items, 'likes':likes},
                               context_instance=RequestContext(request))
 
 @login_required
