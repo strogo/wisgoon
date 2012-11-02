@@ -8,5 +8,22 @@ $('.tooltips').tooltip();
 $("#ScrollToTop").click(function(){
 	$('html, body').animate({scrollTop: $("#wrapper").offset().top}, 1000);
 });
-</script>
 
+$('.pin-item-link').click(function(){
+	var item_link = $(this);
+	href=item_link.attr('href');
+	$('#pinitem').load(href,function(){
+    	$(this).modal({
+                keyboard:true,
+                
+        }).css({
+        width: 'auto',
+        	'margin-left': function () {
+            return -($(this).width() / 2);
+        	}
+    	});
+   	});
+
+	return false;
+});
+</script>

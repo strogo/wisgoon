@@ -12,7 +12,7 @@
 
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css?v=0.0.1">
 <script type="text/javascript" src="{{MEDIA_URL}}js/jquery.js"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}js/bootstrap.js"></script>
 
@@ -107,8 +107,17 @@
   </div>
 </div>
 
-
 {%endif%}
+
+<div style="display: none;" class="modal modal-pin-item fade" id="pinitem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close btn-large" data-dismiss="modal" aria-hidden="true">×</button>
+    <h2 id="myModalLabel"></h2>
+  </div>
+  <div class="modal-body">
+    
+  </div>
+</div>
 
 {% include 'base/all_footer.html'%}
 
