@@ -55,7 +55,8 @@
 			ارسال نظر
 		</legend>
 		<form action="{% comment_form_target %}" method="post" class="form-inline">
-
+{% get_comment_count for rss.item 14 as comment_count %}
+{% get_comment_form for item_inner as form %}
 			{% csrf_token %}
 			<textarea id="id_comment" rows="3" cols="40" name="comment" placeholder="نظر خود را وارد کنید" ></textarea>			
 			<br>
