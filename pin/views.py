@@ -311,6 +311,18 @@ def comment_posted(request):
             return HttpResponseRedirect( entry.get_absolute_url() ) #D
     return HttpResponseRedirect( "/" )     
 
+@login_required
+def delete(request, item_id):
+    try:
+        post = Post.objects.get(pk=item_id)
+        if post.user == request.user:
+            post.delete()
+            return HttpResponse('1')
+            
+    except Post.DoesNotExist:
+        return HttpResponse('0')
+    
+    return HttpResponse('0')
 
 @login_required
 def like(request, item_id):
@@ -350,4 +362,14 @@ def like(request, item_id):
     except Post.DoesNotExist:
         return HttpResponseRedirect('/')
 
+def tag_complete(request):
+    q = request.GET['q']
+    data = []
+    for x in range(10):
+        data.append("%s %s" % (q, x))
+    return HttpResponse(json.dumps(data))
+    
+    
+    
+    
     
