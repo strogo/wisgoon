@@ -10,6 +10,7 @@ $("#ScrollToTop").click(function(){
 });
 
 $('.pin-item-link').click(function(){
+	return true;
 	var item_link = $(this);
 	href=item_link.attr('href');
 	$('#pinitem').html('<center><img src="{{MEDIA_URL}}img/loader.gif" /></center>').modal();
