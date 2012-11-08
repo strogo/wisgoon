@@ -5,6 +5,24 @@
 
 <!-- start feed item -->
 <div class="feed-item feed-inner-item" style="" >
+	<div class="pin-item-top">
+		<div style="float: left">
+			{% if item_inner.user_id != request.user.id %}
+				{% if follow_status == 0 %}
+				<a class="btn btn-success" href="{% url pin-follow item_inner.user.id 1 %}">دنبال کردن</a>
+				{% else %}
+				<a class="btn btn-danger" href="{% url pin-follow item_inner.user.id 0 %}">قطع ارتباط</a>
+				{%endif%}
+			{% endif%}
+		</div>
+		<div style="height: 70px;">
+			<a href="{% url pin-user item_inner.user.id %}">
+				<img src="{{item_inner.user.email|daddy_avatar:50}}" style="display: inline;margin-left: 5px" >
+				<b>{{item_inner.user.username}}</b>
+			</a> 
+		</div>
+		
+	</div>
 	<div class="feed-inner">
 		{% thumbnail item_inner.image "656" upscale=False as im %}
 		<div class="img-block" style="height: {{im.height}}px; width: {{im.width}}px; margin: 0 auto">
@@ -19,10 +37,8 @@
 	</div>
 	<div class="feed-item-bottom">
 		<div class="feed-item-actions">
-			<div style="height: 70px;float: left">
-				<a href="{% url pin-user item_inner.user.id %}">
-				<img src="{{item_inner.user.email|daddy_avatar:50}}" style="display: inline;margin-left: 5px" >
-				</a> 
+			<div style="float: left">
+				<a href="{% url pin-item-like item_inner.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like item_inner.id %}{% endif %}"> <i class="icon-heart"></i> {{item_inner.like}} </a>
 			</div>
 			<div class="feed-item-date">
 				{{item_inner.timestamp|date_from_timestamp}}
@@ -31,14 +47,12 @@
 			<div>
 				<a rel="nofollow" target="_blank" href="{{item_inner.url}}">{{item_inner.url|get_host}}</a>
 			</div>
-			<div>
-				<a href="{% url pin-item-like item_inner.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like item_inner.id %}{% endif %}"> <i class="icon-heart"></i> {{item_inner.like}} </a>
-			</div>
+			
 			
 		</div>
 	</div>
 	<div class="row-fluid">
-		<div class="span4">
+		<div>
 			<legend>
 				علاقه مندان
 			</legend>
@@ -48,8 +62,11 @@
 			</a>
 			{% endfor %}
 		</div>	
+	</div>
+	<div class="row-fluid">
 		
-		<div class="comments span6">
+		
+		<div class="comments">
 		
 		<legend>
 			ارسال نظر
@@ -58,8 +75,8 @@
 {% get_comment_count for rss.item 14 as comment_count %}
 {% get_comment_form for item_inner as form %}
 			{% csrf_token %}
-			<textarea id="id_comment" rows="3" cols="40" name="comment" placeholder="نظر خود را وارد کنید" ></textarea>			
-			<br>
+			<textarea id="id_comment" rows="3" cols="60" name="comment" placeholder="نظر خود را وارد کنید" ></textarea>			
+			
 	
 	
  <input type="submit" class="btn btn-primary" name="submit" value="ارسال">

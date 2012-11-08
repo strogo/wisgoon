@@ -152,13 +152,15 @@ def item(request, item_id):
     latest_items = Post.objects.all().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
     likes = Likes.objects.filter(post=item).all()
     
+    follow_status = Follow.objects.filter(follower=request.user.id, following=item.user.id).count()
+    
     if request.is_ajax():
         return render_to_response('pin/item_inner.html', 
-                              {'item_inner': item, 'latest_items': latest_items, 'likes':likes},
+                              {'item_inner': item, 'latest_items': latest_items, 'likes':likes, 'follow_status':follow_status},
                               context_instance=RequestContext(request))
     else:
         return render_to_response('pin/item.html', 
-                              {'item_inner': item, 'latest_items': latest_items, 'likes':likes},
+                              {'item_inner': item, 'latest_items': latest_items, 'likes':likes, 'follow_status':follow_status},
                               context_instance=RequestContext(request))
 
 @login_required
