@@ -9,7 +9,7 @@ $("#ScrollToTop").click(function(){
 	$('html, body').animate({scrollTop: $("#wrapper").offset().top}, 1000);
 });
 
-$('.pin-item-link').click(function(){
+$('.pin-item-link').live('click',function(){
 	/*return true;*/
 	var item_link = $(this);
 	href=item_link.attr('href');
