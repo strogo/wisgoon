@@ -30,13 +30,13 @@ function load_posts(page) {
         function(response) {
         	if(response==0){
 				loadingobj.hide();
-        		
         	}else{
 				var $boxes = $(response);
 				feedobj.append( $boxes ).masonry( 'appended', $boxes );
 				feedobj.masonry('reload');
 				loadingobj.hide();
 				start_loading=0;
+				ana_ajax(a_url+'?older=' + page + '&'+extend_query);
 			}
         }
     );
