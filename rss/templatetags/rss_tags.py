@@ -9,6 +9,7 @@ from django import template
 from django.utils.text import normalize_newlines
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import stringfilter
+from calverter import Calverter
 
 register = Library()
 
@@ -108,8 +109,18 @@ def get_host(value):
 @register.filter
 def date_from_timestamp(value):
     return datetime.datetime.fromtimestamp(int(value)).strftime('%Y-%m-%d %H:%M:%S')
+
+@register.filter
+def jalali_mysql_date(value):
+    #gd = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+    gd = value
+    cal = Calverter()
+    jd = cal.gregorian_to_jd(gd.year, gd.month, gd.day)
     
-    
+    d = cal.jd_to_jalali(jd)
+    d = "%s/%s/%s" % (d[0], d[1], d[2])
+    return d
+
 def user_feeds(parser, token):
     return UserFeeds(parser, token)
 
