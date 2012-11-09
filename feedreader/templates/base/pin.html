@@ -40,13 +40,13 @@
 	<body dir="rtl">
 		
 		<div class="container row-fluid" id="wrapper">
+			<div class="navbar-fixed-top">
 			{% include "base/bar_first.html" with pinactive="active" %}
 			
 			<ul class="nav nav-tabs nav-second">
 				<li>
 					<form class="navbar-search pull-left" action="{% url rss-search%}" method="get">
 						<input type="text" name="q" class="search-query" placeholder="جستجو">
-			
 					</form>
 				</li>
 				<li class="nav-right">
@@ -77,8 +77,8 @@
 			  
 			  
 			</ul>
-			
-			<div id="content" class="container row-fluid">
+			</div>
+			<div id="content" class="container row-fluid" style="padding-top:80px">
 				{% block content %}
 				{% endblock content %}
 			</div>

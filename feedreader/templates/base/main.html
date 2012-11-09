@@ -36,6 +36,7 @@
 </head>
 	<body dir="rtl">
 		<div class="" id="wrapper">
+			<div class="navbar-fixed-top">
 			{% include "base/bar_first.html" with rssactive="active" %}
 			
 
@@ -90,8 +91,8 @@
 	</li>
 	{%endif%}
 </ul>
-			
-			<div id="content" class="container row-fluid">
+</div>
+			<div id="content" class="container row-fluid" style="padding-top: 80px">
 				{% block content %}
 				{% endblock content %}
 			</div>
