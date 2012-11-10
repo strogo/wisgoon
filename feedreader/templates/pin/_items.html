@@ -14,7 +14,7 @@
 			</a>
 		</div>
 		{% endthumbnail %}
-		<p>{{item.text|safe|linebreaksbr|truncatewords:"50"}} 
+		<p>{{item.text|safe|truncatewords:"50"|linebreaksbr}} 
 		{% if item.url %}
 		<a target="_blank" rel="nofollow" href="{{item.url}}"><i class="icon-globe"></i></a>
 		{%endif%}</p>
