@@ -23,10 +23,15 @@ class FeedItemAdmin(admin.ModelAdmin):
 
 class SubscribeAdmin(admin.ModelAdmin):
     list_display = ('user','feed')
-    
+
+def tag_activate(modeladmin, request, queryset):
+    queryset.update(accept=True)
+tag_activate.short_description = "Mark selected tags published"
+
 class SearchAdmin(admin.ModelAdmin):
     list_display = ('keyword', 'accept', 'count', 'slug')
     fields = ('keyword', 'accept', 'count')
+    actions = [tag_activate]
 
 admin.site.register(Feed,FeedAdmin)
 admin.site.register(Item, FeedItemAdmin)
