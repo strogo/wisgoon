@@ -44,7 +44,7 @@
 <ul class="nav nav-tabs">
 	<li>
 		<form class="navbar-search pull-left" action="{% url rss-search%}" method="get">
-			<input type="text" name="q" class="search-query span3" placeholder="جستجو">
+			<input type="text" name="q" class="search-query span3" placeholder="{%if q%}{{q}}{%else%}جستجو{%endif%}" value="{%if q%}{{q}}{%endif%}">
 
 		</form>
 	</li>

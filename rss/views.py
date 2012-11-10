@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*- 
 
 from django.shortcuts import render_to_response, get_object_or_404
-from rss.models import Item, Feed, Subscribe, Likes ,Report
+from rss.models import Item, Feed, Subscribe, Likes ,Report, Search
 from django.template.context import RequestContext
 from rss.forms import FeedForm ,ReportForm 
 from django.http import HttpResponseRedirect  #, HttpResponse
@@ -271,6 +271,13 @@ def search_query(query, offset=0):
 
 def search(request):
     q = request.GET.get('q', '')
+    
+    if q != '':
+        searchObj, created = Search.objects.get_or_create(keyword=q)
+        if not created:
+            searchObj.count=searchObj.count+1
+            searchObj.save() 
+    
     offset = int(request.GET.get('older', 0))
     docs=search_query(q, offset)
         

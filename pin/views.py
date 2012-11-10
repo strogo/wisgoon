@@ -22,6 +22,7 @@ import os
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import transaction
+from httplib import HTTPResponse
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -379,6 +380,7 @@ def tag_complete(request):
     return HttpResponse(json.dumps(data))
     
     
-    
+def tag(request, tag):
+    return HttpResponse('%s' % tag)
     
     

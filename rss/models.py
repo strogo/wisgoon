@@ -72,3 +72,16 @@ class Report(models.Model):
     
     class Meta:
         unique_together = (("item", "user"),)
+        
+        
+   
+class Search(models.Model):
+    keyword=models.CharField(max_length=80, unique=True)
+    slug=models.SlugField()
+    accept=models.IntegerField(default=0)
+    count=models.IntegerField(default=1)
+
+    def save(self, *args, **kwargs):
+        self.slug = '-'.join(self.keyword.split())#And clean title, and make sure this is unique.
+        super(Search, self).save(*args, **kwargs)
+    
