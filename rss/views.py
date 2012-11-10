@@ -276,27 +276,61 @@ def search(request):
         searchObj, created = Search.objects.get_or_create(keyword=q)
         if not created:
             searchObj.count=searchObj.count+1
-            searchObj.save() 
+            searchObj.save()
     
-    offset = int(request.GET.get('older', 0))
-    docs=search_query(q, offset)
+        offset = int(request.GET.get('older', 0))
+        docs=search_query(q, offset)
+            
+        result = Item.objects.filter(id__in=docs).all()
         
-    result = Item.objects.filter(id__in=docs).all()
+        objects = dict([(obj.id, obj) for obj in result])
+        sorted_objects = [objects[id] for id in docs]
+        
+        result = sorted_objects
     
-    objects = dict([(obj.id, obj) for obj in result])
-    sorted_objects = [objects[id] for id in docs]
+        if request.is_ajax():
+            return render_to_response('rss/_items.html',
+                                  {'latest_items':result, 'offset':offset+30,'q':q},
+                                  context_instance=RequestContext(request))
     
-    result = sorted_objects
-    
-    if request.is_ajax():
-        return render_to_response('rss/_items.html',
-                              {'latest_items':result, 'offset':offset+30,'q':q},
-                              context_instance=RequestContext(request))
-
+        else:
+            return render_to_response('rss/search.html',
+                                  {'latest_items':result, 'offset':offset+30,'q':q},
+                                  context_instance=RequestContext(request))
     else:
-        return render_to_response('rss/search.html',
-                              {'latest_items':result, 'offset':offset+30,'q':q},
-                              context_instance=RequestContext(request))
+        sObj = Search.objects.filter(accept=1).order_by('-count')[:100]
+        return render_to_response('rss/tags.html',{'sobj':sObj},context_instance=RequestContext(request))
+    
+def tag(request, q):
+    if q != '':
+        q=q.replace('-',' ')
+        searchObj, created = Search.objects.get_or_create(keyword=q)
+        if not created:
+            searchObj.count=searchObj.count+1
+            searchObj.save()
+    
+        offset = int(request.GET.get('older', 0))
+        docs=search_query(q, offset)
+            
+        result = Item.objects.filter(id__in=docs).all()
+        
+        objects = dict([(obj.id, obj) for obj in result])
+        sorted_objects = [objects[id] for id in docs]
+        
+        result = sorted_objects
+    
+        if request.is_ajax():
+            return render_to_response('rss/_items.html',
+                                  {'latest_items':result, 'offset':offset+30,'q':q},
+                                  context_instance=RequestContext(request))
+    
+        else:
+            return render_to_response('rss/search.html',
+                                  {'latest_items':result, 'offset':offset+30,'q':q},
+                                  context_instance=RequestContext(request))
+    else:
+        sObj = Search.objects.all().order_by('-count')[:100]
+        return render_to_response('rss/tags.html',{'sobj':sObj},context_instance=RequestContext(request))
 
 def comment_posted(request):
     if request.GET['c']:

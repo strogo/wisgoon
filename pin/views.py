@@ -379,8 +379,3 @@ def tag_complete(request):
         data.append("%s %s" % (q, x))
     return HttpResponse(json.dumps(data))
     
-    
-def tag(request, tag):
-    return HttpResponse('%s' % tag)
-    
-    

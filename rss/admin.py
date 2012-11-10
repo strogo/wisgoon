@@ -1,5 +1,5 @@
 from django.contrib import admin
-from rss.models import Feed, Item, Subscribe
+from rss.models import Feed, Item, Subscribe, Search
 
 class FeedAdmin(admin.ModelAdmin):
     list_display = ('url','title','last_fetch','followers','view','priority','creator','status','lock')
@@ -23,7 +23,12 @@ class FeedItemAdmin(admin.ModelAdmin):
 
 class SubscribeAdmin(admin.ModelAdmin):
     list_display = ('user','feed')
+    
+class SearchAdmin(admin.ModelAdmin):
+    list_display = ('keyword', 'accept', 'count', 'slug')
+    fields = ('keyword', 'accept', 'count')
 
 admin.site.register(Feed,FeedAdmin)
 admin.site.register(Item, FeedItemAdmin)
 admin.site.register(Subscribe, SubscribeAdmin)
+admin.site.register(Search, SearchAdmin)

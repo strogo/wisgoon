@@ -78,9 +78,16 @@ class Report(models.Model):
 class Search(models.Model):
     keyword=models.CharField(max_length=80, unique=True)
     slug=models.SlugField()
-    accept=models.IntegerField(default=0)
+    accept=models.BooleanField()
     count=models.IntegerField(default=1)
 
+    @models.permalink
+    def to_url(self):
+        return ('tag', [self.slug])
+    
+    def __unicode__(self):
+        return self.keyword
+    
     def save(self, *args, **kwargs):
         self.slug = '-'.join(self.keyword.split())#And clean title, and make sure this is unique.
         super(Search, self).save(*args, **kwargs)
