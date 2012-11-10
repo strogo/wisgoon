@@ -15,7 +15,6 @@
 {%block title%} - کاربر {{latest_items.0.user.username}} {%endblock title%}
 
 {% block content %}
-
 <script type="text/javascript">
 var start_loading=0;
 </script>
@@ -28,12 +27,9 @@ var start_loading=0;
 			{% endif%}
 			
 			{% include "pin/user_profile.html"%}
-			
 			{% include "pin/_items.html"%}
 		</div>
 	</div>
 </div>
-
 {% include "rss/feed_scripts.html" %}
-
 {% endblock content %}
