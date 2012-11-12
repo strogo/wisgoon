@@ -19,7 +19,7 @@ var start_loading=0;
 	<div class="well">
 		<div id="tagcloud">
 		{% for tags in sobj%}
-		<a href="/tag/{{tags.slug}}" rel="{{tags.count}}">{{tags.keyword}}</a>
+		<a href="/tag/{{tags.slug}}" rel="{{tags.count}}" style="padding-right: 10px">{{tags.keyword}}</a>
 		{%endfor%}
 		</div>
 		
