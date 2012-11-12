@@ -2,6 +2,7 @@
 
 {% block extra_js %}
 <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<script src="{{MEDIA_URL}}js/jquery.tagcloud.js"></script>
 {% endblock extra_js %}
 
 {% block content%}
@@ -16,11 +17,23 @@ var start_loading=0;
 		{% include 'rss/feed_subscribe.html'%}
 		
 	<div class="well">
-		<ul>
+		<div id="tagcloud">
 		{% for tags in sobj%}
-		<li><a href="/tag/{{tags.slug}}">{{tags.keyword}}</a></li>
+		<a href="/tag/{{tags.slug}}" rel="{{tags.count}}">{{tags.keyword}}</a>
 		{%endfor%}
-		</ul>
+		</div>
+		
+		<script type="text/javascript">
+	$.fn.tagcloud.defaults = {
+      size: {start: 14, end: 18, unit: 'pt'},
+      color: {start: '#cde', end: '#f52'}
+    };
+
+    $(function () {
+      $('#tagcloud a').tagcloud();
+    });
+		</script>
+		
 	</div>
 	</div>
 </div>
