@@ -141,9 +141,9 @@ jQuery(function($) {
         event.preventDefault();
     });
 });
-
-$('body').on('hidden', '.modal', function () {
-  $(this).removeData('modal');
+$('#pinitem').on('hide', function() {
+    $(this).removeData('modal');
+    $(this).children('.modal-body').html('');
 });
 </script>
 
