@@ -1,6 +1,6 @@
-# Create your views here.
+# coding: utf-8
 from django.shortcuts import render_to_response, get_object_or_404
-from pin.forms import PinForm
+from pin.forms import PinForm, PinUpdateForm
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, Http404,\
@@ -245,6 +245,30 @@ def send(request):
         return render_to_response('pin/_send.html',{'form': form}, context_instance=RequestContext(request))
     else:
         return render_to_response('pin/send.html',{'form': form}, context_instance=RequestContext(request))
+
+@login_required
+def edit(request, post_id):
+    try:
+        post = Post.objects.get(pk=int(post_id))
+        if post.user.id != request.user.id:
+            return HttpResponseRedirect('/pin/')
+        
+        if request.method == "POST":
+            form = PinUpdateForm(request.POST, instance=post)
+            if form.is_valid():
+                model = form.save(commit=False)
+                model.save()
+                
+                return HttpResponse('با موفقیت به روزرسانی شد.')
+        else:
+            form = PinUpdateForm(instance=post)
+            
+        if request.is_ajax():
+            return render_to_response('pin/_edit.html',{'form': form, 'post':post}, context_instance=RequestContext(request))
+        else:
+            return render_to_response('pin/edit.html',{'form': form, 'post':post}, context_instance=RequestContext(request))
+    except Post.DoesNotExist:
+        return HttpResponseRedirect('/pin/')
 
 
 def save_upload( uploaded, filename, raw_data ):

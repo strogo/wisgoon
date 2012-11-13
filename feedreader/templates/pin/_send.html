@@ -2,7 +2,7 @@
 {% csrf_token%}
 	<div class="control-group">
       	{{ form.errors}}
-        <label class="control-label">تصویر</label>
+        <label class="control-label">تصویر: </label>
 		<div class="controls">
 			<div class="uploaded-image"></div>
 			<input type="hidden" value="" id="image_field" name="image" />
@@ -17,7 +17,7 @@
 	
 	<div class="control-group ">
             
-        <label class="control-label">توضیحات</label>
+        <label class="control-label">توضیحات: </label>
 		<div class="controls">
 			<textarea id="id_text" rows="5" cols="40" name="text"></textarea>
 		<span class="help-inline"></span>

@@ -1,0 +1,20 @@
+{% load thumbnail%}
+<form method="post" action="{% url pin-item-edit post.id%}" data-async class="form-horizontal" action="" id="pin_form" >
+{% csrf_token%}
+	
+      	{{ form.errors}}
+        
+		
+		{% thumbnail post.image "110" upscale=False as im %}
+		<div class="img-block" style="float:left;">
+			<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+		</div>
+		{% endthumbnail %}
+			<textarea id="id_text" rows="5" cols="40" name="text">{{form.text.value}}</textarea><br><br>
+		
+			<input type="text" name="url" value="{{form.url.value}}" placeholder="URL" class="span3 ltr">
+
+<div class="form-actions">
+	<input type="submit" class="btn btn-primary" value="ذخیره" />
+</div>
+</form>

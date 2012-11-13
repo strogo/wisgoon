@@ -6,3 +6,8 @@ class PinForm(ModelForm):
         model=Post
         exclude = ('user', 'like', 'timestamp')
         
+class PinUpdateForm(ModelForm):
+    class Meta:
+        model=Post
+        exclude = ('user', 'like', 'timestamp', 'image')
+        
