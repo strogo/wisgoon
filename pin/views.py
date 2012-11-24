@@ -1,28 +1,28 @@
 # coding: utf-8
-from django.shortcuts import render_to_response, get_object_or_404
-from pin.forms import PinForm, PinUpdateForm
-from django.template.context import RequestContext
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponseBadRequest, Http404,\
-    HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
 
-from django.contrib.comments.models import Comment
-
-import pin_image
-import time
-from shutil import copyfile
-from glob import glob
-from pin.models import Post, Follow, Stream, Likes
-from pin.crawler import get_images
+""" import from python """
 import json
 import urllib
-import os
+import time
+from shutil import copyfile
+
+""" import from django """
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template.context import RequestContext
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, HttpResponseBadRequest, Http404, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from django.contrib.comments.models import Comment
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from httplib import HTTPResponse
+
+""" import from application """
+import pin_image
+from pin.forms import PinForm, PinUpdateForm
+from pin.models import Post, Follow, Stream, Likes
+from pin.crawler import get_images
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -30,13 +30,10 @@ def home(request):
     
     try:
         timestamp = int(request.GET.get('older', 0))
-    except ValueError:
-        timestamp = 0
-    
-    if timestamp == 0:
-        latest_items = Post.objects.all().order_by('-timestamp')[:30]
-    else:
         latest_items = Post.objects.all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
+    except ValueError:
+        """ Not set older query string """
+        latest_items = Post.objects.all().order_by('-timestamp')[:30]
     
     form = PinForm()
     
@@ -57,13 +54,10 @@ def home(request):
 def user(request, user_id):
     try:
         timestamp = int(request.GET.get('older', 0))
-    except ValueError:
-        timestamp = 0
-    
-    if timestamp == 0:
-        latest_items = Post.objects.all().filter(user=user_id).order_by('-timestamp')[:30]
-    else:
         latest_items = Post.objects.all().filter(user=user_id).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
+    except ValueError:
+        """ Get latest items """
+        latest_items = Post.objects.all().filter(user=user_id).order_by('-timestamp')[:30]
     
     form = PinForm()
     
@@ -87,13 +81,9 @@ def following(request):
     
     try:
         timestamp = int(request.GET.get('older', 0))
-    except ValueError:
-        timestamp = 0
-    
-    if timestamp == 0:
-        stream = Stream.objects.filter(user=request.user).order_by('-date')[:30]
-    else:
         stream = Stream.objects.filter(user=request.user).extra(where=['date<%s'], params=[timestamp]).order_by('-date')[:30]
+    except ValueError:
+        stream = Stream.objects.filter(user=request.user).order_by('-date')[:30]
     
     idis = []
     for p in stream:
@@ -223,14 +213,10 @@ def send(request):
             filename= model.image
             
             image_o = "%s/pin/temp/o/%s" % ( MEDIA_ROOT,filename)
-            image_t = "%s/pin/temp/t/%s" % ( MEDIA_ROOT,filename)
             
             image_on = "%s/pin/images/o/%s" % ( MEDIA_ROOT, filename)
             
             copyfile(image_o, image_on)
-            
-            #glob(image_o)
-            #glob(image_t)
             
             model.image = "pin/images/o/%s" % (filename)
             model.timestamp = time.time()
@@ -332,7 +318,6 @@ def upload(request):
             
             pin_image.resize(image_o, image_t, 99)
             
-        import json
         ret_json = {'success':success,'file':filename}
         return HttpResponse( json.dumps( ret_json ) )
 

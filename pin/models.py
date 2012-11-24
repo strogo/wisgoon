@@ -37,9 +37,7 @@ class Likes(models.Model):
     post = models.ForeignKey(Post, related_name="post_item")
     
     class Meta:
-        unique_together = (("post", "user"),)    
-
-
+        unique_together = (("post", "user"),)
 
 def add_post_to_stream(sender, **kwargs):
     post = kwargs['instance']
@@ -49,15 +47,4 @@ def add_post_to_stream(sender, **kwargs):
         stream = Stream(post=post, user=follower.follower, date=post.timestamp, following=user)
         stream.save()
     
-post_save.connect(add_post_to_stream, sender=Post)
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+post_save.connect(add_post_to_stream, sender=Post)    

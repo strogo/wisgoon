@@ -10,31 +10,24 @@
 
 {% include "base/all_header.html"%}
 
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css?ver=1.0">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css?v=0.0.1">
 <script type="text/javascript" src="{{MEDIA_URL}}js/jquery.js"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}js/bootstrap.js"></script>
-
-{% block extra_js %}
-
-{% endblock extra_js %}
-
+{% block extra_js %}{% endblock extra_js %}
 <style type="text/css">
 /* thanks to http://afsaran.ir/ */
-/*<![CDATA[*/
-			@font-face
-			{
-				font-family: afsFont;
-				src: local('Koodak Bold'),
-					 url('{{MEDIA_URL}}/fonts/BKoodakBold.woff') format('woff'),
-					 url('{{MEDIA_URL}}/fonts/BKoodakBold.ttf') format('truetype'),
-					 url('{{MEDIA_URL}}/fonts/BKoodakBold.eot');
-			}
-/*]]>*/
+@font-face
+{
+	font-family: afsFont;
+	src: local('Koodak Bold'),
+	url('{{MEDIA_URL}}/fonts/BKoodakBold.woff') format('woff'),
+	url('{{MEDIA_URL}}/fonts/BKoodakBold.ttf') format('truetype'),
+	url('{{MEDIA_URL}}/fonts/BKoodakBold.eot');
+}
 </style>
 {% include "base/analytics.html"%}
-
 </head>
 
 	<body dir="rtl">
@@ -87,7 +80,7 @@
 			</div>
 		</div>
 
-{% if user.is_authenticated%}
+{% if user.is_authenticated %}
 <div style="display: none;" class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
