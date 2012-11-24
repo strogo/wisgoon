@@ -4,7 +4,7 @@
       	{{ form.errors}}
         <label class="control-label">تصویر: </label>
 		<div class="controls">
-			<div class="uploaded-image"></div>
+			<div class="uploaded-image"> </div>
 			<input type="hidden" value="" id="image_field" name="image" />
 			<div id="file-uploader">       
 			    <noscript>          
@@ -19,8 +19,8 @@
             
         <label class="control-label">توضیحات: </label>
 		<div class="controls">
-			<textarea id="id_text" rows="5" cols="40" name="text"></textarea>
-		<span class="help-inline"></span>
+			<textarea id="id_text" rows="5" cols="40" name="text"> </textarea>
+		<span class="help-inline"> </span>
 		</div>
     </div>
     
@@ -36,7 +36,18 @@
 </div>
 </form>
 
-
+<script type="text/javascript">
+var image_selected=0;
+$("#pin_form").submit(function(){
+	if(image_selected == 0){
+		alert('لطفا یک تصویر انتخاب کنید');
+		return false;
+		
+	}else{
+		return true;
+	}
+});
+</script>
 
 <script src="{{MEDIA_URL}}js/fileuploader.js" type="text/javascript"></script>
 <script>
@@ -63,6 +74,7 @@ function createUploader(){
 			$('#file-uploader').hide();
             $('.uploaded-image').html('<img src="/media/pin/temp/t/'+responseJSON.file+'">');
 			$('#image_field').val(responseJSON.file);
+			image_selected=1;
 		}else{
 			alert('خطا هنگام ذخیره فایل.');
         }
