@@ -1,0 +1,11 @@
+{% for noti in notif %}
+	{% if noti.type == 1 %}
+		<span><a href="{% url pin-user noti.sender.id%}">{{noti.sender.username}}</a></span> از 
+		{% if noti.post.text.strip %}
+			<span><a href="{% url pin-item noti.post.id %}">{{noti.post.text}}</a></span>
+		{% else %}
+			<span><a href="{% url pin-item noti.post.id %}">{{noti.post.id}}</a></span>
+		{% endif %}
+		خوشش آومد.<br>
+	{% endif %}
+{% endfor %}

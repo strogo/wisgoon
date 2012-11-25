@@ -59,12 +59,14 @@
 			  {%endif%}
 			  </li>
 			  
-			  {% if user.is_authenticated%}
-			  <li class="nav-right">
-			  	<a href="{% url pin-following%}">دنبال شوندگان</a>
-			  </li>
-			  
-			  {%endif%}
+{% if user.is_authenticated%}
+<li class="nav-right">
+	<a href="{% url pin-following%}">دنبال شوندگان</a>
+</li>
+<li class="nav-right">
+	<a href="#notify" data-load="{% url show_notify%}" class="popnotify"><i class="icon-bell"> </i> {{user.id|get_user_notify}} </a>
+</li>
+{%endif%}
 			  
 			  {%block pin-ex-nav%}{%endblock pin-ex-nav%}
 			  
@@ -138,6 +140,29 @@ $('#pinitem').on('hide', function() {
     $(this).removeData('modal');
     $(this).children('.modal-body').html('');
 });
+
+// for notification popover
+var isVisible = false;
+var clickedAway = false;
+var notifCache=false;
+$(".popnotify").bind('click',function(){
+	var el=$(this);
+	if (isVisible){
+		$(el).popover('hide');
+	}else{
+		isVisible = true;
+		if(!notifCache){
+		    $.get(el.attr('data-load'),function(d){
+		    	notifCache=d;
+		    	el.unbind('click').popover({content: d, placement:'bottom',html:true}).popover('show');
+		    });
+		}else{
+		    el.unbind('click').popover({content: notifCache, placement:'bottom',html:true}).popover('show');   	
+	    }
+    }
+    
+});
+
 </script>
 
 {% include 'base/all_footer.html'%}

@@ -20,7 +20,7 @@ from django.contrib.comments.models import Comment
 """ import from application """
 import pin_image
 from pin.forms import PinForm, PinUpdateForm
-from pin.models import Post, Follow, Stream, Likes
+from pin.models import Post, Follow, Stream, Likes, Notify
 from pin.crawler import get_images
 
 
@@ -390,6 +390,10 @@ def like(request, item_id):
             
     except Post.DoesNotExist:
         return HttpResponseRedirect('/')
+
+def show_notify(request):
+    notif = Notify.objects.all().filter(user_id=request.user.id, seen=False)
+    return render_to_response('pin/notify.html',{'notif':notif})
 
 def tag_complete(request):
     q = request.GET['q']

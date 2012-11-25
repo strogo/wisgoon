@@ -2,7 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 
 class Post(models.Model):
     #title = models.CharField(max_length=250, blank=True)
@@ -39,6 +39,14 @@ class Likes(models.Model):
     class Meta:
         unique_together = (("post", "user"),)
 
+class Notify(models.Model):
+    post = models.ForeignKey(Post)
+    sender = models.ForeignKey(User, related_name="sender")
+    user = models.ForeignKey(User, related_name="userid")
+    text = models.CharField(max_length=500)
+    seen = models.BooleanField(default=False)
+    type = models.IntegerField(default=1) # 1=Post_like, 2=Post_comment
+
 def add_post_to_stream(sender, **kwargs):
     post = kwargs['instance']
     user = post.user
@@ -46,5 +54,27 @@ def add_post_to_stream(sender, **kwargs):
     for follower in followers:
         stream = Stream(post=post, user=follower.follower, date=post.timestamp, following=user)
         stream.save()
+
+def user_like_post(sender, **kwargs):
+    like = kwargs['instance']
+    post = like.post
+    sender = like.user
     
-post_save.connect(add_post_to_stream, sender=Post)    
+    notify = Notify()
+    notify.post = post
+    notify.sender = sender
+    notify.user = post.user
+    notify.text = 'like this'
+    notify.save()
+    
+def user_unlike_post(sender, **kwargs):
+    like = kwargs['instance']
+    post = like.post
+    sender = like.user
+    
+    notify = Notify.objects.all().filter(post=post, sender=sender)
+    notify.delete()
+
+post_save.connect(add_post_to_stream, sender=Post)
+post_save.connect(user_like_post, sender=Likes)
+post_delete.connect(user_unlike_post, sender=Likes)
