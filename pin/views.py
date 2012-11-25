@@ -392,7 +392,8 @@ def like(request, item_id):
         return HttpResponseRedirect('/')
 
 def show_notify(request):
-    notif = Notify.objects.all().filter(user_id=request.user.id, seen=False).order_by('-id')
+    Notify.objects.filter(user_id=request.user.id, seen=False).update(seen=True)
+    notif = Notify.objects.all().filter(user_id=request.user.id).order_by('-id')
     return render_to_response('pin/notify.html',{'notif':notif})
 
 def tag_complete(request):
