@@ -64,7 +64,7 @@
 	<a href="{% url pin-following%}">دنبال شوندگان</a>
 </li>
 <li class="nav-right">
-	<a href="#notify" data-load="{% url show_notify%}" class="popnotify"><i class="icon-bell"> </i> {{user.id|get_user_notify}} </a>
+	<a href="#notify" data-load="{% url show_notify%}" title="اعلانات" class="popnotify"><i class="icon-bell"> </i> {{user.id|get_user_notify}} </a>
 </li>
 {%endif%}
 			  
