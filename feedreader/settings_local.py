@@ -79,6 +79,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
@@ -98,7 +99,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
     #'johnny.middleware.LocalStoreClearMiddleware',
     #'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
@@ -155,6 +156,7 @@ INSTALLED_APPS = (
     'ban',
     'socialacc',
     'contactus',
+    'compressor',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -205,6 +207,11 @@ SPHINX_PORT = 9312
 
 #/TODO 
 THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
+
+COMPRESS_ENABLED = True
+COMPRESS_URL = MEDIA_URL
+COMPRESS_ROOT = MEDIA_ROOT
+COMPRESS_OUTPUT_DIR = 'static_cache'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

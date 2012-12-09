@@ -1,4 +1,5 @@
 {% load rss_tags %}
+{% load compress %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -9,14 +10,17 @@
 	<meta name="keywords" content="social,rss,reader" />
 	<meta name="description" content="{%block description%}what is going on, social rss reader{%endblock%}" />
 {% include "base/all_header.html"%}
+{% compress css %}
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css">
-
+{%endcompress%}
+{% compress js %}
 <script type="text/javascript" src="{{MEDIA_URL}}js/jquery.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}js/bootstrap.js"></script>
 
 {% block extra_js %}{% endblock extra_js %}
+{% endcompress %}
 <style type="text/css">
 /* thanks to http://afsaran.ir/ */
 /*<![CDATA[*/
@@ -121,11 +125,7 @@
   </div>
 </div>
 
-
-
 {%endif%}
-
-
 {% include 'base/all_footer.html'%}
 
 	</body>

@@ -87,6 +87,7 @@ SECRET_KEY = 'iqeri28py6po$@c2a#dvicdqh7)58%!17jdou=7-$su#w5i6m)'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
+    'compressor.finders.CompressorFinder',
 #     'django.template.loaders.eggs.Loader',
 )
 
@@ -152,6 +153,7 @@ INSTALLED_APPS = (
     'daddy_avatar',
     'socialacc',
     'contactus',   
+    'compressor',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -184,6 +186,10 @@ JOHNNY_MIDDLEWARE_KEY_PREFIX='wis_cac'
 
 SPHINX_SERVER = 'localhost'
 SPHINX_PORT = 9312
+
+COMPRESS_URL = MEDIA_URL
+COMPRESS_ROOT = MEDIA_ROOT
+COMPRESS_OUTPUT_DIR = 'static_cache'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

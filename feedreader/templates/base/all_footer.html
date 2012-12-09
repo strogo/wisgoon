@@ -2,7 +2,8 @@
 <button id="ScrollToTop" class="Button WhiteButton Indicator" type="button">
     <i class="icon-arrow-up"></i>
 </button>
-
+{% load compress %}
+{% compress js inline%}
 <script type="text/javascript">
 $('.tooltips').tooltip();
 $("#ScrollToTop").click(function(){
@@ -29,3 +30,4 @@ $('.pin-item-link').live('click',function(){
 	return false;
 });
 </script>
+{%endcompress%}

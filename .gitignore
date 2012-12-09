@@ -1,2 +1,4 @@
 *.pyc
 /munin/
+/.project
+/.pydevproject

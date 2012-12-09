@@ -39,6 +39,8 @@
 </div>
 </form>
 
+{% load compress %}
+{% compress js inline%}
 
 <script type="text/javascript">
 
@@ -101,3 +103,4 @@ function start_images(){
 	cur_id=0;
 }
 </script>
+{%endcompress%}
