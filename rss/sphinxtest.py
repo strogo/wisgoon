@@ -32,7 +32,7 @@ def search_query(query, offset):
     return docs
 
 
-q ='کتاب'
+q ='god'
     
 if q != '':
     

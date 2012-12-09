@@ -279,6 +279,7 @@ def search(request):
             searchObj.save()
     
         offset = int(request.GET.get('older', 0))
+
         docs=search_query(q, offset)
             
         result = Item.objects.filter(id__in=docs).all()
