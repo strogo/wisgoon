@@ -77,6 +77,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder' 
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
@@ -87,7 +88,6 @@ SECRET_KEY = 'iqeri28py6po$@c2a#dvicdqh7)58%!17jdou=7-$su#w5i6m)'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    'compressor.finders.CompressorFinder',
 #     'django.template.loaders.eggs.Loader',
 )
 
@@ -187,7 +187,7 @@ JOHNNY_MIDDLEWARE_KEY_PREFIX='wis_cac'
 SPHINX_SERVER = 'localhost'
 SPHINX_PORT = 9312
 
-COMPRESS_ENABLED = False
+#COMPRESS_ENABLED = False
 COMPRESS_URL = MEDIA_URL
 COMPRESS_ROOT = MEDIA_ROOT
 COMPRESS_OUTPUT_DIR = 'static_cache'
