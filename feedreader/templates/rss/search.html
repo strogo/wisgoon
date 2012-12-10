@@ -5,6 +5,15 @@
 {% endblock extra_js %}
 
 {% block title%} - {{q}}{% endblock title%}
+{%block description%}{{q}}{%endblock%}
+
+{% block current_feed %}
+<li class="nav-right active">
+	<a href="#"><h1 style="display: inline">{{q}}</h1></a>
+</li>
+
+{% endblock current_feed %}
+
 {% block content%}
 
 <script type="text/javascript">
