@@ -393,7 +393,7 @@ def like(request, item_id):
 
 def show_notify(request):
     Notify.objects.filter(user_id=request.user.id, seen=False).update(seen=True)
-    notif = Notify.objects.all().filter(user_id=request.user.id).order_by('-id')
+    notif = Notify.objects.all().filter(user_id=request.user.id).order_by('-id')[:20]
     return render_to_response('pin/notify.html',{'notif':notif})
 
 def tag_complete(request):
