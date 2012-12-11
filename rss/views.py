@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*- 
 
 from django.shortcuts import render_to_response, get_object_or_404
-from rss.models import Item, Feed, Subscribe, Likes ,Report, Search
+from rss.models import Item, Feed, Subscribe, Likes ,Report, Search, Lastview
 from django.template.context import RequestContext
 from rss.forms import FeedForm ,ReportForm 
 from django.http import HttpResponseRedirect  #, HttpResponse
@@ -98,7 +98,7 @@ def feed(request, feed_id):
         latest_items = Item.objects.filter(feed=feed_id).all().order_by('-timestamp')[:30]
     else:
         latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
-            
+    
     form = ReportForm()
     
     if request.is_ajax():
@@ -116,6 +116,9 @@ def feed(request, feed_id):
 def feed_item(request, feed_id, item_id):
     feed = Feed.objects.get(pk=feed_id)
     item = get_object_or_404(Item.objects.filter(feed=feed_id,id=item_id)[:1])
+    
+    #store last view
+    Lastview.objects.get_or_create(item=item_id)
     
     latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
     form = ReportForm()
@@ -268,6 +271,19 @@ def search_query(query, offset=0):
     
     return docs
 
+def lastview(request):
+    lv=Lastview.objects.all().order_by('-id')[:50]
+    docs=[]
+    for doc in lv:
+        docs.append(int(doc.item))
+    print docs
+            
+    result = Item.objects.filter(id__in=docs).all()
+    
+    return render_to_response('rss/lastview.html',
+                                  {'latest_items':result},
+                                  context_instance=RequestContext(request))
+    
 
 def search(request):
     q = request.GET.get('q', '')

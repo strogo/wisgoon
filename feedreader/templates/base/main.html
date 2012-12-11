@@ -60,6 +60,9 @@
 			  {%endif%}
 		<!--<a href="{% url rss-subs %}">اشتراک فید</a>-->
 	</li>
+	<li class="pull-right">
+		<a href="{% url rss-lastview%}">دیده ها</a>
+	</li>
 	{% if user.is_authenticated %}
 	<li class="dropdown nav-right">
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#"> فیدهای شما <b class="caret"></b> </a>

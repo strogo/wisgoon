@@ -91,4 +91,9 @@ class Search(models.Model):
     def save(self, *args, **kwargs):
         self.slug = '-'.join(self.keyword.split())#And clean title, and make sure this is unique.
         super(Search, self).save(*args, **kwargs)
+
+class Lastview(models.Model):
+    item = models.IntegerField(unique=True)
+    
+    
     
