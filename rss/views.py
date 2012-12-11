@@ -280,6 +280,11 @@ def lastview(request):
             
     result = Item.objects.filter(id__in=docs).all()
     
+    objects = dict([(obj.id, obj) for obj in result])
+    sorted_objects = [objects[id] for id in docs]
+        
+    result = sorted_objects
+    
     return render_to_response('rss/lastview.html',
                                   {'latest_items':result},
                                   context_instance=RequestContext(request))
