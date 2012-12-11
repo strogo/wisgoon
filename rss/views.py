@@ -129,6 +129,9 @@ def feed_item(request, feed_id, item_id):
 def feed_item_goto(request, item_id):
     item = get_object_or_404(Item.objects.filter(id=item_id)[:1])
     
+    #store last view
+    Lastview.objects.get_or_create(item=item_id)
+    
     Item.objects.filter(id=item_id).update(goto=item.goto+1)
     
     return HttpResponseRedirect(item.url)
@@ -268,6 +271,9 @@ def search_query(query, offset=0):
     docs =[]
     for item in res['matches']:
         docs.append(item['id'])
+        
+        #store last view
+        Lastview.objects.get_or_create(item=item['id'])
     
     return docs
 
