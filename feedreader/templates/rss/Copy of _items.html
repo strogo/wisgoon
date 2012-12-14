@@ -7,7 +7,7 @@
 
 <div class="feed-item" >
 	<small>{{item.feed.title}}</small>
-	 - 
+	<br>
 	<a target="_blank" rel="nofollow" href="{% url rss-item-goto item.id %}">{{item.title|escape}}</a>
 	<p class="feed-description">
 		{{item.description|striptags|safe|truncatewords:25}}
@@ -17,7 +17,7 @@
 		<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item.title}}">
 	</div>
 	{% endthumbnail %}
-	<div class="feed-actions-v2">
+	<div class="feed-actions">
 		<div class="sharing-actions">
 			<div class="a2a_kit a2a_default_style">
 				<a class="tooltips" data-placement="bottom" title="لینک در ویسگون" href="{{item.get_absolute_url}}"><i class="icon-flag"></i></a>

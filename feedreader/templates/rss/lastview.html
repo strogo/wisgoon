@@ -24,7 +24,7 @@ var start_loading=1;
 	<div class="span12">
 		{% include 'rss/feed_subscribe.html'%}
 		
-	<div id="feed-ul">
+	<div id="feed-ul-v2">
 		{% include "rss/_items.html"%}
 	</div>
 	</div>
@@ -36,6 +36,6 @@ var extend_query='q={{q|safe}}'
 </script>
 
 
-{% include "rss/feed_scripts.html" %}
+{% include "rss/feed_scripts_v2.html" %}
 
 {% endblock content%}

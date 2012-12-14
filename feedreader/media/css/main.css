@@ -11,6 +11,13 @@ body{
 	width: 91%;
 }
 
+#feed-ul-v2{
+	list-style: none;
+	margin:0 auto;
+	padding:0;
+	width: 91%;
+}
+
 #feed-ul-item{
 	width: 600px;
 	margin: 0 auto;
@@ -32,7 +39,16 @@ body{
 	padding: 15px 15px 30px;
 	background: #FFF;
 }
-
+#feed-ul-v2 .feed-item{
+	/*width : 192px;*/
+	-webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+	overflow: hidden;
+	border-top: 2px solid #C00;
+	box-shadow: 0 2px 4px #86898C;
+	/*float: right;*/
+	padding: 5px 5px 5px;
+	background: #FFF;
+}
 
 
 #feed-ul .feed-inner{
