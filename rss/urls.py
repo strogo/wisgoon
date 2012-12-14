@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from rss.feeds import LatestItemFeed, FeedsListFeed
 admin.autodiscover()
 
 urlpatterns = patterns('rss.views',
@@ -19,7 +20,8 @@ urlpatterns = patterns('rss.views',
     url(r'^comments/posted/$', 'comment_posted'),
     url(r'^report/$', 'report', name="rss-item-report"),
     url(r'^user/likes/(?P<user_id>\d+)', 'user_likes', name="rss-item-likes"),
-    
+    url(r'^latest/feed/', LatestItemFeed(), name="rss-item-latest-feed"),
+    url(r'^feeds/feed/', FeedsListFeed(), name="rss-list-feed"),
 )
 
 urlpatterns += patterns('', 

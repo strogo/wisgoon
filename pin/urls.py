@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from pin.feeds import LatestPinFeed
 admin.autodiscover()
 
 urlpatterns = patterns('pin.views',
@@ -20,6 +21,7 @@ urlpatterns = patterns('pin.views',
     url(r'^delete/(?P<item_id>\d+)', 'delete', name="pin-item-delete"),
     url(r'^tag/complete/', 'tag_complete', name="pin-tag-complete"),
     url(r'^show_notify/', 'show_notify', name="show_notify"),
+    url(r'^latest/feed/', LatestPinFeed(), name="pin-latest-feed"),
 )
 
 

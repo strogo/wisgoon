@@ -9,6 +9,10 @@
 
 	<meta name="keywords" content="social,rss,reader" />
 	<meta name="description" content="{%block description%}what is going on, social rss reader{%endblock%}" />
+
+<link rel="alternate" type="application/rss+xml" href="{% url rss-item-latest-feed%}" />
+<link rel="alternate" type="application/rss+xml" href="{% url rss-list-feed%}" />
+
 {% include "base/all_header.html"%}
 {% compress css %}
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css">

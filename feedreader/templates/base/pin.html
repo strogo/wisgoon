@@ -8,7 +8,7 @@
 	<title>ویسگون {% block title%}{% endblock%}</title>
 	<meta name="keywords" content="social,rss,reader" />
 	<meta name="description" content="{%block description%}what is going on, social rss reader{%endblock%}" />
-
+<link rel="alternate" type="application/rss+xml" href="{% url pin-latest-feed%}" />
 {% include "base/all_header.html"%}
 
 {% compress css %}
