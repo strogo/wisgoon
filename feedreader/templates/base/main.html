@@ -103,10 +103,34 @@
 	{%endif%}
 </ul>
 </div>
-			<div id="content" class="container row-fluid" style="padding-top: 80px">
+	
+	
+	<div id="content" class="container " style="padding-top: 80px">
+		<div class="row">
+			
+			<div class="span9">
 				{% block content %}
 				{% endblock content %}
 			</div>
+			
+	<div class="span3">
+	<ul class="nav nav-list">
+	{% if user.is_authenticated%}
+		<li class="nav-header">فیدهای شما</li>
+		{% get_user_feeds %}
+		{% for subs in user_feeds %}
+	<li>
+		<a href="{% url rss-feed subs.feed.id %}">{{subs.feed.title|default:subs.feed.url|truncatechars:35}}</a>
+	</li>
+		{% endfor %}
+	{% endif %}
+	<li class="divider"></li>
+	<li class="nav-header">امکانات سایت</li>
+	<li><a href="{% url rss-search%}">جستجو</a></li>	
+	</ul>
+			</div>
+		</div>
+	</div>
 			<div class="loading">
 				<img src="{{MEDIA_URL}}img/loader.gif" />
 			</div>
