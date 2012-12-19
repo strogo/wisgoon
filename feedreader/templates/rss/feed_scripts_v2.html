@@ -4,25 +4,6 @@ var loadingobj ;
 var a_url = a_url || "";
 var extend_query = extend_query || "";
 
-/*feedobj.masonry({
-    itemSelector : '.feed-item',
-    isRTL: true,
-    isAnimated: false,
-    isFitWidth: true,
-});*/
-
-$('.feed-item').live({
-    mouseenter:
-       function(){
-    	$(".feed-actions", this).stop().animate({bottom:'5px'},{queue:false,duration:160});
-       },
-    mouseleave:
-       function(){
-    	$(".feed-actions", this).removeAttr('style');
-		$(".feed-actions", this).stop().animate({},{queue:false,duration:160});
-       }
-});
-
 function load_posts(page) {
     $.get(
         a_url+'?older=' + page + '&'+extend_query,
@@ -31,8 +12,7 @@ function load_posts(page) {
 				loadingobj.hide();
         	}else{
 				var $boxes = $(response);
-				feedobj.append( $boxes )/*.masonry( 'appended', $boxes )*/;
-				/*feedobj.masonry('reload');*/
+				feedobj.append( $boxes );
 				loadingobj.hide();
 				start_loading=0;
 				ana_ajax(a_url+'?older=' + page + '&'+extend_query);
