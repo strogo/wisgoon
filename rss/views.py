@@ -323,7 +323,7 @@ def search(request):
                                   {'latest_items':result, 'offset':offset+30,'q':q},
                                   context_instance=RequestContext(request))
     else:
-        sObj = Search.objects.filter(accept=1)[:100]
+        sObj = Search.objects.filter(accept=1)
         return render_to_response('rss/tags.html',{'sobj':sObj},context_instance=RequestContext(request))
     
 def tag(request, q):
