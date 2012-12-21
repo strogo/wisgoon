@@ -18,6 +18,8 @@ from django.contrib.comments.models import Comment
 from feedreader.parser import parse_feed_web
 from django.views.decorators.csrf import csrf_exempt
 
+MAX_PER_PAGE = 10
+
 def home(request):
     
     try:
@@ -26,9 +28,9 @@ def home(request):
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Item.objects.all().order_by('-timestamp')[:30]
+        latest_items = Item.objects.all().order_by('-timestamp')[:MAX_PER_PAGE]
     else:
-        latest_items = Item.objects.all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
+        latest_items = Item.objects.all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:MAX_PER_PAGE]
     
     try:   
         user_feeds = Subscribe.objects.filter(user=request.user).all()
@@ -95,9 +97,10 @@ def feed(request, feed_id):
     feed = Feed.objects.get(pk=feed_id)
     
     if timestamp == 0:
-        latest_items = Item.objects.filter(feed=feed_id).all().order_by('-timestamp')[:30]
+        latest_items = Item.objects.filter(feed=feed_id).all().order_by('-timestamp')[:MAX_PER_PAGE]
     else:
-        latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
+        latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'],
+                                                                     params=[timestamp]).order_by('-timestamp')[:MAX_PER_PAGE]
     
     form = ReportForm()
     
