@@ -3,6 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
+from django.core.validators import URLValidator
 
 class Post(models.Model):
     #title = models.CharField(max_length=250, blank=True)
@@ -13,7 +14,7 @@ class Post(models.Model):
     timestamp = models.IntegerField(db_index=True, default=1347546432)
     user = models.ForeignKey(User)
     like = models.IntegerField(default=0)
-    url = models.URLField(blank=True)
+    url = models.CharField(blank=True, max_length=2000, validators=[URLValidator()])
     
     def __unicode__(self):
         return self.text
