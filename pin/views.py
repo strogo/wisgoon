@@ -34,9 +34,9 @@ def home(request):
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Post.objects.all().order_by('-timestamp')[:30]
+        latest_items = Post.objects.all().order_by('-timestamp')[:20]
     else:
-        latest_items = Post.objects.all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
+        latest_items = Post.objects.all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
     
     form = PinForm()
     
@@ -61,9 +61,9 @@ def user(request, user_id):
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Post.objects.all().filter(user=user_id).order_by('-timestamp')[:30]
+        latest_items = Post.objects.all().filter(user=user_id).order_by('-timestamp')[:20]
     else:
-        latest_items = Post.objects.all().filter(user=user_id).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:30]
+        latest_items = Post.objects.all().filter(user=user_id).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
     
     form = PinForm()
     
@@ -91,9 +91,9 @@ def following(request):
         timestamp = 0
     
     if timestamp == 0:
-        stream = Stream.objects.filter(user=request.user).order_by('-date')[:30]
+        stream = Stream.objects.filter(user=request.user).order_by('-date')[:20]
     else:
-        stream = Stream.objects.filter(user=request.user).extra(where=['date<%s'], params=[timestamp]).order_by('-date')[:30]
+        stream = Stream.objects.filter(user=request.user).extra(where=['date<%s'], params=[timestamp]).order_by('-date')[:20]
     
     idis = []
     for p in stream:
