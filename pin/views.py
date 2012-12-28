@@ -1,9 +1,11 @@
 # coding: utf-8
 """ import from system """
+import os
 import time
 import json
 import urllib
 from shutil import copyfile
+from pin.tools import create_filename
 
 """ import from django """
 from django.shortcuts import render_to_response, get_object_or_404
@@ -175,12 +177,13 @@ def sendurl(request):
             
             filename = image_url.split('/')[-1]
             
-            str = "%f" % time.time()
-            str = str.replace('.', '')
+            #str = "%f" % time.time()
+            #str = str.replace('.', '')
         
-            filename = "%s%s" % (str, filename)
-                            
-            
+            #filename = "%s%s" % (str, os.path.splitext(filename)[1])
+            filename = create_filename(filename)
+            #filename = "%s%s" % (str, filename)
+                        
             image_on = "%s/pin/images/o/%s" % ( MEDIA_ROOT, filename)
                                  
             urllib.urlretrieve(image_url, image_on)
@@ -290,34 +293,27 @@ def save_upload( uploaded, filename, raw_data ):
 
 @csrf_exempt
 def upload(request):
-    if request.method == "POST":    
-    # AJAX Upload will pass the filename in the querystring if it is the "advanced" ajax upload
+    if request.method == "POST":
         if request.is_ajax( ):
-            # the file is stored raw in the request
             upload = request
             is_raw = True
             try:
                 filename = request.GET[ 'qqfile' ]
             except KeyError: 
                 return HttpResponseBadRequest( "AJAX request not valid" )
-        # not an ajax upload, so it was the "basic" iframe version with submission via form
         else:
             is_raw = False
             if len( request.FILES ) == 1:
-                # FILES is a dictionary in Django but Ajax Upload gives the uploaded file an
-                # ID based on a random number, so it cannot be guessed here in the code.
-                # Rather than editing Ajax Upload to pass the ID in the querystring, note that
-                # each upload is a separate request so FILES should only have one entry.
-                # Thus, we can just grab the first (and only) value in the dict.
                 upload = request.FILES.values( )[ 0 ]
             else:
                 raise Http404( "Bad Upload" )
             filename = upload.name
         
-        str = "%f" % time.time()
-        str = str.replace('.', '')
+        #str = "%f" % time.time()
+        #str = str.replace('.', '')
         
-        filename = "%s%s" % (str, filename)
+        #filename = "%s%s" % (str, os.path.splitext(filename)[1])
+        filename = create_filename(filename)
         
         # save the file
         success = save_upload( upload, filename, is_raw )
