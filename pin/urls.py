@@ -26,6 +26,8 @@ urlpatterns = patterns('pin.views',
     url(r'^show_notify/', 'show_notify', name="show_notify"),
     url(r'^latest/feed/', LatestPinFeed(), name="pin-latest-feed"),
     
+    #not stables
+    url(r'^delneveshte/', 'delneveshte', name="pin-latest-feed"),
     url(r'^api/', include(post_resource.urls)),
     
 )

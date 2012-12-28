@@ -398,4 +398,8 @@ def tag_complete(request):
     for x in range(10):
         data.append("%s %s" % (q, x))
     return HttpResponse(json.dumps(data))
-    
+
+def delneveshte(request):
+    return render_to_response('pin/delneveshte.html',context_instance=RequestContext(request))
+
+
