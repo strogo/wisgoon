@@ -150,12 +150,7 @@ class AllFeeds(Node):
     def __init__(self, parser, token):
         pass
         
-    def render(self, context):
-#        try:
-#            context['all_feeds'] = Feed.objects.all()[:50]
-#        except:
-#            context['all_feeds'] = ""
-            
+    def render(self, context):            
         context['all_feeds'] = Feed.objects.all()[:100]
         return ''
 

@@ -28,8 +28,11 @@
     {% endfor %}
 	{% if user.is_authenticated %}
 	<li class="pull-right">
-		<a data-dismiss="alert" href="/accounts/logout/" title="Log out" onclick="return confirm('Are you sure you want to log out?');">
-			  <img src="{{user.email|daddy_avatar:20}}"><i class="icon-off icon-black"></i> خروج</a>
+		<a href="{% url pin-user user.id%}"><img src="{{user.email|daddy_avatar:20}}"></a>
+	</li>
+	<li class="pull-right">
+		<a data-dismiss="alert" href="/accounts/logout/" title="خروج از سایت" onclick="return confirm('Are you sure you want to log out?');">
+		<i class="icon-off icon-black"></i></a>
 	</li>
 	{%else%}
 	<li class="pull-right">
