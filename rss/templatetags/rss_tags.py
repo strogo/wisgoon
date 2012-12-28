@@ -143,6 +143,24 @@ class UserFeeds(Node):
 register.tag('get_user_feeds', user_feeds)
 
 
+def all_feeds(parser, token):
+    return AllFeeds(parser, token)
+
+class AllFeeds(Node):
+    def __init__(self, parser, token):
+        pass
+        
+    def render(self, context):
+#        try:
+#            context['all_feeds'] = Feed.objects.all()[:50]
+#        except:
+#            context['all_feeds'] = ""
+            
+        context['all_feeds'] = Feed.objects.all()[:100]
+        return ''
+
+register.tag('get_all_feeds', all_feeds)
+
 
 def recomend_feeds(parser, token):
     return RecomendFeeds()

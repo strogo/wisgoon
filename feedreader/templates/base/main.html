@@ -124,9 +124,18 @@
 	</li>
 		{% endfor %}
 	{% endif %}
-	<li class="divider"></li>
+	<li class="divider"> </li>
 	<li class="nav-header">امکانات سایت</li>
-	<li><a href="{% url rss-search%}">جستجو</a></li>	
+	<li><a href="{% url rss-search%}">جستجو</a></li>
+	
+	<li class="divider"> </li>
+	<li class="nav-header">لیست فیدها</li>
+	{% get_all_feeds %}
+		{% for allfeed in all_feeds %}
+	<li>
+		<a href="{% url rss-feed allfeed.id %}">{{allfeed.title|default:allfeed.url|truncatechars:35}}</a>
+	</li>
+		{% endfor %}
 	</ul>
 			</div>
 		</div>

@@ -1,9 +1,12 @@
 from django.conf.urls import patterns, include, url
 
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 from pin.feeds import LatestPinFeed
+from pin.api import PostResource
+
 admin.autodiscover()
+
+post_resource=PostResource()
 
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
@@ -22,6 +25,9 @@ urlpatterns = patterns('pin.views',
     url(r'^tag/complete/', 'tag_complete', name="pin-tag-complete"),
     url(r'^show_notify/', 'show_notify', name="show_notify"),
     url(r'^latest/feed/', LatestPinFeed(), name="pin-latest-feed"),
+    
+    url(r'^api/', include(post_resource.urls)),
+    
 )
 
 
