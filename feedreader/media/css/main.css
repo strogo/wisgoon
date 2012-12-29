@@ -86,8 +86,8 @@ body{
 	padding: 15px;
 }
 .feed-item {
-	padding: 5px;
-	margin: 5px;
+	/*padding: 5px;*/
+	margin: 7px;
 	font-family: 'afsfont';
 	font-weight: normal;
 }
