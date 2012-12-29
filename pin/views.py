@@ -153,6 +153,7 @@ def item(request, item_id):
     item = get_object_or_404(Post.objects.filter(id=item_id)[:1])
     
     latest_items = Post.objects.all().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
+    
     likes = Likes.objects.filter(post=item).all()
     
     follow_status = Follow.objects.filter(follower=request.user.id, following=item.user.id).count()

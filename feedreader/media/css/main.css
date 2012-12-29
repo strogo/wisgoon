@@ -65,12 +65,15 @@ body{
 .feed-actions{
 	right:0;
 	width:100%;
-	bottom:-40px;
+	top:-40px;
 	position:absolute;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	padding-bottom: 5px;
+	text-align: center;
 }
-
+.pin-item-top{
+	padding:5px;
+}
 .feed-description{
 	font-family:Tahoma,Arial, Helvetica, sans-serif;
 	font-size:.8em;
