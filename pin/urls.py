@@ -27,7 +27,7 @@ urlpatterns = patterns('pin.views',
     url(r'^latest/feed/', LatestPinFeed(), name="pin-latest-feed"),
     
     #not stables
-    url(r'^delneveshte/', 'delneveshte', name="pin-latest-feed"),
+    url(r'^delneveshte/', 'delneveshte', name="pin-delneveshte"),
     url(r'^api/', include(post_resource.urls)),
     
 )
