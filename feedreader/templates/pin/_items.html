@@ -23,7 +23,7 @@
 		<div style="height: 30px;padding: 3px">
 		<img src="{{item.user.email|daddy_avatar:30}}" style="display: inline;" > 
 		<a href="{% url pin-user item.user.id %}">
-			<b style="font-size:13px;font-weight:normal;margin-right:5px;">{{item.user.username}}</b>
+			<b style="font-size:13px;font-weight:normal;margin-right:5px;">{{item.user|get_username}}</b>
 		</a>
 		</div>
 		<div class="feed-actions">

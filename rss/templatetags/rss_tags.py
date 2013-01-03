@@ -10,6 +10,7 @@ from django.utils.text import normalize_newlines
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import stringfilter
 from calverter import Calverter
+from user_profile.models import Profile
 
 register = Library()
 
@@ -101,6 +102,15 @@ register.tag('user_post_like', user_post_like)
 def get_user_notify(userid):
     notify = Notify.objects.all().filter(user_id=userid, seen=False).count()
     return notify
+
+@register.filter
+def get_username(user):
+    try:
+        profile=Profile.objects.get(user_id=user.id)
+        username=profile.name
+    except Profile.DoesNotExist:
+        username=user.username
+    return username
 
 @register.filter
 def get_host(value):

@@ -384,3 +384,44 @@ color: white;
 -moz-border-radius: 5px;
 border-radius: 5px;
 }
+
+#profile .FixedContainer {
+width: 934px;
+margin: 10px auto;
+}
+
+.ProfileInfo {
+height: 160px;
+width: 698px;
+position: relative;
+}
+
+.ProfilePanel {
+/*float: righ;*/
+background: white;
+box-shadow: 0 1px 3px rgba(34,25,25,0.5);
+-moz-box-shadow: 0 1px 3px rgba(34,25,25,0.5);
+-webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.5);
+}
+
+.ProfileInfo .ProfileImage {
+height: 165px;
+float: right;
+max-width: 160px;
+overflow: hidden;
+}
+
+.ProfileInfo .content {
+margin-right: 180px;
+padding-left: 15px;
+padding-top: 5px;
+}
+
+.ProfileInfo h1 {
+color: #534F4F;
+margin: 15px 0 10px 0;
+font-size: 30px;
+white-space: nowrap;
+overflow: hidden;
+}
+

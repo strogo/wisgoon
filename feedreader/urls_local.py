@@ -8,6 +8,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', 'pin.views.home', name='home'),
     url(r'^feedreader/', include('rss.urls')),
+    url(r'^profile/', include('user_profile.urls')),
     url(r'^pin/', include('pin.urls')),
     url(r'^feedback/', include('contactus.urls')),
     url(r'^accounts/', include('registration.backends.default.urls')),

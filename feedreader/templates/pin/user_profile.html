@@ -1,5 +1,28 @@
 {% load daddy_avatar%}
-<div class="feed-item" style="height: 240px">
-	<img src="{{latest_items.0.user.email|daddy_avatar:192}}"> <br />
-	{{latest_items.0.user.username}}
+{% load rss_tags %}
+<div class="ProfileHeader">
+<div class="FixedContainer row clearfix" style="">
+	<div class="ProfileInfo ProfilePanel ">
+    <a href="" class="ProfileImage">
+    	<img src="{{latest_items.0.user.email|daddy_avatar:165}}" alt="">
+	</a>
+    <div class="content">
+        <span>{{latest_items.0.user|get_username}}</span>
+        <p class="colormuted">{{profile.bio}}</p>
+        
+        <div class="profile-actions">
+        	{% if latest_items.0.user_id != request.user.id %}
+				{% include "pin/following_box.html"%}
+			{% else %}
+			<a href="{% url user-profile-change%}" role="button" class="btn" data-toggle="modal" data-target="#profileModal">ویرایش مشخصات</a>
+
+
+			{% endif%}
+        </div>
+    </div>
 </div>
+	
+</div>
+
+</div>
+

@@ -1,0 +1,31 @@
+{{form.errors}}
+<form class="form" method="post" action="{% url user-profile-change%}">
+	{% csrf_token %}
+ <div class="control-group">
+    <label class="control-label" for="inputEmail">{{form.name.label}}</label>
+    <div class="controls">
+      <input id="id_name" type="text" name="name" value="{{form.name.value|default_if_none:""}}" maxlength="250" />
+    </div>
+  </div> 
+<div class="control-group">
+    <label class="control-label" for="inputEmail">{{form.location.label}}</label>
+    <div class="controls">
+      <input id="id_location" type="text" name="location" value="{{form.location.value|default_if_none:""}}" maxlength="250" />
+    </div>
+  </div>
+<div class="control-group">
+    <label class="control-label" for="inputEmail">{{form.website.label}}</label>
+    <div class="controls">
+      <input id="id_website" type="text" name="website" value="{{form.website.value|default_if_none:""}}" maxlength="200" />
+    </div>
+  </div>
+<div class="control-group">
+    <label class="control-label" for="inputEmail">{{form.bio.label}}</label>
+    <div class="controls">
+      <textarea id="id_bio" rows="3" cols="40" name="bio">{{form.bio.value|default_if_none:""}}</textarea>
+    </div>
+  </div>
+<div class="form-actions">
+<input type="submit" value="بروز رسانی" class="btn btn-primary" />
+</div>
+</form>

@@ -6,6 +6,7 @@ import json
 import urllib
 from shutil import copyfile
 from pin.tools import create_filename
+from user_profile.models import Profile
 
 """ import from django """
 from django.shortcuts import render_to_response, get_object_or_404
@@ -57,6 +58,7 @@ def home(request):
     #return render_to_response('pin/home.html',context_instance=RequestContext(request))
 
 def user(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
     try:
         timestamp = int(request.GET.get('older', 0))
     except ValueError:
@@ -68,6 +70,8 @@ def user(request, user_id):
         latest_items = Post.objects.all().filter(user=user_id).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
     
     form = PinForm()
+    
+    profile = Profile.objects.get(user=user)
     
     if request.is_ajax():
         if latest_items.exists():
@@ -81,7 +85,8 @@ def user(request, user_id):
         follow_status = Follow.objects.filter(follower=request.user.id, following=latest_items[0].user.id).count()
         
         return render_to_response('pin/user.html', 
-                              {'latest_items': latest_items, 'follow_status':follow_status},
+                              {'latest_items': latest_items, 'follow_status':follow_status,
+                               'profile':profile},
                               context_instance=RequestContext(request))
 
 @login_required
@@ -401,6 +406,6 @@ def tag_complete(request):
     return HttpResponse(json.dumps(data))
 
 def delneveshte(request):
-    return render_to_response('pin/delneveshte.html',context_instance=RequestContext(request))
+    return render_to_response('pin/delneveshte2.html',context_instance=RequestContext(request))
 
 
