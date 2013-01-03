@@ -6,7 +6,6 @@ import json
 import urllib
 from shutil import copyfile
 from pin.tools import create_filename
-from user_profile.models import Profile
 
 """ import from django """
 from django.shortcuts import render_to_response, get_object_or_404
@@ -71,8 +70,6 @@ def user(request, user_id):
     
     form = PinForm()
     
-    profile = Profile.objects.get(user=user)
-    
     if request.is_ajax():
         if latest_items.exists():
             return render_to_response('pin/_items.html', 
@@ -85,8 +82,7 @@ def user(request, user_id):
         follow_status = Follow.objects.filter(follower=request.user.id, following=latest_items[0].user.id).count()
         
         return render_to_response('pin/user.html', 
-                              {'latest_items': latest_items, 'follow_status':follow_status,
-                               'profile':profile},
+                              {'latest_items': latest_items, 'follow_status':follow_status},
                               context_instance=RequestContext(request))
 
 @login_required
