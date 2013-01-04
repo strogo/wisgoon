@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
 from django.core.validators import URLValidator
+from django.contrib.sites.models import Site
+from django.conf import settings
 
 class Post(models.Model):
     #title = models.CharField(max_length=250, blank=True)
@@ -22,6 +24,22 @@ class Post(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('pin-item', [str(self.id)])
+    
+    def get_host_url(self):
+        abs=self.get_absolute_url()
+        
+        if settings.DEBUG:
+            return abs 
+        else:
+            host_url='http://%s%s' % (Site.objects.get_current().domain, abs)
+            return host_url
+    
+    def get_image_absolute_url(self):
+        if settings.DEBUG:
+            url='%s%s' % (settings.MEDIA_URL, self.image)
+        else:
+            url='http://%s%s%s' % (Site.objects.get_current().domain, settings.MEDIA_URL, self.image)
+        return url
     
 class Follow(models.Model):
     follower = models.ForeignKey(User ,related_name='follower')
