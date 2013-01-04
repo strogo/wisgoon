@@ -17,6 +17,15 @@ import os
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "feedreader.settings")
 
+import os, sys
+os.environ['PYTHON_EGG_CACHE'] = '/opt/cache/.egg_cache'
+sys.path.append('/usr/lib/python2.7/site-packages/django')
+sys.path.append('/usr/lib/build/django/django')
+sys.path.append('/home/vahid/workspace/wisgoon.com/')
+sys.path.append('/home/vahid/workspace/wisgoon.com/feedreader/')
+sys.path.append('/var/www/html/')
+sys.path.append('/var/www/html/feedreader')
+
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.

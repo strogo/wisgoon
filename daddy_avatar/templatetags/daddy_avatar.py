@@ -11,7 +11,7 @@ def daddy_avatar(user_email, size=200):
     ahash = md5_constructor(user_email).hexdigest()
     
     hash_dir = os.path.join(settings.MEDIA_ROOT, 'daddy_avatar/%d' % size)
-    ospath = os.path.join(settings.MEDIA_ROOT, '%s/%s_%d.jpg'%(hash_dir, ahash, size))
+    ospath = '%s/%s_%d.jpg'%(hash_dir, ahash, size)
     gravatar_url = "http://www.gravatar.com/avatar/%s.jpg/?s=%d" % (ahash, size)
     
     media_avatar = os.path.join(settings.MEDIA_URL, 'daddy_avatar/%d/%s_%d.jpg'%(size, ahash, size))
