@@ -12,6 +12,6 @@ class PostResource(ModelResource):
         o_image = bundle.data['image']
         im = get_thumbnail(o_image, '100x100', crop='center', quality=99)
         bundle.data['thumbnail'] = im
-        bundle.data['permalink'] = '/pin/%d' % (int(id))
+        bundle.data['permalink'] = '/pin/%d/' % (int(id))
         
         return bundle
