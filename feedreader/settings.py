@@ -154,6 +154,7 @@ INSTALLED_APPS = (
     'socialacc',
     'contactus',   
     'compressor',
+    'taggit',
     'user_profile',
 )
 

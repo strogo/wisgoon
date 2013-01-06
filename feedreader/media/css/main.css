@@ -94,6 +94,9 @@ body{
 	font-family: 'afsfont';
 	font-weight: normal;
 }
+.feed-item .row-fluid{
+	margin: 5px;
+}
 .feed-item-title {
 	font-size: 16px;
 	margin: 0px 8px;
@@ -425,3 +428,12 @@ white-space: nowrap;
 overflow: hidden;
 }
 
+.tags{
+	list-style: none;
+}
+.tags li{
+	display: inline;
+	background: #F2F4F8;
+	margin: 5px;
+	padding: 5px;
+}

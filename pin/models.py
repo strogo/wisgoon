@@ -6,6 +6,8 @@ from django.db.models.signals import post_save, post_delete
 from django.core.validators import URLValidator
 from django.contrib.sites.models import Site
 from django.conf import settings
+from taggit.managers import TaggableManager
+from taggit.models import Tag
 
 class Post(models.Model):
     #title = models.CharField(max_length=250, blank=True)
@@ -17,6 +19,8 @@ class Post(models.Model):
     user = models.ForeignKey(User)
     like = models.IntegerField(default=0)
     url = models.CharField(blank=True, max_length=2000, validators=[URLValidator()])
+    
+    tags = TaggableManager(blank=True)
     
     def __unicode__(self):
         return self.text
@@ -39,8 +43,8 @@ class Post(models.Model):
             url='%s%s' % (settings.MEDIA_URL, self.image)
         else:
             url='http://%s%s%s' % (Site.objects.get_current().domain, settings.MEDIA_URL, self.image)
-        return url
-    
+        return url 
+
 class Follow(models.Model):
     follower = models.ForeignKey(User ,related_name='follower')
     following = models.ForeignKey(User, related_name='following')
@@ -94,6 +98,13 @@ def user_unlike_post(sender, **kwargs):
     notify = Notify.objects.all().filter(post=post, sender=sender)
     notify.delete()
 
+def change_tag_slug(sender, **kwargs):
+    if kwargs['created']:
+        tag = kwargs['instance']
+        tag.slug = '-'.join(tag.name.split())#And clean title, and make sure this is unique.
+        tag.save()
+
 post_save.connect(add_post_to_stream, sender=Post)
 post_save.connect(user_like_post, sender=Likes)
 post_delete.connect(user_unlike_post, sender=Likes)
+post_save.connect(change_tag_slug, sender=Tag)

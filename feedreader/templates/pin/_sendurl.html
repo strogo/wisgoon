@@ -13,7 +13,6 @@
 
 <div id="hidden_actions" style="display: none">
 	<div class="control-group" id="image_control" >
-		<label class="control-label">انتخاب تصویر</label>
 		<div class="controls">
 			<div id="images" style="width:210px;text-align: center">
 				<div class="" style="width: 100%;">
@@ -29,10 +28,16 @@
             
         <label class="control-label">توضیحات</label>
 		<div class="controls">
-			<textarea id="id_text" rows="5" cols="40" name="text"> </textarea>
+			<textarea id="id_text" rows="4" cols="40" name="text"> </textarea>
 		<span class="help-inline"> </span>
 		</div>
     </div>
+    <div class="control-group">
+		<label class="control-label">برچسب ها: </label>
+		<div class="controls">
+			<textarea id="textareaUrl" name="tags" rows="1"></textarea>
+		</div>
+	</div>
 	<div class="form-actions">
 		<input id="pin-submit" type="submit" class="btn btn-primary disabled" value="ارسال" style="display: none" />
 	</div>
@@ -57,7 +62,7 @@ function cur_id_change(action){
 		}
 	}
 }
-
+$('#textareaUrl').textext({ plugins: 'tags' });
 $(".img-move").click(function(){
 	action = $(this).attr('rel')
 	cur_id_change(action);

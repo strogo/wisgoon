@@ -1,4 +1,9 @@
 {% load thumbnail%}
+
+{% block extra_js%}
+<script type="text/javascript" src="{{MEDIA_URL}}js/textextc.js"></script>
+{% endblock extra_js%}
+
 <form method="post" action="{% url pin-item-edit post.id%}" data-async class="form-horizontal" action="" id="pin_form" >
 {% csrf_token%}
 	
@@ -10,11 +15,19 @@
 			<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
 		</div>
 		{% endthumbnail %}
+		<input type="hidden" value="{{post.image}}" id="image_field" name="image" />
 			<textarea id="id_text" rows="5" cols="40" name="text">{{form.text.value}}</textarea><br><br>
 		
 			<input type="text" name="url" value="{{form.url.value}}" placeholder="URL" class="span3 ltr">
-
+	        <br><br>
+	        <textarea id="textareaEdit" name="tags" rows="1"></textarea>
 <div class="form-actions">
 	<input type="submit" class="btn btn-primary" value="ذخیره" />
 </div>
 </form>
+<script type="text/javascript">
+$('#textareaEdit').textext({ plugins: 'tags',
+	tagsItems: [{% for tag in post.tags.all %} '{{tag.name}}', {% endfor%}] });
+
+
+</script>

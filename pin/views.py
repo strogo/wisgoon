@@ -56,6 +56,8 @@ def home(request):
     
     #return render_to_response('pin/home.html',context_instance=RequestContext(request))
 
+
+
 def user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     try:
@@ -171,7 +173,10 @@ def item(request, item_id):
 @login_required
 def sendurl(request):
     if request.method == "POST":
-        form = PinForm(request.POST)
+        post_values = request.POST.copy()
+        tags = post_values['tags']
+        post_values['tags']=tags[tags.find("[")+1:tags.find("]")]
+        form = PinForm(post_values)
         if form.is_valid():
             model = form.save(commit=False)
             
@@ -194,6 +199,8 @@ def sendurl(request):
             model.timestamp = time.time()
             model.user = request.user
             model.save()
+            
+            form.save_m2m()
             
             return HttpResponseRedirect('/pin/')
     else:
@@ -221,7 +228,10 @@ def a_sendurl(request):
 @login_required
 def send(request):
     if request.method == "POST":
-        form = PinForm(request.POST)
+        post_values = request.POST.copy()
+        tags = post_values['tags']
+        post_values['tags']=tags[tags.find("[")+1:tags.find("]")]
+        form = PinForm(post_values)
         if form.is_valid():
             model = form.save(commit=False)
             
@@ -238,6 +248,8 @@ def send(request):
             model.user = request.user
             model.save()
             
+            form.save_m2m()
+            
             return HttpResponseRedirect('/pin/')
     else:
         form = PinForm()
@@ -253,17 +265,22 @@ def edit(request, post_id):
         post = Post.objects.get(pk=int(post_id))
         if post.user.id != request.user.id:
             return HttpResponseRedirect('/pin/')
-        
+
         if request.method == "POST":
-            form = PinUpdateForm(request.POST, instance=post)
+            post_values = request.POST.copy()
+            tags = post_values['tags']
+            post_values['tags']=tags[tags.find("[")+1:tags.find("]")]
+            form = PinUpdateForm(post_values, instance=post)
             if form.is_valid():
                 model = form.save(commit=False)
                 model.save()
                 
+                form.save_m2m()
+                
                 return HttpResponse('با موفقیت به روزرسانی شد.')
         else:
             form = PinUpdateForm(instance=post)
-            
+        
         if request.is_ajax():
             return render_to_response('pin/_edit.html',{'form': form, 'post':post}, context_instance=RequestContext(request))
         else:
@@ -403,5 +420,24 @@ def tag_complete(request):
 
 def delneveshte(request):
     return render_to_response('pin/delneveshte2.html',context_instance=RequestContext(request))
+
+def tag(request, keyword):
+    latest_items = Post.objects.filter(tags__slug__in=[keyword])
+    
+    form = PinForm()
+    
+    if request.is_ajax():
+        if latest_items.exists():
+            return render_to_response('pin/_items.html', 
+                              {'latest_items': latest_items,'pin_form':form},
+                              context_instance=RequestContext(request))
+        else:
+            return HttpResponse(0)
+    else:
+        return render_to_response('pin/tag.html', 
+                              {'latest_items': latest_items},
+                              context_instance=RequestContext(request))
+    
+    #return render_to_response('pin/home.html',context_instance=RequestContext(request))
 
 

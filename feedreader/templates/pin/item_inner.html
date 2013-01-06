@@ -53,6 +53,19 @@
 	</div>
 	<div class="row-fluid">
 		<div>
+			<legend>برچسب ها</legend>
+			<ul class="tags">
+			{% for tag in item_inner.tags.all %}
+				<li><a href="{% url pin-tag tag.slug%}">{{tag.name}}</a></li> 
+			{%empty%}
+				فاقد برچسب
+			{% endfor %}
+			</ul>
+		</div>	
+	</div>
+	
+	<div class="row-fluid">
+		<div>
 			<legend>
 				علاقه مندان
 			</legend>

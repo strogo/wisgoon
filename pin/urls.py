@@ -23,6 +23,7 @@ urlpatterns = patterns('pin.views',
     url(r'^like/(?P<item_id>\d+)', 'like', name="pin-item-like"),
     url(r'^delete/(?P<item_id>\d+)', 'delete', name="pin-item-delete"),
     url(r'^tag/complete/', 'tag_complete', name="pin-tag-complete"),
+    url(r'^tag/(.*)/', 'tag', name="pin-tag"),
     url(r'^show_notify/', 'show_notify', name="show_notify"),
     url(r'^latest/feed/', LatestPinFeed(), name="pin-latest-feed"),
     
