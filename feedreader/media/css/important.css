@@ -84,5 +84,6 @@ input, button, select, textarea {
 	
 }
 .popover-content{
+	height: 400px;
 	overflow-y: scroll;
 }
