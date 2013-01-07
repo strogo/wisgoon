@@ -18,7 +18,7 @@
 		<div style="height: 70px;">
 			<a href="{% url pin-user item_inner.user.id %}">
 				<img src="{{item_inner.user.email|daddy_avatar:50}}" style="display: inline;margin-left: 5px" >
-				<b>{{item_inner.user.username}}</b>
+				<b>{{item_inner.user|get_username}}</b>
 			</a> 
 		</div>
 		

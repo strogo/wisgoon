@@ -3,11 +3,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
+from django.contrib.comments.signals import comment_was_posted
 from django.core.validators import URLValidator
 from django.contrib.sites.models import Site
 from django.conf import settings
 from taggit.managers import TaggableManager
 from taggit.models import Tag
+from django.contrib.comments.models import Comment
 
 class Post(models.Model):
     #title = models.CharField(max_length=250, blank=True)
@@ -63,12 +65,14 @@ class Likes(models.Model):
         unique_together = (("post", "user"),)
 
 class Notify(models.Model):
+    TYPES = ((1,'like'),(2,'comment'))
+    
     post = models.ForeignKey(Post)
     sender = models.ForeignKey(User, related_name="sender")
     user = models.ForeignKey(User, related_name="userid")
     text = models.CharField(max_length=500)
     seen = models.BooleanField(default=False)
-    type = models.IntegerField(default=1) # 1=Post_like, 2=Post_comment
+    type = models.IntegerField(default=1, choices=TYPES) # 1=Post_like, 2=Post_comment
 
 def add_post_to_stream(sender, **kwargs):
     post = kwargs['instance']
@@ -97,7 +101,19 @@ def user_unlike_post(sender, **kwargs):
     
     notify = Notify.objects.all().filter(post=post, sender=sender)
     notify.delete()
-
+    
+def user_comment_post(sender, **kwargs):
+    comment = kwargs['comment']
+    post = comment.post
+    sender = comment.user
+        
+    notify = Notify()
+    notify.post = post
+    notify.sender = sender
+    notify.user = post.user
+    notify.text = 'comment this'
+    notify.save()
+            
 def change_tag_slug(sender, **kwargs):
     if kwargs['created']:
         tag = kwargs['instance']
@@ -108,3 +124,4 @@ post_save.connect(add_post_to_stream, sender=Post)
 post_save.connect(user_like_post, sender=Likes)
 post_delete.connect(user_unlike_post, sender=Likes)
 post_save.connect(change_tag_slug, sender=Tag)
+#comment_was_posted.connect(user_comment_post, sender=Comment)
