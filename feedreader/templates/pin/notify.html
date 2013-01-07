@@ -1,7 +1,13 @@
 {% load rss_tags%}
+{% load daddy_avatar%}
 {% for noti in notif %}
+<div class="notif">
 	{% if noti.type == 1 %}
-		<span><a href="{% url pin-user noti.sender.id%}">{{noti.sender|get_username}}</a></span> از 
+		<span>
+			<a href="{% url pin-user noti.sender.id%}">
+				<img src="{{noti.sender.email|daddy_avatar:30}}" style="display: inline;" > 
+			</a>
+		</span> از 
 		{% if noti.post.text.strip %}
 			<span><a href="{% url pin-item noti.post.id %}">{{noti.post.text}}</a></span>
 		{% else %}
@@ -9,4 +15,5 @@
 		{% endif %}
 	    خوشش اومد.<br>
 	{% endif %}
+</div>
 {% endfor %}

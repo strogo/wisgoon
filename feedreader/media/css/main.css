@@ -437,3 +437,10 @@ overflow: hidden;
 	margin: 5px;
 	padding: 5px;
 }
+
+.notif{
+	border-bottom: 1px solid #DADADA;
+	clear: both;
+	margin-bottom: 10px;
+	padding-bottom: 10px;
+}

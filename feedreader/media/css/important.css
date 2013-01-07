@@ -81,5 +81,8 @@ input, button, select, textarea {
 .popover{
 	width: 400px;
 	height: 400px;
+	
+}
+.popover-content{
 	overflow-y: scroll;
 }
