@@ -433,8 +433,13 @@ overflow: hidden;
 }
 .tags li{
 	display: inline;
-	background: #F2F4F8;
+	/*background: #F2F4F8;*/
 	margin: 5px;
+	padding: 5px;
+}
+.tags a{
+	font-size:15px;
+	font-weight: normal;
 	padding: 5px;
 }
 
