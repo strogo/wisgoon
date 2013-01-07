@@ -1,9 +1,5 @@
 {% load thumbnail%}
 
-{% block extra_js%}
-<script type="text/javascript" src="{{MEDIA_URL}}js/textextc.js"></script>
-{% endblock extra_js%}
-
 <form method="post" action="{% url pin-item-edit post.id%}" data-async class="form-horizontal" action="" id="pin_form" >
 {% csrf_token%}
 	
