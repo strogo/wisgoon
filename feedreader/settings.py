@@ -129,6 +129,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_by_type_backends',
     'social_auth.context_processors.social_auth_login_redirect',
     'rss.context_processors.c_url',
+    'django_facebook.context_processors.facebook',
 )
 
 INSTALLED_APPS = (
@@ -156,7 +157,9 @@ INSTALLED_APPS = (
     'compressor',
     'taggit',
     'user_profile',
+    'django_facebook',
 )
+
 
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
@@ -166,6 +169,7 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.google.GoogleBackend',
     'social_auth.backends.yahoo.YahooBackend',
     'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
+
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -193,6 +197,10 @@ SPHINX_PORT = 9312
 COMPRESS_URL = MEDIA_URL
 COMPRESS_ROOT = MEDIA_ROOT
 COMPRESS_OUTPUT_DIR = 'static_cache'
+
+FACEBOOK_APP_ID = 242648675868616
+FACEBOOK_APP_SECRET = '459f3ab2b3ccd33e1f0eef65c0dfcfcd'
+FACEBOOK_REGISTRATION_BACKEND = 'registration.backends.default.DefaultBackend'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
