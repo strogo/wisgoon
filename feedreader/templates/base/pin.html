@@ -58,16 +58,16 @@
 					<a href="{% url pin-home %}">آخرین مطالب</a></li>
 			  <li class="nav-right">
 			  {% if user.is_authenticated%}
-			  	<a data-toggle="modal" data-target="#myModal" href="#myModal">ارسال مطلب جدید</a>
+			  	<a data-toggle="modal" data-target="#myModal" href="#myModal"><i class="icon-plus-sign"></i> ارسال مطلب جدید </a>
 			  {%else%}
-			  	<a href="/accounts/login/?next=/pin">ارسال مطلب جدید</a>
+			  	<a href="/accounts/login/?next=/pin"><i class="icon-plus-sign"></i> ارسال مطلب جدید</a>
 			  {%endif%}
 			  </li>
 			  <li class="nav-right">
 			  {% if user.is_authenticated%}
-			  	<a data-toggle="modal" data-target="#pin-from-url" href="#pin-from-url">ارسال از وب</a>
+			  	<a data-toggle="modal" data-target="#pin-from-url" href="#pin-from-url"><i class=" icon-globe"></i> ارسال از وب</a>
 			  {%else%}
-			  	<a href="/accounts/login/?next=/pin">ارسال از وب</a>
+			  	<a href="/accounts/login/?next=/pin"><i class=" icon-globe"></i> ارسال از وب</a>
 			  {%endif%}
 			  </li>
 			  

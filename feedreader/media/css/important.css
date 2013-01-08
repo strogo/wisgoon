@@ -87,3 +87,8 @@ input, button, select, textarea {
 	height: 350px;
 	overflow-y: scroll;
 }
+
+.modal-body{
+	overflow-y: visible;
+	max-height: none;
+}
