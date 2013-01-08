@@ -129,7 +129,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_by_type_backends',
     'social_auth.context_processors.social_auth_login_redirect',
     'rss.context_processors.c_url',
-    'django_facebook.context_processors.facebook',
+#    'django_facebook.context_processors.facebook',
 )
 
 INSTALLED_APPS = (
@@ -157,7 +157,7 @@ INSTALLED_APPS = (
     'compressor',
     'taggit',
     'user_profile',
-    'django_facebook',
+ #   'django_facebook',
 )
 
 
@@ -169,7 +169,6 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.google.GoogleBackend',
     'social_auth.backends.yahoo.YahooBackend',
     'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
-
     'django.contrib.auth.backends.ModelBackend',
 )
 
