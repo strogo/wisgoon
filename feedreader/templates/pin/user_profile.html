@@ -7,9 +7,12 @@
     	<img src="{{latest_items.0.user.email|daddy_avatar:165}}" alt="">
 	</a>
     <div class="content">
-        <span>{{latest_items.0.user|get_username}}</span>
-        <p class="colormuted"></p>
+        <span class="profile-name">{{profile.name}}</span>
+        <p class="colormuted">{{profile.bio}}</p>
         
+        {% if profile.website != '' %}
+        <a href="{{profile.website}}">{{profile.website}}</a>
+        {% endif %}
         <div class="profile-actions">
         	{% if latest_items.0.user_id != request.user.id %}
 				{% include "pin/following_box.html"%}

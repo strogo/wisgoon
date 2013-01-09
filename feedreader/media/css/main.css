@@ -449,3 +449,11 @@ overflow: hidden;
 	margin-bottom: 10px;
 	padding-bottom: 10px;
 }
+
+.profile-name{
+	font-family: 'afsFont';
+	color: #666;
+	font-size: 25px;
+	margin: 2px 0 5px 0;
+	display:block;
+}
