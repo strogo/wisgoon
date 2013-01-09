@@ -39,6 +39,14 @@
 		<div class="feed-item-actions">
 			<div style="float: left">
 				<a href="{% url pin-item-like item_inner.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like item_inner.id %}{% endif %}"> <i class="icon-heart"></i> {{item_inner.like}} </a>
+				{% if user.id == item_inner.user.id%}
+				<a href="{% url pin-item-delete item_inner.id%}" class="btn btn-danger delpost" style="margin-right: 5px"> 
+					<i class="icon-remove"></i> 
+				</a>
+<a href="{% url pin-item-edit item_inner.id%}" class="btn" style="margin-right: 5px"  data-toggle="modal" data-target="#pinitem"> 
+	<i class="icon-pencil"></i> 
+</a>
+				{% endif %}
 			</div>
 			<div class="feed-item-date">
 				{{item_inner.create|jalali_mysql_date}}

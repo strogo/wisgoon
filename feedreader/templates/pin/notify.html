@@ -9,7 +9,7 @@
 			</a>
 		</span> از 
 		{% if noti.post.text.strip %}
-			<span><a href="{% url pin-item noti.post.id %}">{{noti.post.text}}</a></span>
+			<span><a href="{% url pin-item noti.post.id %}">{{noti.post.text|truncatewords:30}}</a></span>
 		{% else %}
 			<span><a href="{% url pin-item noti.post.id %}">{{noti.post.id}}</a></span>
 		{% endif %}

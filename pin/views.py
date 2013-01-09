@@ -6,6 +6,7 @@ import json
 import urllib
 from shutil import copyfile
 from pin.tools import create_filename
+from taggit.models import Tag
 
 """ import from django """
 from django.shortcuts import render_to_response, get_object_or_404
@@ -422,7 +423,8 @@ def delneveshte(request):
     return render_to_response('pin/delneveshte2.html',context_instance=RequestContext(request))
 
 def tag(request, keyword):
-    latest_items = Post.objects.filter(tags__slug__in=[keyword])
+    tag = get_object_or_404(Tag, slug=keyword)
+    latest_items = Post.objects.filter(tags__id=tag.id)
     
     form = PinForm()
     
@@ -435,7 +437,7 @@ def tag(request, keyword):
             return HttpResponse(0)
     else:
         return render_to_response('pin/tag.html', 
-                              {'latest_items': latest_items},
+                              {'latest_items': latest_items, 'tag': tag},
                               context_instance=RequestContext(request))
     
     #return render_to_response('pin/home.html',context_instance=RequestContext(request))

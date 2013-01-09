@@ -229,3 +229,5 @@ LOGGING = {
         },
     }
 }
+
+SESSION_COOKIE_DOMAIN = '.wisgoon.com'
