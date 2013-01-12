@@ -14,6 +14,7 @@ import urllib2
 import urllib
 import os
 import socket
+from paste.script.util.uuid import UUID
 
 socket.setdefaulttimeout(10)
 
@@ -112,6 +113,7 @@ def parse_feed(feedObj):
     print "end of getting url"
     i=0
     duplicate=0
+    hasInsert = 0
     try:
         for item in feed.entries:
             i=i+1
@@ -159,6 +161,7 @@ def parse_feed(feedObj):
             fi.feed = feedObj
             
             fi.save()
+            hasInsert = 1
     except IntegrityError:
         """
         duplicate value
@@ -185,6 +188,11 @@ def parse_feed(feedObj):
         feedObj.lock = False
         feedObj.save()
     
-    
+    if hasInsert:
+        from django.conf import settings
+        change=os.path.join(settings.SITE_ROOT, '../jsserver/change.txt')
+        file = open(change, 'w+')
+        file.write('hello')
+        file.close()
     
     

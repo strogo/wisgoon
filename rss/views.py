@@ -13,12 +13,38 @@ from rss.sphinxapi import SPH_MATCH_ALL, SphinxClient, SPH_ATTR_TIMESTAMP,\
     SPH_MATCH_EXTENDED, SPH_SORT_TIME_SEGMENTS
 import sys
 
+from django.template.loader import render_to_string
+
 import time
 from django.contrib.comments.models import Comment
 from feedreader.parser import parse_feed_web
 from django.views.decorators.csrf import csrf_exempt
 
+import simplejson
+
 MAX_PER_PAGE = 10
+
+
+def older(request):
+    try:
+        id = int(request.GET.get('older', 0))
+    except ValueError:
+        id = 0
+    
+    if id != 0:
+        latest_items = Item.objects.all().extra(where=['id>%s'], params=[id]).order_by('-id')[:MAX_PER_PAGE]
+    
+        if request.is_ajax():
+            if latest_items.exists():
+#                html = render_to_string("rss/_items.html", {'latest_items': latest_items})
+#                serialized_data = simplejson.dumps({"html": html,'lastid':latest_items[0].id})
+#                return HttpResponse(serialized_data, mimetype="application/json")
+                return render_to_response('rss/_items.html', 
+                                  {'latest_items': latest_items},
+                                  context_instance=RequestContext(request))
+            else:
+                return HttpResponse(0)
+    return HttpResponse(':D call me back')
 
 def home(request):
     

@@ -22,6 +22,7 @@ urlpatterns = patterns('rss.views',
     url(r'^user/likes/(?P<user_id>\d+)', 'user_likes', name="rss-item-likes"),
     url(r'^latest/feed/', LatestItemFeed(), name="rss-item-latest-feed"),
     url(r'^feeds/feed/', FeedsListFeed(), name="rss-list-feed"),
+    url(r'xhr/older/', 'older', name='rss-older'),
 )
 
 urlpatterns += patterns('', 
