@@ -18,9 +18,10 @@ var lastId={{latest_items.0.id}}
 </div>
 
 {% include "rss/feed_scripts_v2.html" %}
-<script src="http://www.wisgoon.com:1312/socket.io/socket.io.js"></script>
+<!--
+<script src="http://127.0.0.1:1312/socket.io/socket.io.js"></script>
 <script>
-  var socket = io.connect('http://www.wisgoon.com:1312/');
+  var socket = io.connect('http://127.0.0.1:1312/');
   socket.on('data', function (data) {
     $.ajax({
 	  url: '{% url rss-older  %}'+'?older='+lastId,
@@ -33,4 +34,5 @@ var lastId={{latest_items.0.id}}
 	});
   });
 </script>
+-->
 {% endblock content %}
