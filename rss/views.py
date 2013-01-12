@@ -44,7 +44,7 @@ def older(request):
                                   context_instance=RequestContext(request))
             else:
                 return HttpResponse(0)
-    return HttpResponse(':D call me back')
+    return HttpResponse(0)
 
 def home(request):
     

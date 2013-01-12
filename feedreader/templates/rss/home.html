@@ -6,7 +6,7 @@
 
 <script type="text/javascript">
 var start_loading=0;
-var lastId={{latest_items.0.id}}
+var lastId={{latest_items.0.id}};
 </script>
 
 <div class="row row-fluid">
@@ -19,20 +19,21 @@ var lastId={{latest_items.0.id}}
 
 {% include "rss/feed_scripts_v2.html" %}
 
-<script src="http://www.wisgoon.com:1312/socket.io/socket.io.js"></script>
+<script src="{{NODE_URL}}socket.io/socket.io.js"></script>
 <script>
-  var socket = io.connect('http://www.wisgoon.com:1312/');
+  var socket = io.connect('{{NODE_URL}}');
   socket.on('data', function (data) {
     $.ajax({
 	  url: '{% url rss-older  %}'+'?older='+lastId,
 	  success: function(html){
-          
-          $('#feed-ul-v2').prepend(html).fadeIn('slow');
-          var ch = $("#feed-ul-v2 div:first-child")[0];
-          lastId=$(ch).attr('rel');
+          if(html != 0 ){
+          	html=$(html);
+          	$('#feed-ul-v2').prepend(html).fadeIn('slow');
+          	var ch = $("#feed-ul-v2 div:first-child")[0];
+          	lastId=$(ch).attr('rel');
+          }
 	  },
 	});
   });
 </script>
--->
 {% endblock content %}

@@ -94,6 +94,5 @@ class Search(models.Model):
 
 class Lastview(models.Model):
     item = models.IntegerField(unique=True)
-    
-    
+
     

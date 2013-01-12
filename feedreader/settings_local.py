@@ -130,6 +130,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_by_type_backends',
     'social_auth.context_processors.social_auth_login_redirect',
     'rss.context_processors.c_url',
+    'rss.context_processors.node_url',
 )
 
 INSTALLED_APPS = (
@@ -137,6 +138,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    #'django.contrib.sitemaps',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
@@ -160,6 +162,7 @@ INSTALLED_APPS = (
     'taggit',
     'user_profile',
 )
+
 
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
@@ -208,12 +211,14 @@ SPHINX_SERVER = 'localhost'
 SPHINX_PORT = 9312
 
 #/TODO 
-THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
+#THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
 
 #COMPRESS_ENABLED = True
 COMPRESS_URL = MEDIA_URL
 COMPRESS_ROOT = MEDIA_ROOT
 COMPRESS_OUTPUT_DIR = 'static_cache'
+
+NODE_URL='http://127.0.0.1:1312/';
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

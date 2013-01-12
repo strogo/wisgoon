@@ -1,7 +1,7 @@
 # Django settings for feedreader project.
 import os
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ROOT = os.path.dirname(__file__)
@@ -129,6 +129,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_by_type_backends',
     'social_auth.context_processors.social_auth_login_redirect',
     'rss.context_processors.c_url',
+    'rss.context_processors.node_url',
 #    'django_facebook.context_processors.facebook',
 )
 
@@ -200,6 +201,8 @@ COMPRESS_OUTPUT_DIR = 'static_cache'
 FACEBOOK_APP_ID = 242648675868616
 FACEBOOK_APP_SECRET = '459f3ab2b3ccd33e1f0eef65c0dfcfcd'
 FACEBOOK_REGISTRATION_BACKEND = 'registration.backends.default.DefaultBackend'
+
+NODE_URL='http://www.wisgoon.com:1312/';
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
