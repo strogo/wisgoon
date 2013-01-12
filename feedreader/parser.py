@@ -14,7 +14,6 @@ import urllib2
 import urllib
 import os
 import socket
-from paste.script.util.uuid import UUID
 
 socket.setdefaulttimeout(10)
 
