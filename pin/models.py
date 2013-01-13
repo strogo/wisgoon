@@ -103,17 +103,22 @@ def user_unlike_post(sender, **kwargs):
     notify.delete()
     
 def user_comment_post(sender, **kwargs):
-    comment = kwargs['comment']
-    post = comment.post
-    sender = comment.user
-        
-    notify = Notify()
-    notify.post = post
-    notify.sender = sender
-    notify.user = post.user
-    notify.text = 'comment this'
-    notify.save()
-            
+    if 'pin.post' in kwargs['request'].POST['content_type']:
+        comment = kwargs['comment']
+        post_id = kwargs['request'].POST['object_pk']
+        post = Post.objects.get(pk=post_id)
+        if comment.user != post.user:
+            #post = comment.post
+            sender = comment.user
+                
+            notify = Notify()
+            notify.post = post
+            notify.sender = sender
+            notify.user = post.user
+            notify.text = 'comment this'
+            notify.type = 2
+            notify.save()
+                
 def change_tag_slug(sender, **kwargs):
     if kwargs['created']:
         tag = kwargs['instance']
@@ -124,4 +129,4 @@ post_save.connect(add_post_to_stream, sender=Post)
 post_save.connect(user_like_post, sender=Likes)
 post_delete.connect(user_unlike_post, sender=Likes)
 post_save.connect(change_tag_slug, sender=Tag)
-#comment_was_posted.connect(user_comment_post, sender=Comment)
+comment_was_posted.connect(user_comment_post, sender=Comment)
