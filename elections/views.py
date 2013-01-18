@@ -14,16 +14,22 @@ def home(request):
         ao = base - datetime.timedelta(days=x)
         ao = ao.strftime("%Y/%m/%d")
         dateList.append(ao)
-        
+    
+    dataVars=[[u'خامنه ای'], 
+              [u'ولایتی'],
+              [u'حداد عادل'],
+              [u'احمدی نژاد'],
+              [u'مشایی'],
+              [u'قالیباف'],
+              [u'رضایی']]
+    
     #print dateList
     dates,res, resCount  = [], [], []
     
-    res.append(search_query('مشایی'))
-    res.append(search_query('خامنه ای'))
-    res.append(search_query('احمدی نژاد'))
-    res.append(search_query('حداد عادل'))
-    res.append(search_query('ولایتی'))
+    for v in dataVars:
+        res.append(search_query(v[0]))
     
+    i=0
     for r in res:
         resCountList=[]
         #print "start resource"
@@ -35,9 +41,11 @@ def home(request):
             resCountList.append(rsC)
             
         resCount.append(resCountList)
+        dataVars[i].append(resCountList)
+        i=i+1
 
-    #print date_data
-    return render_to_response('elections/index.html',{'res': res, 'dateList':dateList, 'resCount':resCount})
+    #print dataVars
+    return render_to_response('elections/index.html',{'res': res, 'dateList':dateList, 'resCount':resCount,'dv':dataVars})
 
 
 def search_query(query, offset=0):
