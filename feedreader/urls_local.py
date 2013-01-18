@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     url(r'^pages/', include('django.contrib.flatpages.urls')),
     url(r'^socialacc/', include('socialacc.urls')),
     url(r'^tag/(.*)/', 'rss.views.tag', name="tag"),
+    url(r'^elections/', include('elections.urls')),
     
 )
 
