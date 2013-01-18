@@ -1,7 +1,7 @@
 #coding: utf-8
 from django.shortcuts import render_to_response
 from rss.sphinxapi import SPH_MATCH_ALL, SphinxClient, SPH_ATTR_TIMESTAMP,\
-    SPH_MATCH_EXTENDED, SPH_SORT_TIME_SEGMENTS
+    SPH_MATCH_EXTENDED, SPH_SORT_TIME_SEGMENTS, SPH_SORT_ATTR_DESC
 
 import datetime
 
@@ -48,15 +48,16 @@ def search_query(query, offset=0):
     index = 'rss_item'
     filtercol = 'group_id'
     filtervals = []
-    sortby = '-@weights'
+    sortby = '-@date_added'
     groupby = 'id'
     groupsort = '@group desc'
-    limit = 30
+    limit = 1000
     
     # do query
     cl = SphinxClient()
     cl.SetServer ( host, port )
     cl.SetWeights ( [100, 1] )
+    cl.SetSortMode(SPH_SORT_ATTR_DESC, 'date_added')
     cl.SetMatchMode ( mode )
 
     #cl.SetSortMode(SPH_SORT_TIME_SEGMENTS)
