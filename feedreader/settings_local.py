@@ -218,7 +218,9 @@ COMPRESS_URL = MEDIA_URL
 COMPRESS_ROOT = MEDIA_ROOT
 COMPRESS_OUTPUT_DIR = 'static_cache'
 
-NODE_URL='http://127.0.0.1:1312/';
+NODE_URL='http://127.0.0.1:1312/'
+
+API_LIMIT_PER_PAGE = 10
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
