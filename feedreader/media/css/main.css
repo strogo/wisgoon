@@ -168,6 +168,8 @@ width: 40px;
 
 .img-block{
 	background: #F2F4F8;
+	max-height: 450px;
+	overflow-y: hidden;
 }
 
 #google-oauth{
