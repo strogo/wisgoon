@@ -1,0 +1,65 @@
+{% load thumbnail %}
+{% load daddy_avatar %}
+{% load pin_tags %}
+<html>
+<head>
+<style type="text/css">
+body {
+	background-color: #eaeaea;
+	margin: 0px;
+	padding: 0px;
+	direction: rtl;
+	text-align: right;
+}
+span{
+	font-family: tahoma;
+	font-size: 12px;
+}
+</style>
+</head>
+<body>
+
+<table style="margin: 0 auto;padding: 0 auto; width: 620px" width="620">
+	<tr>
+		<td align="center">
+			<img src="http://www.wisgoon.com/media/img/wisgoon_logo.png" alt="Wisgoon">
+		</td>
+	</tr>
+	<tr>
+		<td><span>
+			{{notify.0.user|get_username}}؛ سلام ما را پذیرا باشید
+			</span>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table>
+				{% for notif in notify %}
+				<tr>
+					<td>
+						<table>
+							<tr>
+							<td>
+			<img alt="{{notif.sender|get_username}}" src="http://www.wisgoon.com{{notif.sender.email|daddy_avatar:40}}" />		
+							</td>
+							<td>
+								{% if notif.type == 1 %}
+								<span>پست شما رو پسندید.</span>
+								{% endif %}
+								{% if notif.type == 2 %}
+								<span>در پست شما نظر گذاشت.</span>
+								{% endif %}
+							</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</td>
+	</tr>
+	
+</table>
+
+</body>	
+</html>

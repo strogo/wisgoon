@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*- 
+# -*- coding: utf-8 -*- 
 
 from django.shortcuts import render_to_response, get_object_or_404
 from rss.models import Item, Feed, Subscribe, Likes ,Report, Search, Lastview
@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 import json
 from rss.sphinxapi import SPH_MATCH_ALL, SphinxClient, SPH_ATTR_TIMESTAMP,\
-    SPH_MATCH_EXTENDED, SPH_SORT_TIME_SEGMENTS
+    SPH_MATCH_EXTENDED, SPH_SORT_TIME_SEGMENTS, SPH_SORT_ATTR_DESC
 import sys
 
 from django.template.loader import render_to_string
@@ -54,7 +54,7 @@ def home(request):
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Item.objects.all().order_by('-id')[:MAX_PER_PAGE]
+        latest_items = Item.objects.all().order_by('-timestamp')[:MAX_PER_PAGE]
     else:
         latest_items = Item.objects.all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:MAX_PER_PAGE]
     
@@ -290,6 +290,7 @@ def search_query(query, offset=0):
     cl = SphinxClient()
     cl.SetServer ( host, port )
     cl.SetWeights ( [100, 1] )
+    cl.SetSortMode(SPH_SORT_ATTR_DESC, 'date_added')
     cl.SetMatchMode ( mode )
 
     #cl.SetSortMode(SPH_SORT_TIME_SEGMENTS)
