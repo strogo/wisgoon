@@ -8,8 +8,8 @@ sys.path.append(os.path.dirname(__file__))
 sys.path.append(os.path.join(os.path.dirname(__file__),'../'))
 
 from django.core.management import setup_environ 
-import settings_local 
-setup_environ(settings_local)
+import settings
+setup_environ(settings)
 
 from django.template.loader import render_to_string
 
@@ -39,13 +39,13 @@ msg['To'] = you
 # Create the body of the message (a plain-text and an HTML version).
 #email_content = get_template('mailer/mail.html')
 
-notify = Notify.objects.all().filter(user_id=1)
+notify = Notify.objects.all().filter(seen=0)
 
 email_content = render_to_string('mailer/notify.html',{'notify':notify})
 #email_content = open('templates/mailer/mail.html', 'r').read()
-f = open('out.html','w+')
-f.write(email_content.encode('utf-8'))
-f.close()
+#f = open('out.html','w+')
+#f.write(email_content.encode('utf-8'))
+#f.close()
 
 text = stripIt(email_content)
 html = email_content
