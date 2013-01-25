@@ -50,6 +50,7 @@ span{
 								{% if notif.type == 2 %}
 								<span>در پست شما نظر گذاشت.</span>
 								{% endif %}
+								<a target="_blank" href="{{notif.post.get_host_url}}"> نمایش پست </a>
 							</td>
 							</tr>
 						</table>
