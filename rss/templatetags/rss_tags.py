@@ -115,7 +115,7 @@ def human_farsi(text):
     text = text.replace('minutes', u'دقیقه')
     text = text.replace('an hour', u'یک ساعت')
     text = text.replace('hours', u'ساعت')
-    print text
+    #print text
     #text = text.replace('month', 'ماه')
     return text
 
