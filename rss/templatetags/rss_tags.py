@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from django.template import Library,Node
 from urlparse import urlparse
 import datetime
@@ -102,6 +103,21 @@ register.tag('user_post_like', user_post_like)
 def get_user_notify(userid):
     notify = Notify.objects.all().filter(user_id=userid, seen=False).count()
     return notify
+
+@register.filter
+def human_farsi(text):
+    text = text.replace('days', u'روز')
+    text = text.replace('day', u'روز')
+    text = text.replace('ago', u'قبل')
+    text = text.replace('months', u'ماه')
+    text = text.replace('weeks', u'هفته')
+    text = text.replace('week', u'هفته')
+    text = text.replace('minutes', u'دقیقه')
+    text = text.replace('an hour', u'یک ساعت')
+    text = text.replace('hours', u'ساعت')
+    print text
+    #text = text.replace('month', 'ماه')
+    return text
 
 @register.filter
 def get_username(user):
