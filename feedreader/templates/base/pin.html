@@ -70,6 +70,10 @@
 			  	<a href="/accounts/login/?next=/pin"><i class=" icon-globe"></i> ارسال از وب</a>
 			  {%endif%}
 			  </li>
+
+<li class="nav-right">
+	<a href="{% url pin-popular%}"><i class="icon-fire"></i> برترینها</a>
+</li>
 			  
 {% if user.is_authenticated%}
 <li class="nav-right">
