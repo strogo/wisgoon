@@ -163,7 +163,7 @@ class UserFeeds(Node):
     def render(self, context):
         user=context['user']
         try:
-            context['user_feeds'] = Subscribe.objects.filter(user=user).all()
+            context['user_feeds'] = Subscribe.objects.filter(user=user).all()[:10]
         except:
             context['user_feeds'] = ""
         return ''
@@ -179,7 +179,7 @@ class AllFeeds(Node):
         pass
         
     def render(self, context):            
-        context['all_feeds'] = Feed.objects.all()[:100]
+        context['all_feeds'] = Feed.objects.all().order_by('-id')[:10]
         return ''
 
 register.tag('get_all_feeds', all_feeds)
