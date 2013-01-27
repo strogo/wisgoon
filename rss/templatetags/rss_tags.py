@@ -110,6 +110,7 @@ def human_farsi(text):
     text = text.replace('days', u'روز')
     text = text.replace('day', u'روز')
     text = text.replace('ago', u'قبل')
+    text = text.replace('a minute', u'یک دقیقه')
     text = text.replace('months', u'ماه')
     text = text.replace('weeks', u'هفته')
     text = text.replace('week', u'هفته')
