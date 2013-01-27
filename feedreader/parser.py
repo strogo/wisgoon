@@ -73,7 +73,10 @@ def parse_feed_web(feedObj):
             fi.url = item.link
             fi.url_crc = binascii.crc32(item.link.encode('utf-8'))
             
-            if item.published_parsed != None:
+            if hasattr(item, 'published_parsed') and item.published_parsed != None:
+                fi.date = datetime.fromtimestamp(mktime(item.published_parsed))
+                fi.timestamp = mktime(item.published_parsed)
+            elif hasattr(item, 'updated_parsed') and item.updated_parsed != None:
                 fi.date = datetime.fromtimestamp(mktime(item.updated_parsed))
                 fi.timestamp = mktime(item.updated_parsed)
             else:
@@ -150,13 +153,17 @@ def parse_feed(feedObj):
             fi.url = item.link
             fi.url_crc = binascii.crc32(item.link.encode('utf-8'))
             
-            if item.published_parsed != None:
+            if hasattr(item, 'published_parsed') and item.published_parsed != None:
+                fi.date = datetime.fromtimestamp(mktime(item.published_parsed))
+                fi.timestamp = mktime(item.published_parsed)
+            elif hasattr(item, 'updated_parsed') and item.updated_parsed != None:
                 fi.date = datetime.fromtimestamp(mktime(item.updated_parsed))
                 fi.timestamp = mktime(item.updated_parsed)
             else:
                 fi.date = datetime.now()
                 fi.timestamp = time()
-                
+            
+
             fi.feed = feedObj
             
             fi.save()
