@@ -106,6 +106,7 @@ def get_user_notify(userid):
 
 @register.filter
 def human_farsi(text):
+    text = text.replace('seconds', u'ثانیه')
     text = text.replace('days', u'روز')
     text = text.replace('day', u'روز')
     text = text.replace('ago', u'قبل')

@@ -13,14 +13,12 @@
 	</div>
 	{% endthumbnail %}
 	
-	<small>{{item.feed.title}}</small> - <a target="_blank" rel="nofollow" href="{% url rss-item-goto item.id %}">{{item.title|escape}}</a>
+	<small>{{item.feed.title}}</small> - <a target="_blank" rel="nofollow" href="{{ item.get_absolute_url }}">{{item.title|escape}}</a>
 	<p class="feed-description">{{item.description|striptags|safe|truncatewords:100}}</p>
 	<span style="display: block;">{{item.date|naturaltime|human_farsi}}  </span>
 	<div class="feed-actions-v2">
 		<div class="sharing-actions">
 			<div class="a2a_kit a2a_default_style">
-				<a class="tooltips" data-placement="bottom" title="لینک در ویسگون" href="{{item.get_absolute_url}}"><i class="icon-flag"></i></a>
-				<span class="a2a_divider"></span>
 				<a class="a2a_dd" href="http://www.addtoany.com/share_save">Share</a>
 				<span class="a2a_divider"></span>
 
