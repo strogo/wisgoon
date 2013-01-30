@@ -6,11 +6,10 @@ from tastypie.utils.urls import trailing_slash
 from django.conf.urls import url
 import hashlib
 
-
 class UserResource(ModelResource):
     class Meta:
-        queryset = User.objects.all()
-        fields = ['first_name', 'last_name', 'email']
+    #    queryset = User.objects.all()
+    #    fields = ['first_name', 'last_name', 'email']
         allowed_methods = ['get', 'post']
         resource_name = 'user'
 
