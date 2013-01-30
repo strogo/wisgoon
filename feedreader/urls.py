@@ -1,8 +1,11 @@
 import os
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from feedreader.api import UserResource
 
 admin.autodiscover()
+
+user_resource = UserResource()
 
 urlpatterns = patterns('',
     url(r'^$', 'pin.views.home', name='home'),
@@ -18,5 +21,6 @@ urlpatterns = patterns('',
     url(r'^socialacc/', include('socialacc.urls')),
     url(r'^tag/(.*)/', 'rss.views.tag', name="tag"),
     url(r'^elections/', include('elections.urls')),
+    url(r'^api/', include(user_resource.urls)),
  #   url(r'^facebook/', include('django_facebook.urls')),   
 )
