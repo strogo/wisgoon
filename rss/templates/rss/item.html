@@ -33,6 +33,13 @@ var start_loading=0
 				<div class="feed-item-actions">
 		            <div class="feed-item-date">{{item.timestamp|date_from_timestamp}}</div>
 		            <div>{{item.url|get_host}}</div>
+		            <div>
+		            	<ul class="tags">
+							{% for tag in item.tags %}
+								<li><a class="label label-info" href="{% url tag tag%}">{{tag}}</a></li> 
+							{% endfor %}
+						</ul>
+		            </div>
 				</div>
 			</div>
 			<div class="comments">
