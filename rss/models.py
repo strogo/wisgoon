@@ -1,7 +1,10 @@
-# -*- coding: utf8 -*- 
+# -*- coding: utf-8 -*- 
+from mongoengine import *
+connect('rss')
 
 from django.db import models
 from django.contrib.auth.models import User
+
 
 class Feed(models.Model):
     url = models.URLField()
@@ -20,6 +23,16 @@ class Feed(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('rss-feed', [str(self.id)])
+
+class ItemExtra(Document):
+    item_id = IntField()
+    tags = ListField(StringField(max_length=50))
+    time = IntField()
+    
+    meta = {
+        'indexes': ['item_id', '-time']
+    }
+    
     
 class Item(models.Model):
     title = models.CharField(max_length=250)
@@ -39,12 +52,19 @@ class Item(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('rss-item', [str(self.feed.id), str(self.id)])
-        
+    
+    def tags(self):
+        tags = []
+        item = ItemExtra.objects(item_id=self.id).first()
+        if item:
+            for tag in item.tags:
+                #print tag
+                tags.append(tag)
+        return tags
+    
     class Meta:
         unique_together = (("feed", "url_crc"),)
         
-    
-    
 class Subscribe(models.Model):
     user = models.ForeignKey(User)
     feed = models.ForeignKey(Feed)

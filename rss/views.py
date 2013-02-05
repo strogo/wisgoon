@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*- 
 
 from django.shortcuts import render_to_response, get_object_or_404
-from rss.models import Item, Feed, Subscribe, Likes ,Report, Search, Lastview
+from rss.models import Item, Feed, Subscribe, Likes ,Report, Search, Lastview,\
+    ItemExtra
 from django.template.context import RequestContext
 from rss.forms import FeedForm ,ReportForm 
 from django.http import HttpResponseRedirect  #, HttpResponse
@@ -273,6 +274,14 @@ def like(request, item_id):
     except Item.DoesNotExist:
         return HttpResponseRedirect('/')
 
+def store_extra(item_id, tag, time):
+    upex = ItemExtra.objects(item_id=item_id)
+    if not upex:
+        item_ext = ItemExtra(item_id=item_id, tags=[tag], time=time)
+        item_ext.save()
+    else:
+        upex = ItemExtra.objects(item_id=item_id, tags__nin=[tag]).update_one(push__tags=tag)
+
 def search_query(query, offset=0):
     
     mode = SPH_MATCH_EXTENDED
@@ -321,7 +330,8 @@ def lastview(request):
     return render_to_response('rss/lastview.html',
                                   {'latest_items':result},
                                   context_instance=RequestContext(request))
-    
+
+
 
 def search(request):
     q = request.GET.get('q', '')
@@ -358,6 +368,7 @@ def search(request):
     
 def tag(request, q):
     if q != '':
+        tag_original = q
         q=q.replace('-',' ')
         searchObj, created = Search.objects.get_or_create(keyword=q)
         if not created:
@@ -373,6 +384,8 @@ def tag(request, q):
         sorted_objects = [objects[id] for id in docs]
         
         result = sorted_objects
+        for row in result:
+            store_extra(row.id, tag_original, row.timestamp)
     
         if request.is_ajax():
             return render_to_response('rss/_items.html',

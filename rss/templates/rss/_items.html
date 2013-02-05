@@ -16,6 +16,11 @@
 	<small>{{item.feed.title}}</small> - <a target="_blank" rel="nofollow" href="{{ item.get_absolute_url }}">{{item.title|escape}}</a>
 	<p class="feed-description">{{item.description|striptags|safe|truncatewords:100}}</p>
 	<span style="display: block;">{{item.date|naturaltime|human_farsi}}  </span>
+	<ul class="tags">
+	{% for tag in item.tags %}
+		<li><a class="label label-info" href="{% url tag tag%}">{{tag}}</a></li> 
+	{% endfor %}
+			</ul>
 	<div class="feed-actions-v2">
 		<div class="sharing-actions">
 			<div class="a2a_kit a2a_default_style">
