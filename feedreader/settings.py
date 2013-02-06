@@ -159,6 +159,7 @@ INSTALLED_APPS = (
     'taggit',
     'user_profile',
  #   'django_facebook',
+    'tastypie',
 )
 
 
