@@ -4,6 +4,8 @@ from tastypie.http import HttpUnauthorized, HttpForbidden
 from tastypie.resources import ModelResource
 from tastypie.utils.urls import trailing_slash
 from django.conf.urls import url
+
+from tastypie.models import ApiKey
 import hashlib
 
 class UserResource(ModelResource):
@@ -44,11 +46,16 @@ class UserResource(ModelResource):
         password = data.get('password', '')
 
         user = authenticate(username=username, password=password)
+        
         if user:
             if user.is_active:
                 login(request, user)
+                
+                api_key, created = ApiKey.objects.get_or_create(user=user)
+                
                 return self.create_response(request, {
-                    'success': True
+                    'success': True,
+                    'token': api_key.key
                 })
             else:
                 return self.create_response(request, {
