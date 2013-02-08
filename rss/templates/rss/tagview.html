@@ -1,0 +1,42 @@
+{% extends "base/main.html"%}
+
+{% block title%} - {{q}}{% endblock title%}
+{%block description%}{{q}}{%endblock%}
+
+{% block current_feed %}
+<li class="nav-right active">
+	<a href="#"><h1 style="display: inline">{{q}}</h1></a>
+</li>
+{% endblock current_feed %}
+
+{% block content%}
+
+<script type="text/javascript">
+var start_loading=0;
+</script>
+
+<div class="row row-fluid">
+
+	<div class="span12">
+		{% include 'rss/feed_subscribe.html'%}
+		
+	<div id="feed-ul-v2">
+		{% include "rss/_tag_items.html"%}
+		{% if older_url %}
+		<div id="older_url">
+			<a style="color: #CDCDCD" href="{{older_url}}">next</a>
+		</div>
+		{% endif%}
+	</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+var a_url = 'search';
+var extend_query='q={{q|safe}}';
+</script>
+
+
+{% include "rss/feed_scripts_v3.html" %}
+
+{% endblock content%}

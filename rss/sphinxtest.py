@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*- 
+# -*- coding: utf-8 -*- 
 
 from sphinxapi import SPH_MATCH_ALL, SphinxClient, SPH_ATTR_TIMESTAMP,\
     SPH_MATCH_EXTENDED, SPH_SORT_TIME_SEGMENTS

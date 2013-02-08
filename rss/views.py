@@ -7,7 +7,7 @@ from django.template.context import RequestContext
 from rss.forms import FeedForm ,ReportForm 
 from django.http import HttpResponseRedirect  #, HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
 import json
 from rss.sphinxapi import SPH_MATCH_ALL, SphinxClient, SPH_ATTR_TIMESTAMP,\
@@ -366,7 +366,7 @@ def search(request):
         sObj = Search.objects.filter(accept=1)
         return render_to_response('rss/tags.html',{'sobj':sObj},context_instance=RequestContext(request))
     
-def tag(request, q):
+def tag(request, q, older=0):
     if q != '':
         tag_original = q
         q=q.replace('-',' ')
@@ -375,8 +375,13 @@ def tag(request, q):
             searchObj.count=searchObj.count+1
             searchObj.save()
     
-        offset = int(request.GET.get('older', 0))
+        offset = int(older)
         docs=search_query(q, offset)
+        if not docs:
+            if request.is_ajax():
+                return HttpResponse(0)
+            else:
+                raise Http404
             
         result = Item.objects.filter(id__in=docs).all()
         
@@ -384,17 +389,20 @@ def tag(request, q):
         sorted_objects = [objects[id] for id in docs]
         
         result = sorted_objects
+        older_url = ""
         for row in result:
             store_extra(row.id, tag_original, row.timestamp)
+            
+        older_url = reverse('tag-older', args=[tag_original, offset+30])
     
         if request.is_ajax():
-            return render_to_response('rss/_items.html',
-                                  {'latest_items':result, 'offset':offset+30,'q':q},
+            return render_to_response('rss/_tag_items.html',
+                                  {'latest_items':result, 'offset':offset+30,'q':q, "older_url": older_url},
                                   context_instance=RequestContext(request))
     
         else:
-            return render_to_response('rss/search.html',
-                                  {'latest_items':result, 'offset':offset+30,'q':q},
+            return render_to_response('rss/tagview.html',
+                                  {'latest_items':result, 'offset':offset+30,'q':q, "older_url": older_url},
                                   context_instance=RequestContext(request))
     else:
         sObj = Search.objects.all().order_by('-count')[:100]
