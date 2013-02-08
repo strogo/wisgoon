@@ -92,6 +92,11 @@ var start_loading=0
 	</ul>
 	
 		{% include "rss/_items.html"%}
+		{% if older_url %}
+		<div id="older_url">
+			<a style="color: #CDCDCD" href="{{older_url}}">next</a>
+		</div>
+		{% endif %}
 	</div>
 	</div>
 	
@@ -100,6 +105,6 @@ var start_loading=0
 <script type="text/javascript">
 var a_url = '../../../feed/{{feed.id}}';
 </script>
-{% include "rss/feed_scripts_v2.html" %}
+{% include "rss/feed_scripts_v3.html" %}
 
 {% endblock content %}

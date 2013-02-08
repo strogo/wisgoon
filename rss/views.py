@@ -114,12 +114,9 @@ def user_likes(request, user_id):
                               {'latest_items': latest_items,'user_feeds':user_feeds,'offset':offset+30,'form':form},
                               context_instance=RequestContext(request))
      
-def feed(request, feed_id):
+def feed(request, feed_id, older=0):
     
-    try:
-        timestamp = int(request.GET.get('older', 0))
-    except ValueError:
-        timestamp = 0
+    timestamp = int(older)
     
     feed = Feed.objects.get(pk=feed_id)
     
@@ -128,19 +125,29 @@ def feed(request, feed_id):
     else:
         latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'],
                                                                      params=[timestamp]).order_by('-timestamp')[:MAX_PER_PAGE]
+    if not latest_items:
+        if request.is_ajax():
+            return HttpResponse(0)
+        else:
+            raise Http404
+    
+    for li in latest_items:
+        lrow = li
+    
+    older_url = reverse('rss-feed-older', args=[feed_id, lrow.timestamp])
     
     form = ReportForm()
     
     if request.is_ajax():
         if latest_items.exists():
             return render_to_response('rss/_items.html', 
-                              {'latest_items': latest_items},
+                              {'latest_items': latest_items, 'older_url': older_url},
                               context_instance=RequestContext(request))
         else:
             return HttpResponse(0)
     else:
         return render_to_response('rss/feed.html', 
-                              {'latest_items': latest_items, 'feed':feed,'form':form},
+                              {'latest_items': latest_items, 'feed':feed,'form':form , 'older_url': older_url},
                               context_instance=RequestContext(request))
 
 def feed_item(request, feed_id, item_id):
@@ -151,9 +158,15 @@ def feed_item(request, feed_id, item_id):
     Lastview.objects.get_or_create(item=item_id)
     
     latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
+    
+    for li in latest_items:
+        lrow = li
+    
+    older_url = reverse('rss-feed-older', args=[feed_id, lrow.timestamp])
+    
     form = ReportForm()
     return render_to_response('rss/item.html', 
-                              {'item': item, 'feed':feed, 'latest_items': latest_items,'form':form},
+                              {'item': item, 'feed':feed, 'latest_items': latest_items,'form':form,'older_url': older_url},
                               context_instance=RequestContext(request))
 
 def feed_item_goto(request, item_id):
