@@ -55,9 +55,9 @@ class Item(models.Model):
     
     def tags(self):
         tags = []
-        item = ItemExtra.objects(item_id=self.id).first()[:5]
+        item = ItemExtra.objects(item_id=self.id).first()
         if item:
-            for tag in item.tags:
+            for tag in item.tags[:5]:
                 #print tag
                 tags.append(tag)
         return tags
