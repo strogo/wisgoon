@@ -383,11 +383,16 @@ def tag(request, q, older=0):
     if q != '':
         tag_original = q
         q=q.replace('-',' ')
-        searchObj, created = Search.objects.get_or_create(keyword=q)
-        if not created:
+        save_keyword= True
+        
+        try:
+            searchObj = Search.objects.get(keyword=q)
+            
             searchObj.count=searchObj.count+1
             searchObj.save()
-    
+        except Search.DoesNotExist:
+            save_keyword= False
+            
         offset = int(older)
         docs=search_query(q, offset)
         if not docs:
@@ -403,8 +408,9 @@ def tag(request, q, older=0):
         
         result = sorted_objects
         older_url = ""
-        for row in result:
-            store_extra(row.id, tag_original, row.timestamp)
+        if save_keyword:
+            for row in result:
+                store_extra(row.id, tag_original, row.timestamp)
             
         older_url = reverse('tag-older', args=[tag_original, offset+30])
     
