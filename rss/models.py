@@ -4,7 +4,7 @@ connect('rss')
 
 from django.db import models
 from django.contrib.auth.models import User
-
+from urlparse import urlparse
 
 class Feed(models.Model):
     url = models.URLField()
@@ -18,7 +18,14 @@ class Feed(models.Model):
     lock = models.BooleanField(default=False)
     
     def __unicode__(self):
-        return self.url
+        if not self.title:
+            o = urlparse(self.url)
+            if hasattr(o, 'netloc'):
+                return o.netloc
+            else:
+                return self.url
+        else:
+            return self.title
     
     @models.permalink
     def get_absolute_url(self):

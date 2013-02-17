@@ -120,7 +120,7 @@
 		{% get_user_feeds %}
 		{% for subs in user_feeds %}
 	<li>
-		<a href="{% url rss-feed subs.feed.id %}">{{subs.feed.title|default:subs.feed.url|truncatechars:35}}</a>
+		<a href="{% url rss-feed subs.feed.id %}">{{subs.feed|truncatechars:35}}</a>
 	</li>
 		{% endfor %}
 	{% endif %}
@@ -133,7 +133,7 @@
 	{% get_all_feeds %}
 		{% for allfeed in all_feeds %}
 	<li>
-		<a href="{% url rss-feed allfeed.id %}">{{allfeed.title|default:allfeed.url|truncatechars:35}}</a>
+		<a href="{% url rss-feed allfeed.id %}">{{allfeed|truncatechars:35}}</a>
 	</li>
 		{% endfor %}
 	</ul>
