@@ -25,9 +25,13 @@ class RedirectMiddleware:
         try:
             if request.META['PATH_INFO']:
                 path_info = request.META['PATH_INFO']
-                if path_info.startswith('/feedreader/'):
-                    url = path_info.replace('/feedreader/','/')
+                if path_info.startswith('/feedreader/feed/'):
+                    url = path_info.replace('/feedreader/feed/','/feed/')
                     return HttpResponsePermanentRedirect(url)
+                elif  path_info.startswith('/feedreader/'):
+                    url = path_info.replace('/feedreader/','/feed/')
+                    return HttpResponsePermanentRedirect(url)
+
         except:
             pass
 
