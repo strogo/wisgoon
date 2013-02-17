@@ -1,5 +1,7 @@
 import urlparse
 from rss.models import Search
+from django.http import HttpResponsePermanentRedirect
+
 class SeoQuery():
     def process_request(self, request):
         try:
@@ -16,3 +18,16 @@ class SeoQuery():
                 
         except:
             pass
+
+class RedirectMiddleware:
+
+    def process_request(self, request):
+        try:
+            if request.META['PATH_INFO']:
+                path_info = request.META['PATH_INFO']
+                if path_info.startswith('/feedreader/'):
+                    url = path_info.replace('/feedreader/','/')
+                    return HttpResponsePermanentRedirect(url)
+        except:
+            pass
+

@@ -101,6 +101,7 @@ MIDDLEWARE_CLASSES = (
     'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'rss.middleware.SeoQuery',
+    'rss.middleware.RedirectMiddleware',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
