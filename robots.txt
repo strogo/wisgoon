@@ -5,3 +5,4 @@ Disallow: /feedreader/feed/like/*
 Disallow: /pin/like/*
 Disallow: /pin/ajax_upload/
 Disallow: /media/cache/*
+Disallow: /feedreader/feed/item/*/goto
