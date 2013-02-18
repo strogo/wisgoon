@@ -8,7 +8,7 @@
 
 {% block current_feed %}
 <li class="nav-right active">
-	<a href="#"><h1 style="display: inline">{{feed}}</h1>
+	<a href="#"><h1 style="display: inline">{{feed|truncatewords:10}}</h1>
 	{%if user.is_authenticated%}
 		{% user_feed_subs feed.id %}
 		{% if user_feed_subs_status == 0 %}
