@@ -162,7 +162,10 @@ def feed_item(request, feed_id, item_id):
     for li in latest_items:
         lrow = li
     
-    older_url = reverse('rss-feed-older', args=[feed_id, lrow.timestamp])
+    try:
+        older_url = reverse('rss-feed-older', args=[feed_id, lrow.timestamp])
+    except:
+        older_url = ""
     
     form = ReportForm()
     return render_to_response('rss/item.html', 
