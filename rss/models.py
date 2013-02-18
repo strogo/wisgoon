@@ -54,7 +54,10 @@ class Item(models.Model):
     likes = models.IntegerField(default=0)
     
     def __unicode__(self):
-        return self.title
+        if self.title:
+            return self.title
+        else:
+            return str(self.id)
     
     @models.permalink
     def get_absolute_url(self):

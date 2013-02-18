@@ -1,7 +1,7 @@
 {% extends "base/main.html"%}
 
-{% block title%} - {{item.title}}{% endblock title%}
-{%block description%}{{item.title}} - {{item.description|striptags|truncatewords:25}}{%endblock%}
+{% block title%} - {{item}}{% endblock title%}
+{%block description%}{{item}} - {{item.description|striptags|truncatewords:25}}{%endblock%}
 
 {% load rss_tags %}
 {% load daddy_avatar %}
@@ -27,7 +27,7 @@ var start_loading=0
 		<div class="feed-card" id="">
 			<div class="feed-inner">
 				<a class="feed-item-title" style="display:inline" target="_blank" rel="nofollow" href="{{item.url}}"><i class="icon-globe"></i></a>
-                <h1 style="display:inline">{{item.title}}</h1>
+                <h1 style="display:inline">{{item}}</h1>
 				<div class="feed-item-desc">{{item.description|safe|linebreaksbr}}</div>		
 			</div>
 			<div class="feed-item-bottom">
