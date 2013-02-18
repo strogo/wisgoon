@@ -13,7 +13,7 @@
 	</div>
 	{% endthumbnail %}
 	
-	<small>{{item.feed}}</small> - <a target="_blank" rel="nofollow" href="{{ item.get_absolute_url }}">{{item.title|escape}}</a>
+	<small>{{item.feed}}</small> - <a target="_blank" href="{{ item.get_absolute_url }}">{{item.title|escape}}</a>
 	<p class="feed-description">{{item.description|striptags|safe|truncatewords:100}}</p>
 	<span style="display: block;">{{item.date|naturaltime|human_farsi}}  </span>
 	<ul class="tags">

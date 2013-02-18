@@ -3,12 +3,12 @@
 {% load rss_tags %}
 {%load cache %}
 
-{% block title %} - {{feed.title}} {% endblock title %}
-{%block description%}{{feed.title}}{%endblock%}
+{% block title %} - {{feed}} {% endblock title %}
+{%block description%}{{feed}}{%endblock%}
 
 {% block current_feed %}
 <li class="nav-right active">
-	<a href="#"><h1 style="display: inline">{{feed.title}}</h1>
+	<a href="#"><h1 style="display: inline">{{feed}}</h1>
 	{%if user.is_authenticated%}
 		{% user_feed_subs feed.id %}
 		{% if user_feed_subs_status == 0 %}

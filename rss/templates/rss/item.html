@@ -9,7 +9,7 @@
 
 {% block current_feed %}
 <li class="nav-right">
-	<a href="{{feed.get_absolute_url}}"><h2>{{feed.title}}</h2></a>
+	<a href="{{feed.get_absolute_url}}"><h2>{{feed}}</h2></a>
 </li>
 {% endblock current_feed %}
 
@@ -26,7 +26,8 @@ var start_loading=0
 		<li data-next="{{item.timestamp}}">
 		<div class="feed-card" id="">
 			<div class="feed-inner">
-				<a class="feed-item-title" target="_blank" href="{{item.url}}"><h1>{{item.title}}</h1></a>
+				<a class="feed-item-title" style="display:inline" target="_blank" rel="nofollow" href="{{item.url}}"><i class="icon-globe"></i></a>
+                <h1 style="display:inline">{{item.title}}</h1>
 				<div class="feed-item-desc">{{item.description|safe|linebreaksbr}}</div>		
 			</div>
 			<div class="feed-item-bottom">
