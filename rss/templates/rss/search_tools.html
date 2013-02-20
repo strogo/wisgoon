@@ -7,10 +7,28 @@
 					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="#" id="drop1">اولویت نمایش <b class="caret"></b></a>
 					<ul aria-labelledby="drop1" role="menu" class="dropdown-menu">
 						<li role="presentation" class="{% if sort == 1%}active{%endif%}">
-							<a href="{% url rss-search %}?q={{q|urlencode}}&sort=1" tabindex="-1" role="menuitem">بر اساس ارتباط</a>
+	<a href="{% url rss-search %}?q={{q|urlencode}}&sort=1&has_image={{has_image}}" tabindex="-1" role="menuitem">بر اساس ارتباط</a>
 						</li>
 						<li role="presentation" class="{% if sort == 2%}active{%endif%}">
-							<a href="{% url rss-search %}?q={{q|urlencode}}&sort=2" tabindex="-1" role="menuitem">بر اساس تاریخ</a>
+	<a href="{% url rss-search %}?q={{q|urlencode}}&sort=2&has_image={{has_image}}" tabindex="-1" role="menuitem">بر اساس تاریخ</a>
+						</li>
+						
+					</ul>
+				</li>
+				
+			</ul>
+			<ul role="navigation" class="nav">
+				<li class="dropdown">
+					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="#" id="drop1">تصاویر <b class="caret"></b></a>
+					<ul aria-labelledby="drop1" role="menu" class="dropdown-menu">
+						<li role="presentation" class="{% if has_image == -1%}active{%endif%}">
+							<a href="{% url rss-search %}?q={{q|urlencode}}&sort={{sort}}&has_image=-1" tabindex="-1" role="menuitem">همه موارد</a>
+						</li>
+						<li role="presentation" class="{% if has_image == 1%}active{%endif%}">
+							<a href="{% url rss-search %}?q={{q|urlencode}}&sort={{sort}}&has_image=1" tabindex="-1" role="menuitem">دارای تصویر</a>
+						</li>
+						<li role="presentation" class="{% if has_image == 0%}active{%endif%}">
+							<a href="{% url rss-search %}?q={{q|urlencode}}&sort={{sort}}&has_image=0" tabindex="-1" role="menuitem">بدون تصویر</a>
 						</li>
 						
 					</ul>
