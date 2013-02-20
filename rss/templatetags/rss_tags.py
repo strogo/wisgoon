@@ -45,6 +45,14 @@ class UserFeedSubs(template.Node):
     
 register.tag('user_feed_subs', user_feed_subs)
 
+@register.filter
+def get_host(value):
+    o = urlparse(value)
+    if hasattr(o, 'netloc'):
+        return o.netloc
+    else:
+        return ''
+
 def user_item_like(parser, token):
     try:
         # split_contents() knows not to split quoted strings.
@@ -111,6 +119,7 @@ def human_farsi(text):
     text = text.replace('day', u'روز')
     text = text.replace('ago', u'قبل')
     text = text.replace('a minute', u'یک دقیقه')
+    text = text.replace('month', u'ماه')
     text = text.replace('months', u'ماه')
     text = text.replace('weeks', u'هفته')
     text = text.replace('week', u'هفته')
@@ -129,14 +138,6 @@ def get_username(user):
     except Profile.DoesNotExist:
         username=user.username
     return username
-
-@register.filter
-def get_host(value):
-    o = urlparse(value)
-    if hasattr(o, 'netloc'):
-        return o.netloc
-    else:
-        return ''
 
 @register.filter
 def date_from_timestamp(value):

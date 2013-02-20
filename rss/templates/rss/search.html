@@ -21,6 +21,7 @@ var start_loading=0;
 		{% include 'rss/feed_subscribe.html'%}
 		
 	<div id="feed-ul-v2">
+		{% include "rss/search_tools.html"%}
 		{% include "rss/_items.html"%}
 	</div>
 	</div>
@@ -28,7 +29,7 @@ var start_loading=0;
 
 <script type="text/javascript">
 var a_url = 'search';
-var extend_query='q={{q|safe}}'
+var extend_query='q={{q|safe}}&sort={{sort}}'
 </script>
 
 

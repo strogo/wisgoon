@@ -298,7 +298,7 @@ def store_extra(item_id, tag, time):
     else:
         upex = ItemExtra.objects(item_id=item_id, tags__nin=[tag]).update_one(push__tags=tag)
 
-def search_query(query, offset=0):
+def search_query(query, offset=0, sort=1):
     
     mode = SPH_MATCH_EXTENDED
     host = 'localhost'
@@ -315,7 +315,14 @@ def search_query(query, offset=0):
     cl = SphinxClient()
     cl.SetServer ( host, port )
     cl.SetWeights ( [100, 1] )
-    #cl.SetSortMode(SPH_SORT_ATTR_DESC, 'date_added')
+    
+    if sort==1:
+        """ default order by relation """
+        pass
+    elif sort==2:
+        """ order to date  """
+        cl.SetSortMode(SPH_SORT_ATTR_DESC, 'date_added')
+        
     cl.SetMatchMode ( mode )
 
     #cl.SetSortMode(SPH_SORT_TIME_SEGMENTS)
@@ -357,10 +364,14 @@ def search(request):
         if not created:
             searchObj.count=searchObj.count+1
             searchObj.save()
-    
+            
         offset = int(request.GET.get('older', 0))
+        try:
+            sort = int(request.GET.get('sort', 1))
+        except:
+            sort = 1
 
-        docs=search_query(q, offset)
+        docs=search_query(q, offset, sort)
             
         result = Item.objects.filter(id__in=docs).all()
         
@@ -376,7 +387,7 @@ def search(request):
     
         else:
             return render_to_response('rss/search.html',
-                                  {'latest_items':result, 'offset':offset+30,'q':q},
+                                  {'latest_items':result, 'offset':offset+30,'q':q, 'sort':sort},
                                   context_instance=RequestContext(request))
     else:
         sObj = Search.objects.filter(accept=1)
