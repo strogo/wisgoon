@@ -315,7 +315,7 @@ def search_query(query, offset=0):
     cl = SphinxClient()
     cl.SetServer ( host, port )
     cl.SetWeights ( [100, 1] )
-    cl.SetSortMode(SPH_SORT_ATTR_DESC, 'date_added')
+    #cl.SetSortMode(SPH_SORT_ATTR_DESC, 'date_added')
     cl.SetMatchMode ( mode )
 
     #cl.SetSortMode(SPH_SORT_TIME_SEGMENTS)
