@@ -378,9 +378,9 @@ def search(request):
             sort = 1
             
         try:
-            has_image = int(request.GET.get('has_image', 0))
+            has_image = int(request.GET.get('has_image', -1))
         except:
-            has_image = 0
+            has_image = -1
 
         docs=search_query(q, offset, sort, has_image)
             
