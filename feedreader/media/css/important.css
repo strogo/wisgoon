@@ -93,3 +93,29 @@ input, button, select, textarea {
 	overflow-y: visible;
 	max-height: none;
 }
+
+.navbar-fa{
+	
+}
+
+.navbar-fa .brand{
+	float:right;
+	margin-right: -20px;
+}
+.navbar .nav{
+	float:right;
+	background: none;
+}
+.navbar .nav > li > .dropdown-menu:after{
+	right:10px;
+	left: auto!important;
+}
+
+.navbar .nav > li > .dropdown-menu:before{
+	right: 9px;
+	left: auto!important;
+}
+
+
+
+
