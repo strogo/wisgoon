@@ -323,7 +323,7 @@ def search_query(query, offset=0, sort=1, has_image=-1):
         """ order to date  """
         cl.SetSortMode(SPH_SORT_ATTR_DESC, 'date_added')
     
-    if has_image in (-1,0,1):
+    if has_image != -1 and  has_image in (0,1):
         cl.SetFilter('has_image', [has_image])
 
     
