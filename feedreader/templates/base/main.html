@@ -112,34 +112,47 @@
 				{% block content %}
 				{% endblock content %}
 			</div>
-			
-	<div class="span3">
-	<ul class="nav nav-list sites-nav">
-	{% if user.is_authenticated%}
-		<li class="nav-header">فیدهای شما</li>
-		{% get_user_feeds %}
-		{% for subs in user_feeds %}
-	<li>
-		<a href="{% url rss-feed subs.feed.id %}">{{subs.feed|truncatechars:35}}</a>
-	</li>
-		{% endfor %}
-	{% endif %}
-	<li class="divider"> </li>
-	<li class="nav-header">امکانات سایت</li>
-	<li><a href="{% url rss-search%}">جستجو</a></li>
 	
-	<li class="divider"> </li>
-	<li class="nav-header">لیست فیدها</li>
+    		
+	<div class="span3">
+    {% if user.is_authenticated %}
+    <div class="box"> 
+       <div class="box-title">فیدهای شما</div>
+       <div class="box-content">
+        <ul>
+         {% get_user_feeds %}
+         {% for subs in user_feeds %}
+            <li>
+                <a href="{% url rss-feed subs.feed.id %}">{{subs.feed|truncatechars:35}}</a>
+            </li>
+         {% endfor %}
+        </ul>
+       </div>
+    </div>
+    {% endif %}
+    
+    <div class="box">
+        <div class="box-title">امکانات سایت</div>
+        <div class="box-content">
+	        <a href="{% url rss-search%}">جستجو</a>
+        </div>
+	</div>
+	
+    <div class="box">
+        <div class="box-title">لیست فیدها</div>
+        <div class="box-content">
+            <ul>
 	{% get_all_feeds %}
 		{% for allfeed in all_feeds %}
 	<li>
 		<a href="{% url rss-feed allfeed.id %}">{{allfeed|truncatechars:35}}</a>
 	</li>
 		{% endfor %}
-	</ul>
-			</div>
+	        </ul>
+        </div>
+	</div>
     <div>&nbsp;</div>
-    <div class="span3">
+    <div>
     <a href="http://www.wisgoon.com/pin/" target="_blank">
         <img src="{{MEDIA_URL}}ads/ads-pin.png" alt="مطالب خود را با ما به اشتراک بگذارید" />
     </a>
