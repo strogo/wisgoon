@@ -156,7 +156,8 @@ def feed_item(request, feed_id, item_id):
     
     docs=search_query( clean_words(item.title), mode=SPH_MATCH_ANY, limit=10)
     if docs:
-        docs.remove(int(item_id))
+        if item_id in docs:
+            docs.remove(int(item_id))
         result = Item.objects.filter(id__in=docs).all()
             
         objects = dict([(obj.id, obj) for obj in result])
