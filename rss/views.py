@@ -10,8 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
 import json
-from rss.sphinxapi import SPH_MATCH_ALL, SphinxClient, SPH_ATTR_TIMESTAMP,\
-    SPH_MATCH_EXTENDED, SPH_SORT_TIME_SEGMENTS, SPH_SORT_ATTR_DESC
+from rss.sphinxapi import SphinxClient, SPH_MATCH_EXTENDED, SPH_SORT_ATTR_DESC, SPH_MATCH_ANY
 import sys
 
 from django.template.loader import render_to_string
@@ -22,6 +21,7 @@ from feedreader.parser import parse_feed_web
 from django.views.decorators.csrf import csrf_exempt
 
 import simplejson
+from rss.utils import clean_words
 
 MAX_PER_PAGE = 10
 
@@ -154,6 +154,17 @@ def feed_item(request, feed_id, item_id):
     feed = Feed.objects.get(pk=feed_id)
     item = get_object_or_404(Item.objects.filter(feed=feed_id,id=item_id)[:1])
     
+    docs=search_query( clean_words(item.title), mode=SPH_MATCH_ANY, limit=10)
+    if docs:
+        docs.remove(int(item_id))
+        result = Item.objects.filter(id__in=docs).all()
+            
+        objects = dict([(obj.id, obj) for obj in result])
+        sorted_objects = [objects[id] for id in docs]
+        
+        related_posts = sorted_objects
+    else:
+        related_posts = []
     #store last view
     Lastview.objects.get_or_create(item=item_id)
     
@@ -169,7 +180,8 @@ def feed_item(request, feed_id, item_id):
     
     form = ReportForm()
     return render_to_response('rss/item.html', 
-                              {'item': item, 'feed':feed, 'latest_items': latest_items,'form':form,'older_url': older_url},
+                              {'item': item, 'feed':feed, 'latest_items': latest_items,'form':form,'older_url': older_url
+                              ,'related_posts':related_posts},
                               context_instance=RequestContext(request))
 
 def feed_item_goto(request, item_id):
@@ -298,9 +310,8 @@ def store_extra(item_id, tag, time):
     else:
         upex = ItemExtra.objects(item_id=item_id, tags__nin=[tag]).update_one(push__tags=tag)
 
-def search_query(query, offset=0, sort=1, has_image=-1):
+def search_query(query, offset=0, sort=1, has_image=-1, mode=SPH_MATCH_EXTENDED, limit=30):
     
-    mode = SPH_MATCH_EXTENDED
     host = 'localhost'
     port = 9312
     index = 'rss_item'
@@ -309,7 +320,6 @@ def search_query(query, offset=0, sort=1, has_image=-1):
     sortby = '-@weights'
     groupby = 'id'
     groupsort = '@group desc'
-    limit = 30
     
     # do query
     cl = SphinxClient()
