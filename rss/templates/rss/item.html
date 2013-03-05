@@ -13,6 +13,19 @@
 </li>
 {% endblock current_feed %}
 
+{% block related_post %}
+{% if related_posts %}
+<div class="box">
+	<div class="box-title">مطالب مرتبط</div>
+    <div class="box-content">
+	{% for rp in related_posts %}
+		<a href="{{rp.get_absolute_url}}">{{rp.title|truncatewords:100}}</a><br>
+	{% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock related_post %}
+
 {% block content %}
 
 <script type="text/javascript">
