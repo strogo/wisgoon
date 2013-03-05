@@ -19,7 +19,7 @@
 	<div class="box-title">مطالب مرتبط</div>
     <div class="box-content">
 	{% for rp in related_posts %}
-		<a href="{{rp.get_absolute_url}}">{{rp.title|truncatewords:100}}</a><br>
+		> <a href="{{rp.get_absolute_url}}">{{rp.title|truncatewords:100}}</a><br>
 	{% endfor %}
     </div>
 </div>
