@@ -30,6 +30,7 @@ tag_activate.short_description = "Mark selected tags published"
 
 class SearchAdmin(admin.ModelAdmin):
     list_display = ('keyword', 'accept', 'count', 'slug')
+    list_filter = ('accept',)
     fields = ('keyword', 'accept', 'count')
     actions = [tag_activate]
 
