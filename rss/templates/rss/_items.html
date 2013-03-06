@@ -24,15 +24,8 @@
 	<div class="feed-actions-v2">
 		<div class="sharing-actions">
 			<div class="a2a_kit a2a_default_style">
-				<a class="a2a_dd" href="http://www.addtoany.com/share_save">Share</a>
-				<span class="a2a_divider"></span>
-
 				<a href="{% url rss-item-like item.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_item_like item.id %}{% endif %}"> <i class="icon-heart"></i> {{item.likes}} </a>
 				
-				{% if user.is_authenticated%}
-			  		<!-- <a data-toggle="modal" data-target="#myModal" href="#myModal" class="reportButton" id="{{item.id}}" >گزارش تخلف</a> -->
-			  	{%endif%}
-
 			</div>
 		</div>
 	</div>
@@ -43,35 +36,6 @@
 	{%endif%}
 
 </div>
-{% if request.is_ajax %}
-<script type="text/javascript">
-	a2a_config.linkname = '{{item.title|remove_newlines}}';
-	a2a_config.linkurl = '{{item.url|remove_newlines}}';
-	a2a_config.onclick = 1;
-	a2a.init('page'); 
-</script>
-{%endif%}
-{% if not request.is_ajax %}
-{% if forloop.first%}
-<script type="text/javascript">
-	a2a_config = {
-		linkname : '{{item.title|remove_newlines}}',
-		linkurl : '{{item.url}}',
-		static_server : "{{MEDIA_URL}}sharing/",
-		onclick : 1,
-	}; 
-</script>
-
-<script type="text/javascript" src="{{MEDIA_URL}}sharing/page.js"></script>
-{%else%}
-<script type="text/javascript">
-	a2a_config.linkname = '{{item.title|remove_newlines}}';
-	a2a_config.linkurl = '{{item.url|remove_newlines}}';
-	a2a_config.onclick = 1;
-	a2a.init('page'); 
-</script>
-{%endif%}
-{%endif%}
 
 {%endfor%}
 
