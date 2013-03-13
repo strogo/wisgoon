@@ -1,9 +1,15 @@
 from django.contrib import admin
 from rss.models import Feed, Item, Subscribe, Search
 
+def feed_unlock(modeladmin, request, queryset):
+    queryset.update(lock=False)
+feed_unlock.short_description = "unlock feeds"
+
 class FeedAdmin(admin.ModelAdmin):
     list_display = ('url','title','last_fetch','followers','view','priority','creator','status','lock')
     fields = ('url',)
+    actions = [feed_unlock]
+    list_filter = ('lock',)
     
     def save_model(self, request, obj, form, change):
         obj.creator = request.user
