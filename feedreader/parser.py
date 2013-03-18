@@ -115,13 +115,17 @@ def parse_feed(feedObj):
     feedObj.lock = True
     feedObj.save()
     
-    print "going to parse %s" % feedObj.url
-    feed = feedparser.parse(feedObj.url)
-    print "end of getting url"
+    #print "going to parse %s" % feedObj.url
+    #feed = feedparser.parse(feedObj.url)
+    #print "end of getting url"
     i=0
     duplicate=0
     hasInsert = 0
     try:
+        print "going to parse %s" % feedObj.url
+        feed = feedparser.parse(feedObj.url)
+        print "end of getting url"
+
         for item in feed.entries:
             i=i+1
             #print "title: %s" % item.title
@@ -189,7 +193,11 @@ def parse_feed(feedObj):
     except _mysql_exceptions.Warning:
         print feedObj
     
+    except Exception as e:
+        print e
+
     finally:
+        print "exec finaly ---------------------------------------------"
         if duplicate == 0:
             if feedObj.priority <= 5:
                 feedObj.priority = 1
@@ -197,7 +205,7 @@ def parse_feed(feedObj):
                 feedObj.priority = feedObj.priority-5        
         try:
             feedObj.title=feed['channel']['title']
-        except KeyError:
+        except:
             pass
         
         feedObj.last_fetch = datetime.now()
