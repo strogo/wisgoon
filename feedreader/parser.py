@@ -174,7 +174,7 @@ def parse_feed(feedObj):
                 fi.timestamp = time()
 
 
-            fi.feed = feedObj.id
+            fi.feed = feedObj
             
             fi.save()
             hasInsert = 1
