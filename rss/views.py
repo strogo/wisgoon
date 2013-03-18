@@ -185,7 +185,7 @@ def feed_item(request, feed_id, item_id):
     form = ReportForm()
     return render_to_response('rss/item.html', 
                               {'item': item, 'feed':feed, 'latest_items': latest_items,'form':form,'older_url': older_url
-                              ,'related_posts':related_posts, 'item_extra': item_ex},
+                              ,'related_posts':related_posts},
                               context_instance=RequestContext(request))
 
 def feed_item_goto(request, item_id):
