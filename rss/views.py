@@ -151,9 +151,12 @@ def feed(request, feed_id, older=0):
                               context_instance=RequestContext(request))
 
 def feed_item(request, feed_id, item_id):
-    feed = Feed.objects.get(pk=feed_id)
+    try:
+        feed = Feed.objects.get(pk=feed_id)
+    except Feed.DoesNotExist:
+        raise Http404
     item = get_object_or_404(Item.objects.filter(feed=feed_id,id=item_id)[:1])
-    
+       
     docs=search_query( clean_words(item.title), mode=SPH_MATCH_ANY, limit=10)
     if docs:
         if int(item_id) in docs:
@@ -182,7 +185,7 @@ def feed_item(request, feed_id, item_id):
     form = ReportForm()
     return render_to_response('rss/item.html', 
                               {'item': item, 'feed':feed, 'latest_items': latest_items,'form':form,'older_url': older_url
-                              ,'related_posts':related_posts},
+                              ,'related_posts':related_posts, 'item_extra': item_ex},
                               context_instance=RequestContext(request))
 
 def feed_item_goto(request, item_id):
@@ -491,3 +494,33 @@ def report(request):
                     report.save()
                     
         return HttpResponseRedirect('/feedreader/')
+
+def favicon(request):
+    try:
+        url = request.GET.get('url', '')
+    except :
+        pass
+    return HttpResponse(url)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
