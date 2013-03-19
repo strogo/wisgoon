@@ -74,7 +74,7 @@
 			{% get_user_feeds %}
 			{% for sub in user_feeds %}
 			<li>
-				<a href="{% url rss-feed sub.feed.id %}">{{sub.feed.title|default:sub.feed.url|truncatechars:35}}</a>
+				<a href="{% url rss-feed sub.feed.id %}"><img class="favicon" src="{{MEDIA_URL}}favicon/{{sub.feed.url|get_favicon}}" />{{sub.feed.title|default:sub.feed.url|truncatechars:35}}</a>
 			</li>
 			{% endfor %}
 		</ul>
@@ -87,7 +87,7 @@
 			{% get_recomend_feeds %}
 			{% for f in recomend_feeds %}
 			<li>
-				<a href="{% url rss-feed f.id %}">{{f.title|truncatechars:35}}</a>
+				<a href="{% url rss-feed f.id %}"><img class="favicon" src="{{MEDIA_URL}}favicon/{{f.url|get_favicon}}" />{{f.title|truncatechars:35}}</a>
 			</li>
 			{% endfor %}
 		</ul>
@@ -123,7 +123,7 @@
          {% get_user_feeds %}
          {% for subs in user_feeds %}
             <li>
-                <a href="{% url rss-feed subs.feed.id %}">{{subs.feed|truncatechars:35}}</a>
+                <a href="{% url rss-feed subs.feed.id %}"><img class="favicon" src="{{MEDIA_URL}}favicon/{{subs.feed.url|get_favicon}}" />{{subs.feed|truncatechars:35}}</a>
             </li>
          {% endfor %}
         </ul>
@@ -148,7 +148,7 @@
 	{% get_all_feeds %}
 		{% for allfeed in all_feeds %}
 	<li>
-		<a href="{% url rss-feed allfeed.id %}">{{allfeed|truncatechars:35}}</a>
+		<a href="{% url rss-feed allfeed.id %}"><img class="favicon" src="{{MEDIA_URL}}favicon/{{allfeed.url|get_favicon}}" />{{allfeed|truncatechars:35}}</a>
 	</li>
 		{% endfor %}
 	        </ul>

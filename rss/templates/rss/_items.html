@@ -13,7 +13,7 @@
 	</div>
 	{% endthumbnail %}
 	
-	<small>{{item.feed}}</small> - <a href="{{ item.get_absolute_url }}">{{item|escape}}</a>
+	<small><img class="favicon" src="{{MEDIA_URL}}favicon/{{item.feed.url|get_favicon}}" />{{item.feed}}</small> - <a href="{{ item.get_absolute_url }}">{{item|escape}}</a>
 	<p class="feed-description">{{item.description|striptags|safe|truncatewords:100}}</p>
 	<span style="display: block;">{{item.date|naturaltime|human_farsi}}  </span>
 	<ul class="tags">

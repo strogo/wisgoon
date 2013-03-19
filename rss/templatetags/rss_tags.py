@@ -2,6 +2,8 @@
 from django.template import Library,Node
 from urlparse import urlparse
 import datetime
+import hashlib
+
 from rss.models import Subscribe, Feed, Likes
 from pin.models import Likes as pin_likes, Notify
 from django.contrib.auth.models import User
@@ -44,6 +46,12 @@ class UserFeedSubs(template.Node):
         return ''
     
 register.tag('user_feed_subs', user_feed_subs)
+
+@register.filter
+def get_favicon(url):
+    host = get_host(url)
+    #return host
+    return "%s.ico" % hashlib.md5(host).hexdigest()
 
 @register.filter
 def get_host(value):

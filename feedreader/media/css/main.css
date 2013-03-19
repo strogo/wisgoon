@@ -505,3 +505,9 @@ overflow: hidden;
 .box-content ul{
     list-style: none;
 }
+
+.favicon{
+    width: 16px;
+    height: 16px;
+    margin:5px;
+}
