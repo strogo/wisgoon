@@ -14,7 +14,7 @@ from rss.utils import get_host
 def get_favicon_url(url):
     o = urlparse(url)
     host = get_host(url)
-
+    print "get favicon: ", host
     favloc = "%s/favicon/%s.ico" % ( settings.MEDIA_ROOT, host )
     #print "fav location: ", favloc
     favurl = "http://g.etfv.co/%s://%s" % (o.scheme ,o.netloc)
