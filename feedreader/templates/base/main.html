@@ -74,7 +74,7 @@
 			{% get_user_feeds %}
 			{% for sub in user_feeds %}
 			<li>
-				<a href="{% url rss-feed sub.feed.id %}"><img class="favicon" src="{{MEDIA_URL}}favicon/{{sub.feed.url|get_favicon}}" />{{sub.feed.title|default:sub.feed.url|truncatechars:35}}</a>
+				<a href="{% url rss-feed sub.feed.id %}"><img class="favicon" alt="{{sub.feed.url}}" src="{{MEDIA_URL}}favicon/{{sub.feed.url|get_favicon}}" />{{sub.feed.title|default:sub.feed.url|truncatechars:35}}</a>
 			</li>
 			{% endfor %}
 		</ul>
