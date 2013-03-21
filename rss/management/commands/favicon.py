@@ -3,14 +3,19 @@ from urlparse import urlparse
 import hashlib
 import urllib
 
+import tldextract
+
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
 from rss.models import Feed
+from rss.utils import get_host
 
 def get_favicon_url(url):
     o = urlparse(url)
-    favloc = "%s/favicon/%s.ico" % ( settings.MEDIA_ROOT, hashlib.md5(o.netloc).hexdigest() )
+    host = get_host(url)
+
+    favloc = "%s/favicon/%s.ico" % ( settings.MEDIA_ROOT, host )
     #print "fav location: ", favloc
     favurl = "http://g.etfv.co/%s://%s" % (o.scheme ,o.netloc)
     urllib.urlretrieve(favurl, favloc)

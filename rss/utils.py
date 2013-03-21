@@ -10,7 +10,7 @@ def get_host(url):
     tld = tldextract.extract(url)
     host = ""
     if tld.domain and tld.tld:
-        host = tld.domain + "." + tld.tld
+        host = tld.domain + "_" + tld.tld
         return host
 
     return None
