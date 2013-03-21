@@ -15,6 +15,8 @@ from django.template.defaultfilters import stringfilter
 from calverter import Calverter
 from user_profile.models import Profile
 
+from rss.utils import get_host as gh
+
 register = Library()
 
 def user_feed_subs(parser, token):
@@ -49,7 +51,7 @@ register.tag('user_feed_subs', user_feed_subs)
 
 @register.filter
 def get_favicon(url):
-    host = get_host(url)
+    host = gh(url)
     #return host
     return "%s.ico" % hashlib.md5(host).hexdigest()
 
