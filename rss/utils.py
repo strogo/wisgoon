@@ -11,6 +11,6 @@ def get_host(url):
     host = ""
     if tld.domain and tld.tld:
         host = tld.domain + "_" + tld.tld
-        return host
+        return (tld.domain, tld.tld)
 
     return None

@@ -11,14 +11,23 @@ from django.conf import settings
 from rss.models import Feed
 from rss.utils import get_host
 
+all_check = []
+
 def get_favicon_url(url):
     o = urlparse(url)
-    host = get_host(url)
-    print "get favicon: ", host
-    favloc = "%s/favicon/%s.ico" % ( settings.MEDIA_ROOT, host )
-    #print "fav location: ", favloc
-    favurl = "http://g.etfv.co/%s://%s" % (o.scheme ,o.netloc)
-    urllib.urlretrieve(favurl, favloc)
+    host, tld = get_host(url)
+    sub_suf = host+"."+tld
+    file_name = host+"_"+tld
+    if sub_suf not in all_check:
+        print "get favicon: ", host
+        favloc = "%s/favicon/%s.ico" % ( settings.MEDIA_ROOT, file_name )
+        #print "fav location: ", favloc
+        favurl = "http://g.etfv.co/%s://www.%s" % (o.scheme, sub_suf)
+        print "favurl is: ", favurl
+        urllib.urlretrieve(favurl, favloc)
+        all_check.append(sub_suf)
+
+    print "multiple in: ", sub_suf
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -27,5 +36,6 @@ class Command(BaseCommand):
             os.makedirs("%s/favicon" % ( settings.MEDIA_ROOT ))
 
         feeds  = Feed.objects.all()
+        
         for feed in feeds:
             get_favicon_url( feed.url)

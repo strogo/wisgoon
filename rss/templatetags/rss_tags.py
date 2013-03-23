@@ -51,9 +51,10 @@ register.tag('user_feed_subs', user_feed_subs)
 
 @register.filter
 def get_favicon(url):
-    host = gh(url)
+    host, tld = gh(url)
+    file_name = "%s_%s.ico" %(host, tld)
     #return host
-    return "%s.ico" % host
+    return file_name
 
 @register.filter
 def get_host(value):
