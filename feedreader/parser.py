@@ -16,6 +16,8 @@ import os
 import socket
 import mongoengine
 
+from rss.management.commands.favicon import get_favicon_url
+
 socket.setdefaulttimeout(10)
 
 def remove_img_tags(data):
@@ -34,6 +36,7 @@ def parse_feed_web(feedObj):
     
     try:
         feed = feedparser.parse(feedObj.url)
+        get_favicon_url(feedObj.url)
     except:
         return 0
     i=0
