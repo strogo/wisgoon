@@ -36,7 +36,7 @@ def parse_feed_web(feedObj):
     
     try:
         feed = feedparser.parse(feedObj.url)
-        get_favicon_url(feedObj.url)
+        #get_favicon_url(feedObj.url)
     except:
         return 0
     i=0
