@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import os
 from django.template import Library,Node
 from urlparse import urlparse
 import datetime
@@ -14,6 +15,8 @@ from django.utils.safestring import mark_safe
 from django.template.defaultfilters import stringfilter
 from calverter import Calverter
 from user_profile.models import Profile
+
+from django.conf import settings
 
 from rss.utils import get_host as gh
 
@@ -52,7 +55,12 @@ register.tag('user_feed_subs', user_feed_subs)
 @register.filter
 def get_favicon(url):
     host, tld = gh(url)
+    
     file_name = "%s_%s.ico" %(host, tld)
+    file_path = "%s/favicon/%s" % (settings.MEDIA_ROOT, file_name)
+    if not os.path.exists(file_path):
+        file_name = "default.ico"
+    #print file_path
     #return host
     return file_name
 

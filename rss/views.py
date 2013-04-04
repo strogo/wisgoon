@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
 import json
-from rss.sphinxapi import SphinxClient, SPH_MATCH_EXTENDED, SPH_SORT_ATTR_DESC, SPH_MATCH_ANY
+from rss.sphinxapi import SphinxClient, SPH_MATCH_EXTENDED, SPH_SORT_ATTR_DESC, SPH_MATCH_ANY, SPH_GROUPBY_DAY
 import sys
 
 from django.template.loader import render_to_string
@@ -113,6 +113,15 @@ def user_likes(request, user_id):
         return render_to_response('rss/user_likes.html', 
                               {'latest_items': latest_items,'user_feeds':user_feeds,'offset':offset+30,'form':form},
                               context_instance=RequestContext(request))
+
+def get_feed_range(feed_id):
+    sc = SphinxClient()
+    sc.SetServer('localhost',9312)
+    sc.SetGroupBy('date_added',SPH_GROUPBY_DAY)
+    sc.SetFilter('feed_id',[int(feed_id)])
+    sc.SetLimits(0,10)
+
+    return sc.Query('')
      
 def feed(request, feed_id, older=0):
     
@@ -146,8 +155,15 @@ def feed(request, feed_id, older=0):
         else:
             return HttpResponse(0)
     else:
+        feed_range = get_feed_range(feed_id)
+        dates = []
+        counts = []
+        for item in feed_range['matches']:
+            dates.append(str(item['attrs']['date_abs']))
+            counts.append(item['attrs']['@count'])
+        print feed_range
         return render_to_response('rss/feed.html', 
-                              {'latest_items': latest_items, 'feed':feed,'form':form , 'older_url': older_url},
+                  {'latest_items': latest_items, 'feed':feed,'form':form , 'older_url': older_url, 'dates':dates, 'counts':counts},
                               context_instance=RequestContext(request))
 
 def feed_item(request, feed_id, item_id):
