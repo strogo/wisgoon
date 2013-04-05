@@ -1,5 +1,7 @@
 from time import mktime, time
 from datetime import datetime
+from django.utils.timezone import now
+
 import binascii
 import feedparser
 from rss.models import Item
@@ -19,6 +21,8 @@ import mongoengine
 from rss.management.commands.favicon import get_favicon_url
 
 socket.setdefaulttimeout(10)
+
+STORE_IMAGES = True
 
 def remove_img_tags(data):
     p = re.compile(r'<img.*?>')
@@ -125,6 +129,7 @@ def parse_feed(feedObj):
     duplicate=0
     hasInsert = 0
     try:
+        print "\n\n\nstart ---------------------------------------------------------\n"
         print "going to parse %s" % feedObj.url
         feed = feedparser.parse(feedObj.url)
         print "end of getting url"
@@ -137,7 +142,7 @@ def parse_feed(feedObj):
             fi.title = item.title
             if hasattr(item, 'description'):
                 fi.description = item.description
-                if fi.description != '':
+                if fi.description != '' and STORE_IMAGES:
                     tree = lxml.html.fromstring(fi.description)
                     for image in tree.xpath("//img/@src"):
                         try:
@@ -180,10 +185,10 @@ def parse_feed(feedObj):
                 fi.date = datetime.now()
                 fi.timestamp = time()
 
-
             fi.feed = feedObj
             
             fi.save()
+            print "item saved *******************************************************"
             hasInsert = 1
     except IntegrityError:
         """
@@ -200,7 +205,7 @@ def parse_feed(feedObj):
         print e
 
     finally:
-        print "exec finaly ---------------------------------------------"
+        print "exec finaly ---------------------------------------------\n\n\n"
         if duplicate == 0:
             if feedObj.priority <= 5:
                 feedObj.priority = 1
@@ -211,7 +216,7 @@ def parse_feed(feedObj):
         except:
             pass
         
-        feedObj.last_fetch = datetime.now()
+        feedObj.last_fetch = now()
         feedObj.lock = False
         feedObj.save()
     
