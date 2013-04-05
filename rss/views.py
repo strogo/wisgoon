@@ -74,8 +74,15 @@ def home(request):
         else:
             return HttpResponse(0)
     else:
+        feed_range = get_feed_range()
+        dates = []
+        counts = []
+        for item in feed_range['matches']:
+            dates.append(str(item['attrs']['date_abs']))
+            counts.append(item['attrs']['@count'])
+        print feed_range
         return render_to_response('rss/home.html', 
-                              {'latest_items': latest_items,'user_feeds':user_feeds,'form':form},
+                              {'latest_items': latest_items,'user_feeds':user_feeds,'form':form,'dates':dates, 'counts':counts},
                               context_instance=RequestContext(request))
 
 def user_likes(request, user_id):
@@ -114,11 +121,14 @@ def user_likes(request, user_id):
                               {'latest_items': latest_items,'user_feeds':user_feeds,'offset':offset+30,'form':form},
                               context_instance=RequestContext(request))
 
-def get_feed_range(feed_id):
+def get_feed_range(feed_id=0):
+    feed_id = int(feed_id)
+
     sc = SphinxClient()
     sc.SetServer('localhost',9312)
     sc.SetGroupBy('date_added',SPH_GROUPBY_DAY)
-    sc.SetFilter('feed_id',[int(feed_id)])
+    if feed_id > 0:
+        sc.SetFilter('feed_id',[feed_id])
     sc.SetLimits(0,10)
 
     return sc.Query('')
@@ -161,7 +171,7 @@ def feed(request, feed_id, older=0):
         for item in feed_range['matches']:
             dates.append(str(item['attrs']['date_abs']))
             counts.append(item['attrs']['@count'])
-        print feed_range
+        #print feed_range
         return render_to_response('rss/feed.html', 
                   {'latest_items': latest_items, 'feed':feed,'form':form , 'older_url': older_url, 'dates':dates, 'counts':counts},
                               context_instance=RequestContext(request))

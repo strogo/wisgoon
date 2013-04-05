@@ -11,6 +11,64 @@ var lastId={{latest_items.0.id}};
 
 <div class="row row-fluid">
 	<div class="span12">
+{%if dates %}
+        <div class="box">
+            <div class="box-title">نمودار</div>
+<div class="box-content">
+
+            <script src="{{MEDIA_URL}}js/hc/highcharts.js"></script>
+            <script src="{{MEDIA_URL}}js/hc/modules/exporting.js"></script>
+            
+            <div id="feed-statics" style="min-width: 400px; height: 200px; margin: 0 auto;direction:ltr"></div>
+<script type="text/javascript">
+$(function () {
+        $('#feed-statics').highcharts({
+            chart: {
+                type: 'spline'
+            },
+            credits:{
+                enabled: false
+            },
+            title: {
+                text: 'آمار روزانه فید خوان'
+            },
+            xAxis: {
+                categories: [{%for d in dates %}"{{d}}", {%endfor%} ]
+            },
+            yAxis: {
+                title: {
+                    text: 'تعداد مطالب'
+                },
+                min:0,
+            },
+            tooltip: {
+                crosshairs: true,
+                shared: true
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    }
+                },
+
+            },
+            series: [{
+                name: '',
+                marker: {
+                    symbol: 'square'
+                },
+                data: [{{counts|join:','}}]
+    
+            }]
+        });
+    });
+</script>
+</div>
+        </div>
+{%endif%}
 		<div id="feed-ul-v2">
 			{% include "rss/_items.html"%}
 		</div>
