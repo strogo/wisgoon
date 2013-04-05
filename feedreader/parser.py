@@ -215,12 +215,6 @@ def parse_feed(feedObj):
         feedObj.lock = False
         feedObj.save()
     
-    if hasInsert:
-        from django.conf import settings
-        change=os.path.join(settings.SITE_ROOT, '../jsserver/change.txt')
-        file = open(change, 'w+')
-        file.write('hello')
-        file.close()
 
 
 def parse_feed_mongo(feedObj):
