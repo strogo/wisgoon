@@ -167,7 +167,7 @@ def parse_feed(feedObj):
                         
                     #fi.description = remove_img_tags(lxml.html.tostring(tree, encoding='utf-8'))
                     
-            print item.link
+            #print item.link
             fi.url = item.link
             fi.url_crc = binascii.crc32(item.link.encode('utf-8'))
             
