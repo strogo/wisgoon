@@ -201,8 +201,8 @@ def parse_feed(feedObj):
     except _mysql_exceptions.Warning:
         print feedObj
     
-    #except Exception as e:
-    #    print e
+    except Exception as e:
+        print e
 
     finally:
         print "exec finaly ---------------------------------------------\n\n\n"
