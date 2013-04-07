@@ -142,9 +142,7 @@ def feed(request, feed_id, older=0):
     if timestamp == 0:
         latest_items = Item.objects.filter(feed=feed_id).all().order_by('-timestamp')[:MAX_PER_PAGE]
     else:
-        now = datetime.datetime.fromtimestamp(timestamp)
-        lm = now - datetime.timedelta(days=10)
-        endtimestamp = time.mktime(lm.timetuple())
+        endtimestamp = get_older_days_time(timestamp, 5)
         latest_items = Item.objects.filter(feed=feed_id, timestamp__range=(endtimestamp, timestamp-1)).all().order_by('-timestamp')[:MAX_PER_PAGE]
     if not latest_items:
         if request.is_ajax():
@@ -178,6 +176,12 @@ def feed(request, feed_id, older=0):
                   {'latest_items': latest_items, 'feed':feed,'form':form , 'older_url': older_url, 'dates':dates, 'counts':counts},
                               context_instance=RequestContext(request))
 
+def get_older_days_time(timestamp, days=10):
+    now = datetime.datetime.fromtimestamp(timestamp)
+    lm = now - datetime.timedelta(days=days)
+    endtimestamp = time.mktime(lm.timetuple())
+    return endtimestamp
+
 def feed_item(request, feed_id, item_id):
     try:
         feed = Feed.objects.get(pk=feed_id)
@@ -200,9 +204,7 @@ def feed_item(request, feed_id, item_id):
     #store last view
     Lastview.objects.get_or_create(item=item_id)
     
-    now = datetime.datetime.fromtimestamp(item.timestamp)
-    lm = now - datetime.timedelta(days=10)
-    endtimestamp = time.mktime(lm.timetuple())
+    endtimestamp = get_older_days_time(item.timestamp,5)
 
     latest_items = Item.objects.filter(feed=feed_id,timestamp__range=(endtimestamp, item.timestamp-1)).all().order_by('-timestamp')[:30]
     
