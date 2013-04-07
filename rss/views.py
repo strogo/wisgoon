@@ -15,7 +15,7 @@ import sys
 
 from django.template.loader import render_to_string
 
-import time
+import time, datetime
 from django.contrib.comments.models import Comment
 from feedreader.parser import parse_feed_web
 from django.views.decorators.csrf import csrf_exempt
@@ -142,8 +142,10 @@ def feed(request, feed_id, older=0):
     if timestamp == 0:
         latest_items = Item.objects.filter(feed=feed_id).all().order_by('-timestamp')[:MAX_PER_PAGE]
     else:
-        latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'],
-                                                                     params=[timestamp]).order_by('-timestamp')[:MAX_PER_PAGE]
+        now = datetime.datetime.fromtimestamp(timestamp)
+        lm = now - datetime.timedelta(days=10)
+        endtimestamp = time.mktime(lm.timetuple())
+        latest_items = Item.objects.filter(feed=feed_id, timestamp__range=(endtimestamp, timestamp-1)).all().order_by('-timestamp')[:MAX_PER_PAGE]
     if not latest_items:
         if request.is_ajax():
             return HttpResponse(0)
