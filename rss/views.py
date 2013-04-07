@@ -206,7 +206,7 @@ def feed_item(request, feed_id, item_id):
     
     endtimestamp = get_older_days_time(item.timestamp,5)
 
-    latest_items = Item.objects.filter(feed=feed_id,timestamp__range=(endtimestamp, item.timestamp-1)).all().order_by('-timestamp')[:30]
+    latest_items = Item.objects.filter(feed=feed_id,timestamp__range=(endtimestamp, item.timestamp-1)).all().order_by('-timestamp')[:10]
     
     for li in latest_items:
         lrow = li
