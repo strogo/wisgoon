@@ -200,7 +200,11 @@ def feed_item(request, feed_id, item_id):
     #store last view
     Lastview.objects.get_or_create(item=item_id)
     
-    latest_items = Item.objects.filter(feed=feed_id).all().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
+    now = datetime.datetime.fromtimestamp(item.timestamp)
+    lm = now - datetime.timedelta(days=10)
+    endtimestamp = time.mktime(lm.timetuple())
+
+    latest_items = Item.objects.filter(feed=feed_id,timestamp__range=(endtimestamp, item.timestamp-1)).all().order_by('-timestamp')[:30]
     
     for li in latest_items:
         lrow = li
