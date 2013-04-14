@@ -511,3 +511,10 @@ overflow: hidden;
     height: 16px;
     margin:5px;
 }
+.ads-box{
+    position:fixed;
+    left: 5px;
+    bottom:15px;
+    border:1px solid #f2f4f8;
+    background: #FFF;
+}
