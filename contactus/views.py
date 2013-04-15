@@ -12,4 +12,4 @@ def home(request):
     else:
         form = FeedbackFrom()
     
-    return render_to_response('contactus/feedback.html',{'form':form, 'form_saved': form_saved}, context_instance=RequestContext(request))
+    return render_to_response('feedback.html',{'form':form, 'form_saved': form_saved}, context_instance=RequestContext(request))
