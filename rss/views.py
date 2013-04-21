@@ -33,7 +33,7 @@ def older(request):
         id = 0
     
     if id != 0:
-        latest_items = Item.objects.all().extra(where=['id>%s'], params=[id]).order_by('-id')[:MAX_PER_PAGE]
+        latest_items = Item.objects.all().extra(where=['id<%s'], params=[id]).order_by('-id')[:MAX_PER_PAGE]
     
         if request.is_ajax():
             if latest_items.exists():
@@ -55,9 +55,9 @@ def home(request):
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Item.objects.all().order_by('-timestamp')[:MAX_PER_PAGE]
+        latest_items = Item.objects.all().order_by('-id')[:MAX_PER_PAGE]
     else:
-        latest_items = Item.objects.all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:MAX_PER_PAGE]
+        latest_items = Item.objects.all().extra(where=['id<%s'], params=[timestamp]).order_by('-id')[:MAX_PER_PAGE]
     
     try:   
         user_feeds = Subscribe.objects.filter(user=request.user).all()
@@ -140,10 +140,11 @@ def feed(request, feed_id, older=0):
     feed = Feed.objects.get(pk=feed_id)
     
     if timestamp == 0:
-        latest_items = Item.objects.filter(feed=feed_id).all().order_by('-timestamp')[:MAX_PER_PAGE]
+        latest_items = Item.objects.filter(feed=feed_id).all().order_by('-id')[:MAX_PER_PAGE]
     else:
         endtimestamp = get_older_days_time(timestamp, 5)
-        latest_items = Item.objects.filter(feed=feed_id, timestamp__range=(endtimestamp, timestamp-1)).all().order_by('-timestamp')[:MAX_PER_PAGE]
+        #latest_items = Item.objects.filter(feed=feed_id, timestamp__range=(endtimestamp, timestamp-1)).all().order_by('-timestamp')[:MAX_PER_PAGE]
+        latest_items = Item.objects.filter(feed=feed_id).extra(where=['id<%s'], params=[timestamp]).all().order_by('-id')[:MAX_PER_PAGE]
     if not latest_items:
         if request.is_ajax():
             return HttpResponse(0)
@@ -153,7 +154,7 @@ def feed(request, feed_id, older=0):
     for li in latest_items:
         lrow = li
     
-    older_url = reverse('rss-feed-older', args=[feed_id, lrow.timestamp])
+    older_url = reverse('rss-feed-older', args=[feed_id, lrow.id])
     
     form = ReportForm()
     
@@ -206,13 +207,13 @@ def feed_item(request, feed_id, item_id):
     
     endtimestamp = get_older_days_time(item.timestamp,5)
 
-    latest_items = Item.objects.filter(feed=feed_id,timestamp__range=(endtimestamp, item.timestamp-1)).all().order_by('-timestamp')[:10]
+    latest_items = Item.objects.filter(feed=feed_id).extra(where=['id<%s'], params=[item_id]).all().order_by('-id')[:10]
     
     for li in latest_items:
         lrow = li
     
     try:
-        older_url = reverse('rss-feed-older', args=[feed_id, lrow.timestamp])
+        older_url = reverse('rss-feed-older', args=[feed_id, lrow.id])
     except:
         older_url = ""
     
