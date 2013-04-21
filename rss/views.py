@@ -57,7 +57,7 @@ def home(request):
     if timestamp == 0:
         latest_items = Item.objects.all().order_by('-id')[:MAX_PER_PAGE]
     else:
-        latest_items = Item.objects.all().extra(where=['id<%s'], params=[timestamp]).order_by('-id')[:MAX_PER_PAGE]
+        latest_items = Item.objects.all().extra(where=['id<%s'], params=[int(timestamp)]).order_by('-id')[:MAX_PER_PAGE]
     
     try:   
         user_feeds = Subscribe.objects.filter(user=request.user).all()
@@ -207,7 +207,7 @@ def feed_item(request, feed_id, item_id):
     
     endtimestamp = get_older_days_time(item.timestamp,5)
 
-    latest_items = Item.objects.filter(feed=feed_id).extra(where=['id<%s'], params=[item_id]).all().order_by('-id')[:10]
+    latest_items = Item.objects.filter(feed=feed_id).extra(where=['id<%s'], params=[int(item_id)]).all().order_by('-id')[:10]
     
     for li in latest_items:
         lrow = li
