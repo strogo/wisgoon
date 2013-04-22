@@ -55,7 +55,7 @@ def home(request):
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Item.objects.all().order_by('-id')[:MAX_PER_PAGE]
+        latest_items = Item.objects.all().order_by('-timestamp')[:MAX_PER_PAGE]
     else:
         latest_items = Item.objects.all().extra(where=['id<%s'], params=[int(timestamp)]).order_by('-id')[:MAX_PER_PAGE]
     
