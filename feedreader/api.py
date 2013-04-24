@@ -1,12 +1,32 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from tastypie.http import HttpUnauthorized, HttpForbidden
+from tastypie.http import HttpUnauthorized, HttpForbidden, HttpNotImplemented
 from tastypie.resources import ModelResource
 from tastypie.utils.urls import trailing_slash
 from django.conf.urls import url
 
 from tastypie.models import ApiKey
 import hashlib
+from pin.models import Post
+from tastypie.authentication import ApiKeyAuthentication
+from tastypie.authorization import Authorization
+
+class PostActionsResource(ModelResource):
+    class Meta:
+        queryset = Post.objects.all()
+        resource_name = 'post'
+        list_allowed_methods = ['get', 'post']
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization()
+
+    def obj_create(self, bundle, request=None, **kwargs):
+        try:
+            return super(PostActionsResource, self).obj_create(bundle, request, user=request.user)
+        except Exception as e:
+            HttpNotImplemented(e)
+
+    def apply_authorization_limits(self, request, object_list):
+        return object_list.filter(user=request.user)
 
 class UserResource(ModelResource):
     class Meta:
@@ -55,7 +75,8 @@ class UserResource(ModelResource):
                 
                 return self.create_response(request, {
                     'success': True,
-                    'token': api_key.key
+                    'token': api_key.key,
+                    'id': user.id
                 })
             else:
                 return self.create_response(request, {
