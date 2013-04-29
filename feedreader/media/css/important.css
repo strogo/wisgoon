@@ -82,7 +82,7 @@ input, button, select, textarea {
 .popover{
 	width: 400px;
 	height: 400px;
-	
+    text-align:right;
 }
 .popover-content{
 	height: 350px;
