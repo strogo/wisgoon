@@ -11,22 +11,7 @@ from pin.models import Post
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import Authorization
 
-class PostActionsResource(ModelResource):
-    class Meta:
-        queryset = Post.objects.all()
-        resource_name = 'post'
-        list_allowed_methods = ['get', 'post']
-        authentication = ApiKeyAuthentication()
-        authorization = Authorization()
-
-    def obj_create(self, bundle, request=None, **kwargs):
-        try:
-            return super(PostActionsResource, self).obj_create(bundle, request, user=request.user)
-        except Exception as e:
-            HttpNotImplemented(e)
-
-    def apply_authorization_limits(self, request, object_list):
-        return object_list.filter(user=request.user)
+from daddy_avatar.templatetags import daddy_avatar
 
 class UserResource(ModelResource):
     class Meta:
@@ -47,7 +32,6 @@ class UserResource(ModelResource):
 
     def login(self, request, **kwargs):
         self.method_check(request, allowed=['post'])
-
         data = self.deserialize(request, request.raw_post_data, format=request.META.get('CONTENT_TYPE', 'application/json'))
         
         
@@ -76,7 +60,8 @@ class UserResource(ModelResource):
                 return self.create_response(request, {
                     'success': True,
                     'token': api_key.key,
-                    'id': user.id
+                    'id': user.id,
+                    'user_avatar': daddy_avatar.daddy_avatar(user.user_email)                    
                 })
             else:
                 return self.create_response(request, {
