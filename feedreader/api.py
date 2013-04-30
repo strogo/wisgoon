@@ -34,15 +34,15 @@ class UserResource(ModelResource):
         self.method_check(request, allowed=['post'])
         data = self.deserialize(request, request.raw_post_data, format=request.META.get('CONTENT_TYPE', 'application/json'))
         
-        
         app_token = hashlib.sha1('app mobile-)**Z{QT').hexdigest()
-        
+
         req_token = data.get('token', '')
         
         if req_token != app_token:
+            print "%s, %s" %(req_token, app_token)
             return self.create_response(request, {
                     'success': False,
-                    'reason': 'disabled',
+                    'reason': 'token problem',
                     }, HttpForbidden )
             
         
@@ -61,7 +61,7 @@ class UserResource(ModelResource):
                     'success': True,
                     'token': api_key.key,
                     'id': user.id,
-                    'user_avatar': daddy_avatar.daddy_avatar(user.user_email)                    
+                    'user_avatar': daddy_avatar.daddy_avatar(user.email)                    
                 })
             else:
                 return self.create_response(request, {
