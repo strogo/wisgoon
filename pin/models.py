@@ -15,6 +15,12 @@ from sorl.thumbnail import get_thumbnail
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
+class Category(models.Model):
+    title = models.CharField(max_length=250)
+    
+    def __unicode__(self):
+        return self.title
+
 class Post(models.Model):
     #title = models.CharField(max_length=250, blank=True)
     text = models.TextField(blank=True, verbose_name=_('Text'))
@@ -27,6 +33,8 @@ class Post(models.Model):
     url = models.CharField(blank=True, max_length=2000, validators=[URLValidator()])
     
     tags = TaggableManager(blank=True)
+
+    category = models.ForeignKey(Category, default=1)
     
     def __unicode__(self):
         return self.text

@@ -131,6 +131,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_login_redirect',
     'rss.context_processors.c_url',
     'rss.context_processors.node_url',
+    'pin.context_processors.pin_form',
 #    'django_facebook.context_processors.facebook',
 )
 

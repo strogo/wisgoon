@@ -20,7 +20,7 @@ from django.views.decorators.csrf import csrf_exempt
 import pin_image
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm, PinDirectForm
-from pin.models import Post, Follow, Stream, Likes, Notify
+from pin.models import Post, Follow, Stream, Likes, Notify, Category
 from pin.tools import create_filename
 
 from user_profile.models import Profile
@@ -371,17 +371,17 @@ def send(request):
     else:
         form = PinForm()
     
-    user_category = Category.objects.filter(user_id=request.user.id).all()
+    category = Category.objects.all()
         
     if request.is_ajax():
         return render_to_response('pin/_send.html',
                                   {'form': form,
-                                   'user_category': user_category}, 
+                                   'category': category}, 
                                   context_instance=RequestContext(request))
     else:
         return render_to_response('pin/send.html',
                                   {'form': form,
-                                   'user_category': user_category}, 
+                                   'category': category}, 
                                   context_instance=RequestContext(request))
 
 @login_required
