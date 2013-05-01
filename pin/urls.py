@@ -2,11 +2,12 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
 from pin.feeds import LatestPinFeed
-from pin.api import PostResource
+from pin.api import PostResource, CategotyResource
 
 admin.autodiscover()
 
 post_resource=PostResource()
+cat_resource=CategotyResource()
 
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
@@ -34,6 +35,7 @@ urlpatterns = patterns('pin.views',
     #not stables
     url(r'^delneveshte/', 'delneveshte', name="pin-delneveshte"),
     url(r'^api/', include(post_resource.urls)),
+    url(r'^apic/',include(cat_resource.urls)),
     
 )
 

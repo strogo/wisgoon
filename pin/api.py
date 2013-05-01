@@ -7,16 +7,20 @@ from PIL import Image
 from django.conf import settings
 
 from sorl.thumbnail import get_thumbnail
-from pin.models import Post, Likes
+from pin.models import Post, Likes, Category
 from daddy_avatar.templatetags import daddy_avatar
+
+class CategotyResource(ModelResource):
+    class Meta:
+        queryset = Category.objects.all()
+        resource_name="category"
 
 class LikesResource(ModelResource):
     class Meta:
         #queryset = Likes.objects.all()
         resource_name = 'likes'
 
-class PostResource(ModelResource):
-    
+class PostResource(ModelResource):  
     thumb_default_size = "100x100"
     thumb_size = "100x100"
     thumb_crop = 'center'
@@ -25,6 +29,7 @@ class PostResource(ModelResource):
     user_name = fields.CharField(attribute = 'user__username')
     user_avatar = fields.CharField(attribute = 'user__email')
     likers = fields.ListField()
+    category = fields.ToOneField(CategotyResource , 'category',full=True)
     
     class Meta:
         queryset = Post.objects.all().order_by('-id')
@@ -37,10 +42,14 @@ class PostResource(ModelResource):
         base_object_list = super(PostResource, self).apply_filters(request, applicable_filters)
         
         user_id = request.GET.get('user_id', None)
+        category_id = request.GET.get('category_id', None)
         filters = {}
         
         if user_id:
             filters.update(dict(user_id=user_id))
+        
+        if category_id:
+            filters.update(dict(category_id=category_id))
 
         return base_object_list.filter(**filters).distinct()
     
@@ -55,7 +64,7 @@ class PostResource(ModelResource):
         bundle.data['thumbnail'] = im
         bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
-        
+
         user_email = bundle.data['user_avatar']
         bundle.data['user_avatar'] = daddy_avatar.daddy_avatar(user_email)
         
