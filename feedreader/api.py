@@ -28,7 +28,41 @@ class UserResource(ModelResource):
             url(r'^(?P<resource_name>%s)/logout%s$' %
                 (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('logout'), name='api_logout'),
+            url(r'^(?P<resource_name>%s)/register%s$' %                           
+                (self._meta.resource_name, trailing_slash()),                   
+                 self.wrap_view('register'),name='api_register'),
         ]
+
+    def register(self, request, **kwargs):
+        self.method_check(request, allowed=['post'])
+        data = self.deserialize(request, request.raw_post_data, format=request.META.get('CONTENT_TYPE','application/json'))
+        
+        app_token = hashlib.sha1('app mobile-)**Z{QT').hexdigest()
+        req_token = data.get('token', '')
+
+        if req_token != app_token:
+            return self.create_response(request, {'success': False,'reason':
+            'token problem for register'})
+        
+
+        username = data.get('username', '')
+        email = data.get('email','')
+        password = data.get('password', '')
+
+        if not username or not email or not password:
+            return self.create_response(request, {'status': False, 'reason':'error in parameters'})
+        
+        try:
+            user = User.objects.create_user(username=username, email=email,
+                password=password)
+        except:
+            return self.create_response(request, {'status': False, 'reason': 'error in user creation'})
+
+        if user:
+            return self.create_response(request, {'status':True, 'reason': 'user createdsuccessfully'})
+        else:
+            return self.create_response(request, {'status':False, 'reason': 'problem in create user'})
+
 
     def login(self, request, **kwargs):
         self.method_check(request, allowed=['post'])
