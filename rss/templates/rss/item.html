@@ -3,6 +3,12 @@
 {% block title%} - {{item}}{% endblock title%}
 {%block description%}{{item}} - {{item.description|striptags|truncatewords:25}}{%endblock%}
 
+{% block opengraph %}
+<meta property="og:title" content="{{item}}" />
+<meta property="og:description" content="{{item.description|striptags|truncatewords:25}}" />
+<meta property="og:type" content="article" />
+{% endblock opengraph %}
+
 {% load rss_tags %}
 {% load daddy_avatar %}
 {%load comments%}
