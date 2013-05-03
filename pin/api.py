@@ -83,6 +83,6 @@ class PostResource(ModelResource):
             print img_path
             im = Image.open(img_path)
             w,h = im.size
-            bundle.data['hw'] = "%sx%s" % ( h,w )
+            bundle.data['large_hw'] = "%sx%s" % ( h,w )
         
         return bundle
