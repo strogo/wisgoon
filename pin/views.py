@@ -119,7 +119,8 @@ def user(request, user_id):
             return HttpResponse(0)
     else:
         
-        follow_status = Follow.objects.filter(follower=request.user.id, following=latest_items[0].user.id).count()
+        follow_status = Follow.objects.filter(follower=request.user.id,
+            following=user.id).count()
         
         return render_to_response('pin/user.html', 
                               {'latest_items': latest_items, 'follow_status':follow_status,
