@@ -17,9 +17,15 @@ from taggit.models import Tag
 
 class Category(models.Model):
     title = models.CharField(max_length=250)
+    image = models.ImageField(default='', upload_to='pin/category/')
     
     def __unicode__(self):
         return self.title
+    
+    def admin_image(self):
+        return '<img src="/media/%s" />' % self.image
+
+    admin_image.allow_tags = True
 
 class Post(models.Model):
     #title = models.CharField(max_length=250, blank=True)

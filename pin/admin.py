@@ -10,7 +10,7 @@ class NotifyAdmin(admin.ModelAdmin):
     list_filter = ('seen',)
 
 class CategoryAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id','title','admin_image')
 
 admin.site.register(Post, PinAdmin)
 admin.site.register(Notify, NotifyAdmin)
