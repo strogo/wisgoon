@@ -4,7 +4,7 @@
 <div class="FixedContainer row clearfix" style="">
 	<div class="ProfileInfo ProfilePanel ">
     <a href="" class="ProfileImage">
-    	<img src="{{latest_items.0.user.email|daddy_avatar:165}}" alt="">
+    	<img src="{{cur_user.email|daddy_avatar:165}}" alt="">
 	</a>
     <div class="content">
         <span class="profile-name">{{profile.name}}</span>
@@ -17,8 +17,7 @@
         	{% if cur_user.id != request.user.id %}
 				{% include "pin/following_box.html"%}
 			{% else %}
-			<a href="{% url user-profile-change%}" role="button" class="btn" data-toggle="modal" data-target="#profileModal">ویرایش مشخصات</a>
-
+    <a href="{% url user-profile-change%}" role="button" class="btn" data-toggle="modal" data-target="#profileModal">ویرایش مشخصات</a>
 
 			{% endif%}
         </div>
