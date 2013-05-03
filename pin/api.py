@@ -49,7 +49,8 @@ class PostResource(ModelResource):
             filters.update(dict(user_id=user_id))
         
         if category_id:
-            filters.update(dict(category_id=category_id))
+            category_ids = category_id.replace(',', ' ').split(' ')
+            filters.update(dict(category_id__in=category_ids))
 
         return base_object_list.filter(**filters).distinct()
     
