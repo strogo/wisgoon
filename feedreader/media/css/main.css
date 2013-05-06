@@ -518,3 +518,20 @@ overflow: hidden;
     border:1px solid #f2f4f8;
     background: #FFF;
 }
+
+.post-avatar{
+    display: block;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    text-decoration: none;
+    background: #0A2939;
+    -webkit-box-shadow: 0 1px 5px rgba(0,0,0,.46);
+    -moz-box-shadow: 0 1px 5px rgba(0,0,0,.46);
+    box-shadow: 0 1px 5px rgba(0,0,0,.46);
+    border-bottom: 0;
+}
+

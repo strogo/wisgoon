@@ -40,6 +40,11 @@
 }
 </style>
 {% include "base/analytics.html"%}
+
+<script type="text/javascript">
+var media_url = "{{MEDIA_URL}}";
+var upload_url = "{% url pin-upload %}";
+</script>
 </head>
 
 	<body dir="rtl">
@@ -136,59 +141,11 @@
   </div>
 </div>
 
-{% load compress %}
-{% compress js inline%}
-<script type="text/javascript">
-jQuery(function($) {
-    $('form[data-async]').live('submit', function(event) {
-        var $form = $(this);
-        var $target = $($form.attr('data-target'));
-
-        $.ajax({
-            type: $form.attr('method'),
-            url: $form.attr('action'),
-            data: $form.serialize(),
-
-            success: function(data, status) {
-                alert(data);
-                $('#pinitem').modal('hide').children('.modal-body').html('');
-                
-            }
-        });
-
-        event.preventDefault();
-    });
-});
-$('#pinitem').on('hide', function() {
-    $(this).removeData('modal');
-    $(this).children('.modal-body').html('');
-});
-
-// for notification popover
-var isVisible = false;
-var clickedAway = false;
-var notifCache=false;
-$(".popnotify").bind('click',function(){
-	var el=$(this);
-	if (isVisible){
-		$(el).popover('hide');
-	}else{
-		isVisible = true;
-		if(!notifCache){
-		    $.get(el.attr('data-load'),function(d){
-		    	notifCache=d;
-		    	el.unbind('click').popover({content: d, placement:'bottom',html:true}).popover('show');
-		    });
-		}else{
-		    el.unbind('click').popover({content: notifCache, placement:'bottom',html:true}).popover('show');   	
-	    }
-    }
-    
-});
-
-</script>
-{% endcompress %}
 {% include 'base/all_footer.html'%}
+{% if user.is_authenticated %}
+<script type="text/javascript" src="{{MEDIA_URL}}js/pin-user.js"></script>
+{% endif %}
 
-	</body>
+<script type="text/javascript" src="{{MEDIA_URL}}js/all.js"></script>
+	</body><!-- end body -->
 </html>
