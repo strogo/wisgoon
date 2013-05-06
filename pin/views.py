@@ -41,7 +41,7 @@ def home(request):
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Post.objects.all().order_by('-timestamp')[:20]
+        latest_items = Post.objects.all().select_related().order_by('-timestamp')[:20]
     else:
         latest_items = Post.objects.all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
     
@@ -62,9 +62,8 @@ def home(request):
 def popular(request):
     ROW_PER_PAGE = 20
     
-    post_list = Post.objects.all().order_by('-like')
+    post_list = Post.objects.all().select_related().order_by('-like')
     paginator = Paginator(post_list, ROW_PER_PAGE)
-    
     
     try:
         offset = int(request.GET.get('older', 1))
@@ -77,7 +76,6 @@ def popular(request):
         latest_items = paginator.page(1)
     except EmptyPage:
         return HttpResponse(0)
-    
     
     form = PinForm()
     
@@ -104,7 +102,7 @@ def user(request, user_id):
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Post.objects.all().filter(user=user_id).order_by('-timestamp')[:20]
+        latest_items = Post.objects.all().select_related().filter(user=user_id).order_by('-timestamp')[:20]
     else:
         latest_items = Post.objects.all().filter(user=user_id).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
     
@@ -194,9 +192,9 @@ def follow(request, following, action):
 
 def item(request, item_id):
     
-    item = get_object_or_404(Post.objects.filter(id=item_id)[:1])
+    item = get_object_or_404(Post.objects.select_related().filter(id=item_id)[:1])
     
-    latest_items = Post.objects.all().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
+    latest_items = Post.objects.all().select_related().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
     
     likes = Likes.objects.filter(post=item).all()
     
