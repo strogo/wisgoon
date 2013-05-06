@@ -11,6 +11,7 @@ class PinForm(ModelForm):
 class PinDirectForm(forms.Form):
     image = forms.ImageField()
     description = forms.CharField(required=False)
+    category = forms.IntegerField(required=True)
     
 class PinUpdateForm(ModelForm):
     class Meta:

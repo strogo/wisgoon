@@ -319,6 +319,7 @@ def d_send(request):
                     model.user = api.user
                     model.timestamp = time.time()
                     model.text = form.cleaned_data['description']
+                    model.category_id = form.cleaned_data['category']
                     model.save()
                     
                     return HttpResponse('success')
