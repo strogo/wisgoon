@@ -1,9 +1,10 @@
 # Django settings for feedreader project.
 import os
 
-#DEBUG = True
-DEBUG = False
+DEBUG = True
+#DEBUG = False
 TEMPLATE_DEBUG = DEBUG
+THUMBNAIL_DEBUG = DEBUG
 
 SITE_ROOT = os.path.dirname(__file__)
 
