@@ -28,7 +28,7 @@ class PostResource(ModelResource):
     thumb_query_name = 'thumb_size'
     user_name = fields.CharField(attribute = 'user__username')
     user_avatar = fields.CharField(attribute = 'user__email')
-    user_id = fields.IntegerField(attribute = 'user__id')
+    userid = fields.IntegerField(attribute = 'user__id')
     likers = fields.ListField()
     category = fields.ToOneField(CategotyResource , 'category',full=True)
     
