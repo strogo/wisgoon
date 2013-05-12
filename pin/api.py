@@ -28,7 +28,7 @@ class PostResource(ModelResource):
     thumb_query_name = 'thumb_size'
     user_name = fields.CharField(attribute = 'user__username')
     user_avatar = fields.CharField(attribute = 'user__email')
-    userid = fields.IntegerField(attribute = 'user__id')
+    user_id = fields.IntegerField(attribute = 'user__id')
     likers = fields.ListField()
     category = fields.ToOneField(CategotyResource , 'category',full=True)
     
@@ -42,12 +42,12 @@ class PostResource(ModelResource):
     def apply_filters(self, request, applicable_filters):
         base_object_list = super(PostResource, self).apply_filters(request, applicable_filters)
         
-        user_id = request.GET.get('user_id', None)
+        userid = request.GET.get('userid', None)
         category_id = request.GET.get('category_id', None)
         filters = {}
         
         if user_id:
-            filters.update(dict(user_id=user_id))
+            filters.update(dict(user_id=userid))
         
         if category_id:
             category_ids = category_id.replace(',', ' ').split(' ')
