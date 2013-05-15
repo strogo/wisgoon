@@ -2,6 +2,7 @@ import os
 from tastypie.resources import ModelResource
 from tastypie.paginator import Paginator
 from tastypie import fields
+from tastypie.cache import SimpleCache
 
 from PIL import Image
 from django.conf import settings
@@ -38,6 +39,7 @@ class PostResource(ModelResource):
         allowed_methods = ['get']
         paginator_class = Paginator
         fields = ['id','image','like','text','url']
+        cache = SimpleCache()
 
     def apply_filters(self, request, applicable_filters):
         base_object_list = super(PostResource, self).apply_filters(request, applicable_filters)
