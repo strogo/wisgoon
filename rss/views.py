@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- 
 
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, render
 from rss.models import Item, Feed, Subscribe, Likes ,Report, Search, Lastview,\
     ItemExtra
 from django.template.context import RequestContext
@@ -40,9 +40,7 @@ def older(request):
 #                html = render_to_string("rss/_items.html", {'latest_items': latest_items})
 #                serialized_data = simplejson.dumps({"html": html,'lastid':latest_items[0].id})
 #                return HttpResponse(serialized_data, mimetype="application/json")
-                return render_to_response('rss/_items.html', 
-                                  {'latest_items': latest_items},
-                                  context_instance=RequestContext(request))
+                return render(request,'rss/_items.html', {'latest_items': latest_items})
             else:
                 return HttpResponse(0)
     return HttpResponse(0)
@@ -68,22 +66,11 @@ def home(request):
     
     if request.is_ajax():
         if latest_items.exists():
-            return render_to_response('rss/_items.html', 
-                              {'latest_items': latest_items},
-                              context_instance=RequestContext(request))
+            return render(request, 'rss/_items.html', {'latest_items': latest_items})
         else:
             return HttpResponse(0)
     else:
-        feed_range = get_feed_range()
-        dates = []
-        counts = []
-        for item in feed_range['matches']:
-            dates.append(str(item['attrs']['date_abs']))
-            counts.append(item['attrs']['@count'])
-        print feed_range
-        return render_to_response('rss/home.html', 
-                              {'latest_items': latest_items,'user_feeds':user_feeds,'form':form,'dates':dates, 'counts':counts},
-                              context_instance=RequestContext(request))
+        return render(request, 'rss/home.html', {'latest_items': latest_items,'user_feeds':user_feeds,'form':form})
 
 def user_likes(request, user_id):
     
@@ -117,9 +104,8 @@ def user_likes(request, user_id):
         else:
             return HttpResponse(0)
     else:
-        return render_to_response('rss/user_likes.html', 
-                              {'latest_items': latest_items,'user_feeds':user_feeds,'offset':offset+30,'form':form},
-                              context_instance=RequestContext(request))
+        return render(request, 'rss/user_likes.html', 
+                              {'latest_items': latest_items,'user_feeds':user_feeds,'offset':offset+30,'form':form})
 
 def get_feed_range(feed_id=0):
     feed_id = int(feed_id)
@@ -160,22 +146,11 @@ def feed(request, feed_id, older=0):
     
     if request.is_ajax():
         if latest_items.exists():
-            return render_to_response('rss/_items.html', 
-                              {'latest_items': latest_items, 'older_url': older_url},
-                              context_instance=RequestContext(request))
+            return render(request, 'rss/_items.html', {'latest_items': latest_items, 'older_url': older_url})
         else:
             return HttpResponse(0)
     else:
-        feed_range = get_feed_range(feed_id)
-        dates = []
-        counts = []
-        for item in feed_range['matches']:
-            dates.append(str(item['attrs']['date_abs']))
-            counts.append(item['attrs']['@count'])
-        #print feed_range
-        return render_to_response('rss/feed.html', 
-                  {'latest_items': latest_items, 'feed':feed,'form':form , 'older_url': older_url, 'dates':dates, 'counts':counts},
-                              context_instance=RequestContext(request))
+        return render(request, 'rss/feed.html', {'latest_items': latest_items, 'feed':feed,'form':form , 'older_url': older_url})
 
 def get_older_days_time(timestamp, days=10):
     now = datetime.datetime.fromtimestamp(timestamp)
@@ -218,10 +193,9 @@ def feed_item(request, feed_id, item_id):
         older_url = ""
     
     form = ReportForm()
-    return render_to_response('rss/item.html', 
+    return render(request, 'rss/item.html', 
                               {'item': item, 'feed':feed, 'latest_items': latest_items,'form':form,'older_url': older_url
-                              ,'related_posts':related_posts},
-                              context_instance=RequestContext(request))
+                              ,'related_posts':related_posts})
 
 def feed_item_goto(request, item_id):
     item = get_object_or_404(Item.objects.filter(id=item_id)[:1])

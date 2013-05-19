@@ -13,7 +13,7 @@ from django.contrib.comments.models import Comment
 from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, Http404, HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, render
 from django.template.context import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
@@ -49,15 +49,11 @@ def home(request):
     
     if request.is_ajax():
         if latest_items.exists():
-            return render_to_response('pin/_items.html', 
-                              {'latest_items': latest_items,'pin_form':form},
-                              context_instance=RequestContext(request))
+            return render(request, 'pin/_items.html', {'latest_items': latest_items,'pin_form':form})
         else:
             return HttpResponse(0)
     else:
-        return render_to_response('pin/home.html', 
-                              {'latest_items': latest_items},
-                              context_instance=RequestContext(request))
+        return render(request, 'pin/home.html', {'latest_items': latest_items})
 
 def popular(request):
     ROW_PER_PAGE = 20
@@ -80,14 +76,12 @@ def popular(request):
     form = PinForm()
     
     if request.is_ajax():
-        return render_to_response('pin/_items.html', 
-                              {'latest_items': latest_items,'pin_form':form,'offset':latest_items.next_page_number},
-                              context_instance=RequestContext(request))
+        return render(request, 'pin/_items.html', 
+                              {'latest_items': latest_items,'pin_form':form,'offset':latest_items.next_page_number})
         
     else:
-        return render_to_response('pin/home.html', 
-                              {'latest_items': latest_items, 'offset':latest_items.next_page_number},
-                              context_instance=RequestContext(request))
+        return render(request, 'pin/home.html', 
+                              {'latest_items': latest_items, 'offset':latest_items.next_page_number})
     
 
 def user(request, user_id):
@@ -110,9 +104,7 @@ def user(request, user_id):
     
     if request.is_ajax():
         if latest_items.exists():
-            return render_to_response('pin/_items.html', 
-                              {'latest_items': latest_items,'pin_form':form},
-                              context_instance=RequestContext(request))
+            return render(request, 'pin/_items.html', {'latest_items': latest_items,'pin_form':form})
         else:
             return HttpResponse(0)
     else:
@@ -120,11 +112,10 @@ def user(request, user_id):
         follow_status = Follow.objects.filter(follower=request.user.id,
             following=user.id).count()
         
-        return render_to_response('pin/user.html', 
+        return render(request, 'pin/user.html', 
                               {'latest_items': latest_items, 'follow_status':follow_status,
                                'profile':profile,
-                               'cur_user':user},
-                              context_instance=RequestContext(request))
+                               'cur_user':user})
 
 @login_required
 def following(request):
@@ -152,15 +143,11 @@ def following(request):
     
     if request.is_ajax():
         if latest_items.exists():
-            return render_to_response('pin/_items.html', 
-                              {'latest_items': sorted_objects,'pin_form':form},
-                              context_instance=RequestContext(request))
+            return render(request, 'pin/_items.html', {'latest_items': sorted_objects,'pin_form':form})
         else:
             return HttpResponse(0)
     else:
-        return render_to_response('pin/home.html', 
-                              {'latest_items': sorted_objects},
-                              context_instance=RequestContext(request))
+        return render(request, 'pin/home.html', {'latest_items': sorted_objects})
 
 @login_required
 def follow(request, following, action):
@@ -201,13 +188,11 @@ def item(request, item_id):
     follow_status = Follow.objects.filter(follower=request.user.id, following=item.user.id).count()
     
     if request.is_ajax():
-        return render_to_response('pin/item_inner.html', 
-                              {'item_inner': item, 'latest_items': latest_items, 'likes':likes, 'follow_status':follow_status},
-                              context_instance=RequestContext(request))
+        return render(request, 'pin/item_inner.html', 
+                              {'item_inner': item, 'latest_items': latest_items, 'likes':likes, 'follow_status':follow_status})
     else:
-        return render_to_response('pin/item.html', 
-                              {'item_inner': item, 'latest_items': latest_items, 'likes':likes, 'follow_status':follow_status},
-                              context_instance=RequestContext(request))
+        return render(request, 'pin/item.html', 
+                              {'item_inner': item, 'latest_items': latest_items, 'likes':likes, 'follow_status':follow_status})
 
 @login_required
 def sendurl(request):
@@ -245,8 +230,7 @@ def sendurl(request):
     else:
         form = PinForm()
             
-    return render_to_response('pin/sendurl.html',{'form':form}, 
-                              context_instance=RequestContext(request)) 
+    return render(request, 'pin/sendurl.html',{'form':form}) 
 
 @csrf_exempt
 def d_like(request):
@@ -374,15 +358,9 @@ def send(request):
     category = Category.objects.all()
         
     if request.is_ajax():
-        return render_to_response('pin/_send.html',
-                                  {'form': form,
-                                   'category': category}, 
-                                  context_instance=RequestContext(request))
+        return render(request, 'pin/_send.html',{'form': form,'category': category})
     else:
-        return render_to_response('pin/send.html',
-                                  {'form': form,
-                                   'category': category}, 
-                                  context_instance=RequestContext(request))
+        return render(request, 'pin/send.html',{'form': form, 'category': category})
 
 @login_required
 def edit(request, post_id):
