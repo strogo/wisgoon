@@ -82,8 +82,7 @@ def get_username(user):
         else:
             profile=Profile.objects.get(user_id=user)
 
-        if profile.name:
-            username=profile.name
+        username=profile.name
     except Profile.DoesNotExist:
         username=user.username
     return username
