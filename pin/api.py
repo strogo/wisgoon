@@ -9,6 +9,7 @@ from django.conf import settings
 
 from sorl.thumbnail import get_thumbnail
 from pin.models import Post, Likes, Category
+from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
 
 class CategotyResource(ModelResource):
@@ -78,6 +79,7 @@ class PostResource(ModelResource):
             ar.append([lk.user.id,lk.user.username, daddy_avatar.daddy_avatar(lk.user.email)])
 
         bundle.data['likers'] = ar
+        bundle.data['user_name'] = get_username(bundle.data['user'])
         
         if self.get_resource_uri(bundle) == bundle.request.path:
             # this is detail

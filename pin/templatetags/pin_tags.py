@@ -77,8 +77,13 @@ def get_user_notify(userid):
 @register.filter
 def get_username(user):
     try:
-        profile=Profile.objects.get(user_id=user.id)
-        username=profile.name
+        if isinstance(user, User):
+            profile=Profile.objects.get(user_id=user.id)
+        else:
+            profile=Profile.objects.get(user_id=user)
+
+        if profile.name:
+            username=profile.name
     except Profile.DoesNotExist:
         username=user.username
     return username
