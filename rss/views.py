@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
 import json
-from rss.sphinxapi import SphinxClient, SPH_MATCH_EXTENDED, SPH_SORT_ATTR_DESC, SPH_MATCH_ANY, SPH_GROUPBY_DAY
+from rss.sphinxapi import SphinxClient, SPH_MATCH_EXTENDED, \
+        SPH_SORT_ATTR_DESC, SPH_MATCH_ANY, SPH_GROUPBY_DAY, SPH_SORT_ATTR_ASC
 import sys
 
 from django.template.loader import render_to_string
@@ -442,7 +443,7 @@ def tag(request, q, older=0):
             save_keyword= False
             
         offset = int(older)
-        docs=search_query(q, offset)
+        docs=search_query(q, offset, sort=2)
         if not docs:
             if request.is_ajax():
                 return HttpResponse(0)
