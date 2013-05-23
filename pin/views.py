@@ -41,9 +41,9 @@ def home(request):
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Post.objects.all().select_related().order_by('-timestamp')[:20]
+        latest_items = Post.objects.filter(status=1).select_related().order_by('-timestamp')[:20]
     else:
-        latest_items = Post.objects.all().extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
+        latest_items = Post.objects.filter(status=1).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
     
     form = PinForm()
     

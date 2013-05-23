@@ -35,7 +35,7 @@ class PostResource(ModelResource):
     category = fields.ToOneField(CategotyResource , 'category',full=True)
     
     class Meta:
-        queryset = Post.objects.all().order_by('-id')
+        queryset = Post.objects.filter(status=1).order_by('-id')
         resource_name = 'post'
         allowed_methods = ['get']
         paginator_class = Paginator
