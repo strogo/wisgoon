@@ -37,7 +37,7 @@ class Post(models.Model):
     user = models.ForeignKey(User)
     like = models.IntegerField(default=0)
     url = models.CharField(blank=True, max_length=2000, validators=[URLValidator()])
-    status = models.IntegerField(default=0)
+    status = models.IntegerField(default=0, required=False)
     
     tags = TaggableManager(blank=True)
 
