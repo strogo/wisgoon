@@ -87,6 +87,9 @@ def get_username(user):
             username=profile.name
     except Profile.DoesNotExist:
         username=user.username
+    
+    if not username:
+        username=user.username    
 
     return username
 

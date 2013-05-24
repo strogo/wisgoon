@@ -7,7 +7,7 @@
     	<img src="{{cur_user.email|daddy_avatar:165}}" alt="">
 	</a>
     <div class="content">
-        <span class="profile-name">{{profile.name}}</span>
+        <span class="profile-name">{{cur_user|get_username}}</span>
         <b>امتیاز</b>: {{profile.score}}<br>
         <b>تعداد مطالب</b>: {{profile.cnt_post}}<br>
         <b>تعداد لایک</b>: {{profile.cnt_like}}<br>
