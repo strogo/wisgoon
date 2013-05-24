@@ -502,7 +502,10 @@ def like(request, item_id):
             Likes.objects.filter(user=request.user,post=post).delete()
             user_act = -1
         
-        Post.objects.filter(id=item_id,status=1).update(like=current_like)
+        Post.objects.filter(id=item_id).update(like=current_like)
+        
+        profile = Profile.objects.get(user=post.user)
+        profile.save()
         
         if request.is_ajax():
             

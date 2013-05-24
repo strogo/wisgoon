@@ -15,21 +15,17 @@ class Profile(models.Model):
     score=models.IntegerField(default=0)
     count_flag=models.IntegerField(default=0)
     
-    def cnt_post_calculate(self):
-        cnt_post = Post.objects.filter(user=self.user,status=1).count()
-        return cnt_post
-
-    def cnt_like_calculate(self):
-        cnt_like = Post.objects.filter(user=self.user,status=1).aggregate(models.Sum('like'))
-        return cnt_like['like__sum']
-
+    def cnt_calculate(self):
+        cnt = Post.objects.filter(user=self.user,status=1).aggregate(models.Sum('like'), models.Count('id'))
+        self.cnt_like = cnt['like__sum']
+        self.cnt_post = cnt['id__count']
+        
     def score_calculation(self):
         score = self.cnt_post + (self.cnt_like * 10 )
         return score
 
     def user_statics(self):
-        self.cnt_post = self.cnt_post_calculate()                               
-        self.cnt_like = self.cnt_like_calculate()                               
+        self.cnt_calculate()
         self.score = self.score_calculation()                                   
         self.count_flag = 1
 
