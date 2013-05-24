@@ -87,7 +87,7 @@ def popular(request):
 def user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
 
-    profile, created = Profile.objects.get_or_create(user=user,name=user.username)
+    profile, created = Profile.objects.get_or_create(user=user)
     if not profile.count_flag:
         profile.user_statics()
 
