@@ -4,6 +4,7 @@ import os
 import time
 import json
 import urllib
+import sys
 from shutil import copyfile
 
 from django.conf import settings
@@ -25,7 +26,6 @@ from pin.tools import create_filename
 
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
-import sys
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.contenttypes.models import ContentType
 
@@ -58,7 +58,7 @@ def home(request):
 def popular(request):
     ROW_PER_PAGE = 20
     
-    post_list = Post.objects.all().filter(status=1).select_related().order_by('-like')
+    post_list = Post.objects.filter(status=1).select_related().order_by('-like')
     paginator = Paginator(post_list, ROW_PER_PAGE)
     
     try:
@@ -86,19 +86,20 @@ def popular(request):
 
 def user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
-    try:
-        profile = Profile.objects.get(user=user)
-    except Profile.DoesNotExist:
-        profile = Profile.objects.none()
+
+    profile, created = Profile.objects.get_or_create(user=user,name=user.username)
+    if not profile.count_flag:
+        profile.user_statics()
+
     try:
         timestamp = int(request.GET.get('older', 0))
     except ValueError:
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Post.objects.all().filter(status=1).select_related().filter(user=user_id).order_by('-timestamp')[:20]
+        latest_items = Post.objects.filter(status=1).select_related().filter(user=user_id).order_by('-timestamp')[:20]
     else:
-        latest_items = Post.objects.all().filter(user=user_id,status=1).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
+        latest_items = Post.objects.filter(user=user_id,status=1).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
     
     form = PinForm()
     
@@ -166,7 +167,7 @@ def follow(request, following, action):
             Stream.objects.filter(following=following, user=request.user).all().delete()
             
         else:
-            posts = Post.objects.all().filter(user=following,status=1)[:100]
+            posts = Post.objects.filter(user=following,status=1)[:100]
             
             with transaction.commit_on_success():
                 for post in posts:
@@ -181,7 +182,7 @@ def item(request, item_id):
     
     item = get_object_or_404(Post.objects.select_related().filter(id=item_id,status=1)[:1])
     
-    latest_items = Post.objects.all().filter(status=1).select_related().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
+    latest_items = Post.objects.filter(status=1).select_related().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
     
     likes = Likes.objects.filter(post=item).all()
     
