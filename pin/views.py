@@ -58,7 +58,7 @@ def home(request):
 def popular(request):
     ROW_PER_PAGE = 20
     
-    post_list = Post.objects.all().select_related().order_by('-like')
+    post_list = Post.objects.all().filter(status=1).select_related().order_by('-like')
     paginator = Paginator(post_list, ROW_PER_PAGE)
     
     try:
@@ -96,9 +96,9 @@ def user(request, user_id):
         timestamp = 0
     
     if timestamp == 0:
-        latest_items = Post.objects.all().select_related().filter(user=user_id).order_by('-timestamp')[:20]
+        latest_items = Post.objects.all().filter(status=1).select_related().filter(user=user_id).order_by('-timestamp')[:20]
     else:
-        latest_items = Post.objects.all().filter(user=user_id).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
+        latest_items = Post.objects.all().filter(user=user_id,status=1).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
     
     form = PinForm()
     
@@ -134,7 +134,7 @@ def following(request):
     for p in stream:
         idis.append(p.post_id)
     
-    latest_items = Post.objects.filter(id__in=idis).all()
+    latest_items = Post.objects.filter(id__in=idis,status=1).all()
     
     objects = dict([(obj.id, obj) for obj in latest_items])
     sorted_objects = [objects[id] for id in idis]
@@ -166,7 +166,7 @@ def follow(request, following, action):
             Stream.objects.filter(following=following, user=request.user).all().delete()
             
         else:
-            posts = Post.objects.all().filter(user=following)[:100]
+            posts = Post.objects.all().filter(user=following,status=1)[:100]
             
             with transaction.commit_on_success():
                 for post in posts:
@@ -179,9 +179,9 @@ def follow(request, following, action):
 
 def item(request, item_id):
     
-    item = get_object_or_404(Post.objects.select_related().filter(id=item_id)[:1])
+    item = get_object_or_404(Post.objects.select_related().filter(id=item_id,status=1)[:1])
     
-    latest_items = Post.objects.all().select_related().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
+    latest_items = Post.objects.all().filter(status=1).select_related().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
     
     likes = Likes.objects.filter(post=item).all()
     
@@ -253,7 +253,7 @@ def d_like(request):
         except ValueError:
             return HttpResponse('erro in post id')
         try:
-            post = Post.objects.get(pk=post_id)
+            post = Post.objects.get(pk=post_id,status=1)
         except Post.DoesNotExist:
             return HttpResponse('post not found')
 
@@ -454,7 +454,7 @@ def comment_posted(request):
     if request.GET['c']:
         comment_id = request.GET['c'] #B
         comment = Comment.objects.get( pk=comment_id )
-        entry = Post.objects.get(id=comment.object_pk) #C
+        entry = Post.objects.get(id=comment.object_pk,status=1) #C
         if entry:
             return HttpResponseRedirect( entry.get_absolute_url() ) #D
     return HttpResponseRedirect( "/" )     
@@ -480,7 +480,7 @@ def delete(request, item_id):
 def like(request, item_id):
 
     try:
-        post = Post.objects.get(pk=item_id)
+        post = Post.objects.get(pk=item_id,status=1)
         current_like = post.like
         
         liked = Likes.objects.filter(user=request.user, post=post).count()
@@ -501,7 +501,7 @@ def like(request, item_id):
             Likes.objects.filter(user=request.user,post=post).delete()
             user_act = -1
         
-        Post.objects.filter(id=item_id).update(like=current_like)
+        Post.objects.filter(id=item_id,status=1).update(like=current_like)
         
         if request.is_ajax():
             
@@ -554,7 +554,7 @@ def tag(request, keyword):
     for t in tag_items:
         s.append(t.object_id)
         
-    latest_items = Post.objects.filter(id__in=s).all()
+    latest_items = Post.objects.filter(id__in=s,status=1).all()
     
     form = PinForm()
     
