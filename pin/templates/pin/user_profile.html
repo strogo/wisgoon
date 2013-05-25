@@ -17,7 +17,7 @@
 </tr>
 </table>
         {% if profile.trusted %}
-        توسط <a href="{% url pin-user profile.trusted_by.id %}"><img src="{{profile.trusted_by.email|daddy_avatar:30}}"> </a> تایید شده است.
+        توسط <a href="{% url pin-user profile.trusted_by.id %}"><img src="{{profile.trusted_by.email|daddy_avatar:30}}"></a> تایید شده است.
         {%else%}
             {% if request.user.is_superuser %}                             
                 <a href="{% url trust_user cur_user.id %}">ﺕﺍییﺩ ﺍیﻥ کﺍﺮﺑﺭ</a><br>
