@@ -464,7 +464,7 @@ def comment_posted(request):
 def delete(request, item_id):
     try:
         post = Post.objects.get(pk=item_id)
-        if post.user == request.user:
+        if post.user == request.user or request.user.is_superuser:
             likes = Likes.objects.filter(post_id=post.id)
             for like in likes:
                 like.delete()

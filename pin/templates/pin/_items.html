@@ -30,7 +30,7 @@
 		<div class="sharing-actions">
 			<div class="controls controls-row">
 				<a href="{% url pin-item-like item.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"> <i class="icon-heart"></i> {{item.like}} </a>
-				{% if user.id == item.user.id%}
+				{% if user.id == item.user.id or request.user.is_superuser %}
 				<a href="{% url pin-item-delete item.id%}" class="btn btn-danger delpost" style="margin-right: 5px"> 
 					<i class="icon-remove"></i> 
 				</a>
