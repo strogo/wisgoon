@@ -14,6 +14,8 @@ class Profile(models.Model):
     cnt_like=models.IntegerField(default=0)
     score=models.IntegerField(default=0)
     count_flag=models.IntegerField(default=0)
+    trusted=models.IntegerField(default=0)
+    trusted_by=models.ForeignKey(User, related_name='trusted_by', default=None, null=True, blank=True)
     
     def cnt_calculate(self):
         cnt = Post.objects.filter(user=self.user,status=1).aggregate(models.Sum('like'), models.Count('id'))
@@ -23,6 +25,8 @@ class Profile(models.Model):
         
     def score_calculation(self):
         score = self.cnt_post + (self.cnt_like * 10 )
+        if self.trusted != 0:
+            score = score+10000
         return score
 
     def user_statics(self):

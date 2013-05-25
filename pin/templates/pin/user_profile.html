@@ -1,4 +1,5 @@
 {% load daddy_avatar%}
+{% load humanize %}
 {% load pin_tags %}
 <div class="ProfileHeader">
 <div class="FixedContainer row clearfix" style="">
@@ -8,9 +9,20 @@
 	</a>
     <div class="content">
         <span class="profile-name">{{cur_user|get_username}}</span>
-        <b>امتیاز</b>: {{profile.score}}<br>
-        <b>تعداد مطالب</b>: {{profile.cnt_post}}<br>
-        <b>تعداد لایک</b>: {{profile.cnt_like}}<br>
+<table class="table">
+<tr>
+       <td><b>امتیاز</b>: {{profile.score|intcomma}}</td>
+       <td><b>تعداد مطالب</b>: {{profile.cnt_post}}</td>
+       <td><b>تعداد لایک</b>: {{profile.cnt_like}}</td>
+</tr>
+</table>
+        {% if profile.trusted %}
+        توسط <a href="{% url pin-user profile.trusted_by.id %}"><img src="{{profile.trusted_by.email|daddy_avatar:30}}"> </a> تایید شده است.
+        {%else%}
+            {% if request.user.is_superuser %}                             
+                <a href="{% url trust_user cur_user.id %}">ﺕﺍییﺩ ﺍیﻥ کﺍﺮﺑﺭ</a><br>
+            {% endif %}
+        {%endif%}
 
         <p class="colormuted">{{profile.bio}}</p>
         

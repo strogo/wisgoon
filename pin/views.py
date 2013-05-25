@@ -576,4 +576,12 @@ def tag(request, keyword):
     
     #return render_to_response('pin/home.html',context_instance=RequestContext(request))
 
+def trust_user(request, user_id):
+    if request.user.is_superuser:
+        profile = Profile.objects.get(user_id=user_id)
+        profile.trusted = 1
+        profile.trusted_by = request.user
+        profile.save()
+
+    return HttpResponseRedirect('/pin/user/'+user_id)
 
