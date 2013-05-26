@@ -137,7 +137,7 @@ def following(request):
     
     latest_items = Post.objects.filter(id__in=idis,status=1).all()
     
-    objects = dict([(obj.id, obj) for obj in latest_items])
+    objects = dict([(int(obj.id), obj) for obj in latest_items])
     sorted_objects = [objects[id] for id in idis]
     
     form = PinForm()
