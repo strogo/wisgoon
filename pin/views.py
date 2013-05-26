@@ -309,6 +309,7 @@ def d_send(request):
                     model.timestamp = time.time()
                     model.text = form.cleaned_data['description']
                     model.category_id = form.cleaned_data['category']
+                    model.device = 2
                     model.save()
                     
                     return HttpResponse('success')

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*- 
+import os
+import hashlib
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -39,6 +41,9 @@ class Post(models.Model):
     like = models.IntegerField(default=0)
     url = models.CharField(blank=True, max_length=2000, validators=[URLValidator()])
     status = models.IntegerField(default=0, blank=True)
+    device = models.IntegerField(default=1, blank=True)
+    hash = models.CharField(max_length=100, blank=True)
+    actions = models.IntegerField(default=1, blank=True)
     
     tags = TaggableManager(blank=True)
 
@@ -47,12 +52,27 @@ class Post(models.Model):
     def __unicode__(self):
         return self.text
 
+    def md5_for_file(self, f, block_size=2**20):
+        md5 = hashlib.md5()
+        while True:
+            data = f.read(block_size)
+            if not data:
+                break
+            md5.update(data)
+        return md5.hexdigest()
+
     def save(self, *args, **kwargs):
         from user_profile.models import Profile
         
         profile = Profile.objects.get(user=self.user)
         if profile.score >= 10000:
             self.status=1
+        
+        image_file = open(os.path.join(settings.MEDIA_ROOT, self.image))
+           
+        self.hash = self.md5_for_file(image_file)
+        print self.hash
+
         super(Post, self).save(*args, **kwargs)
     
     @models.permalink

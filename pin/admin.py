@@ -7,9 +7,10 @@ def make_approve(modeladmin, request, queryset):
 make_approve.short_description = "Mark select as approved"
 
 class PinAdmin(admin.ModelAdmin):
-    list_filter = ('status',)
+    list_filter = ('status','category')
+    search_fields = ['id']
     list_display = ('id', 'text','user','category','admin_image','status',\
-    'like', )
+    'like', 'device', 'url')
     actions=[make_approve]
 
 class NotifyAdmin(admin.ModelAdmin):

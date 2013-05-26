@@ -6,7 +6,8 @@ from pin.models import Post
 class PinForm(ModelForm):
     class Meta:
         model=Post
-        exclude = ('user', 'like', 'timestamp', 'status')
+        exclude = ('user', 'like', 'timestamp', 'status','device','hash',
+        'actions')
         
 class PinDirectForm(forms.Form):
     image = forms.ImageField()
