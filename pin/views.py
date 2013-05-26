@@ -133,7 +133,7 @@ def following(request):
     
     idis = []
     for p in stream:
-        idis.append(p.post_id)
+        idis.append(int(p.post_id))
     
     latest_items = Post.objects.filter(id__in=idis,status=1).all()
     
