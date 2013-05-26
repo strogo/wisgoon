@@ -15,6 +15,7 @@ from sorl.thumbnail import get_thumbnail
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
+
 class Category(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/category/')
@@ -45,6 +46,14 @@ class Post(models.Model):
     
     def __unicode__(self):
         return self.text
+
+    def save(self, *args, **kwargs):
+        from user_profile.models import Profile
+        
+        profile = Profile.objects.get(user=self.user)
+        if profile.score >= 10000:
+            self.status=1
+        super(Post, self).save(*args, **kwargs)
     
     @models.permalink
     def get_absolute_url(self):
