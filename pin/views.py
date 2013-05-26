@@ -135,7 +135,7 @@ def following(request):
     for p in stream:
         idis.append(int(p.post_id))
     
-    latest_items = Post.objects.filter(id__in=idis,status=1).all()
+    latest_items = Post.objects.filter(id__in=idis,status=1).all().order_by('-id')
     
     #objects = dict([(int(obj.id), obj) for obj in latest_items])
     
