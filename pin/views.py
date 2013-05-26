@@ -374,8 +374,9 @@ def send(request):
 def edit(request, post_id):
     try:
         post = Post.objects.get(pk=int(post_id))
-        if post.user.id != request.user.id:
-            return HttpResponseRedirect('/pin/')
+        if not request.user.is_superuser:
+            if post.user.id != request.user.id:
+                return HttpResponseRedirect('/pin/')
 
         if request.method == "POST":
             post_values = request.POST.copy()
@@ -399,7 +400,6 @@ def edit(request, post_id):
             return render_to_response('pin/edit.html',{'form': form, 'post':post}, context_instance=RequestContext(request))
     except Post.DoesNotExist:
         return HttpResponseRedirect('/pin/')
-
 
 def save_upload( uploaded, filename, raw_data ):
     ''' raw_data: if True, upfile is a HttpRequest object with raw post data

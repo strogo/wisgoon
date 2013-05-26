@@ -17,5 +17,6 @@ class PinDirectForm(forms.Form):
 class PinUpdateForm(ModelForm):
     class Meta:
         model=Post
-        exclude = ('user', 'like', 'timestamp', 'image')
+        exclude = ('user', 'like', 'timestamp',
+        'image','status','device','hash', 'actions')
         

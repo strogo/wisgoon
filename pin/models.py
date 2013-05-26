@@ -64,14 +64,18 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         from user_profile.models import Profile
         
-        profile = Profile.objects.get(user=self.user)
-        if profile.score >= 10000:
-            self.status=1
-        
-        image_file = open(os.path.join(settings.MEDIA_ROOT, self.image))
+        try:       
+            profile = Profile.objects.get(user=self.user)
+            if profile.score >= 10000:
+                self.status=1
+        except Profile.DoesNotExist:
+            pass
+     
+        file_path = os.path.join(settings.MEDIA_ROOT, self.image)
+        if os.path.exists(file_path):   
+            image_file = open(file_path)
            
-        self.hash = self.md5_for_file(image_file)
-        print self.hash
+            self.hash = self.md5_for_file(image_file)
 
         super(Post, self).save(*args, **kwargs)
     
