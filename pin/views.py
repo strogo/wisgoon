@@ -137,14 +137,15 @@ def following(request):
     
     latest_items = Post.objects.filter(id__in=idis,status=1).all()
     
-    objects = dict([(int(obj.id), obj) for obj in latest_items])
+    #objects = dict([(int(obj.id), obj) for obj in latest_items])
     
     #sorted_objects = [objects[id] for id in idis]
-    sorted_objects=[]
-    for id in idis:
-        sorted_objects.append(objects[id])
+    #sorted_objects=objects
+    #for id in idis:
+    #    sorted_objects.append(objects[id])
 
-    
+    sorted_objects=latest_items
+
     form = PinForm()
     
     if request.is_ajax():
