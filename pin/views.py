@@ -138,10 +138,12 @@ def following(request):
     latest_items = Post.objects.filter(id__in=idis,status=1).all()
     
     objects = dict([(int(obj.id), obj) for obj in latest_items])
-    try:
-        sorted_objects = [objects[id] for id in idis]
-    except KeyError:
-        pass
+    
+    #sorted_objects = [objects[id] for id in idis]
+    sorted_objects=[]
+    for id in idis:
+        sorted_objects.append(objects[id])
+
     
     form = PinForm()
     
