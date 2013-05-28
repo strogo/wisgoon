@@ -25,7 +25,7 @@ class LikesResource(ModelResource):
         resource_name = 'likes'
 
 class CommentResource(ModelResource):
-    user = fields.IntegerField(attribute = 'user__id')
+    user = fields.IntegerField(attribute = 'user__id',  null=True)
     class Meta:
         allowed_methods = ['get']
         post_type = ContentType.objects.get(app_label="pin", model="post")
