@@ -25,6 +25,7 @@ class LikesResource(ModelResource):
         resource_name = 'likes'
 
 class CommentResource(ModelResource):
+    user = fields.IntegerField(attribute = 'user__id')
     class Meta:
         allowed_methods = ['get']
         post_type = ContentType.objects.get(app_label="pin", model="post")
@@ -34,22 +35,12 @@ class CommentResource(ModelResource):
         filtering = {
             "object_pk": ('exact',),
         }
-    
-    def applicable_filters(self, request, applicable_filters):
-        base_object_list = super(CommentResource, self).apply_filters(request, applicable_filters)
-        post_id = request.GET.get('post_id', None)
-        print post_id
-        filters = {}                                                            
-                                                                                
-        if post_id:
-            filters.update(dict(object_pk=post_id))
-                                                                                
-        return base_object_list.filter(**filters).distinct()
 
-                                                                     
-    def dispatch(self, request_type, request, **kwargs):                        
-        return super(CommentResource, self).dispatch(request_type, request, **kwargs)
+    def dehydrate(self, bundle):
+        bundle.data['user_avatar'] = daddy_avatar.daddy_avatar(bundle.data['user_email'])
 
+        return bundle
+        
 class PostResource(ModelResource):  
     thumb_default_size = "100x100"
     thumb_size = "100x100"
@@ -93,7 +84,7 @@ class PostResource(ModelResource):
     def dehydrate(self, bundle):
         id = bundle.data['id']
         o_image = bundle.data['image']
-        im = get_thumbnail(o_image, self.thumb_size, quality=self.thumb_quality)
+        im = get_thumbnail(o_image, self.thumb_size, quality=self.thumb_quality, upscale=False)
         bundle.data['thumbnail'] = im
         bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
