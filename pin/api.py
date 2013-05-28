@@ -6,6 +6,8 @@ from tastypie.cache import SimpleCache
 
 from PIL import Image
 from django.conf import settings
+from django.contrib.comments.models import Comment
+from django.contrib.contenttypes.models import ContentType
 
 from sorl.thumbnail import get_thumbnail
 from pin.models import Post, Likes, Category
@@ -21,6 +23,32 @@ class LikesResource(ModelResource):
     class Meta:
         #queryset = Likes.objects.all()
         resource_name = 'likes'
+
+class CommentResource(ModelResource):
+    class Meta:
+        allowed_methods = ['get']
+        post_type = ContentType.objects.get(app_label="pin", model="post")
+        queryset = Comment.objects.filter(content_type=post_type)
+        resource_name = "comments"
+        paginator_class = Paginator
+        filtering = {
+            "object_pk": ('exact',),
+        }
+    
+    def applicable_filters(self, request, applicable_filters):
+        base_object_list = super(CommentResource, self).apply_filters(request, applicable_filters)
+        post_id = request.GET.get('post_id', None)
+        print post_id
+        filters = {}                                                            
+                                                                                
+        if post_id:
+            filters.update(dict(object_pk=post_id))
+                                                                                
+        return base_object_list.filter(**filters).distinct()
+
+                                                                     
+    def dispatch(self, request_type, request, **kwargs):                        
+        return super(CommentResource, self).dispatch(request_type, request, **kwargs)
 
 class PostResource(ModelResource):  
     thumb_default_size = "100x100"
