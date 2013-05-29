@@ -44,6 +44,7 @@ class Post(models.Model):
     device = models.IntegerField(default=1, blank=True)
     hash = models.CharField(max_length=100, blank=True)
     actions = models.IntegerField(default=1, blank=True)
+    is_ads = models.BooleanField(default=False, blank=True)
     
     tags = TaggableManager(blank=True)
 
