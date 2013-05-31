@@ -10,7 +10,7 @@ from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 
 from sorl.thumbnail import get_thumbnail
-from pin.models import Post, Likes, Category
+from pin.models import Post, Likes, Category, Notify
 from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
 
@@ -23,6 +23,17 @@ class LikesResource(ModelResource):
     class Meta:
         #queryset = Likes.objects.all()
         resource_name = 'likes'
+
+class NotifyResource(ModelResource):
+    class Meta:
+        resource_name = 'notify'
+        allowed_methods = ['get']
+        queryset = Notify.objects.all().order_by('-id')
+        paginator_class = Paginator
+        filtering = {
+            "user_id": ('exact',),
+            "seen": ('exact',),
+        }
 
 class CommentResource(ModelResource):
     user = fields.IntegerField(attribute = 'user__id',  null=True)

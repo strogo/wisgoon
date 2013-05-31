@@ -487,38 +487,30 @@ def delete(request, item_id):
 
 @login_required
 def like(request, item_id):
-
     try:
         post = Post.objects.get(pk=item_id,status=1)
         current_like = post.like
         
-        liked = Likes.objects.filter(user=request.user, post=post).count()
-        
-        user_act = 0
-        
-        if not liked:
-            like = Likes()
-            like.user = request.user
-            like.post = post
-            like.save()
-            
+        liked, created = Likes.objects.get_or_create(user=request.user, post=post)
+
+        if created:
             current_like = current_like+1
             user_act = 1
-            
-        else:
+        elif liked:
             current_like = current_like-1
             Likes.objects.filter(user=request.user,post=post).delete()
             user_act = -1
         
         Post.objects.filter(id=item_id).update(like=current_like)
         
-        profile = Profile.objects.get(user=post.user)
-        profile.save()
+        try:       
+            profile = Profile.objects.get(user=post.user)
+            profile.save()
+        except Profile.DoesNotExist:
+            pass
         
         if request.is_ajax():
-            
             data = [{'likes': current_like, 'user_act':user_act}]
-                       
             return HttpResponse(json.dumps(data))
         else:
             return HttpResponseRedirect(reverse('pin-item', args=[post.id]))

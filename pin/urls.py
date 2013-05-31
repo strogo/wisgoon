@@ -2,13 +2,14 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
 from pin.feeds import LatestPinFeed
-from pin.api import PostResource, CategotyResource, CommentResource
+from pin.api import PostResource, CategotyResource, CommentResource, NotifyResource
 
 admin.autodiscover()
 
 post_resource=PostResource()
 cat_resource=CategotyResource()
 comment_resource = CommentResource()
+notify_resource = NotifyResource()
 
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
@@ -39,6 +40,7 @@ urlpatterns = patterns('pin.views',
     url(r'^api/', include(post_resource.urls)),
     url(r'^apic/',include(cat_resource.urls)),
     url(r'^api/com/', include(comment_resource.urls)),
+    url(r'^api/notif/', include(notify_resource.urls)),
 )
 
 
