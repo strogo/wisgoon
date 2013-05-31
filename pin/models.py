@@ -61,6 +61,15 @@ class Post(models.Model):
                 break
             md5.update(data)
         return md5.hexdigest()
+    
+    def delete(self, *args, **kwargs):
+        try:
+            file_path = os.path.join(settings.MEDIA_ROOT, self.image)
+            os.remove(file_path)
+        except:
+            pass
+
+        super(Post, self).delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
         from user_profile.models import Profile

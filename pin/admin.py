@@ -11,7 +11,24 @@ class PinAdmin(admin.ModelAdmin):
     search_fields = ['id']
     list_display = ('id', 'text','user','category','admin_image','status',\
     'like', 'device', 'url', 'is_ads')
-    actions=[make_approve]
+    actions=[make_approve,'really_delete_selected']
+
+    def get_actions(self, request):
+        actions = super(PinAdmin, self).get_actions(request)
+        del actions['delete_selected']
+        return actions
+
+    def really_delete_selected(self, request, queryset):
+        for obj in queryset:
+            obj.delete()
+
+        if queryset.count() == 1:
+            message_bit = "1 pin entry was"
+        else:
+            message_bit = "%s pin entries were" % queryset.count()
+        self.message_user(request, "%s successfully deleted." % message_bit)
+    really_delete_selected.short_description = "Delete selected entries"
+
 
 class NotifyAdmin(admin.ModelAdmin):
     list_display = ('id', 'sender', 'user', 'text', 'seen', 'type')
