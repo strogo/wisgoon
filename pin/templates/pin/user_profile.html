@@ -16,7 +16,7 @@
        <td><b>تعداد لایک</b>: {{profile.cnt_like}}</td>
 </tr>
 </table>
-        {% if profile.trusted %}
+        {% if profile.trusted and profile.trusted_by_id %}
         توسط <a href="{% url pin-user profile.trusted_by.id %}"><img src="{{profile.trusted_by.email|daddy_avatar:30}}"></a> تایید شده است.
         {%else%}
             {% if request.user.is_superuser %}                             
