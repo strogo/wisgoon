@@ -11,23 +11,23 @@
         <span class="profile-name">{{cur_user|get_username}}</span>
 <table class="table">
 <tr>
-       <td><b>امتیاز</b>: {{profile.score|intcomma}}</td>
-       <td><b>تعداد مطالب</b>: {{profile.cnt_post}}</td>
-       <td><b>تعداد لایک</b>: {{profile.cnt_like}}</td>
+       <td><b>امتیاز</b>: {{cur_user.profile.score|intcomma}}</td>
+       <td><b>تعداد مطالب</b>: {{cur_user.profile.cnt_post}}</td>
+       <td><b>تعداد لایک</b>: {{cur_user.profile.cnt_like}}</td>
 </tr>
 </table>
-        {% if profile.trusted and profile.trusted_by_id %}
-        توسط <a href="{% url pin-user profile.trusted_by.id %}"><img src="{{profile.trusted_by.email|daddy_avatar:30}}"></a> تایید شده است.
+        {% if cur_user.profile.trusted and cur_user.profile.trusted_by_id %}
+        توسط <a href="{% url pin-user cur_user.profile.trusted_by.id %}"><img src="{{cur_user.profile.trusted_by.email|daddy_avatar:30}}"></a> تایید شده است.
         {%else%}
             {% if request.user.is_superuser %}                             
                 <a href="{% url trust_user cur_user.id %}">ﺕﺍییﺩ ﺍیﻥ کﺍﺮﺑﺭ</a><br>
             {% endif %}
         {%endif%}
 
-        <p class="colormuted">{{profile.bio}}</p>
+        <p class="colormuted">{{cur_user.profile.bio}}</p>
         
-        {% if profile.website != '' %}
-        <a href="{{profile.website}}">{{profile.website}}</a>
+        {% if cur_user.profile.website != '' %}
+        <a href="{{cur_user.profile.website}}">{{cur_user.profile.website}}</a>
         {% endif %}
         <div class="profile-actions">
         	{% if cur_user.id != request.user.id %}
@@ -39,8 +39,5 @@
         </div>
     </div>
 </div>
-	
 </div>
-
 </div>
-

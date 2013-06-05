@@ -75,8 +75,8 @@ class Post(models.Model):
         from user_profile.models import Profile
         
         try:       
-            profile = Profile.objects.get(user=self.user)
-            if profile.score >= 10000:
+            #profile = Profile.objects.get(user=self.user)
+            if self.user.profile.trusted :
                 self.status=1
         except Profile.DoesNotExist:
             pass

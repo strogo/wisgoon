@@ -14,7 +14,7 @@
 {% include "base/all_header.html"%}
 
 {% compress css %}
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css?ver=1.1.1">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css?ver=1.1.2">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css?v=0.0.1">
 {%endcompress%}
@@ -71,8 +71,15 @@ var upload_url = "{% url pin-upload %}";
 			  {%endif%}
 			  </li>
 
-<li class="nav-right">
-	<a href="{% url pin-popular%}"><i class="icon-fire"></i> برترینها</a>
+<li class="nav-right dropdown ">
+	<a class="dropdown-toggle" data-toggle="dropdown"  href="#"><i class="icon-fire"></i> برترینها</a>
+    <ul class="dropdown-menu">
+        <li><a href="{% url pin-popular %}">همه زمانها</a></li>
+        <li><a href="{% url pin-popular-offset "month" %}">یک ماه گذشته</a></li>
+        <li><a href="{% url pin-popular-offset "lastday" %} ">24 ساعت گذشته</a></li>
+        <li><a href="{% url pin-popular-offset "lasteigth" %} ">8 ساعت گذشته</a></li>
+      <!-- links -->
+    </ul>
 </li>
 			  
 {% if user.is_authenticated%}

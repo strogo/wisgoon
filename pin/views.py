@@ -5,6 +5,8 @@ import time
 import json
 import urllib
 import sys
+import datetime
+import time
 from shutil import copyfile
 
 from django.conf import settings
@@ -56,10 +58,23 @@ def home(request):
     else:
         return render(request, 'pin/home.html', {'latest_items': latest_items})
 
-def popular(request):
+def popular(request, interval = ""):
     ROW_PER_PAGE = 20
-    
-    post_list = Post.objects.filter(status=1).select_related().order_by('-like')
+
+    if interval and interval in ['month', 'lastday', 'lasteigth']:
+        if interval == 'month':
+            data_from = datetime.datetime.now() - datetime.timedelta(days=30)
+        elif interval == 'lastday':
+            data_from = datetime.datetime.now() - datetime.timedelta(days=1)
+        elif interval == 'lasteigth':
+            data_from = datetime.datetime.now() - datetime.timedelta(hours=8)
+        
+        start_from = time.mktime(data_from.timetuple())
+        post_list = \
+        Post.objects.filter(status=1).extra(where=['timestamp>%s'], params=[start_from]).select_related().order_by('-like')
+
+    else:
+        post_list = Post.objects.filter(status=1).select_related().order_by('-like')
     paginator = Paginator(post_list, ROW_PER_PAGE)
     
     try:
