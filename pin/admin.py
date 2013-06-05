@@ -1,6 +1,11 @@
 from django.contrib import admin
-
+from django.contrib.comments.admin import CommentsAdmin
+from django.contrib.comments.models import Comment
 from pin.models import Post, Notify, Category
+
+class PinCommentsAdmin(CommentsAdmin):
+    list_display = ('name', 'content_type', 'object_pk', 'ip_address',
+    'submit_date', 'is_public', 'is_removed','comment')
 
 def make_approve(modeladmin, request, queryset):
     queryset.update(status=1)
@@ -40,3 +45,5 @@ class CategoryAdmin(admin.ModelAdmin):
 admin.site.register(Post, PinAdmin)
 admin.site.register(Notify, NotifyAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.unregister(Comment)
+admin.site.register(Comment, PinCommentsAdmin)
