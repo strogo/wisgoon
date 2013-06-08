@@ -20,6 +20,10 @@
             امتیاز: {{u.score}}
         </div>
         </td>
+        {% if forloop.counter|divisibleby:3 %}
+        </tr>
+        <tr>
+        {% endif %}
         {%endfor%}
         </tr>
     </table>
