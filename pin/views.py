@@ -100,6 +100,11 @@ def popular(request, interval = ""):
                               {'latest_items': latest_items, 'offset':latest_items.next_page_number})
     
 
+def topuser(request):
+    top_user=Profile.objects.all().order_by('-score')
+
+    return render(request, 'pin/topuser.html', {'top_user': top_user})
+
 def user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
 

@@ -1,0 +1,28 @@
+{% extends "base/pin.html"%}
+{% load pin_tags %}
+{% load daddy_avatar %}
+{%load cache %}
+
+{%block title%} کاربران برتر {%endblock title%}
+
+{% block content %}
+
+<div id="profile" class="row row-fluid">
+	<div class="container">
+    <table style="width:100%" width="100%">
+        <tr>
+        {% for u in top_user %}
+        <td>
+        <div style="border: 1px solid #f2f4f8; background-color:#FFFFFF;">
+            <img src="{{u.user.email|daddy_avatar:50}}" >
+            {{u.user|get_username}}<br>
+            تعداد مطالب: {{u.cnt_post}}<br>
+            امتیاز: {{u.score}}
+        </div>
+        </td>
+        {%endfor%}
+        </tr>
+    </table>
+	</div>
+</div>
+{% endblock content %}
