@@ -101,7 +101,7 @@ def popular(request, interval = ""):
     
 
 def topuser(request):
-    top_user=Profile.objects.all().order_by('-score')
+    top_user=Profile.objects.all().order_by('-score')[:30]
 
     return render(request, 'pin/topuser.html', {'top_user': top_user})
 
