@@ -81,7 +81,9 @@ var upload_url = "{% url pin-upload %}";
       <!-- links -->
     </ul>
 </li>
-			  
+<li class="nav-right" >
+    <a href="{% url pin-topuser %}">برترین کاربران</a>
+</li>
 {% if user.is_authenticated%}
 <li class="nav-right">
 	<a href="{% url pin-following%}">دنبال شوندگان</a>

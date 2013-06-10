@@ -14,10 +14,12 @@
         {% for u in top_user %}
         <td>
         <div class="feed-item">
-            <img src="{{u.user.email|daddy_avatar:50}}" >
+            <a href="{% url pin-user u.user.id %}">
+                <img src="{{u.user.email|daddy_avatar:50}}" style="float:left" >
+            </a>
             <table>
             <tr>
-            <td>{{u.user|get_username}}</td>
+            <td><a href="{% url pin-user u.user.id %}">{{u.user|get_username}}</a></td>
             </tr><tr>
             <td>تعداد مطالب: {{u.cnt_post}}</td>
             </tr>
