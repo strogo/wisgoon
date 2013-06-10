@@ -13,7 +13,7 @@
         <tr>
         {% for u in top_user %}
         <td>
-        <div class="feed-item">
+        <div class="feed-item" style="padding:5px">
             <a href="{% url pin-user u.user.id %}">
                 <img src="{{u.user.email|daddy_avatar:50}}" style="float:left" >
             </a>
