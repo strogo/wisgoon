@@ -8,16 +8,23 @@
 {% block content %}
 
 <div id="profile" class="row row-fluid">
-	<div class="container">
+	<div id="feed-ul" class="container"style="width:940px;" >
     <table style="width:100%" width="100%">
         <tr>
         {% for u in top_user %}
         <td>
-        <div style="border: 1px solid #f2f4f8; background-color:#FFFFFF;">
+        <div class="feed-item">
             <img src="{{u.user.email|daddy_avatar:50}}" >
-            {{u.user|get_username}}<br>
-            تعداد مطالب: {{u.cnt_post}}<br>
-            امتیاز: {{u.score}}
+            <table>
+            <tr>
+            <td>{{u.user|get_username}}</td>
+            </tr><tr>
+            <td>تعداد مطالب: {{u.cnt_post}}</td>
+            </tr>
+            <tr>
+            <td>امتیاز: {{u.score}}</td>
+            </tr>
+            </table>
         </div>
         </td>
         {% if forloop.counter|divisibleby:3 %}
