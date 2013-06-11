@@ -40,6 +40,7 @@
 		<div class="feed-item-actions">
 			<div style="float: left">
 				<a href="{% url pin-item-like item_inner.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like item_inner.id %}{% endif %}"> <i class="icon-heart"></i> {{item_inner.like}} </a>
+
 				{% if user.id == item_inner.user.id%}
 				<a href="{% url pin-item-delete item_inner.id%}" class="btn btn-danger delpost" style="margin-right: 5px"> 
 					<i class="icon-remove"></i> 
@@ -52,6 +53,9 @@
 			<div class="feed-item-date">
 				{{item_inner.create|jalali_mysql_date}}
 			</div>
+<div>
+<a class="a2a_dd" href="http://www.addtoany.com/share_save"><img src="http://static.addtoany.com/buttons/share_save_171_16.png" width="171" height="16" border="0" alt="Share"/></a>
+</div>
 			
 			<div style="direction: ltr; font-family: Arial, Helvetica, sans-serif">
 				<a rel="nofollow" target="_blank" href="{{item_inner.url}}">{{item_inner.url|get_host}}</a>

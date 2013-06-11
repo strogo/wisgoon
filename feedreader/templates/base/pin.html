@@ -157,6 +157,8 @@ var upload_url = "{% url pin-upload %}";
 {% endif %}
 
 <script type="text/javascript" src="{{MEDIA_URL}}js/all.js"></script>
+{% block footer_script %}
+{% endblock %}
 <script type="text/javascript" src="http://apis.google.com/js/plusone.js"></script>
 	</body><!-- end body -->
 </html>

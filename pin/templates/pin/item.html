@@ -46,4 +46,14 @@ var start_loading = 1;
 </script>
 {% include "pin/feed_scripts.html" %}
 
+{% block footer_script %}
+<!-- AddToAny BEGIN -->
+<script type="text/javascript">
+var a2a_config = a2a_config || {};
+a2a_config.locale = "fa";
+</script>
+<script type="text/javascript" src="http://static.addtoany.com/menu/page.js"></script>
+<!-- AddToAny END -->
+{% endblock%}
+
 {% endblock content %}
