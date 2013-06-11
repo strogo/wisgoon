@@ -25,6 +25,11 @@
 		<a href="{% url pin-user item.user.id %}">
 			<b style="font-size:13px;font-weight:normal;margin-right:5px;">{{item.user|get_username}}</b>
 		</a>
+        {% if item.device == 2 %}
+        <i class="icon-camera" title="ارسال از موبایل" style="float:left;margin-left:5px"></i>
+        {% else %}
+        <i class="icon-globe" title="ارسال از وب" style="float:left;margin-left:5px"></i>
+        {%endif%}
 		</div>
 		<div class="feed-actions">
 		<div class="sharing-actions">
