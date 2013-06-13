@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.comments.admin import CommentsAdmin
 from django.contrib.comments.models import Comment
 from pin.models import Post, Notify, Category
+from user_profile.models import Profile
 
 class PinCommentsAdmin(CommentsAdmin):
     list_display = ('name', 'content_type', 'object_pk', 'ip_address',
@@ -15,7 +16,7 @@ class PinAdmin(admin.ModelAdmin):
     list_filter = ('status','category', 'is_ads')
     search_fields = ['id']
     list_display = ('id', 'text','user','category','admin_image','status',\
-    'like', 'device', 'url', 'is_ads')
+    'like', 'device', 'is_ads')
     actions=[make_approve,'really_delete_selected']
 
     def get_actions(self, request):
@@ -42,8 +43,15 @@ class NotifyAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id','title','admin_image')
 
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('name', 'website', 'cnt_post', 'cnt_like', 'score',
+    'user', 'trusted')
+    search_fields = ['user__id','name']
+
+
 admin.site.register(Post, PinAdmin)
 admin.site.register(Notify, NotifyAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Profile, ProfileAdmin)
 admin.site.unregister(Comment)
 admin.site.register(Comment, PinCommentsAdmin)

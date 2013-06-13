@@ -126,7 +126,7 @@ class Post(models.Model):
     def admin_image(self):
         img = self.get_image_thumb()
         
-        return '<img src="%s" /> ' % img.url
+        return '<a href="/media/%s" target="_blank"><img src="%s" /></a>' % (self.image, img.url)
     admin_image.allow_tags = True
 
 class Follow(models.Model):
