@@ -47,6 +47,7 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('name', 'website', 'cnt_post', 'cnt_like', 'score',
     'user', 'trusted')
     search_fields = ['user__id','name']
+    list_filter = ('trusted',)
 
 
 admin.site.register(Post, PinAdmin)
