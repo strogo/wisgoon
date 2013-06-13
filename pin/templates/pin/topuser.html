@@ -15,7 +15,7 @@
         <td>
         <div class="feed-item" style="padding:5px">
             <a href="{% url pin-user u.user.id %}">
-                <img src="{{u.user.email|daddy_avatar:50}}" style="float:left" >
+                <img src="{{u.user|get_avatar:50}}" style="float:left" >
             </a>
             <table>
             <tr>

@@ -5,7 +5,8 @@
 <div class="FixedContainer row clearfix" style="">
 	<div class="ProfileInfo ProfilePanel ">
     <a href="" class="ProfileImage">
-    	<img src="{{cur_user.email|daddy_avatar:165}}" alt="">
+    	<!--<img src="{{cur_user.email|daddy_avatar:165}}" alt="">-->
+        <img src="{{cur_user|get_avatar:165}}" alt="">
 	</a>
     <div class="content">
         <span class="profile-name">{{cur_user|get_username}}</span>

@@ -18,7 +18,7 @@
 		<div style="height: 70px;">
             <div class="post-avatar">
 			<a href="{% url pin-user item_inner.user.id %}">
-				<img src="{{item_inner.user.email|daddy_avatar:50}}" style="display: inline;margin-left: 5px" >
+				<img src="{{item_inner.user|get_avatar:50}}" style="display: inline;margin-left: 5px" >
 			</a>
             </div>
 		</div>
@@ -84,7 +84,7 @@
 			</legend>
 			{% for like in likes%}
 			<a href="{% url pin-user like.user.id %}">
-				<img src="{{like.user.email|daddy_avatar:50}}" style="display: inline;margin-left: 5px" >
+				<img src="{{like.user|get_avatar:50}}" style="display: inline;margin-left: 5px" >
 			</a>
 			{% endfor %}
 		</div>	

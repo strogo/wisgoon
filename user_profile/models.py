@@ -16,8 +16,10 @@ class Profile(models.Model):
     count_flag=models.IntegerField(default=0)
     trusted=models.IntegerField(default=0)
     trusted_by=models.ForeignKey(User, related_name='trusted_by', default=None, null=True, blank=True)
+    avatar = models.ImageField(upload_to='avatars', default=None, null=True, blank=True)
 
     user = models.OneToOneField(User)
+
     
     def cnt_calculate(self):
         cnt = Post.objects.filter(user=self.user,status=1).aggregate(models.Sum('like'), models.Count('id'))

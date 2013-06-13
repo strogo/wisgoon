@@ -13,7 +13,7 @@ def change(request):
     
     #profile=Profile.objects.filter(user=request.user).get()
     if request.method== "POST":
-        form=ProfileForm(request.POST, instance=profile)
+        form=ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             profile= form.save(commit=False)
             profile.save()
