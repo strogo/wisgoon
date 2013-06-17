@@ -108,7 +108,7 @@ class PostResource(ModelResource):
         ar = []
         for lk in likers:
             ar.append([lk.user.id,lk.user.username,\
-            daddy_avatar.get_avatar(lk.user)], size=100)
+            daddy_avatar.get_avatar(lk.user, size=100)])
 
         bundle.data['likers'] = ar
         bundle.data['user_name'] = get_username(bundle.data['user'])
