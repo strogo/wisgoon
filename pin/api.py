@@ -48,7 +48,8 @@ class CommentResource(ModelResource):
         }
 
     def dehydrate(self, bundle):
-        bundle.data['user_avatar'] = daddy_avatar.daddy_avatar(bundle.data['user_email'])
+        bundle.data['user_avatar'] =\
+        daddy_avatar.get_avatar(bundle.data['user'], size=100)
 
         return bundle
         
@@ -101,12 +102,13 @@ class PostResource(ModelResource):
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
 
         user_email = bundle.data['user_avatar']
-        bundle.data['user_avatar'] = daddy_avatar.daddy_avatar(user_email)
+        bundle.data['user_avatar'] = daddy_avatar.get_avatar(bundle.data['user'], size=100)
         
         likers = Likes.objects.filter(post_id=id).all()
         ar = []
         for lk in likers:
-            ar.append([lk.user.id,lk.user.username, daddy_avatar.daddy_avatar(lk.user.email)])
+            ar.append([lk.user.id,lk.user.username,\
+            daddy_avatar.get_avatar(lk.user)], size=100)
 
         bundle.data['likers'] = ar
         bundle.data['user_name'] = get_username(bundle.data['user'])

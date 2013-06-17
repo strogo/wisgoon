@@ -1,6 +1,7 @@
 from django.template import Library
 from django.utils.hashcompat import md5_constructor
 from django.conf import settings
+from django.contrib.auth.models import User
 import os
 import urllib
 
@@ -30,6 +31,8 @@ def daddy_avatar(user_email, size=200):
 
 @register.filter
 def get_avatar(user, size=200):
+    if isinstance(user, int):
+        user = User.objects.get(pk=user)
 
     try:
         if user.profile.avatar:
