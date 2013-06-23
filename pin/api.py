@@ -40,7 +40,7 @@ class CommentResource(ModelResource):
     class Meta:
         allowed_methods = ['get']
         post_type = ContentType.objects.get(app_label="pin", model="post")
-        queryset = Comment.objects.filter(content_type=post_type)
+        queryset = Comment.objects.filter(content_type=post_type,is_public=True)
         resource_name = "comments"
         paginator_class = Paginator
         filtering = {
