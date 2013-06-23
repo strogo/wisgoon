@@ -1,9 +1,21 @@
 #coding: utf-8
+import os
+import time
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
 from pin.models import Post
+
+def avatar_file_name(instance, filename):
+    new_filename = str(time.time()).replace('.','') # create new file name with current timestamp
+    fileext = os.path.splitext(filename)[1] # get file ext
+
+    filestr = new_filename + fileext 
+    
+    d = datetime.now()
+    return '/'.join(['avatars', str(d.year), str(d.month), str(filestr)])
 
 class Profile(models.Model):
     name=models.CharField(max_length=250,verbose_name='نام')
@@ -16,7 +28,7 @@ class Profile(models.Model):
     count_flag=models.IntegerField(default=0)
     trusted=models.IntegerField(default=0)
     trusted_by=models.ForeignKey(User, related_name='trusted_by', default=None, null=True, blank=True)
-    avatar = models.ImageField(upload_to='avatars', default=None, null=True, blank=True)
+    avatar = models.ImageField(upload_to=avatar_file_name, default=None, null=True, blank=True)
 
     user = models.OneToOneField(User)
 
