@@ -299,6 +299,38 @@ def d_like(request):
     return HttpResponse('error in parameters')
 
 @csrf_exempt
+def d_post_comment(request):
+    token = request.GET.get('token','')                                         
+                                                                                
+    if not token:                                                               
+        return HttpResponse('error in user validate')                           
+                                                                                
+    try:                                                                        
+        api = ApiKey.objects.get(key=token)                                     
+        user = api.user                                                         
+    except ApiKey.DoesNotExist:                                                 
+        return HttpResponse('error in user validate')
+
+    data = request.POST.copy()
+    posted_comment = data.get('comment')
+    object_pk = data.get("object_pk")
+    if data and posted_comment and object_pk:
+        post_type = ContentType.objects.get(app_label="pin", model="post")
+        comment = Comment()
+
+        comment.comment = posted_comment
+        comment.content_type = post_type
+        comment.site_id=1
+        comment.ip_address = request.META.get("REMOTE_ADDR", None)
+        comment.user = user
+        comment.object_pk = object_pk
+        comment.save()
+        return HttpResponse(1)
+
+    return HttpResponse(0)
+           
+
+@csrf_exempt
 def d_send(request):
     token = request.GET.get('token','')
     
