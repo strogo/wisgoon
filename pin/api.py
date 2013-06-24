@@ -95,7 +95,10 @@ class PostResource(ModelResource):
     def dehydrate(self, bundle):
         id = bundle.data['id']
         o_image = bundle.data['image']
-        im = get_thumbnail(o_image, self.thumb_size, quality=self.thumb_quality, upscale=False)
+        try:
+            im = get_thumbnail(o_image, self.thumb_size, quality=self.thumb_quality, upscale=False)
+        except:
+            im = ""
         bundle.data['thumbnail'] = im
         bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
