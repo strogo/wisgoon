@@ -191,6 +191,12 @@ class Notify(models.Model):
     seen = models.BooleanField(default=False)
     type = models.IntegerField(default=1, choices=TYPES) # 1=Post_like, 2=Post_comment
 
+class App_data(models.Model):
+    name = models.CharField(max_length=250)
+    file = models.FileField(upload_to='app')
+    version = models.CharField(max_length=50)
+    current = models.BooleanField(default=1)
+
 def user_comment_post(sender, **kwargs):
     if 'pin.post' in kwargs['request'].POST['content_type']:
         comment = kwargs['comment']
@@ -207,7 +213,8 @@ def user_comment_post(sender, **kwargs):
             notify.text = 'comment this'
             notify.type = 2
             notify.save()
-                
+
+
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
 post_delete.connect(Likes.user_unlike_post, sender=Likes)

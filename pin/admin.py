@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.comments.admin import CommentsAdmin
 from django.contrib.comments.models import Comment
-from pin.models import Post, Notify, Category
+from pin.models import Post, Notify, Category, App_data
 from user_profile.models import Profile
 
 class PinCommentsAdmin(CommentsAdmin):
@@ -49,10 +49,13 @@ class ProfileAdmin(admin.ModelAdmin):
     search_fields = ['user__id','name']
     list_filter = ('trusted',)
 
+class AppAdmin(admin.ModelAdmin):
+    list_display = ('name', 'file', 'version', 'current')
 
 admin.site.register(Post, PinAdmin)
 admin.site.register(Notify, NotifyAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Profile, ProfileAdmin)
+admin.site.register(App_data, AppAdmin)
 admin.site.unregister(Comment)
 admin.site.register(Comment, PinCommentsAdmin)
