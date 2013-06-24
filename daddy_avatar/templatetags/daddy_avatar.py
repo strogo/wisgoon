@@ -31,6 +31,9 @@ def daddy_avatar(user_email, size=200):
 
 @register.filter
 def get_avatar(user, size=200):
+    if not user:
+        return daddy_avatar('', size)
+
     if isinstance(user, int):
         user = User.objects.get(pk=user)
 
