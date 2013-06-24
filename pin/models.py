@@ -42,7 +42,7 @@ class Post(models.Model):
     url = models.CharField(blank=True, max_length=2000, validators=[URLValidator()])
     status = models.IntegerField(default=0, blank=True)
     device = models.IntegerField(default=1, blank=True)
-    hash = models.CharField(max_length=100, blank=True)
+    hash = models.CharField(max_length=32, blank=True, db_index=True)
     actions = models.IntegerField(default=1, blank=True)
     is_ads = models.BooleanField(default=False, blank=True)
     
