@@ -61,11 +61,13 @@ def home(request):
 def popular(request, interval = ""):
     ROW_PER_PAGE = 20
 
-    if interval and interval in ['month', 'lastday', 'lasteigth']:
+    if interval and interval in ['month', 'lastday', 'lasteigth', 'lastweek']:
         if interval == 'month':
             data_from = datetime.datetime.now() - datetime.timedelta(days=30)
         elif interval == 'lastday':
             data_from = datetime.datetime.now() - datetime.timedelta(days=1)
+        elif interval == 'lastweek':
+            data_from = datetime.datetime.now() - datetime.timedelta(days=7)
         elif interval == 'lasteigth':
             data_from = datetime.datetime.now() - datetime.timedelta(hours=8)
         

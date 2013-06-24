@@ -76,6 +76,7 @@ var upload_url = "{% url pin-upload %}";
     <ul class="dropdown-menu">
         <li><a href="{% url pin-popular %}">همه زمانها</a></li>
         <li><a href="{% url pin-popular-offset "month" %}">یک ماه گذشته</a></li>
+        <li><a href="{% url pin-popular-offset "lastweek" %}">هفته گذشته</a></li>
         <li><a href="{% url pin-popular-offset "lastday" %} ">24 ساعت گذشته</a></li>
         <li><a href="{% url pin-popular-offset "lasteigth" %} ">8 ساعت گذشته</a></li>
       <!-- links -->

@@ -48,8 +48,7 @@ class CommentResource(ModelResource):
         }
 
     def dehydrate(self, bundle):
-        bundle.data['user_avatar'] =\
-        daddy_avatar.get_avatar(bundle.data['user'], size=100)
+        bundle.data['user_avatar'] = daddy_avatar.get_avatar(bundle.data['user'], size=100)
 
         return bundle
         
