@@ -323,7 +323,10 @@ def d_post_comment(request):
         comment.comment = posted_comment
         comment.content_type = post_type
         comment.site_id = 1
-        comment.is_public = 0
+        if user.profile.trusted :
+            comment.is_public = 1
+        else:
+            comment.is_public = 0
         comment.ip_address = request.META.get("REMOTE_ADDR", None)
         comment.user = user
         comment.object_pk = object_pk
