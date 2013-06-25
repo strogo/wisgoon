@@ -3,6 +3,7 @@ from tastypie.resources import ModelResource
 from tastypie.paginator import Paginator
 from tastypie import fields
 from tastypie.cache import SimpleCache
+from tastypie.models import ApiKey
 
 from PIL import Image
 from django.conf import settings
@@ -63,7 +64,11 @@ class PostResource(ModelResource):
     user = fields.IntegerField(attribute = 'user__id')
     likers = fields.ListField()
     category = fields.ToOneField(CategotyResource , 'category',full=True)
-    
+
+    like_with_user = fields.BooleanField(default=False)
+
+    cur_user = None
+
     class Meta:
         queryset = Post.objects.filter(status=1).order_by('-is_ads','-id')
         resource_name = 'post'
@@ -89,6 +94,14 @@ class PostResource(ModelResource):
         return base_object_list.filter(**filters).distinct()
     
     def dispatch(self, request_type, request, **kwargs):
+        token = request.GET.get('token', '')
+        if token:
+            try:
+                api = ApiKey.objects.get(key=token)                                     
+                self.cur_user = api.user
+            except:
+                pass
+
         self.thumb_size = request.GET.get(self.thumb_query_name, self.thumb_default_size)        
         return super(PostResource, self).dispatch(request_type, request, **kwargs)
     
@@ -105,14 +118,11 @@ class PostResource(ModelResource):
 
         user_email = bundle.data['user_avatar']
         bundle.data['user_avatar'] = daddy_avatar.get_avatar(bundle.data['user'], size=100)
-        
-        likers = Likes.objects.filter(post_id=id).all()
-        ar = []
-        for lk in likers:
-            ar.append([lk.user.id,lk.user.username,\
-            daddy_avatar.get_avatar(lk.user, size=100)])
 
-        bundle.data['likers'] = ar
+        if self.cur_user:
+            if Likes.objects.filter(post_id=id, user=self.cur_user).count():
+                bundle.data['like_with_user'] = True
+
         bundle.data['user_name'] = get_username(bundle.data['user'])
         
         if self.get_resource_uri(bundle) == bundle.request.path:
@@ -124,5 +134,14 @@ class PostResource(ModelResource):
             im = Image.open(img_path)
             w,h = im.size
             bundle.data['large_hw'] = "%sx%s" % ( h,w )
+
+            likers = Likes.objects.filter(post_id=id).all()
+            ar = []
+            for lk in likers:
+                ar.append([lk.user.id,lk.user.username,\
+                daddy_avatar.get_avatar(lk.user, size=100)])
+            
+            bundle.data['likers'] = ar
+                
         
         return bundle
