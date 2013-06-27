@@ -124,7 +124,7 @@
 						<div class="avatar">
 							
 							<a href="{% url pin-user comment.user.id %}">
-							<img src="{{comment.email|daddy_avatar:36}}" alt="">
+							<img src="{{comment.user|get_avatar:36}}" alt="">
 							</a>
 						</div>
 						{% endif%}
