@@ -74,17 +74,22 @@ class ProfileObjectsOnlyAuthorization(Authorization):
         #pass
 
 class ProfileResource(ModelResource):
-    user = fields.ToOneField(UserResource, 'user')
+    user = fields.IntegerField(attribute = 'user__id')
 
     class Meta:
+        allowed_methods = ['get']
         queryset = Profile.objects.all()
         resource_name="profile"
-        authentication = ApiKeyAuthentication()
-        authorization = ProfileObjectsOnlyAuthorization()
+        #authentication = ApiKeyAuthentication()
+        #authorization = ProfileObjectsOnlyAuthorization()
         filtering = {
             "user":('exact'),
         }
-    
+
+    def dehydrate(self, bundle):
+        bundle.data['user_avatar'] = daddy_avatar.get_avatar(bundle.data['user'], size=100)
+        return bundle
+
 class CategotyResource(ModelResource):
     class Meta:
         queryset = Category.objects.all()
