@@ -80,7 +80,7 @@ def category(request, cat_id):
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin/home.html', {'latest_items': latest_items})
+        return render(request, 'pin/category.html', {'latest_items': latest_items, 'cur_cat': cat})
 
 
 def popular(request, interval = ""):
