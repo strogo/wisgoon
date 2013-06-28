@@ -39,8 +39,8 @@
 	<div class="feed-item-bottom">
 		<div class="feed-item-actions">
 			<div style="float: left">
-				<a href="{% url pin-item-like item_inner.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like item_inner.id %}{% endif %}"> <i class="icon-heart"></i> {{item_inner.like}} </a>
-
+				<a href="{% url pin-item-like item_inner.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like item_inner.id %}{% endif %}"> <i class="icon-heart"></i> {{item_inner.like}} </a> 
+                <a href="{{MEDIA_URL}}{{item_inner.image}}" target="_blank" class="btn"><i class="icon-download"></i></a> 
 				{% if user.id == item_inner.user.id%}
 				<a href="{% url pin-item-delete item_inner.id%}" class="btn btn-danger delpost" style="margin-right: 5px"> 
 					<i class="icon-remove"></i> 
