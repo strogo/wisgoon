@@ -82,7 +82,7 @@ class ProfileResource(ModelResource):
         authentication = ApiKeyAuthentication()
         authorization = ProfileObjectsOnlyAuthorization()
         filtering = {
-            "user_id":('exact'),
+            "user":('exact'),
         }
     
 class CategotyResource(ModelResource):
