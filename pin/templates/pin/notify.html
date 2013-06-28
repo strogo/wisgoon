@@ -19,7 +19,7 @@
 	{% if noti.type == 2 %}
 		<span>
 			<a href="{% url pin-user noti.sender.id%}">
-				<img src="{{noti.sender.email|daddy_avatar:30}}" style="display: inline;" > 
+				<img src="{{noti.sender|get_avatar:30}}" style="display: inline;" > 
 			</a>
 		</span> در 
 		{% if noti.post.text.strip %}

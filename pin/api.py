@@ -4,6 +4,14 @@ from tastypie.paginator import Paginator
 from tastypie import fields
 from tastypie.cache import SimpleCache
 from tastypie.models import ApiKey
+from tastypie.authentication import ApiKeyAuthentication
+from tastypie.authorization import Authorization
+
+from django.contrib.auth.models import User
+from django.db import models
+from tastypie.models import create_api_key
+
+from tastypie.exceptions import Unauthorized
 
 from PIL import Image
 from django.conf import settings
@@ -12,9 +20,71 @@ from django.contrib.contenttypes.models import ContentType
 
 from sorl.thumbnail import get_thumbnail
 from pin.models import Post, Likes, Category, Notify
+from user_profile.models import Profile
 from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
 
+models.signals.post_save.connect(create_api_key, sender=User)
+
+class UserResource(ModelResource):
+
+    class Meta:
+        queryset = User.objects.all()
+        excludes = ['password', 'email', 'is_superuser', 'is_staff', 'is_active']
+
+
+class ProfileObjectsOnlyAuthorization(Authorization):
+    def read_list(self, object_list, bundle):
+        # This assumes a ``QuerySet`` from ``ModelResource``.
+        #return object_list.filter(user=bundle.request.user)
+        return object_list
+
+    def read_detail(self, object_list, bundle):
+        # Is the requested object owned by the user?
+        #return bundle.obj.user == bundle.request.user
+        return object_list
+
+    def create_list(self, object_list, bundle):
+        # Assuming their auto-aassigned to ``user``.
+        return object_list
+
+    def create_detail(self, object_list, bundle):
+        return bundle.obj.user == bundle.request.user
+
+    def update_list(self, object_list, bundle):
+        allowed = []
+
+        # Since they may not all be saved, iterate over them.
+        for obj in object_list:
+            if obj.user == bundle.request.user:
+                allowed.append(obj)
+
+        return allowed
+
+    def update_detail(self, object_list, bundle):
+        return bundle.obj.user == bundle.request.user
+
+    def delete_list(self, object_list, bundle):
+        # Sorry user, no deletes for you!
+        raise Unauthorized("Sorry, no deletes.")
+        #pass
+
+    def delete_detail(self, object_list, bundle):
+        raise Unauthorized("Sorry, no deletes.")
+        #pass
+
+class ProfileResource(ModelResource):
+    user = fields.ToOneField(UserResource, 'user')
+
+    class Meta:
+        queryset = Profile.objects.all()
+        resource_name="profile"
+        authentication = ApiKeyAuthentication()
+        authorization = ProfileObjectsOnlyAuthorization()
+        filtering = {
+            "user_id":('exact'),
+        }
+    
 class CategotyResource(ModelResource):
     class Meta:
         queryset = Category.objects.all()

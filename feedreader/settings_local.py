@@ -99,7 +99,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    #'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     #'johnny.middleware.LocalStoreClearMiddleware',
     #'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
@@ -131,6 +131,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_login_redirect',
     'rss.context_processors.c_url',
     'rss.context_processors.node_url',
+    'pin.context_processors.pin_form',                                          
+    'pin.context_processors.pin_categories',
 )
 
 INSTALLED_APPS = (

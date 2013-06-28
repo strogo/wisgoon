@@ -34,7 +34,10 @@ class Profile(models.Model):
 
     
     def cnt_calculate(self):
-        cnt = Post.objects.filter(user=self.user,status=1).aggregate(models.Sum('like'), models.Count('id'))
+        try:
+            cnt = Post.objects.filter(user=self.user,status=1).aggregate(models.Sum('like'), models.Count('id'))
+        except Post.DoesNotExist:
+            cnt = 0
         
         self.cnt_like = 0 if not cnt['like__sum'] else cnt['like__sum']
         self.cnt_post = cnt['id__count']
@@ -51,7 +54,10 @@ class Profile(models.Model):
         self.count_flag = 1
 
     def save(self, *args, **kwargs):
-        self.user_statics()
+        try:
+            self.user_statics()
+        except:
+            pass
 
         super(Profile, self).save(*args,**kwargs)
 

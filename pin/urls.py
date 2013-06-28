@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
 from pin.feeds import LatestPinFeed
-from pin.api import PostResource, CategotyResource, CommentResource, NotifyResource
+from pin.api import PostResource, CategotyResource, CommentResource, NotifyResource, ProfileResource
 
 admin.autodiscover()
 
@@ -10,6 +10,7 @@ post_resource=PostResource()
 cat_resource=CategotyResource()
 comment_resource = CommentResource()
 notify_resource = NotifyResource()
+profile_resource = ProfileResource()
 
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
@@ -36,6 +37,8 @@ urlpatterns = patterns('pin.views',
     url(r'^popular/', 'popular', name="pin-popular"),
     url(r'^topuser/$', 'topuser', name='pin-topuser'),
     url(r'^trust/user/(?P<user_id>\d+)','trust_user',name='trust_user'),
+
+    url(r'^category/(?P<cat_id>\d+)', 'category', name='pin-category'),
     #url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     
     #not stables
@@ -44,6 +47,7 @@ urlpatterns = patterns('pin.views',
     url(r'^apic/',include(cat_resource.urls)),
     url(r'^api/com/', include(comment_resource.urls)),
     url(r'^api/notif/', include(notify_resource.urls)),
+    url(r'^api/profile/', include(profile_resource.urls)),
 )
 
 
