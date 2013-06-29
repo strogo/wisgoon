@@ -37,7 +37,7 @@ class PinAdmin(admin.ModelAdmin):
 
 
 class NotifyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'sender', 'user', 'text', 'seen', 'type')
+    list_display = ('id', 'user', 'text', 'seen', 'type')
     list_filter = ('seen',)
 
 class CategoryAdmin(admin.ModelAdmin):

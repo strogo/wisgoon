@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
 import os
 import hashlib
-
+import datetime
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.comments.models import Comment
@@ -164,12 +164,15 @@ class Likes(models.Model):
         post = like.post
         sender = like.user
         
-        notify = Notify()
-        notify.post = post
-        notify.sender = sender
-        notify.user = post.user
-        notify.text = 'like this'
+        notify, created = Notify.objects.get_or_create(post=post, user=post.user, type=1)
+        notify.date = datetime.datetime.now()
         notify.save()
+        #notify.post = post
+        #notify.sender = sender
+        #notify.user = post.user
+        #notify.text = 'like this'
+        #notify.save()
+        notify.actors.add(sender)
     
     @classmethod
     def user_unlike_post(cls, sender, instance, *args, **kwargs):
@@ -177,19 +180,30 @@ class Likes(models.Model):
         post = like.post
         sender = like.user
         
-        notify = Notify.objects.all().filter(post=post, sender=sender)
-        notify.delete()
+        try:
+            notify = Notify.objects.get(type=1,post=post)
+            if notify.actors:
+                notify.actors.remove(sender)
+            else:
+                notify.delete()
+
+            if not notify.actors.all():
+                notify.delete()
+        except Notify.DoesNotExist:
+            pass
         
 
 class Notify(models.Model):
     TYPES = ((1,'like'),(2,'comment'))
     
     post = models.ForeignKey(Post)
-    sender = models.ForeignKey(User, related_name="sender")
+    #sender = models.ForeignKey(User, related_name="sender")
     user = models.ForeignKey(User, related_name="userid")
     text = models.CharField(max_length=500)
     seen = models.BooleanField(default=False)
     type = models.IntegerField(default=1, choices=TYPES) # 1=Post_like, 2=Post_comment
+    date = models.DateTimeField(auto_now_add=True)
+    actors = models.ManyToManyField(User, related_name="actors")
 
 class App_data(models.Model):
     name = models.CharField(max_length=250)
@@ -206,13 +220,16 @@ def user_comment_post(sender, **kwargs):
             #post = comment.post
             sender = comment.user
                 
-            notify = Notify()
-            notify.post = post
-            notify.sender = sender
-            notify.user = post.user
-            notify.text = 'comment this'
-            notify.type = 2
+            notify, created = Notify.objects.get_or_create(post=post, user=post.user, type=2)
+            #notify.post = post
+            #notify.sender = sender
+            #notify.user = post.user
+            #notify.text = 'comment this'
+            #notify.type = 2
+            notify.date = datetime.datetime.now()
             notify.save()
+            notify.actors.add(sender)
+
 
 
 post_save.connect(Stream.add_post, sender=Post)
