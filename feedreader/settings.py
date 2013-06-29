@@ -1,8 +1,8 @@
 # Django settings for feedreader project.
 import os
 
-#DEBUG = True
-DEBUG = False
+DEBUG = True
+#DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 
