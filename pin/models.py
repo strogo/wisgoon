@@ -166,13 +166,14 @@ class Likes(models.Model):
         
         notify, created = Notify.objects.get_or_create(post=post, user=post.user, type=1)
         notify.date = datetime.datetime.now()
+        notify.actors.add(sender) 
         notify.save()
         #notify.post = post
         #notify.sender = sender
         #notify.user = post.user
         #notify.text = 'like this'
         #notify.save()
-        notify.actors.add(sender)
+        
     
     @classmethod
     def user_unlike_post(cls, sender, instance, *args, **kwargs):
@@ -227,10 +228,8 @@ def user_comment_post(sender, **kwargs):
             #notify.text = 'comment this'
             #notify.type = 2
             notify.date = datetime.datetime.now()
+            notify.actors.add(sender) 
             notify.save()
-            notify.actors.add(sender)
-
-
 
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
