@@ -188,7 +188,8 @@ LOGIN_REDIRECT_URL = '/'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211' # can also be a list of locations
+        'LOCATION': '127.0.0.1:11211',
+        'MAN_IN_BLACKLIST': 'pin_notify_actors',
     }
 }
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
