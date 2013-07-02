@@ -165,6 +165,7 @@ class Likes(models.Model):
         sender = like.user
         
         notify, created = Notify.objects.get_or_create(post=post, user=post.user, type=1)
+        notify.seen = False
         notify.date = datetime.datetime.now()
         notify.actors.add(sender) 
         notify.save()
@@ -228,6 +229,7 @@ def user_comment_post(sender, **kwargs):
             #notify.text = 'comment this'
             #notify.type = 2
             notify.date = datetime.datetime.now()
+            notify.seen = False
             notify.actors.add(sender) 
             notify.save()
 
