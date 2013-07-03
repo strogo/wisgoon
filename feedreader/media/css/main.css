@@ -1,3 +1,20 @@
+@font-face {
+    font-family: "dast";
+      src: url('../fonts/dast.otf');
+     src: local("dast"), url('../fonts/dast.otf') format('truetype');
+}
+@font-face {
+font-family: "dast";
+      src: url('../fonts/dast.eot');
+     src: local("dast"), url('../fonts/dast.otf') format('truetype');
+}
+@font-face {
+  font-family: "dast";
+  src: local('../fonts/dast.ttf'),
+      url('../fonts/dast.ttf') format("opentype");
+}
+
+
 body{
 	direction: rtl;
 	text-align: right;
