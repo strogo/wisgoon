@@ -2,15 +2,15 @@
 {% load daddy_avatar %}
 {% load pin_tags%}
 
-{% block title%} - {{item_inner.text|striptags|remove_newlines|truncatechars:66}}{% endblock title%}
-{%block description%}{{item_inner.text|striptags|remove_newlines|truncatewords:30}}{%endblock%}
+{% block title%} - {{post.text|striptags|remove_newlines|truncatechars:66}}{% endblock title%}
+{%block description%}{{post.text|striptags|remove_newlines|truncatewords:30}}{%endblock%}
 
 {% block opengraph%}
-<meta property="og:title" content="{{item_inner.text|striptags|remove_newlines|truncatechars:66}}" />
-<meta property="og:description" content="{{item_inner.text|striptags|remove_newlines|truncatewords:30}}" />
+<meta property="og:title" content="{{post.text|striptags|remove_newlines|truncatechars:66}}" />
+<meta property="og:description" content="{{post.text|striptags|remove_newlines|truncatewords:30}}" />
 <meta property="og:type" content="image/jpeg" />
-<meta property="og:url" content="{{ item_inner.get_host_url }}" />
-<meta property="og:image" content="{{ item_inner.get_image_absolute_url }}" />
+<meta property="og:url" content="{{ post.get_host_url }}" />
+<meta property="og:image" content="{{ post.get_image_absolute_url }}" />
 {% endblock opengraph%}
 
 {% comment %}
@@ -21,7 +21,7 @@
 
 {% block pin-ex-nav %}
 <li class="nav-right active">
-	<a href="#"><h1 style="display: inline">{{item_inner.text|striptags|remove_newlines|truncatewords:15}}</h1></a>
+	<a href="#"><h1 style="display: inline">{{post.text|striptags|remove_newlines|truncatewords:15}}</h1></a>
 </li>
 {% endblock pin-ex-nav %}
 
