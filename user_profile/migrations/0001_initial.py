@@ -12,10 +12,17 @@ class Migration(SchemaMigration):
         db.create_table('user_profile_profile', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=250)),
-            ('location', self.gf('django.db.models.fields.CharField')(max_length=250)),
-            ('website', self.gf('django.db.models.fields.URLField')(max_length=200)),
-            ('bio', self.gf('django.db.models.fields.TextField')()),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('location', self.gf('django.db.models.fields.CharField')(max_length=250, blank=True)),
+            ('website', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
+            ('bio', self.gf('django.db.models.fields.TextField')(blank=True)),
+            ('cnt_post', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('cnt_like', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('score', self.gf('django.db.models.fields.IntegerField')(default=0, db_index=True)),
+            ('count_flag', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('trusted', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('trusted_by', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='trusted_by', null=True, blank=True, to=orm['auth.User'])),
+            ('avatar', self.gf('django.db.models.fields.files.ImageField')(default=None, max_length=100, null=True, blank=True)),
+            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
         ))
         db.send_create_signal('user_profile', ['Profile'])
 
@@ -64,12 +71,19 @@ class Migration(SchemaMigration):
         },
         'user_profile.profile': {
             'Meta': {'object_name': 'Profile'},
-            'bio': ('django.db.models.fields.TextField', [], {}),
+            'avatar': ('django.db.models.fields.files.ImageField', [], {'default': 'None', 'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'bio': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'cnt_like': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'cnt_post': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'count_flag': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'location': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
+            'location': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
-            'website': ('django.db.models.fields.URLField', [], {'max_length': '200'})
+            'score': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
+            'trusted': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'trusted_by': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'trusted_by'", 'null': 'True', 'blank': 'True', 'to': "orm['auth.User']"}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'}),
+            'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
         }
     }
 

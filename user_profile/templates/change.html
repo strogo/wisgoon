@@ -15,6 +15,14 @@
       <input id="id_name" type="text" name="name" value="{{form.name.value|default_if_none:""}}" maxlength="250" />
     </div>
   </div> 
+
+ <div class="control-group">
+    <label class="control-label" for="inputEmail">جنسیت</label>
+    <div class="controls">
+      {{form.jens}}
+    </div>
+  </div>
+
 <div class="control-group">
     <label class="control-label" for="inputEmail">{{form.location.label}}</label>
     <div class="controls">

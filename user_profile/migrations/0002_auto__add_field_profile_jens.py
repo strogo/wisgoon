@@ -8,39 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Profile.cnt_post'
-        db.add_column('user_profile_profile', 'cnt_post',
-                      self.gf('django.db.models.fields.IntegerField')(default=0),
-                      keep_default=False)
-
-        # Adding field 'Profile.cnt_like'
-        db.add_column('user_profile_profile', 'cnt_like',
-                      self.gf('django.db.models.fields.IntegerField')(default=0),
-                      keep_default=False)
-
-        # Adding field 'Profile.score'
-        db.add_column('user_profile_profile', 'score',
-                      self.gf('django.db.models.fields.IntegerField')(default=0),
-                      keep_default=False)
-
-        # Adding field 'Profile.count_flag'
-        db.add_column('user_profile_profile', 'count_flag',
-                      self.gf('django.db.models.fields.IntegerField')(default=0),
+        # Adding field 'Profile.jens'
+        db.add_column('user_profile_profile', 'jens',
+                      self.gf('django.db.models.fields.CharField')(default='M', max_length=2),
                       keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting field 'Profile.cnt_post'
-        db.delete_column('user_profile_profile', 'cnt_post')
-
-        # Deleting field 'Profile.cnt_like'
-        db.delete_column('user_profile_profile', 'cnt_like')
-
-        # Deleting field 'Profile.score'
-        db.delete_column('user_profile_profile', 'score')
-
-        # Deleting field 'Profile.count_flag'
-        db.delete_column('user_profile_profile', 'count_flag')
+        # Deleting field 'Profile.jens'
+        db.delete_column('user_profile_profile', 'jens')
 
 
     models = {
@@ -82,15 +58,19 @@ class Migration(SchemaMigration):
         },
         'user_profile.profile': {
             'Meta': {'object_name': 'Profile'},
+            'avatar': ('django.db.models.fields.files.ImageField', [], {'default': 'None', 'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'bio': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'cnt_like': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'cnt_post': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'count_flag': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'jens': ('django.db.models.fields.CharField', [], {'default': "'M'", 'max_length': '2'}),
             'location': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
-            'score': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'score': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
+            'trusted': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'trusted_by': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'trusted_by'", 'null': 'True', 'blank': 'True', 'to': "orm['auth.User']"}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'}),
             'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
         }
     }
