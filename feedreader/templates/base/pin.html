@@ -84,7 +84,7 @@ var upload_url = "{% url pin-upload %}";
 </li>
 
 <li class="nav-right dropdown ">
-    <a class="dropdown-toggle" style="color:red" data-toggle="dropdown"  href="#"><i class="icon-th-list"></i>گروهها</a>
+    <a class="dropdown-toggle" data-toggle="dropdown"  href="#"><i class="icon-th-list"></i>  گروه ها</a>
     <ul class="dropdown-menu">
         {% for cat in cats %}
         <li><a href="{% url pin-category cat.id %}">{{cat.title}}</a></li>
