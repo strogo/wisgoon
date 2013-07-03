@@ -87,7 +87,7 @@ class ProfileResource(ModelResource):
         }
 
     def dehydrate(self, bundle):
-        bundle.data['user_avatar'] = daddy_avatar.get_avatar(bundle.data['user'], size=100)
+        bundle.data['user_avatar'] = daddy_avatar.get_avatar(bundle.data['user'], size=300)
         return bundle
 
 class CategotyResource(ModelResource):
@@ -101,6 +101,7 @@ class LikesResource(ModelResource):
         resource_name = 'likes'
 
 class NotifyResource(ModelResource):
+    all_actor = fields.ListField()
     class Meta:
         resource_name = 'notify'
         allowed_methods = ['get']
@@ -110,6 +111,10 @@ class NotifyResource(ModelResource):
             "user_id": ('exact',),
             "seen": ('exact',),
         }
+
+    def dehydrate(self, bundle):
+        print bundle
+        return bundle
 
 class CommentResource(ModelResource):
     user = fields.IntegerField(attribute = 'user__id',  null=True)
