@@ -29,6 +29,7 @@ class Profile(models.Model):
     trusted=models.IntegerField(default=0)
     trusted_by=models.ForeignKey(User, related_name='trusted_by', default=None, null=True, blank=True)
     avatar = models.ImageField(upload_to=avatar_file_name, default=None, null=True, blank=True)
+    jens = models.CharField(max_length=2, choices=(('M','مذکر'),('F','مونث')), default='M')
     user = models.OneToOneField(User)
 
     
