@@ -29,6 +29,7 @@ input, button, select, textarea {
 .nav a{
 	font-family: 'dast';
 	font-size:16px;
+    color: #ADA9A9;
 }
 
 .form-horizontal .control-label {
