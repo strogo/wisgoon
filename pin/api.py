@@ -75,6 +75,7 @@ class ProfileObjectsOnlyAuthorization(Authorization):
 
 class ProfileResource(ModelResource):
     user = fields.IntegerField(attribute = 'user__id')
+    user_name = fields.CharField(attribute = 'user__username')
 
     class Meta:
         allowed_methods = ['get']
