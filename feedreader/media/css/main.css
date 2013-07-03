@@ -1,8 +1,8 @@
 body{
 	direction: rtl;
 	text-align: right;
-	/*background: url('../img/paper.jpg') repeat ;*/
-	background-color: #CDCDCD!important;
+	background: url('../img/back01.png') repeat top left;
+	/*background-color: #CDCDCD!important;*/
 }
 #feed-ul{
 	list-style: none;
