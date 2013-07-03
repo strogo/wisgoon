@@ -6,6 +6,15 @@ from django.db import models
 from django.contrib.auth.models import User
 from urlparse import urlparse
 
+class Category(models.Model):
+    name = models.CharField(max_length=1000)
+    en_title = models.CharField(max_length=1000)
+    image = models.ImageField(upload_to='rss/category')
+    order = models.IntegerField(default=0)
+    
+    def __unicode__(self):
+        return self.name
+
 class Feed(models.Model):
     url = models.URLField()
     title = models.CharField(max_length=1000, blank=True)
@@ -16,6 +25,8 @@ class Feed(models.Model):
     view = models.IntegerField(default=0)
     status = models.IntegerField(default=1)
     lock = models.BooleanField(default=False)
+
+    category = models.ForeignKey(Category, default=None, blank=True, null=True)
     
     def __unicode__(self):
         if not self.title:
