@@ -24,6 +24,7 @@ urlpatterns = patterns('rss.views',
     url(r'^latest/feed/', LatestItemFeed(), name="rss-item-latest-feed"),
     url(r'^feeds/feed/', FeedsListFeed(), name="rss-list-feed"),
     url(r'xhr/older/', 'older', name='rss-older'),
+    url(r'category/', 'category', name="rss-category"),
 )
 
 urlpatterns += patterns('', 

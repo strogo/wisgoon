@@ -1,31 +1,39 @@
 # -*- coding: utf-8 -*- 
+import time
+import json
+import sys
+import simplejson
+import datetime
 
 from django.shortcuts import render_to_response, get_object_or_404, render
-from rss.models import Item, Feed, Subscribe, Likes ,Report, Search, Lastview,\
-    ItemExtra
 from django.template.context import RequestContext
-from rss.forms import FeedForm ,ReportForm 
 from django.http import HttpResponseRedirect  #, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
-import json
 from rss.sphinxapi import SphinxClient, SPH_MATCH_EXTENDED, \
         SPH_SORT_ATTR_DESC, SPH_MATCH_ANY, SPH_GROUPBY_DAY, SPH_SORT_ATTR_ASC
-import sys
 
 from django.template.loader import render_to_string
 
-import time, datetime
 from django.contrib.comments.models import Comment
 from feedreader.parser import parse_feed_web
 from django.views.decorators.csrf import csrf_exempt
 
-import simplejson
+from rss.models import Item, Feed, Subscribe, Likes ,Report, Search, Lastview, ItemExtra, Category
 from rss.utils import clean_words
+from rss.forms import FeedForm, ReportForm
 
 MAX_PER_PAGE = 10
 
+def category(request):
+    cats = Category.objects.all()
+    for cat in cats:
+        cat_feeds = Feed.objects.filter(category=cat)
+        cat_idis = [int(feed.id) for feed in cat_feeds]
+        cat.items = Item.objects.filter(feed__in=cat_idis).order_by('-id')[:5]
+            
+    return render(request, 'rss/category.html', {'cats':cats})
 
 def older(request):
     try:
@@ -361,8 +369,9 @@ def search_query(query, offset=0, sort=1, has_image=-1, mode=SPH_MATCH_EXTENDED,
     res = cl.Query ( query, index )
     
     docs =[]
-    for item in res['matches']:
-        docs.append(item['id'])
+    if res:
+        for item in res['matches']:
+            docs.append(item['id'])
     
     return docs
 
