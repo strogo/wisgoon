@@ -5,60 +5,41 @@
 
 <!-- start pin item -->
 <div class="feed-item feed-inner-item" itemscope itemtype="http://schema.org/CreativeWork" >
-	<div class="pin-item-top">
-		<div style="float: left">
-			{% if item_inner.user_id != request.user.id %}
-				{% if follow_status == 0 %}
-				<a class="btn btn-success" href="{% url pin-follow item_inner.user.id 1 %}">دنبال کردن</a>
-				{% else %}
-				<a class="btn btn-danger" href="{% url pin-follow item_inner.user.id 0 %}">قطع ارتباط</a>
-				{%endif%}
-			{% endif%}
-		</div>
-		<div style="height: 70px;">
-            <div class="post-avatar">
-			<a href="{% url pin-user item_inner.user.id %}">
-				<img src="{{item_inner.user|get_avatar:50}}" style="display: inline;margin-left: 5px" >
-			</a>
-            </div>
-		</div>
-		
-	</div>
 	<div class="feed-inner">
-		{% thumbnail item_inner.image "603" upscale=False as im %}
+		{% thumbnail post.image "603" upscale=False as im %}
 		<div style="height: {{im.height}}px; width: {{im.width}}px; margin: 0 auto">
-			<a href="{{MEDIA_URL}}{{item_inner.image}}" >
-			<img itemprop="image" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item_inner.text|remove_newlines|truncatewords:15}}">
+			<a href="{{MEDIA_URL}}{{post.image}}" >
+			<img itemprop="image" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{post.text|remove_newlines|truncatewords:15}}">
 			</a>
 		</div>
 		{% endthumbnail %}
 		<div class="feed-item-desc" itemprop="name" >
-			{{item_inner.text|safe|linebreaksbr}}
+			{{post.text|safe|linebreaksbr}}
 		</div>
 	</div>
 	<div class="feed-item-bottom">
 		<div class="feed-item-actions">
 			<div style="float: left">
-				<a href="{% url pin-item-like item_inner.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like item_inner.id %}{% endif %}"> <i class="icon-heart"></i> {{item_inner.like}} </a> 
-                <a href="{{MEDIA_URL}}{{item_inner.image}}" target="_blank" class="btn"><i class="icon-download"></i></a> 
-				{% if user.id == item_inner.user.id%}
-				<a href="{% url pin-item-delete item_inner.id%}" class="btn btn-danger delpost" style="margin-right: 5px"> 
+				<a href="{% url pin-item-like post.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"> <i class="icon-heart"></i> {{post.like}} </a> 
+                <a href="{{MEDIA_URL}}{{post.image}}" target="_blank" class="btn"><i class="icon-download"></i></a> 
+				{% if user.id == post.user.id%}
+				<a href="{% url pin-item-delete post.id%}" class="btn btn-danger delpost" style="margin-right: 5px"> 
 					<i class="icon-remove"></i> 
 				</a>
-<a href="{% url pin-item-edit item_inner.id%}" class="btn" style="margin-right: 5px"  data-toggle="modal" data-target="#pinitem"> 
+<a href="{% url pin-item-edit post.id%}" class="btn" style="margin-right: 5px"  data-toggle="modal" data-target="#pinitem"> 
 	<i class="icon-pencil"></i> 
 </a>
 				{% endif %}
 			</div>
 			<div class="feed-item-date">
-				{{item_inner.create|jalali_mysql_date}}
+				{{post.create|jalali_mysql_date}}
 			</div>
 <div style="width:171px;">
 <a class="a2a_dd" href="http://www.addtoany.com/share_save"><img src="http://static.addtoany.com/buttons/share_save_171_16.png" width="171" height="16" border="0" alt="Share"/></a>
 </div>
 			
 			<div style="direction: ltr; font-family: Arial, Helvetica, sans-serif">
-				<a rel="nofollow" target="_blank" href="{{item_inner.url}}">{{item_inner.url|get_host}}</a>
+				<a rel="nofollow" target="_blank" href="{{post.url}}">{{post.url|get_host}}</a>
 			</div>
 			
 			
@@ -68,7 +49,7 @@
 		<div>
 			<legend>برچسب ها</legend>
 			<ul class="tags">
-			{% for tag in item_inner.tags.all %}
+			{% for tag in post.tags.all %}
 				<li><a class="label label-info" href="{% url pin-tag tag.slug%}">{{tag.name}}</a></li> 
 			{%empty%}
 				فاقد برچسب
@@ -76,20 +57,6 @@
 			</ul>
 		</div>	
 	</div>
-	{% if likes %}
-	<div class="row-fluid">
-		<div>
-			<legend>
-				علاقه مندان
-			</legend>
-			{% for like in likes%}
-			<a href="{% url pin-user like.user.id %}">
-				<img src="{{like.user|get_avatar:50}}" style="display: inline;margin-left: 5px" >
-			</a>
-			{% endfor %}
-		</div>	
-	</div>
-    {% endif %}
 	<div class="row-fluid">
 		
 		
@@ -99,7 +66,7 @@
 			ارسال نظر
 		</legend>
 		<form action="{% comment_form_target %}" method="post" class="form-inline">
-{% get_comment_form for item_inner as form %}
+{% get_comment_form for post as form %}
 			{% csrf_token %}
 			<textarea id="id_comment" rows="3" cols="60" name="comment" placeholder="نظر خود را وارد کنید" ></textarea>			
 			
@@ -114,7 +81,7 @@
 		</form>
 
 		<ul id="comments">
-			{% get_comment_list for item_inner as comment_list %}
+			{% get_comment_list for post as comment_list %}
 			{% for comment in comment_list %}
 			<li class="comment_box">
 				<div class="comment">

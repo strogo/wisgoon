@@ -234,20 +234,21 @@ def follow(request, following, action):
 
 def item(request, item_id):
     
-    item = get_object_or_404(Post.objects.select_related().filter(id=item_id,status=1)[:1])
+    post = get_object_or_404(Post.objects.select_related().filter(id=item_id,status=1)[:1])
     
-    latest_items = Post.objects.filter(status=1).select_related().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
+    #latest_items = Post.objects.filter(status=1).select_related().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
     
-    likes = Likes.objects.filter(post=item).all()
+    post.likes = Likes.objects.filter(post=post).all()
+    print post.likes
     
-    follow_status = Follow.objects.filter(follower=request.user.id, following=item.user.id).count()
+    follow_status = Follow.objects.filter(follower=request.user.id, following=post.user.id).count()
     
     if request.is_ajax():
         return render(request, 'pin/item_inner.html', 
-                              {'item_inner': item, 'latest_items': latest_items, 'likes':likes, 'follow_status':follow_status})
+                              {'post': post, 'follow_status':follow_status})
     else:
         return render(request, 'pin/item.html', 
-                              {'item_inner': item, 'latest_items': latest_items, 'likes':likes, 'follow_status':follow_status})
+                              {'post': post, 'follow_status':follow_status})
 
 @login_required
 def sendurl(request):
