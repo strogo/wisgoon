@@ -17,13 +17,14 @@
 {% block extra_js %}
 <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
 {% endblock extra_js %}
-{% endcomment %}
+
 
 {% block pin-ex-nav %}
 <li class="nav-right active">
 	<a href="#"><h1 style="display: inline">{{post.text|striptags|remove_newlines|truncatewords:15}}</h1></a>
 </li>
 {% endblock pin-ex-nav %}
+{% endcomment %}
 
 {% block content %}
 

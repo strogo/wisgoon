@@ -232,14 +232,10 @@ def follow(request, following, action):
     except User.DoesNotExist:
         return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
 
-def item(request, item_id):
-    
+def item(request, item_id):   
     post = get_object_or_404(Post.objects.select_related().filter(id=item_id,status=1)[:1])
     
-    #latest_items = Post.objects.filter(status=1).select_related().extra(where=['timestamp<%s'], params=[item.timestamp]).order_by('-timestamp')[:30]
-    
     post.likes = Likes.objects.filter(post=post).all()
-    print post.likes
     
     follow_status = Follow.objects.filter(follower=request.user.id, following=post.user.id).count()
     
