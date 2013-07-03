@@ -58,21 +58,21 @@ var upload_url = "{% url pin-upload %}";
 					<a href="{% url pin-home %}">آخرین مطالب</a></li>
 			  <li class="nav-right">
 			  {% if user.is_authenticated%}
-			  	<a data-toggle="modal" data-target="#myModal" href="#myModal"><i class="icon-plus-sign"></i> ارسال مطلب جدید </a>
+			  	<a data-toggle="modal" data-target="#myModal" href="#myModal"><img src="{{MEDIA_URL}}img/new/add.png">ارسال تصویر</a>
 			  {%else%}
-			  	<a href="/accounts/login/?next=/pin"><i class="icon-plus-sign"></i> ارسال مطلب جدید</a>
+			  	<a href="/accounts/login/?next=/pin"><img src="{{MEDIA_URL}}img/new/add.png">ارسال تصویر</a>
 			  {%endif%}
 			  </li>
 			  <li class="nav-right">
 			  {% if user.is_authenticated%}
-			  	<a data-toggle="modal" data-target="#pin-from-url" href="#pin-from-url"><i class=" icon-globe"></i> ارسال از وب</a>
+			  	<a data-toggle="modal" data-target="#pin-from-url" href="#pin-from-url"><img src="{{MEDIA_URL}}img/new/web.png"><i class=" icon-globe"></i> ارسال از وب</a>
 			  {%else%}
-			  	<a href="/accounts/login/?next=/pin"><i class=" icon-globe"></i> ارسال از وب</a>
+			  	<a href="/accounts/login/?next=/pin"><img src="{{MEDIA_URL}}img/new/web.png"> ارسال از وب</a>
 			  {%endif%}
 			  </li>
 
 <li class="nav-right dropdown ">
-	<a class="dropdown-toggle" data-toggle="dropdown"  href="#"><i class="icon-fire"></i> برترینها</a>
+	<a class="dropdown-toggle" data-toggle="dropdown"  href="#"><img src="{{MEDIA_URL}}img/new/bartarin.png"> برترینها</a>
     <ul class="dropdown-menu">
         <li><a href="{% url pin-popular %}">همه زمانها</a></li>
         <li><a href="{% url pin-popular-offset "month" %}">یک ماه گذشته</a></li>
@@ -84,7 +84,7 @@ var upload_url = "{% url pin-upload %}";
 </li>
 
 <li class="nav-right dropdown ">
-    <a class="dropdown-toggle" data-toggle="dropdown"  href="#"><i class="icon-th-list"></i>  گروه ها</a>
+    <a class="dropdown-toggle" data-toggle="dropdown"  href="#"><img src="{{MEDIA_URL}}img/new/category.png">  گروه ها</a>
     <ul class="dropdown-menu">
         {% for cat in cats %}
         <li><a href="{% url pin-category cat.id %}">{{cat.title}}</a></li>
