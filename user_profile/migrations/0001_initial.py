@@ -22,6 +22,7 @@ class Migration(SchemaMigration):
             ('trusted', self.gf('django.db.models.fields.IntegerField')(default=0)),
             ('trusted_by', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='trusted_by', null=True, blank=True, to=orm['auth.User'])),
             ('avatar', self.gf('django.db.models.fields.files.ImageField')(default=None, max_length=100, null=True, blank=True)),
+            ('jens', self.gf('django.db.models.fields.CharField')(default='M', max_length=2)),
             ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
         ))
         db.send_create_signal('user_profile', ['Profile'])
@@ -77,6 +78,7 @@ class Migration(SchemaMigration):
             'cnt_post': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'count_flag': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'jens': ('django.db.models.fields.CharField', [], {'default': "'M'", 'max_length': '2'}),
             'location': ('django.db.models.fields.CharField', [], {'max_length': '250', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
             'score': ('django.db.models.fields.IntegerField', [], {'default': '0', 'db_index': 'True'}),
