@@ -60,9 +60,7 @@ var start_loading=0
     <div class="row-fluid">
         <div>
             {% for like in post.likes %}
-            <a href="{% url pin-user like.user.id %}">
-                <img src="{{like.user|get_avatar:50}}" style="display: inline;margin-left: 5px" >
-            </a>
+            <a href="{% url pin-user like.user.id %}"><img src="{{like.user|get_avatar:50}}" style="display: inline;margin: 2px;" ></a>
             {% endfor %}
         </div>
     </div>

@@ -32,9 +32,8 @@ def check_content_type(url):
         conn = httplib.HTTPConnection(o.netloc)
         conn.request("HEAD", o.path)
         res = conn.getresponse()
-    
         content_type = res.getheader('content-type')
-        if content_type.startswith('image'):
+        if content_type and content_type.startswith('image'):
             return 'image'
         else:
             return 'text'
