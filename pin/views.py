@@ -36,7 +36,6 @@ from tastypie.models import ApiKey
 MEDIA_ROOT = settings.MEDIA_ROOT
 
 def home(request):
-    
     try:
         timestamp = int(request.GET.get('older', 0))
     except ValueError:
@@ -128,7 +127,7 @@ def popular(request, interval = ""):
     
 
 def topuser(request):
-    top_user=Profile.objects.all().order_by('-score')[:150]
+    top_user=Profile.objects.all().order_by('-score')[:152]
 
     return render(request, 'pin/topuser.html', {'top_user': top_user})
 
@@ -168,7 +167,6 @@ def user(request, user_id):
 
 @login_required
 def following(request):
-    
     try:
         timestamp = int(request.GET.get('older', 0))
     except ValueError:
@@ -206,7 +204,6 @@ def following(request):
 
 @login_required
 def follow(request, following, action):
-    
     if int(following) == request.user.id:
         return HttpResponseRedirect(reverse('pin-home'))
     
@@ -664,4 +661,7 @@ def trust_user(request, user_id):
         profile.save()
 
     return HttpResponseRedirect('/pin/user/'+user_id)
+
+def policy(request):
+    return render(request, 'pin/policy.html')
 
