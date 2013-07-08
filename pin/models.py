@@ -45,7 +45,7 @@ class Post(models.Model):
     hash = models.CharField(max_length=32, blank=True, db_index=True)
     actions = models.IntegerField(default=1, blank=True)
     is_ads = models.BooleanField(default=False, blank=True)
-    
+
     tags = TaggableManager(blank=True)
 
     category = models.ForeignKey(Category, default=1)
@@ -154,6 +154,7 @@ class Stream(models.Model):
 class Likes(models.Model):
     user = models.ForeignKey(User,related_name='pin_post_user_like')
     post = models.ForeignKey(Post, related_name="post_item")
+    ip = models.IPAddressField(default='127.0.0.1')
     
     class Meta:
         unique_together = (("post", "user"),)
@@ -215,6 +216,7 @@ class App_data(models.Model):
 
 def user_comment_post(sender, **kwargs):
     if 'pin.post' in kwargs['request'].POST['content_type']:
+
         comment = kwargs['comment']
         post_id = kwargs['request'].POST['object_pk']
         post = Post.objects.get(pk=post_id)
