@@ -8,9 +8,7 @@
 	<div class="feed-inner">
 		{% thumbnail post.image "603" upscale=False as im %}
 		<div style="height: {{im.height}}px; width: {{im.width}}px; margin: 0 auto">
-			<a href="{{MEDIA_URL}}{{post.image}}" >
-			<img itemprop="image" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{post.text|remove_newlines|truncatewords:15}}">
-			</a>
+			<a href="{{MEDIA_URL}}{{post.image}}" ><img itemprop="image" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{post.text|remove_newlines|truncatewords:15}}"></a>
 		</div>
 		{% endthumbnail %}
 		<div class="feed-item-desc" itemprop="name" >
@@ -23,12 +21,8 @@
 				<a href="{% url pin-item-like post.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"> <i class="icon-heart"></i> {{post.like}} </a> 
                 <a href="{{MEDIA_URL}}{{post.image}}" target="_blank" class="btn"><i class="icon-download"></i></a> 
 				{% if user.id == post.user.id%}
-				<a href="{% url pin-item-delete post.id%}" class="btn btn-danger delpost" style="margin-right: 5px"> 
-					<i class="icon-remove"></i> 
-				</a>
-<a href="{% url pin-item-edit post.id%}" class="btn" style="margin-right: 5px"  data-toggle="modal" data-target="#pinitem"> 
-	<i class="icon-pencil"></i> 
-</a>
+				<a href="{% url pin-item-delete post.id%}" class="btn btn-danger delpost" style="margin-right: 5px"><i class="icon-remove"></i></a>
+<a href="{% url pin-item-edit post.id%}" class="btn" style="margin-right: 5px"  data-toggle="modal" data-target="#pinitem"><i class="icon-pencil"></i></a>
 				{% endif %}
 			</div>
 			<div class="feed-item-date">
@@ -65,15 +59,11 @@
 		<legend>
 			ارسال نظر
 		</legend>
-		<form action="{% comment_form_target %}" method="post" class="form-inline">
+<form action="{% comment_form_target %}" method="post" class="form-inline">
 {% get_comment_form for post as form %}
-			{% csrf_token %}
-			<textarea id="id_comment" rows="3" cols="60" name="comment" placeholder="نظر خود را وارد کنید" ></textarea>			
-			
-	
-	
+{% csrf_token %}
+<textarea id="id_comment" rows="3" cols="60" name="comment" placeholder="نظر خود را وارد کنید" ></textarea>	
  <input type="submit" class="btn btn-primary" name="submit" value="ارسال">
-
 			{{form.content_type}}
 			{{form.object_pk}}
 			{{form.timestamp}}
@@ -89,10 +79,7 @@
 					<div class="comment_side">
 						{% if comment.user %}
 						<div class="avatar">
-							
-							<a href="{% url pin-user comment.user.id %}">
-							<img src="{{comment.user|get_avatar:36}}" alt="">
-							</a>
+							<a href="{% url pin-user comment.user.id %}"><img src="{{comment.user|get_avatar:36}}" alt=""></a>
 						</div>
 						{% endif%}
 					</div>
