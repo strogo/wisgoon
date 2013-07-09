@@ -306,7 +306,7 @@ def d_like(request):
         except Post.DoesNotExist:
             return HttpResponse('post not found')
 
-        like, created = Likes.objects.get_or_create(user=user, post=post, ip=request.META.get("REMOTE_ADDR", None))
+        like, created = Likes.objects.get_or_create(user=user, post=post)
         if created:
             post.like=post.like+1
             post.save()
@@ -568,7 +568,7 @@ def like(request, item_id):
         post = Post.objects.get(pk=item_id,status=1)
         current_like = post.like
         
-        liked, created = Likes.objects.get_or_create(user=request.user, post=post, ip=request.META.get("REMOTE_ADDR", None))
+        liked, created = Likes.objects.get_or_create(user=request.user, post=post)
 
         if created:
             current_like = current_like+1
