@@ -234,6 +234,12 @@ def item(request, item_id):
     
     post.likes = Likes.objects.filter(post=post).all()
     
+    try:
+        post.prev = Post.objects.filter(status=1).extra(where=['id<%s'], params=[post.id]).order_by('-id')[:1][0]
+        post.next = Post.objects.filter(status=1).extra(where=['id>%s'], params=[post.id]).order_by('id')[:1][0]
+    except:
+        pass
+    
     follow_status = Follow.objects.filter(follower=request.user.id, following=post.user.id).count()
     
     if request.is_ajax():

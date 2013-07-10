@@ -1,6 +1,7 @@
 {% extends "base/pin.html"%}
 {% load daddy_avatar %}
 {% load pin_tags%}
+{% load thumbnail %}
 
 {% block title%} - {{post.text|striptags|remove_newlines|truncatechars:66}}{% endblock title%}
 {%block description%}{{post.text|striptags|remove_newlines|truncatewords:30}}{%endblock%}
@@ -35,52 +36,74 @@ var start_loading=0
 <div class="container">
     <div class="span3">
         <div class="box">
-        <div class="box-title">مشخصات فرستنده</div>
-        <div class="box-content">
-            <a href="{% url pin-user post.user.id %}"><img src="{{post.user|get_avatar:188}}" /></a>
-            <br><br>
-            <div style="">
-            {% if post.user_id != request.user.id %}
-                {% if follow_status == 0 %}
-                <a class="btn btn-success" href="{% url pin-follow post.user.id 1 %}">ایجاد دوستی</a>
-                {% else %}
-                <a class="btn btn-danger" href="{% url pin-follow post.user.id 0 %}">قطع دوستی</a>
-                {%endif%}
-            {% endif%}
+            <div class="box-title">مشخصات فرستنده</div>
+            <div class="box-content">
+                <a href="{% url pin-user post.user.id %}"><img src="{{post.user|get_avatar:188}}" /></a>
+                <br><br>
+                <div style="">
+                {% if post.user_id != request.user.id %}
+                    {% if follow_status == 0 %}
+                    <a class="btn btn-success" href="{% url pin-follow post.user.id 1 %}">ایجاد دوستی</a>
+                    {% else %}
+                    <a class="btn btn-danger" href="{% url pin-follow post.user.id 0 %}">قطع دوستی</a>
+                    {%endif%}
+                {% endif%}
+                </div>
             </div>
-           
         </div>
-        </div>
+        {% if post.likes %}
         <div class="box">
             <div class="box-title">
                 علاقه مندان
             </div>
             <div class="box-content">
-   {% if post.likes %}
-    <div class="row-fluid">
-        <div>
-            {% for like in post.likes %}
-            <a href="{% url pin-user like.user.id %}"><img src="{{like.user|get_avatar:50}}" style="display: inline;margin: 2px;" ></a>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
+                <div class="row-fluid">
+                    <div>
+                        {% for like in post.likes %}
+                        <a href="{% url pin-user like.user.id %}"><img src="{{like.user|get_avatar:50}}" style="display: inline;margin: 2px;" ></a>
+                        {% endfor %}
+                    </div>
+                </div>
 
             </div>
-
         </div>
+        {% endif %}
+        {% if post.next %}
+        <div class="box">
+            <div class="box-title">
+                عکس بعدی
+            </div>
+            <div class="box-content">
+                <a href="{{post.next.get_absolute_url }}">
+                {% thumbnail post.next.image "200x200" crop="center" as img %}
+                <img src="{{img.url}}" >
+                {% endthumbnail %}
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if post.prev %}
+        <div class="box">
+            <div class="box-title">
+                عکس قبلی
+            </div>
+            <div class="box-content">
+                <a href="{{post.prev.get_absolute_url }}">
+                {% thumbnail post.prev.image "200x200" crop="center" as img %}
+                <img src="{{img.url}}" >
+                {% endthumbnail %}
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
     </div>
 
 	<div class="span9">
-	
-	<div id="feed-ul">
-    {% include "pin/item_inner.html" %}
-    {% comment %}
-		{% with display_item=1%}
-		{% include "pin/_items.html"%}
-		{% endwith%}
-    {% endcomment %}
-	</div>
+	    <div id="feed-ul">
+            {% include "pin/item_inner.html" %}
+	    </div>
 	</div>
 	
 	
