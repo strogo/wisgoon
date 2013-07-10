@@ -24,7 +24,7 @@ urlpatterns = patterns('',
     url(r'^tag/(.*)/', 'rss.views.tag', name="tag"),
     url(r'^elections/', include('elections.urls')),
     url(r'^api/', include(user_resource.urls)),
-    
+    url(r'^policy/', 'pin.views.policy', name='policy'),
 )
 
 urlpatterns += patterns('', 
