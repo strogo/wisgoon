@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^elections/', include('elections.urls')),
     url(r'^api/', include(user_resource.urls)),
     url(r'^policy/', 'pin.views.policy', name='policy'),
+    url(r'^captcha/', include('captcha.urls')),
 )
 
 urlpatterns += patterns('', 

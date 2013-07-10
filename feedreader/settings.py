@@ -165,6 +165,7 @@ INSTALLED_APPS = (
     'user_profile',
  #   'django_facebook',
     'tastypie',
+    'captcha',
 )
 
 
