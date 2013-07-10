@@ -15,7 +15,11 @@
         <td>
         <div class="feed-item" style="padding:5px">
             <a href="{% url pin-user u.user.id %}">
+                {% if forloop.counter < 5 %}
+                <img src="{{u.user|get_avatar:50}}" style="float:left; width:192px;" >
+                {%else%}
                 <img src="{{u.user|get_avatar:50}}" style="float:left" >
+                {%endif%}
             </a>
             <table>
             <tr>
