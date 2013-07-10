@@ -194,7 +194,8 @@ class PostResource(ModelResource):
         except:
             im = ""
         bundle.data['thumbnail'] = im
-        bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
+	if im:
+	    bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
 
         user_email = bundle.data['user_avatar']
