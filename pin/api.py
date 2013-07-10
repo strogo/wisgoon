@@ -188,6 +188,10 @@ class PostResource(ModelResource):
     
     def dehydrate(self, bundle):
         id = bundle.data['id']
+        post = Post.objects.get(pk=id)
+        post.view += 1
+        post.save()
+        
         o_image = bundle.data['image']
         try:
             im = get_thumbnail(o_image, self.thumb_size, quality=self.thumb_quality, upscale=False)
