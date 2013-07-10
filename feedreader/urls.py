@@ -23,5 +23,6 @@ urlpatterns = patterns('',
     url(r'^tag/(?P<q>.*)/o/(?P<older>\d+)$', 'rss.views.tag', name="tag-older"),
     url(r'^elections/', include('elections.urls')),
     url(r'^api/', include(user_resource.urls)),
+    url(r'^policy/', 'pin.views.policy', name='policy'),
  #   url(r'^facebook/', include('django_facebook.urls')),   
 )

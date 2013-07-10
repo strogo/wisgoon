@@ -22,6 +22,9 @@
 	<li class="pull-right">
 		<a href="{% url contactus-home %}">ارتباط با ما</a>
 	</li>
+    <li class="pull-right">
+        <a href="{% url policy %}">قوانین</a>
+    </li>
 	
 	{% for page in flatpages %}
         <li class="pull-right"><a href="{{ page.url }}">{{ page.title }}</a></li>
