@@ -231,6 +231,8 @@ def follow(request, following, action):
 
 def item(request, item_id):   
     post = get_object_or_404(Post.objects.select_related().filter(id=item_id,status=1)[:1])
+    post.view += 1
+    post.save()
     
     post.likes = Likes.objects.filter(post=post).all()
     
