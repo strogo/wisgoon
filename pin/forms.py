@@ -7,7 +7,7 @@ class PinForm(ModelForm):
     class Meta:
         model=Post
         exclude = ('user', 'like', 'timestamp', 'status','device','hash',
-        'actions','is_ads','view')
+        'actions','is_ads','view', 'show_in_default')
         
 class PinDirectForm(forms.Form):
     image = forms.ImageField()
@@ -18,5 +18,5 @@ class PinUpdateForm(ModelForm):
     class Meta:
         model=Post
         exclude = ('user', 'like', 'timestamp',
-        'image','status','device','hash', 'actions','view' )
+        'image','status','device','hash', 'actions','view','show_in_default' )
         
