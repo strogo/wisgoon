@@ -249,7 +249,7 @@ td, th {
     border-bottom: 1px solid #eee;
     vertical-align: top;
     padding: 5px;
-    font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+    font-family: tahoma, "Lucida Grande", Verdana, Arial, sans-serif;
 }
 
 th {
