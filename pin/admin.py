@@ -12,12 +12,16 @@ def make_approve(modeladmin, request, queryset):
     queryset.update(status=1)
 make_approve.short_description = "Mark select as approved"
 
+def make_approve_go_default(modeladmin, request, queryset):
+    queryset.update(status=1,show_in_default=True)
+make_approve_go_default.short_description = "Mark select ad approved and go to default page"
+
 class PinAdmin(admin.ModelAdmin):
-    list_filter = ('status','category', 'is_ads')
+    list_filter = ('status','category', 'is_ads','show_in_default')
     search_fields = ['id']
     list_display = ('id', 'text','user','category','admin_image','status',\
-    'like', 'device', 'is_ads')
-    actions=[make_approve,'really_delete_selected']
+    'like', 'device', 'is_ads', 'show_in_default')
+    actions=[make_approve, make_approve_go_default,'really_delete_selected']
 
     def get_actions(self, request):
         actions = super(PinAdmin, self).get_actions(request)

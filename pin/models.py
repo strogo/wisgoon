@@ -46,6 +46,7 @@ class Post(models.Model):
     actions = models.IntegerField(default=1, blank=True)
     is_ads = models.BooleanField(default=False, blank=True)
     view = models.IntegerField(default=0, db_index=True)
+    show_in_default = models.BooleanField(default=False, blank=True, db_index=True)
 
     tags = TaggableManager(blank=True)
 
