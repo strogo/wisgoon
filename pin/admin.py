@@ -17,7 +17,7 @@ def make_approve_go_default(modeladmin, request, queryset):
 make_approve_go_default.short_description = "Mark select ad approved and go to default page"
 
 class PinAdmin(admin.ModelAdmin):
-    list_filter = ('status','category', 'is_ads','show_in_default')
+    list_filter = ('status', 'is_ads','show_in_default', 'category')
     search_fields = ['id']
     list_display = ('id', 'text','user','category','admin_image','status',\
     'like', 'device', 'is_ads', 'show_in_default')
