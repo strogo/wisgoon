@@ -40,17 +40,18 @@ class Post(models.Model):
     user = models.ForeignKey(User)
     like = models.IntegerField(default=0)
     url = models.CharField(blank=True, max_length=2000, validators=[URLValidator()])
-    status = models.IntegerField(default=0, blank=True)
+    status = models.IntegerField(default=0, blank=True, verbose_name="وضعیت")
     device = models.IntegerField(default=1, blank=True)
     hash = models.CharField(max_length=32, blank=True, db_index=True)
     actions = models.IntegerField(default=1, blank=True)
-    is_ads = models.BooleanField(default=False, blank=True)
+    is_ads = models.BooleanField(default=False, blank=True, verbose_name="آگهی")
     view = models.IntegerField(default=0, db_index=True)
-    show_in_default = models.BooleanField(default=False, blank=True, db_index=True)
+    show_in_default = models.BooleanField(default=False, blank=True,
+    db_index=True , verbose_name='نمایش در خانه')
 
     tags = TaggableManager(blank=True)
 
-    category = models.ForeignKey(Category, default=1)
+    category = models.ForeignKey(Category, default=1, verbose_name='گروه')
     
     def __unicode__(self):
         return self.text
