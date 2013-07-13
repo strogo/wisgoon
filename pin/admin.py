@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.contrib import admin
 from django.contrib.comments.admin import CommentsAdmin
 from django.contrib.comments.models import Comment
@@ -10,11 +11,11 @@ class PinCommentsAdmin(CommentsAdmin):
 
 def make_approve(modeladmin, request, queryset):
     queryset.update(status=1)
-make_approve.short_description = "Mark select as approved"
+make_approve.short_description = u"تایید مظالب"
 
 def make_approve_go_default(modeladmin, request, queryset):
     queryset.update(status=1,show_in_default=True)
-make_approve_go_default.short_description = "Mark select ad approved and go to default page"
+make_approve_go_default.short_description = u"تایید و ارسال برای صفحه اصلی"
 
 class PinAdmin(admin.ModelAdmin):
     list_filter = ('status', 'is_ads','show_in_default', 'category')
@@ -37,7 +38,7 @@ class PinAdmin(admin.ModelAdmin):
         else:
             message_bit = "%s pin entries were" % queryset.count()
         self.message_user(request, "%s successfully deleted." % message_bit)
-    really_delete_selected.short_description = "Delete selected entries"
+    really_delete_selected.short_description = "حذف انتخاب شده ها"
 
 
 class NotifyAdmin(admin.ModelAdmin):
