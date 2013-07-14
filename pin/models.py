@@ -151,7 +151,10 @@ class Stream(models.Model):
         user = post.user
         followers = Follow.objects.all().filter(following=user)
         for follower in followers:
-            stream, created = Stream.objects.get_or_create(post=post, user=follower.follower, date=post.timestamp, following=user)
+            try:
+                stream, created = Stream.objects.get_or_create(post=post, user=follower.follower, date=post.timestamp, following=user)
+            except:
+                pass
             
     
 class Likes(models.Model):
