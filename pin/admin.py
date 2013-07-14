@@ -5,16 +5,18 @@ from django.contrib.comments.models import Comment
 from pin.models import Post, Notify, Category, App_data
 from user_profile.models import Profile
 
+import time
+
 class PinCommentsAdmin(CommentsAdmin):
     list_display = ('name', 'content_type', 'object_pk', 'ip_address',
     'submit_date', 'is_public', 'is_removed','comment')
 
 def make_approve(modeladmin, request, queryset):
-    queryset.update(status=1)
+    queryset.update(status=1, timestamp=time.time())
 make_approve.short_description = u"تایید مظالب"
 
 def make_approve_go_default(modeladmin, request, queryset):
-    queryset.update(status=1,show_in_default=True)
+    queryset.update(status=1,show_in_default=True, timestamp=time.time())
 make_approve_go_default.short_description = u"تایید و ارسال برای صفحه اصلی"
 
 class PinAdmin(admin.ModelAdmin):
