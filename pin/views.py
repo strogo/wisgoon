@@ -23,7 +23,7 @@ from django.views.decorators.csrf import csrf_exempt
 import pin_image
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm, PinDirectForm
-from pin.models import Post, Follow, Stream, Likes, Notify, Category
+from pin.models import Post, Follow, Stream, Likes, Notif, Category
 from pin.tools import create_filename
 
 from user_profile.models import Profile
@@ -604,8 +604,8 @@ def like(request, item_id):
         return HttpResponseRedirect('/')
 
 def show_notify(request):
-    Notify.objects.filter(user_id=request.user.id, seen=False).update(seen=True)
-    notif = Notify.objects.all().filter(user_id=request.user.id).order_by('-date')[:20]
+    Notif.objects.filter(user_id=request.user.id, seen=False).update(seen=True)
+    notif = Notif.objects.all().filter(user_id=request.user.id).order_by('-date')[:20]
     return render_to_response('pin/notify.html',{'notif':notif})
 
 def tag_complete(request):
