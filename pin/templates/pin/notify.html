@@ -13,9 +13,9 @@
             <i class="icon-comment"></i>
         {% endif %}
         </div>
-        {% for actor in noti.actors.all reversed %}
+        {% for actor in noti.actors reversed %}
             {% if forloop.counter < 10 %}
-            <a target="_blank" href="{% url pin-user actor.id %}"><img src="{{actor|get_avatar:30}}"></a>
+            <a target="_blank" href="{% url pin-user actor.id %}"><img src="{{actor.actor|get_avatar:30}}"></a>
             {% endif %}
         {% endfor%}
 	
