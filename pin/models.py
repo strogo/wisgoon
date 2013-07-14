@@ -171,11 +171,12 @@ class Likes(models.Model):
         post = like.post
         sender = like.user
         
-        notify, created = Notify.objects.get_or_create(post=post, user=post.user, type=1)
-        notify.seen = False
-        notify.date = datetime.datetime.now()
-        notify.actors.add(sender) 
-        notify.save()
+        notif, created = Notif.objects.get_or_create(post=post, user=post.user, type=1)
+        notif.seen = False
+        notif.date = datetime.datetime.now()
+        #notify.actors.add(sender) 
+        notif.save()
+        Notif_actors.objects.get_or_create(actor=sender, notif=notif)
         #notify.post = post
         #notify.sender = sender
         #notify.user = post.user
@@ -201,6 +202,21 @@ class Likes(models.Model):
         except Notify.DoesNotExist:
             pass
         
+
+class Notif(models.Model):
+    TYPES = ((1,'like'),(2,'comment'))
+                                              
+    post = models.ForeignKey(Post)
+    #sender = models.ForeignKey(User, related_name="sender")
+    user = models.ForeignKey(User, related_name="user_id")
+    text = models.CharField(max_length=500)
+    seen = models.BooleanField(default=False)
+    type = models.IntegerField(default=1, choices=TYPES) # 1=Post_like, 2=Post_comment
+    date = models.DateTimeField(auto_now_add=True)
+
+class Notif_actors(models.Model):
+    notif = models.ForeignKey(Notif, related_name="notif")
+    actor = models.ForeignKey(User, related_name="actor")
 
 class Notify(models.Model):
     TYPES = ((1,'like'),(2,'comment'))
@@ -230,16 +246,19 @@ def user_comment_post(sender, **kwargs):
             #post = comment.post
             sender = comment.user
                 
-            notify, created = Notify.objects.get_or_create(post=post, user=post.user, type=2)
+            #notify, created = Notify.objects.get_or_create(post=post, user=post.user, type=2)
+            notif, created = Notif.objects.get_or_create(post=post, user=post.user, type=2)
             #notify.post = post
             #notify.sender = sender
             #notify.user = post.user
             #notify.text = 'comment this'
             #notify.type = 2
-            notify.date = datetime.datetime.now()
-            notify.seen = False
-            notify.actors.add(sender) 
-            notify.save()
+            notif.date = datetime.datetime.now()
+            notif.seen = False
+           
+            #notify.actors.add(sender) 
+            notif.save()
+            Notif_actors.objects.get_or_create(actor=sender, notif=notif)
 
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
