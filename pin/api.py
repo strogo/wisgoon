@@ -165,14 +165,14 @@ class PostResource(ModelResource):
         category_id = request.GET.get('category_id', None)
         filters = {}
         
-        if user_id:
+        if userid:
             filters.update(dict(user_id=userid))
         
         if category_id:
             category_ids = category_id.replace(',', ' ').split(' ')
             filters.update(dict(category_id__in=category_ids))
         
-        if not user_id and not category_id:
+        if not userid and not category_id:
             filters.update(dict(show_in_default=True))
 
         return base_object_list.filter(**filters).distinct()
