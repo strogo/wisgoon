@@ -161,7 +161,7 @@ class PostResource(ModelResource):
     def apply_filters(self, request, applicable_filters):
         base_object_list = super(PostResource, self).apply_filters(request, applicable_filters)
         
-        userid = request.GET.get('userid', None)
+        userid = request.GET.get('user_id', None)
         category_id = request.GET.get('category_id', None)
         filters = {}
         
