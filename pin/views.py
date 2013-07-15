@@ -318,6 +318,10 @@ def d_like(request):
         if created:
             post.like=post.like+1
             post.save()
+
+            like.ip = request.META.get("REMOTE_ADDR", None)
+            like.save()
+            
             return HttpResponse('+1')
         elif like:
             like.delete()
@@ -575,12 +579,15 @@ def like(request, item_id):
     try:
         post = Post.objects.get(pk=item_id,status=1)
         current_like = post.like
-        
+
         liked, created = Likes.objects.get_or_create(user=request.user, post=post)
 
         if created:
             current_like = current_like+1
             user_act = 1
+            
+            liked.ip = request.META.get("REMOTE_ADDR", None)
+            liked.save()
         elif liked:
             current_like = current_like-1
             Likes.objects.filter(user=request.user,post=post).delete()
