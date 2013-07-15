@@ -200,9 +200,11 @@ class PostResource(ModelResource):
             im = get_thumbnail(o_image, self.thumb_size, quality=self.thumb_quality, upscale=False)
         except:
             im = ""
-        bundle.data['thumbnail'] = im
-	if im:
-	    bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
+
+        if im:
+            bundle.data['thumbnail'] = im
+            bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
+
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
 
         user_email = bundle.data['user_avatar']
