@@ -231,9 +231,6 @@ class Notif(models.Model):
 
                 Notif_actors.objects.get_or_create(notif=notif, actor=comment.user)
 
-
-
-
 class Notif_actors(models.Model):
     notif = models.ForeignKey(Notif, related_name="notif")
     actor = models.ForeignKey(User, related_name="actor")
@@ -268,7 +265,7 @@ class Comments(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('pin-item', [str(self.post_id)])
+        return ('pin-item', [str(self.object_pk_id)])
 
     def admin_link(self):        
         return '<a href="%s" target="_blank">مشاهده</a>' % (self.get_absolute_url())
