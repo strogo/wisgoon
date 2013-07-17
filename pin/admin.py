@@ -56,7 +56,7 @@ class AppAdmin(admin.ModelAdmin):
     list_display = ('name', 'file', 'version', 'current')
 
 class CommentsAdmin(admin.ModelAdmin):
-    list_display = ('id','comment', 'ip_address', 'user', 'object_pk_id', 'is_public', 'reported', 'admin_link')
+    list_display = ('id','comment', 'ip_address', 'user', 'is_public', 'reported', 'admin_link')
     list_filter = ('is_public', 'reported')
 
     actions = ['accept', 'unaccept', 'delete_and_deactive_user', 'delete_all_user_comments']
