@@ -132,6 +132,9 @@ class Post(models.Model):
         return '<a href="/media/%s" target="_blank"><img src="%s" /></a>' % (self.image, img.url)
     admin_image.allow_tags = True
 
+
+
+
 class Follow(models.Model):
     follower = models.ForeignKey(User ,related_name='follower')
     following = models.ForeignKey(User, related_name='following')
@@ -214,6 +217,23 @@ class Notif(models.Model):
     type = models.IntegerField(default=1, choices=TYPES) # 1=Post_like, 2=Post_comment
     date = models.DateTimeField(auto_now_add=True)
 
+    @classmethod
+    def add_comment(cls, sender, instance, created, *args, **kwargs):
+        comment = instance
+        if comment.is_public:
+            commenter = comment.user
+            post = comment.object_pk
+            if comment.user != post.user:
+                notif, created = Notif.objects.get_or_create(user=post.user, type=2, post=post)
+
+                notif.seen = False
+                notif.save()
+
+                Notif_actors.objects.get_or_create(notif=notif, actor=comment.user)
+
+
+
+
 class Notif_actors(models.Model):
     notif = models.ForeignKey(Notif, related_name="notif")
     actor = models.ForeignKey(User, related_name="actor")
@@ -235,6 +255,25 @@ class App_data(models.Model):
     file = models.FileField(upload_to='app')
     version = models.CharField(max_length=50)
     current = models.BooleanField(default=1)
+
+class Comments(models.Model):
+    comment = models.TextField()
+    submit_date = models.DateTimeField(auto_now_add=True)
+    ip_address = models.IPAddressField(default='127.0.0.1')
+    is_public = models.BooleanField(default=False)
+    reported = models.BooleanField(default=False)
+
+    object_pk = models.ForeignKey(Post, related_name='comment_post')
+    user = models.ForeignKey(User, related_name='comment_sender')
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('pin-item', [str(self.post_id)])
+
+    def admin_link(self):        
+        return '<a href="%s" target="_blank">مشاهده</a>' % (self.get_absolute_url())
+
+    admin_link.allow_tags = True
 
 def user_comment_post(sender, **kwargs):
     if 'pin.post' in kwargs['request'].POST['content_type']:
@@ -264,4 +303,6 @@ post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
 post_delete.connect(Likes.user_unlike_post, sender=Likes)
 post_save.connect(Post.change_tag_slug, sender=Tag)
+post_save.connect(Notif.add_comment, sender=Comments)
+
 comment_was_posted.connect(user_comment_post, sender=Comment)

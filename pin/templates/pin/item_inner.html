@@ -38,11 +38,12 @@
 			
 		</div>
 	</div>
+	{% if post.tag %}
 	<div class="row-fluid">
 		<div>
 			<legend>برچسب ها</legend>
 			<ul class="tags">
-			{% for tag in post.tags.all %}
+			{% for tag in post.tag %}
 				<li><a class="label label-info" href="{% url pin-tag tag.slug%}">{{tag.name}}</a></li> 
 			{%empty%}
 				فاقد برچسب
@@ -50,28 +51,20 @@
 			</ul>
 		</div>	
 	</div>
+	{% endif %}
 	<div class="row-fluid">
-		
-		
 		<div class="comments">
-		
 		<legend>
 			ارسال نظر
 		</legend>
-<form action="{% comment_form_target %}" method="post" class="form-inline">
-{% get_comment_form for post as form %}
-{% csrf_token %}
-<textarea id="id_comment" rows="3" cols="60" name="comment" placeholder="نظر خود را وارد کنید" ></textarea>	
- <input type="submit" class="btn btn-primary" name="submit" value="ارسال">
-			{{form.content_type}}
-			{{form.object_pk}}
-			{{form.timestamp}}
-			{{form.security_hash}}
-		</form>
+<form action="{% url pin-comment %}" method="post" class="form-inline">
+<textarea id="id_comment" rows="3" cols="60" name="text" placeholder="نظر خود را وارد کنید" ></textarea>
+<input type="hidden" name="post" value="{{post.id}}">
+<input type="submit" class="btn btn-primary" name="submit" value="ارسال">
+</form>
 
 		<ul id="comments">
-			{% get_comment_list for post as comment_list %}
-			{% for comment in comment_list %}
+			{% for comment in post.comments %}
 			<li class="comment_box">
 				<div class="comment">
 					<div class="arrow reply_arrow icon_link"></div>
@@ -83,10 +76,23 @@
 						{% endif%}
 					</div>
 					<div class="comment_main">
-						
 						<div class="comment_content">
 							{{comment.comment}}
 						</div>
+						
+						<div class="">
+							{% if user.is_superuser %}
+								{% if comment.is_public == 0 %}
+									<a href="{% url pin-comment-approve comment.id %}"><i class="icon-ok-sign"></i></a>
+								{% else %}
+									<a href="{% url pin-comment-unapprove comment.id %}"><i class="icon-minus-sign"></i></a>
+								{% endif %}
+							{% endif %}
+							{% if comment.user = request.user or user.is_superuser %}
+							<a href="{%url pin-comment-delete comment.id %}"><i class="icon-remove"></i></a>
+							{% endif %}
+						</div>
+						
 					</div>
 				</div>
 			</li>

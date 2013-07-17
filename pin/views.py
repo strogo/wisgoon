@@ -23,7 +23,7 @@ from django.views.decorators.csrf import csrf_exempt
 import pin_image
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm, PinDirectForm
-from pin.models import Post, Follow, Stream, Likes, Notif, Category, Notif_actors
+from pin.models import Post, Follow, Stream, Likes, Notif, Category, Notif_actors, Comments
 from pin.tools import create_filename
 
 from user_profile.models import Profile
@@ -234,7 +234,13 @@ def item(request, item_id):
     post.view += 1
     post.save()
     
-    post.likes = Likes.objects.filter(post=post).all()
+    post.likes = Likes.objects.filter(post=post)
+    post.tag = post.tags.all()
+
+    if request.user.is_superuser:
+        post.comments = Comments.objects.filter(object_pk=post)
+    else:
+        post.comments = Comments.objects.filter(object_pk=post, is_public=True)
     
     try:
         post.prev = Post.objects.filter(status=1).extra(where=['id<%s'], params=[post.id]).order_by('-id')[:1][0]
@@ -345,23 +351,11 @@ def d_post_comment(request):
         return HttpResponse('error in user validate')
 
     data = request.POST.copy()
-    posted_comment = data.get('comment')
+    comment = data.get('comment')
     object_pk = data.get("object_pk")
-    if data and posted_comment and object_pk:
-        post_type = ContentType.objects.get(app_label="pin", model="post")
-        comment = Comment()
-
-        comment.comment = posted_comment
-        comment.content_type = post_type
-        comment.site_id = 1
-        if user.profile.trusted :
-            comment.is_public = 1
-        else:
-            comment.is_public = 0
-        comment.ip_address = request.META.get("REMOTE_ADDR", None)
-        comment.user = user
-        comment.object_pk = object_pk
-        comment.save()
+    if data and comment and object_pk:
+        post = get_object_or_404(Post, pk=object_pk)
+        Comments.objects.create(object_pk=post, comment=comment, user=user, ip_address=request.META.get('REMOTE_ADDR', None))
         return HttpResponse(1)
 
     return HttpResponse(0)
@@ -681,4 +675,57 @@ def trust_user(request, user_id):
 
 def policy(request):
     return render(request, 'pin/policy.html')
+
+@csrf_exempt
+@login_required
+def send_comment(request):
+    if request.method == 'POST':
+        text = request.POST.get('text', None)
+        post = request.POST.get('post', None)
+        if text and post:
+            post = get_object_or_404(Post, pk=post)
+            Comments.objects.create(object_pk=post, comment=text, user=request.user, ip_address=request.META.get('REMOTE_ADDR', None))
+
+            return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
+
+
+    return HttpResponse('error')
+
+@login_required
+def comment_delete(request, id):
+    if not request.user.is_superuser:
+        return HttpResponse('error in authentication')
+
+    comment = get_object_or_404(Comments, pk=id)
+    post_id = comment.object_pk.id
+
+    comment.delete()
+
+    return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
+
+@login_required
+def comment_approve(request, id):
+    if not request.user.is_superuser:
+        return HttpResponse('error in authentication')
+
+    comment = get_object_or_404(Comments, pk=id)
+    comment.is_public = True
+    comment.save()
+
+    return HttpResponseRedirect(reverse('pin-item', args=[comment.object_pk.id]))
+
+@login_required
+def comment_unapprove(request, id):
+    if not request.user.is_superuser:
+        return HttpResponse('error in authentication')
+
+    comment = get_object_or_404(Comments, pk=id)
+    comment.is_public = False
+    comment.save()
+
+    return HttpResponseRedirect(reverse('pin-item', args=[comment.object_pk.id]))
+
+
+
+
 

@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from django.contrib.comments.admin import CommentsAdmin
-from django.contrib.comments.models import Comment
-from pin.models import Post, Notify, Category, App_data
+#from django.contrib.comments.admin import CommentsAdmin
+#from django.contrib.comments.models import Comment
+from pin.models import Post, Notify, Category, App_data, Comments
 from user_profile.models import Profile
 
 import time
-
-class PinCommentsAdmin(CommentsAdmin):
-    list_display = ('name', 'content_type', 'object_pk', 'ip_address',
-    'submit_date', 'is_public', 'is_removed','comment')
 
 def make_approve(modeladmin, request, queryset):
     queryset.update(status=1, timestamp=time.time())
@@ -59,10 +55,42 @@ class ProfileAdmin(admin.ModelAdmin):
 class AppAdmin(admin.ModelAdmin):
     list_display = ('name', 'file', 'version', 'current')
 
+class CommentsAdmin(admin.ModelAdmin):
+    list_display = ('comment', 'ip_address', 'user', 'object_pk', 'is_public', 'reported', 'admin_link')
+    list_filter = ('is_public', 'reported')
+
+    actions = ['accept', 'unaccept', 'delete_and_deactive_user', 'delete_all_user_comments']
+
+    def accept(self, request, queryset):
+        for obj in queryset:
+            obj.is_public = True
+            obj.save()
+    accept.short_description = 'تایید'
+
+    def unaccept(self, request, queryset):
+        for obj in queryset:
+            obj.is_public = False
+            obj.save()
+    unaccept.short_description = 'عدم تایید'
+
+    def delete_and_deactive_user(self, request, queryset):
+        for obj in queryset:
+            user = obj.user
+            user.is_active = False
+            user.save()
+            obj.delete()
+
+    delete_and_deactive_user.short_description = 'حذف و غیر فعال کردن کاربر'
+
+    def delete_all_user_comments(self, request, queryset):
+        for obj in queryset:
+            Comments.objects.filter(user=obj.user).delete()
+
+    delete_all_user_comments.short_description = 'حذف تمام کامنت های این کاربر'
+
 admin.site.register(Post, PinAdmin)
 admin.site.register(Notify, NotifyAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(App_data, AppAdmin)
-admin.site.unregister(Comment)
-admin.site.register(Comment, PinCommentsAdmin)
+admin.site.register(Comments, CommentsAdmin)

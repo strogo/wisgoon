@@ -19,7 +19,7 @@ from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 
 from sorl.thumbnail import get_thumbnail
-from pin.models import Post, Likes, Category, Notify
+from pin.models import Post, Likes, Category, Notify, Comments
 from user_profile.models import Profile
 from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
@@ -119,10 +119,10 @@ class NotifyResource(ModelResource):
 
 class CommentResource(ModelResource):
     user = fields.IntegerField(attribute = 'user__id',  null=True)
+    object_pk = fields.IntegerField(attribute = 'object_pk_id',  null=True)
     class Meta:
         allowed_methods = ['get']
-        post_type = ContentType.objects.get(app_label="pin", model="post")
-        queryset = Comment.objects.filter(content_type=post_type,is_public=True)
+        queryset = Comments.objects.filter(is_public=True)
         resource_name = "comments"
         paginator_class = Paginator
         filtering = {
