@@ -704,11 +704,12 @@ def send_comment(request):
 
 @login_required
 def comment_delete(request, id):
-    if not request.user.is_superuser:
-        return HttpResponse('error in authentication')
-
     comment = get_object_or_404(Comments, pk=id)
     post_id = comment.object_pk.id
+
+    if not request.user.is_superuser:
+        if comment.user != request.user:
+            return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
 
     comment.delete()
 
