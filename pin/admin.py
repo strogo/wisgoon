@@ -84,9 +84,12 @@ class CommentsAdmin(admin.ModelAdmin):
 
     def delete_all_user_comments(self, request, queryset):
         for obj in queryset:
+            user = obj.user
+            user.is_active = False
+            user.save()
             Comments.objects.filter(user=obj.user).delete()
 
-    delete_all_user_comments.short_description = 'حذف تمام کامنت های این کاربر'
+    delete_all_user_comments.short_description = 'حذف تمام کامنت های این کاربر و غیر فعال کردن کاربر'
 
 admin.site.register(Post, PinAdmin)
 admin.site.register(Notify, NotifyAdmin)
