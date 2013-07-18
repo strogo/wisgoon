@@ -54,6 +54,7 @@
 	{% endif %}
 	<div class="row-fluid">
 		<div class="comments">
+{% if user.is_authenticated %}
 		<legend>
 			ارسال نظر
 		</legend>
@@ -62,6 +63,7 @@
 <input type="hidden" name="post" value="{{post.id}}">
 <input type="submit" class="btn btn-primary" name="submit" value="ارسال">
 </form>
+{% endif %}
 
 		<ul id="comments">
 			{% for comment in post.comments %}
