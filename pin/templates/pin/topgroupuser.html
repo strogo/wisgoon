@@ -6,7 +6,7 @@
 {%block title%} کاربران برتر {%endblock title%}
 
 {% block content %}
-
+{% cache 500 topgroup %}
 <div id="profile" class="row row-fluid">
 	<div id="feed-ul" class="container"style="width:940px;backgoruond:#FFF" >
         <div class="accordion" id="accordion2">
@@ -55,4 +55,5 @@
         </div>
 	</div>
 </div>
+{%endcache%}
 {% endblock content %}
