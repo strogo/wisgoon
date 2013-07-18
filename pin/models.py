@@ -257,7 +257,7 @@ class Comments(models.Model):
     comment = models.TextField()
     submit_date = models.DateTimeField(auto_now_add=True)
     ip_address = models.IPAddressField(default='127.0.0.1')
-    is_public = models.BooleanField(default=False)
+    is_public = models.BooleanField(default=False, db_index=True)
     reported = models.BooleanField(default=False)
 
     object_pk = models.ForeignKey(Post, related_name='comment_post')

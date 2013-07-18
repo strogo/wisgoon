@@ -15,6 +15,7 @@ from django.contrib.auth.models import User
 from django.contrib.comments.models import Comment
 from django.core.urlresolvers import reverse
 from django.db import transaction
+from django.db.models import Sum
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, Http404, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, render
 from django.template.context import RequestContext
@@ -130,6 +131,16 @@ def topuser(request):
     top_user=Profile.objects.all().order_by('-score')[:152]
 
     return render(request, 'pin/topuser.html', {'top_user': top_user})
+
+def topgroupuser(request):
+    cats = Category.objects.all()
+    for cat in cats:
+        cat.tops = Post.objects.values('user_id').filter(category_id=cat.id).annotate(sum_like=Sum('like'))[:4]
+        for ut in cat.tops:
+            ut['user'] = User.objects.get(pk=ut['user_id'])
+        
+
+    return render(request, 'pin/topgroupuser.html', {'cats': cats})
 
 def user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
@@ -725,7 +736,15 @@ def comment_unapprove(request, id):
 
     return HttpResponseRedirect(reverse('pin-item', args=[comment.object_pk.id]))
 
+"""
+def send_mail(request):
+    from django.core.mail import EmailMultiAlternatives
 
-
-
+    subject, from_email, to = 'hello', 'info@wisgoon-local.com', 'vchakoshy@gmail.com'
+    text_content = 'This is an important message.'
+    html_content = '<p>This is an <strong>important</strong> message.</p>'
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+"""
 
