@@ -135,7 +135,7 @@ def topuser(request):
 def topgroupuser(request):
     cats = Category.objects.all()
     for cat in cats:
-        cat.tops = Post.objects.values('user_id').filter(category_id=cat.id).annotate(sum_like=Sum('like'))[:4]
+        cat.tops = Post.objects.values('user_id').filter(category_id=cat.id).annotate(sum_like=Sum('like')).order_by('-sum_like')[:4]
         for ut in cat.tops:
             ut['user'] = User.objects.get(pk=ut['user_id'])
         
