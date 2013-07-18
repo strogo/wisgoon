@@ -6,13 +6,13 @@
 {%block title%} کاربران برتر {%endblock title%}
 
 {% block content %}
-{% cache 500 topgroup %}
+{% cache 500 topgroupusers %}
 <div id="profile" class="row row-fluid">
-	<div id="feed-ul" class="container"style="width:940px;backgoruond:#FFF" >
+	<div id="feed-ul" class="container"style="width:940px;" >
         <div class="accordion" id="accordion2">
             {% for cat in cats %}
             <div class="accordion-group">
-                <div class="accordion-heading">
+                <div class="accordion-heading" style="background-color:#FFF ">
                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse{{cat.id}}">
                         {{cat.title}}
                     </a>
@@ -25,11 +25,7 @@
                         <td>
                         <div class="feed-item" style="padding:5px">
                             <a href="{% url pin-user u.user.id %}">
-                                {% if forloop.counter < 9 %}
                                 <img src="{{u.user|get_avatar:192}}" style="float:left; width:192px;" >
-                                {%else%}
-                                <img src="{{u.user|get_avatar:50}}" style="float:left" >
-                                {%endif%}
                             </a>
                             <table>
                             <tr>
@@ -41,10 +37,6 @@
                             </table>
                         </div>
                         </td>
-                        {% if forloop.counter|divisibleby:4 %}
-                        </tr>
-                        <tr>
-                        {% endif %}
                         {%endfor%}
                         </tr>
                     </table>
