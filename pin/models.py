@@ -77,12 +77,14 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         from user_profile.models import Profile
         
+        """
         try:       
             #profile = Profile.objects.get(user=self.user)
             if self.user.profile.trusted :
                 self.status=1
         except Profile.DoesNotExist:
             pass
+        """
      
         file_path = os.path.join(settings.MEDIA_ROOT, self.image)
         if os.path.exists(file_path):   
@@ -220,16 +222,15 @@ class Notif(models.Model):
     @classmethod
     def add_comment(cls, sender, instance, created, *args, **kwargs):
         comment = instance
-        if comment.is_public:
-            commenter = comment.user
-            post = comment.object_pk
-            if comment.user != post.user:
-                notif, created = Notif.objects.get_or_create(user=post.user, type=2, post=post)
+        commenter = comment.user
+        post = comment.object_pk
+        if comment.user != post.user:
+            notif, created = Notif.objects.get_or_create(user=post.user, type=2, post=post)
 
-                notif.seen = False
-                notif.save()
+            notif.seen = False
+            notif.save()
 
-                Notif_actors.objects.get_or_create(notif=notif, actor=comment.user)
+            Notif_actors.objects.get_or_create(notif=notif, actor=comment.user)
 
 class Notif_actors(models.Model):
     notif = models.ForeignKey(Notif, related_name="notif")

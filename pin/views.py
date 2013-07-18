@@ -251,7 +251,7 @@ def item(request, item_id):
     if request.user.is_superuser:
         post.comments = Comments.objects.filter(object_pk=post)
     else:
-        post.comments = Comments.objects.filter(object_pk=post, is_public=True)
+        post.comments = Comments.objects.filter(object_pk=post)
     
     try:
         post.prev = Post.objects.filter(status=1).extra(where=['id<%s'], params=[post.id]).order_by('-id')[:1][0]
