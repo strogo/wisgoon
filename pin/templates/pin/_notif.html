@@ -23,14 +23,14 @@
 		    {% endif %}
 		</div>
 		{% for actor in item.actors %}
-		<div style="float:right;padding:5px">
+		<div style="float:right;padding:5px; heigth:40px;">
             <a target="_blank" href="{% url pin-user actor.actor.id %}"><img src="{{actor.actor|get_avatar:30}}"></a>
         </div>
         {% endfor%}
 		{% if offset %}
 		<span data-next="{{offset}}" ></span>
 		{%else%}
-		<span data-next="{{item.timestamp}}" ></span>
+		<span data-next="{{item.date|date:"U"}}" ></span>
 		{%endif%}
 	
 	</div>

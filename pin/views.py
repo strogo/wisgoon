@@ -618,12 +618,24 @@ def like(request, item_id):
 
 @login_required
 def notif_user(request):
-    notif = Notif.objects.filter(user_id=request.user.id).order_by('-date')
+    try:
+        timestamp = int(request.GET.get('older', 0))
+    except ValueError:
+        timestamp = 0
+
+    if timestamp:
+        date = datetime.datetime.fromtimestamp(timestamp)
+        notif = Notif.objects.filter(user_id=request.user.id).filter(date__lt=date).order_by('-date')[:20]
+    else:
+        notif = Notif.objects.filter(user_id=request.user.id).order_by('-date')[:20]
 
     for n in notif:
         n.actors = Notif_actors.objects.filter(notif=n).order_by('-id')[:20]
 
-    return render(request, 'pin/notif_user.html', {'notif':notif})
+    if request.is_ajax():
+        return render(request, 'pin/_notif.html', {'notif':notif})
+    else:
+        return render(request, 'pin/notif_user.html', {'notif':notif})
 
 def show_notify(request):
     Notif.objects.filter(user_id=request.user.id, seen=False).update(seen=True)
