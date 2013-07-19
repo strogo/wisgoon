@@ -1,0 +1,39 @@
+{% load pin_tags%}
+{% load humanize %}
+{% load thumbnail %}
+{% load daddy_avatar%}
+
+{% spaceless %}
+{% for item in notif %}
+
+	<div class="feed-item" >
+		{% thumbnail item.post.image "192x192" crop="center" as im %}
+		<div class="img-block" style="height: {{im.height}}px; width: {{im.width}}px">
+			<a class="pin-item-link" href="{% url pin-item item.id%}">
+			<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item.text|remove_newlines|truncatewords:5}}">
+			</a>
+			
+		</div>
+		{% endthumbnail %}
+		<div>
+			{% if item.type == 1 %}
+		        <i class="icon-heart"></i>
+		    {% else %}
+		        <i class="icon-comment"></i>
+		    {% endif %}
+		</div>
+		{% for actor in item.actors %}
+		<div style="float:right;padding:5px">
+            <a target="_blank" href="{% url pin-user actor.actor.id %}"><img src="{{actor.actor|get_avatar:30}}"></a>
+        </div>
+        {% endfor%}
+		{% if offset %}
+		<span data-next="{{offset}}" ></span>
+		{%else%}
+		<span data-next="{{item.timestamp}}" ></span>
+		{%endif%}
+	
+	</div>
+	
+{%endfor%}
+{% endspaceless %}
