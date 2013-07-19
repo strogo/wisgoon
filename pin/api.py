@@ -118,7 +118,7 @@ class NotifyResource(ModelResource):
         return bundle
 
 class CommentResource(ModelResource):
-    user = fields.IntegerField(attribute = 'user__id',  null=True)
+    user_url = fields.IntegerField(attribute = 'user__id',  null=True)
     object_pk = fields.IntegerField(attribute = 'object_pk_id',  null=True)
     class Meta:
         allowed_methods = ['get']
@@ -130,7 +130,8 @@ class CommentResource(ModelResource):
         }
 
     def dehydrate(self, bundle):
-        bundle.data['user_avatar'] = daddy_avatar.get_avatar(bundle.data['user'], size=100)
+        bundle.data['user_avatar'] = daddy_avatar.get_avatar(bundle.data['user_url'], size=100)
+        bundle.data['user_name'] = get_username(bundle.data['user_url'])
 
         return bundle
         
