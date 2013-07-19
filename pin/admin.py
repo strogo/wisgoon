@@ -18,7 +18,7 @@ make_approve_go_default.short_description = u"تایید و ارسال برای 
 class PinAdmin(admin.ModelAdmin):
     list_filter = ('status', 'is_ads','show_in_default', 'category')
     search_fields = ['id']
-    list_display = ('id', 'text','user','category','admin_image','status',\
+    list_display = ('id', 'text','get_user_url','category','admin_image','status',\
     'like', 'device', 'is_ads', 'show_in_default')
     actions=[make_approve, make_approve_go_default,'really_delete_selected']
 

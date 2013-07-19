@@ -98,6 +98,11 @@ class Post(models.Model):
     def get_absolute_url(self):
         return ('pin-item', [str(self.id)])
     
+    def get_user_url(self):
+        url = '/pin/user/%s' % (str(self.user_id))
+        return '<a href="%s" target="_blank">%s</a>' % (url, self.user)
+    get_user_url.allow_tags = True
+
     def get_host_url(self):
         abs=self.get_absolute_url()
         
