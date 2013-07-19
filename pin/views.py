@@ -245,13 +245,14 @@ def item(request, item_id):
     post.view += 1
     post.save()
     
-    post.likes = Likes.objects.filter(post=post)
     post.tag = post.tags.all()
 
     if request.user.is_superuser:
         post.comments = Comments.objects.filter(object_pk=post)
+        post.likes = Likes.objects.filter(post=post).order_by('ip')
     else:
         post.comments = Comments.objects.filter(object_pk=post)
+        post.likes = Likes.objects.filter(post=post)
     
     try:
         post.prev = Post.objects.filter(status=1).extra(where=['id<%s'], params=[post.id]).order_by('-id')[:1][0]

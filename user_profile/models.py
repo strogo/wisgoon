@@ -32,6 +32,9 @@ class Profile(models.Model):
     jens = models.CharField(max_length=2, choices=(('M','مذکر'),('F','مونث')), default='M')
     user = models.OneToOneField(User)
 
+    fault = models.IntegerField(default=0, null=True, blank=True)
+    fault_minus = models.IntegerField(default=0 ,null=True, blank=True)
+
     
     def cnt_calculate(self):
         try:

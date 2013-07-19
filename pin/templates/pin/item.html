@@ -59,9 +59,16 @@ var start_loading=0
             <div class="box-content">
                 <div class="row-fluid">
                     <div>
-                        {% for like in post.likes %}
-                        <a href="{% url pin-user like.user.id %}"><img src="{{like.user|get_avatar:50}}" style="display: inline;margin: 2px;" ></a>
-                        {% endfor %}
+        {% for like in post.likes %}
+            {% if request.user.is_superuser %}
+                {% ifchanged like.ip %} {{like.ip}}<br> {% endifchanged %}
+                <a href="{% url pin-user like.user.id %}"><img alt="{{like.ip}}" src="{{like.user|get_avatar:50}}" style="display: inline;margin: 2px;" ></a>
+            {%else %}
+                        
+                <a href="{% url pin-user like.user.id %}"><img src="{{like.user|get_avatar:50}}" style="display: inline;margin: 2px;" ></a>
+                        
+            {%endif%}
+        {% endfor %}
                     </div>
                 </div>
 

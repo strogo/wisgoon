@@ -12,6 +12,7 @@
        <td><b>امتیاز</b>: {{cur_user.profile.score|intcomma}}</td>
        <td><b>تعداد مطالب</b>: {{cur_user.profile.cnt_post}}</td>
        <td><b>تعداد لایک</b>: {{cur_user.profile.cnt_like}}</td>
+       <td><b>تعداد خطا</b>: {{cur_user.profile.fault}}</td>
 </tr>
 </table>
         {% if cur_user.profile.trusted and cur_user.profile.trusted_by_id %}

@@ -278,34 +278,8 @@ class Comments(models.Model):
 
     admin_link.allow_tags = True
 
-def user_comment_post(sender, **kwargs):
-    if 'pin.post' in kwargs['request'].POST['content_type']:
-
-        comment = kwargs['comment']
-        post_id = kwargs['request'].POST['object_pk']
-        post = Post.objects.get(pk=post_id)
-        if comment.user != post.user:
-            #post = comment.post
-            sender = comment.user
-                
-            #notify, created = Notify.objects.get_or_create(post=post, user=post.user, type=2)
-            notif, created = Notif.objects.get_or_create(post=post, user=post.user, type=2)
-            #notify.post = post
-            #notify.sender = sender
-            #notify.user = post.user
-            #notify.text = 'comment this'
-            #notify.type = 2
-            notif.date = datetime.datetime.now()
-            notif.seen = False
-           
-            #notify.actors.add(sender) 
-            notif.save()
-            Notif_actors.objects.get_or_create(actor=sender, notif=notif)
-
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
 post_delete.connect(Likes.user_unlike_post, sender=Likes)
 post_save.connect(Post.change_tag_slug, sender=Tag)
 post_save.connect(Notif.add_comment, sender=Comments)
-
-comment_was_posted.connect(user_comment_post, sender=Comment)
