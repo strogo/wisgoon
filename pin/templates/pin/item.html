@@ -61,7 +61,7 @@ var start_loading=0
                     <div>
         {% for like in post.likes %}
             {% if request.user.is_superuser %}
-                {% ifchanged like.ip %} <br>{{like.ip}}<br> {% endifchanged %}
+                {% ifchanged like.ip %} {{like.ip}}<br><hr> {% endifchanged %}
                 <a href="{% url pin-user like.user.id %}"><img alt="{{like.ip}}" src="{{like.user|get_avatar:50}}" style="display: inline;margin: 2px;" ></a>
             {%else %}
                         
