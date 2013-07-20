@@ -127,7 +127,7 @@ class NotifyResource(ModelResource):
             bundle.data['thumbnail'] = im
             bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
         
-        actors = Notif_actors.objects.filter(notif=id).all()
+        actors = Notif_actors.objects.filter(notif=id).all()[:10]
         ar = []
         for lk in actors:
             ar.append([lk.actor.id,lk.actor.username,daddy_avatar.get_avatar(lk.actor, size=100)])
