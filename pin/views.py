@@ -584,7 +584,7 @@ def delete(request, item_id):
 def like(request, item_id):
     try:
         post = Post.objects.get(pk=item_id,status=1)
-        current_like = post.like
+        current_like = post.cnt_likes()
 
         try:
             liked = Likes.objects.get(user=request.user, post=post)
