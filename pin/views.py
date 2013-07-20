@@ -586,7 +586,14 @@ def like(request, item_id):
         post = Post.objects.get(pk=item_id,status=1)
         current_like = post.like
 
-        liked, created = Likes.objects.get_or_create(user=request.user, post=post)
+        try:
+            liked = Likes.objects.get(user=request.user, post=post)
+            created = False
+        except Likes.DoesNotExist:
+            liked = Likes.objects.create(user=request.user, post=post)
+            created = True
+
+        #liked, created = Likes.objects.get_or_create()
 
         if created:
             current_like = current_like+1
