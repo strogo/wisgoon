@@ -19,7 +19,7 @@ from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 
 from sorl.thumbnail import get_thumbnail
-from pin.models import Post, Likes, Category, Notify, Comments
+from pin.models import Post, Likes, Category, Notif, Comments, Notif_actors
 from user_profile.models import Profile
 from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
@@ -102,11 +102,13 @@ class LikesResource(ModelResource):
         resource_name = 'likes'
 
 class NotifyResource(ModelResource):
-    all_actor = fields.ListField()
+    actors = fields.ListField()
+    image = fields.CharField(attribute='post__image')
+    post_id = fields.IntegerField(attribute='post_id')
     class Meta:
         resource_name = 'notify'
         allowed_methods = ['get']
-        queryset = Notify.objects.all().order_by('-id')
+        queryset = Notif.objects.all().order_by('-date')
         paginator_class = Paginator
         filtering = {
             "user_id": ('exact',),
@@ -114,7 +116,24 @@ class NotifyResource(ModelResource):
         }
 
     def dehydrate(self, bundle):
-        print bundle
+        id = bundle.data['id']
+        o_image = bundle.data['image']
+        try:
+            im = get_thumbnail(o_image, "300x300", quality=99, upscale=False)
+        except:
+            im = ""
+
+        if im:
+            bundle.data['thumbnail'] = im
+            bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
+        
+        actors = Notif_actors.objects.filter(notif=id).all()
+        ar = []
+        for lk in actors:
+            ar.append([lk.actor.id,lk.actor.username,daddy_avatar.get_avatar(lk.actor, size=100)])
+
+        bundle.data['actors'] = ar
+
         return bundle
 
 class CommentResource(ModelResource):
