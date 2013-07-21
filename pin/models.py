@@ -141,7 +141,6 @@ class Post(models.Model):
 
     def cnt_likes(self):
         count_like = Likes.objects.filter(post_id=self.id).count()
-        print count_like
         return count_like
 
 
