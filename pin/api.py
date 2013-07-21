@@ -105,6 +105,7 @@ class NotifyResource(ModelResource):
     actors = fields.ListField()
     image = fields.CharField(attribute='post__image')
     post_id = fields.IntegerField(attribute='post_id')
+    user_id = fields.IntegerField(attribute='user_id')
     class Meta:
         resource_name = 'notify'
         allowed_methods = ['get']
