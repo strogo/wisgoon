@@ -6,6 +6,8 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 
+REPORT_TYPE = {'PIN':1,'COMMENT':2,'RSS':3}
+
 SITE_ROOT = os.path.dirname(__file__)
 
 ADMINS = (

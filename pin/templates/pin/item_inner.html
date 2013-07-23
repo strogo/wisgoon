@@ -21,6 +21,10 @@
 			<div style="float: left">
 				<a href="{% url pin-item-like post.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"> <i class="icon-heart"></i> {{post.cnt_likes}} </a> 
                 <a href="{{MEDIA_URL}}{{post.image}}" target="_blank" class="btn"><i class="icon-download"></i></a> 
+                {% if user.is_authenticated%}
+					<a href="{% url report_pin post.id%}" style="margin-right: 5px" class="btn btn_report "> <i class="icon-eye-open"></i></a>
+				{% endif %}
+                
 				{% if user.id == post.user.id%}
 				<a href="{% url pin-item-delete post.id%}" class="btn btn-danger delpost" style="margin-right: 5px"><i class="icon-remove"></i></a>
 <a href="{% url pin-item-edit post.id%}" class="btn" style="margin-right: 5px"  data-toggle="modal" data-target="#pinitem"><i class="icon-pencil"></i></a>

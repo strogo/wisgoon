@@ -77,6 +77,32 @@ $(".btn_like").live('click',function(){
 
 
 //
+
+//
+
+$(".btn_report").live('click',function(){
+	if (confirm('آیا این مطلب غیر اخلاقی است و می خواهید گزارش کنید؟')){
+	    var obj = $(this);
+	    obj.addClass('disabled');
+	    var like_url=obj.attr('href');
+	    $.ajax({
+	        url: like_url,
+	        success: function(html) {
+	            var res = jQuery.parseJSON(html);
+	            obj.removeClass('disabled');
+	            if (res[0].status){
+	                obj.addClass('btn-danger');
+	            }else{
+	                alert(res[0].msg);
+	            }
+	        }
+	    });
+	}
+    return false;
+});
+
+//
+
 var parent_to_del = '';
 
 $(".delpost").live('click',function(){

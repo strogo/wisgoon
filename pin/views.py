@@ -29,12 +29,16 @@ from pin.forms import PinForm, PinUpdateForm, PinDirectForm
 from pin.models import Post, Follow, Stream, Likes, Notif, Category, Notif_actors, Comments
 from pin.tools import create_filename
 
+from rss.models import Report
+
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
 
 from tastypie.models import ApiKey
 
 MEDIA_ROOT = settings.MEDIA_ROOT
+
+REPORT_TYPE = settings.REPORT_TYPE
 
 def home(request):
     try:
@@ -788,6 +792,33 @@ def comment_unapprove(request, id):
     comment.save()
 
     return HttpResponseRedirect(reverse('pin-item', args=[comment.object_pk.id]))
+
+@login_required
+def report(request,pin_id):
+    ### remove report if needed
+    try:
+        post = Post.objects.get(id=pin_id)
+        report_key, created = Report.objects.get_or_create(user=request.user,item=pin_id,mode=REPORT_TYPE['PIN'])
+        if created:
+            if post.report == 9:
+                post.status = 0
+            post.report = post.report + 1
+            post.save()
+            status = True
+            msg = 'گزارش شما ثبت شد.'
+        else:
+            status = False
+            msg = 'شما قبلا این مطلب را گزارش داده اید.'
+
+        if request.is_ajax():
+            data = [{'status': status, 'msg':msg}]
+            return HttpResponse(json.dumps(data))
+        else:
+            return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
+            
+    except Post.DoesNotExist:
+        return HttpResponseRedirect('/')
+
 
 """
 def send_mail(request):
