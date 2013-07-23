@@ -14,6 +14,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.comments.models import Comment
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models import Sum
 from django.http import HttpResponseRedirect, HttpResponseBadRequest, Http404, HttpResponse
@@ -29,8 +31,6 @@ from pin.tools import create_filename
 
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.contrib.contenttypes.models import ContentType
 
 from tastypie.models import ApiKey
 
