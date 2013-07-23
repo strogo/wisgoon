@@ -213,6 +213,7 @@ class Likes(models.Model):
 
         if post.like > 9 and post.show_in_default == False:
             post.show_in_default = True
+            post.timestamp = time.time()
             post.save()
         
     @classmethod
