@@ -105,7 +105,6 @@ class Post(models.Model):
 
         except Profile.DoesNotExist:
             pass
-        
      
         file_path = os.path.join(settings.MEDIA_ROOT, self.image)
         if os.path.exists(file_path):   
@@ -114,7 +113,7 @@ class Post(models.Model):
             self.hash = self.md5_for_file(image_file)
 
         super(Post, self).save(*args, **kwargs)
-    
+
     @models.permalink
     def get_absolute_url(self):
         return ('pin-item', [str(self.id)])
@@ -211,10 +210,8 @@ class Likes(models.Model):
         notif.save()
         Notif_actors.objects.get_or_create(actor=sender, notif=notif)
 
-        if post.like > 9 and post.show_in_default == False:
-            post.show_in_default = True
-            #post.timestamp = time.time()
-            post.save()
+        if post.like+1>15 and post.show_in_default == False:
+            Post.objects.filter(id=post.id).update(show_in_default=True)
         
     @classmethod
     def user_unlike_post(cls, sender, instance, *args, **kwargs):
