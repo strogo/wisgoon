@@ -101,18 +101,12 @@ class Likes(models.Model):
         unique_together = (("item", "user"),)
     
 class Report(models.Model):
-    MODES = (
-        (1, 'توهین به مقدسات'),
-        (2, 'توهین به مسوولین'),
-        (3, 'محتوای غیر اخلاقی'),
-    )
-    
     user = models.ForeignKey(User)
-    item = models.ForeignKey(Item, related_name="report_item")
-    mode = models.IntegerField(default=1,choices=MODES)
+    item = models.IntegerField(default=0)
+    mode = models.IntegerField(default=0)
     
     class Meta:
-        unique_together = (("item", "user"),)
+        unique_together = (("item", "user","mode"),)
         
         
    

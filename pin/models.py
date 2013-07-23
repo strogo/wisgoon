@@ -48,7 +48,9 @@ class Post(models.Model):
     view = models.IntegerField(default=0, db_index=True)
     show_in_default = models.BooleanField(default=False, blank=True,
     db_index=True , verbose_name='نمایش در خانه')
-
+    
+    report = models.IntegerField(default=0)
+    
     tags = TaggableManager(blank=True)
 
     category = models.ForeignKey(Category, default=1, verbose_name='گروه')

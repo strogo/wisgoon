@@ -39,6 +39,7 @@ urlpatterns = patterns('pin.views',
     url(r'^topuser/$', 'topuser', name='pin-topuser'),
     url(r'^top-group-user/$', 'topgroupuser', name='pin-topgroupuser'),
     url(r'^notif/$','notif_user', name="pin-notif-user"),
+    url(r'^report/(?P<pin_id>\d+)','report',name='report_pin'),
 
     url(r'^trust/user/(?P<user_id>\d+)','trust_user',name='trust_user'),
     url(r'^send_comment/', 'send_comment', name='pin-comment'),
