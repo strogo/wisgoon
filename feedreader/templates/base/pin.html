@@ -55,7 +55,7 @@ var upload_url = "{% url pin-upload %}";
 			
 			<ul class="nav nav-tabs nav-second">
 				<li class="nav-right">
-					<a href="{% url pin-home %}">آخرین مطالب</a></li>
+					<a href="{% url pin-latest %}">آخرین مطالب</a></li>
 			  <li class="nav-right">
 			  {% if user.is_authenticated%}
 			  	<a data-toggle="modal" data-target="#myModal" href="#myModal"><img src="{{MEDIA_URL}}img/new/add.png">ارسال تصویر</a>

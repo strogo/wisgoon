@@ -58,6 +58,29 @@ def home(request):
     else:
         return render(request, 'pin/home.html', {'latest_items': latest_items})
 
+def latest(request):
+    try:
+        timestamp = int(request.GET.get('older', 0))
+    except ValueError:
+        timestamp = 0
+    
+    if timestamp == 0:
+        latest_items =\
+        Post.objects.filter(status=1).select_related().order_by('-is_ads','-timestamp')[:20]
+    else:
+        latest_items = Post.objects.filter(status=1).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
+    
+    form = PinForm()
+    
+    if request.is_ajax():
+        if latest_items.exists():
+            return render(request, 'pin/_items.html', {'latest_items': latest_items,'pin_form':form})
+        else:
+            return HttpResponse(0)
+    else:
+        return render(request, 'pin/home.html', {'latest_items': latest_items})
+
+
 def category(request, cat_id):
     cat = get_object_or_404(Category, pk=cat_id)
     cat_id = cat.id
