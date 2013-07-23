@@ -91,7 +91,7 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         from user_profile.models import Profile
         
-        try:       
+        try:
             profile = Profile.objects.get(user=self.user)
             print "date joined: ", self.user.date_joined
             print "timestamp joined: ", time.mktime(self.user.date_joined.timetuple())
@@ -210,11 +210,10 @@ class Likes(models.Model):
         #notify.actors.add(sender) 
         notif.save()
         Notif_actors.objects.get_or_create(actor=sender, notif=notif)
-        #notify.post = post
-        #notify.sender = sender
-        #notify.user = post.user
-        #notify.text = 'like this'
-        #notify.save()
+        
+        if post.like == 10 and post.show_in_default == False:
+            post.show_in_default = True
+            post.save()
         
     @classmethod
     def user_unlike_post(cls, sender, instance, *args, **kwargs):
