@@ -2,6 +2,7 @@
 import os
 import hashlib
 import datetime
+import time
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.comments.models import Comment
@@ -16,7 +17,6 @@ from sorl.thumbnail import get_thumbnail
 
 from taggit.managers import TaggableManager
 from taggit.models import Tag
-
 
 class Category(models.Model):
     title = models.CharField(max_length=250)
@@ -74,17 +74,38 @@ class Post(models.Model):
 
         super(Post, self).delete(*args, **kwargs)
 
+    def date_lt(self, date ,how_many_days):
+        """
+            date less than
+        """
+
+        from datetime import datetime, timedelta
+        how_many_days = 30
+
+        lt_date = datetime.now()-timedelta(days=how_many_days)
+        lt_timestamp = time.mktime(lt_date.timetuple())
+        timestamp = time.mktime(date.timetuple())
+        #print timestamp, older_timestamp
+        return timestamp<lt_timestamp
+
     def save(self, *args, **kwargs):
         from user_profile.models import Profile
         
-        """
         try:       
-            #profile = Profile.objects.get(user=self.user)
-            if self.user.profile.trusted :
-                self.status=1
+            profile = Profile.objects.get(user=self.user)
+            print "date joined: ", self.user.date_joined
+            print "timestamp joined: ", time.mktime(self.user.date_joined.timetuple())
+            if self.user.profile.post_accept :
+                self.status = 1
+            else:
+                if self.date_lt( self.user.date_joined, 30) and self.user.profile.score > 2000:
+                    profile.post_accept = True
+                    profile.save()
+                    self.status = 1
+
         except Profile.DoesNotExist:
             pass
-        """
+        
      
         file_path = os.path.join(settings.MEDIA_ROOT, self.image)
         if os.path.exists(file_path):   
@@ -195,7 +216,6 @@ class Likes(models.Model):
         #notify.text = 'like this'
         #notify.save()
         
-    
     @classmethod
     def user_unlike_post(cls, sender, instance, *args, **kwargs):
         like = instance
@@ -214,7 +234,6 @@ class Likes(models.Model):
         except Notify.DoesNotExist:
             pass
         
-
 class Notif(models.Model):
     TYPES = ((1,'like'),(2,'comment'))
                                               

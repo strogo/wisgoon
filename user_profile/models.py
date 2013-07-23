@@ -35,6 +35,8 @@ class Profile(models.Model):
     fault = models.IntegerField(default=0, null=True, blank=True)
     fault_minus = models.IntegerField(default=0 ,null=True, blank=True)
 
+    post_accept = models.BooleanField(default=False, blank=True)
+
     
     def cnt_calculate(self):
         try:
@@ -50,6 +52,8 @@ class Profile(models.Model):
         #if self.trusted != 0:
         #    score = score+10000
         return score
+
+        
 
     def user_statics(self):
         self.cnt_calculate()
