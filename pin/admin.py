@@ -16,7 +16,7 @@ def make_approve_go_default(modeladmin, request, queryset):
 make_approve_go_default.short_description = u"تایید و ارسال برای صفحه اصلی"
 
 class PinAdmin(admin.ModelAdmin):
-    list_filter = ('status', 'is_ads','show_in_default', 'category', 'report')
+    list_filter = ('status', 'report', 'is_ads','show_in_default', 'category')
     search_fields = ['id', 'user__id']
     list_display = ('id', 'text','get_user_url','category','admin_image','status',\
     'like', 'device', 'is_ads', 'show_in_default', 'report')
