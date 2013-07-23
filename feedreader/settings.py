@@ -25,8 +25,8 @@ DATABASES = {
     }
 }
 
-EMAIL_HOST = "mail.wisgoon.com"
-DEFAULT_FROM_EMAIL = "mail.wisgoon.com"
+EMAIL_HOST = "wisgoon.com"
+DEFAULT_FROM_EMAIL = "mail"
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
