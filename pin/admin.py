@@ -20,7 +20,7 @@ class PinAdmin(admin.ModelAdmin):
     search_fields = ['id']
     list_display = ('id', 'text','get_user_url','category','admin_image','status',\
     'like', 'device', 'is_ads', 'show_in_default')
-    actions=[make_approve, make_approve_go_default,'really_delete_selected']
+    actions=[make_approve, make_approve_go_default,'really_delete_selected', 'delete_all_user_posts']
 
     def get_actions(self, request):
         actions = super(PinAdmin, self).get_actions(request)
@@ -38,6 +38,14 @@ class PinAdmin(admin.ModelAdmin):
         self.message_user(request, "%s successfully deleted." % message_bit)
     really_delete_selected.short_description = "حذف انتخاب شده ها"
 
+    def delete_all_user_posts(self, request, queryset):
+        for obj in queryset:
+            user = obj.user
+            user.is_active = False
+            user.save()
+            Post.objects.filter(user=obj.user).delete()
+
+    delete_all_user_posts.short_description = 'حذف تمام پست های کاربر و غیر فعال کردن'
 
 class NotifyAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'text', 'seen', 'type')
