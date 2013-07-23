@@ -14,6 +14,7 @@ profile_resource = ProfileResource()
 
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
+    url(r'^latest_post/', 'latest', name='pin-latest'),
     url(r'^(?P<item_id>\d+)/$', 'item', name="pin-item"),
     url(r'^send/$', 'send', name="pin-send"),
     url(r'^d_send/$', 'd_send', name="pin-direct"),
