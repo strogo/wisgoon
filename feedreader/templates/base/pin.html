@@ -170,7 +170,7 @@ var upload_url = "{% url pin-upload %}";
 
 {% include 'base/all_footer.html'%}
 {% if user.is_authenticated %}
-<script type="text/javascript" src="{{MEDIA_URL}}js/pin-user.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}js/pin-user.js?ver=1"></script>
 {% endif %}
 
 <script type="text/javascript" src="{{MEDIA_URL}}js/all.js"></script>
