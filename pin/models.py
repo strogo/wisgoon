@@ -215,11 +215,10 @@ class Likes(models.Model):
         
     @classmethod
     def user_unlike_post(cls, sender, instance, *args, **kwargs):
-        like = instance
-        post = like.post
-        sender = like.user
-        
         try:
+            like = instance
+            post = like.post
+            sender = like.user
             notify = Notify.objects.get(type=1,post=post)
             if notify.actors:
                 notify.actors.remove(sender)
@@ -229,6 +228,8 @@ class Likes(models.Model):
             if not notify.actors.all():
                 notify.delete()
         except Notify.DoesNotExist:
+            pass
+        except Post.DoesNotExist:
             pass
         
 class Notif(models.Model):
