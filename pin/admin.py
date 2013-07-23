@@ -20,7 +20,7 @@ class PinAdmin(admin.ModelAdmin):
     search_fields = ['id', 'user__id']
     list_display = ('id', 'text','get_user_url','category','admin_image','status',\
     'like', 'device', 'is_ads', 'show_in_default', 'report')
-    actions=[make_approve, make_approve_go_default,'really_delete_selected', 'delete_all_user_posts']
+    actions=[make_approve, make_approve_go_default,'really_delete_selected', 'delete_all_user_posts', 'delete_and_fault']
 
     def get_actions(self, request):
         actions = super(PinAdmin, self).get_actions(request)
@@ -46,6 +46,15 @@ class PinAdmin(admin.ModelAdmin):
             Post.objects.filter(user=obj.user).delete()
 
     delete_all_user_posts.short_description = 'حذف تمام پست های کاربر و غیر فعال کردن'
+
+    def delete_and_fault(self, request, queryset):
+        for obj in queryset:
+            user = obj.user
+            user.profile.fault = user.profile.fault+1
+            user.profile.save()
+            obj.delete()
+            
+    delete_and_fault.short_description = 'حذف مطلب و ثبت تخلف'
 
 class NotifyAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'text', 'seen', 'type')
