@@ -11,6 +11,7 @@
 			<a href="{{MEDIA_URL}}{{post.image}}" ><img itemprop="image" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{post.text|remove_newlines|truncatewords:15}}"></a>
 		</div>
 		{% endthumbnail %}
+		
 		<div class="feed-item-desc" itemprop="name" >
 			{{post.text|safe|linebreaksbr}}
 		</div>
@@ -27,6 +28,9 @@
 			</div>
 			<div class="feed-item-date">
 				{{post.create|jalali_mysql_date}}
+			</div>
+			<div>
+				<a href="/pin/category/{{post.category.id}}">{{post.category}}</a>
 			</div>
             <div style="width:171px;">
             <a class="a2a_dd" href="http://www.addtoany.com/share_save"><img src="http://static.addtoany.com/buttons/share_save_171_16.png" width="171" height="16" border="0" alt="Share"/></a>

@@ -622,7 +622,7 @@ def like(request, item_id):
             current_like = current_like+1
             user_act = 1
             
-            liked.ip = request.META.get("REMOTE_ADDR", None)
+            liked.ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
             liked.save()
         elif liked:
             current_like = current_like-1
@@ -655,7 +655,7 @@ def notif_user(request):
 
     if timestamp:
         date = datetime.datetime.fromtimestamp(timestamp)
-        notif = Notif.objects.filter(user_id=request.user.id).filter(date__lt=date).order_by('-date')[:20]
+        notif = Notif.objects.filter(user_id=request.user.id, date__lt=date).order_by('-date')[:20]
     else:
         notif = Notif.objects.filter(user_id=request.user.id).order_by('-date')[:20]
 

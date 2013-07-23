@@ -18,6 +18,8 @@ from sorl.thumbnail import get_thumbnail
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
+LIKE_TO_DEFAULT_PAGE = 10
+
 class Category(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/category/')
@@ -93,8 +95,8 @@ class Post(models.Model):
         
         try:
             profile = Profile.objects.get(user=self.user)
-            print "date joined: ", self.user.date_joined
-            print "timestamp joined: ", time.mktime(self.user.date_joined.timetuple())
+            #print "date joined: ", self.user.date_joined
+            #print "timestamp joined: ", time.mktime(self.user.date_joined.timetuple())
             if self.user.profile.post_accept :
                 self.status = 1
             else:
@@ -206,11 +208,10 @@ class Likes(models.Model):
         notif, created = Notif.objects.get_or_create(post=post, user=post.user, type=1)
         notif.seen = False
         notif.date = datetime.datetime.now()
-        #notify.actors.add(sender) 
         notif.save()
         Notif_actors.objects.get_or_create(actor=sender, notif=notif)
 
-        if post.like+1>=15 and post.show_in_default == False:
+        if post.like+1>=LIKE_TO_DEFAULT_PAGE and post.show_in_default == False:
             Post.objects.filter(id=post.id).update(show_in_default=True)
         
     @classmethod
@@ -231,6 +232,15 @@ class Likes(models.Model):
             pass
         except Post.DoesNotExist:
             pass
+
+def send_notif(user, type, post, actor, seen=False):
+    notif, created = Notif.objects.get_or_create(user=user, type=type, post=post)
+
+    notif.seen = seen
+    notif.save()
+
+    Notif_actors.objects.get_or_create(notif=notif, actor=actor)
+    return notif
         
 class Notif(models.Model):
     TYPES = ((1,'like'),(2,'comment'))
@@ -249,12 +259,13 @@ class Notif(models.Model):
         commenter = comment.user
         post = comment.object_pk
         if comment.user != post.user:
-            notif, created = Notif.objects.get_or_create(user=post.user, type=2, post=post)
+            notif = send_notif(user=post.user, type=2, post=post, actor=comment.user)
 
-            notif.seen = False
-            notif.save()
-
-            Notif_actors.objects.get_or_create(notif=notif, actor=comment.user)
+        for notif in Notif.objects.filter(type=2, post=post):
+            for act in Notif_actors.objects.filter(notif=notif):
+                if act.actor != comment.user:
+                    send_notif(user=act.actor, type=2, post=post, actor=comment.user)
+                #print act.actor_id
 
 class Notif_actors(models.Model):
     notif = models.ForeignKey(Notif, related_name="notif")
