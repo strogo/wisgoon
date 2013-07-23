@@ -310,6 +310,13 @@ class Comments(models.Model):
 
     admin_link.allow_tags = True
 
+class Report(models.Model):
+    user = models.ForeignKey(User, related_name='report_user')
+    post = models.ForeignKey(Post, related_name='report_post')
+    
+    class Meta:
+        unique_together = (("post", "user"),)
+
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
 post_delete.connect(Likes.user_unlike_post, sender=Likes)

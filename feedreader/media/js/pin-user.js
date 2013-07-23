@@ -92,9 +92,9 @@ $(".btn_report").live('click',function(){
 	            obj.removeClass('disabled');
 	            if (res[0].status){
 	                obj.addClass('btn-danger');
-	            }else{
-	                alert(res[0].msg);
 	            }
+                
+                alert(res[0].msg);
 	        }
 	    });
 	}
