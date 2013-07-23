@@ -210,8 +210,8 @@ class Likes(models.Model):
         #notify.actors.add(sender) 
         notif.save()
         Notif_actors.objects.get_or_create(actor=sender, notif=notif)
-        
-        if post.like == 10 and post.show_in_default == False:
+
+        if post.like > 9 and post.show_in_default == False:
             post.show_in_default = True
             post.save()
         
