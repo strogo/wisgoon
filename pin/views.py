@@ -836,4 +836,5 @@ def send_mail(request):
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
+    return HttpResponse('done')
 
