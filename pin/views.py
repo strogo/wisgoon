@@ -825,15 +825,15 @@ def report(request, pin_id):
     else:
         return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
 
-"""
+
 def send_mail(request):
     from django.core.mail import EmailMultiAlternatives
 
-    subject, from_email, to = 'hello', 'info@wisgoon-local.com', 'vchakoshy@gmail.com'
-    text_content = 'This is an important message.'
+    subject, from_email, to = 'hello', 'info@wisgoon.com', 'vchakoshy@gmail.com'
+    text_content = 'shoma yek payame jadid darid.'
     html_content = '<p>This is an <strong>important</strong> message.</p>'
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
     msg.attach_alternative(html_content, "text/html")
     msg.send()
-"""
+
 

@@ -47,7 +47,7 @@ urlpatterns = patterns('pin.views',
     url(r'^comment/approve/(?P<id>\d+)', 'comment_approve', name="pin-comment-approve"),
     url(r'^comment/unapprove/(?P<id>\d+)', 'comment_unapprove', name="pin-comment-unapprove"),
 
-    #url(r'^send_mail', 'send_mail', name='pin-sendmail'),
+    url(r'^send_mail', 'send_mail', name='pin-sendmail'),
 
     url(r'^category/(?P<cat_id>\d+)', 'category', name='pin-category'),
     #url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
