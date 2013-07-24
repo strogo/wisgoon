@@ -1,11 +1,14 @@
-{% extends "base/main.html" %}
-{% block content %}
-<div class="well form-horizontal">
+{% extends "pin/pure.html" %}
+
+{% block box-title %} ورود {% endblock%}
+
+{% block box-content %}
+
 {% include "registration/social.html"%}
 <form method="post" >
 {% csrf_token %}
 {{form.as_p}}
-<input type="submit" value="ورود" class="btn">
+<input type="submit" value="ورود" class="btn"> <a href="/accounts/password/reset/">رمز عبور خود را فراموش کرده اید؟</a>
 </form>
-</div>
+
 {% endblock %}
