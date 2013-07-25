@@ -49,6 +49,8 @@ urlpatterns = patterns('pin.views',
 
     url(r'^send_mail', 'send_mail', name='pin-sendmail'),
 
+    url(r'^test_page', 'test_page', name='google_contacts_login'),
+
     url(r'^category/(?P<cat_id>\d+)', 'category', name='pin-category'),
     #url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     

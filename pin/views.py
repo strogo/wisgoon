@@ -9,6 +9,9 @@ import datetime
 import time
 from shutil import copyfile
 
+from httplib import HTTPSConnection, HTTPConnection
+from BeautifulSoup import BeautifulStoneSoup
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -838,3 +841,97 @@ def send_mail(request):
 
     return HttpResponse('done')
 
+
+
+
+from gdata.contacts.client import ContactsClient
+import gdata.contacts.data
+from gdata.gauth import AuthSubToken
+
+def GetAuthSubUrl():
+    next = 'http://127.0.0.1:8000/pin/test_page'
+    scopes = ['http://www.google.com/m8/feeds/']
+    secure = False  # set secure=True to request a secure AuthSub token
+    session = True
+    return gdata.gauth.generate_auth_sub_url(next, scopes, secure=secure, session=session)
+
+def test_page(request):
+    import inspect
+
+    if 'token' in request.GET:
+        token = request.GET['token']
+        print token
+        token_auth_login = AuthSubToken(token)
+        client = ContactsClient(auth_token=token_auth_login)
+        #client.auth_token = token
+
+        print client.auth_token 
+        feed = client.GetContacts()
+        for entry in feed.entry:
+            try:
+                #print entry.email
+                
+                
+                print inspect.getmembers(entry.email)
+                print entry.email[0].address.text
+            except:
+                pass
+            
+        #print resource_feed
+
+    return render(request , 'pin/a.html', {'login': GetAuthSubUrl()})
+
+
+
+
+
+
+
+TOKEN_VAR = 'contact_token'
+TOKEN_IN_GET = 'token'
+def gdata_required(f):
+    """
+    Authenticate against Google GData service
+    """
+    def wrap(request, *args, **kwargs):
+        if TOKEN_IN_GET not in request.GET and TOKEN_VAR not in request.session:
+            # no token at all, request one-time-token
+            # next: where to redirect
+            # scope: what service you want to get access to
+            return HttpResponseRedirect("https://www.google.com/accounts/AuthSubRequest?next=http://127.0.0.1:8000/pin/test_page&scope=https://www.google.com/m8/feeds&session=1")
+        elif TOKEN_VAR not in request.session and TOKEN_IN_GET in request.GET:
+            # request session token using one-time-token
+            conn = HTTPSConnection("www.google.com")
+            conn.putrequest('GET', '/accounts/AuthSubSessionToken')
+            conn.putheader('Authorization', 'AuthSub token="%s"' % request.GET[TOKEN_IN_GET])
+            conn.endheaders()
+            conn.send(' ')
+            r = conn.getresponse()
+            if str(r.status) == '200':
+                token = r.read()
+                token = token.split('=')[1]
+                token = token.replace('', '')
+                request.session[TOKEN_VAR] = token
+        return f(request, *args, **kwargs)
+    wrap.__doc__=f.__doc__
+    wrap.__name__=f.__name__
+    return wrap
+
+@gdata_required
+def test_page1(request):
+    """
+    Simple example - list google docs documents
+    """
+    if TOKEN_VAR in request.session:
+        con = HTTPSConnection("www.google.com")
+        con.putrequest('GET', '/m8/feeds/contacts/vchakoshy@gmail.com/full')
+        con.putheader('Authorization', 'AuthSub token="%s"' % request.session[TOKEN_VAR])
+        con.endheaders()
+        con.send('')
+        r2 = con.getresponse()
+        dane = r2.read()
+        soup = BeautifulStoneSoup(dane)
+        dane = soup.prettify()
+        return render_to_response('pin/a.html', {'dane':dane}, context_instance=RequestContext(request))
+    else:
+        return render_to_response('pin/a.html', {'dane':'bad bad'}, context_instance=RequestContext(request))
