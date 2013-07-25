@@ -362,12 +362,19 @@ def d_like(request):
         except Post.DoesNotExist:
             return HttpResponse('post not found')
 
-        like, created = Likes.objects.get_or_create(user=user, post=post)
+        #like, created = Likes.objects.get_or_create(user=user, post=post)
+        try:
+            liked = Likes.objects.get(user=user, post=post)
+            created = False
+        except Likes.DoesNotExist:
+            liked = Likes.objects.create(user=user, post=post)
+            created = True
+
         if created:
             post.like=post.like+1
             post.save()
 
-            like.ip = request.META.get("REMOTE_ADDR", None)
+            like.ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
             like.save()
             
             return HttpResponse('+1')
