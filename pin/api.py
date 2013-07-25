@@ -242,7 +242,7 @@ class PostResource(ModelResource):
             #del(bundle.data['thumbnail'])
                    
             img_path = os.path.join(settings.MEDIA_ROOT, o_image)
-            print img_path
+            #print img_path
             im = Image.open(img_path)
             w,h = im.size
             bundle.data['large_hw'] = "%sx%s" % ( h,w )
