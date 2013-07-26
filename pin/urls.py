@@ -49,7 +49,7 @@ urlpatterns = patterns('pin.views',
 
     url(r'^send_mail', 'send_mail', name='pin-sendmail'),
 
-    url(r'^test_page', 'test_page', name='google_contacts_login'),
+    #url(r'^test_page', 'test_page', name='google_contacts_login'),
 
     url(r'^category/(?P<cat_id>\d+)', 'category', name='pin-category'),
     #url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
@@ -63,6 +63,9 @@ urlpatterns = patterns('pin.views',
     url(r'^api/profile/', include(profile_resource.urls)),
 )
 
+urlpatterns += patterns('pin.views_other',
+    url(r'invite/google', 'invite_google', name='invite-google'),
+)
 
 urlpatterns += patterns('', 
     url(r'^comments/', include('django.contrib.comments.urls')),

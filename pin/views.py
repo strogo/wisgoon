@@ -848,58 +848,6 @@ def send_mail(request):
 
     return HttpResponse('done')
 
-from gdata.contacts.client import ContactsClient, ContactsQuery
-import gdata.contacts.data
-from gdata.gauth import AuthSubToken
-
-def GetAuthSubUrl():
-    next = settings.TEST_PAGE_URL
-    scopes = ['http://www.google.com/m8/feeds/']
-    secure = False  # set secure=True to request a secure AuthSub token
-    session = True
-    return gdata.gauth.generate_auth_sub_url(next, scopes, secure=secure, session=session)
-
-def test_page(request):
-    import inspect
-
-    all_emails = []
-
-    if 'token' in request.GET:
-        token = request.GET['token']
-        print token
-        token_auth_login = AuthSubToken(token)
-        
-        query = ContactsQuery()
-        query.max_results = 1000000
-
-        client = ContactsClient(auth_token=token_auth_login)
-
-
-        client.upgrade_token(token=token_auth_login)
-        #client.auth_token = token
-
-        try:
-            feed = client.GetContacts(q=query)
-            while feed:
-                next = feed.GetNextLink()
-
-                for entry in feed.entry:
-                    try:
-                        email_address = entry.email[0].address
-                        print email_address
-                        all_emails.append(email_address)
-                    except:
-                        pass
-
-                feed = None
-                if next:
-                    feed = client.GetContacts(next.href, auth_token=token_auth_login, q=query)
-        except:
-            pass        
-
-        #print resource_feed
-
-    return render(request , 'pin/a.html', {'login': GetAuthSubUrl(), 'all_emails':all_emails})
 
 
 

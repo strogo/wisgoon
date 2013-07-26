@@ -30,8 +30,6 @@ GOOGLE_COOKIE_CONSENT = 'google_token_consent'
 GOOGLE_REDIRECT_SESSION_VAR = 'google_contacts_redirect'
 GOOGLE_REDIRECT_BASE_URL = 'http://localhost:8000'
 
-TEST_PAGE_URL = 'http://127.0.0.1:8000/pin/test_page'
-
 EMAIL_HOST = "mail.wisgoon.com"
 
 # Local time zone for this installation. Choices can be found here:
