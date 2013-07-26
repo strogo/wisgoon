@@ -848,7 +848,7 @@ def send_mail(request):
 
     return HttpResponse('done')
 
-from gdata.contacts.client import ContactsClient
+from gdata.contacts.client import ContactsClient, ContactsQuery
 import gdata.contacts.data
 from gdata.gauth import AuthSubToken
 
@@ -868,27 +868,34 @@ def test_page(request):
         token = request.GET['token']
         print token
         token_auth_login = AuthSubToken(token)
+        
+        query = ContactsQuery()
+        query.max_results = 1000000
+
         client = ContactsClient(auth_token=token_auth_login)
+
+
         client.upgrade_token(token=token_auth_login)
         #client.auth_token = token
 
-        print client.auth_token 
-        feed = client.GetContacts()
-        while feed:
-            next = feed.GetNextLink()
+        try:
+            feed = client.GetContacts(q=query)
+            while feed:
+                next = feed.GetNextLink()
 
-            for entry in feed.entry:
-                try:
-                    email_address = entry.email[0].address
-                    print email_address
-                    all_emails.append(email_address)
-                except:
-                    pass
+                for entry in feed.entry:
+                    try:
+                        email_address = entry.email[0].address
+                        print email_address
+                        all_emails.append(email_address)
+                    except:
+                        pass
 
-            feed = None
-            if next:
-                feed = client.GetContacts(next.href, auth_token=token_auth_login)
-                
+                feed = None
+                if next:
+                    feed = client.GetContacts(next.href, auth_token=token_auth_login, q=query)
+        except:
+            pass        
 
         #print resource_feed
 
