@@ -12,7 +12,7 @@ if settings.DEBUG:
 else:
 	MAX_RESULT = 100000
 	PAGING = True
-	TEST_PAGE_URL = 'http://wisgoon.com/pin/invite/google'
+	TEST_PAGE_URL = 'http://www.wisgoon.com/pin/invite/google'
 
 def GetAuthSubUrl():
     domain = 'www.wisgoon.com'
