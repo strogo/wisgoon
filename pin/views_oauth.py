@@ -4,6 +4,8 @@ from gdata.gauth import AuthSubToken
 
 from django.shortcuts import render
 from django.conf import settings
+from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.cache import cache_page, cache_control
 
 if settings.DEBUG:
 	MAX_RESULT = 25

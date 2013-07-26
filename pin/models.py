@@ -183,15 +183,16 @@ class Stream(models.Model):
 
     @classmethod
     def add_post(cls, sender, instance, *args, **kwargs):
-        post = instance
-        user = post.user
-        followers = Follow.objects.all().filter(following=user)
-        for follower in followers:
-            try:
-                stream, created = Stream.objects.get_or_create(post=post, user=follower.follower, date=post.timestamp, following=user)
-            except:
-                pass
-            
+        if kwargs['created']:
+            post = instance
+            user = post.user
+            followers = Follow.objects.all().filter(following=user)
+            for follower in followers:
+                try:
+                    stream, created = Stream.objects.get_or_create(post=post, user=follower.follower, date=post.timestamp, following=user)
+                except:
+                    pass
+                
     
 class Likes(models.Model):
     user = models.ForeignKey(User,related_name='pin_post_user_like')

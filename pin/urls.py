@@ -63,7 +63,7 @@ urlpatterns = patterns('pin.views',
     url(r'^api/profile/', include(profile_resource.urls)),
 )
 
-urlpatterns += patterns('pin.views_other',
+urlpatterns += patterns('pin.views_oauth',
     url(r'invite/google', 'invite_google', name='invite-google'),
 )
 
