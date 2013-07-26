@@ -15,11 +15,12 @@ else:
 	TEST_PAGE_URL = 'http://wisgoon.com/pin/invite/google'
 
 def GetAuthSubUrl():
+    domain = 'www.wisgoon.com'
     next = TEST_PAGE_URL
     scopes = ['http://www.google.com/m8/feeds/']
     secure = False  # set secure=True to request a secure AuthSub token
     session = True
-    return gdata.gauth.generate_auth_sub_url(next, scopes, secure=secure, session=session)
+    return gdata.gauth.generate_auth_sub_url(next, scopes, secure=secure, session=session, domain=domain)
 
 def invite_google(request):
 
