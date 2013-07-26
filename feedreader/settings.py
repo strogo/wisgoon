@@ -6,6 +6,8 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 
+TEST_PAGE_URL = 'http://wisgoon.com/pin/test_page'
+
 REPORT_TYPE = {'PIN':1,'COMMENT':2,'RSS':3}
 
 SITE_ROOT = os.path.dirname(__file__)

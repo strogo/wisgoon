@@ -1,3 +1,11 @@
-{{dane|safe}}
-
+{% if all_emails %}
+<table>
+{% for email in all_emails %}
+	<tr>
+		<td>{{email}}</td>
+	</tr>
+{% endfor %}
+</table>
+{% else %}
 <a href="{{login|safe}}">Import contacts</a>
+{% endif %}

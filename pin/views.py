@@ -848,15 +848,12 @@ def send_mail(request):
 
     return HttpResponse('done')
 
-
-
-
 from gdata.contacts.client import ContactsClient
 import gdata.contacts.data
 from gdata.gauth import AuthSubToken
 
 def GetAuthSubUrl():
-    next = 'http://127.0.0.1:8000/pin/test_page'
+    next = settings.TEST_PAGE_URL
     scopes = ['http://www.google.com/m8/feeds/']
     secure = False  # set secure=True to request a secure AuthSub token
     session = True
@@ -865,28 +862,37 @@ def GetAuthSubUrl():
 def test_page(request):
     import inspect
 
+    all_emails = []
+
     if 'token' in request.GET:
         token = request.GET['token']
         print token
         token_auth_login = AuthSubToken(token)
         client = ContactsClient(auth_token=token_auth_login)
+        client.upgrade_token(token=token_auth_login)
         #client.auth_token = token
 
         print client.auth_token 
         feed = client.GetContacts()
-        for entry in feed.entry:
-            try:
-                #print entry.email
+        while feed:
+            next = feed.GetNextLink()
+
+            for entry in feed.entry:
+                try:
+                    email_address = entry.email[0].address
+                    print email_address
+                    all_emails.append(email_address)
+                except:
+                    pass
+
+            feed = None
+            if next:
+                feed = client.GetContacts(next.href, auth_token=token_auth_login)
                 
-                
-                print inspect.getmembers(entry.email)
-                print entry.email[0].address.text
-            except:
-                pass
-            
+
         #print resource_feed
 
-    return render(request , 'pin/a.html', {'login': GetAuthSubUrl()})
+    return render(request , 'pin/a.html', {'login': GetAuthSubUrl(), 'all_emails':all_emails})
 
 
 
