@@ -18,9 +18,9 @@ def GetAuthSubUrl():
     domain = 'www.wisgoon.com'
     next = TEST_PAGE_URL
     scopes = ['http://www.google.com/m8/feeds/']
-    secure = True  # set secure=True to request a secure AuthSub token
+    secure = False  # set secure=True to request a secure AuthSub token
     session = True
-    return gdata.gauth.generate_auth_sub_url(next, scopes, secure=secure, session=session, domain=domain)
+    return gdata.gauth.generate_auth_sub_url(next, scopes, secure=secure, session=session)
 
 def invite_google(request):
 
