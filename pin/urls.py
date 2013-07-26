@@ -18,7 +18,7 @@ urlpatterns = patterns('pin.views',
     url(r'^(?P<item_id>\d+)/$', 'item', name="pin-item"),
     url(r'^send/$', 'send', name="pin-send"),
     url(r'^d_send/$', 'd_send', name="pin-direct"),
-    url(r'^d_like/$', 'd_like', name='pin-device-like'),
+    
     url(r'^d_post_comment/$', 'd_post_comment', name='pin-device-post-comment'),
     url(r'^sendurl/$', 'sendurl', name="pin-sendurl"),
     url(r'^edit/(?P<post_id>\d+)/$', 'edit', name="pin-item-edit"),
@@ -65,6 +65,10 @@ urlpatterns = patterns('pin.views',
 
 urlpatterns += patterns('pin.views_oauth',
     url(r'invite/google', 'invite_google', name='invite-google'),
+)
+
+urlpatterns += patterns('pin.views_device',
+    url(r'^d_like/$', 'like', name='pin-device-like'),
 )
 
 urlpatterns += patterns('', 
