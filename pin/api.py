@@ -212,9 +212,6 @@ class PostResource(ModelResource):
     
     def dehydrate(self, bundle):
         id = bundle.data['id']
-        post = Post.objects.get(pk=id)
-        post.view += 1
-        post.save()
         
         o_image = bundle.data['image']
         try:
@@ -240,6 +237,10 @@ class PostResource(ModelResource):
         if self.get_resource_uri(bundle) == bundle.request.path:
             # this is detail
             #del(bundle.data['thumbnail'])
+            #post = Post.objects.get(pk=id)
+            #post.view += 1
+            #post.save()
+        
                    
             img_path = os.path.join(settings.MEDIA_ROOT, o_image)
             #print img_path
