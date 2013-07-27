@@ -20,12 +20,19 @@ class PinAdmin(admin.ModelAdmin):
     search_fields = ['id', 'user__id']
     list_display = ('id', 'text','get_user_url','category','admin_image','status',\
     'like', 'device', 'is_ads', 'show_in_default', 'report')
-    actions=[make_approve, make_approve_go_default,'really_delete_selected', 'delete_all_user_posts', 'delete_and_fault']
+    actions=[make_approve, make_approve_go_default,'really_delete_selected', 'delete_all_user_posts', 'delete_and_fault', 'no_problem']
 
     def get_actions(self, request):
         actions = super(PinAdmin, self).get_actions(request)
         del actions['delete_selected']
         return actions
+
+    def no_problem(self, request, queryset):
+        for obj in queryset:
+            obj.report = 0
+            obj.save()
+
+    no_problem.short_description = "عکس مشکلی نداره"
 
     def really_delete_selected(self, request, queryset):
         for obj in queryset:
