@@ -95,7 +95,7 @@ class UserResource(ModelResource):
                     'success': True,
                     'token': api_key.key,
                     'id': user.id,
-                    'user_avatar': daddy_avatar.daddy_avatar(user.email)                    
+                    'user_avatar': daddy_avatar.get_avatar(user)                    
                 })
             else:
                 return self.create_response(request, {
