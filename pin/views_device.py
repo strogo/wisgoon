@@ -4,22 +4,30 @@ from django.http import HttpResponse
 
 from tastypie.models import ApiKey
 
-from pin.models import Post, Likes
+from pin.models import Post, Likes, Comments
 
 def check_auth(request):
     token = request.GET.get('token','')
     if not token:
-        return HttpResponse('error in user validation')
+        return False
     
     try:
         api = ApiKey.objects.get(key=token)
-        return api.user
+        user = api.user
+        user._ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
+
+        return user
     except ApiKey.DoesNotExist:
-        return HttpResponse('error in user validation')
+        return False
+
+    return False
     
 @csrf_exempt
 def like(request):
     user = check_auth(request)
+
+    if not user:
+        return HttpResponse('error in user validation')
         
     if request.method == 'POST' and user.is_active:
         try:
@@ -41,7 +49,7 @@ def like(request):
         if created:
             Post.objects.filter(pk=post_id).update(like=F('like')+1)
             
-            like.ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
+            like.ip = user._ip
             like.save()
             
             return HttpResponse('+1')
@@ -53,3 +61,19 @@ def like(request):
             return HttpResponse('-1')
 
     return HttpResponse('error in parameters')
+
+@csrf_exempt
+def post_comment(request):
+    user = check_auth(request)
+    if not user:
+        return HttpResponse('error in user validation')
+
+    data = request.POST.copy()
+    comment = data.get('comment')
+    object_pk = data.get("object_pk")
+    if data and comment and object_pk and Post.objects.filter(pk=object_pk).exists():
+
+        Comments.objects.create(object_pk_id=object_pk, comment=comment, user=user, ip_address=user._ip)
+        return HttpResponse(1)
+
+    return HttpResponse(0)

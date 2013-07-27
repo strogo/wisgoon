@@ -19,7 +19,7 @@ urlpatterns = patterns('pin.views',
     url(r'^send/$', 'send', name="pin-send"),
     url(r'^d_send/$', 'd_send', name="pin-direct"),
     
-    url(r'^d_post_comment/$', 'd_post_comment', name='pin-device-post-comment'),
+    
     url(r'^sendurl/$', 'sendurl', name="pin-sendurl"),
     url(r'^edit/(?P<post_id>\d+)/$', 'edit', name="pin-item-edit"),
     url(r'^ajax_url/$', 'a_sendurl', name="pin-sendurl-a"),
@@ -69,6 +69,7 @@ urlpatterns += patterns('pin.views_oauth',
 
 urlpatterns += patterns('pin.views_device',
     url(r'^d_like/$', 'like', name='pin-device-like'),
+    url(r'^d_post_comment/$', 'post_comment', name='pin-device-post-comment'),
 )
 
 urlpatterns += patterns('', 
