@@ -145,6 +145,7 @@ class CommentResource(ModelResource):
         queryset = Comments.objects.filter(is_public=True)
         resource_name = "comments"
         paginator_class = Paginator
+        limit = 100
         filtering = {
             "object_pk": ('exact',),
         }
