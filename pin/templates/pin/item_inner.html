@@ -62,7 +62,7 @@
 	{% endif %}
 	<div class="row-fluid">
 		<div class="comments">
-{% if user.is_authenticated %}
+{% if user.is_authenticated and user.is_active %}
 		<legend>
 			ارسال نظر
 		</legend>

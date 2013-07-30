@@ -13,7 +13,7 @@ from httplib import HTTPSConnection, HTTPConnection
 from BeautifulSoup import BeautifulStoneSoup
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.contrib.comments.models import Comment
 from django.core.urlresolvers import reverse
@@ -683,6 +683,7 @@ def policy(request):
 
 @csrf_exempt
 @login_required
+@user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 def send_comment(request):
     if request.method == 'POST':
         text = request.POST.get('text', None)
@@ -695,6 +696,9 @@ def send_comment(request):
 
 
     return HttpResponse('error')
+
+def you_are_deactive(request):
+    return render(request, 'pin/you_are_deactive.html')
 
 @login_required
 def comment_delete(request, id):
@@ -763,6 +767,20 @@ def report(request, pin_id):
     else:
         return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
 
+@login_required
+def goto_index(request, item_id, status):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/')
+
+    if int(status) == 1:
+        Post.objects.filter(pk=item_id).update(show_in_default=True)
+        data = [{'status':1, 'url':reverse('pin-item-goto-index', args=[item_id, 0])}]
+        return HttpResponse(json.dumps(data))
+    else:
+        Post.objects.filter(pk=item_id).update(show_in_default=False)
+        data = [{'status':0, 'url':reverse('pin-item-goto-index', args=[item_id, 1])}]
+        return HttpResponse(json.dumps(data))
+    
 
 def send_mail(request):
     from django.core.mail import EmailMultiAlternatives

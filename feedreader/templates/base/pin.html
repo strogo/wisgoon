@@ -173,6 +173,10 @@ var upload_url = "{% url pin-upload %}";
 <script type="text/javascript" src="{{MEDIA_URL}}js/pin-user.js?ver=1"></script>
 {% endif %}
 
+{% if user.is_superuser %}
+<script type="text/javascript" src="{{MEDIA_URL}}js/pin-admin.js?ver=1.1"></script>
+{% endif %}
+
 <script type="text/javascript" src="{{MEDIA_URL}}js/all.js"></script>
 {% block footer_script %}
 {% endblock %}

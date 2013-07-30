@@ -3,13 +3,14 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from user_profile.forms import ProfileForm
 from user_profile.models import Profile
 
 from tastypie.models import ApiKey
 
+@user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 @login_required
 def change(request):
     profile, create = Profile.objects.get_or_create(user=request.user)
@@ -41,7 +42,7 @@ def d_change(request):
 
     profile, created = Profile.objects.get_or_create(user=user)
 
-    if request.method == "POST":
+    if request.method == "POST" and user.is_active:
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             profile = form.save(commit=False)

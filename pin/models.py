@@ -214,8 +214,8 @@ class Likes(models.Model):
         notif.save()
         Notif_actors.objects.get_or_create(actor=sender, notif=notif)
 
-        if post.like+1>=LIKE_TO_DEFAULT_PAGE and post.show_in_default == False:
-            Post.objects.filter(id=post.id).update(show_in_default=True)
+        #if post.like+1>=LIKE_TO_DEFAULT_PAGE and post.show_in_default == False:
+        #    Post.objects.filter(id=post.id).update(show_in_default=True)
         
     @classmethod
     def user_unlike_post(cls, sender, instance, *args, **kwargs):
