@@ -50,7 +50,7 @@ var upload_url = "{% url pin-upload %}";
 	<body dir="rtl">
 		
 		<div class="container row-fluid" id="wrapper">
-			<div class="navbar-fixed-top">
+			<div class="">
 			{% include "base/bar_first.html" with pinactive="active" %}
 			
 			<ul class="nav nav-tabs nav-second">
@@ -116,7 +116,7 @@ var upload_url = "{% url pin-upload %}";
 			  
 			</ul>
 			</div>
-			<div id="content" class="container row-fluid" style="padding-top:90px">
+			<div id="content" class="container row-fluid" style="">
 				{% block content %}
 				{% endblock content %}
 			</div>
