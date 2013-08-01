@@ -1,4 +1,6 @@
 import os
+import time
+import datetime
 from tastypie.resources import ModelResource
 from tastypie.paginator import Paginator
 from tastypie import fields
@@ -134,6 +136,7 @@ class PostResource(ModelResource):
     category = fields.ToOneField(CategotyResource , 'category',full=True)
 
     like_with_user = fields.BooleanField(default=False)
+    popular = None
 
     cur_user = None
 
@@ -143,13 +146,15 @@ class PostResource(ModelResource):
         allowed_methods = ['get']
         paginator_class = Paginator
         fields = ['id','image','like','text','url']
-        cache = SimpleCache()
+        #cache = SimpleCache()
 
     def apply_filters(self, request, applicable_filters):
         base_object_list = super(PostResource, self).apply_filters(request, applicable_filters)
         
         userid = request.GET.get('user_id', None)
         category_id = request.GET.get('category_id', None)
+        before = request.GET.get('before', None)
+        popular = request.GET.get('popular', None)
         filters = {}
         
         if userid:
@@ -159,11 +164,38 @@ class PostResource(ModelResource):
             category_ids = category_id.replace(',', ' ').split(' ')
             filters.update(dict(category_id__in=category_ids))
         
-        #if not userid and not category_id:
-        #    filters.update(dict(show_in_default=True))
+        if before:
+            filters.update(dict(id__lt=before))
 
+        if popular:
+            date_from = None
+            if popular == 'month':
+                date_from = datetime.datetime.now() - datetime.timedelta(days=30)
+            elif popular == 'lastday':
+                date_from = datetime.datetime.now() - datetime.timedelta(days=1)
+            elif popular == 'lastweek':
+                date_from = datetime.datetime.now() - datetime.timedelta(days=7)
+            elif popular == 'lasteigth':
+                date_from = datetime.datetime.now() - datetime.timedelta(hours=8)
+            
+            if date_from:
+                start_from = time.mktime(date_from.timetuple())
+                filters.update(dict(timestamp__gt=start_from))
+            
         return base_object_list.filter(**filters).distinct()
     
+    def apply_sorting(self, object_list, options=None):
+        base_object_list = super(PostResource, self).apply_sorting(object_list)
+        
+        sorts = []
+        if self.popular in ['month', 'lastday', 'lastweek', 'lasteigth']:
+            sorts.append("-like")
+        else:
+            sorts.append('-is_ads')
+            sorts.append('-id')
+
+        return base_object_list.order_by(*sorts)
+
     def dispatch(self, request_type, request, **kwargs):
         token = request.GET.get('token', '')
         if token:
@@ -173,7 +205,8 @@ class PostResource(ModelResource):
             except:
                 pass
 
-        self.thumb_size = request.GET.get(self.thumb_query_name, self.thumb_default_size)        
+        self.thumb_size = request.GET.get(self.thumb_query_name, self.thumb_default_size)
+        self.popular = request.GET.get('popular', None)
         return super(PostResource, self).dispatch(request_type, request, **kwargs)
     
     def dehydrate(self, bundle):
