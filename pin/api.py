@@ -81,8 +81,10 @@ class ProfileResource(ModelResource):
 
     class Meta:
         allowed_methods = ['get']
+        ordering = ['score']
         queryset = Profile.objects.all()
         resource_name="profile"
+        paginator_class = Paginator
         #authentication = ApiKeyAuthentication()
         #authorization = ProfileObjectsOnlyAuthorization()
         filtering = {
