@@ -101,41 +101,6 @@ class LikesResource(ModelResource):
         #queryset = Likes.objects.all()
         resource_name = 'likes'
 
-class NotifyResource(ModelResource):
-    actors = fields.ListField()
-    image = fields.CharField(attribute='post__image')
-    post_id = fields.IntegerField(attribute='post_id')
-    user_id = fields.IntegerField(attribute='user_id')
-    class Meta:
-        resource_name = 'notify'
-        allowed_methods = ['get']
-        queryset = Notif.objects.all().order_by('-date')
-        paginator_class = Paginator
-        filtering = {
-            "user_id": ('exact',),
-            "seen": ('exact',),
-        }
-
-    def dehydrate(self, bundle):
-        id = bundle.data['id']
-        o_image = bundle.data['image']
-        try:
-            im = get_thumbnail(o_image, "300x300", quality=99, upscale=False)
-        except:
-            im = ""
-
-        if im:
-            bundle.data['thumbnail'] = im
-            bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
-        
-        actors = Notif_actors.objects.filter(notif=id).all()[:10]
-        ar = []
-        for lk in actors:
-            ar.append([lk.actor.id,lk.actor.username,daddy_avatar.get_avatar(lk.actor, size=100)])
-
-        bundle.data['actors'] = ar
-
-        return bundle
 
 class CommentResource(ModelResource):
     user_url = fields.IntegerField(attribute = 'user__id',  null=True)
@@ -258,4 +223,43 @@ class PostResource(ModelResource):
             bundle.data['likers'] = ar
                 
         
+        return bundle
+
+class NotifyResource(ModelResource):
+    actors = fields.ListField()
+    image = fields.CharField(attribute='post__image')
+    post_id = fields.IntegerField(attribute='post_id')
+    user_id = fields.IntegerField(attribute='user_id')
+
+    post = fields.ToOneField(PostResource, 'post')
+
+    class Meta:
+        resource_name = 'notify'
+        allowed_methods = ['get']
+        queryset = Notif.objects.all().order_by('-date')
+        paginator_class = Paginator
+        filtering = {
+            "user_id": ('exact',),
+            "seen": ('exact',),
+        }
+
+    def dehydrate(self, bundle):
+        id = bundle.data['id']
+        o_image = bundle.data['image']
+        try:
+            im = get_thumbnail(o_image, "300x300", quality=99, upscale=False)
+        except:
+            im = ""
+
+        if im:
+            bundle.data['thumbnail'] = im
+            bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
+        
+        actors = Notif_actors.objects.filter(notif=id).all()[:10]
+        ar = []
+        for lk in actors:
+            ar.append([lk.actor.id,lk.actor.username,daddy_avatar.get_avatar(lk.actor, size=100)])
+
+        bundle.data['actors'] = ar
+
         return bundle
