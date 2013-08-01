@@ -77,3 +77,21 @@ def post_comment(request):
         return HttpResponse(1)
 
     return HttpResponse(0)
+
+@csrf_exempt
+def post_report(request):
+    user = check_auth(request)
+    if not user:
+        return HttpResponse('error in user validation')
+
+    data = request.POST.copy()
+    post_id = data['post_id']
+    print post_id
+
+    if data and post_id and Post.objects.filter(pk=post_id).exists():
+        Post.objects.filter(pk=post_id).update(report=F('report')+1)
+        return HttpResponse(1)
+
+    return HttpResponse(0)
+
+

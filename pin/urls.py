@@ -72,6 +72,7 @@ urlpatterns += patterns('pin.views_oauth',
 urlpatterns += patterns('pin.views_device',
     url(r'^d_like/$', 'like', name='pin-device-like'),
     url(r'^d_post_comment/$', 'post_comment', name='pin-device-post-comment'),
+    url(r'^d_post_report/$', 'post_report'),
 )
 
 urlpatterns += patterns('', 
