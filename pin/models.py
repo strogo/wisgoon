@@ -167,6 +167,10 @@ class Post(models.Model):
         count_like = Likes.objects.filter(post_id=self.id).count()
         return count_like
 
+    def cnt_comments(self):
+        count_comments = Comments.objects.filter(object_pk_id=self.id).count()
+        return count_comments
+
 
 class Follow(models.Model):
     follower = models.ForeignKey(User ,related_name='follower')
@@ -318,6 +322,7 @@ class Report(models.Model):
     
     class Meta:
         unique_together = (("post", "user"),)
+
 
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)

@@ -29,6 +29,13 @@
 		</div>
 		{% endif%}
 
+		{% with item.cnt_comments as cc %}
+		{% if cc %}
+		<div style="font-family:tahoma;font-size:11px;padding-right:5px">{{cc}} نظر
+		</div>
+		{% endif %}
+		{% endwith %}
+
 		{% if request.user.is_superuser %}
 		<div class="actions" style="margin:5px 0">
 			{% if item.show_in_default %}
