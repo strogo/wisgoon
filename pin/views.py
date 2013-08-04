@@ -332,6 +332,14 @@ def sendurl(request):
             model.save()
             
             form.save_m2m()
+
+            if model.status == 1:
+                msg = 'مطلب شما با موفقیت ارسال شد. <a href="%s">مشاهده</a>' % reverse('pin-item', args=[model.id])
+                messages.add_message(request, messages.SUCCESS, msg)
+            elif model.status == 0:
+                msg = 'مطلب شما با موفقیت ارسال شد و بعد از تایید در سایت نمایش داده می شود '
+                messages.add_message(request, messages.SUCCESS, msg)
+
             
             return HttpResponseRedirect('/pin/')
     else:
