@@ -102,7 +102,7 @@ class Post(models.Model):
             if self.user.profile.post_accept :
                 self.status = 1
             else:
-                if self.date_lt( self.user.date_joined, 15) and self.user.profile.score > 2000:
+                if (self.date_lt( self.user.date_joined, 15) and self.user.profile.score > 2000) or self.user.profile.score > 5000:
                     profile.post_accept = True
                     profile.save()
                     self.status = 1
