@@ -2,7 +2,7 @@
 import os
 
 DEBUG = True
-THUMBNAIL_DEBUG = True
+THUMBNAIL_DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 REPORT_TYPE = {'PIN':1,'COMMENT':2,'RSS':3}
@@ -111,9 +111,15 @@ MIDDLEWARE_CLASSES = (
     'johnny.middleware.LocalStoreClearMiddleware',
     'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+
+    #'django.middleware.cache.FetchFromCacheMiddleware',
+    #'django.middleware.cache.UpdateCacheMiddleware',
+    #'pin.customcachemiddlware.CustomFetchFromCacheMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 
 ROOT_URLCONF = 'feedreader.urls_local'
 
@@ -133,10 +139,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages',
     'social_auth.context_processors.social_auth_by_name_backends',
     'social_auth.context_processors.social_auth_backends',
     'social_auth.context_processors.social_auth_by_type_backends',
     'social_auth.context_processors.social_auth_login_redirect',
+
     'rss.context_processors.c_url',
     'rss.context_processors.node_url',
     'pin.context_processors.pin_form',                                          

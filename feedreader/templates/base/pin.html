@@ -116,7 +116,20 @@ var upload_url = "{% url pin-upload %}";
 			  
 			</ul>
 			</div>
+			<div >
+				{% if messages %}
+				
+			    {% for message in messages %}
+			    <div class="span6 alert alert-{{ message.tags }}" style="float: none; margin: 5px auto;">
+			    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+			    {{ message|safe}}
+				</div>
+			    {% endfor %}
+			
+				{% endif %}
+			</div>
 			<div id="content" class="container row-fluid" style="">
+				
 				{% block content %}
 				{% endblock content %}
 			</div>

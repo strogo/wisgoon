@@ -16,6 +16,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.contrib.comments.models import Comment
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.contenttypes.models import ContentType
@@ -66,6 +67,7 @@ def home(request):
         return render(request, 'pin/home.html', {'latest_items': latest_items})
 
 def latest(request):
+
     try:
         timestamp = int(request.GET.get('older', 0))
     except ValueError:
@@ -419,6 +421,13 @@ def send(request):
             model.save()
             
             form.save_m2m()
+
+            if model.status == 1:
+                msg = 'مطلب شما با موفقیت ارسال شد. <a href="%s">مشاهده</a>' % reverse('pin-item', args=[model.id])
+                messages.add_message(request, messages.SUCCESS, msg)
+            elif model.status == 0:
+                msg = 'مطلب شما با موفقیت ارسال شد و بعد از تایید در سایت نمایش داده می شود '
+                messages.add_message(request, messages.SUCCESS, msg)
             
             return HttpResponseRedirect('/pin/')
     else:
