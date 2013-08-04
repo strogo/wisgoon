@@ -78,13 +78,12 @@ class Post(models.Model):
 
         super(Post, self).delete(*args, **kwargs)
 
-    def date_lt(self, date ,how_many_days):
+    def date_lt(self, date ,how_many_days=15):
         """
             date less than
         """
 
         from datetime import datetime, timedelta
-        how_many_days = 30
 
         lt_date = datetime.now()-timedelta(days=how_many_days)
         lt_timestamp = time.mktime(lt_date.timetuple())
@@ -94,6 +93,7 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         from user_profile.models import Profile
+
         
         try:
             profile = Profile.objects.get(user=self.user)
@@ -102,7 +102,7 @@ class Post(models.Model):
             if self.user.profile.post_accept :
                 self.status = 1
             else:
-                if self.date_lt( self.user.date_joined, 30) and self.user.profile.score > 2000:
+                if self.date_lt( self.user.date_joined, 15) and self.user.profile.score > 2000:
                     profile.post_accept = True
                     profile.save()
                     self.status = 1
