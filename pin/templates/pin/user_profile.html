@@ -7,21 +7,36 @@
     <a href="" class="ProfileImage"><img src="{{cur_user|get_avatar:165}}" alt=""></a>
     <div class="content">
         <span class="profile-name">{{cur_user|get_username}}</span>
-<table class="table">
-<tr>
-       <td><b>امتیاز</b>: {{cur_user.profile.score|intcomma}}</td>
-       <td><b>تعداد مطالب</b>: {{cur_user.profile.cnt_post}}</td>
-       <td><b>تعداد لایک</b>: {{cur_user.profile.cnt_like}}</td>
-       <td><b>تعداد خطا</b>: {{cur_user.profile.fault}}</td>
-</tr>
-</table>
-        {% if cur_user.profile.trusted and cur_user.profile.trusted_by_id %}
-        توسط <a href="{% url pin-user cur_user.profile.trusted_by.id %}"><img src="{{cur_user.profile.trusted_by.email|daddy_avatar:30}}"></a> تایید شده است.
-        {%else%}
-            {% if request.user.is_superuser %}                             
-                <a href="{% url trust_user cur_user.id %}">ﺕﺍییﺩ ﺍیﻥ کﺍﺮﺑﺭ</a><br>
-            {% endif %}
-        {%endif%}
+        <ul id="user_information_details">
+            <li class="user_acc">
+                <label for="User_acceptability"> امتیاز</label> : {{cur_user.profile.score|intcomma}}
+            </li>
+            <li class="user_acc">
+                <label for="User_acceptability"> تعداد مطالب</label> : {{cur_user.profile.cnt_post}}
+            </li>
+            <li class="user_acc">
+                <label for="User_acceptability"> تعداد لایک</label> : {{cur_user.profile.cnt_like}}
+            </li>
+            <li class="user_acc">
+                <label for="User_acceptability"> تعداد خطا</label> : {{cur_user.profile.fault}}
+            </li>
+            <li class="user_acc">
+                <label for="User_acceptability"> ارسال مطلب</label> : 
+                {% if cur_user.profile.post_accept %}
+                
+                <b class="tooltips" data-placement="bottom" rel="tooltip" title="مطالب ارسالی نیاز به تایید ندارند">
+                    <i class="icon-ok"></i>
+                </b>
+                {% else%}
+                <b class="tooltips" data-placement="bottom" rel="tooltip" title="مطالب ارسال شده بعد تایید مدیران سایت نمایش داده می شوند.">
+                    <i class="icon-ban-circle"></i>
+                </b>
+                {%endif%}
+            </li>
+            <li class="user_acc ">
+                <label> عضویت</label> : {{cur_user.date_joined|date:"d-m-Y"}}
+            </li>
+        </ul>
 
         <p class="colormuted">{{cur_user.profile.bio}}</p>
         
@@ -33,7 +48,8 @@
 				{% include "pin/following_box.html"%}
 			{% else %}
     <a href="{% url user-profile-change%}" role="button" class="btn" data-toggle="modal" data-target="#profileModal">ویرایش مشخصات</a>
-    <a href="/accounts/password/change/">تعویض رمز عبور</a>
+    
+    <a href="/accounts/password/change/?{{user.has_usable_password}}">تعویض رمز عبور</a>
 
 			{% endif%}
         </div>

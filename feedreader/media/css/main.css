@@ -424,6 +424,7 @@ background: white;
 box-shadow: 0 1px 3px rgba(34,25,25,0.5);
 -moz-box-shadow: 0 1px 3px rgba(34,25,25,0.5);
 -webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.5);
+overflow: hidden;
 }
 
 .ProfileInfo .ProfileImage {
@@ -475,6 +476,7 @@ overflow: hidden;
 	font-size: 25px;
 	margin: 2px 0 5px 0;
 	display:block;
+	padding: 5px;
 }
 
 .sites-nav {
@@ -552,3 +554,26 @@ overflow: hidden;
     border-bottom: 0;
 }
 
+#user_information_details li {
+background-color: #F5F5F5;
+border-left: 1px solid #BBBBBB;
+border-right: 1px solid #BBBBBB;
+display: inline-block;
+height: 20px;
+margin: 3px 1px;
+padding: 0 5px;
+width: 21%;
+font-size: 11px;
+}
+#user_information_details li div.icon {
+display: none;
+float: right;
+}
+#user_information_details li label{
+	display: inline;
+	font-size: 11px;
+}
+
+#user_information_details .long {
+width: 236px;
+}
