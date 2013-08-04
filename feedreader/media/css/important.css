@@ -72,6 +72,7 @@ input, button, select, textarea {
 }
 .nav-second{
 	background-color: #E0E0E0!important;
+	margin-bottom: 0!important;
 }
 /*
 #pinitem{
