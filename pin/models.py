@@ -306,6 +306,7 @@ class Comments(models.Model):
 
     object_pk = models.ForeignKey(Post, related_name='comment_post')
     user = models.ForeignKey(User, related_name='comment_sender')
+    score = models.IntegerField(default=0, blank=True, )
 
     @models.permalink
     def get_absolute_url(self):
@@ -315,6 +316,11 @@ class Comments(models.Model):
         return '<a href="%s" target="_blank">مشاهده</a>' % (self.get_absolute_url())
 
     admin_link.allow_tags = True
+
+class Comments_score(models.Model):
+    comment = models.ForeignKey(Comments)
+    user = models.ForeignKey(User, related_name='comment_like_user')
+    score = models.IntegerField(default=0, blank=True)
 
 class Report(models.Model):
     user = models.ForeignKey(User, related_name='report_user')

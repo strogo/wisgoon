@@ -30,7 +30,7 @@ from django.views.decorators.csrf import csrf_exempt
 import pin_image
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm, PinDirectForm
-from pin.models import Post, Follow, Stream, Likes, Notif, Category, Notif_actors, Comments, Report
+from pin.models import Post, Follow, Stream, Likes, Notif, Category, Notif_actors, Comments, Report, Comments_score
 from pin.tools import create_filename
 
 #from rss.models import Report
@@ -751,6 +751,31 @@ def comment_unapprove(request, id):
     comment.save()
 
     return HttpResponseRedirect(reverse('pin-item', args=[comment.object_pk.id]))
+
+@login_required
+def comment_score(request, comment_id, score):
+    score=int(score)
+    scores = [1, 0]
+    if score not in scores:
+        return HttpResponse('error in scores')
+    
+    if score == 0:
+        score = -1
+
+    try:
+        comment = Comments.objects.get(pk=comment_id)
+        comment_score, created = Comments_score.objects.get_or_create(user=request.user, comment=comment)
+        if score != comment_score.score:
+            comment_score.score = score
+            comment_score.save()
+        
+        sum_score = Comments_score.objects.filter(comment=comment).aggregate(Sum('score'))
+        comment.score = sum_score['score__sum']
+        comment.save()
+        return HttpResponse(sum_score['score__sum'])
+
+    except Comments.DoesNotExist:
+        return HttpResponseRedirect('/')
 
 @login_required
 def report(request, pin_id):

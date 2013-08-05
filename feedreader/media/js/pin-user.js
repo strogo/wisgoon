@@ -125,3 +125,37 @@ $(".delpost").live('click',function(){
     }
     return false;
 });
+
+var comment_vote = 1;
+$(".comment-up").click(function(){
+    if (comment_vote == 0){
+        return false;
+    }
+    comment_vote = 0
+    comment_id = $(this).attr('rel');
+    url = "/pin/comment/score/"+comment_id+'/1'
+    $.ajax({
+        url: url,
+        success: function(html) {
+            $("#comment_vote_cnt_"+comment_id).html(html);
+            comment_vote = 1;
+        }
+    });
+});
+
+
+$(".comment-down").click(function(){
+    if (comment_vote == 0){
+        return false;
+    }
+    comment_vote = 0
+    comment_id = $(this).attr('rel');
+    url = "/pin/comment/score/"+comment_id+'/0'
+    $.ajax({
+        url: url,
+        success: function(html) {
+            $("#comment_vote_cnt_"+comment_id).html(html);
+            comment_vote = 1;
+        }
+    });
+});

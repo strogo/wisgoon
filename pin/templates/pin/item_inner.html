@@ -86,6 +86,25 @@
 						{% endif%}
 					</div>
 					<div class="comment_main">
+						<div class="comment_top">
+							<div class="comment-author">
+								<a href="{% url pin-user comment.user.id %}">
+									{{comment.user|get_username}}
+								</a>
+							</div>
+							<div class="comment-date">
+							{{comment.submit_date|jalali_mysql_date}}
+							</div>
+							<div class="comment_vote" rel="{{comment.id}}">
+								<div class="comment-up" rel="{{comment.id}}">
+									<i class="icon-plus"></i>
+								</div>
+			                	<div class="comment-down" rel="{{comment.id}}">
+									<i class="icon-minus"></i>
+								</div> | 
+			                    <div class="comment_vote_cnt" id="comment_vote_cnt_{{comment.id}}">{{comment.score}}</div>
+			                </div>
+						</div>
 						<div class="comment_content">
 							{{comment.comment}}
 						</div>

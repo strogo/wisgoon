@@ -577,3 +577,40 @@ float: right;
 #user_information_details .long {
 width: 236px;
 }
+
+
+.comment_top{
+	font-family: tahoma;
+	font-size: 11px;
+}
+
+.comment-author{
+	display: inline;
+}
+
+.comment-author a {
+border-left: 1px solid #86898C;
+color: #0282B8;
+font-size: 11px;
+font-weight: bold;
+margin-left: 10px;
+padding-left: 10px;
+}
+
+.comment-date {
+display: inline-block;
+height: 15px;
+overflow: hidden;
+}
+.comment_vote {
+float: left;
+width: 100px;
+}
+.comment-up, .comment-down, .comment_vote_cnt {
+	display: inline;
+}
+
+.comment_content{
+	font-family: tahoma;
+	font-size: 11px;
+}
