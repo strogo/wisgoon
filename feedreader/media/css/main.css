@@ -606,6 +606,11 @@ overflow: hidden;
 float: left;
 width: 100px;
 }
+
+.comment-up, .comment-down{
+	cursor: pointer;
+}
+
 .comment-up, .comment-down, .comment_vote_cnt {
 	display: inline;
 }

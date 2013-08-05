@@ -263,6 +263,8 @@ class Notif(models.Model):
 
     @classmethod
     def add_comment(cls, sender, instance, created, *args, **kwargs):
+        if not created:
+            return None
         comment = instance
         commenter = comment.user
         post = comment.object_pk
