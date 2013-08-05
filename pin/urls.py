@@ -71,6 +71,7 @@ urlpatterns = patterns('pin.views',
 
 urlpatterns += patterns('pin.views_oauth',
     url(r'invite/google', 'invite_google', name='invite-google'),
+    url(r'email/activation/$', 'activation_email', name='activation_email'),
 )
 
 urlpatterns += patterns('pin.views_device',
