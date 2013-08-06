@@ -29,9 +29,9 @@ class PinAdmin(admin.ModelAdmin):
 
     def make_approve(self, request, queryset):
         for obj in queryset:
-            obj.status = Post.APPROVED
-            obj.timestamp = time.time()
-            obj.save()
+            Post.objects.filter(pk=obj.id).update(status=Post.APPROVED, timestamp=time.time())
+            
+        for obj in queryset:
             send_notif(user=obj.user, type=Notif.APPROVE , post=obj, actor=request.user)
 
     make_approve.short_description = u"تایید مطلب"
@@ -66,11 +66,17 @@ class PinAdmin(admin.ModelAdmin):
 
     def fault(self, request, queryset):
         for obj in queryset:
+            Post.objects.filter(pk=obj.id).update(status=Post.FAULT)
+            #print obj.status
+            #obj.status = Post.FAULT
+            #print obj.status
+            #obj.save()
+
             user = obj.user
             user.profile.fault = user.profile.fault+1
             user.profile.save()
-            obj.status = 2
-            obj.save()
+        
+        for obj in queryset:    
             send_notif(user=obj.user, type=Notif.FAULT , post=obj, actor=request.user)
             
     fault.short_description = 'ثبت تخلف'
