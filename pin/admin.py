@@ -66,7 +66,7 @@ class PinAdmin(admin.ModelAdmin):
 
     def fault(self, request, queryset):
         for obj in queryset:
-            Post.objects.filter(pk=obj.id).update(status=Post.FAULT)
+            Post.objects.filter(pk=obj.id).update(status=Post.FAULT, report=0)
             #print obj.status
             #obj.status = Post.FAULT
             #print obj.status
