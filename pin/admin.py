@@ -2,14 +2,14 @@
 from django.contrib import admin
 #from django.contrib.comments.admin import CommentsAdmin
 #from django.contrib.comments.models import Comment
-from pin.models import Post, Notify, Category, App_data, Comments
+from pin.models import Post, Notify, Category, App_data, Comments, send_notif, Notif
 from user_profile.models import Profile
 
 import time
 
-def make_approve(modeladmin, request, queryset):
-    queryset.update(status=1, timestamp=time.time())
-make_approve.short_description = u"تایید مظالب"
+#def make_approve(modeladmin, request, queryset):
+#    queryset.update(status=1, timestamp=time.time())
+#make_approve.short_description = u"تایید مظالب"
 
 def make_approve_go_default(modeladmin, request, queryset):
     queryset.update(status=1,show_in_default=True, timestamp=time.time())
@@ -20,18 +20,28 @@ class PinAdmin(admin.ModelAdmin):
     search_fields = ['id', 'user__id']
     list_display = ('id', 'text','get_user_url','category','admin_image','status',\
     'like', 'device', 'is_ads', 'show_in_default', 'report')
-    actions=[make_approve, make_approve_go_default,'really_delete_selected', 'delete_all_user_posts', 'delete_and_fault', 'no_problem']
+    actions=['make_approve', make_approve_go_default,'really_delete_selected', 'delete_all_user_posts', 'fault', 'no_problem']
 
     def get_actions(self, request):
         actions = super(PinAdmin, self).get_actions(request)
         del actions['delete_selected']
         return actions
 
+    def make_approve(self, request, queryset):
+        for obj in queryset:
+            obj.status = Post.APPROVED
+            obj.timestamp = time.time()
+            obj.save()
+            send_notif(user=obj.user, type=Notif.APPROVE , post=obj, actor=request.user)
+
+    make_approve.short_description = u"تایید مطلب"
+
     def no_problem(self, request, queryset):
         for obj in queryset:
             obj.report = 0
+            obj.status = Post.APPROVED
             obj.save()
-
+            
     no_problem.short_description = "عکس مشکلی نداره"
 
     def really_delete_selected(self, request, queryset):
@@ -54,14 +64,16 @@ class PinAdmin(admin.ModelAdmin):
 
     delete_all_user_posts.short_description = 'حذف تمام پست های کاربر و غیر فعال کردن'
 
-    def delete_and_fault(self, request, queryset):
+    def fault(self, request, queryset):
         for obj in queryset:
             user = obj.user
             user.profile.fault = user.profile.fault+1
             user.profile.save()
-            obj.delete()
+            obj.status = 2
+            obj.save()
+            send_notif(user=obj.user, type=Notif.FAULT , post=obj, actor=request.user)
             
-    delete_and_fault.short_description = 'حذف مطلب و ثبت تخلف'
+    fault.short_description = 'ثبت تخلف'
 
 class NotifyAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'text', 'seen', 'type')

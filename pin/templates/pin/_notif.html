@@ -18,8 +18,12 @@
 		<div>
 			{% if item.type == 1 %}
 		        <i class="icon-heart"></i>
-		    {% else %}
-		        <i class="icon-comment"></i>
+		    {% elif item.type == 2 %}
+	            <i class="icon-comment"></i>
+	        {% elif item.type == 3 %}
+	            <i class="icon-ok"></i>
+	        {% elif item.type == 4 %}
+	            <i class="icon-remove"></i>
 		    {% endif %}
 		</div>
 		{% for actor in item.actors %}

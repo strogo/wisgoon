@@ -10,8 +10,12 @@
         <div class="post-like-right">
         {% if noti.type == 1 %}
             <i class="icon-heart"></i>
-        {% else %}
+        {% elif noti.type == 2 %}
             <i class="icon-comment"></i>
+        {% elif noti.type == 3 %}
+            <i class="icon-ok"></i>
+        {% elif noti.type == 4 %}
+            <i class="icon-remove"></i>
         {% endif %}
         </div>
         {% for actor in noti.actors reversed %}

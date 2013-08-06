@@ -29,6 +29,18 @@
 		</div>
 		{% endif%}
 
+		{% if item.status != 1 %}
+		<div>
+			{% if item.status == 0 %}
+				<span>این مطلب نیاز به تایید دارد</span>
+			{% else%}
+				{% if item.status == 2 %}
+				<span>این مطلب با قوانین سایت مغایر است و تنها به شما نمایش داده می شود</span>
+				{% endif %}
+			{% endif %}
+		</div>
+		{% endif %}
+
 		{% with item.cnt_comments as cc %}
 		{% if cc %}
 		<div style="font-family:tahoma;font-size:11px;padding-right:5px">{{cc}} نظر

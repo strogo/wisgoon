@@ -186,11 +186,18 @@ def user(request, user_id, user_name=None):
     except ValueError:
         timestamp = 0
     
-    if timestamp == 0:
-        latest_items = Post.objects.filter(status=1).select_related().filter(user=user_id).order_by('-timestamp')[:20]
+    if request.user == user:
+        if timestamp == 0:
+          latest_items = Post.objects.filter(user=user_id).order_by('-timestamp')[:20]
+        else:
+            latest_items = Post.objects.filter(user=user_id).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
+
     else:
-        latest_items = Post.objects.filter(user=user_id,status=1).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
-    
+        if timestamp == 0:
+            latest_items = Post.objects.filter(status=1, user=user_id).order_by('-timestamp')[:20]
+        else:
+            latest_items = Post.objects.filter(user=user_id,status=1).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
+        
     form = PinForm()
     
     if request.is_ajax():
@@ -549,11 +556,7 @@ def comment_posted(request):
 def delete(request, item_id):
     try:
         post = Post.objects.get(pk=item_id)
-        if post.user == request.user or request.user.is_superuser:
-            likes = Likes.objects.filter(post_id=post.id)
-            for like in likes:
-                like.delete()
-                
+        if post.user == request.user or request.user.is_superuser:                
             post.delete()
             return HttpResponse('1')
             

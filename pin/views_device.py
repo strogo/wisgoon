@@ -1,10 +1,10 @@
-from django.db.models import F
+from django.db.models import F, Sum
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseNotFound
 
 from tastypie.models import ApiKey
 
-from pin.models import Post, Likes, Comments
+from pin.models import Post, Likes, Comments, Comments_score
 
 def check_auth(request):
     token = request.GET.get('token','')
@@ -27,7 +27,7 @@ def like(request):
     user = check_auth(request)
 
     if not user:
-        return HttpResponse('error in user validation')
+        return HttpResponseForbidden('error in user validation')
         
     if request.method == 'POST' and user.is_active:
         try:
@@ -66,7 +66,7 @@ def like(request):
 def post_comment(request):
     user = check_auth(request)
     if not user:
-        return HttpResponse('error in user validation')
+        return HttpResponseForbidden('error in user validation')
 
     data = request.POST.copy()
     comment = data.get('comment')
@@ -82,16 +82,62 @@ def post_comment(request):
 def post_report(request):
     user = check_auth(request)
     if not user:
-        return HttpResponse('error in user validation')
+        return HttpResponseForbidden('error in user validation')
 
     data = request.POST.copy()
     post_id = data['post_id']
-    print post_id
+    #print post_id
 
     if data and post_id and Post.objects.filter(pk=post_id).exists():
         Post.objects.filter(pk=post_id).update(report=F('report')+1)
         return HttpResponse(1)
+    else:
+        return HttpResponseNotFound('post not found')
 
-    return HttpResponse(0)
+    return HttpResponseBadRequest(0)
 
+def comment_score(request, comment_id, score):
+    user = check_auth(request)
+    if not user:
+        return HttpResponseForbidden('error in user validation')
 
+    score=int(score)
+    scores = [1, 0]
+    if score not in scores:
+        return HttpResponseBadRequest('error in scores')
+    
+    if score == 0:
+        score = -1
+
+    try:
+        comment = Comments.objects.get(pk=comment_id)
+        comment_score, created = Comments_score.objects.get_or_create(user=user, comment=comment)
+        if score != comment_score.score:
+            comment_score.score = score
+            comment_score.save()
+        
+        sum_score = Comments_score.objects.filter(comment=comment).aggregate(Sum('score'))
+        comment.score = sum_score['score__sum']
+        comment.save()
+        return HttpResponse(sum_score['score__sum'])
+
+    except Comments.DoesNotExist:
+        return HttpResponseNotFound('comment not found')
+
+    return HttpResponseBadRequest('error')
+
+def post_delete(request, item_id):
+    user = check_auth(request)
+    if not user:
+        return HttpResponseForbidden('error in user validation')
+
+    try:
+        post = Post.objects.get(pk=item_id)
+        if post.user == user or request.user.is_superuser:                
+            post.delete()
+            return HttpResponse('1')
+            
+    except Post.DoesNotExist:
+        return HttpResponseNotFound('post not exists or not yours')
+    
+    return HttpResponseBadRequest('bad request')

@@ -32,7 +32,18 @@ class Category(models.Model):
 
     admin_image.allow_tags = True
 
+
 class Post(models.Model):
+    PENDING = 0
+    APPROVED = 1
+    FAULT = 2
+
+    STATUS_CHOICES = (
+        (PENDING, 'منتظر تایید'),
+        (APPROVED, 'تایید شده'),
+        (FAULT, 'تخلف'),
+    )
+
     #title = models.CharField(max_length=250, blank=True)
     text = models.TextField(blank=True, verbose_name=_('Text'))
     image = models.CharField(max_length=500, verbose_name='تصویر')
@@ -42,7 +53,7 @@ class Post(models.Model):
     user = models.ForeignKey(User)
     like = models.IntegerField(default=0)
     url = models.CharField(blank=True, max_length=2000, validators=[URLValidator()])
-    status = models.IntegerField(default=0, blank=True, verbose_name="وضعیت")
+    status = models.IntegerField(default=0, blank=True, verbose_name="وضعیت", choices=STATUS_CHOICES)
     device = models.IntegerField(default=1, blank=True)
     hash = models.CharField(max_length=32, blank=True, db_index=True)
     actions = models.IntegerField(default=1, blank=True)
@@ -71,6 +82,7 @@ class Post(models.Model):
     
     def delete(self, *args, **kwargs):
         try:
+
             file_path = os.path.join(settings.MEDIA_ROOT, self.image)
             os.remove(file_path)
         except:
@@ -251,7 +263,15 @@ def send_notif(user, type, post, actor, seen=False):
     return notif
         
 class Notif(models.Model):
-    TYPES = ((1,'like'),(2,'comment'))
+    LIKE = 1
+    COMMENT = 2
+    APPROVE = 3
+    FAULT = 4
+    TYPES = (
+        (LIKE,'like'),
+        (COMMENT,'comment'),
+        (APPROVE,'approve'),
+        (FAULT,'fault'))
                                               
     post = models.ForeignKey(Post)
     #sender = models.ForeignKey(User, related_name="sender")
