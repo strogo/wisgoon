@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequ
 from tastypie.models import ApiKey
 
 from pin.models import Post, Likes, Comments, Comments_score
+from pin.forms import PinDeviceUpdate
 
 def check_auth(request):
     token = request.GET.get('token','')
@@ -16,7 +17,10 @@ def check_auth(request):
         user = api.user
         user._ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
 
-        return user
+        if not user.is_active:
+            return False
+        else:
+            return user
     except ApiKey.DoesNotExist:
         return False
 
@@ -140,4 +144,27 @@ def post_delete(request, item_id):
     except Post.DoesNotExist:
         return HttpResponseNotFound('post not exists or not yours')
     
+    return HttpResponseBadRequest('bad request')
+
+
+@csrf_exempt
+def post_update(request, item_id):
+    user = check_auth(request)
+    if not user:
+        return HttpResponseForbidden('error in user validation')
+
+    try:
+        post = Post.objects.get(pk=int(item_id), user=user)
+    except Post.DoesNotExist:
+        return HttpResponseNotFound('post not found or not yours')
+    
+    if request.method == 'POST':
+        form = PinDeviceUpdate(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            
+            return HttpResponse('success')
+        else:
+            return HttpResponseBadRequest('error in form')
+
     return HttpResponseBadRequest('bad request')
