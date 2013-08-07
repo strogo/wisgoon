@@ -502,15 +502,6 @@ def upload(request):
         ret_json = {'success':success,'file':filename}
         return HttpResponse( json.dumps( ret_json ) )
 
-def comment_posted(request):
-    if request.GET['c']:
-        comment_id = request.GET['c'] #B
-        comment = Comment.objects.get( pk=comment_id )
-        entry = Post.objects.get(id=comment.object_pk,status=1) #C
-        if entry:
-            return HttpResponseRedirect( entry.get_absolute_url() ) #D
-    return HttpResponseRedirect( "/" )     
-
 @login_required
 def delete(request, item_id):
     try:
