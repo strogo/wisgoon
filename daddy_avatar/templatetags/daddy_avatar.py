@@ -35,7 +35,7 @@ def get_avatar(user, size=200):
         return daddy_avatar('', size)
 
     if isinstance(user, int):
-        user = User.objects.get(pk=user)
+        user = User.objects.only('email').get(pk=user)
 
     try:
         if user.profile.avatar:

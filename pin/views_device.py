@@ -41,16 +41,15 @@ def like(request):
     if not user:
         return HttpResponseForbidden('error in user validation')
         
-    if request.method == 'POST' and user.is_active:
+    if request.method == 'POST':
         try:
             post_id = int(request.POST['post_id'])
         except ValueError:
-            return HttpResponse('erro in post id')
+            return HttpResponseBadRequest('erro in post id')
 
         if not Post.objects.filter(pk=post_id,status=1).exists():
-            return HttpResponse('post not found')
-
-        #like, created = Likes.objects.get_or_create(user=user, post=post)
+            return HttpResponseNotFound('post not found')
+        
         try:
             like = Likes.objects.get(user=user, post_id=post_id)
             created = False
@@ -59,20 +58,16 @@ def like(request):
             created = True
 
         if created:
-            Post.objects.filter(pk=post_id).update(like=F('like')+1)
-            
             like.ip = user._ip
             like.save()
             
             return HttpResponse('+1')
         elif like:
             like.delete()
-
-            Post.objects.filter(pk=post_id).update(like=F('like')-1)
             
             return HttpResponse('-1')
 
-    return HttpResponse('error in parameters')
+    return HttpResponseBadRequest('error in parameters')
 
 @csrf_exempt
 def post_comment(request):

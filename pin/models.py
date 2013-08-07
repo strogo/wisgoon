@@ -10,6 +10,7 @@ from django.contrib.comments.signals import comment_was_posted
 from django.contrib.sites.models import Site
 from django.core.validators import URLValidator
 from django.db import models
+from django.db.models import F
 from django.db.models.signals import post_save, post_delete
 from django.utils.translation import ugettext_lazy as _
 
@@ -63,7 +64,8 @@ class Post(models.Model):
     db_index=True , verbose_name='نمایش در خانه')
     
     report = models.IntegerField(default=0, db_index=True)
-    
+    cnt_comment = models.IntegerField(default=-1, blank=True)
+    cnt_like = models.IntegerField(default=-1, blank=True)
     tags = TaggableManager(blank=True)
 
     category = models.ForeignKey(Category, default=1, verbose_name='گروه')
@@ -106,7 +108,6 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         from user_profile.models import Profile
 
-        
         try:
             profile = Profile.objects.get(user=self.user)
             #print "date joined: ", self.user.date_joined
@@ -176,12 +177,22 @@ class Post(models.Model):
     admin_image.allow_tags = True
 
     def cnt_likes(self):
-        count_like = Likes.objects.filter(post_id=self.id).count()
-        return count_like
+        if self.cnt_like == -1:
+            cnt = Likes.objects.filter(post_id=self.id).count()
+            Post.objects.filter(pk=self.id).update(cnt_like=cnt)
+        else:
+            cnt = self.cnt_like
+
+        return cnt
 
     def cnt_comments(self):
-        count_comments = Comments.objects.filter(object_pk_id=self.id).count()
-        return count_comments
+        if self.cnt_comment == -1:
+            cnt = Comments.objects.filter(object_pk_id=self.id).count()
+            Post.objects.filter(pk=self.id).update(cnt_comment=cnt)
+        else:
+            cnt = self.cnt_comment
+
+        return cnt
 
 
 class Follow(models.Model):
@@ -217,7 +228,16 @@ class Likes(models.Model):
     
     class Meta:
         unique_together = (("post", "user"),)
-        
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like')+1)
+        super(Likes, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like')-1)
+        super(Likes, self).delete(*args, **kwargs)
+
     @classmethod
     def user_like_post(cls, sender, instance, *args, **kwargs):
         like = instance
@@ -229,10 +249,8 @@ class Likes(models.Model):
         notif.date = datetime.datetime.now()
         notif.save()
         Notif_actors.objects.get_or_create(actor=sender, notif=notif)
-
-        #if post.like+1>=LIKE_TO_DEFAULT_PAGE and post.show_in_default == False:
-        #    Post.objects.filter(id=post.id).update(show_in_default=True)
         
+    """
     @classmethod
     def user_unlike_post(cls, sender, instance, *args, **kwargs):
         try:
@@ -251,6 +269,7 @@ class Likes(models.Model):
             pass
         except Post.DoesNotExist:
             pass
+    """
 
 def send_notif(user, type, post, actor, seen=False):
     notif, created = Notif.objects.get_or_create(user=user, type=type, post=post)
@@ -288,6 +307,7 @@ class Notif(models.Model):
         comment = instance
         commenter = comment.user
         post = comment.object_pk
+
         if comment.user != post.user:
             notif = send_notif(user=post.user, type=2, post=post, actor=comment.user)
 
@@ -330,6 +350,15 @@ class Comments(models.Model):
     user = models.ForeignKey(User, related_name='comment_sender')
     score = models.IntegerField(default=0, blank=True, )
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            Post.objects.filter(pk=self.object_pk.id).update(cnt_comment=F('cnt_comment')+1)
+        super(Comments, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        Post.objects.filter(pk=self.object_pk.id).update(cnt_comment=F('cnt_comment')-1)
+        super(Comments, self).delete(*args, **kwargs)
+
     @models.permalink
     def get_absolute_url(self):
         return ('pin-item', [str(self.object_pk_id)])
@@ -354,6 +383,6 @@ class Report(models.Model):
 
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
-post_delete.connect(Likes.user_unlike_post, sender=Likes)
+#post_delete.connect(Likes.user_unlike_post, sender=Likes)
 post_save.connect(Post.change_tag_slug, sender=Tag)
 post_save.connect(Notif.add_comment, sender=Comments)

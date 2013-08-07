@@ -538,10 +538,10 @@ def like(request, item_id):
             liked.save()
         elif liked:
             current_like = current_like-1
-            Likes.objects.filter(user=request.user,post=post).delete()
+            Likes.objects.get(user=request.user,post=post).delete()
             user_act = -1
         
-        Post.objects.filter(id=item_id).update(like=current_like)
+        #Post.objects.filter(id=item_id).update(like=current_like)
         
         try:       
             profile = Profile.objects.get(user=post.user)

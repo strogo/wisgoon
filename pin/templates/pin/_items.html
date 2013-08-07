@@ -33,10 +33,8 @@
 		<div>
 			{% if item.status == 0 %}
 				<span>این مطلب نیاز به تایید دارد</span>
-			{% else%}
-				{% if item.status == 2 %}
+			{% elif item.status == 2 %}
 				<span>این مطلب با قوانین سایت مغایر است و تنها به شما نمایش داده می شود</span>
-				{% endif %}
 			{% endif %}
 		</div>
 		{% endif %}
