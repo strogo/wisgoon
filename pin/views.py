@@ -353,47 +353,6 @@ def sendurl(request):
         form = PinForm()
             
     return render(request, 'pin/sendurl.html',{'form':form}) 
-           
-
-@csrf_exempt
-def d_send(request):
-    token = request.GET.get('token','')
-    
-    if not token:
-        return HttpResponse('error in user validate')
-    
-    try:
-        api = ApiKey.objects.get(key=token)
-        user = api.user
-    except ApiKey.DoesNotExist:
-        return HttpResponse('error in user validate')
-    
-    if request.method == 'POST' and user.is_active:
-        form = PinDirectForm(request.POST, request.FILES)
-        if form.is_valid():
-            upload = request.FILES.values( )[ 0 ]
-            filename = create_filename(upload.name)
-            
-            try:
-                from io import FileIO, BufferedWriter
-                with BufferedWriter( FileIO( "%s/pin/images/o/%s" % (MEDIA_ROOT, filename), "wb" ) ) as dest:
-                    for c in upload.chunks( ):
-                        dest.write( c )
-                        
-                    ## after upload we need to save model
-                    model = Post()
-                    model.image = "pin/images/o/%s" % (filename)
-                    model.user = api.user
-                    model.timestamp = time.time()
-                    model.text = form.cleaned_data['description']
-                    model.category_id = form.cleaned_data['category']
-                    model.device = 2
-                    model.save()
-                    
-                    return HttpResponse('success')
-            except IOError:
-                # could not open the file most likely
-                return HttpResponse('error')
             
 @login_required
 @csrf_exempt

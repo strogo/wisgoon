@@ -1,3 +1,7 @@
+
+from io import FileIO, BufferedWriter
+
+from django.conf import settings
 from django.db.models import F, Sum
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseNotFound
@@ -5,7 +9,10 @@ from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequ
 from tastypie.models import ApiKey
 
 from pin.models import Post, Likes, Comments, Comments_score
-from pin.forms import PinDeviceUpdate
+from pin.forms import PinDirectForm, PinDeviceUpdate
+from pin.tools import create_filename
+
+MEDIA_ROOT = settings.MEDIA_ROOT
 
 def check_auth(request):
     token = request.GET.get('token','')
@@ -168,3 +175,43 @@ def post_update(request, item_id):
             return HttpResponseBadRequest('error in form')
 
     return HttpResponseBadRequest('bad request')
+
+@csrf_exempt
+def post_send(request):
+    user = check_auth(request)
+    if not user:
+        return HttpResponseForbidden('error in user validation')
+    
+    if request.method != 'POST':
+        return HttpResponseBadRequest('bad request post')
+    
+    form = PinDirectForm(request.POST, request.FILES)
+    if form.is_valid():
+        upload = request.FILES.values( )[ 0 ]
+        filename = create_filename(upload.name)
+        
+        try:
+            with BufferedWriter( FileIO( "%s/pin/images/o/%s" % (MEDIA_ROOT, filename), "wb" ) ) as dest:
+                for c in upload.chunks( ):
+                    dest.write( c )
+                    
+                model = Post()
+                model.image = "pin/images/o/%s" % (filename)
+                model.user = user
+                model.timestamp = time.time()
+                model.text = form.cleaned_data['description']
+                model.category_id = form.cleaned_data['category']
+                model.device = 2
+                model.save()
+                
+                return HttpResponse('success')
+        except IOError:
+            return HttpResponseBadRequest('error')
+
+        return HttpResponseBadRequest('bad request in form')            
+    else:
+        HttpResponseBadRequest('error in form validation')
+
+    return HttpResponseBadRequest('bad request')
+
+    

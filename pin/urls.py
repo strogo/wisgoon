@@ -17,7 +17,7 @@ urlpatterns = patterns('pin.views',
     url(r'^latest_post/', 'latest', name='pin-latest'),
     url(r'^(?P<item_id>\d+)/$', 'item', name="pin-item"),
     url(r'^send/$', 'send', name="pin-send"),
-    url(r'^d_send/$', 'd_send', name="pin-direct"),
+    
     
     
     url(r'^sendurl/$', 'sendurl', name="pin-sendurl"),
@@ -75,6 +75,7 @@ urlpatterns += patterns('pin.views_oauth',
 )
 
 urlpatterns += patterns('pin.views_device',
+    url(r'^d_send/$', 'post_send', name="pin-direct"),
     url(r'^d_like/$', 'like', name='pin-device-like'),
     url(r'^d_post_comment/$', 'post_comment', name='pin-device-post-comment'),
     url(r'^d_post_report/$', 'post_report'),
