@@ -177,12 +177,10 @@ class Post(models.Model):
     admin_image.allow_tags = True
 
     def cnt_likes(self):
-        if self.cnt_like == -1:
-            cnt = Likes.objects.filter(post_id=self.id).count()
-            Post.objects.filter(pk=self.id).update(cnt_like=cnt)
-        else:
-            cnt = self.cnt_like
-
+        #return Likes.objects.filter(post_id=self.id).count()
+    
+        cnt = Likes.objects.filter(post_id=self.id).count()
+        Post.objects.filter(pk=self.id).update(cnt_like=cnt)
         return cnt
 
     def cnt_comments(self):
