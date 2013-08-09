@@ -61,6 +61,7 @@ class PinAdmin(admin.ModelAdmin):
             user.is_active = False
             user.save()
             Post.objects.filter(user=obj.user).delete()
+            Comments.objects.filter(user=obj.user).delete()
 
     delete_all_user_posts.short_description = 'حذف تمام پست های کاربر و غیر فعال کردن'
 
