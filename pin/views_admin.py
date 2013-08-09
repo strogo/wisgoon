@@ -24,6 +24,6 @@ def post_accept(request, user_id, status):
 		return HttpResponseForbidden('cant access')
 
 	status = bool(int(status))
-	Profile.objects.filter(user_id=user_id).update(post_accept=status)
+	Profile.objects.filter(user_id=user_id).update(post_accept_admin=status)
 
 	return HttpResponseRedirect(reverse('pin-user', args=[user_id]))	

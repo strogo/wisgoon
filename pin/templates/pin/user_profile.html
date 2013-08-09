@@ -31,11 +31,13 @@
             </li>
             <li class="user_acc">
                 <label for="User_acceptability"> ارسال مطلب</label> : 
-                {% if cur_user.profile.post_accept %}
+                {% if cur_user.profile.post_accept and cur_user.profile.post_accept_admin  %}
                 <b class="tooltips" data-placement="bottom" rel="tooltip" title="مطالب ارسالی نیاز به تایید ندارند">
                     <i class="icon-ok"></i>
                 </b>
-                
+                {% if user.is_superuser %}
+                    <a href="{% url post-accept cur_user.id 0 %}">غیر فعال</a>
+                {% endif %}
                 {% else%}
                 <b class="tooltips" data-placement="bottom" rel="tooltip" title="مطالب ارسال شده بعد تایید مدیران سایت نمایش داده می شوند.">
                     <i class="icon-ban-circle"></i>

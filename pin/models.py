@@ -112,13 +112,15 @@ class Post(models.Model):
             profile = Profile.objects.get(user=self.user)
             #print "date joined: ", self.user.date_joined
             #print "timestamp joined: ", time.mktime(self.user.date_joined.timetuple())
-            if self.user.profile.post_accept :
-                self.status = 1
-            else:
-                if (self.date_lt( self.user.date_joined, 15) and self.user.profile.score > 2000) or self.user.profile.score > 5000:
-                    profile.post_accept = True
-                    profile.save()
+            if self.user.profile.post_accept_admin:
+                if self.user.profile.post_accept and self.user.profile.post_accept_admin :
                     self.status = 1
+                else:
+                    if ((self.date_lt( self.user.date_joined, 15) and self.user.profile.score > 2000) \
+                        or self.user.profile.score > 5000 ):
+                        profile.post_accept = True
+                        profile.save()
+                        self.status = 1
 
         except Profile.DoesNotExist:
             pass
