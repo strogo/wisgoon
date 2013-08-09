@@ -235,8 +235,8 @@ class PostResource(ModelResource):
                 bundle.data['like_with_user'] = True
 
         bundle.data['user_name'] = get_username(bundle.data['user'])
-        #if bundle.data['like'] == -1:
-        #    bundle.data['like']=0
+        if bundle.data['like'] == -1:
+            bundle.data['like']=0
         
         if self.get_resource_uri(bundle) == bundle.request.path:
             # this is detail

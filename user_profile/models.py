@@ -41,11 +41,11 @@ class Profile(models.Model):
     
     def cnt_calculate(self):
         try:
-            cnt = Post.objects.filter(user=self.user,status=1).aggregate(models.Sum('like'), models.Count('id'))
+            cnt = Post.objects.filter(user=self.user,status=1).aggregate(models.Sum('cnt_like'), models.Count('id'))
         except Post.DoesNotExist:
             cnt = 0
         
-        self.cnt_like = 0 if not cnt['like__sum'] else cnt['like__sum']
+        self.cnt_like = 0 if not cnt['cnt_like__sum'] else cnt['cnt_like__sum']
         self.cnt_post = cnt['id__count']
         
     def score_calculation(self):

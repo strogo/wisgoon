@@ -65,7 +65,7 @@ class Post(models.Model):
     
     report = models.IntegerField(default=0, db_index=True)
     cnt_comment = models.IntegerField(default=-1, blank=True)
-    cnt_like = models.IntegerField(default=-1, blank=True)
+    cnt_like = models.IntegerField(default=0, blank=True)
     tags = TaggableManager(blank=True)
 
     category = models.ForeignKey(Category, default=1, verbose_name='گروه')
