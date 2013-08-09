@@ -103,6 +103,7 @@ def post_report(request):
 
     return HttpResponseBadRequest(0)
 
+@csrf_exempt
 def comment_score(request, comment_id, score):
     user = check_auth(request)
     if not user:
