@@ -35,10 +35,14 @@
                 <b class="tooltips" data-placement="bottom" rel="tooltip" title="مطالب ارسالی نیاز به تایید ندارند">
                     <i class="icon-ok"></i>
                 </b>
+                
                 {% else%}
                 <b class="tooltips" data-placement="bottom" rel="tooltip" title="مطالب ارسال شده بعد تایید مدیران سایت نمایش داده می شوند.">
                     <i class="icon-ban-circle"></i>
                 </b>
+                {% if user.is_superuser %}
+                    <a href="{% url post-accept cur_user.id 1 %}">تایید شود</a>
+                {% endif %}
                 {%endif%}
             </li>
             <li class="user_acc">
@@ -46,12 +50,12 @@
                 {% if cur_user.is_active %}
                 فعال
                 {% if user.is_superuser %}
-                    <a href="{% url deactive-user cur_user.id%}">غیر فعال کردن</a>
+                    <a href="{% url activate-user cur_user.id 0%}">غیر فعال کردن</a>
                 {% endif %}
                 {% else%}
                 غیرفعال
                 {% if user.is_superuser %}
-                    <a href="{% url active-user cur_user.id%}">فعال کردن</a>
+                    <a href="{% url activate-user cur_user.id 1%}">فعال کردن</a>
                 {% endif %}
                 {%endif%}
             </li>

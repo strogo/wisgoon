@@ -74,8 +74,9 @@ urlpatterns += patterns('pin.views_oauth',
 )
 
 urlpatterns += patterns('pin.views_admin',
-    url(r'user/deactive/(?P<user_id>\d+)/$', 'deactive_user', name='deactive-user'),
-    url(r'user/active/(?P<user_id>\d+)/$', 'active_user', name='active-user'),
+    #url(r'user/deactive/(?P<user_id>\d+)/$', 'deactive_user', name='deactive-user'),
+    url(r'user/activate/(?P<user_id>\d+)/(?P<status>\d+)/$', 'activate_user', name='activate-user'),
+    url(r'user/post_accept/(?P<user_id>\d+)/(?P<status>\d+)/$', 'post_accept', name='post-accept'),
 )
 
 urlpatterns += patterns('pin.views_device',
