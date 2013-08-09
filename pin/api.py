@@ -192,7 +192,7 @@ class PostResource(ModelResource):
         
         sorts = []
         if self.popular in ['month', 'lastday', 'lastweek', 'lasteigth']:
-            sorts.append("-like")
+            sorts.append("-cnt_like")
         else:
             sorts.append('-is_ads')
             sorts.append('-id')
