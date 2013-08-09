@@ -135,6 +135,7 @@ class PostResource(ModelResource):
     user_avatar = fields.CharField(attribute = 'user__email')
     user = fields.IntegerField(attribute = 'user__id')
     likers = fields.ListField()
+    like = fields.IntegerField(attribute = 'cnt_like')
     category = fields.ToOneField(CategotyResource , 'category',full=True)
 
     like_with_user = fields.BooleanField(default=False)
@@ -234,6 +235,8 @@ class PostResource(ModelResource):
                 bundle.data['like_with_user'] = True
 
         bundle.data['user_name'] = get_username(bundle.data['user'])
+        #if bundle.data['like'] == -1:
+        #    bundle.data['like']=0
         
         if self.get_resource_uri(bundle) == bundle.request.path:
             # this is detail
