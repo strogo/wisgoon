@@ -81,6 +81,8 @@ urlpatterns += patterns('pin.views_device',
     url(r'^d/comment/score/(?P<comment_id>\d+)/(?P<score>\d+)/$', 'comment_score'),
     url(r'^d/post/delete/(?P<item_id>\d+)/$', 'post_delete'),
     url(r'^d/post/update/(?P<item_id>\d+)/$', 'post_update'),
+    url(r'^d/comment/report/(?P<comment_id>\d+)/$', 'comment_report'),
+
 )
 
 urlpatterns += patterns('', 

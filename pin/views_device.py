@@ -104,6 +104,20 @@ def post_report(request):
     return HttpResponseBadRequest(0)
 
 @csrf_exempt
+def comment_report(request, comment_id):
+    user = check_auth(request)
+    if not user:
+        return HttpResponseForbidden('error in user validation')
+
+    if comment_id and Comments.objects.filter(pk=comment_id).exists():
+        Comments.objects.filter(pk=comment_id).update(reported=True)
+        return HttpResponse(1)
+    else:
+        return HttpResponseNotFound('post not found')
+
+    return HttpResponseBadRequest(0)
+
+@csrf_exempt
 def comment_score(request, comment_id, score):
     user = check_auth(request)
     if not user:
