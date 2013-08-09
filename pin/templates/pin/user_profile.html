@@ -45,8 +45,14 @@
                 <label for="User_acceptability"> وضعیت</label> : 
                 {% if cur_user.is_active %}
                 فعال
+                {% if user.is_superuser %}
+                    <a href="{% url deactive-user cur_user.id%}">غیر فعال کردن</a>
+                {% endif %}
                 {% else%}
                 غیرفعال
+                {% if user.is_superuser %}
+                    <a href="{% url active-user cur_user.id%}">فعال کردن</a>
+                {% endif %}
                 {%endif%}
             </li>
             <li class="user_acc ">

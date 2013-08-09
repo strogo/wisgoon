@@ -73,6 +73,11 @@ urlpatterns += patterns('pin.views_oauth',
     url(r'email/activation/$', 'activation_email', name='activation_email'),
 )
 
+urlpatterns += patterns('pin.views_admin',
+    url(r'user/deactive/(?P<user_id>\d+)/$', 'deactive_user', name='deactive-user'),
+    url(r'user/active/(?P<user_id>\d+)/$', 'active_user', name='active-user'),
+)
+
 urlpatterns += patterns('pin.views_device',
     url(r'^d_send/$', 'post_send', name="pin-direct"),
     url(r'^d_like/$', 'like', name='pin-device-like'),

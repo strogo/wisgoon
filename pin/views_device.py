@@ -148,6 +148,7 @@ def comment_score(request, comment_id, score):
 
     return HttpResponseBadRequest('error')
 
+@csrf_exempt
 def post_delete(request, item_id):
     user = check_auth(request)
     if not user:
