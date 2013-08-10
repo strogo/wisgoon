@@ -73,6 +73,10 @@ urlpatterns += patterns('pin.views_oauth',
     url(r'email/activation/$', 'activation_email', name='activation_email'),
 )
 
+urlpatterns += patterns('pin.views_static',
+    url(r'app/android/', 'android', name='static-android'),
+)
+
 urlpatterns += patterns('pin.views_admin',
     #url(r'user/deactive/(?P<user_id>\d+)/$', 'deactive_user', name='deactive-user'),
     url(r'user/activate/(?P<user_id>\d+)/(?P<status>\d+)/$', 'activate_user', name='activate-user'),
