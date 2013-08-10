@@ -18,7 +18,8 @@ from PIL import Image
 from django.conf import settings
 
 from sorl.thumbnail import get_thumbnail
-from pin.models import Post, Likes, Category, Notif, Comments, Notif_actors
+from pin.models import Post, Likes, Category, Notif, Comments,\
+    Notif_actors, App_data
 from user_profile.models import Profile
 from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
@@ -32,6 +33,17 @@ class UserResource(ModelResource):
         queryset = User.objects.all()
         excludes = ['password', 'email', 'is_superuser', 'is_staff',
                     'is_active']
+
+
+class AppResource(ModelResource):
+    class Meta:
+        allowed_methods = ['get']
+        queryset = App_data.objects.all()
+        resource_name = "app"
+        paginator_class = Paginator
+        filtering = {
+            "current": ('exact'),
+        }
 
 
 class ProfileObjectsOnlyAuthorization(Authorization):

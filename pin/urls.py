@@ -2,24 +2,23 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
 from pin.feeds import LatestPinFeed
-from pin.api import PostResource, CategotyResource, CommentResource, NotifyResource, ProfileResource
+from pin.api import PostResource, CategotyResource, CommentResource,\
+    NotifyResource, ProfileResource, AppResource
 
 admin.autodiscover()
 
-post_resource=PostResource()
-cat_resource=CategotyResource()
+post_resource = PostResource()
+cat_resource = CategotyResource()
 comment_resource = CommentResource()
 notify_resource = NotifyResource()
 profile_resource = ProfileResource()
+app_resource = AppResource()
 
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
     url(r'^latest_post/', 'latest', name='pin-latest'),
     url(r'^(?P<item_id>\d+)/$', 'item', name="pin-item"),
     url(r'^send/$', 'send', name="pin-send"),
-    
-    
-    
     url(r'^sendurl/$', 'sendurl', name="pin-sendurl"),
     url(r'^edit/(?P<post_id>\d+)/$', 'edit', name="pin-item-edit"),
     url(r'^ajax_url/$', 'a_sendurl', name="pin-sendurl-a"),
@@ -40,7 +39,6 @@ urlpatterns = patterns('pin.views',
     url(r'^top-group-user/$', 'topgroupuser', name='pin-topgroupuser'),
     url(r'^notif/$','notif_user', name="pin-notif-user"),
     url(r'^report/(?P<pin_id>\d+)','report',name='report_pin'),
-
     url(r'^trust/user/(?P<user_id>\d+)','trust_user',name='trust_user'),
     url(r'^send_comment/', 'send_comment', name='pin-comment'),
     url(r'^comment/delete/(?P<id>\d+)', 'comment_delete', name="pin-comment-delete"),
@@ -66,6 +64,7 @@ urlpatterns = patterns('pin.views',
     url(r'^api/com/', include(comment_resource.urls)),
     url(r'^api/notif/', include(notify_resource.urls)),
     url(r'^api/profile/', include(profile_resource.urls)),
+    url(r'^api/app/', include(app_resource.urls)),
 )
 
 urlpatterns += patterns('pin.views_oauth',

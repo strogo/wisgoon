@@ -2,7 +2,7 @@
 
 send(){
 	git push origin vahid
-	ssh root@wisgoon.com  -p 2200 "cd /home/wisgoon/public_html && git merge vahid && /etc/init.d/httpd restart"
+	ssh wisgoon@wisgoon.com "cd /home/wisgoon/wisgoon.com/www && git merge vahid && touch reload"
 }
 
 case $1 in
