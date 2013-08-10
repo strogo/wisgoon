@@ -337,6 +337,7 @@ class App_data(models.Model):
     name = models.CharField(max_length=250)
     file = models.FileField(upload_to='app')
     version = models.CharField(max_length=50)
+    version_code = models.IntegerField(default=0, blank=True)
     current = models.BooleanField(default=1)
 
 class Comments(models.Model):
