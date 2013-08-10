@@ -1,36 +1,34 @@
 # coding: utf-8
 
-import os
-import time
+from time import time, mktime
 import json
 import urllib
-import sys
 import datetime
-import time
 from shutil import copyfile
 
-from httplib import HTTPSConnection, HTTPConnection
+from httplib import HTTPSConnection
 from BeautifulSoup import BeautifulStoneSoup
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
-from django.contrib.comments.models import Comment
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models import Sum
-from django.http import HttpResponseRedirect, HttpResponseBadRequest, Http404, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponseBadRequest,\
+    Http404, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, render
 from django.template.context import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
 import pin_image
 from pin.crawler import get_images
-from pin.forms import PinForm, PinUpdateForm, PinDirectForm
-from pin.models import Post, Follow, Stream, Likes, Notif, Category, Notif_actors, Comments, Report, Comments_score
+from pin.forms import PinForm, PinUpdateForm
+from pin.models import Post, Follow, Stream, Likes, Notif, Category,\
+    Notif_actors, Comments, Report, Comments_score
 from pin.tools import create_filename
 
 #from rss.models import Report
@@ -38,33 +36,37 @@ from pin.tools import create_filename
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
 
-from tastypie.models import ApiKey
-
 MEDIA_ROOT = settings.MEDIA_ROOT
 
 REPORT_TYPE = settings.REPORT_TYPE
+
 
 def home(request):
     try:
         timestamp = int(request.GET.get('older', 0))
     except ValueError:
         timestamp = 0
-    
+
     if timestamp == 0:
-        latest_items =\
-        Post.objects.filter(show_in_default=1, status=1).select_related().order_by('-is_ads','-timestamp')[:20]
+        latest_items = Post.objects.filter(show_in_default=1, status=1)\
+            .select_related().order_by('-is_ads', '-timestamp')[:20]
     else:
-        latest_items = Post.objects.filter(show_in_default=1, status=1).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
-    
+        latest_items = Post.objects.filter(show_in_default=1, status=1)\
+            .extra(where=['timestamp<%s'], params=[timestamp])\
+            .order_by('-timestamp')[:20]
+
     form = PinForm()
-    
+
     if request.is_ajax():
         if latest_items.exists():
-            return render(request, 'pin/_items.html', {'latest_items': latest_items,'pin_form':form})
+            return render(request,
+                          'pin/_items.html',
+                          {'latest_items': latest_items, 'pin_form': form})
         else:
             return HttpResponse(0)
     else:
         return render(request, 'pin/home.html', {'latest_items': latest_items})
+
 
 def latest(request):
 
@@ -72,18 +74,22 @@ def latest(request):
         timestamp = int(request.GET.get('older', 0))
     except ValueError:
         timestamp = 0
-    
+
     if timestamp == 0:
-        latest_items =\
-        Post.objects.filter(status=1).select_related().order_by('-is_ads','-timestamp')[:20]
+        latest_items = Post.objects.filter(status=1)\
+            .select_related().order_by('-is_ads', '-timestamp')[:20]
     else:
-        latest_items = Post.objects.filter(status=1).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
-    
+        latest_items = Post.objects.filter(status=1)\
+            .extra(where=['timestamp<%s'], params=[timestamp])\
+            .order_by('-timestamp')[:20]
+
     form = PinForm()
-    
+
     if request.is_ajax():
         if latest_items.exists():
-            return render(request, 'pin/_items.html', {'latest_items': latest_items,'pin_form':form})
+            return render(request,
+                          'pin/_items.html',
+                          {'latest_items': latest_items, 'pin_form': form})
         else:
             return HttpResponse(0)
     else:
@@ -97,25 +103,33 @@ def category(request, cat_id):
         timestamp = int(request.GET.get('older', 0))
     except ValueError:
         timestamp = 0
-    
+
     if timestamp == 0:
-        latest_items =\
-        Post.objects.filter(status=1, category=cat_id).select_related().order_by('-is_ads','-timestamp')[:20]
+        latest_items = Post.objects.filter(status=1, category=cat_id)\
+            .select_related()\
+            .order_by('-is_ads', '-timestamp')[:20]
     else:
-        latest_items = Post.objects.filter(status=1, category=cat_id).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
-    
+        latest_items = Post.objects.filter(status=1, category=cat_id)\
+            .extra(where=['timestamp<%s'], params=[timestamp])\
+            .order_by('-timestamp')[:20]
+
     form = PinForm()
-    
+
     if request.is_ajax():
         if latest_items.exists():
-            return render(request, 'pin/_items.html', {'latest_items': latest_items,'pin_form':form})
+            return render(request,
+                          'pin/_items.html',
+                          {'latest_items': latest_items,
+                          'pin_form': form})
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin/category.html', {'latest_items': latest_items, 'cur_cat': cat})
+        return render(request,
+                      'pin/category.html',
+                      {'latest_items': latest_items, 'cur_cat': cat})
 
 
-def popular(request, interval = ""):
+def popular(request, interval=""):
     ROW_PER_PAGE = 20
 
     if interval and interval in ['month', 'lastday', 'lasteigth', 'lastweek']:
@@ -127,52 +141,61 @@ def popular(request, interval = ""):
             data_from = datetime.datetime.now() - datetime.timedelta(days=7)
         elif interval == 'lasteigth':
             data_from = datetime.datetime.now() - datetime.timedelta(hours=8)
-        
-        start_from = time.mktime(data_from.timetuple())
-        post_list = \
-        Post.objects.filter(status=1).extra(where=['timestamp>%s'], params=[start_from]).select_related().order_by('-cnt_like')
+
+        start_from = mktime(data_from.timetuple())
+        post_list = Post.objects.filter(status=1)\
+            .extra(where=['timestamp>%s'], params=[start_from])\
+            .select_related().order_by('-cnt_like')
 
     else:
-        post_list = Post.objects.filter(status=1).select_related().order_by('-cnt_like')
+        post_list = Post.objects.filter(status=1)\
+            .select_related().order_by('-cnt_like')
     paginator = Paginator(post_list, ROW_PER_PAGE)
-    
+
     try:
         offset = int(request.GET.get('older', 1))
     except ValueError:
         offset = 1
-    
+
     try:
         latest_items = paginator.page(offset)
     except PageNotAnInteger:
         latest_items = paginator.page(1)
     except EmptyPage:
         return HttpResponse(0)
-    
+
     form = PinForm()
-    
+
     if request.is_ajax():
-        return render(request, 'pin/_items.html', 
-                              {'latest_items': latest_items,'pin_form':form,'offset':latest_items.next_page_number})
-        
+        return render(request, 'pin/_items.html',
+                      {'latest_items': latest_items,
+                      'pin_form': form,
+                      'offset': latest_items.next_page_number})
+
     else:
-        return render(request, 'pin/home.html', 
-                              {'latest_items': latest_items, 'offset':latest_items.next_page_number})
-    
+        return render(request, 'pin/home.html',
+                      {'latest_items': latest_items,
+                      'offset': latest_items.next_page_number})
+
 
 def topuser(request):
-    top_user=Profile.objects.all().order_by('-score')[:152]
+    top_user = Profile.objects.all().order_by('-score')[:152]
 
     return render(request, 'pin/topuser.html', {'top_user': top_user})
+
 
 def topgroupuser(request):
     cats = Category.objects.all()
     for cat in cats:
-        cat.tops = Post.objects.values('user_id').filter(category_id=cat.id).annotate(sum_like=Sum('like')).order_by('-sum_like')[:4]
+        cat.tops = Post.objects.values('user_id')\
+            .filter(category_id=cat.id)\
+            .annotate(sum_like=Sum('like'))\
+            .order_by('-sum_like')[:4]
         for ut in cat.tops:
             ut['user'] = User.objects.get(pk=ut['user_id'])
-        
 
     return render(request, 'pin/topgroupuser.html', {'cats': cats})
+
 
 def user(request, user_id, user_name=None):
     user = get_object_or_404(User, pk=user_id)
@@ -185,35 +208,44 @@ def user(request, user_id, user_name=None):
         timestamp = int(request.GET.get('older', 0))
     except ValueError:
         timestamp = 0
-    
+
     if request.user == user:
         if timestamp == 0:
-          latest_items = Post.objects.filter(user=user_id).order_by('-timestamp')[:20]
+            latest_items = Post.objects.filter(user=user_id)\
+                .order_by('-timestamp')[:20]
         else:
-            latest_items = Post.objects.filter(user=user_id).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
+            latest_items = Post.objects.filter(user=user_id)\
+                .extra(where=['timestamp<%s'], params=[timestamp])\
+                .order_by('-timestamp')[:20]
 
     else:
         if timestamp == 0:
-            latest_items = Post.objects.filter(status=1, user=user_id).order_by('-timestamp')[:20]
+            latest_items = Post.objects.filter(status=1, user=user_id)\
+                .order_by('-timestamp')[:20]
         else:
-            latest_items = Post.objects.filter(user=user_id,status=1).extra(where=['timestamp<%s'], params=[timestamp]).order_by('-timestamp')[:20]
-        
+            latest_items = Post.objects.filter(user=user_id, status=1)\
+                .extra(where=['timestamp<%s'], params=[timestamp])\
+                .order_by('-timestamp')[:20]
+
     form = PinForm()
-    
+
     if request.is_ajax():
         if latest_items.exists():
-            return render(request, 'pin/_items.html', {'latest_items': latest_items,'pin_form':form})
+            return render(request, 'pin/_items.html',
+                          {'latest_items': latest_items, 'pin_form': form})
         else:
             return HttpResponse(0)
     else:
-        
-        follow_status = Follow.objects.filter(follower=request.user.id,
-            following=user.id).count()
-        
-        return render(request, 'pin/user.html', 
-                              {'latest_items': latest_items, 'follow_status':follow_status,
-                               'profile':profile,
-                               'cur_user':user})
+
+        follow_status = Follow.objects\
+            .filter(follower=request.user.id, following=user.id).count()
+
+        return render(request, 'pin/user.html',
+                      {'latest_items': latest_items,
+                      'follow_status': follow_status,
+                      'profile': profile,
+                      'cur_user': user})
+
 
 @login_required
 def following(request):
@@ -221,65 +253,77 @@ def following(request):
         timestamp = int(request.GET.get('older', 0))
     except ValueError:
         timestamp = 0
-    
+
     if timestamp == 0:
-        stream = Stream.objects.filter(user=request.user).order_by('-date')[:20]
+        stream = Stream.objects.filter(user=request.user)\
+            .order_by('-date')[:20]
     else:
-        stream = Stream.objects.filter(user=request.user).extra(where=['date<%s'], params=[timestamp]).order_by('-date')[:20]
-    
+        stream = Stream.objects.filter(user=request.user)\
+            .extra(where=['date<%s'], params=[timestamp])\
+            .order_by('-date')[:20]
+
     idis = []
     for p in stream:
         idis.append(int(p.post_id))
-    
-    latest_items = Post.objects.filter(id__in=idis,status=1).all().order_by('-id')
-    
+
+    latest_items = Post.objects.filter(id__in=idis, status=1)\
+        .all().order_by('-id')
+
     #objects = dict([(int(obj.id), obj) for obj in latest_items])
-    
+
     #sorted_objects = [objects[id] for id in idis]
     #sorted_objects=objects
     #for id in idis:
     #    sorted_objects.append(objects[id])
 
-    sorted_objects=latest_items
+    sorted_objects = latest_items
 
     form = PinForm()
-    
+
     if request.is_ajax():
         if latest_items.exists():
-            return render(request, 'pin/_items.html', {'latest_items': sorted_objects,'pin_form':form})
+            return render(request,
+                          'pin/_items.html',
+                          {'latest_items': sorted_objects,
+                          'pin_form': form})
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin/home.html', {'latest_items': sorted_objects})
+        return render(request,
+                      'pin/home.html',
+                      {'latest_items': sorted_objects})
+
 
 @login_required
 def follow(request, following, action):
     if int(following) == request.user.id:
         return HttpResponseRedirect(reverse('pin-home'))
-    
+
     try:
         following = User.objects.get(pk=int(following))
-        
-        follow, created = Follow.objects.get_or_create(follower=request.user, following=following)
-        
+
+        follow, created = Follow.objects.get_or_create(follower=request.user,
+                                                       following=following)
+
         if int(action) == 0:
             follow.delete()
-            
-            Stream.objects.filter(following=following, user=request.user).all().delete()
-            
+            Stream.objects.filter(following=following, user=request.user)\
+                .all().delete()
         else:
-            posts = Post.objects.filter(user=following,status=1)[:100]
-            
+            posts = Post.objects.filter(user=following, status=1)[:100]
             with transaction.commit_on_success():
                 for post in posts:
-                    stream = Stream(post=post, user=request.user, date=post.timestamp, following=following)
+                    stream = Stream(post=post,
+                                    user=request.user,
+                                    date=post.timestamp,
+                                    following=following)
                     stream.save()
-        
         return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
     except User.DoesNotExist:
         return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
 
-def item(request, item_id):   
+
+def item(request, item_id):
     post = get_object_or_404(Post.objects.select_related().filter(id=item_id,status=1)[:1])
     post.view += 1
     post.save()
@@ -739,10 +783,10 @@ def report(request, pin_id):
         return HttpResponseRedirect('/')
 
     try:
-        report_key= Report.objects.get(user=request.user,post=post)
+        Report.objects.get(user=request.user,post=post)
         created = False
     except Report.DoesNotExist:
-        report_key = Report.objects.create(user=request.user,post=post)
+        Report.objects.create(user=request.user,post=post)
         created = True
 
     if created:

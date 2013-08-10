@@ -113,7 +113,6 @@ class CommentResource(ModelResource):
     user_url = fields.IntegerField(attribute='user__id', null=True)
     object_pk = fields.IntegerField(attribute='object_pk_id', null=True)
 
-
     class Meta:
         allowed_methods = ['get']
         queryset = Comments.objects.filter(is_public=True)
@@ -125,7 +124,8 @@ class CommentResource(ModelResource):
         }
 
     def dehydrate(self, bundle):
-        bundle.data['user_avatar'] = daddy_avatar.get_avatar(bundle.data['user_url'], size=100)
+        user = bundle.data['user_url']
+        bundle.data['user_avatar'] = daddy_avatar.get_avatar(user, size=100)
         bundle.data['user_name'] = get_username(bundle.data['user_url'])
 
         return bundle
@@ -150,7 +150,7 @@ class PostResource(ModelResource):
     cur_user = None
 
     class Meta:
-        queryset = Post.objects.filter(status=1).order_by('-is_ads','-id')
+        queryset = Post.objects.filter(status=1).order_by('-is_ads', '-id')
         resource_name = 'post'
         allowed_methods = ['get']
         paginator_class = Paginator
@@ -158,43 +158,44 @@ class PostResource(ModelResource):
         cache = SimpleCache()
 
     def apply_filters(self, request, applicable_filters):
-        base_object_list = super(PostResource, self).apply_filters(request, applicable_filters)
+        base_object_list = super(PostResource, self)\
+            .apply_filters(request, applicable_filters)
         userid = request.GET.get('user_id', None)
         category_id = request.GET.get('category_id', None)
         before = request.GET.get('before', None)
         popular = request.GET.get('popular', None)
         filters = {}
-        
+
         if userid:
             filters.update(dict(user_id=userid))
-        
+
         if category_id:
             category_ids = category_id.replace(',', ' ').split(' ')
             filters.update(dict(category_id__in=category_ids))
-        
+
         if before:
             filters.update(dict(id__lt=before))
 
         if popular:
             date_from = None
+            dn = datetime.datetime.now()
             if popular == 'month':
-                date_from = datetime.datetime.now() - datetime.timedelta(days=30)
+                date_from = dn - datetime.timedelta(days=30)
             elif popular == 'lastday':
-                date_from = datetime.datetime.now() - datetime.timedelta(days=1)
+                date_from = dn - datetime.timedelta(days=1)
             elif popular == 'lastweek':
-                date_from = datetime.datetime.now() - datetime.timedelta(days=7)
+                date_from = dn - datetime.timedelta(days=7)
             elif popular == 'lasteigth':
-                date_from = datetime.datetime.now() - datetime.timedelta(hours=8)
-            
+                date_from = dn - datetime.timedelta(hours=8)
+
             if date_from:
                 start_from = time.mktime(date_from.timetuple())
                 filters.update(dict(timestamp__gt=start_from))
-            
+
         return base_object_list.filter(**filters).distinct()
-    
+
     def apply_sorting(self, object_list, options=None):
         base_object_list = super(PostResource, self).apply_sorting(object_list)
-        
         sorts = []
         if self.popular in ['month', 'lastday', 'lastweek', 'lasteigth']:
             sorts.append("-cnt_like")
@@ -213,26 +214,30 @@ class PostResource(ModelResource):
             except:
                 pass
 
-        self.thumb_size = request.GET.get(self.thumb_query_name, self.thumb_default_size)
+        self.thumb_size = request.GET.get(self.thumb_query_name,
+                                          self.thumb_default_size)
         self.popular = request.GET.get('popular', None)
-        return super(PostResource, self).dispatch(request_type, request, **kwargs)
-    
+        return super(PostResource, self)\
+            .dispatch(request_type, request, **kwargs)
+
     def dehydrate(self, bundle):
         id = bundle.data['id']
-        
         o_image = bundle.data['image']
         try:
-            im = get_thumbnail(o_image, self.thumb_size, quality=self.thumb_quality, upscale=False)
+            im = get_thumbnail(o_image,
+                               self.thumb_size,
+                               quality=self.thumb_quality,
+                               upscale=False)
         except:
             im = ""
 
         if im:
             bundle.data['thumbnail'] = im
-            bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
+            bundle.data['hw'] = "%sx%s" % (im.height, im.width)
 
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
-
-        bundle.data['user_avatar'] = daddy_avatar.get_avatar(bundle.data['user'], size=100)
+        user = bundle.data['user']
+        bundle.data['user_avatar'] = daddy_avatar.get_avatar(user, size=100)
 
         if self.cur_user:
             if Likes.objects.filter(post_id=id, user=self.cur_user).count():
@@ -241,34 +246,30 @@ class PostResource(ModelResource):
         bundle.data['user_name'] = get_username(bundle.data['user'])
         if bundle.data['like'] == -1:
             bundle.data['like'] = 0
-        
+
         if bundle.data['cnt_comment'] == -1:
             bundle.data['cnt_comment'] = 0
-        
+
         if self.get_resource_uri(bundle) == bundle.request.path:
             # this is detail
-            #del(bundle.data['thumbnail'])
-            #post = Post.objects.get(pk=id)
-            #post.view += 1
-            #post.save()
-        
-                   
             img_path = os.path.join(settings.MEDIA_ROOT, o_image)
-            #print img_path
             im = Image.open(img_path)
-            w,h = im.size
-            bundle.data['large_hw'] = "%sx%s" % ( h,w )
+            w, h = im.size
+            bundle.data['large_hw'] = "%sx%s" % (h, w)
 
             likers = Likes.objects.filter(post_id=id).all()
             ar = []
             for lk in likers:
-                ar.append([lk.user.id,lk.user.username,\
-                daddy_avatar.get_avatar(lk.user, size=100)])
-            
+                ar.append(
+                    [
+                        lk.user.id,
+                        lk.user.username,
+                        daddy_avatar.get_avatar(lk.user, size=100)
+                    ]
+                )
             bundle.data['likers'] = ar
-                
-        
         return bundle
+
 
 class NotifyResource(ModelResource):
     actors = fields.ListField()
@@ -298,12 +299,18 @@ class NotifyResource(ModelResource):
 
         if im:
             bundle.data['thumbnail'] = im
-            bundle.data['hw'] = "%sx%s" % (im.height, im.width) 
-        
+            bundle.data['hw'] = "%sx%s" % (im.height, im.width)
+
         actors = Notif_actors.objects.filter(notif=id).all()[:10]
         ar = []
         for lk in actors:
-            ar.append([lk.actor.id,lk.actor.username,daddy_avatar.get_avatar(lk.actor, size=100)])
+            ar.append(
+                [
+                    lk.actor.id,
+                    lk.actor.username,
+                    daddy_avatar.get_avatar(lk.actor, size=100)
+                ]
+            )
 
         bundle.data['actors'] = ar
 
