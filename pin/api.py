@@ -6,7 +6,6 @@ from tastypie.paginator import Paginator
 from tastypie import fields
 from tastypie.cache import SimpleCache
 from tastypie.models import ApiKey
-from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import Authorization
 
 from django.contrib.auth.models import User
@@ -17,8 +16,6 @@ from tastypie.exceptions import Unauthorized
 
 from PIL import Image
 from django.conf import settings
-from django.contrib.comments.models import Comment
-from django.contrib.contenttypes.models import ContentType
 
 from sorl.thumbnail import get_thumbnail
 from pin.models import Post, Likes, Category, Notif, Comments, Notif_actors
@@ -28,11 +25,13 @@ from daddy_avatar.templatetags import daddy_avatar
 
 models.signals.post_save.connect(create_api_key, sender=User)
 
+
 class UserResource(ModelResource):
 
     class Meta:
         queryset = User.objects.all()
-        excludes = ['password', 'email', 'is_superuser', 'is_staff', 'is_active']
+        excludes = ['password', 'email', 'is_superuser', 'is_staff',
+                    'is_active']
 
 
 class ProfileObjectsOnlyAuthorization(Authorization):
@@ -75,30 +74,34 @@ class ProfileObjectsOnlyAuthorization(Authorization):
         raise Unauthorized("Sorry, no deletes.")
         #pass
 
+
 class ProfileResource(ModelResource):
-    user = fields.IntegerField(attribute = 'user__id')
-    user_name = fields.CharField(attribute = 'user__username')
+    user = fields.IntegerField(attribute='user__id')
+    user_name = fields.CharField(attribute='user__username')
 
     class Meta:
         allowed_methods = ['get']
         ordering = ['score']
         queryset = Profile.objects.all()
-        resource_name="profile"
+        resource_name = "profile"
         paginator_class = Paginator
         #authentication = ApiKeyAuthentication()
         #authorization = ProfileObjectsOnlyAuthorization()
         filtering = {
-            "user":('exact'),
+            "user": ('exact'),
         }
 
     def dehydrate(self, bundle):
-        bundle.data['user_avatar'] = daddy_avatar.get_avatar(bundle.data['user'], size=300)
+        user = bundle.data['user']
+        bundle.data['user_avatar'] = daddy_avatar.get_avatar(user, size=300)
         return bundle
+
 
 class CategotyResource(ModelResource):
     class Meta:
         queryset = Category.objects.all()
-        resource_name="category"
+        resource_name = "category"
+
 
 class LikesResource(ModelResource):
     class Meta:
@@ -107,8 +110,10 @@ class LikesResource(ModelResource):
 
 
 class CommentResource(ModelResource):
-    user_url = fields.IntegerField(attribute = 'user__id',  null=True)
-    object_pk = fields.IntegerField(attribute = 'object_pk_id',  null=True)
+    user_url = fields.IntegerField(attribute='user__id', null=True)
+    object_pk = fields.IntegerField(attribute='object_pk_id', null=True)
+
+
     class Meta:
         allowed_methods = ['get']
         queryset = Comments.objects.filter(is_public=True)
@@ -124,19 +129,20 @@ class CommentResource(ModelResource):
         bundle.data['user_name'] = get_username(bundle.data['user_url'])
 
         return bundle
-        
-class PostResource(ModelResource):  
+
+
+class PostResource(ModelResource):
     thumb_default_size = "100x100"
     thumb_size = "100x100"
     thumb_crop = 'center'
     thumb_quality = 99
     thumb_query_name = 'thumb_size'
-    user_name = fields.CharField(attribute = 'user__username')
-    user_avatar = fields.CharField(attribute = 'user__email')
-    user = fields.IntegerField(attribute = 'user__id')
+    user_name = fields.CharField(attribute='user__username')
+    user_avatar = fields.CharField(attribute='user__email')
+    user = fields.IntegerField(attribute='user__id')
     likers = fields.ListField()
-    like = fields.IntegerField(attribute = 'cnt_like')
-    category = fields.ToOneField(CategotyResource , 'category',full=True)
+    like = fields.IntegerField(attribute='cnt_like')
+    category = fields.ToOneField(CategotyResource, 'category', full=True)
 
     like_with_user = fields.BooleanField(default=False)
     popular = None
@@ -148,12 +154,11 @@ class PostResource(ModelResource):
         resource_name = 'post'
         allowed_methods = ['get']
         paginator_class = Paginator
-        fields = ['id','image','like','text','url']
+        fields = ['id', 'image', 'like', 'text', 'url', 'cnt_comment']
         cache = SimpleCache()
 
     def apply_filters(self, request, applicable_filters):
         base_object_list = super(PostResource, self).apply_filters(request, applicable_filters)
-        
         userid = request.GET.get('user_id', None)
         category_id = request.GET.get('category_id', None)
         before = request.GET.get('before', None)
@@ -203,7 +208,7 @@ class PostResource(ModelResource):
         token = request.GET.get('token', '')
         if token:
             try:
-                api = ApiKey.objects.get(key=token)                                     
+                api = ApiKey.objects.get(key=token)
                 self.cur_user = api.user
             except:
                 pass
@@ -227,7 +232,6 @@ class PostResource(ModelResource):
 
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
 
-        user_email = bundle.data['user_avatar']
         bundle.data['user_avatar'] = daddy_avatar.get_avatar(bundle.data['user'], size=100)
 
         if self.cur_user:
@@ -236,7 +240,10 @@ class PostResource(ModelResource):
 
         bundle.data['user_name'] = get_username(bundle.data['user'])
         if bundle.data['like'] == -1:
-            bundle.data['like']=0
+            bundle.data['like'] = 0
+        
+        if bundle.data['cnt_comment'] == -1:
+            bundle.data['cnt_comment'] = 0
         
         if self.get_resource_uri(bundle) == bundle.request.path:
             # this is detail
