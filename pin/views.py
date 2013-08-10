@@ -17,7 +17,7 @@ from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.http import HttpResponseRedirect, HttpResponseBadRequest,\
     Http404, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, render
@@ -31,37 +31,37 @@ from pin.models import Post, Follow, Stream, Likes, Notif, Category,\
     Notif_actors, Comments, Report, Comments_score
 from pin.tools import create_filename
 
-#from rss.models import Report
-
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
 
 MEDIA_ROOT = settings.MEDIA_ROOT
-
 REPORT_TYPE = settings.REPORT_TYPE
 
 
-def home(request):
+def get_request_timestamp(request):
     try:
         timestamp = int(request.GET.get('older', 0))
     except ValueError:
         timestamp = 0
+    return timestamp
+
+
+def home(request):
+    timestamp = get_request_timestamp(request)
 
     if timestamp == 0:
-        latest_items = Post.objects.filter(show_in_default=1, status=1)\
+        latest_items = Post.accepted.filter(show_in_default=1)\
             .select_related().order_by('-is_ads', '-timestamp')[:20]
     else:
-        latest_items = Post.objects.filter(show_in_default=1, status=1)\
+        latest_items = Post.accepted.filter(show_in_default=1)\
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
-
-    form = PinForm()
 
     if request.is_ajax():
         if latest_items.exists():
             return render(request,
                           'pin/_items.html',
-                          {'latest_items': latest_items, 'pin_form': form})
+                          {'latest_items': latest_items})
         else:
             return HttpResponse(0)
     else:
@@ -69,27 +69,21 @@ def home(request):
 
 
 def latest(request):
-
-    try:
-        timestamp = int(request.GET.get('older', 0))
-    except ValueError:
-        timestamp = 0
+    timestamp = get_request_timestamp(request)
 
     if timestamp == 0:
-        latest_items = Post.objects.filter(status=1)\
+        latest_items = Post.accepted\
             .select_related().order_by('-is_ads', '-timestamp')[:20]
     else:
-        latest_items = Post.objects.filter(status=1)\
+        latest_items = Post.accepted\
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
-
-    form = PinForm()
 
     if request.is_ajax():
         if latest_items.exists():
             return render(request,
                           'pin/_items.html',
-                          {'latest_items': latest_items, 'pin_form': form})
+                          {'latest_items': latest_items})
         else:
             return HttpResponse(0)
     else:
@@ -99,10 +93,7 @@ def latest(request):
 def category(request, cat_id):
     cat = get_object_or_404(Category, pk=cat_id)
     cat_id = cat.id
-    try:
-        timestamp = int(request.GET.get('older', 0))
-    except ValueError:
-        timestamp = 0
+    timestamp = get_request_timestamp(request)
 
     if timestamp == 0:
         latest_items = Post.objects.filter(status=1, category=cat_id)\
@@ -113,14 +104,11 @@ def category(request, cat_id):
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
 
-    form = PinForm()
-
     if request.is_ajax():
         if latest_items.exists():
             return render(request,
                           'pin/_items.html',
-                          {'latest_items': latest_items,
-                          'pin_form': form})
+                          {'latest_items': latest_items})
         else:
             return HttpResponse(0)
     else:
@@ -164,12 +152,9 @@ def popular(request, interval=""):
     except EmptyPage:
         return HttpResponse(0)
 
-    form = PinForm()
-
     if request.is_ajax():
         return render(request, 'pin/_items.html',
                       {'latest_items': latest_items,
-                      'pin_form': form,
                       'offset': latest_items.next_page_number})
 
     else:
@@ -189,7 +174,7 @@ def topgroupuser(request):
     for cat in cats:
         cat.tops = Post.objects.values('user_id')\
             .filter(category_id=cat.id)\
-            .annotate(sum_like=Sum('like'))\
+            .annotate(sum_like=Sum('cnt_like'))\
             .order_by('-sum_like')[:4]
         for ut in cat.tops:
             ut['user'] = User.objects.get(pk=ut['user_id'])
@@ -204,10 +189,7 @@ def user(request, user_id, user_name=None):
     if not profile.count_flag:
         profile.user_statics()
 
-    try:
-        timestamp = int(request.GET.get('older', 0))
-    except ValueError:
-        timestamp = 0
+    timestamp = get_request_timestamp(request)
 
     if request.user == user:
         if timestamp == 0:
@@ -249,10 +231,7 @@ def user(request, user_id, user_name=None):
 
 @login_required
 def following(request):
-    try:
-        timestamp = int(request.GET.get('older', 0))
-    except ValueError:
-        timestamp = 0
+    timestamp = get_request_timestamp(request)
 
     if timestamp == 0:
         stream = Stream.objects.filter(user=request.user)\
@@ -269,23 +248,13 @@ def following(request):
     latest_items = Post.objects.filter(id__in=idis, status=1)\
         .all().order_by('-id')
 
-    #objects = dict([(int(obj.id), obj) for obj in latest_items])
-
-    #sorted_objects = [objects[id] for id in idis]
-    #sorted_objects=objects
-    #for id in idis:
-    #    sorted_objects.append(objects[id])
-
     sorted_objects = latest_items
-
-    form = PinForm()
 
     if request.is_ajax():
         if latest_items.exists():
             return render(request,
                           'pin/_items.html',
-                          {'latest_items': sorted_objects,
-                          'pin_form': form})
+                          {'latest_items': sorted_objects})
         else:
             return HttpResponse(0)
     else:
@@ -324,13 +293,12 @@ def follow(request, following, action):
 
 
 def item(request, item_id):
-    post = get_object_or_404(Post.objects.select_related().filter(id=item_id,status=1)[:1])
-    post.view += 1
-    post.save()
+    post = get_object_or_404(Post.objects.select_related().filter(id=item_id, status=1)[:1])
+    Post.objects.filter(id=item_id).update(view=F('view') + 1)
     
     post.tag = post.tags.all()
 
-    if request.user.is_superuser:
+    if request.user.is_superuser and request.GET.get('ip', None):
         post.comments = Comments.objects.filter(object_pk=post)
         post.likes = Likes.objects.filter(post=post).order_by('ip')
     else:
@@ -338,19 +306,21 @@ def item(request, item_id):
         post.likes = Likes.objects.filter(post=post)
     
     try:
-        post.prev = Post.objects.filter(status=1).extra(where=['id<%s'], params=[post.id]).order_by('-id')[:1][0]
-        post.next = Post.objects.filter(status=1).extra(where=['id>%s'], params=[post.id]).order_by('id')[:1][0]
+        post.prev = Post.objects.filter(status=1)\
+            .extra(where=['id<%s'], params=[post.id]).order_by('-id')[:1][0]
+        post.next = Post.objects.filter(status=1)\
+            .extra(where=['id>%s'], params=[post.id]).order_by('id')[:1][0]
     except:
         pass
     
     follow_status = Follow.objects.filter(follower=request.user.id, following=post.user.id).count()
     
     if request.is_ajax():
-        return render(request, 'pin/item_inner.html', 
-                              {'post': post, 'follow_status':follow_status})
+        return render(request, 'pin/item_inner.html',
+                      {'post': post, 'follow_status': follow_status})
     else:
-        return render(request, 'pin/item.html', 
-                              {'post': post, 'follow_status':follow_status})
+        return render(request, 'pin/item.html',
+                      {'post': post, 'follow_status': follow_status})
 
 @login_required
 def sendurl(request):
@@ -365,20 +335,15 @@ def sendurl(request):
             image_url= model.image
             
             filename = image_url.split('/')[-1]
-            
-            #str = "%f" % time.time()
-            #str = str.replace('.', '')
-        
-            #filename = "%s%s" % (str, os.path.splitext(filename)[1])
+
             filename = create_filename(filename)
-            #filename = "%s%s" % (str, filename)
                         
             image_on = "%s/pin/images/o/%s" % ( MEDIA_ROOT, filename)
                                  
             urllib.urlretrieve(image_url, image_on)
             
             model.image = "pin/images/o/%s" % (filename)
-            model.timestamp = time.time()
+            model.timestamp = time()
             model.user = request.user
             model.save()
             
@@ -397,6 +362,7 @@ def sendurl(request):
         form = PinForm()
             
     return render(request, 'pin/sendurl.html',{'form':form}) 
+
             
 @login_required
 @csrf_exempt
@@ -415,26 +381,27 @@ def a_sendurl(request):
     else:
         return HttpResponse(0)
 
+
 @login_required
 def send(request):
     if request.method == "POST":
         post_values = request.POST.copy()
         tags = post_values['tags']
-        post_values['tags']=tags[tags.find("[")+1:tags.find("]")]
+        post_values['tags'] = tags[tags.find("[") + 1:tags.find("]")]
         form = PinForm(post_values)
         if form.is_valid():
             model = form.save(commit=False)
             
-            filename= model.image
+            filename = model.image
             
-            image_o = "%s/pin/temp/o/%s" % ( MEDIA_ROOT,filename)
+            image_o = "%s/pin/temp/o/%s" % (MEDIA_ROOT, filename)
             
-            image_on = "%s/pin/images/o/%s" % ( MEDIA_ROOT, filename)
+            image_on = "%s/pin/images/o/%s" % (MEDIA_ROOT, filename)
             
             copyfile(image_o, image_on)
             
             model.image = "pin/images/o/%s" % (filename)
-            model.timestamp = time.time()
+            model.timestamp = time()
             model.user = request.user
             model.save()
             
@@ -458,6 +425,7 @@ def send(request):
     else:
         return render(request, 'pin/send.html',{'form': form, 'category': category})
 
+
 @login_required
 def edit(request, post_id):
     try:
@@ -469,7 +437,7 @@ def edit(request, post_id):
         if request.method == "POST":
             post_values = request.POST.copy()
             tags = post_values['tags']
-            post_values['tags']=tags[tags.find("[")+1:tags.find("]")]
+            post_values['tags'] = tags[tags.find("[") + 1:tags.find("]")]
             form = PinUpdateForm(post_values, instance=post)
             if form.is_valid():
                 model = form.save(commit=False)
@@ -483,59 +451,56 @@ def edit(request, post_id):
             form = PinUpdateForm(instance=post)
         
         if request.is_ajax():
-            return render_to_response('pin/_edit.html',{'form': form, 'post':post}, context_instance=RequestContext(request))
+            return render(request, 'pin/_edit.html', {'form': form, 'post': post})
         else:
-            return render_to_response('pin/edit.html',{'form': form, 'post':post}, context_instance=RequestContext(request))
+            return render(request, 'pin/edit.html', {'form': form, 'post': post})
     except Post.DoesNotExist:
         return HttpResponseRedirect('/pin/')
 
-def save_upload( uploaded, filename, raw_data ):
+
+def save_upload(uploaded, filename, raw_data ):
     ''' raw_data: if True, upfile is a HttpRequest object with raw post data
         as the file, rather than a Django UploadedFile from request.FILES '''
     try:
         from io import FileIO, BufferedWriter
-        with BufferedWriter( FileIO( "%s/pin/temp/o/%s" % (MEDIA_ROOT, filename), "wb" ) ) as dest:
+        with BufferedWriter(FileIO("%s/pin/temp/o/%s" % (MEDIA_ROOT, filename), "wb")) as dest:
 
             if raw_data:
-                foo = uploaded.read( 1024 )
+                foo = uploaded.read(1024)
                 while foo:
-                    dest.write( foo )
-                    foo = uploaded.read( 1024 ) 
-            # if not raw, it was a form upload so read in the normal Django chunks fashion
+                    dest.write(foo)
+                    foo = uploaded.read(1024)
+            
             else:
-                for c in uploaded.chunks( ):
-                    dest.write( c )
+                for c in uploaded.chunks():
+                    dest.write(c)
             return True
     except IOError:
         # could not open the file most likely
         return False
 
+
 @csrf_exempt
 def upload(request):
     if request.method == "POST":
-        if request.is_ajax( ):
+        if request.is_ajax():
             upload = request
             is_raw = True
             try:
-                filename = request.GET[ 'qqfile' ]
-            except KeyError: 
-                return HttpResponseBadRequest( "AJAX request not valid" )
+                filename = request.GET['qqfile']
+            except KeyError:
+                return HttpResponseBadRequest("AJAX request not valid")
         else:
             is_raw = False
-            if len( request.FILES ) == 1:
-                upload = request.FILES.values( )[ 0 ]
+            if len(request.FILES) == 1:
+                upload = request.FILES.values()[0]
             else:
-                raise Http404( "Bad Upload" )
+                raise Http404("Bad Upload")
             filename = upload.name
         
-        #str = "%f" % time.time()
-        #str = str.replace('.', '')
-        
-        #filename = "%s%s" % (str, os.path.splitext(filename)[1])
         filename = create_filename(filename)
         
-        # save the file
-        success = save_upload( upload, filename, is_raw )
+        success = save_upload(upload, filename, is_raw)
         
         if success:
             image_o = "%s/pin/temp/o/%s" % (MEDIA_ROOT, filename)
@@ -543,14 +508,15 @@ def upload(request):
             
             pin_image.resize(image_o, image_t, 99)
             
-        ret_json = {'success':success,'file':filename}
-        return HttpResponse( json.dumps( ret_json ) )
+        ret_json = {'success': success,'file': filename}
+        return HttpResponse(json.dumps(ret_json))
+
 
 @login_required
 def delete(request, item_id):
     try:
         post = Post.objects.get(pk=item_id)
-        if post.user == request.user or request.user.is_superuser:                
+        if post.user == request.user or request.user.is_superuser:
             post.delete()
             return HttpResponse('1')
             
@@ -559,10 +525,11 @@ def delete(request, item_id):
     
     return HttpResponse('0')
 
+
 @login_required
 def like(request, item_id):
     try:
-        post = Post.objects.get(pk=item_id,status=1)
+        post = Post.objects.get(pk=item_id, status=1)
         current_like = post.cnt_likes()
 
         try:
@@ -575,19 +542,19 @@ def like(request, item_id):
         #liked, created = Likes.objects.get_or_create()
 
         if created:
-            current_like = current_like+1
+            current_like = current_like + 1
             user_act = 1
             
             liked.ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
             liked.save()
         elif liked:
-            current_like = current_like-1
-            Likes.objects.get(user=request.user,post=post).delete()
+            current_like = current_like - 1
+            Likes.objects.get(user=request.user, post=post).delete()
             user_act = -1
         
         #Post.objects.filter(id=item_id).update(like=current_like)
         
-        try:       
+        try:
             profile = Profile.objects.get(user=post.user)
             profile.save()
         except Profile.DoesNotExist:
@@ -602,13 +569,10 @@ def like(request, item_id):
     except Post.DoesNotExist:
         return HttpResponseRedirect('/')
 
+
 @login_required
 def notif_user(request):
-    try:
-        timestamp = int(request.GET.get('older', 0))
-    except ValueError:
-        timestamp = 0
-
+    timestamp = get_request_timestamp(request)
     if timestamp:
         date = datetime.datetime.fromtimestamp(timestamp)
         notif = Notif.objects.filter(user_id=request.user.id, date__lt=date).order_by('-date')[:20]
@@ -623,22 +587,14 @@ def notif_user(request):
     else:
         return render(request, 'pin/notif_user.html', {'notif':notif})
 
+
 def show_notify(request):
     Notif.objects.filter(user_id=request.user.id, seen=False).update(seen=True)
     notif = Notif.objects.all().filter(user_id=request.user.id).order_by('-date')[:20]
     for n in notif:
         n.actors = Notif_actors.objects.filter(notif=n)
-    return render_to_response('pin/notify.html',{'notif':notif})
+    return render(request, 'pin/notify.html',{'notif': notif})
 
-def tag_complete(request):
-    q = request.GET['q']
-    data = []
-    for x in range(10):
-        data.append("%s %s" % (q, x))
-    return HttpResponse(json.dumps(data))
-
-def delneveshte(request):
-    return render_to_response('pin/delneveshte2.html',context_instance=RequestContext(request))
 
 def tag(request, keyword):
     ROW_PER_PAGE = 20
@@ -665,35 +621,25 @@ def tag(request, keyword):
     for t in tag_items:
         s.append(t.object_id)
         
-    latest_items = Post.objects.filter(id__in=s,status=1).all()
-    
-    form = PinForm()
+    latest_items = Post.objects.filter(id__in=s, status=1).all()
     
     if request.is_ajax():
         if latest_items.exists():
-            return render_to_response('pin/_items.html', 
-                              {'latest_items': latest_items,'pin_form':form, 'offset':tag_items.next_page_number},
-                              context_instance=RequestContext(request))
+            return render(request, 'pin/_items.html',
+                          {'latest_items': latest_items,
+                          'offset': tag_items.next_page_number})
         else:
             return HttpResponse(0)
     else:
-        return render_to_response('pin/tag.html', 
-                              {'latest_items': latest_items, 'tag': tag,'offset':tag_items.next_page_number},
-                              context_instance=RequestContext(request))
+        return render(request, 'pin/tag.html',
+                      {'latest_items': latest_items,
+                      'tag': tag,
+                      'offset': tag_items.next_page_number})
     
-    #return render_to_response('pin/home.html',context_instance=RequestContext(request))
-
-def trust_user(request, user_id):
-    if request.user.is_superuser:
-        profile = Profile.objects.get(user_id=user_id)
-        profile.trusted = 1
-        profile.trusted_by = request.user
-        profile.save()
-
-    return HttpResponseRedirect('/pin/user/'+user_id)
 
 def policy(request):
     return render(request, 'pin/policy.html')
+
 
 @csrf_exempt
 @login_required
@@ -704,15 +650,19 @@ def send_comment(request):
         post = request.POST.get('post', None)
         if text and post:
             post = get_object_or_404(Post, pk=post)
-            Comments.objects.create(object_pk=post, comment=text, user=request.user, ip_address=request.META.get('REMOTE_ADDR', None))
+            Comments.objects.create(object_pk=post,
+                                    comment=text,
+                                    user=request.user,
+                                    ip_address=request.META.get('REMOTE_ADDR', None))
 
             return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
 
-
     return HttpResponse('error')
+
 
 def you_are_deactive(request):
     return render(request, 'pin/you_are_deactive.html')
+
 
 @login_required
 def comment_delete(request, id):
@@ -727,6 +677,7 @@ def comment_delete(request, id):
 
     return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
 
+
 @login_required
 def comment_approve(request, id):
     if not request.user.is_superuser:
@@ -737,6 +688,7 @@ def comment_approve(request, id):
     comment.save()
 
     return HttpResponseRedirect(reverse('pin-item', args=[comment.object_pk.id]))
+
 
 @login_required
 def comment_unapprove(request, id):
@@ -749,9 +701,10 @@ def comment_unapprove(request, id):
 
     return HttpResponseRedirect(reverse('pin-item', args=[comment.object_pk.id]))
 
+
 @login_required
 def comment_score(request, comment_id, score):
-    score=int(score)
+    score = int(score)
     scores = [1, 0]
     if score not in scores:
         return HttpResponse('error in scores')
@@ -774,6 +727,7 @@ def comment_score(request, comment_id, score):
     except Comments.DoesNotExist:
         return HttpResponseRedirect('/')
 
+
 @login_required
 def report(request, pin_id):
     ### remove report if needed
@@ -783,10 +737,10 @@ def report(request, pin_id):
         return HttpResponseRedirect('/')
 
     try:
-        Report.objects.get(user=request.user,post=post)
+        Report.objects.get(user=request.user, post=post)
         created = False
     except Report.DoesNotExist:
-        Report.objects.create(user=request.user,post=post)
+        Report.objects.create(user=request.user, post=post)
         created = True
 
     if created:
@@ -805,6 +759,7 @@ def report(request, pin_id):
         return HttpResponse(json.dumps(data))
     else:
         return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
+
 
 @login_required
 def goto_index(request, item_id, status):

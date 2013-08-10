@@ -1,17 +1,16 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 import os
 import hashlib
-import datetime
-import time
+#import datetime
+from datetime import datetime, timedelta
+from time import mktime
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.comments.models import Comment
-from django.contrib.comments.signals import comment_was_posted
 from django.contrib.sites.models import Site
 from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import F
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 
 from sorl.thumbnail import get_thumbnail
@@ -21,18 +20,23 @@ from taggit.models import Tag
 
 LIKE_TO_DEFAULT_PAGE = 10
 
+
 class Category(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/category/')
-    
+
     def __unicode__(self):
         return self.title
-    
+
     def admin_image(self):
         return '<img src="/media/%s" />' % self.image
 
     admin_image.allow_tags = True
 
+
+class AcceptedManager(models.Manager):
+    def get_query_set(self):
+        return super(AcceptedManager, self).get_query_set().filter(status=1)
 
 class Post(models.Model):
     PENDING = 0
@@ -69,6 +73,8 @@ class Post(models.Model):
     tags = TaggableManager(blank=True)
 
     category = models.ForeignKey(Category, default=1, verbose_name='گروه')
+    objects = models.Manager()
+    accepted = AcceptedManager()
     
     def __unicode__(self):
         return self.text
@@ -84,34 +90,24 @@ class Post(models.Model):
     
     def delete(self, *args, **kwargs):
         try:
-
             file_path = os.path.join(settings.MEDIA_ROOT, self.image)
             os.remove(file_path)
         except:
             pass
-
         super(Post, self).delete(*args, **kwargs)
 
-    def date_lt(self, date ,how_many_days=15):
-        """
-            date less than
-        """
-
-        from datetime import datetime, timedelta
-
-        lt_date = datetime.now()-timedelta(days=how_many_days)
-        lt_timestamp = time.mktime(lt_date.timetuple())
-        timestamp = time.mktime(date.timetuple())
+    def date_lt(self, date, how_many_days=15):
+        lt_date = datetime.now() - timedelta(days=how_many_days)
+        lt_timestamp = mktime(lt_date.timetuple())
+        timestamp = mktime(date.timetuple())
         #print timestamp, older_timestamp
-        return timestamp<lt_timestamp
+        return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
         from user_profile.models import Profile
-
         try:
             profile = Profile.objects.get(user=self.user)
-            #print "date joined: ", self.user.date_joined
-            #print "timestamp joined: ", time.mktime(self.user.date_joined.timetuple())
+
             if self.user.profile.post_accept_admin:
                 if self.user.profile.post_accept and self.user.profile.post_accept_admin :
                     self.status = 1
@@ -169,7 +165,7 @@ class Post(models.Model):
     def change_tag_slug(cls, sender, instance, *args, **kwargs):
         if kwargs['created']:
             tag = instance
-            tag.slug = '-'.join(tag.name.split())#And clean title, and make sure this is unique.
+            tag.slug = '-'.join(tag.name.split())
             tag.save()
 
     def admin_image(self):
@@ -179,6 +175,7 @@ class Post(models.Model):
     admin_image.allow_tags = True
 
     def cnt_likes(self):
+        return self.cnt_like
         #return Likes.objects.filter(post_id=self.id).count()
     
         cnt = Likes.objects.filter(post_id=self.id).count()
@@ -198,6 +195,7 @@ class Post(models.Model):
 class Follow(models.Model):
     follower = models.ForeignKey(User ,related_name='follower')
     following = models.ForeignKey(User, related_name='following')
+
 
 class Stream(models.Model):
     following = models.ForeignKey(User, related_name='stream_following')
@@ -246,7 +244,7 @@ class Likes(models.Model):
         
         notif, created = Notif.objects.get_or_create(post=post, user=post.user, type=1)
         notif.seen = False
-        notif.date = datetime.datetime.now()
+        notif.date = datetime.now()
         notif.save()
         Notif_actors.objects.get_or_create(actor=sender, notif=notif)
         
@@ -275,7 +273,7 @@ def send_notif(user, type, post, actor, seen=False):
     notif, created = Notif.objects.get_or_create(user=user, type=type, post=post)
 
     notif.seen = seen
-    notif.date = datetime.datetime.now()
+    notif.date = datetime.now()
     notif.save()
 
     Notif_actors.objects.get_or_create(notif=notif, actor=actor)
@@ -305,7 +303,6 @@ class Notif(models.Model):
         if not created:
             return None
         comment = instance
-        commenter = comment.user
         post = comment.object_pk
 
         if comment.user != post.user:
