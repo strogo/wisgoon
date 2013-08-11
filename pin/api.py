@@ -170,7 +170,7 @@ class PostResource(ModelResource):
 
     like_with_user = fields.BooleanField(default=False)
     popular = None
-
+    just_image = None
     cur_user = None
 
     class Meta:
@@ -240,6 +240,7 @@ class PostResource(ModelResource):
 
         self.thumb_size = request.GET.get(self.thumb_query_name,
                                           self.thumb_default_size)
+        self.just_image = request.GET.get('just_image', None)
         self.popular = request.GET.get('popular', None)
         return super(PostResource, self)\
             .dispatch(request_type, request, **kwargs)
@@ -247,6 +248,7 @@ class PostResource(ModelResource):
     def dehydrate(self, bundle):
         id = bundle.data['id']
         o_image = bundle.data['image']
+
         try:
             im = get_thumbnail(o_image,
                                self.thumb_size,
@@ -258,6 +260,13 @@ class PostResource(ModelResource):
         if im:
             bundle.data['thumbnail'] = im
             bundle.data['hw'] = "%sx%s" % (im.height, im.width)
+
+        if int(self.just_image) == 1:
+            for key in ['user', 'user_name', 'user_avatar', 'url', 'like', 'like_with_user', 
+                        'cnt_comment', 'category', 'text', 'image', 'likers']:
+                del(bundle.data[key])
+
+            return bundle        
 
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
         user = bundle.data['user']
