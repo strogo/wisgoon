@@ -240,7 +240,7 @@ class PostResource(ModelResource):
 
         self.thumb_size = request.GET.get(self.thumb_query_name,
                                           self.thumb_default_size)
-        self.just_image = request.GET.get('just_image', None)
+        self.just_image = request.GET.get('just_image', 0)
         self.popular = request.GET.get('popular', None)
         return super(PostResource, self)\
             .dispatch(request_type, request, **kwargs)
