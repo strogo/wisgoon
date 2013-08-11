@@ -116,9 +116,21 @@ class CategotyResource(ModelResource):
 
 
 class LikesResource(ModelResource):
+    user_url = fields.IntegerField(attribute='user__id', null=True)
+    post_id = fields.IntegerField(attribute='post_id', null=True)
     class Meta:
-        #queryset = Likes.objects.all()
+        queryset = Likes.objects.all()
         resource_name = 'likes'
+        filtering = {
+            "post_id": ("exact",),
+        }
+
+    def dehydrate(self, bundle):
+        user = bundle.data['user_url']
+        bundle.data['user_avatar'] = daddy_avatar.get_avatar(user, size=100)
+        bundle.data['user_name'] = get_username(bundle.data['user_url'])
+
+        return bundle
 
 
 class CommentResource(ModelResource):
