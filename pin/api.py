@@ -308,11 +308,13 @@ class NotifyResource(ModelResource):
     actors = fields.ListField()
     image = fields.CharField(attribute='post__image')
     like = fields.IntegerField(attribute='post__cnt_like')
+    cnt_comment = fields.IntegerField(attribute='post__cnt_comment')
     text = fields.CharField(attribute='post__text')
     url = fields.CharField(attribute='post__url')
     post_id = fields.IntegerField(attribute='post_id')
     user_id = fields.IntegerField(attribute='user_id')
-    
+    post_owner_id = fields.IntegerField(attribute='post__user_id')
+    category = fields.ToOneField(CategotyResource, 'post__category', full=True)
     like_with_user = fields.BooleanField(default=False)
     cur_user = None
     post = fields.ToOneField(PostResource, 'post')
@@ -355,13 +357,17 @@ class NotifyResource(ModelResource):
             if Likes.objects.filter(post_id=bundle.data['post_id'], user=self.cur_user).count():
                 bundle.data['like_with_user'] = True
 
+        post_owner_id = bundle.data['post_owner_id']
+        bundle.data['post_owner_avatar'] = daddy_avatar.get_avatar(post_owner_id, size=100)
+        bundle.data['post_owner_user_name'] = get_username(post_owner_id)
+
         actors = Notif_actors.objects.filter(notif=id).all()[:10]
         ar = []
         for lk in actors:
             ar.append(
                 [
                     lk.actor.id,
-                    lk.actor.username,
+                    get_username(lk.actor),
                     daddy_avatar.get_avatar(lk.actor, size=100)
                 ]
             )
