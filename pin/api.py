@@ -307,9 +307,14 @@ class PostResource(ModelResource):
 class NotifyResource(ModelResource):
     actors = fields.ListField()
     image = fields.CharField(attribute='post__image')
+    like = fields.IntegerField(attribute='post__cnt_like')
+    text = fields.CharField(attribute='post__text')
+    url = fields.CharField(attribute='post__url')
     post_id = fields.IntegerField(attribute='post_id')
     user_id = fields.IntegerField(attribute='user_id')
-
+    
+    like_with_user = fields.BooleanField(default=False)
+    cur_user = None
     post = fields.ToOneField(PostResource, 'post')
 
     class Meta:
@@ -322,6 +327,18 @@ class NotifyResource(ModelResource):
             "seen": ('exact',),
         }
 
+    def dispatch(self, request_type, request, **kwargs):
+        token = request.GET.get('token', '')
+        if token:
+            try:
+                api = ApiKey.objects.get(key=token)
+                self.cur_user = api.user
+            except:
+                pass
+        
+        return super(NotifyResource, self)\
+            .dispatch(request_type, request, **kwargs)
+
     def dehydrate(self, bundle):
         id = bundle.data['id']
         o_image = bundle.data['image']
@@ -333,6 +350,10 @@ class NotifyResource(ModelResource):
         if im:
             bundle.data['thumbnail'] = im
             bundle.data['hw'] = "%sx%s" % (im.height, im.width)
+
+        if self.cur_user:
+            if Likes.objects.filter(post_id=bundle.data['post_id'], user=self.cur_user).count():
+                bundle.data['like_with_user'] = True
 
         actors = Notif_actors.objects.filter(notif=id).all()[:10]
         ar = []
