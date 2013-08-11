@@ -170,7 +170,7 @@ class PostResource(ModelResource):
 
     like_with_user = fields.BooleanField(default=False)
     popular = None
-    just_image = None
+    just_image = 0
     cur_user = None
 
     class Meta:
