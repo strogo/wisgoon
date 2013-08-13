@@ -7,6 +7,7 @@ from tastypie import fields
 from tastypie.cache import SimpleCache
 from tastypie.models import ApiKey
 from tastypie.authorization import Authorization
+from tastypie.authentication import ApiKeyAuthentication
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -304,6 +305,11 @@ class PostResource(ModelResource):
         return bundle
 
 
+class NotifAuthorization(Authorization):
+    def read_list(self, object_list, bundle):
+        return object_list.filter(user=bundle.request.user)
+
+
 class NotifyResource(ModelResource):
     actors = fields.ListField()
     image = fields.CharField(attribute='post__image')
@@ -322,12 +328,18 @@ class NotifyResource(ModelResource):
     class Meta:
         resource_name = 'notify'
         allowed_methods = ['get']
+        authentication = ApiKeyAuthentication()
+        authorization = NotifAuthorization()
         queryset = Notif.objects.all().order_by('-date')
         paginator_class = Paginator
         filtering = {
-            "user_id": ('exact',),
+            #"user_id": ('exact',),
             "seen": ('exact',),
         }
+
+    def apply_authorization_limits(self, request, object_list):
+        print "hello"
+        return object_list.filter(user=request.user)
 
     def dispatch(self, request_type, request, **kwargs):
         token = request.GET.get('token', '')
