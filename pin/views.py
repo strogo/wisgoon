@@ -51,7 +51,7 @@ def home(request):
 
     if timestamp == 0:
         latest_items = Post.accepted.filter(show_in_default=1)\
-            .select_related().order_by('-is_ads', '-timestamp')[:20]
+            .order_by('-is_ads', '-timestamp')[:20]
     else:
         latest_items = Post.accepted.filter(show_in_default=1)\
             .extra(where=['timestamp<%s'], params=[timestamp])\
