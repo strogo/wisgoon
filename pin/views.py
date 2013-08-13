@@ -73,7 +73,7 @@ def latest(request):
 
     if timestamp == 0:
         latest_items = Post.accepted\
-            .select_related().order_by('-is_ads', '-timestamp')[:20]
+            .order_by('-is_ads', '-timestamp')[:20]
     else:
         latest_items = Post.accepted\
             .extra(where=['timestamp<%s'], params=[timestamp])\
@@ -97,7 +97,6 @@ def category(request, cat_id):
 
     if timestamp == 0:
         latest_items = Post.objects.filter(status=1, category=cat_id)\
-            .select_related()\
             .order_by('-is_ads', '-timestamp')[:20]
     else:
         latest_items = Post.objects.filter(status=1, category=cat_id)\
@@ -133,11 +132,11 @@ def popular(request, interval=""):
         start_from = mktime(data_from.timetuple())
         post_list = Post.objects.filter(status=1)\
             .extra(where=['timestamp>%s'], params=[start_from])\
-            .select_related().order_by('-cnt_like')
+            .order_by('-cnt_like')
 
     else:
         post_list = Post.objects.filter(status=1)\
-            .select_related().order_by('-cnt_like')
+            .order_by('-cnt_like')
     paginator = Paginator(post_list, ROW_PER_PAGE)
 
     try:
