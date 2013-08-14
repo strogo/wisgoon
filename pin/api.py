@@ -98,6 +98,7 @@ class ProfileResource(ModelResource):
         queryset = Profile.objects.all()
         resource_name = "profile"
         paginator_class = Paginator
+        cache = SimpleCache()
         #authentication = ApiKeyAuthentication()
         #authorization = ProfileObjectsOnlyAuthorization()
         filtering = {
@@ -114,6 +115,7 @@ class CategotyResource(ModelResource):
     class Meta:
         queryset = Category.objects.all()
         resource_name = "category"
+        cache = SimpleCache()
 
 
 class LikesResource(ModelResource):
@@ -143,6 +145,7 @@ class CommentResource(ModelResource):
         queryset = Comments.objects.filter(is_public=True)
         resource_name = "comments"
         paginator_class = Paginator
+        cache = SimpleCache()
         limit = 1000
         filtering = {
             "object_pk": ('exact',),
@@ -332,6 +335,7 @@ class NotifyResource(ModelResource):
         authorization = NotifAuthorization()
         queryset = Notif.objects.all().order_by('-date')
         paginator_class = Paginator
+        cache = SimpleCache()
         filtering = {
             #"user_id": ('exact',),
             "seen": ('exact',),
