@@ -38,6 +38,7 @@ class AcceptedManager(models.Manager):
     def get_query_set(self):
         return super(AcceptedManager, self).get_query_set().filter(status=1)
 
+
 class Post(models.Model):
     PENDING = 0
     APPROVED = 1
@@ -108,15 +109,15 @@ class Post(models.Model):
         try:
             profile = Profile.objects.get(user=self.user)
 
-            if self.user.profile.post_accept_admin:
-                if self.user.profile.post_accept and self.user.profile.post_accept_admin :
-                    self.status = 1
-                else:
-                    if ((self.date_lt( self.user.date_joined, 15) and self.user.profile.score > 2000) \
-                        or self.user.profile.score > 5000 ):
-                        profile.post_accept = True
-                        profile.save()
-                        self.status = 1
+            #if profile.post_accept_admin:
+            #    if profile.post_accept and profile.post_accept_admin:
+            #        self.status = 1
+            #    else:
+            if ((self.date_lt( self.user.date_joined, 15) and profile.score > 2000) \
+                or profile.score > 5000 ):
+                profile.post_accept = True
+                profile.save()
+                self.status = 1
 
         except Profile.DoesNotExist:
             pass
