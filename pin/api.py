@@ -176,6 +176,7 @@ class PostResource(ModelResource):
     popular = None
     just_image = 0
     cur_user = None
+    show_ads = True
 
     class Meta:
         queryset = Post.objects.filter(status=1).order_by('-is_ads', '-id')
@@ -196,15 +197,19 @@ class PostResource(ModelResource):
 
         if userid:
             filters.update(dict(user_id=userid))
+            self.show_ads = False
 
         if category_id:
             category_ids = category_id.replace(',', ' ').split(' ')
             filters.update(dict(category_id__in=category_ids))
+            self.show_ads = True
 
         if before:
             filters.update(dict(id__lt=before))
+            self.show_ads = False
 
         if popular:
+            self.show_ads = False
             date_from = None
             dn = datetime.datetime.now()
             if popular == 'month':
@@ -228,8 +233,10 @@ class PostResource(ModelResource):
         if self.popular in ['month', 'lastday', 'lastweek', 'lasteigth']:
             sorts.append("-cnt_like")
         else:
-            sorts.append('-is_ads')
             sorts.append('-id')
+
+        if self.show_ads:
+            sorts.append('-is_ads')
 
         return base_object_list.order_by(*sorts)
 
