@@ -8,11 +8,8 @@
 	<title>ویسگون {% block title%}{% endblock%}</title>
 	<meta name="keywords" content="social,rss,reader" />
 	<meta name="description" content="{%block description%}what is going on, social rss reader{%endblock%}" />
-
 {% block nextpost%}{%endblock%}
 {% block prevpost%}{%endblock%}
-
-
 <link rel="alternate" type="application/rss+xml" href="{% url pin-latest-feed%}" />
 {% block opengraph%}{% endblock opengraph%}
 
