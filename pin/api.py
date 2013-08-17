@@ -206,7 +206,7 @@ class PostResource(ModelResource):
 
         if before:
             filters.update(dict(id__lt=before))
-            self.show_ads = False
+            self.show_ads = True
 
         if popular:
             self.show_ads = False
