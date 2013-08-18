@@ -4,7 +4,7 @@ import datetime
 from tastypie.resources import ModelResource
 from tastypie.paginator import Paginator
 from tastypie import fields
-from tastypie.cache import SimpleCache
+#from tastypie.cache import SimpleCache
 from tastypie.models import ApiKey
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
@@ -121,9 +121,11 @@ class CategotyResource(ModelResource):
 class LikesResource(ModelResource):
     user_url = fields.IntegerField(attribute='user__id', null=True)
     post_id = fields.IntegerField(attribute='post_id', null=True)
+
     class Meta:
         queryset = Likes.objects.all()
         resource_name = 'likes'
+        excludes = ['ip']
         filtering = {
             "post_id": ("exact",),
         }
@@ -273,11 +275,13 @@ class PostResource(ModelResource):
             bundle.data['hw'] = "%sx%s" % (im.height, im.width)
 
         if int(self.just_image) == 1:
-            for key in ['user', 'user_name', 'user_avatar', 'url', 'like', 'like_with_user', 
-                        'cnt_comment', 'category', 'text', 'image', 'likers', 'resource_uri']:
+            for key in ['user', 'user_name', 'user_avatar',
+                        'url', 'like', 'like_with_user',
+                        'cnt_comment', 'category', 'text',
+                        'image', 'likers', 'resource_uri']:
                 del(bundle.data[key])
 
-            return bundle        
+            return bundle
 
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
         user = bundle.data['user']
@@ -360,7 +364,7 @@ class NotifyResource(ModelResource):
                 self.cur_user = api.user
             except:
                 pass
-        
+
         return super(NotifyResource, self)\
             .dispatch(request_type, request, **kwargs)
 
@@ -377,7 +381,8 @@ class NotifyResource(ModelResource):
             bundle.data['hw'] = "%sx%s" % (im.height, im.width)
 
         if self.cur_user:
-            if Likes.objects.filter(post_id=bundle.data['post_id'], user=self.cur_user).count():
+            if Likes.objects.filter(post_id=bundle.data['post_id'],
+                                    user=self.cur_user).count():
                 bundle.data['like_with_user'] = True
 
         post_owner_id = bundle.data['post_owner_id']
