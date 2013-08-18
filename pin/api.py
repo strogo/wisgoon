@@ -305,7 +305,7 @@ class PostResource(ModelResource):
             w, h = im.size
             bundle.data['large_hw'] = "%sx%s" % (h, w)
 
-            likers = Likes.objects.filter(post_id=id).all()
+            likers = Likes.objects.filter(post_id=id).all()[:10]
             ar = []
             for lk in likers:
                 ar.append(
