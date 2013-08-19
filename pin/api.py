@@ -147,6 +147,7 @@ class CommentResource(ModelResource):
         queryset = Comments.objects.filter(is_public=True)
         resource_name = "comments"
         paginator_class = Paginator
+        excludes = ['ip_address']
         #cache = SimpleCache()
         limit = 1000
         filtering = {
