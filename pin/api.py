@@ -233,7 +233,8 @@ class PostResource(ModelResource):
     def apply_sorting(self, object_list, options=None):
         base_object_list = super(PostResource, self).apply_sorting(object_list)
         sorts = []
-	sorts.append('-is_ads')
+        sorts.append('-is_ads')
+        
         if self.popular in ['month', 'lastday', 'lastweek', 'lasteigth']:
             sorts.append("-cnt_like")
         else:
@@ -305,17 +306,7 @@ class PostResource(ModelResource):
             w, h = im.size
             bundle.data['large_hw'] = "%sx%s" % (h, w)
 
-            likers = Likes.objects.filter(post_id=id).all()[:10]
-            ar = []
-            for lk in likers:
-                ar.append(
-                    [
-                        lk.user.id,
-                        lk.user.username,
-                        daddy_avatar.get_avatar(lk.user, size=100)
-                    ]
-                )
-            bundle.data['likers'] = ar
+            bundle.data['likers'] = []
         return bundle
 
 
