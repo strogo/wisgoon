@@ -233,13 +233,12 @@ class PostResource(ModelResource):
     def apply_sorting(self, object_list, options=None):
         base_object_list = super(PostResource, self).apply_sorting(object_list)
         sorts = []
+	sorts.append('-is_ads')
         if self.popular in ['month', 'lastday', 'lastweek', 'lasteigth']:
             sorts.append("-cnt_like")
         else:
             sorts.append('-id')
-
-        if self.show_ads:
-            sorts.append('-is_ads')
+        sorts.append('-is_ads')
 
         return base_object_list.order_by(*sorts)
 
