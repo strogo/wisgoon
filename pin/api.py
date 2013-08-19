@@ -125,7 +125,7 @@ class LikesResource(ModelResource):
     class Meta:
         queryset = Likes.objects.all()
         resource_name = 'likes'
-        excludes = ['ip']
+        excludes = ['ip', 'id',]
         filtering = {
             "post_id": ("exact",),
         }
