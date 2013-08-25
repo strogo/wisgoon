@@ -90,7 +90,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id','title','admin_image')
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('name', 'website', 'cnt_post', 'cnt_like', 'score',
+    list_display = ('id', 'name', 'website', 'cnt_post', 'cnt_like', 'score',
     'user', 'trusted')
     search_fields = ['user__id','name']
     list_filter = ('trusted',)
