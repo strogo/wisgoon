@@ -344,7 +344,7 @@ class NotifyResource(ModelResource):
         }
 
     def apply_authorization_limits(self, request, object_list):
-        print "hello"
+        #print "hello"
         return object_list.filter(user=request.user)
 
     def dispatch(self, request_type, request, **kwargs):
@@ -380,7 +380,7 @@ class NotifyResource(ModelResource):
         bundle.data['post_owner_avatar'] = daddy_avatar.get_avatar(post_owner_id, size=100)
         bundle.data['post_owner_user_name'] = get_username(post_owner_id)
 
-        actors = Notif_actors.objects.filter(notif=id).all()[:10]
+        actors = Notif_actors.objects.filter(notif=id).order_by('id')[:10]
         ar = []
         for lk in actors:
             ar.append(
