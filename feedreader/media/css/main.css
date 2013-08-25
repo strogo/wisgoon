@@ -619,3 +619,20 @@ width: 100px;
 	font-family: tahoma;
 	font-size: 11px;
 }
+
+.notif-item{
+	-webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+	overflow: hidden;
+	border-top: 2px solid #C00;
+	box-shadow: 0 2px 4px #86898C;
+	padding: 15px 15px 30px;
+	background: #FFF;
+	margin: 5px; 
+}
+.notif-img{
+	float:left;
+}
+.notif-type{
+	margin-left:200px;
+	float:left;
+}
