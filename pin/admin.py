@@ -101,6 +101,7 @@ class AppAdmin(admin.ModelAdmin):
 class CommentsAdmin(admin.ModelAdmin):
     list_display = ('id','comment', 'ip_address', 'user', 'is_public', 'reported', 'admin_link')
     list_filter = ('is_public', 'reported')
+    search_fields = ['ip_address', 'user__id']
 
     actions = ['accept', 'unaccept', 'delete_and_deactive_user', 'delete_all_user_comments']
 

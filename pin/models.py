@@ -66,12 +66,15 @@ class Post(models.Model):
     is_ads = models.BooleanField(default=False, blank=True, verbose_name="آگهی")
     view = models.IntegerField(default=0, db_index=True)
     show_in_default = models.BooleanField(default=False, blank=True,
-    db_index=True , verbose_name='نمایش در خانه')
-    
+        db_index=True, verbose_name='نمایش در خانه')
+
     report = models.IntegerField(default=0, db_index=True)
     cnt_comment = models.IntegerField(default=-1, blank=True)
     cnt_like = models.IntegerField(default=0, blank=True)
     tags = TaggableManager(blank=True)
+
+    height = models.IntegerField(default=-1, blank=True)
+    width = models.IntegerField(default=-1, blank=True)
 
     category = models.ForeignKey(Category, default=1, verbose_name='گروه')
     objects = models.Manager()
@@ -319,6 +322,7 @@ class Notif_actors(models.Model):
     notif = models.ForeignKey(Notif, related_name="notif")
     actor = models.ForeignKey(User, related_name="actor")
 
+
 class Notify(models.Model):
     TYPES = ((1,'like'),(2,'comment'))
     
@@ -331,6 +335,7 @@ class Notify(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     actors = models.ManyToManyField(User, related_name="actors")
 
+
 class App_data(models.Model):
     name = models.CharField(max_length=250)
     file = models.FileField(upload_to='app')
@@ -338,12 +343,13 @@ class App_data(models.Model):
     version_code = models.IntegerField(default=0, blank=True)
     current = models.BooleanField(default=1)
 
+
 class Comments(models.Model):
     comment = models.TextField()
     submit_date = models.DateTimeField(auto_now_add=True)
-    ip_address = models.IPAddressField(default='127.0.0.1')
+    ip_address = models.IPAddressField(default='127.0.0.1', db_index=True)
     is_public = models.BooleanField(default=True, db_index=True)
-    reported = models.BooleanField(default=False)
+    reported = models.BooleanField(default=False, db_index=True)
 
     object_pk = models.ForeignKey(Post, related_name='comment_post')
     user = models.ForeignKey(User, related_name='comment_sender')

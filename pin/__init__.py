@@ -1,3 +1,6 @@
+from django.conf import settings
 from johnny.cache import enable
-enable()
-print "enable cache"
+
+if settings.DEBUG == False:
+	enable()
+	print "enable cache"
