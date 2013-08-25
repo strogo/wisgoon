@@ -26,11 +26,13 @@
 	            <i class="icon-remove"></i>
 		    {% endif %}
 		</div>
-		{% for actor in item.actors %}
-		<div style="float:right;padding:5px; heigth:40px;">
-            <a target="_blank" href="{% url pin-user actor.actor.id %}"><img src="{{actor.actor|get_avatar:30}}"></a>
-        </div>
-        {% endfor%}
+		<div class="notif-actors">
+			{% for actor in item.actors %}
+			<div style="float:right;padding:5px; heigth:40px;">
+            	<a target="_blank" href="{% url pin-user actor.actor.id %}"><img src="{{actor.actor|get_avatar:30}}"></a>
+        	</div>
+        	{% endfor%}
+    	</div>
 		{% if offset %}
 		<span data-next="{{offset}}" ></span>
 		{%else%}
