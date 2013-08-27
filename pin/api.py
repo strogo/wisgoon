@@ -4,7 +4,7 @@ import datetime
 from tastypie.resources import ModelResource
 from tastypie.paginator import Paginator
 from tastypie import fields
-#from tastypie.cache import SimpleCache
+from tastypie.cache import SimpleCache
 from tastypie.models import ApiKey
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
@@ -148,8 +148,8 @@ class CommentResource(ModelResource):
         resource_name = "comments"
         paginator_class = Paginator
         excludes = ['ip_address', 'is_public', 'object_pk', 'reported']
-        #cache = SimpleCache()
-        limit = 1000
+        cache = SimpleCache(timeout=120)
+        #limit = 1000
         filtering = {
             "object_pk": ('exact',),
         }
