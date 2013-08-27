@@ -144,7 +144,7 @@ class LikesResource(ModelResource):
 
 
 class CommentResource(ModelResource):
-    user_url = fields.IntegerField(attribute='user__id', null=True)
+    user_url = fields.IntegerField(attribute='user_id', null=True)
     object_pk = fields.IntegerField(attribute='object_pk_id', null=True)
 
     class Meta:
@@ -152,6 +152,7 @@ class CommentResource(ModelResource):
         queryset = Comments.objects.filter(is_public=True)
         resource_name = "comments"
         paginator_class = Paginator
+        #fields = ['id', 'comment', 'object_pk', 'user_id', 'score', 'submit_date']
         excludes = ['ip_address', 'is_public', 'object_pk', 'reported']
         cache = SimpleCache(timeout=120)
         #limit = 1000
@@ -173,9 +174,9 @@ class PostResource(ModelResource):
     thumb_crop = 'center'
     thumb_quality = 99
     thumb_query_name = 'thumb_size'
-    user_name = fields.CharField(attribute='user__username')
-    user_avatar = fields.CharField(attribute='user__email')
-    user = fields.IntegerField(attribute='user__id')
+    #user_name = fields.CharField(attribute='user__username')
+    #user_avatar = fields.CharField(attribute='user__email')
+    user = fields.IntegerField(attribute='user_id')
     likers = fields.ListField()
     like = fields.IntegerField(attribute='cnt_like')
     category = fields.ToOneField(CategotyResource, 'category', full=True)

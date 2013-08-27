@@ -10,7 +10,7 @@
 <meta name="description" content="{%block description%}what is going on, social rss reader{%endblock%}" />
 {% block nextpost%}{%endblock%}
 {% block prevpost%}{%endblock%}
-<link rel="alternate" type="application/rss+xml" href="{% url pin-latest-feed%}" />
+<link rel="alternate" type="application/rss+xml" href="{% url "pin-latest-feed" %}" />
 {% block opengraph%}{% endblock opengraph%}
 
 {% include "base/all_header.html"%}
@@ -46,7 +46,7 @@
 
 <script type="text/javascript">
 var media_url = "{{MEDIA_URL}}";
-var upload_url = "{% url pin-upload %}";
+var upload_url = "{% url "pin-upload" %}";
 </script>
 </head>
 
@@ -58,7 +58,7 @@ var upload_url = "{% url pin-upload %}";
 			
 			<ul class="nav nav-tabs nav-second">
 				<li class="nav-right">
-					<a href="{% url pin-latest %}">آخرین مطالب</a></li>
+					<a href="{% url "pin-latest" %}">آخرین مطالب</a></li>
 			  <li class="nav-right">
 			  {% if user.is_authenticated%}
 			  	<a data-toggle="modal" data-target="#myModal" href="#myModal"><img src="{{MEDIA_URL}}img/new/add.png">ارسال تصویر</a>
@@ -77,11 +77,11 @@ var upload_url = "{% url pin-upload %}";
 <li class="nav-right dropdown ">
 	<a class="dropdown-toggle" data-toggle="dropdown"  href="#"><img src="{{MEDIA_URL}}img/new/bartarin.png"> برترینها</a>
     <ul class="dropdown-menu">
-        <li><a href="{% url pin-popular %}">همه زمانها</a></li>
-        <li><a href="{% url pin-popular-offset "month" %}">یک ماه گذشته</a></li>
-        <li><a href="{% url pin-popular-offset "lastweek" %}">هفته گذشته</a></li>
-        <li><a href="{% url pin-popular-offset "lastday" %} ">24 ساعت گذشته</a></li>
-        <li><a href="{% url pin-popular-offset "lasteigth" %} ">8 ساعت گذشته</a></li>
+        <li><a href="{% url "pin-popular" %}">همه زمانها</a></li>
+        <li><a href="{% url "pin-popular-offset" "month" %}">یک ماه گذشته</a></li>
+        <li><a href="{% url "pin-popular-offset" "lastweek" %}">هفته گذشته</a></li>
+        <li><a href="{% url "pin-popular-offset" "lastday" %} ">24 ساعت گذشته</a></li>
+        <li><a href="{% url "pin-popular-offset" "lasteigth" %} ">8 ساعت گذشته</a></li>
       <!-- links -->
     </ul>
 </li>
@@ -90,7 +90,7 @@ var upload_url = "{% url pin-upload %}";
     <a class="dropdown-toggle" data-toggle="dropdown"  href="#"><img src="{{MEDIA_URL}}img/new/category.png">  گروه ها</a>
     <ul class="dropdown-menu">
         {% for cat in cats %}
-        <li><a href="{% url pin-category cat.id %}">{{cat.title}}</a></li>
+        <li><a href="{% url "pin-category" cat.id %}">{{cat.title}}</a></li>
         {% endfor %}
       <!-- links -->
     </ul>
@@ -99,17 +99,17 @@ var upload_url = "{% url pin-upload %}";
 <li class="nav-right dropdown ">
 	<a class="dropdown-toggle" data-toggle="dropdown"  href="#">برترین کاربران</a>
     <ul class="dropdown-menu">
-        <li><a href="{% url pin-topuser %}">کل سایت</a></li>
-        <li><a href="{% url pin-topgroupuser %}">گروه ها</a></li>
+        <li><a href="{% url "pin-topuser" %}">کل سایت</a></li>
+        <li><a href="{% url "pin-topgroupuser" %}">گروه ها</a></li>
     </ul>
 </li>
 
 {% if user.is_authenticated%}
 <li class="nav-right">
-	<a href="{% url pin-following%}">مطالب دوستان</a>
+	<a href="{% url "pin-following" %}">مطالب دوستان</a>
 </li>
 <li class="nav-right">
-	<a href="#notify" data-load="{% url show_notify%}" title="اعلانات" class="popnotify"><i class="icon-bell"> </i> {{user.id|get_user_notify}} </a>
+	<a href="#notify" data-load="{% url "show_notify" %}" title="اعلانات" class="popnotify"><i class="icon-bell"> </i> {{user.id|get_user_notify}} </a>
 </li>
 {%endif%}
 			  

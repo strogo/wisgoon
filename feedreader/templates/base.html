@@ -40,16 +40,16 @@
 		<div class="container" id="wrapper">
 			
 				<ul class="nav nav-tabs">
-					<li class="nav-right"><a href="{% url home %}">صفحه اصلی</a></li>
-					<li class="nav-right"><a href="{% url pin-home %}">پین</a></li>
-					<li class="nav-right"><a href="{% url rss-subs %}">اشتراک فید</a></li>
+					<li class="nav-right"><a href="{% url "home" %}">صفحه اصلی</a></li>
+					<li class="nav-right"><a href="{% url "pin-home" %}">پین</a></li>
+					<li class="nav-right"><a href="{% url "rss-subs" %}">اشتراک فید</a></li>
 					{% if user.is_authenticated %}
 						<li class="nav-right">
 				<a href="/accounts/logout/" title="Log out" onclick="return confirm('Are you sure you want to log out?');"> <i class="icon-off icon-black"></i> خروج</a>
 			</li>
 					{%else%}
 						<li class="nav-right">
-				<a href="{% url registration_register %}"><i class="icon-user icon-black"></i> عضویت</a>
+				<a href="{% url "registration_register" %}"><i class="icon-user icon-black"></i> عضویت</a>
 			</li>
 			<li class="nav-right">
 				<a href="/accounts/login/"><i class="icon-user icon-black"></i> ورود</a>
@@ -66,7 +66,7 @@
 			    <ul class="dropdown-menu">
 			    	{% get_user_feeds %}
 			      {% for sub in user_feeds %}
-					<li><a href="{% url rss-feed sub.feed.id %}">{{sub.feed.title|default:sub.feed.url}}</a></li>
+					<li><a href="{% url "rss-feed" sub.feed.id %}">{{sub.feed.title|default:sub.feed.url}}</a></li>
 				  {% endfor %}
 			    </ul>
 			  </li>
@@ -78,7 +78,7 @@
 			    <ul class="dropdown-menu">
 			    	{% get_recomend_feeds %}
 			      {% for f in recomend_feeds %}
-							<li><a href="{% url rss-feed f.id %}">{{f.title}}</a></li>
+							<li><a href="{% url "rss-feed" f.id %}">{{f.title}}</a></li>
 						{% endfor %}
 			    </ul>
 			  </li>

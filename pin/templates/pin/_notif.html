@@ -9,7 +9,7 @@
 	<div class="notif-item" >
 		{% thumbnail item.post.image "100x100" crop="center" as im %}
 		<div class="notif-img" style="height: {{im.height}}px; width: {{im.width}}px">
-			<a class="pin-item-link" href="{% url pin-item item.post.id%}">
+			<a class="pin-item-link" href="{% url "pin-item" item.post.id%}">
 			<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item.text|remove_newlines|truncatewords:5}}">
 			</a>
 			
@@ -29,7 +29,7 @@
 		<div class="notif-actors">
 			{% for actor in item.actors %}
 			<div style="float:right;padding:5px; heigth:40px;">
-            	<a target="_blank" href="{% url pin-user actor.actor.id %}"><img src="{{actor.actor|get_avatar:30}}"></a>
+            	<a target="_blank" href="{% url "pin-user" actor.actor.id %}"><img src="{{actor.actor|get_avatar:30}}"></a>
         	</div>
         	{% endfor%}
     	</div>

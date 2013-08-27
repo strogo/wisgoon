@@ -19,15 +19,15 @@
 	<div class="feed-item-bottom">
 		<div class="feed-item-actions">
 			<div style="float: left">
-				<a href="{% url pin-item-like post.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"> <i class="icon-heart"></i> {{post.cnt_likes}} </a> 
+				<a href="{% url "pin-item-like" post.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"> <i class="icon-heart"></i> {{post.cnt_likes}} </a> 
                 <a href="{{MEDIA_URL}}{{post.image}}" target="_blank" class="btn"><i class="icon-download"></i></a> 
                 {% if user.is_authenticated and user.id != post.user_id %}
-					<a alt="{{user.id}}/{{post.user.id}}" href="{% url report_pin post.id%}" style="margin-right: 5px" class="btn btn_report "> <i class="icon-eye-open"></i></a>
+					<a alt="{{user.id}}/{{post.user.id}}" href="{% url "report_pin" post.id%}" style="margin-right: 5px" class="btn btn_report "> <i class="icon-eye-open"></i></a>
 				{% endif %}
                 
 				{% if user.id == post.user.id%}
-				<a href="{% url pin-item-delete post.id%}" class="btn btn-danger delpost" style="margin-right: 5px"><i class="icon-remove"></i></a>
-<a href="{% url pin-item-edit post.id%}" class="btn" style="margin-right: 5px"  data-toggle="modal" data-target="#pinitem"><i class="icon-pencil"></i></a>
+				<a href="{% url "pin-item-delete" post.id%}" class="btn btn-danger delpost" style="margin-right: 5px"><i class="icon-remove"></i></a>
+<a href="{% url "pin-item-edit" post.id%}" class="btn" style="margin-right: 5px"  data-toggle="modal" data-target="#pinitem"><i class="icon-pencil"></i></a>
 				{% endif %}
 			</div>
 			<div class="feed-item-date">
@@ -52,7 +52,7 @@
 			<legend>برچسب ها</legend>
 			<ul class="tags">
 			{% for tag in post.tag %}
-				<li><a class="label label-info" href="{% url pin-tag tag.slug%}">{{tag.name}}</a></li> 
+				<li><a class="label label-info" href="{% url "pin-tag" tag.slug%}">{{tag.name}}</a></li> 
 			{%empty%}
 				فاقد برچسب
 			{% endfor %}
@@ -66,7 +66,7 @@
 		<legend>
 			ارسال نظر
 		</legend>
-<form action="{% url pin-comment %}" method="post" class="form-inline">
+<form action="{% url "pin-comment" %}" method="post" class="form-inline">
 <textarea id="id_comment" rows="3" cols="60" name="text" placeholder="نظر خود را وارد کنید" ></textarea>
 <input type="hidden" name="post" value="{{post.id}}">
 <input type="submit" class="btn btn-primary" name="submit" value="ارسال">
@@ -81,14 +81,14 @@
 					<div class="comment_side">
 						{% if comment.user %}
 						<div class="avatar">
-							<a href="{% url pin-user comment.user.id %}"><img src="{{comment.user|get_avatar:36}}" alt=""></a>
+							<a href="{% url "pin-user" comment.user.id %}"><img src="{{comment.user|get_avatar:36}}" alt=""></a>
 						</div>
 						{% endif%}
 					</div>
 					<div class="comment_main">
 						<div class="comment_top">
 							<div class="comment-author">
-								<a href="{% url pin-user comment.user.id %}">
+								<a href="{% url "pin-user" comment.user.id %}">
 									{{comment.user|get_username}}
 								</a>
 							</div>
@@ -112,13 +112,13 @@
 						<div class="">
 							{% if user.is_superuser %}
 								{% if comment.is_public == 0 %}
-									<a href="{% url pin-comment-approve comment.id %}"><i class="icon-ok-sign"></i></a>
+									<a href="{% url "pin-comment-approve" comment.id %}"><i class="icon-ok-sign"></i></a>
 								{% else %}
-									<a href="{% url pin-comment-unapprove comment.id %}"><i class="icon-minus-sign"></i></a>
+									<a href="{% url "pin-comment-unapprove" comment.id %}"><i class="icon-minus-sign"></i></a>
 								{% endif %}
 							{% endif %}
 							{% if comment.user = request.user or user.is_superuser %}
-							<a href="{%url pin-comment-delete comment.id %}"><i class="icon-remove"></i></a>
+							<a href="{% url "pin-comment-delete" comment.id %}"><i class="icon-remove"></i></a>
 							{% endif %}
 						</div>
 						

@@ -25,13 +25,13 @@
 $("#rss-check").click(function(){
 	$(this).val('لطفا صبر کنید').addClass('disabled');
 	var url=$("#id_url").val();
-	$.post('{% url rss-subs-modal%}',{'url':url},function(data){
+	$.post('{% url "rss-subs-modal" %}',{'url':url},function(data){"
 		if(data==0){
 			$("#sub-alert").fadeIn();
 			$("#rss-check").val('بررسی آدرس').removeClass('disabled');
 		}else{
 			$.each(data, function(index, el){
-				url = el['url'];
+				 url = el['url'];
 				$("#sub-ac").fadeOut();
 				$("#sub-success").fadeIn();
 				$("#sub-redirect").attr('href', url).html(url);

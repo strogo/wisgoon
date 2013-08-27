@@ -14,7 +14,7 @@
         {% for u in top_user %}
         <td>
         <div class="feed-item" style="padding:5px">
-            <a href="{% url pin-user u.user.id %}">
+            <a href="{% url "pin-user" u.user.id %}">
                 {% if forloop.counter < 9 %}
                 <img src="{{u.user|get_avatar:192}}" style="float:left; width:192px;" >
                 {%else%}
@@ -23,7 +23,7 @@
             </a>
             <table>
             <tr>
-            <td><a href="{% url pin-user u.user.id %}">{{u.user|get_username}}</a></td>
+            <td><a href="{% url "pin-user" u.user.id %}">{{u.user|get_username}}</a></td>
             </tr><tr>
             <td>تعداد مطالب: {{u.cnt_post}}</td>
             </tr>

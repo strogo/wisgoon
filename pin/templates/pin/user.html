@@ -8,7 +8,7 @@
 
 {%block pin-ex-nav%}
 <li class="nav-right active">
-	<a href="{%url pin-user cur_user.id %}"><h1>ارسال شده های کاربر {{cur_user|get_username}}</h1></a>
+	<a href="{% url "pin-user" cur_user.id %}"><h1>ارسال شده های کاربر {{cur_user|get_username}}</h1></a>
 </li>
 {%endblock pin-ex-nav%}
 

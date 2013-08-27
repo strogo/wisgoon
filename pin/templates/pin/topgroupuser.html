@@ -24,12 +24,12 @@
                         {% for u in cat.tops %}
                         <td>
                         <div class="feed-item" style="padding:5px">
-                            <a href="{% url pin-user u.user.id %}">
+                            <a href="{% url "pin-user" u.user.id %}">
                                 <img src="{{u.user|get_avatar:192}}" style="float:left; width:192px;" >
                             </a>
                             <table>
                             <tr>
-                            <td><a href="{% url pin-user u.user.id %}">{{u.user|get_username}}</a></td>
+                            <td><a href="{% url "pin-user" u.user.id %}">{{u.user|get_username}}</a></td>
                             </tr>
                             <tr>
                             <td>امتیاز: {{u.sum_like}}</td>

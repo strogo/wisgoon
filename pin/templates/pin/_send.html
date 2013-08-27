@@ -1,5 +1,5 @@
 {% load pin_tags%}
-<form method="post" class="form-horizontal" action="{% url pin-send%}" id="pin_form" >
+<form method="post" class="form-horizontal" action="{% url "pin-send" %}" id="pin_form" >
 {% csrf_token%}
 	<div class="control-group">
       	{{ form.errors}}

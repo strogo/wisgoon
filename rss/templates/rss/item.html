@@ -63,7 +63,7 @@ var start_loading=0
 		            <div>
 		            	<ul class="tags">
 							{% for tag in item.tags %}
-								<li><a class="label label-info" href="{% url tag tag%}">{{tag}}</a></li> 
+								<li><a class="label label-info" href="{% url "tag" tag %}">{{tag}}</a></li> 
 							{% endfor %}
 						</ul>
 		            </div>

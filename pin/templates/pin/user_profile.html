@@ -36,14 +36,14 @@
                     <i class="icon-ok"></i>
                 </b>
                 {% if user.is_superuser %}
-                    <a href="{% url post-accept cur_user.id 0 %}">غیر فعال</a>
+                    <a href="{% url "post-accept" cur_user.id 0 %}">غیر فعال</a>
                 {% endif %}
                 {% else%}
                 <b class="tooltips" data-placement="bottom" rel="tooltip" title="مطالب ارسال شده بعد تایید مدیران سایت نمایش داده می شوند.">
                     <i class="icon-ban-circle"></i>
                 </b>
                 {% if user.is_superuser %}
-                    <a href="{% url post-accept cur_user.id 1 %}">تایید شود</a>
+                    <a href="{% url "post-accept" cur_user.id 1 %}">تایید شود</a>
                 {% endif %}
                 {%endif%}
             </li>
@@ -52,12 +52,12 @@
                 {% if cur_user.is_active %}
                 فعال
                 {% if user.is_superuser %}
-                    <a href="{% url activate-user cur_user.id 0%}">غیر فعال کردن</a>
+                    <a href="{% url "activate-user" cur_user.id 0%}">غیر فعال کردن</a>
                 {% endif %}
                 {% else%}
                 غیرفعال
                 {% if user.is_superuser %}
-                    <a href="{% url activate-user cur_user.id 1%}">فعال کردن</a>
+                    <a href="{% url "activate-user" cur_user.id 1%}">فعال کردن</a>
                 {% endif %}
                 {%endif%}
             </li>
@@ -75,7 +75,7 @@
         	{% if cur_user.id != request.user.id %}
 				{% include "pin/following_box.html"%}
 			{% else %}
-    <a href="{% url user-profile-change%}" role="button" class="btn" data-toggle="modal" data-target="#profileModal">ویرایش مشخصات</a>
+    <a href="{% url "user-profile-change" %}" role="button" class="btn" data-toggle="modal" data-target="#profileModal">ویرایش مشخصات</a>
     
     <a href="/accounts/password/change/?{{user.has_usable_password}}">تعویض رمز عبور</a>
 

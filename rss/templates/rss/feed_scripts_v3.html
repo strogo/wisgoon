@@ -6,11 +6,11 @@ var extend_query = extend_query || "";
 var older_url = older_url || "";
 
 function load_posts(page) {
-	pro_older_url = "";
-	if (older_url != ""){
-		pro_older_url = older_url;
+	pro_older_url "=" "";
+	if (older_url "!=" ""){
+		pro_older_url "=" older_url;
 	}else{
-		pro_older_url = a_url+'?older=' + page + '&'+extend_query;
+		pro_older_url "=" a_url+'?older=' + page + '&'+extend_query;
 	}
 	
     $.get(

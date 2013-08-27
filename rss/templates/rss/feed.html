@@ -12,9 +12,9 @@
 	{%if user.is_authenticated%}
 		{% user_feed_subs feed.id %}
 		{% if user_feed_subs_status == 0 %}
-		<span rel="{% url rss-feed-sub feed.id%}" class="feed-sub label label-success">اشتراک</span>
+		<span rel="{% url "rss-feed-sub" feed.id%}" class="feed-sub label label-success">اشتراک</span>
 		{%else%}
-		<span rel="{% url rss-feed-sub feed.id%}" class="feed-sub label label-inverse">لغو اشتراک</span>
+		<span rel="{% url "rss-feed-sub" feed.id%}" class="feed-sub label label-inverse">لغو اشتراک</span>
 		{%endif%}		
 	{%endif%}
 	</a>

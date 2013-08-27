@@ -9,21 +9,21 @@
 	</li>
 
 	<li class="pull-right">
-		<a href="{% url home %}">صفحه اصلی</a>
+		<a href="{% url "home" %}">صفحه اصلی</a>
 	</li>
 	<li class="nav-right {{pinactive}}">
-		<a href="{% url pin-home %}"><img src="{{MEDIA_URL}}img/new/pin.png" /> پین</a></li>
+		<a href="{% url "pin-home" %}"><img src="{{MEDIA_URL}}img/new/pin.png" /> پین</a></li>
 	<li class="pull-right {{rssactive}}">
-		<a href="{% url rss %}">فید خوان</a>
+		<a href="{% url "rss" %}">فید خوان</a>
 	</li>
 	<li class="pull-right">
-		<a href="{% url rss-search %}">جستجو</a>
+		<a href="{% url "rss-search" %}">جستجو</a>
 	</li>
 	<li class="pull-right">
-		<a href="{% url contactus-home %}">ارتباط با ما</a>
+		<a href="{% url "contactus-home" %}">ارتباط با ما</a>
 	</li>
     <li class="pull-right">
-        <a href="{% url policy %}">قوانین</a>
+        <a href="{% url "policy" %}">قوانین</a>
     </li>
 	
 	{% for page in flatpages %}
@@ -31,7 +31,7 @@
     {% endfor %}
 	{% if user.is_authenticated %}
 	<li class="pull-right">
-		<a class="tooltips" data-placement="bottom" rel="tooltip" title="نمایش و ویرایش پروفایل" href="{% url pin-user-new user.id user.username %}"><img src="{{user|get_avatar:20}}"></a>
+		<a class="tooltips" data-placement="bottom" rel="tooltip" title="نمایش و ویرایش پروفایل" href="{% url "pin-user-new" user.id user.username %}"><img src="{{user|get_avatar:20}}"></a>
 	</li>
 	<li class="pull-right">
 		<a class="tooltips" data-placement="bottom" data-dismiss="alert" href="/accounts/logout/" rel="tooltip" title="خروج از سایت" onclick="return confirm('Are you sure you want to log out?');">
@@ -39,7 +39,7 @@
 	</li>
 	{%else%}
 	<li class="pull-right">
-		<a href="{% url registration_register %}"><img src="{{MEDIA_URL}}img/new/user.png"><!--<i class="icon-user icon-black">--></i> عضویت</a>
+		<a href="{% url "registration_register" %}"><img src="{{MEDIA_URL}}img/new/user.png"><!--<i class="icon-user icon-black">--></i> عضویت</a>
 	</li>
 	<li class="pull-right">
 		<a href="/accounts/login/"><img src="{{MEDIA_URL}}img/new/login.png"> ورود</a>

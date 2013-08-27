@@ -13,19 +13,19 @@
 	</div>
 	{% endthumbnail %}
 	
-	<small><img class="favicon" src="{{MEDIA_URL}}favicon/{{item.feed.url|get_favicon}}" />{{item.feed}}</small> - <a href="{{ item.get_absolute_url }}">{{item|escape}}</a>
+	<small><img class="favicon" src="{{MEDIA_URL}}favicon/{{item.feed.url|get_favicon}}" />{{item.feed}}</small> - <a href="{{ item.get_absolute_url}}">{{item|escape}}</a>
 	<p class="feed-description">{{item.description|striptags|safe|truncatewords:100}}</p>
 	<span style="display: block;">{{item.date|naturaltime|human_farsi}}  </span>
 	<ul class="tags">
 	{% for tag in item.tags %}
-		<li><a class="label label-info" href="{% url tag tag%}">{{tag}}</a></li> 
+		<li><a class="label label-info" href="{% url "tag" tag%}">{{tag}}</a></li> 
 	{% endfor %}
 			</ul>
 	<div class="feed-actions-v2">
 		<div class="sharing-actions">
 
 			<div class="a2a_kit a2a_default_style">
-				<a href="{% url rss-item-like item.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_item_like item.id %}{% endif %}"> <i class="icon-heart"></i> {{item.likes}} </a>
+				<a href="{% url "rss-item-like" item.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_item_like item.id %}{% endif %}"> <i class="icon-heart"></i> {{item.likes}} </a>
 				
 			</div>
 		</div>
