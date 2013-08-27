@@ -11,8 +11,8 @@ from tastypie.authentication import ApiKeyAuthentication
 
 from django.contrib.auth.models import User
 from django.db import models
-from tastypie.models import create_api_key
 
+from tastypie.models import create_api_key
 from tastypie.exceptions import Unauthorized
 
 from PIL import Image
@@ -25,7 +25,12 @@ from user_profile.models import Profile
 from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
 
+from pin.tools import userdata_cache
+
 models.signals.post_save.connect(create_api_key, sender=User)
+
+CACHE_AVATAR = 0
+CACHE_USERNAME = 1
 
 
 class UserResource(ModelResource):
@@ -107,7 +112,7 @@ class ProfileResource(ModelResource):
 
     def dehydrate(self, bundle):
         user = bundle.data['user']
-        bundle.data['user_avatar'] = daddy_avatar.get_avatar(user, size=300)
+        bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR, size=300)
         return bundle
 
 
@@ -125,15 +130,15 @@ class LikesResource(ModelResource):
     class Meta:
         queryset = Likes.objects.all()
         resource_name = 'likes'
-        excludes = ['ip', 'id',]
+        excludes = ['ip', 'id']
         filtering = {
             "post_id": ("exact",),
         }
 
     def dehydrate(self, bundle):
         user = bundle.data['user_url']
-        bundle.data['user_avatar'] = daddy_avatar.get_avatar(user, size=100)
-        bundle.data['user_name'] = get_username(bundle.data['user_url'])
+        bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR)
+        bundle.data['user_name'] = userdata_cache(user, CACHE_USERNAME)
 
         return bundle
 
@@ -156,9 +161,9 @@ class CommentResource(ModelResource):
 
     def dehydrate(self, bundle):
         user = bundle.data['user_url']
-        bundle.data['user_avatar'] = daddy_avatar.get_avatar(user, size=100)
-        bundle.data['user_name'] = get_username(bundle.data['user_url'])
 
+        bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR)
+        bundle.data['user_name'] = userdata_cache(user, CACHE_USERNAME)
         return bundle
 
 
@@ -234,7 +239,7 @@ class PostResource(ModelResource):
         base_object_list = super(PostResource, self).apply_sorting(object_list)
         sorts = []
         sorts.append('-is_ads')
-        
+
         if self.popular in ['month', 'lastday', 'lastweek', 'lasteigth']:
             sorts.append("-cnt_like")
         else:
@@ -286,13 +291,13 @@ class PostResource(ModelResource):
 
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
         user = bundle.data['user']
-        bundle.data['user_avatar'] = daddy_avatar.get_avatar(user, size=100)
+        bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR)
 
         if self.cur_user:
             if Likes.objects.filter(post_id=id, user=self.cur_user).count():
                 bundle.data['like_with_user'] = True
 
-        bundle.data['user_name'] = get_username(bundle.data['user'])
+        bundle.data['user_name'] = userdata_cache(user, CACHE_USERNAME)
         if bundle.data['like'] == -1:
             bundle.data['like'] = 0
 
@@ -377,8 +382,8 @@ class NotifyResource(ModelResource):
                 bundle.data['like_with_user'] = True
 
         post_owner_id = bundle.data['post_owner_id']
-        bundle.data['post_owner_avatar'] = daddy_avatar.get_avatar(post_owner_id, size=100)
-        bundle.data['post_owner_user_name'] = get_username(post_owner_id)
+        bundle.data['post_owner_avatar'] = userdata_cache(post_owner_id, CACHE_AVATAR)
+        bundle.data['post_owner_user_name'] = userdata_cache(post_owner_id, CACHE_USERNAME)
 
         actors = Notif_actors.objects.filter(notif=id).order_by('id')[:10]
         ar = []
