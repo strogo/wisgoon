@@ -108,8 +108,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'johnny.middleware.LocalStoreClearMiddleware',
-    'johnny.middleware.QueryCacheMiddleware',
+    #'johnny.middleware.LocalStoreClearMiddleware',
+    #'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 
     #'django.middleware.cache.FetchFromCacheMiddleware',
@@ -130,7 +130,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(SITE_ROOT, 'templates')
+    os.path.join(SITE_ROOT, 'templates'),
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -147,8 +147,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
     'rss.context_processors.c_url',
     'rss.context_processors.node_url',
-    'pin.context_processors.pin_form',                                          
+    'pin.context_processors.pin_form',
     'pin.context_processors.pin_categories',
+    'pin.context_processors.is_super_user',
+    'pin.context_processors.user__id',
 )
 
 INSTALLED_APPS = (
@@ -174,13 +176,14 @@ INSTALLED_APPS = (
     #'djangosphinx',
     'daddy_avatar',
     'ban',
-    'socialacc',
+    #'socialacc',
     'contactus',
     'compressor',
     'taggit',
     'user_profile',
     'captcha',
-    'google_contacts',
+    #'google_contacts',
+    'devserver',
 )
 
 

@@ -66,6 +66,11 @@ urlpatterns = patterns('pin.views',
     url(r'^api/like/', include(likes_resource.urls)),
 )
 
+urlpatterns += patterns('pin.views_backbone',
+    url(r'new/home', 'home', name='new-home'),
+    url(r'new/notif/', 'notif', name='new-notif'),
+)
+
 urlpatterns += patterns('pin.views_oauth',
     url(r'invite/google', 'invite_google', name='invite-google'),
     url(r'email/activation/$', 'activation_email', name='activation_email'),
@@ -95,3 +100,4 @@ urlpatterns += patterns('pin.views_device',
 urlpatterns += patterns('',
     url(r'^comments/', include('django.contrib.comments.urls')),
 )
+

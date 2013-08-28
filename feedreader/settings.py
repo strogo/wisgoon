@@ -305,3 +305,7 @@ LOGGING = {
 }
 
 SESSION_COOKIE_DOMAIN = '.wisgoon.com'
+
+import warnings
+import exceptions
+warnings.filterwarnings("ignore", category=exceptions.RuntimeWarning)
