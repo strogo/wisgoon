@@ -3,8 +3,9 @@ import time
 from datetime import datetime
 from django.core.cache import cache
 from django.conf import settings
+from django.contrib.auth.models import User
+from user_profile.models import Profile
 
-from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
 
 user_keys = {}
@@ -56,3 +57,23 @@ def userdata_cache(user, field=None, size=100):
         return value
 
     return []
+
+
+
+def get_username(user):
+    if isinstance(user, (int, long)):
+        user = User.objects.only('username').get(pk=user)
+
+    try:
+        profile = Profile.objects.only('name').get(user_id=user.id)
+        if not profile:
+            username = user.username
+        else:
+            username = profile.name
+    except Profile.DoesNotExist:
+        username = user.username
+
+    if not username:
+        username = user.username
+
+    return username

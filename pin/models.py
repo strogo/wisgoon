@@ -174,8 +174,9 @@ class Post(models.Model):
 
     def admin_image(self):
         img = self.get_image_thumb()
-        
-        return '<a href="/media/%s" target="_blank"><img src="%s" /></a>' % (self.image, img.url)
+        if img:
+            return '<a href="/media/%s" target="_blank"><img src="%s" /></a>' % (self.image, img.url)
+        return 'None'
     admin_image.allow_tags = True
 
     def cnt_likes(self):
@@ -209,6 +210,9 @@ class Stream(models.Model):
     
     class Meta:
         unique_together = (("following", "user", "post"),)
+        #index_together = [
+        #    ["user", "date"],
+        #]
 
     @classmethod
     def add_post(cls, sender, instance, *args, **kwargs):

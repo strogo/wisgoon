@@ -141,6 +141,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'rss.context_processors.node_url',
     'pin.context_processors.pin_form',
     'pin.context_processors.pin_categories',
+    'pin.context_processors.is_super_user',
+    'pin.context_processors.user__id',
 #    'django_facebook.context_processors.facebook',
 )
 
