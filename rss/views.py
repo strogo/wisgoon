@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 import time
 import json
+from urllib import quote
 import sys
 import simplejson
 import datetime
@@ -15,7 +16,7 @@ from rss.sphinxapi import SphinxClient, SPH_MATCH_EXTENDED, \
         SPH_SORT_ATTR_DESC, SPH_MATCH_ANY, SPH_GROUPBY_DAY, SPH_SORT_ATTR_ASC
 
 from django.template.loader import render_to_string
-
+from django.utils.http import urlencode
 from django.contrib.comments.models import Comment
 from feedreader.parser import parse_feed_web
 from django.views.decorators.csrf import csrf_exempt
@@ -469,8 +470,11 @@ def tag(request, q, older=0):
         if save_keyword:
             for row in result:
                 store_extra(row.id, tag_original, row.timestamp)
-            
-        older_url = reverse('tag-older', args=[tag_original, offset+30])
+        
+        #tag_in_url = quote(tag_original.encode('utf-8'))
+        #tag_in_url = tag_original
+        #older_url = reverse('tag-older', args=[tag_in_url, offset+30])
+        older_url = ""
     
         if request.is_ajax():
             return render_to_response('rss/_tag_items.html',
