@@ -27,6 +27,8 @@ DATABASES = {
     }
 }
 
+ALLOWED_HOSTS = ['*.wisgoon.com']
+
 EMAIL_HOST = "wisgoon.com"
 DEFAULT_FROM_EMAIL = "info@wisgoon.com"
 
