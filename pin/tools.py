@@ -31,7 +31,7 @@ def create_filename(filename):
 
 
 def userdata_cache(user, field=None, size=100):
-    cache_key = 'user_%s' % user
+    cache_key = 'user_%s_%s' % (user, size)
 
     if cache_key in user_keys:
         data = user_keys[cache_key]
