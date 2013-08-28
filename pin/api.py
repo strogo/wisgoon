@@ -282,8 +282,7 @@ class PostResource(ModelResource):
             bundle.data['hw'] = "%sx%s" % (im.height, im.width)
 
         if int(self.just_image) == 1:
-            for key in ['user', 'user_name', 'user_avatar',
-                        'url', 'like', 'like_with_user',
+            for key in ['user', 'url', 'like', 'like_with_user',
                         'cnt_comment', 'category', 'text',
                         'image', 'likers', 'resource_uri']:
                 del(bundle.data[key])
