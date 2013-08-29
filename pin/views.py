@@ -69,6 +69,7 @@ def home(request):
 
 
 def user_like(request, user_id):
+    user_id = int(user_id)
     ROW_PER_PAGE = 20
     likes_list = []
     
@@ -106,6 +107,7 @@ def user_like(request, user_id):
         return render(request, 'pin/mylike.html', 
             {'latest_items': latest_items,
              'offset': likes.next_page_number,
+             'user_id': user_id,
             })
 
 
