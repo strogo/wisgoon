@@ -639,3 +639,22 @@ width: 100px;
 .notif-actors{
 	width: 400px;
 }
+
+#user_boxes{
+	margin-top: 9px;
+	padding:5px; 
+	border:1px solid #e1e1e1; 
+	background: white;
+	box-shadow: 0 1px 3px rgba(34,25,25,0.5);
+	-moz-box-shadow: 0 1px 3px rgba(34,25,25,0.5);
+	-webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.5);
+	overflow: hidden;
+}
+#user_boxes_list{
+	list-style: none;
+	margin: 0;
+	
+}
+#user_boxes_list li{
+
+}
