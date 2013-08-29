@@ -47,7 +47,7 @@ urlpatterns = patterns('pin.views',
 
     url(r'^comment/score/(?P<comment_id>\d+)/(?P<score>\d+)', 'comment_score', name="pin-comment-score"),
 
-    #url(r'^mylike/', 'mylike', name='pin-mylike'),
+    url(r'^mylike/', 'mylike', name='pin-mylike'),
     url(r'^you_are_deactive', 'you_are_deactive', name='pin-you-are-deactive'),
     url(r'^goto_index/(?P<item_id>\d+)/(?P<status>\d+)/', 'goto_index', name='pin-item-goto-index'),
     url(r'^send_mail', 'send_mail', name='pin-sendmail'),

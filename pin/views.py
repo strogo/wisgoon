@@ -68,6 +68,48 @@ def home(request):
         return render(request, 'pin/home.html', {'latest_items': latest_items})
 
 
+def mylike(request):
+    ROW_PER_PAGE = 20
+    likes_list = []
+    
+    likes = Likes.objects.values_list('post_id', flat=True)\
+        .filter(user_id=request.user.id).order_by('-id')
+
+    paginator = Paginator(likes, ROW_PER_PAGE)
+
+    try:
+        offset = int(request.GET.get('older', 1))
+    except ValueError:
+        offset = 1
+
+    try:
+        likes = paginator.page(offset)
+    except PageNotAnInteger:
+        likes = paginator.page(1)
+    except EmptyPage:
+        return HttpResponse(0)
+
+    for l in likes:
+        likes_list.append(int(l))
+        print int(l)
+    
+    latest_items = Post.accepted.filter(id__in=likes_list)
+
+    if request.is_ajax():
+        if latest_items.exists():
+            return render(request,
+                          'pin/_items.html',
+                          {'latest_items': latest_items,
+                           'offset': likes.next_page_number})
+        else:
+            return HttpResponse(0)
+    else:
+        return render(request, 'pin/mylike.html', 
+            {'latest_items': latest_items,
+             'offset': likes.next_page_number,
+            })
+
+
 def latest(request):
     timestamp = get_request_timestamp(request)
 
