@@ -68,12 +68,12 @@ def home(request):
         return render(request, 'pin/home.html', {'latest_items': latest_items})
 
 
-def mylike(request):
+def user_like(request, user_id):
     ROW_PER_PAGE = 20
     likes_list = []
     
     likes = Likes.objects.values_list('post_id', flat=True)\
-        .filter(user_id=request.user.id).order_by('-id')
+        .filter(user_id=user_id).order_by('-id')
 
     paginator = Paginator(likes, ROW_PER_PAGE)
 
@@ -91,7 +91,6 @@ def mylike(request):
 
     for l in likes:
         likes_list.append(int(l))
-        print int(l)
     
     latest_items = Post.accepted.filter(id__in=likes_list)
 

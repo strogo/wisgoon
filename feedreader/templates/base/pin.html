@@ -109,7 +109,7 @@ var upload_url = "{% url "pin-upload" %}";
 	<a href="{% url "pin-following" %}">مطالب دوستان</a>
 </li>
 <li class="nav-right">
-	<a href="{% url "pin-mylike" %}"><i class="icon-heart"></i></a>
+	<a href="{% url "pin-user-like" user.id %}"><i class="icon-heart"></i></a>
 </li>
 <li class="nav-right">
 	<a href="#notify" data-load="{% url "show_notify" %}" title="اعلانات" class="popnotify"><i class="icon-bell"> </i> {{user.id|get_user_notify}} </a>
