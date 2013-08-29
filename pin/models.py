@@ -352,16 +352,28 @@ class Comments(models.Model):
     comment = models.TextField()
     submit_date = models.DateTimeField(auto_now_add=True)
     ip_address = models.IPAddressField(default='127.0.0.1', db_index=True)
-    is_public = models.BooleanField(default=True, db_index=True)
+    is_public = models.BooleanField(default=False, db_index=True)
     reported = models.BooleanField(default=False, db_index=True)
 
     object_pk = models.ForeignKey(Post, related_name='comment_post')
     user = models.ForeignKey(User, related_name='comment_sender')
     score = models.IntegerField(default=0, blank=True, )
 
+    def date_lt(self, date, how_many_days=15):
+        lt_date = datetime.now() - timedelta(days=how_many_days)
+        lt_timestamp = mktime(lt_date.timetuple())
+        timestamp = mktime(date.timetuple())
+        #print timestamp, older_timestamp
+        return timestamp < lt_timestamp
+
     def save(self, *args, **kwargs):
         if not self.pk:
             Post.objects.filter(pk=self.object_pk.id).update(cnt_comment=F('cnt_comment')+1)
+        else:
+            if ((self.date_lt( self.user.date_joined, 15) and self.user.profile.score > 2000) \
+                or self.user.profile.score > 5000 ):
+                self.is_public = True
+
         super(Comments, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
