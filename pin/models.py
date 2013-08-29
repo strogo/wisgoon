@@ -370,8 +370,8 @@ class Comments(models.Model):
         if not self.pk:
             Post.objects.filter(pk=self.object_pk.id).update(cnt_comment=F('cnt_comment')+1)
         else:
-            if ((self.date_lt( self.user.date_joined, 15) and self.user.profile.score > 2000) \
-                or self.user.profile.score > 5000 ):
+            if ((self.date_lt( self.user.date_joined, 5) and self.user.profile.score > 500) \
+                or self.user.profile.score > 500 ):
                 self.is_public = True
 
         super(Comments, self).save(*args, **kwargs)

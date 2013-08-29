@@ -301,7 +301,7 @@ def item(request, item_id):
         post.comments = Comments.objects.filter(object_pk=post)
         post.likes = Likes.objects.filter(post=post).order_by('ip')
     else:
-        post.comments = Comments.objects.filter(object_pk=post)
+        post.comments = Comments.objects.filter(object_pk=post, is_public=True)
         post.likes = Likes.objects.filter(post=post)
     
     try:
