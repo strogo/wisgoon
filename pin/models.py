@@ -372,7 +372,7 @@ class Comments(models.Model):
         
         if ((self.date_lt( self.user.date_joined, 5) and self.user.profile.score > 500) \
                 or self.user.profile.score > 500 ):
-                self.is_public = True
+            self.is_public = True
 
         super(Comments, self).save(*args, **kwargs)
 
