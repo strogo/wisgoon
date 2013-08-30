@@ -83,7 +83,7 @@ $("#btn-pin-url").click(function(){
 	$(this).addClass('disabled');
 	
 	 url = $("#url").val();
-	$.post('{% url "pin-sendurl-a" %}',{'url':url}," parse_data, 'json');
+	$.post('{% url "pin-sendurl-a" %}',{'url':url}, parse_data, 'json');
 	
 });
 var images = [];

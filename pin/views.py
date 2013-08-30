@@ -90,6 +90,9 @@ def user_like(request, user_id):
     except EmptyPage:
         return HttpResponse(0)
 
+    if likes.has_next() is False:
+        likes.next_page_number = -1
+
     for l in likes:
         likes_list.append(int(l))
     
@@ -662,7 +665,9 @@ def tag(request, keyword):
     s = []
     for t in tag_items:
         s.append(t.object_id)
-        
+    
+    if tag_items.has_next() is False:
+        tag_items.next_page_number = -1
     latest_items = Post.objects.filter(id__in=s, status=1).all()
     
     if request.is_ajax():

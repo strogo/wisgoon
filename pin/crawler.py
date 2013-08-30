@@ -41,7 +41,7 @@ def check_content_type(url):
     return 'text'
 
 def validate_url(url):
-    valid_url = URLValidator(verify_exists=False)
+    valid_url = URLValidator()
     
     try:
         valid_url(url)
