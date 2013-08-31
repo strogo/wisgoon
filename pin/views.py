@@ -75,7 +75,8 @@ def user_friends(request, user_id):
     
     friends = Follow.objects.values_list('following_id', flat=True)\
         .filter(follower_id=user_id).order_by('-id')
-
+    if len(friends) == 0:
+        return render(request, 'pin/user_friends_empty.html')
     paginator = Paginator(friends, ROW_PER_PAGE)
 
     try:
