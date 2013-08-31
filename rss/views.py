@@ -1,31 +1,27 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 import time
 import json
-from urllib import quote
-import sys
-import simplejson
 import datetime
 
 from django.shortcuts import render_to_response, get_object_or_404, render
 from django.template.context import RequestContext
-from django.http import HttpResponseRedirect  #, HttpResponse
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.core.urlresolvers import reverse
-from rss.sphinxapi import SphinxClient, SPH_MATCH_EXTENDED, \
-        SPH_SORT_ATTR_DESC, SPH_MATCH_ANY, SPH_GROUPBY_DAY, SPH_SORT_ATTR_ASC
+from rss.sphinxapi import SphinxClient, SPH_MATCH_EXTENDED, SPH_SORT_ATTR_DESC, SPH_MATCH_ANY, SPH_GROUPBY_DAY
 
-from django.template.loader import render_to_string
-from django.utils.http import urlencode
+
 from django.contrib.comments.models import Comment
 from feedreader.parser import parse_feed_web
 from django.views.decorators.csrf import csrf_exempt
 
-from rss.models import Item, Feed, Subscribe, Likes ,Report, Search, Lastview, ItemExtra, Category
+from rss.models import Item, Feed, Subscribe, Likes, Report, Search, Lastview, ItemExtra, Category
 from rss.utils import clean_words
 from rss.forms import FeedForm, ReportForm
 
 MAX_PER_PAGE = 10
+
 
 def category(request):
     cats = Category.objects.all()
@@ -33,54 +29,56 @@ def category(request):
         cat_feeds = Feed.objects.filter(category=cat)
         cat_idis = [int(feed.id) for feed in cat_feeds]
         cat.items = Item.objects.filter(feed__in=cat_idis).order_by('-id')[:5]
-            
-    return render(request, 'rss/category.html', {'cats':cats})
+
+    return render(request, 'rss/category.html', {'cats': cats})
+
 
 def older(request):
     try:
         id = int(request.GET.get('older', 0))
     except ValueError:
         id = 0
-    
+
     if id != 0:
         latest_items = Item.objects.all().extra(where=['id<%s'], params=[id]).order_by('-id')[:MAX_PER_PAGE]
-    
+
         if request.is_ajax():
             if latest_items.exists():
-#                html = render_to_string("rss/_items.html", {'latest_items': latest_items})
-#                serialized_data = simplejson.dumps({"html": html,'lastid':latest_items[0].id})
-#                return HttpResponse(serialized_data, mimetype="application/json")
                 return render(request,'rss/_items.html', {'latest_items': latest_items})
             else:
                 return HttpResponse(0)
     return HttpResponse(0)
 
+
 def home(request):
-    
     try:
         timestamp = int(request.GET.get('older', 0))
     except ValueError:
         timestamp = 0
-    
+
     if timestamp == 0:
         latest_items = Item.objects.all().order_by('-timestamp')[:MAX_PER_PAGE]
     else:
         latest_items = Item.objects.all().extra(where=['id<%s'], params=[int(timestamp)]).order_by('-id')[:MAX_PER_PAGE]
-    
-    try:   
+
+    try:
         user_feeds = Subscribe.objects.filter(user=request.user).all()
-    except :
+    except:
         user_feeds = ""
-        
+
     form = ReportForm()
-    
+
     if request.is_ajax():
         if latest_items.exists():
             return render(request, 'rss/_items.html', {'latest_items': latest_items})
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'rss/home.html', {'latest_items': latest_items,'user_feeds':user_feeds,'form':form})
+        return render(request, 'rss/home.html', {
+            'latest_items': latest_items,
+            'user_feeds':user_feeds,
+            'form':form})
+
 
 def user_likes(request, user_id):
     
@@ -96,15 +94,13 @@ def user_likes(request, user_id):
     lss = []
     for l in likes:
         lss.append(l.item_id)
-    latest_items = Item.objects.filter(id__in=lss).all().order_by('-timestamp')[:30]
-    
-        
-    
-    try:   
+    latest_items = Item.objects.filter(id__in=lss).all().order_by('-timestamp')[:30]        
+
+    try:
         user_feeds = Subscribe.objects.filter(user=request.user).all()
     except :
         user_feeds = ""
-        
+
     form = ReportForm()
     if request.is_ajax():
         if latest_items.exists():
@@ -134,11 +130,11 @@ def feed(request, feed_id, older=0):
     timestamp = int(older)
     
     feed = Feed.objects.get(pk=feed_id)
-    
+
     if timestamp == 0:
         latest_items = Item.objects.filter(feed=feed_id).all().order_by('-id')[:MAX_PER_PAGE]
     else:
-        endtimestamp = get_older_days_time(timestamp, 5)
+        #endtimestamp = get_older_days_time(timestamp, 5)
         #latest_items = Item.objects.filter(feed=feed_id, timestamp__range=(endtimestamp, timestamp-1)).all().order_by('-timestamp')[:MAX_PER_PAGE]
         latest_items = Item.objects.filter(feed=feed_id).extra(where=['id<%s'], params=[timestamp]).all().order_by('-id')[:MAX_PER_PAGE]
     if not latest_items:
@@ -168,6 +164,17 @@ def get_older_days_time(timestamp, days=10):
     endtimestamp = time.mktime(lm.timetuple())
     return endtimestamp
 
+
+def feed_item_preview(request, feed_id, item_id):
+    try:
+        feed = Feed.objects.get(pk=feed_id)
+    except Feed.DoesNotExist:
+        raise Http404
+    item = get_object_or_404(Item.objects.filter(id=item_id)[:1])
+    
+    return render(request, 'rss/item_preview.html', {'item': item})
+
+
 def feed_item(request, feed_id, item_id):
     try:
         feed = Feed.objects.get(pk=feed_id)
@@ -190,7 +197,7 @@ def feed_item(request, feed_id, item_id):
     #store last view
     Lastview.objects.get_or_create(item=item_id)
     
-    endtimestamp = get_older_days_time(item.timestamp,5)
+    #endtimestamp = get_older_days_time(item.timestamp,5)
 
     latest_items = Item.objects.filter(feed=feed_id).extra(where=['id<%s'], params=[int(item_id)]).all().order_by('-id')[:10]
     
@@ -338,11 +345,11 @@ def search_query(query, offset=0, sort=1, has_image=-1, mode=SPH_MATCH_EXTENDED,
     host = 'localhost'
     port = 9312
     index = 'rss_item'
-    filtercol = 'group_id'
-    filtervals = []
-    sortby = '-@weights'
-    groupby = 'id'
-    groupsort = '@group desc'
+    #filtercol = 'group_id'
+    #filtervals = []
+    #sortby = '-@weights'
+    #groupby = 'id'
+    #groupsort = '@group desc'
     
     # do query
     cl = SphinxClient()

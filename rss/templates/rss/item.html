@@ -45,7 +45,7 @@ var start_loading=0
 		<li data-next="{{item.timestamp}}">
 		<div class="feed-card" id="">
 			<div class="feed-inner">
-				<a class="feed-item-title" style="display:inline" target="_blank" rel="nofollow" href="{{item.url}}"><img class="favicon" src="{{MEDIA_URL}}favicon/{{item.feed.url|get_favicon}}" /></a>
+				<a class="feed-item-title" style="display:inline" target="_blank" rel="nofollow" href="{{item.get_absolute_url}}preview/"><img class="favicon" src="{{MEDIA_URL}}favicon/{{item.feed.url|get_favicon}}" /></a>
                 <h1 style="display:inline">{{item}}</h1>
 				<div class="feed-item-desc">{{item.description|safe|linebreaksbr}}</div>		
 			</div>
