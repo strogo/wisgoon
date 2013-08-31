@@ -7,10 +7,10 @@
         <tr>
         {% for u in user_items %}
         <td>
-        <div class="feed-item" style="padding:5px">
+        <div class="feed-item" style="padding:5px; width:165px">
             <a href="{% url "pin-user" u.id %}">
                 
-                <img src="{{u.id|get_avatar:192}}" style="float:left; width:192px;height:192px" >
+                <img src="{{u.id|get_avatar:165}}" style="float:left; width:165px;height:165px" >
                 
             </a>
             <table>
