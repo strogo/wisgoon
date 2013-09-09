@@ -99,7 +99,7 @@ class AppAdmin(admin.ModelAdmin):
     list_display = ('name', 'file', 'version', 'current')
 
 class CommentsAdmin(admin.ModelAdmin):
-    list_display = ('id','comment', 'ip_address', 'user', 'is_public', 'reported', 'admin_link')
+    list_display = ('id','comment', 'ip_address', 'is_public', 'reported', 'admin_link')
     list_filter = ('is_public', 'reported')
     search_fields = ['ip_address', 'user__id']
 
