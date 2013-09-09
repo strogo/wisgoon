@@ -106,8 +106,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'johnny.middleware.LocalStoreClearMiddleware',
-    'johnny.middleware.QueryCacheMiddleware',
+    #'johnny.middleware.LocalStoreClearMiddleware',
+    #'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'rss.middleware.SeoQuery',
     'rss.middleware.RedirectMiddleware',
@@ -196,6 +196,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 LOGIN_REDIRECT_URL = '/'
 
+"""
 CACHES = {
     'default': {
 	'JOHNNY_CACHE': True,
@@ -203,7 +204,8 @@ CACHES = {
         'LOCATION': '127.0.0.1:11211',
         #'MAN_IN_BLACKLIST': ['pin_notify_actors', 'pin_notify'],
     }
-}
+}"""
+
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 JOHNNY_MIDDLEWARE_KEY_PREFIX='wis_cac'
