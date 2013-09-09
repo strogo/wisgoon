@@ -317,6 +317,7 @@ class PostResource(ModelResource):
 
 class NotifAuthorization(Authorization):
     def read_list(self, object_list, bundle):
+        Notif.objects.filter(user=bundle.request.user).update(seen=True)
         return object_list.filter(user=bundle.request.user)
 
 
@@ -350,6 +351,7 @@ class NotifyResource(ModelResource):
 
     def apply_authorization_limits(self, request, object_list):
         #print "hello"
+
         return object_list.filter(user=request.user)
 
     def dispatch(self, request_type, request, **kwargs):
@@ -382,6 +384,7 @@ class NotifyResource(ModelResource):
                 bundle.data['like_with_user'] = True
 
         post_owner_id = bundle.data['post_owner_id']
+
         bundle.data['post_owner_avatar'] = userdata_cache(post_owner_id, CACHE_AVATAR)
         bundle.data['post_owner_user_name'] = userdata_cache(post_owner_id, CACHE_USERNAME)
 
