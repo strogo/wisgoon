@@ -6,7 +6,7 @@
 <div class="feed-item feed-inner-item" itemscope itemtype="http://schema.org/CreativeWork" >
 	<div class="feed-inner">
 		<div style="margin: 0 auto">
-			<a href="{{MEDIA_URL}}{{post.image}}"><img itemprop="image" src="{{MEDIA_URL}}{{ post.image }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}"></a>
+			<a href="{{MEDIA_URL}}{{post.image}}"><img itemprop="image" style="margin:0 auto" src="{{MEDIA_URL}}{{ post.image }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}"></a>
 		</div>
 		{% comment %}
 		{% thumbnail post.image "603" upscale=False as im %}
