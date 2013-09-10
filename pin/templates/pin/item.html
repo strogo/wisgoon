@@ -85,7 +85,7 @@ var start_loading=0
             </div>
             <div class="box-content">
                 <a href="{{post.next.get_absolute_url}}">
-                {% thumbnail post.next.image "200x200" crop="center" as img %}
+                {% thumbnail post.next.image "192" as img %}
                 <img src="{{img.url}}" >
                 {% endthumbnail %}
                 </a>
@@ -103,7 +103,7 @@ var start_loading=0
             </div>
             <div class="box-content">
                 <a href="{{post.prev.get_absolute_url }}">
-                {% thumbnail post.prev.image "200x200" crop="center" as img %}
+                {% thumbnail post.prev.image "192" crop="center" as img %}
                 <img src="{{img.url}}" >
                 {% endthumbnail %}
                 </a>

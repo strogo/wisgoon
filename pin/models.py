@@ -160,7 +160,7 @@ class Post(models.Model):
 
     def get_image_thumb(self):
         try:
-            im = get_thumbnail(self.image, '192', crop='center', quality=99)
+            im = get_thumbnail(self.image, '192')
         except:
             im = None
         return im
