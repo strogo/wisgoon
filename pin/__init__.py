@@ -1,5 +1,5 @@
-from django.conf import settings
-from johnny.cache import enable
+#from django.conf import settings
+#from johnny.cache import enable
 
 #if settings.DEBUG is False:
 #    enable()
