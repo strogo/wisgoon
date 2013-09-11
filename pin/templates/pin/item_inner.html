@@ -116,7 +116,7 @@
 									<a href="{% url "pin-comment-unapprove" comment.id %}"><i class="icon-minus-sign"></i></a>
 								{% endif %}
 							{% endif %}
-							{% if comment.user = request.user or user.is_superuser %}
+							{% if user.is_superuser %}
 							<a href="{% url "pin-comment-delete" comment.id %}"><i class="icon-remove"></i></a>
 							{% endif %}
 						</div>
