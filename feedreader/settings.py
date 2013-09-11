@@ -206,7 +206,7 @@ CACHES = {
     }
 }"""
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 JOHNNY_MIDDLEWARE_KEY_PREFIX='wis_cac'
 
