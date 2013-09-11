@@ -149,7 +149,7 @@ class CommentResource(ModelResource):
 
     class Meta:
         allowed_methods = ['get']
-        queryset = Comments.objects.filter(is_public=True)
+        queryset = Comments.objects.filter(is_public=True).order_by('-id')
         resource_name = "comments"
         paginator_class = Paginator
         #fields = ['id', 'comment', 'object_pk', 'user_id', 'score', 'submit_date']
