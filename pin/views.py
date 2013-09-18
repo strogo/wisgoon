@@ -394,10 +394,10 @@ def item(request, item_id):
 
     if request.user.is_superuser and request.GET.get('ip', None):
         post.comments = Comments.objects.filter(object_pk=post)
-        post.likes = Likes.objects.filter(post=post).order_by('ip')
+        post.likes = Likes.objects.filter(post=post).order_by('ip')[:10]
     else:
         post.comments = Comments.objects.filter(object_pk=post, is_public=True)
-        post.likes = Likes.objects.filter(post=post)
+        post.likes = Likes.objects.filter(post=post)[:10]
     
     try:
         post.prev = Post.objects.filter(status=1)\
