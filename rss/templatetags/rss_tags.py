@@ -6,7 +6,7 @@ import datetime
 import hashlib
 
 from rss.models import Subscribe, Feed, Likes
-from pin.models import Likes as pin_likes, Notify
+from pin.models import Likes as pin_likes
 from django.contrib.auth.models import User
 from django.template.base import TemplateSyntaxError
 from django import template
@@ -126,10 +126,6 @@ class UserPostLike(template.Node):
 
 register.tag('user_post_like', user_post_like)
 
-@register.filter
-def get_user_notify(userid):
-    notify = Notify.objects.all().filter(user_id=userid, seen=False).count()
-    return notify
 
 @register.filter
 def human_farsi(text):
