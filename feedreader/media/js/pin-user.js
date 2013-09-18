@@ -51,36 +51,36 @@ createUploader();
 
 //
 
-$(".btn_like").live('click',function(){
-        var obj = $(this);
-        obj.addClass('disabled');
-        var like_url=obj.attr('href');
-        $.ajax({
-            url: like_url,
-            success: function(html) {
-                ret = html;
-                
-                var o = jQuery.parseJSON(ret);
-                
-                obj.html('<i class="icon-heart"></i>'+o[0].likes);
-                obj.removeClass('disabled');
-                
-                if (o[0].user_act == 1){
-                    obj.addClass('btn-danger');
-                }else{
-                    obj.removeClass('btn-danger');
-                }
+$(".btn_like").on('click',function(){
+    var obj = $(this);
+    obj.addClass('disabled');
+    var like_url=obj.attr('href');
+    $.ajax({
+        url: like_url,
+        success: function(html) {
+            ret = html;
+            
+            var o = jQuery.parseJSON(ret);
+            
+            obj.html('<i class="icon-heart"></i>'+o[0].likes);
+            obj.removeClass('disabled');
+            
+            if (o[0].user_act == 1){
+                obj.addClass('btn-danger');
+            }else{
+                obj.removeClass('btn-danger');
             }
-        });
-        return false;
+        }
     });
+    return false;
+});
 
 
 //
 
 //
 
-$(".btn_report").live('click',function(){
+$(".btn_report").on('click',function(){
 	if (confirm('آیا این مطلب غیر اخلاقی است و می خواهید گزارش کنید؟')){
 	    var obj = $(this);
 	    obj.addClass('disabled');
@@ -105,7 +105,7 @@ $(".btn_report").live('click',function(){
 
 var parent_to_del = '';
 
-$(".delpost").live('click',function(){
+$(".delpost").on('click',function(){
     if (confirm('این مطلب حذف شود؟')){
         var obj = $(this); 
         var parent_to_del = $(obj).parents("div.feed-item");

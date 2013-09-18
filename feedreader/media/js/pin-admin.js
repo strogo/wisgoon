@@ -1,4 +1,4 @@
-$(".item-to-index").live('click',function(){
+$(".item-to-index").on('click',function(){
     var obj = $(this);
     var like_url=obj.attr('href');
     $.ajax({

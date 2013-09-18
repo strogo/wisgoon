@@ -327,6 +327,7 @@ class Notif_actors(models.Model):
     actor = models.ForeignKey(User, related_name="actor")
 
 
+"""
 class Notify(models.Model):
     TYPES = ((1,'like'),(2,'comment'))
     
@@ -338,6 +339,7 @@ class Notify(models.Model):
     type = models.IntegerField(default=1, choices=TYPES) # 1=Post_like, 2=Post_comment
     date = models.DateTimeField(auto_now_add=True)
     actors = models.ManyToManyField(User, related_name="actors")
+"""
 
 
 class App_data(models.Model):

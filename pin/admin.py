@@ -2,7 +2,7 @@
 from django.contrib import admin
 #from django.contrib.comments.admin import CommentsAdmin
 #from django.contrib.comments.models import Comment
-from pin.models import Post, Notify, Category, App_data, Comments, send_notif, Notif
+from pin.models import Post, Category, App_data, Comments, send_notif, Notif
 from user_profile.models import Profile
 
 import time
@@ -136,7 +136,6 @@ class CommentsAdmin(admin.ModelAdmin):
     delete_all_user_comments.short_description = 'حذف تمام کامنت های این کاربر و غیر فعال کردن کاربر'
 
 admin.site.register(Post, PinAdmin)
-admin.site.register(Notify, NotifyAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(App_data, AppAdmin)

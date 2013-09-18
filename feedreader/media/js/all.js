@@ -13,7 +13,7 @@ if (disable_masonry==0){
     });
 }
 
-$('.feed-item').live({
+$('.feed-item').on({
     mouseenter:
        function(){
         $(".feed-actions", this).stop().animate({top:'5px'},{queue:false,duration:160});
@@ -62,7 +62,7 @@ $(window).scroll(function() {
 
 //second
 jQuery(function($) {
-    $('form[data-async]').live('submit', function(event) {
+    $('form[data-async]').on('submit', function(event) {
         var $form = $(this);
         var $target = $($form.attr('data-target'));
 
@@ -115,7 +115,7 @@ $("#ScrollToTop").click(function(){
 	$('html, body').animate({scrollTop: $("#wrapper").offset().top}, 1000);
 });
 
-$('.pin-item-link').live('click',function(){
+$('.pin-item-link').on('click',function(){
 	return true;
 	var item_link = $(this);
 	href=item_link.attr('href');
