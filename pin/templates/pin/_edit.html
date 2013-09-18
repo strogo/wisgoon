@@ -9,7 +9,7 @@
 		
 		{% thumbnail post.image "110" upscale=False as im %}
 		<div class="img-block" style="float:left;">
-			<img src="{{ im. url "}}"" width="{{ im.width }}" height="{{ im.height }}">
+			<img src="{{im.url}}" width="{{ im.width }}" height="{{ im.height }}">
 		</div>
 		{% endthumbnail %}
 		<input type="hidden" value="{{post.image}}" id="image_field" name="image" />

@@ -48,83 +48,7 @@ function createUploader(){
 }
 createUploader(); 
 
-
-//
-
-$(".btn_like").on('click',function(){
-    var obj = $(this);
-    obj.addClass('disabled');
-    var like_url=obj.attr('href');
-    $.ajax({
-        url: like_url,
-        success: function(html) {
-            ret = html;
-            
-            var o = jQuery.parseJSON(ret);
-            
-            obj.html('<i class="icon-heart"></i>'+o[0].likes);
-            obj.removeClass('disabled');
-            
-            if (o[0].user_act == 1){
-                obj.addClass('btn-danger');
-            }else{
-                obj.removeClass('btn-danger');
-            }
-        }
-    });
-    return false;
-});
-
-
-//
-
-//
-
-$(".btn_report").on('click',function(){
-	if (confirm('آیا این مطلب غیر اخلاقی است و می خواهید گزارش کنید؟')){
-	    var obj = $(this);
-	    obj.addClass('disabled');
-	    var like_url=obj.attr('href');
-	    $.ajax({
-	        url: like_url,
-	        success: function(html) {
-	            var res = jQuery.parseJSON(html);
-	            obj.removeClass('disabled');
-	            if (res[0].status){
-	                obj.addClass('btn-danger');
-	            }
-                
-                alert(res[0].msg);
-	        }
-	    });
-	}
-    return false;
-});
-
-//
-
 var parent_to_del = '';
-
-$(".delpost").on('click',function(){
-    if (confirm('این مطلب حذف شود؟')){
-        var obj = $(this); 
-        var parent_to_del = $(obj).parents("div.feed-item");
-        
-        obj.addClass('disabled');
-        var like_url=obj.attr('href');
-        $.ajax({
-            url: like_url,
-            success: function(html) {
-                ret = html;
-                if (ret==1){
-                    $(parent_to_del).remove();
-                    feedobj.masonry('reload');
-                }
-            }
-        });
-    }
-    return false;
-});
 
 var comment_vote = 1;
 $(".comment-up").click(function(){
@@ -158,4 +82,71 @@ $(".comment-down").click(function(){
             comment_vote = 1;
         }
     });
+});
+
+
+$( "body" ).on('click', ".delpost", function(){
+    if (confirm('این مطلب حذف شود؟')){
+        var obj = $(this); 
+        var parent_to_del = $(obj).parents("div.feed-item");
+        
+        obj.addClass('disabled');
+        var like_url=obj.attr('href');
+        $.ajax({
+            url: like_url,
+            success: function(html) {
+                ret = html;
+                if (ret==1){
+                    $(parent_to_del).remove();
+                    feedobj.masonry('reload');
+                }
+            }
+        });
+    }
+    return false;
+});
+
+$("body").on('click', '.btn_report',function(){
+    if (confirm('آیا این مطلب غیر اخلاقی است و می خواهید گزارش کنید؟')){
+        var obj = $(this);
+        obj.addClass('disabled');
+        var like_url=obj.attr('href');
+        $.ajax({
+            url: like_url,
+            success: function(html) {
+                var res = jQuery.parseJSON(html);
+                obj.removeClass('disabled');
+                if (res[0].status){
+                    obj.addClass('btn-danger');
+                }
+                
+                alert(res[0].msg);
+            }
+        });
+    }
+    return false;
+});
+
+$('body').on('click', '.btn_like',function(){
+    var obj = $(this);
+    obj.addClass('disabled');
+    var like_url=obj.attr('href');
+    $.ajax({
+        url: like_url,
+        success: function(html) {
+            ret = html;
+            
+            var o = jQuery.parseJSON(ret);
+            
+            obj.html('<i class="icon-heart"></i>'+o[0].likes);
+            obj.removeClass('disabled');
+            
+            if (o[0].user_act == 1){
+                obj.addClass('btn-danger');
+            }else{
+                obj.removeClass('btn-danger');
+            }
+        }
+    });
+    return false;
 });
