@@ -79,7 +79,7 @@ class Post(models.Model):
     category = models.ForeignKey(Category, default=1, verbose_name='گروه')
     objects = models.Manager()
     accepted = AcceptedManager()
-    
+
     def __unicode__(self):
         return self.text
 
@@ -91,7 +91,7 @@ class Post(models.Model):
                 break
             md5.update(data)
         return md5.hexdigest()
-    
+
     def delete(self, *args, **kwargs):
         try:
             file_path = os.path.join(settings.MEDIA_ROOT, self.image)
@@ -112,10 +112,6 @@ class Post(models.Model):
         try:
             profile = Profile.objects.get(user=self.user)
 
-            #if profile.post_accept_admin:
-            #    if profile.post_accept and profile.post_accept_admin:
-            #        self.status = 1
-            #    else:
             if ((self.date_lt( self.user.date_joined, 15) and profile.score > 2000) \
                 or profile.score > 5000 ):
                 profile.post_accept = True
@@ -126,7 +122,7 @@ class Post(models.Model):
             pass
      
         file_path = os.path.join(settings.MEDIA_ROOT, self.image)
-        if os.path.exists(file_path):   
+        if os.path.exists(file_path):
             image_file = open(file_path)
            
             self.hash = self.md5_for_file(image_file)
@@ -143,19 +139,19 @@ class Post(models.Model):
     get_user_url.allow_tags = True
 
     def get_host_url(self):
-        abs=self.get_absolute_url()
+        abs = self.get_absolute_url()
         
         if settings.DEBUG:
-            return abs 
+            return abs
         else:
-            host_url='http://%s%s' % (Site.objects.get_current().domain, abs)
+            host_url = 'http://%s%s' % (Site.objects.get_current().domain, abs)
             return host_url
     
     def get_image_absolute_url(self):
         if settings.DEBUG:
-            url='%s%s' % (settings.MEDIA_URL, self.image)
+            url = '%s%s' % (settings.MEDIA_URL, self.image)
         else:
-            url='http://%s%s%s' % (Site.objects.get_current().domain, settings.MEDIA_URL, self.image)
+            url = 'http://%s%s%s' % (Site.objects.get_current().domain, settings.MEDIA_URL, self.image)
         return url
 
     def get_image_thumb(self):
@@ -198,21 +194,18 @@ class Post(models.Model):
 
 
 class Follow(models.Model):
-    follower = models.ForeignKey(User ,related_name='follower')
+    follower = models.ForeignKey(User, related_name='follower')
     following = models.ForeignKey(User, related_name='following')
 
 
 class Stream(models.Model):
     following = models.ForeignKey(User, related_name='stream_following')
-    user = models.ForeignKey(User ,related_name='user')
+    user = models.ForeignKey(User, related_name='user')
     post = models.ForeignKey(Post)
     date = models.IntegerField(default=0)
     
     class Meta:
         unique_together = (("following", "user", "post"),)
-        #index_together = [
-        #    ["user", "date"],
-        #]
 
     @classmethod
     def add_post(cls, sender, instance, *args, **kwargs):
@@ -228,7 +221,7 @@ class Stream(models.Model):
                 
     
 class Likes(models.Model):
-    user = models.ForeignKey(User,related_name='pin_post_user_like')
+    user = models.ForeignKey(User, related_name='pin_post_user_like')
     post = models.ForeignKey(Post, related_name="post_item")
     ip = models.IPAddressField(default='127.0.0.1')
     
@@ -277,6 +270,7 @@ class Likes(models.Model):
             pass
     """
 
+
 def send_notif(user, type, post, actor, seen=False):
     notif, created = Notif.objects.get_or_create(user=user, type=type, post=post)
 
@@ -286,6 +280,7 @@ def send_notif(user, type, post, actor, seen=False):
 
     Notif_actors.objects.get_or_create(notif=notif, actor=actor)
     return notif
+
         
 class Notif(models.Model):
     LIKE = 1
@@ -303,7 +298,7 @@ class Notif(models.Model):
     user = models.ForeignKey(User, related_name="user_id")
     text = models.CharField(max_length=500)
     seen = models.BooleanField(default=False)
-    type = models.IntegerField(default=1, choices=TYPES) # 1=Post_like, 2=Post_comment
+    type = models.IntegerField(default=1, choices=TYPES)
     date = models.DateTimeField(auto_now_add=True)
 
     @classmethod
@@ -322,24 +317,10 @@ class Notif(models.Model):
                     send_notif(user=act.actor, type=2, post=post, actor=comment.user)
                 #print act.actor_id
 
+
 class Notif_actors(models.Model):
     notif = models.ForeignKey(Notif, related_name="notif")
     actor = models.ForeignKey(User, related_name="actor")
-
-
-"""
-class Notify(models.Model):
-    TYPES = ((1,'like'),(2,'comment'))
-    
-    post = models.ForeignKey(Post)
-    #sender = models.ForeignKey(User, related_name="sender")
-    user = models.ForeignKey(User, related_name="userid")
-    text = models.CharField(max_length=500)
-    seen = models.BooleanField(default=False)
-    type = models.IntegerField(default=1, choices=TYPES) # 1=Post_like, 2=Post_comment
-    date = models.DateTimeField(auto_now_add=True)
-    actors = models.ManyToManyField(User, related_name="actors")
-"""
 
 
 class App_data(models.Model):

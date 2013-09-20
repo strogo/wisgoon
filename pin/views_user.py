@@ -106,8 +106,6 @@ def like(request, item_id):
             liked = Likes.objects.create(user=request.user, post=post)
             created = True
 
-        #liked, created = Likes.objects.get_or_create()
-
         if created:
             current_like = current_like + 1
             user_act = 1
@@ -118,8 +116,6 @@ def like(request, item_id):
             current_like = current_like - 1
             Likes.objects.get(user=request.user, post=post).delete()
             user_act = -1
-
-        #Post.objects.filter(id=item_id).update(like=current_like)
 
         try:
             profile = Profile.objects.get(user=post.user)
@@ -159,7 +155,6 @@ def notif_user(request):
 
 @login_required
 def report(request, pin_id):
-    ### remove report if needed
     try:
         post = Post.objects.get(id=pin_id)
     except Post.DoesNotExist:
@@ -246,7 +241,7 @@ def send_comment(request):
             Comments.objects.create(object_pk=post,
                                     comment=text,
                                     user=request.user,
-                                    ip_address=get_user_ip())
+                                    ip_address=get_user_ip(request))
 
             return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
 
