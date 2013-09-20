@@ -3,7 +3,8 @@ from django.contrib import admin
 
 from pin.feeds import LatestPinFeed
 from pin.api import PostResource, CategotyResource, CommentResource,\
-    NotifyResource, ProfileResource, AppResource, LikesResource
+    NotifyResource, ProfileResource, AppResource, LikesResource,\
+    StreamResource
 
 admin.autodiscover()
 
@@ -14,7 +15,7 @@ notify_resource = NotifyResource()
 profile_resource = ProfileResource()
 app_resource = AppResource()
 likes_resource = LikesResource()
-
+stream_resource = StreamResource()
 
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
@@ -45,6 +46,7 @@ urlpatterns = patterns('pin.views',
     url(r'^api/profile/', include(profile_resource.urls)),
     url(r'^api/app/', include(app_resource.urls)),
     url(r'^api/like/', include(likes_resource.urls)),
+    url(r'^api/stream/', include(stream_resource.urls)),
 )
 
 urlpatterns += patterns('pin.views_user',

@@ -1,3 +1,5 @@
+# -*- coding:utf-8 -*-
+
 import os
 import time
 import datetime
@@ -20,7 +22,7 @@ from django.conf import settings
 
 from sorl.thumbnail import get_thumbnail
 from pin.models import Post, Likes, Category, Notif, Comments,\
-    Notif_actors, App_data
+    Notif_actors, App_data, Stream
 from user_profile.models import Profile
 from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
@@ -186,6 +188,7 @@ class PostResource(ModelResource):
     just_image = 0
     cur_user = None
     show_ads = True
+    dispatch_exec = False
 
     class Meta:
         queryset = Post.objects.filter(status=1).order_by('-is_ads', '-id')
@@ -249,8 +252,9 @@ class PostResource(ModelResource):
 
         return base_object_list.order_by(*sorts)
 
-    def dispatch(self, request_type, request, **kwargs):
-        token = request.GET.get('token', '')
+    def pre_dispatch(self, request, token_name):
+        self.dispatch_exec = True
+        token = request.GET.get(token_name, '')
         if token:
             try:
                 api = ApiKey.objects.get(key=token)
@@ -262,10 +266,18 @@ class PostResource(ModelResource):
                                           self.thumb_default_size)
         self.just_image = request.GET.get('just_image', 0)
         self.popular = request.GET.get('popular', None)
+
+    def dispatch(self, request_type, request, **kwargs):
+        self.dispatch_exec = True
+        self.pre_dispatch(request, 'token')
+
         return super(PostResource, self)\
             .dispatch(request_type, request, **kwargs)
 
     def dehydrate(self, bundle):
+        if self.dispatch_exec is False:
+            self.pre_dispatch(bundle.request, 'api_key')
+    
         id = bundle.data['id']
         o_image = bundle.data['image']
 
@@ -292,7 +304,7 @@ class PostResource(ModelResource):
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
         user = bundle.data['user']
         bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR)
-
+        print self.cur_user
         if self.cur_user:
             if Likes.objects.filter(post_id=id, user=self.cur_user).count():
                 bundle.data['like_with_user'] = True
@@ -402,3 +414,18 @@ class NotifyResource(ModelResource):
         bundle.data['actors'] = ar
 
         return bundle
+
+
+class StreamAuthorization(Authorization):
+    def read_list(self, object_list, bundle):
+        #Notif.objects.filter(user=bundle.request.user).update(seen=True)
+        return object_list.filter(user=bundle.request.user)
+
+
+class StreamResource(ModelResource):
+    post = fields.ForeignKey(PostResource, 'post', full=True)
+
+    class Meta:
+        queryset = Stream.objects.all().order_by('-date')
+        authentication = ApiKeyAuthentication()
+        authorization = StreamAuthorization()
