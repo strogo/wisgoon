@@ -165,7 +165,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'rss',
     'pin',
-    'avval',
+    #'avval',
     'registration',
     'south',
     'debug_toolbar',
@@ -175,7 +175,7 @@ INSTALLED_APPS = (
     'django.contrib.comments',
     #'djangosphinx',
     'daddy_avatar',
-    'ban',
+    #'ban',
     #'socialacc',
     'contactus',
     'compressor',
@@ -223,7 +223,7 @@ CACHES = {
         'JOHNNY_CACHE' : True,
     }
 }
-SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_myproj2'
 

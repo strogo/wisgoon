@@ -59,7 +59,6 @@ def userdata_cache(user, field=None, size=100):
     return []
 
 
-
 def get_username(user):
     if isinstance(user, (int, long)):
         user = User.objects.only('username').get(pk=user)
@@ -77,3 +76,15 @@ def get_username(user):
         username = user.username
 
     return username
+
+
+def get_request_timestamp(request):
+    try:
+        timestamp = int(request.GET.get('older', 0))
+    except ValueError:
+        timestamp = 0
+    return timestamp
+
+
+def get_user_ip(request):
+    return request.META.get('REMOTE_ADDR', None)
