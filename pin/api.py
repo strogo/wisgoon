@@ -304,7 +304,7 @@ class PostResource(ModelResource):
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
         user = bundle.data['user']
         bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR)
-        print self.cur_user
+        #print self.cur_user
         if self.cur_user:
             if Likes.objects.filter(post_id=id, user=self.cur_user).count():
                 bundle.data['like_with_user'] = True
@@ -418,7 +418,6 @@ class NotifyResource(ModelResource):
 
 class StreamAuthorization(Authorization):
     def read_list(self, object_list, bundle):
-        #Notif.objects.filter(user=bundle.request.user).update(seen=True)
         return object_list.filter(user=bundle.request.user)
 
 
