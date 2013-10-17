@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+from johnny.cache import enable
+enable()
 
 import os
 import time
@@ -122,7 +124,7 @@ class CategotyResource(ModelResource):
     class Meta:
         queryset = Category.objects.all()
         resource_name = "category"
-        #cache = SimpleCache()
+        cache = SimpleCache()
 
 
 class LikesResource(ModelResource):
