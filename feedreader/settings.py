@@ -168,7 +168,7 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'djangosphinx',
     'daddy_avatar',
-    'cacheops',
+    #'cacheops',
     #'socialacc',
     'contactus',   
     'compressor',
