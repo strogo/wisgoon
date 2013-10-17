@@ -179,6 +179,7 @@ INSTALLED_APPS = (
     'captcha',
 )
 
+"""
 CACHEOPS_REDIS = {
     'host': 'localhost', # redis-server is on same machine
     'port': 6379,        # default redis port
@@ -208,7 +209,7 @@ CACHEOPS = {
     # Automatically cache count requests for all other models for 15 min
     '*.*': ('count', 60*15),
 }
-
+"""
 
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
