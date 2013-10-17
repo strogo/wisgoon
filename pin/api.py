@@ -196,7 +196,7 @@ class PostResource(ModelResource):
         allowed_methods = ['get']
         paginator_class = Paginator
         fields = ['id', 'image', 'like', 'text', 'url', 'cnt_comment']
-        #cache = SimpleCache()
+        cache = SimpleCache()
 
     def apply_filters(self, request, applicable_filters):
         base_object_list = super(PostResource, self)\
