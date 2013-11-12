@@ -163,6 +163,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.humanize',
+    'cacheops',
     'rss',
     'pin',
     #'avval',
@@ -216,6 +217,7 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.logger.LoggingPanel',
 )
 
+"""
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
@@ -223,6 +225,43 @@ CACHES = {
         'JOHNNY_CACHE' : True,
     }
 }
+"""
+
+CACHEOPS_REDIS = {
+    'host': 'localhost', # redis-server is on same machine
+    'port': 6379,        # default redis port
+    'db': 5,             # SELECT non-default redis database
+                         # using separate redis db or redis instance
+                         # is highly recommended
+    'socket_timeout': 3,
+}
+
+CACHEOPS = {
+    # Automatically cache any User.objects.get() calls for 15 minutes
+    # This includes request.user or post.author access,
+    # where Post.author is a foreign key to auth.User
+    #'auth.user': ('get', 60*15),
+
+    # Automatically cache all gets, queryset fetches and counts
+    # to other django.contrib.auth models for an hour
+    #'auth.*': ('all', 60*60),
+
+    'pin.category': ('all', 60*60),
+    #'pin.post':('all', 60),
+    'social_auth.usersocialauth': ('all', 60),
+
+    # Enable manual caching on all news models with default timeout of an hour
+    # Use News.objects.cache().get(...)
+    #  or Tags.objects.filter(...).order_by(...).cache()
+    # to cache particular ORM request.
+    # Invalidation is still automatic
+    'news.*': ('just_enable', 60*60),
+
+
+    # Automatically cache count requests for all other models for 15 min
+    '*.*': ('count', 60),
+}
+
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_myproj2'

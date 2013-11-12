@@ -157,6 +157,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.humanize',
+    'cacheops',
     'rss',
     'pin',
     'registration',
@@ -210,6 +211,21 @@ CACHEOPS = {
     '*.*': ('count', 60*15),
 }
 """
+
+CACHEOPS_REDIS = {
+    'host': 'localhost', # redis-server is on same machine
+    'port': 6379,        # default redis port
+    'db': 5,             # SELECT non-default redis database
+                         # using separate redis db or redis instance
+                         # is highly recommended
+    'socket_timeout': 3,
+}
+
+CACHEOPS = {
+    'pin.category': ('all', 60*60),
+    'social_auth.usersocialauth': ('all', 60),
+    '*.*': ('count', 60),
+}
 
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
