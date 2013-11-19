@@ -578,6 +578,7 @@ float: right;
 #user_information_details li label{
 	display: inline;
 	font-size: 11px;
+	font-family: 'csyekan';
 }
 
 #user_information_details .long {

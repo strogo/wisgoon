@@ -256,6 +256,7 @@ CACHEOPS = {
     # to cache particular ORM request.
     # Invalidation is still automatic
     'news.*': ('just_enable', 60*60),
+    'apikey': ('all', 60*60),
 
 
     # Automatically cache count requests for all other models for 15 min
