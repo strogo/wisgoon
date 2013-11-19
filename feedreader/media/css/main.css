@@ -26,8 +26,8 @@ font-family: "dast";
 	font-family: 'afsFont';
 	src: local('Koodak Bold'),
 	url('/media/fonts/BKoodakBold.woff') format('woff'),
-	url('{{MEDIA_URL}}/fonts/BKoodakBold.ttf') format('truetype'),
-	url('{{MEDIA_URL}}/fonts/BKoodakBold.eot');
+	url('/media/fonts/BKoodakBold.ttf') format('truetype'),
+	url('/media/fonts/BKoodakBold.eot');
 }
 
 body{
