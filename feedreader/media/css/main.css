@@ -21,6 +21,15 @@ font-family: "dast";
             url('/media/fonts/csyekan.ttf') format('truetype');
 }
 
+@font-face
+{
+	font-family: 'afsFont';
+	src: local('Koodak Bold'),
+	url('/media/fonts/BKoodakBold.woff') format('woff'),
+	url('{{MEDIA_URL}}/fonts/BKoodakBold.ttf') format('truetype'),
+	url('{{MEDIA_URL}}/fonts/BKoodakBold.eot');
+}
+
 body{
 	direction: rtl;
 	text-align: right;

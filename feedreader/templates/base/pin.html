@@ -6,8 +6,8 @@
 <html>
 <head>
 <title>ویسگون {% block title%}{% endblock%}</title>
-<meta name="keywords" content="social,rss,reader" />
-<meta name="description" content="{%block description%}what is going on, social rss reader{%endblock%}" />
+<meta name="keywords" content="social, image, sharing" />
+<meta name="description" content="{%block description%}what is going on, social image sharing{%endblock%}" />
 {% block nextpost%}{%endblock%}
 {% block prevpost%}{%endblock%}
 <link rel="alternate" type="application/rss+xml" href="{% url "pin-latest-feed" %}" />
@@ -16,7 +16,7 @@
 {% include "base/all_header.html"%}
 
 {% compress css %}
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css?ver=1.1.6">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css?ver=1.1.7">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css?v=0.0.4">
 {%endcompress%}
@@ -30,17 +30,6 @@
 {% block extra_css%}{% endblock extra_css%}
 {% endcompress %}
 
-<style type="text/css">
-/* thanks to http://afsaran.ir/ */
-@font-face
-{
-	font-family: afsFont;
-	src: local('Koodak Bold'),
-	url('{{MEDIA_URL}}/fonts/BKoodakBold.woff') format('woff'),
-	url('{{MEDIA_URL}}/fonts/BKoodakBold.ttf') format('truetype'),
-	url('{{MEDIA_URL}}/fonts/BKoodakBold.eot');
-}
-</style>
 
 {% include "base/analytics.html"%}
 
