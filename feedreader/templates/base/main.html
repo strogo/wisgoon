@@ -60,14 +60,6 @@
 		</form>
 	</li>
 	<li class="pull-right">
-		{% if user.is_authenticated%}
-			  	<a data-toggle="modal" data-target="#subModal" href="#subModal">اشتراک فید</a>
-			  {%else%}
-			  	<a href="/accounts/login/?next=/feedreader">اشتراک فید</a>
-			  {%endif%}
-		<!--<a href="{% url "rss-subs" %}">اشتراک فید</a>-->
-	</li>
-	<li class="pull-right">
 		<a href="{% url "rss-lastview" %}">دیده ها</a>
 	</li>
     <li class="pull-right">
