@@ -164,7 +164,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.humanize',
     'cacheops',
-    'rss',
+    #'rss',
     'pin',
     #'avval',
     'registration',
