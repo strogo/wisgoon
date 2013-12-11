@@ -237,7 +237,7 @@ class PostResource(ModelResource):
                 start_from = time.mktime(date_from.timetuple())
                 filters.update(dict(timestamp__gt=start_from))
 
-        return base_object_list.filter(**filters).distinct()
+        return base_object_list.filter(**filters)
 
     def apply_sorting(self, object_list, options=None):
         base_object_list = super(PostResource, self).apply_sorting(object_list)
