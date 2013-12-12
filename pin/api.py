@@ -1,8 +1,5 @@
 # -*- coding:utf-8 -*-
 
-from johnny.cache import enable
-enable()
-
 import os
 import time
 import datetime

@@ -256,15 +256,16 @@ CACHES = {
 
 CACHES = {
     'default' : dict(
-        BACKEND = 'johnny.backends.memcached.MemcachedCache',
+        #BACKEND = 'johnny.backends.memcached.MemcachedCache',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         LOCATION = ['127.0.0.1:11211'],
-        JOHNNY_CACHE = True,
+        #JOHNNY_CACHE = True,
     )
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
-JOHNNY_MIDDLEWARE_KEY_PREFIX='wis_cac'
+JOHNNY_MIDDLEWARE_KEY_PREFIX='wis_cac2'
 
 
 SPHINX_SERVER = 'localhost'
