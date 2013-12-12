@@ -136,6 +136,7 @@ class LikesResource(ModelResource):
         filtering = {
             "post_id": ("exact",),
         }
+        cache = SimpleCache(timeout=120)
 
     def dehydrate(self, bundle):
         user = bundle.data['user_url']
