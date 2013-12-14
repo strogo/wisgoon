@@ -161,7 +161,7 @@ CACHEOPS = {
     'django.flatpage': ('all', 60*60*60),
     'taggit.tag': ('all', 60*60),
     'pin.comments': ('all', 60),
-    '*.*': ('count', 60),
+    '*.*': ('count', 60*15),
 }
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
