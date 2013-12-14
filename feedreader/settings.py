@@ -154,9 +154,10 @@ CACHEOPS_REDIS = {
     'socket_timeout': 3,
 }
 CACHEOPS = {
+    'auth.user': ('get', 60*15),
     'pin.category': ('all', 60*60),
     'social_auth.usersocialauth': ('all', 60),
-    'pin.post': ('all', 60),
+    'pin.post': ('count', 60*60*60),
     'django.flatpage': ('all', 60*60*60),
     'taggit.tag': ('all', 60*60),
     'pin.comments': ('all', 60),
