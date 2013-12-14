@@ -157,6 +157,9 @@ CACHEOPS = {
     'pin.category': ('all', 60*60),
     'social_auth.usersocialauth': ('all', 60),
     'pin.post': ('all', 60),
+    'django.flatpage': ('all', 60*60*60),
+    'taggit.tag': ('all', 60*60),
+    'pin.comments': ('all', 60),
     '*.*': ('count', 60),
 }
 AUTHENTICATION_BACKENDS = (
