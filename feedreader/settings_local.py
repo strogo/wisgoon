@@ -1,20 +1,13 @@
-# Django settings for feedreader project.
 import os
-
 DEBUG = True
 THUMBNAIL_DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-
 REPORT_TYPE = {'PIN':1,'COMMENT':2,'RSS':3}
-
 SITE_ROOT = os.path.dirname(__file__)
-
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
-
 MANAGERS = ADMINS
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
@@ -25,82 +18,36 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
-
 GOOGLE_COOKIE_CONSENT = 'google_token_consent'
 GOOGLE_REDIRECT_SESSION_VAR = 'google_contacts_redirect'
 GOOGLE_REDIRECT_BASE_URL = 'http://localhost:8000'
-
 EMAIL_HOST = "mail.wisgoon.com"
-
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# In a Windows environment this must be set to your system time zone.
 TIME_ZONE = 'Asia/Tehran'
-
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'fa-ir'
-
 SITE_ID = 1
-
-# If you set this to False, Django will make some optimizations so as not
-# to load the internationalization machinery.
 USE_I18N = True
-
-# If you set this to False, Django will not format dates, numbers and
-# calendars according to the current locale.
 USE_L10N = True
-
-# If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
-
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = os.path.join(SITE_ROOT,'media')
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash.
-# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
-
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
-# Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = os.path.join(SITE_ROOT,'statics')
-
-# URL prefix for static files.
-# Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
-
-# Additional locations of static files
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     #os.path.join(STATIC_ROOT,'stat'),
 )
-
-# List of finder classes that know how to find static files in
-# various locations.
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-
-# Make this unique, and don't share it with anybody.
 SECRET_KEY = 'iqeri28py6po$@c2a#dvicdqh7)58%!17jdou=7-$su#w5i6m)'
-
-# List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
 )
-
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -111,28 +58,18 @@ MIDDLEWARE_CLASSES = (
     #'johnny.middleware.LocalStoreClearMiddleware',
     #'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-
     #'django.middleware.cache.FetchFromCacheMiddleware',
     #'django.middleware.cache.UpdateCacheMiddleware',
     #'pin.customcachemiddlware.CustomFetchFromCacheMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
-
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
-
 ROOT_URLCONF = 'feedreader.urls_local'
-
-# Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'feedreader.wsgi.application'
-
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
     os.path.join(SITE_ROOT, 'templates'),
 )
-
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
@@ -144,7 +81,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_backends',
     'social_auth.context_processors.social_auth_by_type_backends',
     'social_auth.context_processors.social_auth_login_redirect',
-
     'rss.context_processors.c_url',
     'rss.context_processors.node_url',
     'pin.context_processors.pin_form',
@@ -152,7 +88,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'pin.context_processors.is_super_user',
     'pin.context_processors.user__id',
 )
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -185,9 +120,8 @@ INSTALLED_APPS = (
     'captcha',
     #'google_contacts',
     'devserver',
+    'tastypie'
 )
-
-
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
     'social_auth.backends.facebook.FacebookBackend',
@@ -200,11 +134,9 @@ AUTHENTICATION_BACKENDS = (
 )
 SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
 ACCOUNT_EMAIL_REQUIRED = True
-
+ACCOUNT_ACTIVATION_DAYS = 7
 LOGIN_REDIRECT_URL = '/'
-
 INTERNAL_IPS = ('127.0.0.1',)
-
 DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.version.VersionDebugPanel',
     'debug_toolbar.panels.timer.TimerDebugPanel',
@@ -217,15 +149,14 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.logger.LoggingPanel',
 )
 
-"""
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211', # can also be a list of locations
-        'JOHNNY_CACHE' : True,
-    }
+    'default' : dict(
+        #BACKEND = 'johnny.backends.memcached.MemcachedCache',
+        BACKEND= 'django.core.cache.backends.memcached.MemcachedCache',
+        LOCATION = ['127.0.0.1:11211'],
+        #JOHNNY_CACHE = True,
+    )
 }
-"""
 
 CACHEOPS_REDIS = {
     'host': 'localhost', # redis-server is on same machine
@@ -235,61 +166,22 @@ CACHEOPS_REDIS = {
                          # is highly recommended
     'socket_timeout': 3,
 }
-
 CACHEOPS = {
-    # Automatically cache any User.objects.get() calls for 15 minutes
-    # This includes request.user or post.author access,
-    # where Post.author is a foreign key to auth.User
-    #'auth.user': ('get', 60*15),
-
-    # Automatically cache all gets, queryset fetches and counts
-    # to other django.contrib.auth models for an hour
-    #'auth.*': ('all', 60*60),
-
     'pin.category': ('all', 60*60),
-    #'pin.post':('all', 60),
+    'pin.post': ('all', 60),
     'social_auth.usersocialauth': ('all', 60),
-
-    # Enable manual caching on all news models with default timeout of an hour
-    # Use News.objects.cache().get(...)
-    #  or Tags.objects.filter(...).order_by(...).cache()
-    # to cache particular ORM request.
-    # Invalidation is still automatic
-    'news.*': ('just_enable', 60*60),
-    'apikey': ('all', 60*60),
-
-
-    # Automatically cache count requests for all other models for 15 min
     '*.*': ('count', 60),
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-
 JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_myproj2'
-
-
-#SPHINX_API_VERSION = 0x116
-
 SPHINX_SERVER = 'localhost'
 SPHINX_PORT = 9312
-
-#/TODO 
-#THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
-
-#COMPRESS_ENABLED = True
 COMPRESS_URL = MEDIA_URL
 COMPRESS_ROOT = MEDIA_ROOT
 COMPRESS_OUTPUT_DIR = 'static_cache'
-
 NODE_URL='http://127.0.0.1:1312/'
-
 API_LIMIT_PER_PAGE = 10
-
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error when DEBUG=False.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
