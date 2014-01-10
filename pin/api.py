@@ -310,12 +310,11 @@ class PostResource(ModelResource):
         if self.cur_user:
             # post likes users
             c_key = "post_like_%s" % (id)
-            print "get from cache", c_key
 
             plu = cache.get(c_key)
             if plu:
+                print "get like_with_user from memcache", c_key
                 if self.cur_user.id in plu:
-                    print "get like_with_user from memcache", c_key
                     bundle.data['like_with_user'] = True
             else:
                 post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
@@ -416,12 +415,11 @@ class NotifyResource(ModelResource):
             id = bundle.data['post_id']
             # post likes users
             c_key = "post_like_%s" % (id)
-            print "get from cache", c_key
 
             plu = cache.get(c_key)
             if plu:
+                print "get like_with_user from memcache", c_key
                 if self.cur_user.id in plu:
-                    print "get like_with_user from memcache", c_key
                     bundle.data['like_with_user'] = True
             else:
                 post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
