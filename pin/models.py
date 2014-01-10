@@ -252,7 +252,6 @@ class Likes(models.Model):
 
         
         c_key = "post_like_%s" % (post.id)
-        print "cachekey is", c_key, post.id    
         post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=post.id)
         cache.set(c_key, post_likers, 60*60)
         #cache.set(c_key, [sender.id], 60*60)
