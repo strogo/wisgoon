@@ -252,17 +252,11 @@ class Likes(models.Model):
 
         
         c_key = "post_like_%s" % (post.id)
-        print "cachekey is", c_key, post.id
-        plu = cache.get(c_key)
-        if plu:
-            if sender.id not in plu:
-                plu.append(sender.id)
-                cache.set(c_key, plu, 60*60)
-        else:
-            post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
-            cache.set(c_key, post_likers, 60*60)
-            #cache.set(c_key, [sender.id], 60*60)
-    
+        print "cachekey is", c_key, post.id    
+        post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=post.id)
+        cache.set(c_key, post_likers, 60*60)
+        #cache.set(c_key, [sender.id], 60*60)
+
     """
     @classmethod
     def user_unlike_post(cls, sender, instance, *args, **kwargs):
