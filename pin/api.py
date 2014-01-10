@@ -315,7 +315,7 @@ class PostResource(ModelResource):
             plu = cache.get(c_key)
             if plu:
                 if self.cur_user.id in plu:
-                    print "get like_with_user from memcache"
+                    print "get like_with_user from memcache", c_key
                     bundle.data['like_with_user'] = True
             else:
                 if Likes.objects.filter(post_id=id, user=self.cur_user).count():
