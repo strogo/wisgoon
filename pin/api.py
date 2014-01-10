@@ -193,7 +193,7 @@ class PostResource(ModelResource):
     dispatch_exec = False
 
     class Meta:
-        queryset = Post.objects.select_related().filter(status=1).order_by('-id')
+        queryset = Post.objects.filter(status=1).order_by('-id')
         resource_name = 'post'
         allowed_methods = ['get']
         paginator_class = Paginator
