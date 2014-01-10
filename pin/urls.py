@@ -17,6 +17,10 @@ app_resource = AppResource()
 likes_resource = LikesResource()
 stream_resource = StreamResource()
 
+#urlpatterns = patterns('pin.views_api',
+#    url(r'^api/like/likes/', 'likes', name="api-like"),
+#)
+
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
     url(r'^latest_post/', 'latest', name='pin-latest'),
@@ -39,6 +43,7 @@ urlpatterns = patterns('pin.views',
     url(r'^category/(?P<cat_id>\d+)', 'category', name='pin-category'),
     #url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     #not stables
+
     url(r'^api/', include(post_resource.urls)),
     url(r'^apic/', include(cat_resource.urls)),
     url(r'^api/com/', include(comment_resource.urls)),

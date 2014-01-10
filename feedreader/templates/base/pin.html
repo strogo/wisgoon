@@ -10,7 +10,9 @@
 <meta name="description" content="{%block description%}what is going on, social image sharing{%endblock%}" />
 {% block nextpost%}{%endblock%}
 {% block prevpost%}{%endblock%}
+{% comment %}
 <link rel="alternate" type="application/rss+xml" href="{% url "pin-latest-feed" %}" />
+{% endcomment %}
 {% block opengraph%}{% endblock opengraph%}
 
 {% include "base/all_header.html"%}

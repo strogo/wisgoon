@@ -2,7 +2,7 @@ import os
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
-REPORT_TYPE = {'PIN':1,'COMMENT':2,'RSS':3}
+REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
 SITE_ROOT = os.path.dirname(__file__)
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -10,12 +10,12 @@ ADMINS = (
 MANAGERS = ADMINS
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'feedreader',                      # Or path to database file if using sqlite3.
-        'USER': 'root',                      # Not used with sqlite3.
-        'PASSWORD': '-)**Z{QT',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'feedreader',
+        'USER': 'root',
+        'PASSWORD': '-)**Z{QT',
+        'HOST': '',
+        'PORT': '',
     }
 }
 ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com', 'wisgoon.com']
@@ -27,19 +27,15 @@ SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-MEDIA_ROOT = os.path.join(SITE_ROOT,'media')
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 MEDIA_URL = '/media/'
 STATIC_ROOT = ''
 STATIC_URL = '/statics/'
-STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
+STATICFILES_DIRS = ()
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder' 
+    'compressor.finders.CompressorFinder'
 )
 SECRET_KEY = 'iqeri28py6po$@c2a#dvicdqh7)58%!17jdou=7-$su#w5i6m)'
 TEMPLATE_LOADERS = (
@@ -55,18 +51,10 @@ MIDDLEWARE_CLASSES = (
     #'johnny.middleware.LocalStoreClearMiddleware',
     #'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-    'rss.middleware.SeoQuery',
-    'rss.middleware.RedirectMiddleware',
-    #'debug_toolbar.middleware.DebugToolbarMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 ROOT_URLCONF = 'feedreader.urls'
 WSGI_APPLICATION = 'feedreader.wsgi.application'
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
     os.path.join(SITE_ROOT, 'templates'),
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -80,8 +68,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_backends',
     'social_auth.context_processors.social_auth_by_type_backends',
     'social_auth.context_processors.social_auth_login_redirect',
-    'rss.context_processors.c_url',
-    'rss.context_processors.node_url',
+    #'rss.context_processors.c_url',
+    #'rss.context_processors.node_url',
     'pin.context_processors.pin_form',
     'pin.context_processors.pin_categories',
     'pin.context_processors.is_super_user',
@@ -97,7 +85,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.humanize',
     'cacheops',
-    'rss',
+    #'rss',
     'pin',
     'registration',
     'south',
@@ -110,59 +98,30 @@ INSTALLED_APPS = (
     'daddy_avatar',
     #'cacheops',
     #'socialacc',
-    'contactus',   
+    'contactus',
     'compressor',
     'taggit',
     'user_profile',
- #   'django_facebook',
     'tastypie',
     'captcha',
 )
-"""
+
 CACHEOPS_REDIS = {
-    'host': 'localhost', # redis-server is on same machine
-    'port': 6379,        # default redis port
-    'db': 1,             # SELECT non-default redis database
-                         # using separate redis db or redis instance
-                         # is highly recommended
+    'host': 'localhost',
+    'port': 6379,
+    'db': 5,
     'socket_timeout': 3,
 }
 CACHEOPS = {
-    # Automatically cache any User.objects.get() calls for 15 minutes
-    # This includes request.user or post.author access,
-    # where Post.author is a foreign key to auth.User
-    'auth.user': ('get', 60*15),
-    # Automatically cache all gets, queryset fetches and counts
-    # to other django.contrib.auth models for an hour
-    'auth.*': ('all', 60*60),
-    # Enable manual caching on all news models with default timeout of an hour
-    # Use News.objects.cache().get(...)
-    #  or Tags.objects.filter(...).order_by(...).cache()
-    # to cache particular ORM request.
-    # Invalidation is still automatic
-    'news.*': ('just_enable', 60*60),
-    # Automatically cache count requests for all other models for 15 min
-    '*.*': ('count', 60*15),
-}
-"""
-CACHEOPS_REDIS = {
-    'host': 'localhost', # redis-server is on same machine
-    'port': 6379,        # default redis port
-    'db': 5,             # SELECT non-default redis database
-                         # using separate redis db or redis instance
-                         # is highly recommended
-    'socket_timeout': 3,
-}
-CACHEOPS = {
-    'auth.user': ('get', 60*15),
-    'pin.category': ('all', 60*60),
+    'auth.user': ('get', 60 * 15),
+    'pin.category': ('all', 60 * 60),
     'social_auth.usersocialauth': ('all', 60),
-    'pin.post': ('count', 60*60*60),
-    'django.flatpage': ('all', 60*60*60),
-    'taggit.tag': ('all', 60*60),
+    'pin.post': ('count', 60 * 60 * 60),
+    'django.flatpage': ('all', 60 * 60 * 60),
+    'taggit.tag': ('all', 60 * 60),
     'pin.comments': ('all', 60),
-    'pin.likes': ('all', 60*15),
-    '*.*': ('count', 60*15),
+    'pin.likes': ('all', 60 * 60),
+    '*.*': ('count', 60 * 15),
 }
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
@@ -177,23 +136,15 @@ AUTHENTICATION_BACKENDS = (
 SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
 ACCOUNT_EMAIL_REQUIRED = True
 LOGIN_REDIRECT_URL = '/'
-"""
+
 CACHES = {
-    'default': {
-	'JOHNNY_CACHE': True,
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-        #'MAN_IN_BLACKLIST': ['pin_notify_actors', 'pin_notify'],
-    }
-}"""
-CACHES = {
-    'default' : dict(
-        #BACKEND = 'johnny.backends.memcached.MemcachedCache',
-        BACKEND= 'django.core.cache.backends.memcached.MemcachedCache',
+    'default': dict(
+        BACKEND = 'django.core.cache.backends.memcached.MemcachedCache',
         LOCATION = ['127.0.0.1:11211'],
         JOHNNY_CACHE = True,
     )
 }
+
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 JOHNNY_MIDDLEWARE_KEY_PREFIX='wis_cac2'
 SPHINX_SERVER = 'localhost'

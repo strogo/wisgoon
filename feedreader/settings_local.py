@@ -32,6 +32,9 @@ MEDIA_ROOT = os.path.join(SITE_ROOT,'media')
 MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(SITE_ROOT,'statics')
 STATIC_URL = '/static/'
+
+IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT,'image_cache')
+
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
@@ -55,14 +58,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    #'johnny.middleware.LocalStoreClearMiddleware',
-    #'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-    #'django.middleware.cache.FetchFromCacheMiddleware',
-    #'django.middleware.cache.UpdateCacheMiddleware',
-    #'pin.customcachemiddlware.CustomFetchFromCacheMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_cprofile_middleware.middleware.ProfilerMiddleware',
 )
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 ROOT_URLCONF = 'feedreader.urls_local'
@@ -81,8 +78,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_backends',
     'social_auth.context_processors.social_auth_by_type_backends',
     'social_auth.context_processors.social_auth_login_redirect',
-    'rss.context_processors.c_url',
-    'rss.context_processors.node_url',
+    #'rss.context_processors.c_url',
+    #'rss.context_processors.node_url',
     'pin.context_processors.pin_form',
     'pin.context_processors.pin_categories',
     'pin.context_processors.is_super_user',
@@ -98,10 +95,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.humanize',
-    'cacheops',
+    #'cacheops',
     #'rss',
     'pin',
-    #'avval',
     'registration',
     'south',
     'debug_toolbar',
@@ -120,7 +116,7 @@ INSTALLED_APPS = (
     'captcha',
     #'google_contacts',
     'devserver',
-    'tastypie'
+    'tastypie',
 )
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
@@ -167,9 +163,15 @@ CACHEOPS_REDIS = {
     'socket_timeout': 3,
 }
 CACHEOPS = {
+    'auth.user': ('get', 60*15),
     'pin.category': ('all', 60*60),
     'pin.post': ('all', 60),
+    #'pin.post': ('count', 60*60*60),
     'social_auth.usersocialauth': ('all', 60),
+    'django.flatpage': ('all', 60*60*60),
+    'taggit.tag': ('all', 60*60),
+    'pin.comments': ('all', 60),
+    'pin.likes': ('all', 60),
     '*.*': ('count', 60),
 }
 
