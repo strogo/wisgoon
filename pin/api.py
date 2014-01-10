@@ -13,12 +13,13 @@ from tastypie.authentication import ApiKeyAuthentication
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.conf import settings
+from django.core.cache import cache
 
 from tastypie.models import create_api_key
 from tastypie.exceptions import Unauthorized
 
 from PIL import Image
-from django.conf import settings
 
 from sorl.thumbnail import get_thumbnail
 from pin.models import Post, Likes, Category, Notif, Comments,\
@@ -307,8 +308,23 @@ class PostResource(ModelResource):
         bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR)
         #print self.cur_user
         if self.cur_user:
-            if Likes.objects.filter(post_id=id, user=self.cur_user).count():
-                bundle.data['like_with_user'] = True
+            # post likes users
+            c_key = "post_like_%s" % (id)
+            print "get from cache", c_key
+
+            plu = cache.get(c_key)
+            if plu:
+                if self.cur_user.id in plu:
+                    print "get like_with_user from memcache"
+                    bundle.data['like_with_user'] = True
+            else:
+                if Likes.objects.filter(post_id=id, user=self.cur_user).count():
+                    print "get like_with_user from db"
+                    bundle.data['like_with_user'] = True
+                
+                post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
+                cache.set(c_key, post_likers, 60*60)
+
 
         bundle.data['user_name'] = userdata_cache(user, CACHE_USERNAME)
         if bundle.data['like'] == -1:

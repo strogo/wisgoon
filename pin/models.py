@@ -7,6 +7,7 @@ from time import mktime
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from django.core.cache import cache
 from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import F
@@ -248,7 +249,20 @@ class Likes(models.Model):
         notif.date = datetime.now()
         notif.save()
         Notif_actors.objects.get_or_create(actor=sender, notif=notif)
+
         
+        c_key = "post_like_%s" % (post.id)
+        print "cachekey is", c_key, post.id
+        plu = cache.get(c_key)
+        if plu:
+            if sender.id not in plu:
+                plu.append(sender.id)
+                cache.set(c_key, plu, 60*60)
+        else:
+            post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
+            cache.set(c_key, post_likers, 60*60)
+            #cache.set(c_key, [sender.id], 60*60)
+    
     """
     @classmethod
     def user_unlike_post(cls, sender, instance, *args, **kwargs):
