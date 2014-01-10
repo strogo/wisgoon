@@ -405,10 +405,30 @@ class NotifyResource(ModelResource):
             bundle.data['thumbnail'] = im
             bundle.data['hw'] = "%sx%s" % (im.height, im.width)
 
+        """
         if self.cur_user:
             if Likes.objects.filter(post_id=bundle.data['post_id'],
                                     user=self.cur_user).count():
                 bundle.data['like_with_user'] = True
+        """
+
+        if self.cur_user:
+            id = bundle.data['post_id']
+            # post likes users
+            c_key = "post_like_%s" % (id)
+            print "get from cache", c_key
+
+            plu = cache.get(c_key)
+            if plu:
+                if self.cur_user.id in plu:
+                    print "get like_with_user from memcache", c_key
+                    bundle.data['like_with_user'] = True
+            else:
+                post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
+                cache.set(c_key, post_likers, 60*60)
+
+                if self.cur_user.id in post_likers:
+                    bundle.data['like_with_user'] = True
 
         post_owner_id = bundle.data['post_owner_id']
 
