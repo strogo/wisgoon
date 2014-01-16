@@ -122,6 +122,7 @@ CACHEOPS = {
     'pin.comments': ('all', 60),
     'pin.likes': ('all', 60 * 60),
     'user_profile.profile': ('all', 60 * 60),
+    'tastypie.apikey': ('all', 60 * 60),
     '*.*': ('count', 60 * 15),
 }
 AUTHENTICATION_BACKENDS = (
