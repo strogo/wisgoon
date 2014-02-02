@@ -6,7 +6,7 @@ import datetime
 from tastypie.resources import ModelResource
 from tastypie.paginator import Paginator
 from tastypie import fields
-from tastypie.cache import SimpleCache
+from tastypie.cache import SimpleCache, NoCache
 from tastypie.models import ApiKey
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
@@ -158,7 +158,7 @@ class CommentResource(ModelResource):
         paginator_class = Paginator
         #fields = ['id', 'comment', 'object_pk', 'user_id', 'score', 'submit_date']
         excludes = ['ip_address', 'is_public', 'object_pk', 'reported']
-        cache = SimpleCache(timeout=120)
+        cache = SimpleCache(timeout=300)
         #limit = 1000
         filtering = {
             "object_pk": ('exact',),
@@ -279,7 +279,7 @@ class PostResource(ModelResource):
     def dehydrate(self, bundle):
         if self.dispatch_exec is False:
             self.pre_dispatch(bundle.request, 'api_key')
-    
+
         id = bundle.data['id']
         o_image = bundle.data['image']
 
@@ -318,7 +318,7 @@ class PostResource(ModelResource):
                     bundle.data['like_with_user'] = True
             else:
                 post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
-                cache.set(c_key, post_likers, 60*60)
+                cache.set(c_key, post_likers, 60 * 60)
 
                 if self.cur_user.id in post_likers:
                     bundle.data['like_with_user'] = True
@@ -369,7 +369,7 @@ class NotifyResource(ModelResource):
         authorization = NotifAuthorization()
         queryset = Notif.objects.all().order_by('-date')
         paginator_class = Paginator
-        #cache = SimpleCache()
+        cache = SimpleCache(timeout=600)
         filtering = {
             #"user_id": ('exact',),
             "seen": ('exact',),
@@ -423,7 +423,7 @@ class NotifyResource(ModelResource):
                     bundle.data['like_with_user'] = True
             else:
                 post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
-                cache.set(c_key, post_likers, 60*60)
+                cache.set(c_key, post_likers, 60 * 60)
 
                 if self.cur_user.id in post_likers:
                     bundle.data['like_with_user'] = True
