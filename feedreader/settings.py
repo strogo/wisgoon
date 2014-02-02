@@ -121,6 +121,7 @@ CACHEOPS = {
     'taggit.tag': ('all', 60 * 60),
     'pin.comments': ('all', 60),
     'pin.likes': ('all', 60 * 60),
+    'pin.notif': ('all', 60 * 60),
     'user_profile.profile': ('all', 60 * 60),
     'tastypie.apikey': ('all', 60 * 60),
     '*.*': ('count', 60 * 15),
