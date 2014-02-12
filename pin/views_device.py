@@ -57,13 +57,10 @@ def like(request):
             like = Likes.objects.get(user=user, post_id=post_id)
             created = False
         except Likes.DoesNotExist:
-            like = Likes.objects.create(user=user, post_id=post_id)
+            like = Likes.objects.create(user=user, post_id=post_id, ip = user._ip)
             created = True
 
         if created:
-            like.ip = user._ip
-            like.save()
-
             return HttpResponse('+1')
         elif like:
             like.delete()
