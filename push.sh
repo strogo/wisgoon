@@ -1,8 +1,8 @@
 #!/bin/sh
 
 send(){
-	git push origin vahid
-	ssh wisgoon@wisgoon.com "cd /home/wisgoon/wisgoon.com/www && git merge vahid && touch reload"
+	git push origin devel
+	ssh wisgoon@wisgoon.com "cd /home/wisgoon/wisgoon.com/www && git merge devel && touch reload"
 }
 
 case $1 in
