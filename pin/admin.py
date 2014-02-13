@@ -3,7 +3,8 @@ import time
 
 from django.contrib import admin
 
-from pin.models import Post, Category, App_data, Comments, send_notif, Notif
+from pin.models import Post, Category, App_data, Comments, Notif
+from pin.tasks import send_notif
 from user_profile.models import Profile
 
 

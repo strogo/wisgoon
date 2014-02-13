@@ -1,6 +1,9 @@
 from __future__ import absolute_import
 
+import os
 from celery import Celery
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'feedreader.settings')
 
 app = Celery('pin', broker='redis://localhost:6379/6', include=['pin.tasks'])
 

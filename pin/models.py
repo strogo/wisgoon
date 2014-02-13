@@ -244,16 +244,20 @@ class Likes(models.Model):
         post = like.post
         sender = like.user
         
-        notif, created = Notif.objects.get_or_create(post=post, user=post.user, type=1)
-        notif.seen = False
-        notif.date = datetime.now()
-        notif.save()
-        Notif_actors.objects.get_or_create(actor=sender, notif=notif)
+        from pin.tasks import send_notif
+
+        send_notif.delay(user=post.user, type=1, post=post, actor=sender)
+        #send_notif(fun)
+        #notif, created = Notif.objects.get_or_create(post=post, user=post.user, type=1)
+        #notif.seen = False
+        #notif.date = datetime.now()
+        #notif.save()
+        #Notif_actors.objects.get_or_create(actor=sender, notif=notif)
 
         
-        c_key = "post_like_%s" % (post.id)
-        post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=post.id)
-        cache.set(c_key, post_likers, 60*60)
+        #c_key = "post_like_%s" % (post.id)
+        #post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=post.id)
+        #cache.set(c_key, post_likers, 60*60)
         #cache.set(c_key, [sender.id], 60*60)
 
     """
@@ -278,15 +282,15 @@ class Likes(models.Model):
     """
 
 
-def send_notif(user, type, post, actor, seen=False):
-    notif, created = Notif.objects.get_or_create(user=user, type=type, post=post)
+# def send_notif(user, type, post, actor, seen=False):
+#     notif, created = Notif.objects.get_or_create(user=user, type=type, post=post)
 
-    notif.seen = seen
-    notif.date = datetime.now()
-    notif.save()
+#     notif.seen = seen
+#     notif.date = datetime.now()
+#     notif.save()
 
-    Notif_actors.objects.get_or_create(notif=notif, actor=actor)
-    return notif
+#     Notif_actors.objects.get_or_create(notif=notif, actor=actor)
+#     return notif
 
         
 class Notif(models.Model):
@@ -310,18 +314,19 @@ class Notif(models.Model):
 
     @classmethod
     def add_comment(cls, sender, instance, created, *args, **kwargs):
+        from pin.tasks import send_notif
         if not created:
             return None
         comment = instance
         post = comment.object_pk
 
         if comment.user != post.user:
-            notif = send_notif(user=post.user, type=2, post=post, actor=comment.user)
+            notif = send_notif.delay(user=post.user, type=2, post=post, actor=comment.user)
 
         for notif in Notif.objects.filter(type=2, post=post):
             for act in Notif_actors.objects.filter(notif=notif):
                 if act.actor != comment.user:
-                    send_notif(user=act.actor, type=2, post=post, actor=comment.user)
+                    send_notif.delay(user=act.actor, type=2, post=post, actor=comment.user)
                 #print act.actor_id
 
 
@@ -360,9 +365,12 @@ class Comments(models.Model):
         if not self.pk:
             Post.objects.filter(pk=self.object_pk.id).update(cnt_comment=F('cnt_comment')+1)
         
-        if ((self.date_lt( self.user.date_joined, 5) and self.user.profile.score > 500) \
+        try:
+            if ((self.date_lt( self.user.date_joined, 5) and self.user.profile.score > 500) \
                 or self.user.profile.score > 500 ):
-            self.is_public = True
+                self.is_public = True
+        except:
+            pass
 
         super(Comments, self).save(*args, **kwargs)
 
