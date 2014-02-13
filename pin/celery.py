@@ -9,7 +9,7 @@ app = Celery('pin', broker='redis://localhost:6379/6', include=['pin.tasks'])
 
 # Optional configuration, see the application user guide.
 app.conf.update(
-    CELERY_TASK_RESULT_EXPIRES = 3600,
+    CELERY_TASK_RESULT_EXPIRES = 60,
     CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml'],
     CELERY_ANNOTATIONS = {'tasks.send_notif': {'rate_limit': '1/s'}},
 )
