@@ -119,7 +119,7 @@ CACHEOPS = {
     'pin.post': ('count', 60 * 60 * 60),
     'django.flatpage': ('all', 60 * 60 * 60),
     'taggit.tag': ('all', 60 * 60),
-    'pin.comments': ('all', 60),
+    #'pin.comments': ('all', 60),
     'pin.likes': ('all', 60 * 60),
     'pin.notif': ('all', 60 * 60),
     'user_profile.profile': ('all', 60 * 60),

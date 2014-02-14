@@ -202,9 +202,9 @@ class CommentResource(ModelResource):
         cp = cache.get(hcpstr)
         if cp:
             if offset > cp:
-                cache.set(hcpstr, offset, 3000)
+                cache.set(hcpstr, offset, 3600)
         else:
-            cache.set(hcpstr, offset, 3000)
+            cache.set(hcpstr, offset, 3600)
 
 
         print "hstr is", hstr
@@ -230,7 +230,7 @@ class CommentResource(ModelResource):
         to_be_serialized[self._meta.collection_name] = bundles
         to_be_serialized = self.alter_list_data_to_serialize(request, to_be_serialized)
         res = self.create_response(request, to_be_serialized)
-        cache.set(hstr, res, 3000)
+        cache.set(hstr, res, 3600)
         return res
 
 
