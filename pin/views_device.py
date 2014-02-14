@@ -54,18 +54,25 @@ def like(request):
             return HttpResponseNotFound('post not found')
 
         try:
-            like = Likes.objects.get(user=user, post_id=post_id)
-            created = False
-        except Likes.DoesNotExist:
             like = Likes.objects.create(user=user, post_id=post_id, ip = user._ip)
-            created = True
+        except Exception, e:
+            raise print e
 
-        if created:
-            return HttpResponse('+1')
-        elif like:
-            like.delete()
+        return HttpResponse('+1')
+        
+        # try:
+        #     like = Likes.objects.get(user=user, post_id=post_id)
+        #     created = False
+        # except Likes.DoesNotExist:
+        #     like = Likes.objects.create(user=user, post_id=post_id, ip = user._ip)
+        #     created = True
 
-            return HttpResponse('-1')
+        # if created:
+        #     return HttpResponse('+1')
+        # elif like:
+        #     like.delete()
+
+        #     return HttpResponse('-1')
 
     return HttpResponseBadRequest('error in parameters')
 
