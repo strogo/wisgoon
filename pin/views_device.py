@@ -56,10 +56,10 @@ def like(request):
         try:
             like = Likes.objects.create(user=user, post_id=post_id, ip = user._ip)
         except Exception, e:
-            raise print e
+            print str(e)
 
         return HttpResponse('+1')
-        
+
         # try:
         #     like = Likes.objects.get(user=user, post_id=post_id)
         #     created = False
