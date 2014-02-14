@@ -147,17 +147,6 @@ class LikesResource(ModelResource):
 
         return bundle
 
-    def build_filters(self, filters=None):
-        print " filters "
-        f = super(ModelResource, self).build_filters(filters)
-        print f
-        return f
-
-    def obj_get_list(self, bundle, **kwargs):
-        return super(ModelResource, self).obj_get_list(bundle, **kwargs)
-
-
-
 
 class CommentResource(ModelResource):
     user_url = fields.IntegerField(attribute='user_id', null=True)
