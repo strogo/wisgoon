@@ -243,6 +243,13 @@ class Likes(models.Model):
         like = instance
         post = like.post
         sender = like.user
+
+        hcpstr = "like_max_%d" % post.id
+        cp = cache.get(hcpstr)
+        if cp:
+            hstr = "like_cache_%s%s" % (self.object_pk.id, cp)
+            cache.delete(hstr)
+            print "delete ", hstr, hcpstr
         
         from pin.tasks import send_notif
 

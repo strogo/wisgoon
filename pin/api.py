@@ -140,12 +140,51 @@ class LikesResource(ModelResource):
         cache = SimpleCache(timeout=15)
 
     def dehydrate(self, bundle):
-        print "here1"
         user = bundle.data['user_url']
         bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR)
         bundle.data['user_name'] = userdata_cache(user, CACHE_USERNAME)
 
         return bundle
+
+    def get_list(self, request, **kwargs):
+        pk = int(request.GET.get('post_id'))
+        offset = int(request.GET.get('offset', 0))
+
+        hstr = "like_cache_%s%s" % (pk, offset)
+        hcpstr = "like_max_%d" % pk
+        cp = cache.get(hcpstr)
+        if cp:
+            if offset > cp:
+                cache.set(hcpstr, offset, 3600)
+        else:
+            cache.set(hcpstr, offset, 3600)
+
+
+        print "hstr is", hstr
+        c = cache.get(hstr)
+        if c:
+            print "get from cache", hstr, hcpstr
+            return c
+
+        base_bundle = self.build_bundle(request=request)
+        objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
+        sorted_objects = self.apply_sorting(objects, options=request.GET)
+
+        paginator = self._meta.paginator_class(request.GET, sorted_objects, resource_uri=self.get_resource_uri(), limit=self._meta.limit, max_limit=self._meta.max_limit, collection_name=self._meta.collection_name)
+        to_be_serialized = paginator.page()
+
+        # Dehydrate the bundles in preparation for serialization.
+        bundles = []
+
+        for obj in to_be_serialized[self._meta.collection_name]:
+            bundle = self.build_bundle(obj=obj, request=request)
+            bundles.append(self.full_dehydrate(bundle, for_list=True))
+
+        to_be_serialized[self._meta.collection_name] = bundles
+        to_be_serialized = self.alter_list_data_to_serialize(request, to_be_serialized)
+        res = self.create_response(request, to_be_serialized)
+        cache.set(hstr, res, 3600)
+        return res
 
 
 class CommentResource(ModelResource):
@@ -199,7 +238,7 @@ class CommentResource(ModelResource):
         print "hstr is", hstr
         c = cache.get(hstr)
         if c:
-            print "get from cache"
+            print "get from cache", hstr, hcpstr
             return c
 
         base_bundle = self.build_bundle(request=request)
