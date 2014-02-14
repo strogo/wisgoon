@@ -24,7 +24,7 @@ def xsum(numbers):
 
 @app.task
 def send_notif(user, type, post, actor, seen=False):
-    notif, created = Notif.objects.get_or_create(user=user, type=type, post=post)
+    notif, created = Notif.objects.get_or_create(user=user, type=type, post_id=post)
 
     notif.seen = seen
     notif.date = datetime.now()

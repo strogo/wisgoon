@@ -246,10 +246,11 @@ class Likes(models.Model):
         
         from pin.tasks import send_notif
 
-        send_notif.delay(user=post.user, type=1, post=post, actor=sender)
+        send_notif.delay(user=post.user, type=1, post=post.id, actor=sender)
         #send_notif(fun)
         #notif, created = Notif.objects.get_or_create(post=post, user=post.user, type=1)
         #notif.seen = False
+
         #notif.date = datetime.now()
         #notif.save()
         #Notif_actors.objects.get_or_create(actor=sender, notif=notif)
@@ -321,12 +322,12 @@ class Notif(models.Model):
         post = comment.object_pk
 
         if comment.user != post.user:
-            notif = send_notif.delay(user=post.user, type=2, post=post, actor=comment.user)
+            notif = send_notif.delay(user=post.user, type=2, post=post.id, actor=comment.user)
 
         for notif in Notif.objects.filter(type=2, post=post):
             for act in Notif_actors.objects.filter(notif=notif):
                 if act.actor != comment.user:
-                    send_notif.delay(user=act.actor, type=2, post=post, actor=comment.user)
+                    send_notif.delay(user=act.actor, type=2, post=post.id, actor=comment.user)
                 #print act.actor_id
 
 
