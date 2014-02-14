@@ -36,6 +36,17 @@ CACHE_AVATAR = 0
 CACHE_USERNAME = 1
 
 
+class PostPaginator(Paginator):
+    def get_count(self):
+        """
+        Returns a count of the total number of objects seen.
+        """
+        try:
+            return 1000
+        except (AttributeError, TypeError):
+            # If it's not a QuerySet (or it's ilk), fallback to ``len``.
+            return len(self.objects)
+
 class UserResource(ModelResource):
 
     class Meta:
@@ -286,7 +297,7 @@ class PostResource(ModelResource):
         queryset = Post.objects.filter(status=1).order_by('-id')
         resource_name = 'post'
         allowed_methods = ['get']
-        paginator_class = Paginator
+        paginator_class = PostPaginator
         fields = ['id', 'image', 'like', 'text', 'url', 'cnt_comment']
         cache = SimpleCache()
 
@@ -429,6 +440,28 @@ class PostResource(ModelResource):
 
             bundle.data['likers'] = []
         return bundle
+
+    def get_list(self, request, **kwargs):
+        
+        base_bundle = self.build_bundle(request=request)
+        objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
+        sorted_objects = self.apply_sorting(objects, options=request.GET)
+
+        paginator = self._meta.paginator_class(request.GET, sorted_objects, resource_uri=self.get_resource_uri(), limit=self._meta.limit, max_limit=self._meta.max_limit, collection_name=self._meta.collection_name)
+        to_be_serialized = paginator.page()
+        
+        # Dehydrate the bundles in preparation for serialization.
+        bundles = []
+
+        for obj in to_be_serialized[self._meta.collection_name]:
+            bundle = self.build_bundle(obj=obj, request=request)
+            bundles.append(self.full_dehydrate(bundle, for_list=True))
+
+        to_be_serialized[self._meta.collection_name] = bundles
+        to_be_serialized = self.alter_list_data_to_serialize(request, to_be_serialized)
+        res = self.create_response(request, to_be_serialized)
+        
+        return res
 
 
 class NotifAuthorization(Authorization):
