@@ -12,6 +12,7 @@ app.conf.update(
     CELERY_TASK_RESULT_EXPIRES = 60,
     CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml'],
     CELERY_ANNOTATIONS = {'tasks.send_notif': {'rate_limit': '1/s'}},
+    CELERY_DEFAULT_RATE_LIMIT = '1/s'
 )
 
 if __name__ == '__main__':
