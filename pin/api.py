@@ -137,14 +137,26 @@ class LikesResource(ModelResource):
         filtering = {
             "post_id": ("exact",),
         }
-        cache = SimpleCache(timeout=600)
+        cache = SimpleCache(timeout=15)
 
     def dehydrate(self, bundle):
+        print "here1"
         user = bundle.data['user_url']
         bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR)
         bundle.data['user_name'] = userdata_cache(user, CACHE_USERNAME)
 
         return bundle
+
+    def build_filters(self, filters=None):
+        print " filters "
+        f = super(ModelResource, self).build_filters(filters)
+        print f
+        return f
+
+    def obj_get_list(self, bundle, **kwargs):
+        return super(ModelResource, self).obj_get_list(bundle, **kwargs)
+
+
 
 
 class CommentResource(ModelResource):
@@ -159,7 +171,7 @@ class CommentResource(ModelResource):
         #fields = ['id', 'comment', 'object_pk', 'user_id', 'score', 'submit_date']
         excludes = ['ip_address', 'is_public', 'object_pk', 'reported']
         cache = SimpleCache(timeout=300)
-        #limit = 1000
+        limit = 10
         filtering = {
             "object_pk": ('exact',),
         }
@@ -170,6 +182,56 @@ class CommentResource(ModelResource):
         bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR)
         bundle.data['user_name'] = userdata_cache(user, CACHE_USERNAME)
         return bundle
+
+    def get_list(self, request, **kwargs):
+        """
+        Returns a serialized list of resources.
+
+        Calls ``obj_get_list`` to provide the data, then handles that result
+        set and serializes it.
+
+        Should return a HttpResponse (200 OK).
+        """
+        # TODO: Uncached for now. Invalidation that works for everyone may be
+        #       impossible.
+        pk = int(request.GET.get('object_pk'))
+        offset = int(request.GET.get('offset', 0))
+
+        hstr = "cmn_cache_%s%s" % (pk, offset)
+        hcpstr = "cmnt_max_%d" % pk
+        cp = cache.get(hcpstr)
+        if cp:
+            if offset > cp:
+                cache.set(hcpstr, offset, 3000)
+        else:
+            cache.set(hcpstr, offset, 3000)
+
+
+        print "hstr is", hstr
+        c = cache.get(hstr)
+        if c:
+            print "get from cache"
+            return c
+
+        base_bundle = self.build_bundle(request=request)
+        objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
+        sorted_objects = self.apply_sorting(objects, options=request.GET)
+
+        paginator = self._meta.paginator_class(request.GET, sorted_objects, resource_uri=self.get_resource_uri(), limit=self._meta.limit, max_limit=self._meta.max_limit, collection_name=self._meta.collection_name)
+        to_be_serialized = paginator.page()
+
+        # Dehydrate the bundles in preparation for serialization.
+        bundles = []
+
+        for obj in to_be_serialized[self._meta.collection_name]:
+            bundle = self.build_bundle(obj=obj, request=request)
+            bundles.append(self.full_dehydrate(bundle, for_list=True))
+
+        to_be_serialized[self._meta.collection_name] = bundles
+        to_be_serialized = self.alter_list_data_to_serialize(request, to_be_serialized)
+        res = self.create_response(request, to_be_serialized)
+        cache.set(hstr, res, 3000)
+        return res
 
 
 class PostResource(ModelResource):

@@ -373,6 +373,13 @@ class Comments(models.Model):
         except:
             pass
 
+        hcpstr = "cmnt_max_%d" % self.object_pk.id
+        cp = cache.get(hcpstr)
+        if cp:
+            hstr = "cmn_cache_%s%s" % (self.object_pk.id, cp)
+            cache.delete(hstr)
+            print "delete ", hstr, hcpstr
+
         super(Comments, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
