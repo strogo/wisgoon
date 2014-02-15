@@ -38,14 +38,8 @@ CACHE_USERNAME = 1
 
 class PostPaginator(Paginator):
     def get_count(self):
-        """
-        Returns a count of the total number of objects seen.
-        """
-        try:
-            return 1000
-        except (AttributeError, TypeError):
-            # If it's not a QuerySet (or it's ilk), fallback to ``len``.
-            return len(self.objects)
+        return 1000
+
 
 class UserResource(ModelResource):
 
@@ -126,7 +120,7 @@ class ProfileResource(ModelResource):
 
     def dehydrate(self, bundle):
         user = bundle.data['user']
-        bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR, size=300)
+        bundle.data['user_avatar'] = AuthCache.avatar(user, size=300)
         return bundle
 
 
@@ -152,8 +146,8 @@ class LikesResource(ModelResource):
 
     def dehydrate(self, bundle):
         user = bundle.data['user_url']
-        bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR)
-        bundle.data['user_name'] = userdata_cache(user, CACHE_USERNAME)
+        bundle.data['user_avatar'] = AuthCache.avatar(user)
+        bundle.data['user_name'] = AuthCache.get_username(user)
 
         return bundle
 
@@ -218,8 +212,8 @@ class CommentResource(ModelResource):
     def dehydrate(self, bundle):
         user = bundle.data['user_url']
 
-        bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR)
-        bundle.data['user_name'] = userdata_cache(user, CACHE_USERNAME)
+        bundle.data['user_avatar'] = AuthCache.avatar(user)
+        bundle.data['user_name'] = AuthCache.get_username(user)
         return bundle
 
     def get_list(self, request, **kwargs):

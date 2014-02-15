@@ -128,6 +128,11 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
+
+DEBUG_TOOLBAR_CONFIG ={
+    'INTERCEPT_REDIRECTS': False,
+}
+
 SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_ACTIVATION_DAYS = 7
@@ -163,7 +168,7 @@ CACHEOPS_REDIS = {
     'socket_timeout': 3,
 }
 CACHEOPS = {
-    'auth.user': ('get', 60*15),
+    #'auth.user': ('get', 60*15),
     'pin.category': ('all', 60*60),
     'pin.post': ('all', 60),
     #'pin.post': ('count', 60*60*60),
