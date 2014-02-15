@@ -164,8 +164,6 @@ class LikesResource(ModelResource):
         else:
             cache.set(hcpstr, offset, 3600)
 
-
-        print "hstr is", hstr
         c = cache.get(hstr)
         if c:
             print "get from cache", hstr, hcpstr
