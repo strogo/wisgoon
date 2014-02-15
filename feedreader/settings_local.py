@@ -33,6 +33,9 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(SITE_ROOT,'statics')
 STATIC_URL = '/static/'
 
+THUMBNAIL_PREFIX = 'cache2/'
+THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.cached_db_kvstore.KVStore'
+
 IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT,'image_cache')
 
 STATICFILES_DIRS = (
