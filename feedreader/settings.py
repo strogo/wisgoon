@@ -84,7 +84,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.humanize',
-    'cacheops',
+    #'cacheops',
     #'rss',
     'pin',
     'registration',
@@ -123,7 +123,6 @@ CACHEOPS = {
     'pin.likes': ('all', 60),
     'pin.notif': ('all', 60),
     'user_profile.profile': ('all', 60),
-    'tastypie.apikey': ('all', 60),
     '*.*': ('count', 60),
 }
 AUTHENTICATION_BACKENDS = (
