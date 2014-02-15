@@ -12,7 +12,7 @@ from tastypie.models import ApiKey
 
 from pin.models import Post, Likes, Comments, Comments_score
 from pin.forms import PinDirectForm, PinDeviceUpdate
-from pin.tools import create_filename
+from pin.tools import create_filename, AuthCache
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -23,8 +23,9 @@ def check_auth(request):
         return False
 
     try:
-        api = ApiKey.objects.get(key=token)
-        user = api.user
+        # api = ApiKey.objects.get(key=token)
+        # user = api.user
+        user = AuthCache.user_from_token(token)
         user._ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
 
         if not user.is_active:

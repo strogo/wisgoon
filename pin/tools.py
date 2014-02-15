@@ -4,6 +4,9 @@ from datetime import datetime
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
+
+from tastypie.models import ApiKey
+
 from user_profile.models import Profile
 
 from daddy_avatar.templatetags import daddy_avatar
@@ -88,3 +91,84 @@ def get_request_timestamp(request):
 
 def get_user_ip(request):
     return request.META.get('REMOTE_ADDR', None)
+
+
+class MyCache(object):
+    pass
+
+
+class AuthCache(MyCache):
+    TTL_TOKEN = 60 *60 * 24
+    TTL_AVATAR = 60 * 60 * 24
+    TTL_USERNAME = 60 * 60 * 24
+
+    @classmethod
+    def get_username(self, user_id):
+        cun_str = "un_%d" % user_id
+        c_str = cache.get(cun_str)
+        if c_str:
+            return c_str
+
+        if isinstance(user_id, (int, long)):
+            user = User.objects.only('username').get(pk=user_id)
+
+        try:
+            profile = Profile.objects.only('name').get(user_id=user.id)
+            if not profile:
+                username = user.username
+            else:
+                username = profile.name
+        except Profile.DoesNotExist:
+            username = user.username
+
+        if not username:
+            username = user.username
+
+        cache.set(cun_str, username, self.TTL_USERNAME)
+        return username
+
+    @classmethod
+    def avatar(self, user_id, size=100):
+        ca_str = "ava_%d" % user_id
+        c_avatar = cache.get(ca_str)
+        if c_avatar:
+            return c_avatar
+
+        avatar = daddy_avatar.get_avatar(user_id, size=size)
+        cache.set(ca_str, avatar, self.TTL_AVATAR)
+
+    @classmethod
+    def id_from_token(self, token):
+        if not token:
+            return None
+
+        ct_str = "tuid_%s" % str(token)
+        c_token = cache.get(ct_str)
+        if c_token:
+            return c_token
+        else:
+            try:
+                api = ApiKey.objects.get(key=token)
+            except ApiKey.DoesNotExist:
+                return None
+            cache.set(ct_str, api.user_id, self.TTL_TOKEN)
+            return api.user_id
+
+    @classmethod
+    def user_from_token(self, token):
+        if not token:
+            return None
+
+        ct_str = "tu_%s" % str(token)
+        c_token = cache.get(ct_str)
+        if c_token:
+            return c_token
+        else:
+            try:
+                api = ApiKey.objects.get(key=token)
+                u = api.user
+            except ApiKey.DoesNotExist:
+                return None
+
+            cache.set(ct_str, u, self.TTL_TOKEN)
+            return u

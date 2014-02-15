@@ -114,17 +114,17 @@ CACHEOPS_REDIS = {
 }
 CACHEOPS = {
     'auth.user': ('get', 60 * 15),
-    'pin.category': ('all', 60 * 60),
+    'pin.category': ('all', 60 * 15),
     'social_auth.usersocialauth': ('all', 60),
-    'pin.post': ('count', 60 * 60 * 60),
-    'django.flatpage': ('all', 60 * 60 * 60),
-    'taggit.tag': ('all', 60 * 60),
+    'pin.post': ('count', 60),
+    'django.flatpage': ('all', 60),
+    'taggit.tag': ('all', 60),
     #'pin.comments': ('all', 60),
-    'pin.likes': ('all', 60 * 60),
-    'pin.notif': ('all', 60 * 60),
-    'user_profile.profile': ('all', 60 * 60),
-    'tastypie.apikey': ('all', 60 * 60),
-    '*.*': ('count', 60 * 15),
+    'pin.likes': ('all', 60),
+    'pin.notif': ('all', 60),
+    'user_profile.profile': ('all', 60),
+    'tastypie.apikey': ('all', 60),
+    '*.*': ('count', 60),
 }
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
@@ -152,10 +152,12 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 JOHNNY_MIDDLEWARE_KEY_PREFIX='wis_cac2'
 SPHINX_SERVER = 'localhost'
 SPHINX_PORT = 9312
-THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
-THUMBNAIL_REDIS_HOST = 'localhost'
-THUMBNAIL_REDIS_PORT = 6379
+#THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
+#THUMBNAIL_REDIS_HOST = 'localhost'
+#THUMBNAIL_REDIS_PORT = 6379
 THUMBNAIL_PREFIX = 'cache2/'
+THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.cached_db_kvstore.KVStore'
+
 COMPRESS_URL = MEDIA_URL
 COMPRESS_ROOT = MEDIA_ROOT
 COMPRESS_OUTPUT_DIR = 'static_cache'

@@ -28,7 +28,7 @@ from user_profile.models import Profile
 from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
 
-from pin.tools import userdata_cache
+from pin.tools import userdata_cache, AuthCache
 
 models.signals.post_save.connect(create_api_key, sender=User)
 
@@ -359,17 +359,7 @@ class PostResource(ModelResource):
         self.dispatch_exec = True
         token = request.GET.get(token_name, '')
         if token:
-            try:
-                ct_str = "tokenc_%s" % str(token)
-                c_token = cache.get(ct_str)
-                if c_token:
-                    self.cur_user = c_token.user_id
-                else:    
-                    api = ApiKey.objects.get(key=token)
-                    cache.set(ct_str, api, 60*60*24)
-                    self.cur_user = api.user_id
-            except:
-                pass
+            self.cur_user = AuthCache.id_from_token(token=token)
 
         self.thumb_size = request.GET.get(self.thumb_query_name,
                                           self.thumb_default_size)
@@ -412,7 +402,8 @@ class PostResource(ModelResource):
 
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
         user = bundle.data['user']
-        bundle.data['user_avatar'] = userdata_cache(user, CACHE_AVATAR)
+        bundle.data['user_avatar'] = AuthCache.avatar(user_id=user)
+        bundle.data['user_name'] = AuthCache.get_username(user_id=user)
         #print self.cur_user
         if self.cur_user:
             # post likes users
@@ -430,7 +421,7 @@ class PostResource(ModelResource):
                 if self.cur_user in post_likers:
                     bundle.data['like_with_user'] = True
 
-        bundle.data['user_name'] = userdata_cache(user, CACHE_USERNAME)
+        
         if bundle.data['like'] == -1:
             bundle.data['like'] = 0
 
@@ -512,11 +503,7 @@ class NotifyResource(ModelResource):
     def dispatch(self, request_type, request, **kwargs):
         token = request.GET.get('token', '')
         if token:
-            try:
-                api = ApiKey.objects.get(key=token)
-                self.cur_user = api.user
-            except:
-                pass
+            self.cur_user = AuthCache.id_from_token(token)
 
         return super(NotifyResource, self)\
             .dispatch(request_type, request, **kwargs)
@@ -548,28 +535,28 @@ class NotifyResource(ModelResource):
             plu = cache.get(c_key)
             if plu:
                 #print "get like_with_user from memcache", c_key
-                if self.cur_user.id in plu:
+                if self.cur_user in plu:
                     bundle.data['like_with_user'] = True
             else:
                 post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
                 cache.set(c_key, post_likers, 60 * 60)
 
-                if self.cur_user.id in post_likers:
+                if self.cur_user in post_likers:
                     bundle.data['like_with_user'] = True
 
         post_owner_id = bundle.data['post_owner_id']
 
-        bundle.data['post_owner_avatar'] = userdata_cache(post_owner_id, CACHE_AVATAR)
-        bundle.data['post_owner_user_name'] = userdata_cache(post_owner_id, CACHE_USERNAME)
+        bundle.data['post_owner_avatar'] = AuthCache.avatar(post_owner_id)
+        bundle.data['post_owner_user_name'] = AuthCache.get_username(post_owner_id)
 
         actors = Notif_actors.objects.filter(notif=id).order_by('id')[:10]
         ar = []
         for lk in actors:
             ar.append(
                 [
-                    lk.actor.id,
-                    get_username(lk.actor),
-                    daddy_avatar.get_avatar(lk.actor, size=100)
+                    lk.actor_id,
+                    AuthCache.get_username(lk.actor_id),
+                    AuthCache.avatar(lk.actor_id, size=100)
                 ]
             )
 
