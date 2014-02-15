@@ -360,8 +360,14 @@ class PostResource(ModelResource):
         token = request.GET.get(token_name, '')
         if token:
             try:
-                api = ApiKey.objects.get(key=token)
-                self.cur_user = api.user
+                ct_str = "tokenc_%s" % str(token)
+                c_token = cache.get(ct_str)
+                if c_token:
+                    self.cur_user = c_token.user_id
+                else:    
+                    api = ApiKey.objects.get(key=token)
+                    cache.set(ct_str, api, 60*60*24)
+                    self.cur_user = api.user_id
             except:
                 pass
 
@@ -415,13 +421,13 @@ class PostResource(ModelResource):
             plu = cache.get(c_key)
             if plu:
                 #print "get like_with_user from memcache", c_key
-                if self.cur_user.id in plu:
+                if self.cur_user in plu:
                     bundle.data['like_with_user'] = True
             else:
                 post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
                 cache.set(c_key, post_likers, 60 * 60)
 
-                if self.cur_user.id in post_likers:
+                if self.cur_user in post_likers:
                     bundle.data['like_with_user'] = True
 
         bundle.data['user_name'] = userdata_cache(user, CACHE_USERNAME)
