@@ -215,16 +215,6 @@ class CommentResource(ModelResource):
         return bundle
 
     def get_list(self, request, **kwargs):
-        """
-        Returns a serialized list of resources.
-
-        Calls ``obj_get_list`` to provide the data, then handles that result
-        set and serializes it.
-
-        Should return a HttpResponse (200 OK).
-        """
-        # TODO: Uncached for now. Invalidation that works for everyone may be
-        #       impossible.
         pk = int(request.GET.get('object_pk'))
         offset = int(request.GET.get('offset', 0))
 
@@ -237,8 +227,6 @@ class CommentResource(ModelResource):
         else:
             cache.set(hcpstr, offset, 3600)
 
-
-        print "hstr is", hstr
         c = cache.get(hstr)
         if c:
             print "get from cache", hstr, hcpstr
