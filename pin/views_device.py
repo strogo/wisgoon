@@ -55,7 +55,7 @@ def like(request):
             return HttpResponseNotFound('post not found')
 
         try:
-            like = Likes.objects.create(user=user, post_id=post_id, ip = user._ip)
+            like = Likes.objects.create(user_id=user.id, post_id=post_id, ip = user._ip)
         except Exception, e:
             print str(e)
 
@@ -89,7 +89,7 @@ def post_comment(request):
     object_pk = data.get("object_pk")
     if data and comment and object_pk and Post.objects.filter(pk=object_pk).exists():
 
-        Comments.objects.create(object_pk_id=object_pk, comment=comment, user=user, ip_address=user._ip)
+        Comments.objects.create(object_pk_id=object_pk, comment=comment, user_id=user.id, ip_address=user._ip)
         return HttpResponse(1)
 
     return HttpResponse(0)
