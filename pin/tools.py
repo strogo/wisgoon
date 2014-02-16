@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from tastypie.models import ApiKey
 
 from user_profile.models import Profile
+from pin.models import Category
 
 from daddy_avatar.templatetags import daddy_avatar
 
@@ -94,7 +95,23 @@ def get_user_ip(request):
 
 
 class MyCache(object):
-    pass
+    LONG_TIME = 60 * 60 * 24
+
+
+class CatCache(MyCache):
+
+    @classmethod
+    def get_cat(self, cat_id):
+        cc_str = "cat_%d" % cat_id
+        cc_cache = cache.get(cc_str)
+        if cc_cache:
+            return cc_cache
+
+        cat = Category.objects.get(id=cat_id)
+        cache.set(cc_str, cat, self.LONG_TIME)
+        return cat
+
+
 
 
 class AuthCache(MyCache):
