@@ -264,7 +264,8 @@ class PostResource(ModelResource):
     user = fields.IntegerField(attribute='user_id')
     likers = fields.ListField()
     like = fields.IntegerField(attribute='cnt_like')
-    category_id = fields.IntegerField(attribute='category_id')
+    category = fields.ToOneField(CategotyResource, 'category', full=True)
+    #category_id = fields.IntegerField(attribute='category_id')
 
     like_with_user = fields.BooleanField(default=False)
     popular = None
@@ -385,16 +386,16 @@ class PostResource(ModelResource):
         bundle.data['user_avatar'] = AuthCache.avatar(user_id=user)
         bundle.data['user_name'] = AuthCache.get_username(user_id=user)
 
-        cat = CatCache.get_cat(bundle.data['category_id'])
-        cat_o = {
-            'id': cat.id,
-            'image': "/media/" + str(cat.image),
-            'resource_uri': "/pin/apic/category/"+str(cat.id)+"/",
-            'title': cat.title,
-            }
+        # cat = CatCache.get_cat(bundle.data['category_id'])
+        # cat_o = {
+        #     'id': cat.id,
+        #     'image': "/media/" + str(cat.image),
+        #     'resource_uri': "/pin/apic/category/"+str(cat.id)+"/",
+        #     'title': cat.title,
+        #     }
 
-        bundle.data['category'] = cat_o
-        del(bundle.data['category_id'])
+        # bundle.data['category'] = cat_o
+        # del(bundle.data['category_id'])
         #print self.cur_user
         if self.cur_user:
             # post likes users
