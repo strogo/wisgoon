@@ -8,6 +8,8 @@ from django.db.models.signals import post_save
 
 from pin.models import Post
 
+from caching.base import CachingManager, CachingMixin
+
 def avatar_file_name(instance, filename):
     new_filename = str(time.time()).replace('.','') # create new file name with current timestamp
     fileext = os.path.splitext(filename)[1] # get file ext
@@ -17,7 +19,7 @@ def avatar_file_name(instance, filename):
     d = datetime.now()
     return '/'.join(['avatars', str(d.year), str(d.month), str(filestr)])
 
-class Profile(models.Model):
+class Profile(CachingMixin, models.Model):
     name=models.CharField(max_length=250,verbose_name='نام')
     location=models.CharField(max_length=250, verbose_name='موقعیت', blank=True)
     website=models.URLField(verbose_name='وب سایت', blank=True)
@@ -39,6 +41,8 @@ class Profile(models.Model):
     post_accept_admin = models.BooleanField(default=True, blank=True)
     email_active = models.BooleanField(default=False, blank=True)
     activation_key = models.CharField(max_length=50, default=0, blank=True)
+
+    objects = CachingManager()
     
     def cnt_calculate(self):
         try:
