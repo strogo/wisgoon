@@ -19,10 +19,12 @@ from sorl.thumbnail import get_thumbnail
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
+from caching.base import CachingManager, CachingMixin
+
 LIKE_TO_DEFAULT_PAGE = 10
 
 
-class Category(models.Model):
+class Category(CachingMixin, models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/category/')
 
@@ -33,6 +35,8 @@ class Category(models.Model):
         return '<img src="/media/%s" />' % self.image
 
     admin_image.allow_tags = True
+
+    objects = CachingManager()
 
 
 class AcceptedManager(models.Manager):
