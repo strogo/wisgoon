@@ -115,8 +115,6 @@ def get_cache_avatar(user, size=30):
 
 @register.filter
 def get_userdata_avatar(user, size=30):
-    return AuthCache.avatar(user, size=size)
-    #print "size is: ",  user, size
     return userdata_cache(user, 0, size=size)
 
 
