@@ -13,6 +13,7 @@ from pin.models import Likes as pin_likes, Notif
 from user_profile.models import Profile
 
 from pin.tools import userdata_cache
+from pin.tools import AuthCache
 
 
 register = Library()
@@ -108,7 +109,13 @@ def get_username(user):
 
 
 @register.filter
+def get_cache_avatar(user, size=30):
+    return AuthCache.avatar(user, size=size)
+
+
+@register.filter
 def get_userdata_avatar(user, size=30):
+    return AuthCache.avatar(user, size=size)
     #print "size is: ",  user, size
     return userdata_cache(user, 0, size=size)
 

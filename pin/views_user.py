@@ -139,13 +139,13 @@ def notif_user(request):
     if timestamp:
         date = datetime.datetime.fromtimestamp(timestamp)
         notif = Notif.objects.filter(user_id=request.user.id, date__lt=date)\
-            .order_by('-date')[:20]
+            .order_by('-date').extra(where=['1=1 /* query no. views_user 142 */'])[:20]
     else:
         notif = Notif.objects.filter(user_id=request.user.id)\
-            .order_by('-date')[:20]
+            .order_by('-date').extra(where=['1=1 /* query no. views_user 145 */'])[:20]
 
     for n in notif:
-        n.actors = Notif_actors.objects.filter(notif=n).order_by('-id')[:20]
+        n.actors = Notif_actors.objects.filter(notif=n).extra(where=['1=1 /* query no. views_user 148 */']).order_by('-id')[:20]
 
     if request.is_ajax():
         return render(request, 'pin/_notif.html', {'notif': notif})
