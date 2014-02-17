@@ -146,7 +146,7 @@ class AuthCache(MyCache):
 
     @classmethod
     def avatar(self, user_id, size=100):
-        ca_str = "ava_%d" % user_id
+        ca_str = "ava_%d_%d" % (user_id, size)
         c_avatar = cache.get(ca_str)
         if c_avatar:
             return c_avatar
