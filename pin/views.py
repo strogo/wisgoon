@@ -303,6 +303,7 @@ def item(request, item_id):
     #     post.comments = Comments.objects.filter(object_pk=post)
     #     post.likes = Likes.objects.filter(post=post).order_by('ip')[:10]
     # else:
+    post.comments = Comments.objects.filter(object_pk=post)
     str_likers = "web_likes_%s" % post.id
     csl = cache.get(str_likers)
     if csl:
