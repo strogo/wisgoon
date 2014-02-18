@@ -19,12 +19,12 @@ from sorl.thumbnail import get_thumbnail
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
-from caching.base import CachingManager, CachingMixin
+
 
 LIKE_TO_DEFAULT_PAGE = 10
 
 
-class Category(CachingMixin, models.Model):
+class Category(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/category/')
 
@@ -35,8 +35,6 @@ class Category(CachingMixin, models.Model):
         return '<img src="/media/%s" />' % self.image
 
     admin_image.allow_tags = True
-
-    objects = CachingManager()
 
 
 class AcceptedManager(models.Manager):
@@ -254,6 +252,9 @@ class Likes(models.Model):
             hstr = "like_cache_%s%s" % (self.object_pk.id, cp)
             cache.delete(hstr)
             print "delete ", hstr, hcpstr
+
+        str_likers = "web_likes_%s" % self.object_pk.id
+        cache.delete(str_likers)
         
         from pin.tasks import send_notif
 

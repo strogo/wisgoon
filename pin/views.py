@@ -5,6 +5,7 @@ import datetime
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Sum, F
 from django.http import HttpResponse
@@ -294,26 +295,48 @@ def user(request, user_id, user_name=None):
 def item(request, item_id):
     post = get_object_or_404(
         Post.objects.select_related().filter(id=item_id, status=1)[:1])
-    Post.objects.filter(id=item_id).update(view=F('view') + 1)
+    #Post.objects.filter(id=item_id).update(view=F('view') + 1)
 
-    post.tag = post.tags.all()
+    post.tag = []
 
-    if request.user.is_superuser and request.GET.get('ip', None):
-        post.comments = Comments.objects.filter(object_pk=post)
-        post.likes = Likes.objects.filter(post=post).order_by('ip')[:10]
+    # if request.user.is_superuser and request.GET.get('ip', None):
+    #     post.comments = Comments.objects.filter(object_pk=post)
+    #     post.likes = Likes.objects.filter(post=post).order_by('ip')[:10]
+    # else:
+    str_likers = "web_likes_%s" % post.id
+    csl = cache.get(str_likers)
+    if csl:
+        post.likes = csl
     else:
-        post.comments = Comments.objects.filter(object_pk=post, is_public=True)
-        post.likes = Likes.objects.filter(post=post)[:10]
+        pl = Likes.objects.filter(post_id=post.id).values_list('user_id', flat=True)[:10]
+        ll = [liker for liker in pl]
+        cache.set(str_likers, ll, 86400)
+        post.likes = ll
 
-    try:
-        post.prev = Post.objects.filter(status=1)\
-            .extra(where=['id<%s'], params=[post.id]).order_by('-id')[:1][0]
-        post.next = Post.objects.filter(status=1)\
-            .extra(where=['id>%s'], params=[post.id]).order_by('id')[:1][0]
-    except:
-        pass
+    
+    #cache.set("w_likes_"+str(post.id), pp, 30)
 
-    follow_status = Follow.objects.filter(follower=request.user.id,
+    # try:
+    #     c_prev = cache.get('prev_post_'+str(post.id))
+    #     if c_prev:
+    #         post.prev = c_prev
+    #     else:
+    #         post.prev = Post.objects.filter(status=1)\
+    #             .extra(where=['id<%s'], params=[post.id]).order_by('-id')[:1][0]
+    #         cache.set('prev_post_'+str(post.id), post.prev, 3600)
+
+    #     c_next = cache.get('next_post_'+ str(post.id))
+    #     if c_next:
+    #         post.next = c_next
+    #     else:
+    #         post.next = Post.objects.filter(status=1)\
+    #             .extra(where=['id>%s'], params=[post.id]).order_by('id')[:1][0]
+    #         cache.set("next_post_"+str(post.id), post.next, 86400)
+    # except:
+    #     pass
+
+    if request.user.is_authenticated:
+        follow_status = Follow.objects.filter(follower=request.user.id,
                                           following=post.user.id).count()
 
     if request.is_ajax():

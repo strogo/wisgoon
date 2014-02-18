@@ -38,14 +38,14 @@ var start_loading=0
         <div class="box">
             <div class="box-title">مشخصات فرستنده</div>
             <div class="box-content">
-                <a href="{% url "pin-user" post.user.id %}"><img src="{{post.user|get_avatar:188}}" /></a>
+                <a href="{% url "pin-user" post.user_id %}"><img src="{{post.user|get_avatar:188}}" /></a>
                 <br><br>
                 <div style="">
                 {% if post.user_id != request.user.id %}
                     {% if follow_status == 0 %}
-                    <a class="btn btn-success" href="{% url "pin-follow" post.user.id 1 %}">ایجاد دوستی</a>
+                    <a class="btn btn-success" href="{% url "pin-follow" post.user_id 1 %}">ایجاد دوستی</a>
                     {% else %}
-                    <a class="btn btn-danger" href="{% url "pin-follow" post.user.id 0 %}">قطع دوستی</a>
+                    <a class="btn btn-danger" href="{% url "pin-follow" post.user_id 0 %}">قطع دوستی</a>
                     {%endif%}
                 {% endif%}
                 </div>
@@ -59,15 +59,10 @@ var start_loading=0
             <div class="box-content">
                 <div class="row-fluid">
                     <div>
-        {% for like in post.likes %}
-            {% if request.user.is_superuser %}
-                {% ifchanged like.ip %} <br>{{like.ip}}<br> {% endifchanged %}
-                <a href="{% url "pin-user" like.user.id %}"><img alt="{{like.ip}}" src="{{like.user|get_avatar:50}}" style="display: inline;margin: 2px;" ></a>
-            {%else %}
-                        
-                <a href="{% url "pin-user" like.user.id %}"><img src="{{like.user|get_avatar:50}}" style="display: inline;margin: 2px;" ></a>
-                        
-            {%endif%}
+        {% for liker in post.likes %}            
+            <a href="{% url "pin-user" liker %}">
+                <img src="{{liker|get_avatar:50}}" style="display: inline;margin: 2px;" >
+            </a>
         {% endfor %}
                     </div>
                 </div>
@@ -75,6 +70,8 @@ var start_loading=0
             </div>
         </div>
         {% endif %}
+
+{% comment %}
         {% if post.next %}
 
 {% block nextpost%}<link rel="next" href="{{post.next.get_absolute_url}}">{%endblock%}
@@ -110,7 +107,7 @@ var start_loading=0
             </div>
         </div>
         {% endif %}
-
+{% endcomment %}
     </div>
 
 	<div class="span9">
@@ -126,14 +123,5 @@ var start_loading = 1;
 </script>
 {% include "pin/feed_scripts.html" %}
 
-{% block footer_script %}
-<!-- AddToAny BEGIN -->
-<script type="text/javascript">
-var a2a_config = a2a_config || {};
-a2a_config.locale = "fa";
-</script>
-<script type="text/javascript" src="http://static.addtoany.com/menu/page.js"></script>
-<!-- AddToAny END -->
-{% endblock%}
 
 {% endblock content %}
