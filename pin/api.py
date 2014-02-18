@@ -130,6 +130,51 @@ class CategotyResource(ModelResource):
         resource_name = "category"
         cache = SimpleCache()
 
+    def get_list(self, request, **kwargs):
+        print "get list"
+        base_bundle = self.build_bundle(request=request)
+        objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
+        sorted_objects = self.apply_sorting(objects, options=request.GET)
+
+        paginator = self._meta.paginator_class(request.GET, sorted_objects, resource_uri=self.get_resource_uri(), limit=self._meta.limit, max_limit=self._meta.max_limit, collection_name=self._meta.collection_name)
+        to_be_serialized = paginator.page()
+
+        # Dehydrate the bundles in preparation for serialization.
+        bundles = []
+
+        for obj in to_be_serialized[self._meta.collection_name]:
+            bundle = self.build_bundle(obj=obj, request=request)
+            bundles.append(self.full_dehydrate(bundle, for_list=True))
+
+        to_be_serialized[self._meta.collection_name] = bundles
+        to_be_serialized = self.alter_list_data_to_serialize(request, to_be_serialized)
+        res = self.create_response(request, to_be_serialized)
+        return res
+
+    def get_detail(self, request, **kwargs):
+        print "get details"
+        """
+        Returns a single serialized resource.
+
+        Calls ``cached_obj_get/obj_get`` to provide the data, then handles that result
+        set and serializes it.
+
+        Should return a HttpResponse (200 OK).
+        """
+        basic_bundle = self.build_bundle(request=request)
+
+        try:
+            obj = self.cached_obj_get(bundle=basic_bundle, **self.remove_api_resource_names(kwargs))
+        except ObjectDoesNotExist:
+            return http.HttpNotFound()
+        except MultipleObjectsReturned:
+            return http.HttpMultipleChoices("More than one resource is found at this URI.")
+
+        bundle = self.build_bundle(obj=obj, request=request)
+        bundle = self.full_dehydrate(bundle)
+        bundle = self.alter_detail_data_to_serialize(request, bundle)
+        return self.create_response(request, bundle)
+
 
 class LikesResource(ModelResource):
     user_url = fields.IntegerField(attribute='user__id', null=True)
@@ -264,8 +309,8 @@ class PostResource(ModelResource):
     user = fields.IntegerField(attribute='user_id')
     likers = fields.ListField()
     like = fields.IntegerField(attribute='cnt_like')
-    category = fields.ToOneField(CategotyResource, 'category', full=True)
-    #category_id = fields.IntegerField(attribute='category_id')
+    #category = fields.ToOneField(CategotyResource, 'category', full=True)
+    category_id = fields.IntegerField(attribute='category_id')
 
     like_with_user = fields.BooleanField(default=False)
     popular = None
@@ -386,16 +431,25 @@ class PostResource(ModelResource):
         bundle.data['user_avatar'] = AuthCache.avatar(user_id=user)
         bundle.data['user_name'] = AuthCache.get_username(user_id=user)
 
-        # cat = CatCache.get_cat(bundle.data['category_id'])
-        # cat_o = {
-        #     'id': cat.id,
-        #     'image': "/media/" + str(cat.image),
-        #     'resource_uri': "/pin/apic/category/"+str(cat.id)+"/",
-        #     'title': cat.title,
-        #     }
+        cat_id = bundle.data['category_id']
+        c_cache = cache.get("cat_c"+str(cat_id))
+        if c_cache:
+            bundle.data['category'] = c_cache
+        else:
+            cat = Category.objects.get(id=cat_id)
+            # cat = CatCache.get_cat(bundle.data['category_id'])
+            cat_o = {
+                 'id': cat.id,
+                 'image': "/media/" + str(cat.image),
+                 'resource_uri': "/pin/apic/category/"+str(cat.id)+"/",
+                 'title': cat.title,
+                 }
 
-        # bundle.data['category'] = cat_o
-        # del(bundle.data['category_id'])
+            bundle.data['category'] = cat_o
+            cache.set("cat_c"+str(cat_id), cat_o, 86400)
+        del(bundle.data['category_id'])
+
+
         #print self.cur_user
         if self.cur_user:
             # post likes users
