@@ -406,7 +406,7 @@ class PostResource(ModelResource):
         id = bundle.data['id']
         o_image = bundle.data['image']
 
-        c_str = "s%s_%s_%s" % (o_image,self.thumb_size,self.thumb_quality)
+        c_str = "s2%s_%s_%s" % (o_image,self.thumb_size,self.thumb_quality)
         img_cache = cache.get(c_str)
         if img_cache:
             imo = img_cache
@@ -427,7 +427,7 @@ class PostResource(ModelResource):
             print imo
 
         if imo:
-            bundle.data['thumbnail'] = imo['thumbnail']
+            bundle.data['thumbnail'] = imo['thumbnail'].replace('/media/', '')
             bundle.data['hw'] = imo['hw']
 
         if int(self.just_image) == 1:
