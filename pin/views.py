@@ -308,7 +308,7 @@ def item(request, item_id):
     if csl:
         post.likes = csl
     else:
-        pl = Likes.objects.filter(post_id=post.id).values_list('user_id', flat=True)[:10]
+        pl = Likes.objects.filter(post_id=post.id).values_list('user_id', flat=True)[:12]
         ll = [liker for liker in pl]
         cache.set(str_likers, ll, 86400)
         post.likes = ll
