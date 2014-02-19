@@ -120,7 +120,7 @@ class ProfileResource(ModelResource):
 
     def dehydrate(self, bundle):
         user = bundle.data['user']
-        bundle.data['user_avatar'] = AuthCache.avatar(user, size=300)
+        bundle.data['user_avatar'] = AuthCache.avatar(user, size=300)[1:]
         return bundle
 
 
@@ -191,7 +191,7 @@ class LikesResource(ModelResource):
 
     def dehydrate(self, bundle):
         user = bundle.data['user_url']
-        bundle.data['user_avatar'] = AuthCache.avatar(user)
+        bundle.data['user_avatar'] = AuthCache.avatar(user)[1:]
         bundle.data['user_name'] = AuthCache.get_username(user)
 
         return bundle
@@ -440,7 +440,8 @@ class PostResource(ModelResource):
 
         bundle.data['permalink'] = '/pin/%d/' % (int(id))
         user = bundle.data['user']
-        bundle.data['user_avatar'] = AuthCache.avatar(user_id=user)
+        av = AuthCache.avatar(user_id=user)
+        bundle.data['user_avatar'] = AuthCache.avatar(user_id=user)[1:]
         bundle.data['user_name'] = AuthCache.get_username(user_id=user)
 
         cat_id = bundle.data['category']
