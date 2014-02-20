@@ -38,7 +38,7 @@ var start_loading=0
         <div class="box">
             <div class="box-title">مشخصات فرستنده</div>
             <div class="box-content">
-                <a href="{% url "pin-user" post.user_id %}"><img src="{{post.user|get_avatar:188}}" /></a>
+                <a href="{% url "pin-user" post.user_id %}"><img src="{{post.user_id|get_avatar:188}}" /></a>
             </div>
         </div>
         {% if post.cnt_likes %}

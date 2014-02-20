@@ -3,6 +3,7 @@ import urllib
 
 from django.template import Library
 from django.utils.hashcompat import md5_constructor
+from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
 
@@ -32,15 +33,32 @@ def get_avatar(user, size=200):
         return daddy_avatar('', size)
 
     if isinstance(user, (int, long)):
-        user = User.objects.only('email').get(pk=user)
+        #user = User.objects.only('email').get(pk=user)
+        user_str = "user_%d" % (user)
+        user_cache = cache.get(user_str)
+        if user_cache:
+            user = user_cache
+        else:
+            user = User.objects.only('email').get(pk=user)
+            cache.set(user_str, user, 60*60*24)
 
+    ava_str = "avatar_%d_%d" % (user.id, size)
     try:
+        ava_cache = cache.get(ava_str)
+        if ava_cache:
+            print "get avatar from cache", ava_cache
+            return ava_cache
+
         profile = Profile.objects.only('avatar').get(user=user)
+        
         if profile.avatar:
             t_size = '%sx%s' % (size, size)
             im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
+            cache.set(ava_str, im.url, 60 * 60 * 1)
             return im.url
-    except:
-        pass
-
-    return daddy_avatar(user.email, size)
+    except Exception, e:
+        print str(e)
+        
+    glob_avatar = daddy_avatar(user.email, size)
+    cache.set(ava_str, glob_avatar, 60 * 60 * 1)
+    return glob_avatar
