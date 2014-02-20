@@ -35,7 +35,7 @@ def get_avatar(user, size=200):
         user = User.objects.only('email').get(pk=user)
 
     try:
-        profile = Profile.objects.only('avatar').get(user=user)
+        profile = Profile.objects.only('avatar').get(user=user).extra(where=['1=1 /* query no. views_user 148 */'])
         if profile.avatar:
             t_size = '%sx%s' % (size, size)
             im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
