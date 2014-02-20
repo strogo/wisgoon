@@ -6,7 +6,7 @@
 {%block title%} کاربران برتر {%endblock title%}
 
 {% block content %}
-{% cache 500 topusers %}
+{% cache 3600 topusers %}
 <div id="profile" class="row row-fluid">
 	<div id="feed-ul" class="container"style="width:940px;" >
     <table style="width:100%" width="100%">
@@ -16,7 +16,7 @@
         <div class="feed-item" style="padding:5px">
             <a href="{% url "pin-user" u.user.id %}">
                 {% if forloop.counter < 9 %}
-                <img src="{{u.user|get_avatar:192}}" style="float:left; width:192px;" >
+                <img src="{{u.user|get_avatar:326}}" style="float:left; width:326px;" >
                 {%else%}
                 <img src="{{u.user|get_avatar:50}}" style="float:left" >
                 {%endif%}
