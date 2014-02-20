@@ -109,5 +109,6 @@ urlpatterns += patterns('pin.views_device',
 
 urlpatterns += patterns('',
     url(r'^comments/', include('django.contrib.comments.urls')),
+    url(r'^api2/post/', 'pin.views_api.post'),
 )
 
