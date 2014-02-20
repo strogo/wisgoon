@@ -80,7 +80,7 @@
 					<div class="comment_side">
 						
 						<div class="avatar">
-							<a href="{% url "pin-user" comment.user.id %}"><img src="{{comment.user|get_avatar:36}}" alt=""></a>
+							<a href="{% url "pin-user" comment.user_id %}"><img src="{{comment.user_id|get_avatar:36}}" alt=""></a>
 						</div>
 						
 					</div>
@@ -88,7 +88,7 @@
 						<div class="comment_top">
 							<div class="comment-author">
 								<a href="{% url "pin-user" comment.user_id %}">
-									{{comment.user|get_username}}
+									{{comment.user_id|get_username}}
 								</a>
 							</div>
 							<div class="comment-date">

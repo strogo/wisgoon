@@ -4,6 +4,7 @@ from urlparse import urlparse
 
 from django import template
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.template import Library
 from django.template.defaultfilters import stringfilter
 from django.utils.text import normalize_newlines
@@ -90,8 +91,20 @@ def get_user_notify(userid):
 
 @register.filter
 def get_username(user):
-    if isinstance(user, int):
-        user = User.objects.only('username').get(pk=user)
+    if isinstance(user, (int, long)):
+        #user = User.objects.only('email').get(pk=user)
+        user_str = "user_name_%d" % (user)
+        user_cache = cache.get(user_str)
+        if user_cache:
+            user = user_cache
+        else:
+            user = User.objects.only('username').get(pk=user)
+            cache.set(user_str, user, 60*60*24)
+
+    profile_str = "profile_name_%d" % (user.id)
+    profile_cache = cache.get(profile_str)
+    if profile_cache:
+        return profile_cache
 
     try:
         profile = Profile.objects.only('name').get(user_id=user.id)
@@ -104,6 +117,8 @@ def get_username(user):
 
     if not username:
         username = user.username
+
+    cache.set(profile_str, username, 60 * 60)
 
     return username
 
