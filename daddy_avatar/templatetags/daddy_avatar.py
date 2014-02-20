@@ -46,7 +46,7 @@ def get_avatar(user, size=200):
     try:
         ava_cache = cache.get(ava_str)
         if ava_cache:
-            print "get avatar from cache", ava_cache
+            #print "get avatar from cache", ava_cache
             return ava_cache
 
         profile = Profile.objects.only('avatar').get(user=user)
