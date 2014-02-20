@@ -470,7 +470,7 @@ class PostResource(ModelResource):
 
             plu = cache.get(c_key)
             if plu:
-                print "get like_with_user from memcache", c_key
+                #print "get like_with_user from memcache", c_key
                 if self.cur_user in plu:
                     bundle.data['like_with_user'] = True
             else:
