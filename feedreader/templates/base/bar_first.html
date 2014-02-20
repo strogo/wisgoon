@@ -1,7 +1,7 @@
 {%spaceless%}
-{% load flatpages %}
+
 {% load daddy_avatar %}
-{% get_flatpages as flatpages %}
+
 <ul class="nav nav-tabs nav-first">
 
 	<li>
@@ -20,9 +20,6 @@
         <a href="{% url "policy" %}">قوانین</a>
     </li>
 	
-	{% for page in flatpages %}
-        <li class="pull-right"><a href="{{ page.url }}">{{ page.title }}</a></li>
-    {% endfor %}
 	{% if user.is_authenticated %}
 	<li class="pull-right">
 		<a class="tooltips" data-placement="bottom" rel="tooltip" title="نمایش و ویرایش پروفایل" href="{% url "pin-user" user.id %}"><img src="{{user|get_avatar:20}}"></a>

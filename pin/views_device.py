@@ -51,12 +51,6 @@ def like(request):
         except ValueError:
             return HttpResponseBadRequest('erro in post id')
 
-        # cache_key = "exists_post_%d" % post_id
-        # pexists = cache.get(cache_key)
-        # if pexists:
-        # if not Post.objects.filter(pk=post_id, status=1).exists():
-        #     return HttpResponseNotFound('post not found')
-
         try:
             Likes.objects.create(user_id=user.id, post_id=post_id, ip = user._ip)
         except Exception:

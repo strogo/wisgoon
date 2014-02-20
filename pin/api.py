@@ -131,7 +131,6 @@ class CategotyResource(ModelResource):
         cache = SimpleCache()
 
     def get_list(self, request, **kwargs):
-        print "get list"
         base_bundle = self.build_bundle(request=request)
         objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
         sorted_objects = self.apply_sorting(objects, options=request.GET)
@@ -211,7 +210,6 @@ class LikesResource(ModelResource):
 
         c = cache.get(hstr)
         if c:
-            print "get from cache", hstr, hcpstr
             return c
 
         base_bundle = self.build_bundle(request=request)
@@ -472,7 +470,7 @@ class PostResource(ModelResource):
 
             plu = cache.get(c_key)
             if plu:
-                #print "get like_with_user from memcache", c_key
+                print "get like_with_user from memcache", c_key
                 if self.cur_user in plu:
                     bundle.data['like_with_user'] = True
             else:
