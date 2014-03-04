@@ -598,7 +598,7 @@ class NotifyResource(ModelResource):
                     bundle.data['like_with_user'] = True
             else:
                 post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
-                cache.set(c_key, post_likers, 60 * 60)
+                cache.set(c_key, post_likers, 60 * 60 * 60)
 
                 if self.cur_user in post_likers:
                     bundle.data['like_with_user'] = True
