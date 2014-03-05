@@ -38,17 +38,7 @@ var start_loading=0
         <div class="box">
             <div class="box-title">مشخصات فرستنده</div>
             <div class="box-content">
-                <a href="{% url "pin-user" post.user_id %}"><img src="{{post.user|get_avatar:188}}" /></a>
-                <br><br>
-                <div style="">
-                {% if post.user_id != request.user.id %}
-                    {% if follow_status == 0 %}
-                    <a class="btn btn-success" href="{% url "pin-follow" post.user_id 1 %}">ایجاد دوستی</a>
-                    {% else %}
-                    <a class="btn btn-danger" href="{% url "pin-follow" post.user_id 0 %}">قطع دوستی</a>
-                    {%endif%}
-                {% endif%}
-                </div>
+                <a href="{% url "pin-user" post.user_id %}"><img src="{{post.user_id|get_avatar:188}}" /></a>
             </div>
         </div>
         {% if post.cnt_likes %}

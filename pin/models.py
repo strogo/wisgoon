@@ -254,6 +254,7 @@ class Likes(models.Model):
             print "delete ", hstr, hcpstr
 
         str_likers = "web_likes_%s" % post.id
+        all_likers = "post_like_%s" % (post.id)
         cache.delete(str_likers)
         
         from pin.tasks import send_notif

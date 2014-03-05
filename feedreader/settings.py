@@ -50,7 +50,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     #'johnny.middleware.LocalStoreClearMiddleware',
     #'johnny.middleware.QueryCacheMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    #'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 ROOT_URLCONF = 'feedreader.urls'
 WSGI_APPLICATION = 'feedreader.wsgi.application'
@@ -91,7 +91,7 @@ INSTALLED_APPS = (
     'south',
     #'debug_toolbar',
     'social_auth',
-    'django.contrib.flatpages',
+    #'django.contrib.flatpages',
     'django.contrib.comments',
     'sorl.thumbnail',
     'djangosphinx',

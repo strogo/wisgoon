@@ -131,7 +131,6 @@ class CategotyResource(ModelResource):
         cache = SimpleCache()
 
     def get_list(self, request, **kwargs):
-        print "get list"
         base_bundle = self.build_bundle(request=request)
         objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
         sorted_objects = self.apply_sorting(objects, options=request.GET)
@@ -211,7 +210,6 @@ class LikesResource(ModelResource):
 
         c = cache.get(hstr)
         if c:
-            print "get from cache", hstr, hcpstr
             return c
 
         base_bundle = self.build_bundle(request=request)
@@ -366,6 +364,8 @@ class PostResource(ModelResource):
                 start_from = time.mktime(date_from.timetuple())
                 filters.update(dict(timestamp__gt=start_from))
 
+        print filters
+
         return base_object_list.filter(**filters)
 
     def apply_sorting(self, object_list, options=None):
@@ -410,7 +410,7 @@ class PostResource(ModelResource):
         img_cache = cache.get(c_str)
         if img_cache:
             imo = img_cache
-            print imo, "cache"
+            #print imo, "cache"
         else:
             try:
                 im = get_thumbnail(o_image,
@@ -424,7 +424,7 @@ class PostResource(ModelResource):
                 cache.set(c_str, imo, 8600)
             except:
                 imo = ""
-            print imo
+            #print imo
 
         if imo:
             bundle.data['thumbnail'] = imo['thumbnail'].replace('/media/', '')
@@ -598,7 +598,7 @@ class NotifyResource(ModelResource):
                     bundle.data['like_with_user'] = True
             else:
                 post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
-                cache.set(c_key, post_likers, 60 * 60)
+                cache.set(c_key, post_likers, 60 * 60 * 60)
 
                 if self.cur_user in post_likers:
                     bundle.data['like_with_user'] = True

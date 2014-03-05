@@ -78,17 +78,17 @@
 				<div class="comment">
 					<div class="arrow reply_arrow icon_link"></div>
 					<div class="comment_side">
-						{% if comment.user %}
+						
 						<div class="avatar">
-							<a href="{% url "pin-user" comment.user.id %}"><img src="{{comment.user|get_avatar:36}}" alt=""></a>
+							<a href="{% url "pin-user" comment.user_id %}"><img src="{{comment.user_id|get_avatar:36}}" alt=""></a>
 						</div>
-						{% endif%}
+						
 					</div>
 					<div class="comment_main">
 						<div class="comment_top">
 							<div class="comment-author">
-								<a href="{% url "pin-user" comment.user.id %}">
-									{{comment.user|get_username}}
+								<a href="{% url "pin-user" comment.user_id %}">
+									{{comment.user_id|get_username}}
 								</a>
 							</div>
 							<div class="comment-date">

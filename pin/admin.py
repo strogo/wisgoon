@@ -34,7 +34,7 @@ class PinAdmin(admin.ModelAdmin):
                 .update(status=Post.APPROVED, timestamp=time.time())
 
         for obj in queryset:
-            send_notif(user=obj.user, type=Notif.APPROVE, post=obj, actor=request.user)
+            send_notif(user=obj.user, type=Notif.APPROVE, post=obj.id, actor=request.user)
 
     make_approve.short_description = u"تایید مطلب"
 

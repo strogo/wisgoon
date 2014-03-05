@@ -51,29 +51,12 @@ def like(request):
         except ValueError:
             return HttpResponseBadRequest('erro in post id')
 
-        if not Post.objects.filter(pk=post_id, status=1).exists():
-            return HttpResponseNotFound('post not found')
-
         try:
-            like = Likes.objects.create(user_id=user.id, post_id=post_id, ip = user._ip)
-        except Exception, e:
-            print str(e)
+            Likes.objects.create(user_id=user.id, post_id=post_id, ip = user._ip)
+        except Exception:
+            return HttpResponse('-1')
 
         return HttpResponse('+1')
-
-        # try:
-        #     like = Likes.objects.get(user=user, post_id=post_id)
-        #     created = False
-        # except Likes.DoesNotExist:
-        #     like = Likes.objects.create(user=user, post_id=post_id, ip = user._ip)
-        #     created = True
-
-        # if created:
-        #     return HttpResponse('+1')
-        # elif like:
-        #     like.delete()
-
-        #     return HttpResponse('-1')
 
     return HttpResponseBadRequest('error in parameters')
 

@@ -38,6 +38,8 @@ THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.cached_db_kvstore.KVStore'
 
 IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT,'image_cache')
 
+TASTYPIE_DEFAULT_FORMATS = ['json']
+
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
@@ -106,7 +108,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'sorl.thumbnail',
     'social_auth',
-    'django.contrib.flatpages',
+    #'django.contrib.flatpages',
     'django.contrib.comments',
     #'djangosphinx',
     'daddy_avatar',
