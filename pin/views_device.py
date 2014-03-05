@@ -52,7 +52,7 @@ def like(request):
             return HttpResponseBadRequest('erro in post id')
 
         try:
-            Likes.objects.create(user_id=user.id, post_id=post_id, ip = user._ip)
+            Likes.objects.get_or_create(user_id=user.id, post_id=post_id, ip = user._ip)
         except Exception:
             return HttpResponse('-1')
 
