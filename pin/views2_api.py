@@ -83,7 +83,7 @@ def post_item(request, item_id):
 
 
 def post(request):
-    print "we are in post"
+    #print "we are in post"
     data = {}
     data['meta'] = {'limit': 10,
                     'next': '',
@@ -137,7 +137,7 @@ def post(request):
     cache_stream_name = md5(cache_stream_str).hexdigest()
 
     posts = cache.get(cache_stream_name)
-    print cache_stream_str, cache_stream_name, posts
+    #print cache_stream_str, cache_stream_name, posts
     if not posts:
         posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
                               'image', 'user_id', 'cnt_like', 'category_id')\
