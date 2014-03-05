@@ -44,7 +44,7 @@ urlpatterns = patterns('pin.views',
     #url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     #not stables
 
-    url(r'^api/', include(post_resource.urls)),
+    url(r'^api1/', include(post_resource.urls)),
     url(r'^apic/', include(cat_resource.urls)),
     url(r'^api/com/', include(comment_resource.urls)),
     url(r'^api/notif/', include(notify_resource.urls)),
@@ -109,5 +109,6 @@ urlpatterns += patterns('pin.views_device',
 
 urlpatterns += patterns('',
     url(r'^comments/', include('django.contrib.comments.urls')),
+    url(r'^api/post/', 'pin.views_api.post', name="post_api"),
 )
 

@@ -255,7 +255,7 @@ class CommentResource(ModelResource):
     def dehydrate(self, bundle):
         user = bundle.data['user_url']
 
-        bundle.data['user_avatar'] = AuthCache.avatar(user)
+        bundle.data['user_avatar'] = AuthCache.avatar(user)[1:]
         bundle.data['user_name'] = AuthCache.get_username(user)
         return bundle
 
@@ -605,7 +605,7 @@ class NotifyResource(ModelResource):
 
         post_owner_id = bundle.data['post_owner_id']
 
-        bundle.data['post_owner_avatar'] = AuthCache.avatar(post_owner_id)
+        bundle.data['post_owner_avatar'] = AuthCache.avatar(post_owner_id)[1:]
         bundle.data['post_owner_user_name'] = AuthCache.get_username(post_owner_id)
 
         actors = Notif_actors.objects.filter(notif=id).order_by('id')[:10]
@@ -614,7 +614,7 @@ class NotifyResource(ModelResource):
             ar.append(
                 [
                     lk.actor_id,
-                    AuthCache.get_username(lk.actor_id),
+                    AuthCache.get_username(lk.actor_id)[1:],
                     AuthCache.avatar(lk.actor_id, size=100)
                 ]
             )
