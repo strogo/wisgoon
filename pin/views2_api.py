@@ -140,7 +140,7 @@ def post(request):
     
     cache_stream_name = md5(cache_stream_str).hexdigest()
 
-    posts = cache.get(cache_stream_name)
+    #posts = cache.get(cache_stream_name)
     #print cache_stream_str, cache_stream_name, posts
     if not posts:
         posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
@@ -204,7 +204,7 @@ def post(request):
         }
         objects_list.append(o)
 
-    cache.set(cache_stream_name, posts, cache_ttl)
+    #cache.set(cache_stream_name, posts, cache_ttl)
 
     data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
