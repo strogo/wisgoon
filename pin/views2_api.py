@@ -142,10 +142,10 @@ def post(request):
 
     #posts = cache.get(cache_stream_name)
     #print cache_stream_str, cache_stream_name, posts
-    if not posts:
-        posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
-                              'image', 'user_id', 'cnt_like', 'category_id')\
-            .filter(**filters).order_by(sort_by)[:10]      
+    #if not posts:
+    posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
+                          'image', 'user_id', 'cnt_like', 'category_id')\
+        .filter(**filters).order_by(sort_by)[:10]      
 
     for p in posts:
         o = {}
