@@ -100,6 +100,7 @@ def post(request):
     category_id = request.GET.get('category_id', None)
     popular = request.GET.get('popular', None)
     just_image = request.GET.get('just_image', 0)
+    user_id = request.GET.get('user_id', None)
 
     sort_by = '-timestamp'
 
@@ -113,6 +114,9 @@ def post(request):
 
     if before:
         filters.update(dict(id__lt=before))
+
+    if user_id:
+        filters.update(dict(user_id=user_id))        
 
     if popular:
         cache_ttl = 60 * 60 * 4
