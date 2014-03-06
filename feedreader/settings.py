@@ -48,8 +48,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    #'johnny.middleware.LocalStoreClearMiddleware',
-    #'johnny.middleware.QueryCacheMiddleware',
+    'johnny.middleware.LocalStoreClearMiddleware',
+    'johnny.middleware.QueryCacheMiddleware',
     #'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 ROOT_URLCONF = 'feedreader.urls'
@@ -141,7 +141,8 @@ LOGIN_REDIRECT_URL = '/'
 
 CACHES = {
     'default': dict(
-        BACKEND = 'django.core.cache.backends.memcached.MemcachedCache',
+        BACKEND = 'johnny.backends.memcached.MemcachedCache',
+        #BACKEND = 'django.core.cache.backends.memcached.MemcachedCache',
         LOCATION = ['127.0.0.1:11211'],
         JOHNNY_CACHE = True,
     )

@@ -63,6 +63,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'johnny.middleware.LocalStoreClearMiddleware',
+    'johnny.middleware.QueryCacheMiddleware',
     #'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     #'django_cprofile_middleware.middleware.ProfilerMiddleware',
 )
@@ -158,11 +160,14 @@ DEBUG_TOOLBAR_PANELS = (
 CACHES = {
     'default' : dict(
         #BACKEND = 'johnny.backends.memcached.MemcachedCache',
-        BACKEND= 'django.core.cache.backends.memcached.MemcachedCache',
+        BACKEND = 'johnny.backends.memcached.MemcachedCache',
+        #BACKEND= 'django.core.cache.backends.memcached.MemcachedCache',
         LOCATION = ['127.0.0.1:11211'],
-        #JOHNNY_CACHE = True,
+        JOHNNY_CACHE = True,
     )
 }
+
+JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_myproj'
 
 CACHEOPS_REDIS = {
     'host': 'localhost', # redis-server is on same machine
