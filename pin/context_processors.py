@@ -16,12 +16,12 @@ def pin_categories(request):
 
 
 def is_super_user(request):
-    return {'is_super_user': False}
-    #print "re user", request.user
-    #if request.user.is_superuser:
-    #    return {'is_super_user': True}
-
     #return {'is_super_user': False}
+    #print "re user", request.user
+    if request.user.is_superuser:
+       return {'is_super_user': True}
+
+    return {'is_super_user': False}
 
 
 def user__id(request):
