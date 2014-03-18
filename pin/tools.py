@@ -153,6 +153,7 @@ class AuthCache(MyCache):
 
         avatar = daddy_avatar.get_avatar(user_id, size=size)
         cache.set(ca_str, avatar, self.TTL_AVATAR)
+        return avatar
 
     @classmethod
     def id_from_token(self, token):
