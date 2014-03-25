@@ -29,7 +29,7 @@ def get_thumb(o_image, thumb_size, thumb_quality):
     img_cache = cache.get(c_str)
     if img_cache:
         imo = img_cache
-        print imo, "cache"
+        #print imo, "cache"
     else:
         try:
             im = get_thumbnail(o_image,
@@ -43,7 +43,7 @@ def get_thumb(o_image, thumb_size, thumb_quality):
             cache.set(c_str, imo, 8600)
         except:
             imo = ""
-        print imo
+        #print imo
     return imo
 
 
