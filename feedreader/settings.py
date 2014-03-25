@@ -19,7 +19,7 @@ DATABASES = {
     }
 }
 ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com', 'wisgoon.com']
-EMAIL_HOST = "wisgoon.com"
+EMAIL_HOST = "direct.wisgoon.com"
 DEFAULT_FROM_EMAIL = "info@wisgoon.com"
 TIME_ZONE = 'Asia/Tehran'
 LANGUAGE_CODE = 'fa-ir'
