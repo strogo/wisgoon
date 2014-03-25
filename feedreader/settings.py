@@ -30,6 +30,7 @@ USE_TZ = True
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 MEDIA_URL = '/media/'
 STATIC_ROOT = ''
+ACCOUNT_ACTIVATION_DAYS = 7
 STATIC_URL = '/statics/'
 STATICFILES_DIRS = ()
 STATICFILES_FINDERS = (
