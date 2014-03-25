@@ -1,5 +1,5 @@
 import os
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
