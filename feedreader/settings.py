@@ -1,5 +1,5 @@
 import os
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
@@ -19,7 +19,7 @@ DATABASES = {
     }
 }
 ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com', 'wisgoon.com']
-EMAIL_HOST = "direct.wisgoon.com"
+EMAIL_HOST = "wisgoon.com"
 DEFAULT_FROM_EMAIL = "info@wisgoon.com"
 TIME_ZONE = 'Asia/Tehran'
 LANGUAGE_CODE = 'fa-ir'
