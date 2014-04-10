@@ -219,7 +219,7 @@ def comment_score(request, comment_id, score):
 def delete(request, item_id):
     try:
         post = Post.objects.get(pk=item_id)
-        if post.user == request.user or request.user.is_superuser:
+        if request.user.is_superuser:
             post.delete()
             return HttpResponse('1')
 
