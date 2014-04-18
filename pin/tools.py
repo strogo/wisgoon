@@ -115,7 +115,7 @@ class CatCache(MyCache):
 
 
 class AuthCache(MyCache):
-    TTL_TOKEN = 60 *60 * 24
+    TTL_TOKEN = 60 * 60
     TTL_AVATAR = 60 * 60 * 24
     TTL_USERNAME = 60 * 60 * 24
 
