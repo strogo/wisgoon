@@ -115,8 +115,8 @@ class Post(models.Model):
         try:
             profile = Profile.objects.get(user=self.user)
 
-            if ((self.date_lt( self.user.date_joined, 15) and profile.score > 2000) \
-                or profile.score > 5000 ):
+            if ((self.date_lt( self.user.date_joined, 30) and profile.score > 5000) \
+                or profile.score > 10000 ):
                 profile.post_accept = True
                 profile.save()
                 self.status = 1
