@@ -12,6 +12,8 @@ class PinAdmin(admin.ModelAdmin):
     list_filter = ('status', 'report', 'is_ads', 'show_in_default', 'category')
     search_fields = ['id', 'user__id']
 
+    raw_id_fields = ("user",)
+
     list_display = ('id', 'text', 'get_user_url', 'category', 'admin_image',
                     'status', 'like', 'device', 'is_ads',
                     'show_in_default', 'report')
