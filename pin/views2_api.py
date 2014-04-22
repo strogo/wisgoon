@@ -102,7 +102,8 @@ def post(request):
     just_image = request.GET.get('just_image', 0)
     user_id = request.GET.get('user_id', None)
 
-    sort_by = '-timestamp'
+
+    sort_by = ['-timestamp', '-is_ads']
 
     token = request.GET.get('token', '')
     if token:
@@ -120,7 +121,7 @@ def post(request):
 
     if popular:
         cache_ttl = 60 * 60 * 4
-        sort_by = '-cnt_like'
+        sort_by = ['-cnt_like']
         date_from = None
         dn = datetime.datetime.now()
         if popular == 'month':
@@ -145,7 +146,7 @@ def post(request):
     #if not posts:
     posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
                           'image', 'user_id', 'cnt_like', 'category_id')\
-        .filter(**filters).order_by(sort_by)[:10]      
+        .filter(**filters).order_by(*sort_by)[:10]      
 
     for p in posts:
         o = {}
