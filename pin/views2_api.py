@@ -105,7 +105,7 @@ def post(request):
     if before:
         sort_by = ['-timestamp']
     else:
-        sort_by = ['-timestamp', '-is_ads']
+        sort_by = ['-is_ads', '-timestamp']
 
     token = request.GET.get('token', '')
     if token:
