@@ -102,8 +102,10 @@ def post(request):
     just_image = request.GET.get('just_image', 0)
     user_id = request.GET.get('user_id', None)
 
-
-    sort_by = ['-timestamp', '-is_ads']
+    if before:
+        sort_by = ['-timestamp']
+    else:
+        sort_by = ['-timestamp', '-is_ads']
 
     token = request.GET.get('token', '')
     if token:
