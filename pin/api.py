@@ -23,7 +23,7 @@ from PIL import Image
 
 from sorl.thumbnail import get_thumbnail
 from pin.models import Post, Likes, Category, Notif, Comments,\
-    Notif_actors, App_data, Stream
+    Notif_actors, App_data, Stream, Notifbar
 from user_profile.models import Profile
 from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
@@ -527,7 +527,7 @@ class NotifAuthorization(Authorization):
 
 
 class NotifyResource(ModelResource):
-    actors = fields.ListField()
+    actor = fields.IntegerField(attribute='actor_id')
     image = fields.CharField(attribute='post__image')
     like = fields.IntegerField(attribute='post__cnt_like')
     cnt_comment = fields.IntegerField(attribute='post__cnt_comment')
@@ -546,7 +546,7 @@ class NotifyResource(ModelResource):
         allowed_methods = ['get']
         authentication = ApiKeyAuthentication()
         authorization = NotifAuthorization()
-        queryset = Notif.objects.all().order_by('-date')
+        queryset = Notifbar.objects.all().order_by('-id')
         paginator_class = Paginator
         cache = SimpleCache(timeout=600)
         filtering = {
@@ -608,17 +608,13 @@ class NotifyResource(ModelResource):
         bundle.data['post_owner_avatar'] = AuthCache.avatar(post_owner_id)[1:]
         bundle.data['post_owner_user_name'] = AuthCache.get_username(post_owner_id)
 
-        actors = Notif_actors.objects.filter(notif=id).order_by('id')[:10]
-        ar = []
-        for lk in actors:
-            ar.append(
-                [
-                    lk.actor_id,
-                    AuthCache.get_username(lk.actor_id)[1:],
-                    AuthCache.avatar(lk.actor_id, size=100)
-                ]
-            )
-
+        actor_id = bundle.data['actor']
+        ar = [[
+            actor_id,
+            AuthCache.get_username(actor_id)[1:],
+            AuthCache.avatar(actor_id, size=100)
+        ]]
+        
         bundle.data['actors'] = ar
 
         return bundle
