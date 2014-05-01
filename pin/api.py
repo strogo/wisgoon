@@ -272,7 +272,7 @@ class CommentResource(ModelResource):
 
         c = cache.get(hstr)
         if c:
-            print "get from cache", hstr, hcpstr
+            print "get comment from cache", hstr, hcpstr
             return c
 
         base_bundle = self.build_bundle(request=request)

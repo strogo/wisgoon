@@ -152,7 +152,7 @@ def post_delete(request, item_id):
 
     try:
         post = Post.objects.get(pk=item_id)
-        if post.user == user or request.user.is_superuser:
+        if request.user.is_superuser:
             post.delete()
             return HttpResponse('1')
     except Post.DoesNotExist:
