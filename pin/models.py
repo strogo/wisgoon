@@ -259,7 +259,7 @@ class Likes(models.Model):
         
         from pin.tasks import send_notif, send_notif_bar
 
-        send_notif(user=post.user, type=1, post=post.id, actor=sender)
+        #send_notif(user=post.user, type=1, post=post.id, actor=sender)
         send_notif_bar(user=post.user, type=1, post=post.id, actor=sender)
         #send_notif(fun)
         #notif, created = Notif.objects.get_or_create(post=post, user=post.user, type=1)
