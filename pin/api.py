@@ -261,19 +261,19 @@ class CommentResource(ModelResource):
         pk = int(request.GET.get('object_pk'))
         offset = int(request.GET.get('offset', 0))
 
-        hstr = "cmn_cache_%s%s" % (pk, offset)
-        hcpstr = "cmnt_max_%d" % pk
-        cp = cache.get(hcpstr)
-        if cp:
-            if offset > cp:
-                cache.set(hcpstr, offset, 3600)
-        else:
-            cache.set(hcpstr, offset, 3600)
+        # hstr = "cmn_cache_%s%s" % (pk, offset)
+        # hcpstr = "cmnt_max_%d" % pk
+        # cp = cache.get(hcpstr)
+        # if cp:
+        #     if offset > cp:
+        #         cache.set(hcpstr, offset, 3600)
+        # else:
+        #     cache.set(hcpstr, offset, 3600)
 
-        c = cache.get(hstr)
-        if c:
-            print "get comment from cache", hstr, hcpstr
-            return c
+        # c = cache.get(hstr)
+        # if c:
+        #     print "get comment from cache", hstr, hcpstr
+        #     return c
 
         base_bundle = self.build_bundle(request=request)
         objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
@@ -292,7 +292,7 @@ class CommentResource(ModelResource):
         to_be_serialized[self._meta.collection_name] = bundles
         to_be_serialized = self.alter_list_data_to_serialize(request, to_be_serialized)
         res = self.create_response(request, to_be_serialized)
-        cache.set(hstr, res, 3600)
+        # cache.set(hstr, res, 3600)
         return res
 
 
