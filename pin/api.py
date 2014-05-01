@@ -522,7 +522,7 @@ class PostResource(ModelResource):
 
 class NotifAuthorization(Authorization):
     def read_list(self, object_list, bundle):
-        Notif.objects.filter(user=bundle.request.user, seen=False).update(seen=True)
+        Notifbar.objects.filter(user=bundle.request.user, seen=False).update(seen=True)
         return object_list.filter(user=bundle.request.user)
 
 
