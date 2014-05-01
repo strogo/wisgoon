@@ -257,9 +257,10 @@ class Likes(models.Model):
         all_likers = "post_like_%s" % (post.id)
         cache.delete(str_likers)
         
-        from pin.tasks import send_notif
+        from pin.tasks import send_notif, send_notif_bar
 
         send_notif(user=post.user, type=1, post=post.id, actor=sender)
+        send_notif_bar(user=post.user, type=1, post=post.id, actor=sender)
         #send_notif(fun)
         #notif, created = Notif.objects.get_or_create(post=post, user=post.user, type=1)
         #notif.seen = False
@@ -306,6 +307,41 @@ class Likes(models.Model):
 #     Notif_actors.objects.get_or_create(notif=notif, actor=actor)
 #     return notif
 
+
+class Notifbar(models.Model):
+    LIKE = 1
+    COMMENT = 2
+    APPROVE = 3
+    FAULT = 4
+    TYPES = (
+        (LIKE,'like'),
+        (COMMENT,'comment'),
+        (APPROVE,'approve'),
+        (FAULT,'fault'))
+                                              
+    post = models.ForeignKey(Post)
+    actor = models.ForeignKey(User, related_name="actor_id")
+    user = models.ForeignKey(User, related_name="post_user_id")
+    seen = models.BooleanField(default=False)
+    type = models.IntegerField(default=1, choices=TYPES)
+    date = models.DateTimeField(auto_now_add=True)
+
+    @classmethod
+    def add_comment(cls, sender, instance, created, *args, **kwargs):
+        from pin.tasks import send_notif, send_notif_bar
+        if not created:
+            return None
+        comment = instance
+        post = comment.object_pk
+
+        if comment.user != post.user:
+            notif = send_notif_bar(user=post.user, type=2, post=post.id, actor=comment.user)
+
+        # for notif in Notif.objects.filter(type=2, post=post):
+        #     for act in Notif_actors.objects.filter(notif=notif):
+        #         if act.actor != comment.user:
+        #             send_notif(user=act.actor, type=2, post=post.id, actor=comment.user)
+        #         #print act.actor_id
         
 class Notif(models.Model):
     LIKE = 1
@@ -328,7 +364,7 @@ class Notif(models.Model):
 
     @classmethod
     def add_comment(cls, sender, instance, created, *args, **kwargs):
-        from pin.tasks import send_notif
+        from pin.tasks import send_notif, send_notif_bar
         if not created:
             return None
         comment = instance
@@ -336,11 +372,13 @@ class Notif(models.Model):
 
         if comment.user != post.user:
             notif = send_notif(user=post.user, type=2, post=post.id, actor=comment.user)
+            notif = send_notif_bar(user=post.user, type=2, post=post.id, actor=comment.user)
 
         for notif in Notif.objects.filter(type=2, post=post):
             for act in Notif_actors.objects.filter(notif=notif):
                 if act.actor != comment.user:
                     send_notif(user=act.actor, type=2, post=post.id, actor=comment.user)
+
                 #print act.actor_id
 
 
