@@ -199,18 +199,18 @@ class LikesResource(ModelResource):
         pk = int(request.GET.get('post_id'))
         offset = int(request.GET.get('offset', 0))
 
-        hstr = "like_cache_%s%s" % (pk, offset)
-        hcpstr = "like_max_%d" % pk
-        cp = cache.get(hcpstr)
-        if cp:
-            if offset > cp:
-                cache.set(hcpstr, offset, 3600)
-        else:
-            cache.set(hcpstr, offset, 3600)
+        # hstr = "like_cache_%s%s" % (pk, offset)
+        # hcpstr = "like_max_%d" % pk
+        # cp = cache.get(hcpstr)
+        # if cp:
+        #     if offset > cp:
+        #         cache.set(hcpstr, offset, 3600)
+        # else:
+        #     cache.set(hcpstr, offset, 3600)
 
-        c = cache.get(hstr)
-        if c:
-            return c
+        # c = cache.get(hstr)
+        # if c:
+        #     return c
 
         base_bundle = self.build_bundle(request=request)
         objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
@@ -229,7 +229,7 @@ class LikesResource(ModelResource):
         to_be_serialized[self._meta.collection_name] = bundles
         to_be_serialized = self.alter_list_data_to_serialize(request, to_be_serialized)
         res = self.create_response(request, to_be_serialized)
-        cache.set(hstr, res, 3600)
+        # cache.set(hstr, res, 3600)
         return res
 
 
