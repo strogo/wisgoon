@@ -335,7 +335,7 @@ class Notif(models.Model):
         post = comment.object_pk
 
 
-        hcpstr = "cmnt_max_%d" % int(post)
+        hcpstr = "cmnt_max_%d" % int(post.id)
         cp = cache.get(hcpstr)
         if cp:
             print "remove cache from", hcpstr
