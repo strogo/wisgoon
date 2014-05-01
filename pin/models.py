@@ -334,6 +334,16 @@ class Notif(models.Model):
         comment = instance
         post = comment.object_pk
 
+
+        hcpstr = "cmnt_max_%d" % int(post)
+        cp = cache.get(hcpstr)
+        if cp:
+            print "remove cache from", hcpstr
+            hstr = "cmn_cache_%s%s" % (post, cp)
+            cache.delete(hstr)
+        else:
+            print "not cache avalable"
+
         if comment.user != post.user:
             notif = send_notif(user=post.user, type=2, post=post.id, actor=comment.user)
 
