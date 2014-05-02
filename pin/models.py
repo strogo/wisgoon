@@ -371,13 +371,13 @@ class Notif(models.Model):
         post = comment.object_pk
 
         if comment.user != post.user:
-            notif = send_notif(user=post.user, type=2, post=post.id, actor=comment.user)
+            #notif = send_notif(user=post.user, type=2, post=post.id, actor=comment.user)
             notif = send_notif_bar(user=post.user, type=2, post=post.id, actor=comment.user)
 
-        for notif in Notif.objects.filter(type=2, post=post):
-            for act in Notif_actors.objects.filter(notif=notif):
-                if act.actor != comment.user:
-                    send_notif(user=act.actor, type=2, post=post.id, actor=comment.user)
+        #for notif in Notif.objects.filter(type=2, post=post):
+        #    for act in Notif_actors.objects.filter(notif=notif):
+        #        if act.actor != comment.user:
+        #            send_notif(user=act.actor, type=2, post=post.id, actor=comment.user)
 
                 #print act.actor_id
 
