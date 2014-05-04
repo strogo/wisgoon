@@ -19,7 +19,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
-from pin.models import Post, Stream, Follow, Likes, Notif, Notif_actors,\
+from pin.models import Post, Stream, Follow, Likes, Notifbar,\
     Report, Comments, Comments_score, Category
 
 import pin_image
@@ -138,15 +138,13 @@ def notif_user(request):
     timestamp = get_request_timestamp(request)
     if timestamp:
         date = datetime.datetime.fromtimestamp(timestamp)
-        notif = Notif.objects.filter(user_id=request.user.id, date__lt=date)\
-            .order_by('-date').extra(where=['1=1 /* query no. views_user 142 */'])[:20]
+        notif = Notifbar.objects.filter(user_id=request.user.id, date__lt=date)\
+            .order_by('-date')[:20]
     else:
-        notif = Notif.objects.filter(user_id=request.user.id)\
-            .order_by('-date').extra(where=['1=1 /* query no. views_user 145 */'])[:20]
+        notif = Notifbar.objects.filter(user_id=request.user.id)\
+            .order_by('-date')[:20]
 
-    for n in notif:
-        n.actors = Notif_actors.objects.filter(notif=n).extra(where=['1=1 /* query no. views_user 148 */']).order_by('-id')[:20]
-
+    
     if request.is_ajax():
         return render(request, 'pin/_notif.html', {'notif': notif})
     else:
@@ -435,8 +433,6 @@ def upload(request):
 
 @login_required
 def show_notify(request):
-    Notif.objects.filter(user_id=request.user.id, seen=False).update(seen=True)
-    notif = Notif.objects.all().filter(user_id=request.user.id).order_by('-date')[:20]
-    for n in notif:
-        n.actors = Notif_actors.objects.filter(notif=n)
+    Notifbar.objects.filter(user_id=request.user.id, seen=False).update(seen=True)
+    notif = Notifbar.objects.all().filter(user_id=request.user.id).order_by('-date')[:20]
     return render(request, 'pin/notify.html', {'notif': notif})

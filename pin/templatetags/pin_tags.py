@@ -10,7 +10,7 @@ from django.template.defaultfilters import stringfilter
 from django.utils.text import normalize_newlines
 from django.utils.safestring import mark_safe
 
-from pin.models import Likes as pin_likes, Notif
+from pin.models import Likes as pin_likes, Notif, Notifbar
 from user_profile.models import Profile
 
 from pin.tools import userdata_cache
@@ -85,7 +85,7 @@ register.tag('user_post_like', user_post_like)
 @register.filter
 def get_user_notify(userid):
     print "user id ", userid
-    notify = Notif.objects.all().filter(user_id=userid, seen=False).count()
+    notify = Notifbar.objects.all().filter(user_id=userid, seen=False).count()
     return notify
 
 

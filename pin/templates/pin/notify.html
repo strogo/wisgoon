@@ -18,12 +18,7 @@
             <i class="icon-remove"></i>
         {% endif %}
         </div>
-        {% for actor in noti.actors reversed %}
-            {% if forloop.counter < 10 %}
-            <a target="_blank" href="{% url "pin-user" actor.actor.id %}"><img src="{{actor.actor|get_avatar:30}}"></a>
-            {% endif %}
-        {% endfor%}
-	
+        <a target="_blank" href="{% url "pin-user" noti.actor_id %}"><img src="{{noti.actor|get_avatar:30}}"></a>
 	
 </div>
 {% endfor %}
