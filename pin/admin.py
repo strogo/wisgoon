@@ -117,6 +117,8 @@ class CommentsAdmin(admin.ModelAdmin):
     list_display = ('id', 'comment', 'ip_address', 'is_public',
                     'reported', 'admin_link')
 
+    raw_id_fields = ("user",)
+
     list_filter = ('submit_date', 'is_public', 'reported')
     search_fields = ['ip_address', 'user__id']
     date_hierarchy = 'submit_date'
