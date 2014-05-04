@@ -26,11 +26,13 @@
 			<a href="{% url "pin-item-delete" item.id%}" class=" delpost" style="margin-right: 5px"> 
 				<i class="icon-remove"></i> 
 			</a>
+			{% comment %}
 			{% if is_super_user %}
 			<a href="{% url "pin-item-fault" item.id%}" class=" postfault" style="margin-right: 5px"> 
 				<i class="icon-remove"></i> 
 			</a>
 			{% endif %}
+			{%endcomment%}
 		</div>
 		{% endif%}
 
