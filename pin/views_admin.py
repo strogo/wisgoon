@@ -9,7 +9,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden,\
 from django.shortcuts import get_object_or_404
 from user_profile.models import Profile
 
-from pin.models import Post, Comments
+from pin.models import Post, Comments, Notifbar
 
 
 def is_admin(user):
@@ -38,6 +38,22 @@ def post_accept(request, user_id, status):
     Profile.objects.filter(user_id=user_id).update(post_accept_admin=status)
 
     return HttpResponseRedirect(reverse('pin-user', args=[user_id]))
+
+
+@login_required
+def item_fault(request, item_id):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/')
+
+    p = Post.objects.get(id=item_id)
+    p.status = Post.FAULT
+    p.report = 0
+    p.save()
+
+    user = p.user
+    user.profile.fault = user.profile.fault+1
+    user.profile.save()
+    return HttpResponse('1')
 
 
 @login_required

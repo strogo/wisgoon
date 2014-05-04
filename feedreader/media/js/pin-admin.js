@@ -17,3 +17,24 @@ $('body').on('click', ".item-to-index", function(){
     });
     return false;
 });
+
+$( "body" ).on('click', ".postfault", function(){
+    if (confirm('این مطلب تخلف محصوب می شود؟')){
+        var obj = $(this); 
+        var parent_to_del = $(obj).parents("div.feed-item");
+        
+        obj.addClass('disabled');
+        var like_url=obj.attr('href');
+        $.ajax({
+            url: like_url,
+            success: function(html) {
+                ret = html;
+                if (ret==1){
+                    $(parent_to_del).remove();
+                    feedobj.masonry('reload');
+                }
+            }
+        });
+    }
+    return false;
+});

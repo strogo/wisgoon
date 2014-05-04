@@ -3,7 +3,7 @@ import time
 
 from django.contrib import admin
 
-from pin.models import Post, Category, App_data, Comments, Notif
+from pin.models import Post, Category, App_data, Comments, Notif, Notifbar
 from pin.tasks import send_notif
 from user_profile.models import Profile
 
@@ -88,7 +88,7 @@ class PinAdmin(admin.ModelAdmin):
             user.profile.save()
 
         for obj in queryset:
-            send_notif(user=obj.user, type=Notif.FAULT, post=obj, actor=request.user)
+            send_notif(user=obj.user, type=Notifbar.FAULT, post=obj, actor=request.user)
 
     fault.short_description = 'ثبت تخلف'
 
