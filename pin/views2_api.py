@@ -59,16 +59,18 @@ def get_cat(cat_id):
 
 
 def post_item(request, item_id):
-    cache_pi_str = "post_item_%s" % item_id
-    p = cache.get(cache_pi_str)
-    if not p:
-        p = Post.objects.values('id', 'image').get(id=item_id)
-        cache.set(cache_pi_str, p, 86400)
-    data = {}
-
     thumb_size = request.GET.get('thumb_size', "100x100")
     thumb_quality = 99
 
+    cache_pi_str = "post_item_%s_%s" % (item_id, thumb_size)
+    p = cache.get(cache_pi_str)
+    if p:
+        return HttpResponse(p)
+    
+    p = Post.objects.values('id', 'image').get(id=item_id)
+    
+    data = {}
+    
     o_image = p['image']
 
     imo = get_thumb(o_image, thumb_size, thumb_quality)
@@ -79,6 +81,7 @@ def post_item(request, item_id):
         data['hw'] = imo['hw']
 
     json_data = json.dumps(data, cls=MyEncoder)
+    cache.set(cache_pi_str, json_data, 86400)
     return HttpResponse(json_data)
 
 
