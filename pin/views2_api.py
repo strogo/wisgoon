@@ -156,7 +156,7 @@ def post(request):
                               'image', 'user_id', 'cnt_like', 'category_id')\
                 .filter(**filters).order_by(*sort_by)[:10]
 
-            cache.set(cache_stream_name, posts, 60)
+            cache.set(cache_stream_name, posts, 86400)
             print "store posts in cache"
         else:
             print "get posts data from cache"
