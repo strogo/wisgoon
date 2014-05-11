@@ -145,13 +145,21 @@ def post(request):
     cache_stream_str = "%s_%s" % (str(filters), sort_by)
     
     cache_stream_name = md5(cache_stream_str).hexdigest()
+    print cache_stream_str, cache_stream_name
 
-    #posts = cache.get(cache_stream_name)
+    posts = cache.get(cache_stream_name)
     #print cache_stream_str, cache_stream_name, posts
-    #if not posts:
-    posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
+    if not posts:
+        print "get posts from db"
+        posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
                           'image', 'user_id', 'cnt_like', 'category_id')\
-        .filter(**filters).order_by(*sort_by)[:10]      
+            .filter(**filters).order_by(*sort_by)[:10]
+
+        cache.set(cache_stream_name, posts, 60)
+        print "store posts in cache"
+    else:
+        print "get posts data from cache"
+
 
     for p in posts:
         o = {}
