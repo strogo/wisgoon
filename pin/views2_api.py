@@ -257,7 +257,7 @@ def likes(request):
     else:
         return HttpResponse('fault')
 
-    cache_stream_str = "wislisskes_%s" % (str(filters))
+    cache_stream_str = "wislikes_%s_%s_%s" % (str(filters), str(offset), str(limit))
     
     cache_stream_name = md5(cache_stream_str).hexdigest()
     print cache_stream_str, cache_stream_name
@@ -265,7 +265,9 @@ def likes(request):
     posts = cache.get(cache_stream_name)
     if not posts:
         posts = Likes.objects.values('id', 'post_id', 'user_id').filter(**filters).all()[offset:offset+limit]
-        #cache.set(cache_stream_name, posts, 86400)
+        if len(posts) == limit:
+            print "store likes in cache"
+            cache.set(cache_stream_name, posts, 86400)
 
     for p in posts:
         o = {}
