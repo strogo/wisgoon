@@ -268,6 +268,8 @@ def likes(request):
         if len(posts) == limit:
             print "store likes in cache"
             cache.set(cache_stream_name, posts, 86400)
+    else:
+        print "get likes from cache"
 
     for p in posts:
         o = {}
