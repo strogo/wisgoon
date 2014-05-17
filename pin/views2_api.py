@@ -145,21 +145,17 @@ def post(request):
     cache_stream_str = "%s_%s" % (str(filters), sort_by)
     
     cache_stream_name = md5(cache_stream_str).hexdigest()
-    print cache_stream_str, cache_stream_name
+    #print cache_stream_str, cache_stream_name
 
     posts = cache.get(cache_stream_name)
     #print cache_stream_str, cache_stream_name, posts
     if before:
         if not posts:
-            print "get posts from db"
             posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
                               'image', 'user_id', 'cnt_like', 'category_id')\
                 .filter(**filters).order_by(*sort_by)[:10]
 
             cache.set(cache_stream_name, posts, 86400)
-            print "store posts in cache"
-        else:
-            print "get posts data from cache"
     else:
         posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
                               'image', 'user_id', 'cnt_like', 'category_id')\
@@ -230,7 +226,6 @@ def post(request):
 
 
 def likes(request):
-    print "we are in likes views api"
 
     before = request.GET.get('before', None)
     post_id = request.GET.get('post_id', None)
@@ -260,16 +255,14 @@ def likes(request):
     cache_stream_str = "wislikes_%s_%s_%s" % (str(filters), str(offset), str(limit))
     
     cache_stream_name = md5(cache_stream_str).hexdigest()
-    print cache_stream_str, cache_stream_name
+    #print cache_stream_str, cache_stream_name
 
     posts = cache.get(cache_stream_name)
     if not posts:
         posts = Likes.objects.values('id', 'post_id', 'user_id').filter(**filters).all()[offset:offset+limit]
         if len(posts) == limit:
-            print "store likes in cache"
+            #print "store likes in cache"
             cache.set(cache_stream_name, posts, 86400)
-    else:
-        print "get likes from cache"
 
     for p in posts:
         o = {}
