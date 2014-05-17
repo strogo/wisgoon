@@ -227,3 +227,62 @@ def post(request):
     data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
+
+
+def likes(request):
+    print "we are in likes views api"
+
+    before = request.GET.get('before', None)
+    post_id = request.GET.get('post_id', None)
+    offset = int(request.GET.get('offset', 0))
+    limit = int(request.GET.get('limit', 20))
+    
+    next = {
+        'url': "/api/v1/tone/?limit=%s&offset=%s" % (limit, offset+limit),
+    }
+
+    data = {}
+    data['meta'] = {'limit': 10,
+                    'next': next['url'],
+                    'offset': 0,
+                    'previous': '',
+                    'total_count': 1000}
+
+    objects_list = []
+    filters = {}
+    cache_ttl = 120
+
+    if post_id:
+        filters.update(dict(post_id=post_id))
+    else:
+        return HttpResponse('fault')
+
+    cache_stream_str = "wislisskes_%s" % (str(filters))
+    
+    cache_stream_name = md5(cache_stream_str).hexdigest()
+    print cache_stream_str, cache_stream_name
+
+    posts = cache.get(cache_stream_name)
+    if not posts:
+        posts = Likes.objects.values('id', 'post_id', 'user_id').filter(**filters).all()[offset:offset+limit]
+        #cache.set(cache_stream_name, posts, 86400)
+
+    for p in posts:
+        o = {}
+        o['post_id'] = p['post_id']
+
+        av = AuthCache.avatar(user_id=p['user_id'])
+        o['user_avatar'] = AuthCache.avatar(user_id=p['user_id'])[1:]
+        o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
+
+        o['user_url'] = p['user_id']
+        o['resource_uri'] = "/pin/api/like/likes/%d/" % p['id']
+
+        
+        objects_list.append(o)
+
+    #cache.set(cache_stream_name, posts, cache_ttl)
+
+    data['objects'] = objects_list
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
