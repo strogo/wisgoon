@@ -18,7 +18,7 @@ USERDATA_TIMEOUT = 300
 
 def create_filename(filename):
     d = datetime.now()
-    folder = "%d/%d/%d" % (d.year, d.month, d.day)
+    folder = "%d/%d/%d/%d" % (d.year, d.month, d.day, d.hour)
     paths = []
     paths.append("%s/pin/temp/o/" % (settings.MEDIA_ROOT))
     paths.append("%s/pin/temp/t/" % (settings.MEDIA_ROOT))
