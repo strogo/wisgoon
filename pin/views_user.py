@@ -87,7 +87,10 @@ def follow(request, following, action):
                                     user=request.user,
                                     date=post.timestamp,
                                     following=following)
-                    stream.save()
+                    try:
+                        stream.save()
+                    except IntegrityError:
+                        print "duplicate in stream"
         return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
     except User.DoesNotExist:
         return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
