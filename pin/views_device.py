@@ -3,6 +3,7 @@ from io import FileIO, BufferedWriter
 import time
 
 from django.conf import settings
+from django.core.cache import cache
 from django.db.models import F, Sum
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseForbidden,\
@@ -189,6 +190,11 @@ def post_send(request):
     if not user:
         return HttpResponseForbidden('error in user validation')
 
+    upload_cache_str = "upload_cache_%s" % user.id
+    upload_cache = cache.get(upload_cache_str)
+    if upload_cache:
+        return HttpResponseForbidden('error in user validation')
+
     if request.method != 'POST':
         return HttpResponseBadRequest('bad request post')
 
@@ -208,6 +214,7 @@ def post_send(request):
                 model.category_id = form.cleaned_data['category']
                 model.device = 2
                 model.save()
+                cache.set(upload_cache_str, upload_cache, 300)
                 return HttpResponse('success')
         except IOError:
             return HttpResponseBadRequest('error')
