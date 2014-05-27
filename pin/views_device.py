@@ -194,7 +194,7 @@ def post_send(request):
     upload_cache = cache.get(upload_cache_str)
     if upload_cache:
         return HttpResponseForbidden('error in user validation')
-
+    
     cache.set(upload_cache_str, upload_cache, 300)
 
     if request.method != 'POST':
