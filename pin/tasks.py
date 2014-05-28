@@ -4,7 +4,8 @@ from __future__ import absolute_import
 from datetime import datetime
 
 #from pin.celery import app
-from pin.models import Notif, Notif_actors, Notifbar
+from pin.models import Notifbar
+from pin.model_mongo import Notif
 
 
 #@app.task
@@ -21,6 +22,14 @@ def send_notif(user, type, post, actor, seen=False):
 
 
 def send_notif_bar(user, type, post, actor, seen=False):
+    print "call me"
     notif, created = Notifbar.objects.get_or_create(user=user, type=type, post_id=post, actor=actor)
+
+    #Location.objects(user_id=user_id).update_one(set__point=point, upsert=True)
+    Notif.objects(owner=user.id, type=type, post=post)\
+        .update_one(set__last_actor=actor.id,
+                    set__date=datetime.now,
+                    set__seen=False,
+                    add_to_set__actors=actor.id, upsert=True)
 
     return notif
