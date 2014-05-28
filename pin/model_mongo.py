@@ -10,3 +10,7 @@ class Notif(Document):
 	actors = ListField()
 	type = IntField()
 	seen = BooleanField(default=False)
+
+	meta = {
+        'indexes': [('owner', '-date'), ('owner', 'type', 'post'), ('seen', 'owner')]
+    }
