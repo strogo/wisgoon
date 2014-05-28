@@ -12,5 +12,5 @@ class Notif(Document):
 	seen = BooleanField(default=False)
 
 	meta = {
-        'indexes': [('owner', '-date'), ('owner', 'type', 'post'), ('seen', 'owner')]
+        'indexes': ['owner', ('owner', '-date'), ('owner', 'type', 'post'), ('seen', 'owner')]
     }
