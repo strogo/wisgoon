@@ -28,7 +28,11 @@
 		</div>
 		<div class="notif-actors">
 			<div style="float:right;padding:5px; heigth:40px;">
-            	<a target="_blank" href="{% url "pin-user" item.actor_id %}"><img src="{{item.actor_id|get_userdata_avatar:30}}"></a>
+				{% for actor in item.actors reversed %}
+            	<a target="_blank" href="{% url "pin-user" actor %}">
+            		<img src="{{actor|get_userdata_avatar:30}}">
+            	</a>
+            	{% endfor %}
         	</div>
     	</div>
 		{% if offset %}

@@ -22,6 +22,8 @@ from pin.forms import PinForm, PinUpdateForm
 from pin.models import Post, Stream, Follow, Likes, Notifbar,\
     Report, Comments, Comments_score, Category
 
+from pin.model_mongo import Notif
+
 import pin_image
 from pin.tools import get_request_timestamp, create_filename, get_user_ip
 
@@ -141,10 +143,10 @@ def notif_user(request):
     timestamp = get_request_timestamp(request)
     if timestamp:
         date = datetime.datetime.fromtimestamp(timestamp)
-        notif = Notifbar.objects.filter(user_id=request.user.id, date__lt=date)\
+        notif = Notif.objects.filter(owner=request.user.id, date__lt=date)\
             .order_by('-date')[:20]
     else:
-        notif = Notifbar.objects.filter(user_id=request.user.id)\
+        notif = Notif.objects.filter(owner=request.user.id)\
             .order_by('-date')[:20]
 
     
