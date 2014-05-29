@@ -32,4 +32,4 @@ def send_notif_bar(user, type, post, actor, seen=False):
                     set__seen=False,
                     add_to_set__actors=actor.id, upsert=True)
 
-    return notif
+    return None
