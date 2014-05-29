@@ -452,5 +452,14 @@ def upload(request):
 @login_required
 def show_notify(request):
     Notifbar.objects.filter(user_id=request.user.id, seen=False).update(seen=True)
-    notif = Notifbar.objects.all().filter(user_id=request.user.id).order_by('-date')[:20]
-    return render(request, 'pin/notify.html', {'notif': notif})
+    notif = Notif.objects.all().filter(owner=request.user.id).order_by('-date')[:20]
+    nl = []
+    for n in notif:
+        anl = {}
+        anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+        anl['id'] = n.post
+        anl['type'] = n.type
+        anl['actors'] = n.actors
+
+        nl.append(anl)
+    return render(request, 'pin/notify.html', {'notif': nl})

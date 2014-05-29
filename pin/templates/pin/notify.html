@@ -4,8 +4,8 @@
 <a href="{% url "pin-notif-user" %}">مشاهده همه اعلانات</a>
 {% for noti in notif %}
 <div class="notif" style="height:100px">
-        {% thumbnail noti.post.image "100x100" crop="center" as im %}
-        <a href="{% url "pin-item" noti.post.id %}"><img src="{{im.url}}" style="float:left;margin-right:5px" /></a>
+        {% thumbnail noti.po "100x100" crop="center" as im %}
+        <a href="{% url "pin-item" noti.id %}"><img src="{{im.url}}" style="float:left;margin-right:5px" /></a>
         {% endthumbnail%}
         <div class="post-like-right">
         {% if noti.type == 1 %}
@@ -18,7 +18,9 @@
             <i class="icon-remove"></i>
         {% endif %}
         </div>
-        <a target="_blank" href="{% url "pin-user" noti.actor_id %}"><img src="{{noti.actor|get_avatar:30}}"></a>
+        {% for ac in noti.actors reversed %}
+        <a target="_blank" href="{% url "pin-user" ac %}"><img src="{{ac|get_avatar:30}}"></a>
+        {% endfor %}
 	
 </div>
 {% endfor %}
