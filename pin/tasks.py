@@ -23,7 +23,7 @@ def send_notif(user, type, post, actor, seen=False):
 
 def send_notif_bar(user, type, post, actor, seen=False):
     print "call me"
-    notif, created = Notifbar.objects.get_or_create(user=user, type=type, post_id=post, actor=actor)
+    #notif, created = Notifbar.objects.get_or_create(user=user, type=type, post_id=post, actor=actor)
 
     #Location.objects(user_id=user_id).update_one(set__point=point, upsert=True)
     Notif.objects(owner=user.id, type=type, post=post)\
