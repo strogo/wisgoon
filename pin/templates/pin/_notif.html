@@ -7,10 +7,10 @@
 {% for item in notif %}
 
 	<div class="notif-item" >
-		{% thumbnail item.post.image "100x100" crop="center" as im %}
+		{% thumbnail item.po "100x100" crop="center" as im %}
 		<div class="notif-img" style="height: {{im.height}}px; width: {{im.width}}px">
-			<a class="pin-item-link" href="{% url "pin-item" item.post.id%}">
-			<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item.text|remove_newlines|truncatewords:5}}">
+			<a class="pin-item-link" style="float:right" href="{% url "pin-item" item.id%}">
+			<img style="display:inline; float:right; margin-right:2px" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
 			</a>
 			
 		</div>

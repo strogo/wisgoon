@@ -149,11 +149,24 @@ def notif_user(request):
         notif = Notif.objects.filter(owner=request.user.id)\
             .order_by('-date')[:20]
 
-    
+    nl = []
+    for n in notif:
+        anl = {}
+        anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+        anl['id'] = n.post
+        anl['type'] = n.type
+        anl['actors'] = n.actors
+
+        nl.append(anl)
+        
+
+    #for n in notif:
+    #    print 'pois', n.po
+
     if request.is_ajax():
-        return render(request, 'pin/_notif.html', {'notif': notif})
+        return render(request, 'pin/_notif.html', {'notif': nl})
     else:
-        return render(request, 'pin/notif_user.html', {'notif': notif})
+        return render(request, 'pin/notif_user.html', {'notif': nl})
 
 
 @login_required
