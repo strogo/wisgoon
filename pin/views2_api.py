@@ -11,6 +11,7 @@ from sorl.thumbnail import get_thumbnail
 
 from pin.tools import userdata_cache, AuthCache, CatCache
 from pin.models import Post, Category, Likes
+from pin.model_mongo import Notif
 
 
 class MyEncoder(json.JSONEncoder):
@@ -18,8 +19,8 @@ class MyEncoder(json.JSONEncoder):
         if isinstance(obj, datetime.datetime):
             return int(mktime(obj.timetuple()))
 
-        if isinstance(obj, FieldFile):
-            return str(obj)
+        """if isinstance(obj, FieldFile):
+            return str(obj)"""
 
         return json.JSONEncoder.default(self, obj)
 
@@ -276,6 +277,121 @@ def likes(request):
         o['resource_uri'] = "/pin/api/like/likes/%d/" % p['id']
 
         
+        objects_list.append(o)
+
+    #cache.set(cache_stream_name, posts, cache_ttl)
+
+    data['objects'] = objects_list
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
+
+def notif(request):
+    #print "we are in post"
+    data = {}
+    data['meta'] = {'limit': 10,
+                    'next': '',
+                    'offset': 0,
+                    'previous': '',
+                    'total_count': 1000}
+
+    objects_list = []
+    filters = {}
+    cur_user = None
+    cache_ttl = 120
+    filters.update(dict(status=Post.APPROVED))
+    before = request.GET.get('before', None)
+    category_id = request.GET.get('category_id', None)
+    popular = request.GET.get('popular', None)
+    just_image = request.GET.get('just_image', 0)
+    user_id = request.GET.get('user_id', None)
+
+    if before:
+        sort_by = ['-timestamp']
+    else:
+        sort_by = ['-is_ads', '-timestamp']
+
+    token = request.GET.get('api_key', '')
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+
+    notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:10]
+
+    rf = ['id', 'text', 'cnt_comment', 'image', 'user_id', 'cnt_like', 'category_id']
+
+    for p in notifs:
+        cur_p = Post.objects.values(*rf).get(id=p.post)
+        o = {}
+        o['id'] = str(p['id'])
+        o['text'] = cur_p['text']
+        o['cnt_comment'] = 0 if cur_p['cnt_comment'] == -1 else cur_p['cnt_comment']
+        o['image'] = cur_p['image']
+        o['date'] = "2014-05-28T20:22:14"
+
+        av = AuthCache.avatar(user_id=cur_p['user_id'])
+        #o['user_avatar'] = AuthCache.avatar(user_id=cur_p['user_id'])[1:]
+        #o['user_name'] = AuthCache.get_username(user_id=cur_p['user_id'])
+
+        o['post'] = "/pin/api1/post/879/"
+        o['post_id'] = cur_p['id']
+        o['post_owner_avatar'] = AuthCache.avatar(user_id=cur_p['user_id'])[1:]
+        o['post_owner_id'] = cur_p['user_id']
+        o['post_owner_user_name'] = AuthCache.get_username(user_id=cur_p['user_id'])
+
+        o['user'] = cur_p['user_id']
+        o['type'] = p['type']
+        o['like'] = cur_p['cnt_like']
+        o['likers'] = None
+        o['like_with_user'] = False
+
+        
+        o['resource_uri'] = "/pin/api/notif/notify/%d/" % cur_p['id']
+
+        if cur_user and cur_p['cnt_like'] > 0:
+            # post likes users
+            c_key = "post_like_%s" % (cur_p['id'])
+
+            plu = cache.get(c_key)
+            if plu:
+                #print "get like_with_user from memcache", c_key
+                if cur_user in plu:
+                    o['like_with_user'] = True
+            else:
+                post_likers = Likes.objects.values_list('user_id', flat=True)\
+                    .filter(post_id=cur_p['id'])
+                cache.set(c_key, post_likers, 60 * 60)
+
+                if cur_user in post_likers:
+                    o['like_with_user'] = True
+
+        thumb_size = request.GET.get('thumb_size', "100x100")
+        thumb_quality = 99
+
+        o_image = cur_p['image']
+
+        imo = get_thumb(o_image, thumb_size, thumb_quality)
+
+        if imo:
+            o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
+            o['hw'] = imo['hw']
+
+        cat = get_cat(cat_id=cur_p['category_id'])
+        o['category'] = {
+            'id': cat.id,
+            'image': "/media/" + str(cat.image),
+            'resource_uri': "/pin/apic/category/"+str(cat.id)+"/",
+            'title': cat.title,
+        }
+
+        ar = []
+        for ac in p.actors:
+            ar.append([
+                ac,
+                AuthCache.get_username(ac)[1:],
+                AuthCache.avatar(ac, size=100)
+            ])
+        
+        o['actors'] = ar
+
         objects_list.append(o)
 
     #cache.set(cache_stream_name, posts, cache_ttl)

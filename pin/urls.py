@@ -11,7 +11,7 @@ admin.autodiscover()
 post_resource = PostResource()
 cat_resource = CategotyResource()
 comment_resource = CommentResource()
-notify_resource = NotifyResource()
+#notify_resource = NotifyResource()
 profile_resource = ProfileResource()
 app_resource = AppResource()
 #likes_resource = LikesResource()
@@ -47,7 +47,7 @@ urlpatterns = patterns('pin.views',
     url(r'^api1/', include(post_resource.urls)),
     url(r'^apic/', include(cat_resource.urls)),
     url(r'^api/com/', include(comment_resource.urls)),
-    url(r'^api/notif/', include(notify_resource.urls)),
+    #url(r'^api/notif/', include(notify_resource.urls)),
     url(r'^api/profile/', include(profile_resource.urls)),
     url(r'^api/app/', include(app_resource.urls)),
     #url(r'^api/like/', include(likes_resource.urls)),
@@ -115,5 +115,6 @@ urlpatterns += patterns('',
     url(r'^api/post/(?P<item_id>\d+)/', 'pin.views2_api.post_item', name="post_api_item"),
     url(r'^api/post/', 'pin.views2_api.post', name="post_api"),
     url(r'^api/like/likes/', 'pin.views2_api.likes', name="likes_api"),
+    url(r'^api/notif/notify/', 'pin.views2_api.notif', name="new_notif"),
 )
 
