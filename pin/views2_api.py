@@ -319,7 +319,10 @@ def notif(request):
     rf = ['id', 'text', 'cnt_comment', 'image', 'user_id', 'cnt_like', 'category_id']
 
     for p in notifs:
-        cur_p = Post.objects.values(*rf).get(id=p.post)
+        try:
+            cur_p = Post.objects.values(*rf).get(id=p.post)
+        except post.DoesNotExist:
+            continue
         o = {}
         o['id'] = cur_p['id']
         o['text'] = cur_p['text']
@@ -340,6 +343,7 @@ def notif(request):
         o['user'] = cur_p['user_id']
         o['type'] = p['type']
         o['like'] = cur_p['cnt_like']
+        o['url'] = ""
         o['likers'] = None
         o['like_with_user'] = False
 
