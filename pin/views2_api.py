@@ -314,7 +314,7 @@ def notif(request):
     if token:
         cur_user = AuthCache.id_from_token(token=token)
 
-    notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:10]
+    notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 
     rf = ['id', 'text', 'cnt_comment', 'image', 'user_id', 'cnt_like', 'category_id']
 
