@@ -321,7 +321,7 @@ def notif(request):
     for p in notifs:
         try:
             cur_p = Post.objects.values(*rf).get(id=p.post)
-        except post.DoesNotExist:
+        except Post.DoesNotExist:
             continue
         o = {}
         o['id'] = cur_p['id']
