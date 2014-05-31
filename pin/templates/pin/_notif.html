@@ -30,7 +30,7 @@
 			<div style="float:right;padding:5px; heigth:40px;">
 				{% for actor in item.actors reversed %}
             	<a target="_blank" href="{% url "pin-user" actor %}">
-            		<img src="{{actor|get_userdata_avatar:30}}">
+            		<img style="display:inline" src="{{actor|get_userdata_avatar:30}}">
             	</a>
             	{% endfor %}
         	</div>

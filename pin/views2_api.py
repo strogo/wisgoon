@@ -321,7 +321,7 @@ def notif(request):
     for p in notifs:
         cur_p = Post.objects.values(*rf).get(id=p.post)
         o = {}
-        o['id'] = str(p['id'])
+        o['id'] = str(cur_p['id'])
         o['text'] = cur_p['text']
         o['cnt_comment'] = 0 if cur_p['cnt_comment'] == -1 else cur_p['cnt_comment']
         o['image'] = cur_p['image']
@@ -391,6 +391,9 @@ def notif(request):
             ])
         
         o['actors'] = ar
+        from collections import OrderedDict
+        o = OrderedDict(sorted(o.items(), key=lambda o: o[0]))
+
 
         objects_list.append(o)
 
