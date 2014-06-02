@@ -387,7 +387,7 @@ def notif(request):
         }
 
         ar = []
-        for ac in p.actors:
+        for ac in p.last_actors:
             ar.append([
                 ac,
                 AuthCache.get_username(ac)[1:],

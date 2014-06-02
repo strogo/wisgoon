@@ -28,7 +28,7 @@
 		</div>
 		<div class="notif-actors">
 			<div style="float:right;padding:5px; heigth:40px;">
-				{% for actor in item.actors|slice:":10" reversed %}
+				{% for actor in item.actors %}
             	<a target="_blank" href="{% url "pin-user" actor %}">
             		<img style="display:inline;padding:5px" src="{{actor|get_userdata_avatar:30}}">
             	</a>

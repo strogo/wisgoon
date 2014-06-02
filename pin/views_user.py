@@ -139,37 +139,6 @@ def like(request, item_id):
 
 
 @login_required
-def notif_user(request):
-    timestamp = get_request_timestamp(request)
-    if timestamp:
-        date = datetime.datetime.fromtimestamp(timestamp)
-        notif = Notif.objects.filter(owner=request.user.id, date__lt=date)\
-            .order_by('-date')[:20]
-    else:
-        notif = Notif.objects.filter(owner=request.user.id)\
-            .order_by('-date')[:20]
-
-    nl = []
-    for n in notif:
-        anl = {}
-        anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
-        anl['id'] = n.post
-        anl['type'] = n.type
-        anl['actors'] = n.actors
-
-        nl.append(anl)
-        
-
-    #for n in notif:
-    #    print 'pois', n.po
-
-    if request.is_ajax():
-        return render(request, 'pin/_notif.html', {'notif': nl})
-    else:
-        return render(request, 'pin/notif_user.html', {'notif': nl})
-
-
-@login_required
 def report(request, pin_id):
     try:
         post = Post.objects.get(id=pin_id)
@@ -463,3 +432,33 @@ def show_notify(request):
 
         nl.append(anl)
     return render(request, 'pin/notify.html', {'notif': nl})
+
+@login_required
+def notif_user(request):
+    timestamp = get_request_timestamp(request)
+    if timestamp:
+        date = datetime.datetime.fromtimestamp(timestamp)
+        notif = Notif.objects.filter(owner=request.user.id, date__lt=date)\
+            .order_by('-date')[:20]
+    else:
+        notif = Notif.objects.filter(owner=request.user.id)\
+            .order_by('-date')[:20]
+
+    nl = []
+    for n in notif:
+        anl = {}
+        anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+        anl['id'] = n.post
+        anl['type'] = n.type
+        anl['actors'] = n.last_actors
+
+        nl.append(anl)
+        
+
+    #for n in notif:
+    #    print 'pois', n.po
+
+    if request.is_ajax():
+        return render(request, 'pin/_notif.html', {'notif': nl})
+    else:
+        return render(request, 'pin/notif_user.html', {'notif': nl})
