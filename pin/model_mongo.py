@@ -15,6 +15,6 @@ class Notif(Document):
         'indexes': ['owner', ('owner', '-date'), ('owner', 'type', 'post'), ('seen', 'owner')]
     }
 
-    def last_actors(self, num=10):
+    def last_actors(self, num=12):
         la = self.actors[::-1][:num]
         return la
