@@ -68,7 +68,11 @@ def post_item(request, item_id):
     if p:
         return HttpResponse(p)
     
-    p = Post.objects.values('id', 'image').get(id=item_id)
+    try:
+        p = Post.objects.values('id', 'image').get(id=item_id)
+    except Exception, e:
+        print str(e)
+        return HttpResponse('{}')
     
     data = {}
     

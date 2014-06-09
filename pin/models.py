@@ -99,8 +99,9 @@ class Post(models.Model):
         try:
             file_path = os.path.join(settings.MEDIA_ROOT, self.image)
             os.remove(file_path)
-        except:
-            pass
+        except Exception, e:
+            print str(e)
+
         super(Post, self).delete(*args, **kwargs)
 
     def date_lt(self, date, how_many_days=15):
