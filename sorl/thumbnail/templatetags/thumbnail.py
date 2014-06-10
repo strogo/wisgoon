@@ -61,6 +61,7 @@ class ThumbnailNode(ThumbnailNodeBase):
 
     def __init__(self, parser, token):
         bits = token.split_contents()
+        # print "bits:", bits
         if len(bits) < 5 or bits[-2] != 'as':
             raise TemplateSyntaxError(self.error_msg)
         self.file_ = parser.compile_filter(bits[1])
@@ -93,6 +94,9 @@ class ThumbnailNode(ThumbnailNodeBase):
         if settings.THUMBNAIL_DUMMY:
             thumbnail = DummyImageFile(geometry)
         elif file_:
+            # print "file:", file_
+            # print "geometry:", geometry
+            # print "options", options
             thumbnail = default.backend.get_thumbnail(
                 file_, geometry, **options
                 )
