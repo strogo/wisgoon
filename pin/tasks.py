@@ -3,10 +3,16 @@ from __future__ import absolute_import
 
 from datetime import datetime
 
+from django.conf import settings
+
 #from pin.celery import app
 from pin.models import Notifbar
 from pin.model_mongo import Notif
-from feedreader.task_cel import notif_send
+
+if settings.DEBUG:
+    from feedreader.task_cel_local import notif_send
+else:
+    from feedreader.task_cel import notif_send
 
 #@app.task
 def send_notif(user, type, post, actor, seen=False):

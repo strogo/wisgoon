@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from celery import Celery
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'feedreader.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'feedreader.settings_local')
 
 app = Celery('tasks', broker='amqp://guest@localhost//')
 app.conf.CELERY_TASK_SERIALIZER = 'json'
