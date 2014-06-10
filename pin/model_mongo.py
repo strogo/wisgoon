@@ -12,7 +12,7 @@ class Notif(Document):
     seen = BooleanField(default=False)
 
     meta = {
-        'indexes': ['owner', ('owner', '-date'), ('owner', 'type', 'post'), ('seen', 'owner')]
+        'indexes': ['owner', 'post', ('owner', '-date'), ('owner', 'type', 'post'), ('seen', 'owner')]
     }
 
     def last_actors(self, num=12):
