@@ -6,7 +6,7 @@ from datetime import datetime
 from django.conf import settings
 
 #from pin.celery import app
-from pin.models import Notifbar
+# from pin.models import Notifbar
 from pin.model_mongo import Notif
 
 if settings.DEBUG:
@@ -38,7 +38,7 @@ def send_notif_bar(user, type, post, actor, seen=False):
     #                  add_to_set__actors=actor.id, upsert=True)
     
     try:
-        notif_send.delay(user.id, type, post, actor.id, seen=False)
+        notif_send.delay(user, type, post, actor, seen=False)
     except Exception, e:
         print str(e)
     return None

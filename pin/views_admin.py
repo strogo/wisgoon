@@ -9,7 +9,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden,\
 from django.shortcuts import get_object_or_404
 from user_profile.models import Profile
 
-from pin.models import Post, Comments, Notifbar
+from pin.models import Post, Comments
 
 
 def is_admin(user):

@@ -3,7 +3,7 @@ from django.contrib import admin
 
 from pin.feeds import LatestPinFeed
 from pin.api import PostResource, CategotyResource, CommentResource,\
-    NotifyResource, ProfileResource, AppResource, LikesResource,\
+    ProfileResource, AppResource, LikesResource,\
     StreamResource
 
 admin.autodiscover()

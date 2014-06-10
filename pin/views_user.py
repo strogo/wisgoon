@@ -19,7 +19,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
-from pin.models import Post, Stream, Follow, Likes, Notifbar,\
+from pin.models import Post, Stream, Follow, Likes,\
     Report, Comments, Comments_score, Category
 
 from pin.model_mongo import Notif

@@ -10,7 +10,7 @@ from django.template.defaultfilters import stringfilter
 from django.utils.text import normalize_newlines
 from django.utils.safestring import mark_safe
 
-from pin.models import Likes as pin_likes, Notif, Notifbar
+from pin.models import Likes as pin_likes
 from pin.model_mongo import Notif
 from user_profile.models import Profile
 

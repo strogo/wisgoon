@@ -3,7 +3,7 @@ import time
 
 from django.contrib import admin
 
-from pin.models import Post, Category, App_data, Comments, Notif, Notifbar
+from pin.models import Post, Category, App_data, Comments
 from pin.tasks import send_notif
 from user_profile.models import Profile
 
@@ -93,9 +93,9 @@ class PinAdmin(admin.ModelAdmin):
     fault.short_description = 'ثبت تخلف'
 
 
-class NotifyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'text', 'seen', 'type')
-    list_filter = ('seen',)
+# class NotifyAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'user', 'text', 'seen', 'type')
+#     list_filter = ('seen',)
 
 
 class CategoryAdmin(admin.ModelAdmin):

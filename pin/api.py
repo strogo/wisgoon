@@ -22,8 +22,8 @@ from tastypie.exceptions import Unauthorized
 from PIL import Image
 
 from sorl.thumbnail import get_thumbnail
-from pin.models import Post, Likes, Category, Notif, Comments,\
-    Notif_actors, App_data, Stream, Notifbar
+from pin.models import Post, Likes, Category, Comments,\
+    App_data, Stream
 from user_profile.models import Profile
 from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
@@ -520,104 +520,104 @@ class PostResource(ModelResource):
         return res
 
 
-class NotifAuthorization(Authorization):
-    def read_list(self, object_list, bundle):
-        Notifbar.objects.filter(user=bundle.request.user, seen=False).update(seen=True)
-        return object_list.filter(user=bundle.request.user)
+# class NotifAuthorization(Authorization):
+#     def read_list(self, object_list, bundle):
+#         Notifbar.objects.filter(user=bundle.request.user, seen=False).update(seen=True)
+#         return object_list.filter(user=bundle.request.user)
 
 
-class NotifyResource(ModelResource):
-    actor = fields.IntegerField(attribute='actor_id')
-    image = fields.CharField(attribute='post__image')
-    like = fields.IntegerField(attribute='post__cnt_like')
-    cnt_comment = fields.IntegerField(attribute='post__cnt_comment')
-    text = fields.CharField(attribute='post__text')
-    url = fields.CharField(attribute='post__url')
-    post_id = fields.IntegerField(attribute='post_id')
-    user_id = fields.IntegerField(attribute='user_id')
-    post_owner_id = fields.IntegerField(attribute='post__user_id')
-    category = fields.ToOneField(CategotyResource, 'post__category', full=True)
-    like_with_user = fields.BooleanField(default=False)
-    cur_user = None
-    post = fields.ToOneField(PostResource, 'post')
+# class NotifyResource(ModelResource):
+#     actor = fields.IntegerField(attribute='actor_id')
+#     image = fields.CharField(attribute='post__image')
+#     like = fields.IntegerField(attribute='post__cnt_like')
+#     cnt_comment = fields.IntegerField(attribute='post__cnt_comment')
+#     text = fields.CharField(attribute='post__text')
+#     url = fields.CharField(attribute='post__url')
+#     post_id = fields.IntegerField(attribute='post_id')
+#     user_id = fields.IntegerField(attribute='user_id')
+#     post_owner_id = fields.IntegerField(attribute='post__user_id')
+#     category = fields.ToOneField(CategotyResource, 'post__category', full=True)
+#     like_with_user = fields.BooleanField(default=False)
+#     cur_user = None
+#     post = fields.ToOneField(PostResource, 'post')
 
-    class Meta:
-        resource_name = 'notify'
-        allowed_methods = ['get']
-        authentication = ApiKeyAuthentication()
-        authorization = NotifAuthorization()
-        queryset = Notifbar.objects.all().order_by('-id')
-        paginator_class = Paginator
-        cache = SimpleCache(timeout=600)
-        filtering = {
-            #"user_id": ('exact',),
-            "seen": ('exact',),
-        }
+#     class Meta:
+#         resource_name = 'notify'
+#         allowed_methods = ['get']
+#         authentication = ApiKeyAuthentication()
+#         authorization = NotifAuthorization()
+#         queryset = Notifbar.objects.all().order_by('-id')
+#         paginator_class = Paginator
+#         cache = SimpleCache(timeout=600)
+#         filtering = {
+#             #"user_id": ('exact',),
+#             "seen": ('exact',),
+#         }
 
-    def apply_authorization_limits(self, request, object_list):
-        #print "hello"
+#     def apply_authorization_limits(self, request, object_list):
+#         #print "hello"
 
-        return object_list.filter(user=request.user)
+#         return object_list.filter(user=request.user)
 
-    def dispatch(self, request_type, request, **kwargs):
-        token = request.GET.get('token', '')
-        if token:
-            self.cur_user = AuthCache.id_from_token(token)
+#     def dispatch(self, request_type, request, **kwargs):
+#         token = request.GET.get('token', '')
+#         if token:
+#             self.cur_user = AuthCache.id_from_token(token)
 
-        return super(NotifyResource, self)\
-            .dispatch(request_type, request, **kwargs)
+#         return super(NotifyResource, self)\
+#             .dispatch(request_type, request, **kwargs)
 
-    def dehydrate(self, bundle):
-        id = bundle.data['id']
-        o_image = bundle.data['image']
-        try:
-            im = get_thumbnail(o_image, "300x300", quality=99, upscale=False)
-        except:
-            im = ""
+#     def dehydrate(self, bundle):
+#         id = bundle.data['id']
+#         o_image = bundle.data['image']
+#         try:
+#             im = get_thumbnail(o_image, "300x300", quality=99, upscale=False)
+#         except:
+#             im = ""
 
-        if im:
-            bundle.data['thumbnail'] = im
-            bundle.data['hw'] = "%sx%s" % (im.height, im.width)
+#         if im:
+#             bundle.data['thumbnail'] = im
+#             bundle.data['hw'] = "%sx%s" % (im.height, im.width)
 
-        """
-        if self.cur_user:
-            if Likes.objects.filter(post_id=bundle.data['post_id'],
-                                    user=self.cur_user).count():
-                bundle.data['like_with_user'] = True
-        """
+#         """
+#         if self.cur_user:
+#             if Likes.objects.filter(post_id=bundle.data['post_id'],
+#                                     user=self.cur_user).count():
+#                 bundle.data['like_with_user'] = True
+#         """
 
-        if self.cur_user:
-            id = bundle.data['post_id']
-            # post likes users
-            c_key = "post_like_%s" % (id)
+#         if self.cur_user:
+#             id = bundle.data['post_id']
+#             # post likes users
+#             c_key = "post_like_%s" % (id)
 
-            plu = cache.get(c_key)
-            if plu:
-                #print "get like_with_user from memcache", c_key
-                if self.cur_user in plu:
-                    bundle.data['like_with_user'] = True
-            else:
-                post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
-                cache.set(c_key, post_likers, 60 * 60 * 60)
+#             plu = cache.get(c_key)
+#             if plu:
+#                 #print "get like_with_user from memcache", c_key
+#                 if self.cur_user in plu:
+#                     bundle.data['like_with_user'] = True
+#             else:
+#                 post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=id)
+#                 cache.set(c_key, post_likers, 60 * 60 * 60)
 
-                if self.cur_user in post_likers:
-                    bundle.data['like_with_user'] = True
+#                 if self.cur_user in post_likers:
+#                     bundle.data['like_with_user'] = True
 
-        post_owner_id = bundle.data['post_owner_id']
+#         post_owner_id = bundle.data['post_owner_id']
 
-        bundle.data['post_owner_avatar'] = AuthCache.avatar(post_owner_id)[1:]
-        bundle.data['post_owner_user_name'] = AuthCache.get_username(post_owner_id)
+#         bundle.data['post_owner_avatar'] = AuthCache.avatar(post_owner_id)[1:]
+#         bundle.data['post_owner_user_name'] = AuthCache.get_username(post_owner_id)
 
-        actor_id = bundle.data['actor']
-        ar = [[
-            actor_id,
-            AuthCache.get_username(actor_id)[1:],
-            AuthCache.avatar(actor_id, size=100)
-        ]]
+#         actor_id = bundle.data['actor']
+#         ar = [[
+#             actor_id,
+#             AuthCache.get_username(actor_id)[1:],
+#             AuthCache.avatar(actor_id, size=100)
+#         ]]
         
-        bundle.data['actors'] = ar
+#         bundle.data['actors'] = ar
 
-        return bundle
+#         return bundle
 
 
 class StreamAuthorization(Authorization):
