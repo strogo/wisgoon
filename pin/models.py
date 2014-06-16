@@ -298,95 +298,46 @@ class Likes(models.Model):
             pass
     """
 
+class Notifbar(models.Model):
+    LIKE = 1
+    COMMENT = 2
+    APPROVE = 3
+    FAULT = 4
+    TYPES = (
+        (LIKE,'like'),
+        (COMMENT,'comment'),
+        (APPROVE,'approve'),
+        (FAULT,'fault'))
 
-# def send_notif(user, type, post, actor, seen=False):
-#     notif, created = Notif.objects.get_or_create(user=user, type=type, post=post)
+    post = models.ForeignKey(Post)
+    actor = models.ForeignKey(User, related_name="actor_id")
+    user = models.ForeignKey(User, related_name="post_user_id")
+    seen = models.BooleanField(default=False)
+    type = models.IntegerField(default=1, choices=TYPES)
+    date = models.DateTimeField(auto_now_add=True)
 
-#     notif.seen = seen
-#     notif.date = datetime.now()
-#     notif.save()
+class Notif(models.Model):
+    LIKE = 1
+    COMMENT = 2
+    APPROVE = 3
+    FAULT = 4
+    TYPES = (
+        (LIKE,'like'),
+        (COMMENT,'comment'),
+        (APPROVE,'approve'),
+        (FAULT,'fault'))
 
-#     Notif_actors.objects.get_or_create(notif=notif, actor=actor)
-#     return notif
+    post = models.ForeignKey(Post)
+    #sender = models.ForeignKey(User, related_name="sender")
+    user = models.ForeignKey(User, related_name="user_id")
+    text = models.CharField(max_length=500)
+    seen = models.BooleanField(default=False)
+    type = models.IntegerField(default=1, choices=TYPES)
+    date = models.DateTimeField(auto_now_add=True)     
 
-
-# class Notifbar(models.Model):
-#     LIKE = 1
-#     COMMENT = 2
-#     APPROVE = 3
-#     FAULT = 4
-#     TYPES = (
-#         (LIKE,'like'),
-#         (COMMENT,'comment'),
-#         (APPROVE,'approve'),
-#         (FAULT,'fault'))
-                                              
-#     post = models.ForeignKey(Post)
-#     actor = models.ForeignKey(User, related_name="actor_id")
-#     user = models.ForeignKey(User, related_name="post_user_id")
-#     seen = models.BooleanField(default=False)
-#     type = models.IntegerField(default=1, choices=TYPES)
-#     date = models.DateTimeField(auto_now_add=True)
-
-#     @classmethod
-#     def add_comment(cls, sender, instance, created, *args, **kwargs):
-#         from pin.tasks import send_notif, send_notif_bar
-#         if not created:
-#             return None
-#         comment = instance
-#         post = comment.object_pk
-
-#         if comment.user != post.user:
-#             notif = send_notif_bar(user=post.user, type=2, post=post.id, actor=comment.user)
-
-        # for notif in Notif.objects.filter(type=2, post=post):
-        #     for act in Notif_actors.objects.filter(notif=notif):
-        #         if act.actor != comment.user:
-        #             send_notif(user=act.actor, type=2, post=post.id, actor=comment.user)
-        #         #print act.actor_id
-        
-# class Notif(models.Model):
-#     LIKE = 1
-#     COMMENT = 2
-#     APPROVE = 3
-#     FAULT = 4
-#     TYPES = (
-#         (LIKE,'like'),
-#         (COMMENT,'comment'),
-#         (APPROVE,'approve'),
-#         (FAULT,'fault'))
-                                              
-#     post = models.ForeignKey(Post)
-#     #sender = models.ForeignKey(User, related_name="sender")
-#     user = models.ForeignKey(User, related_name="user_id")
-#     text = models.CharField(max_length=500)
-#     seen = models.BooleanField(default=False)
-#     type = models.IntegerField(default=1, choices=TYPES)
-#     date = models.DateTimeField(auto_now_add=True)
-
-#     @classmethod
-#     def add_comment(cls, sender, instance, created, *args, **kwargs):
-#         from pin.tasks import send_notif, send_notif_bar
-#         if not created:
-#             return None
-#         comment = instance
-#         post = comment.object_pk
-
-#         if comment.user != post.user:
-#             #notif = send_notif(user=post.user, type=2, post=post.id, actor=comment.user)
-#             notif = send_notif_bar(user=post.user, type=2, post=post.id, actor=comment.user)
-
-#         for notif in Notif.objects.filter(type=2, post=post.id):
-#             for act in notif.actors:
-#                 if act != comment.user_id:
-#                     send_notif_bar(user=act, type=2, post=post.id, actor=comment.user)
-
-#                 print act.actor_id
-
-
-# class Notif_actors(models.Model):
-#     notif = models.ForeignKey(Notif, related_name="notif")
-#     actor = models.ForeignKey(User, related_name="actor")
+class Notif_actors(models.Model):
+    notif = models.ForeignKey(Notif, related_name="notif")
+    actor = models.ForeignKey(User, related_name="actor")
 
 
 class App_data(models.Model):
