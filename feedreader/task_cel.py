@@ -22,10 +22,11 @@ def notif_send(user_id, type, post, actor_id, seen=False):
                     set__seen=False,
                     add_to_set__actors=actor_id, upsert=True)
 
-    print "notif_test"
     return "hello notif"
 
-@app.task(name="tasks.inc_prof")
+@app.task(name="tasks.inc_prof", rate_limit=50/m)
 def inc_prof(user_id):
-	Profile.objects.filter(user_id=user_id)\
+    Profile.objects.filter(user_id=user_id)\
         .update(cnt_like=F('cnt_like')+1, score=F('score')+10)
+    
+    return "inc prof"
