@@ -18,7 +18,7 @@ USERDATA_TIMEOUT = 300
 
 
 def inc_user_cnt_like(user_id):
-    print "inc for ", user_id
+    #print "inc for ", user_id
     Profile.objects.filter(user_id=user_id)\
         .update(cnt_like=F('cnt_like')+1, score=F('score')+10)
 
