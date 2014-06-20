@@ -54,7 +54,7 @@ def like(request):
             return HttpResponseBadRequest('erro in post id')
 
         try:
-            created, l = Likes.objects.get_or_create(user_id=user.id, post_id=post_id, ip = user._ip)
+            l, created = Likes.objects.get_or_create(user_id=user.id, post_id=post_id, ip = user._ip)
             if created:
                 inc_user_cnt_like(user_id=l.post.user_id)
             else:
