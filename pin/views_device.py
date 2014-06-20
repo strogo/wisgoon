@@ -13,7 +13,8 @@ from tastypie.models import ApiKey
 
 from pin.models import Post, Likes, Comments, Comments_score
 from pin.forms import PinDirectForm, PinDeviceUpdate
-from pin.tools import create_filename, AuthCache
+from pin.tools import create_filename, AuthCache,\
+    inc_user_cnt_like, dec_user_cnt_like
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -53,8 +54,13 @@ def like(request):
             return HttpResponseBadRequest('erro in post id')
 
         try:
-            Likes.objects.get_or_create(user_id=user.id, post_id=post_id, ip = user._ip)
-        except Exception:
+            created, l = Likes.objects.get_or_create(user_id=user.id, post_id=post_id, ip = user._ip)
+            if created:
+                inc_user_cnt_like(user_id=l.post.user_id)
+            else:
+                dec_user_cnt_like(user_id=l.post.user_id)
+        except Exception, e:
+            print str(e)
             return HttpResponse('-1')
 
         return HttpResponse('+1')

@@ -116,6 +116,7 @@ class Post(models.Model):
         from user_profile.models import Profile
         try:
             profile = Profile.objects.get(user=self.user)
+            profile.cnt_post += 1
 
             if ((self.date_lt( self.user.date_joined, 30) and profile.score > 5000) \
                 or profile.score > 10000 ):

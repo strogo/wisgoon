@@ -25,7 +25,8 @@ from pin.models import Post, Stream, Follow, Likes,\
 from pin.model_mongo import Notif
 
 import pin_image
-from pin.tools import get_request_timestamp, create_filename, get_user_ip
+from pin.tools import get_request_timestamp, create_filename, get_user_ip,\
+    inc_user_cnt_like, dec_user_cnt_like
 
 from user_profile.models import Profile
 
@@ -122,11 +123,15 @@ def like(request, item_id):
             Likes.objects.get(user=request.user, post=post).delete()
             user_act = -1
 
-        try:
-            profile = Profile.objects.get(user=post.user)
-            profile.save()
-        except Profile.DoesNotExist:
-            pass
+        if created:
+            inc_user_cnt_like(user_id=post.user_id)
+        else:
+            dec_user_cnt_like(user_id=post.user_id)
+        # try:
+        #     #profile = Profile.objects.get(user=post.user)
+        #     #profile.save()
+        # except Exception, e:
+        #     print str(e)
 
         if request.is_ajax():
             data = [{'likes': current_like, 'user_act': user_act}]

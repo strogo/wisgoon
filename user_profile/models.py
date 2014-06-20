@@ -8,69 +8,72 @@ from django.db.models.signals import post_save
 
 from pin.models import Post
 
-def avatar_file_name(instance, filename):
-    new_filename = str(time.time()).replace('.','') # create new file name with current timestamp
-    fileext = os.path.splitext(filename)[1] # get file ext
 
-    filestr = new_filename + fileext 
-    
+def avatar_file_name(instance, filename):
+    new_filename = str(time.time()).replace('.', '')
+    fileext = os.path.splitext(filename)[1]
+
+    filestr = new_filename + fileext
     d = datetime.now()
     return '/'.join(['avatars', str(d.year), str(d.month), str(filestr)])
 
+
 class Profile(models.Model):
-    name=models.CharField(max_length=250,verbose_name='نام')
-    location=models.CharField(max_length=250, verbose_name='موقعیت', blank=True)
-    website=models.URLField(verbose_name='وب سایت', blank=True)
-    bio=models.TextField(verbose_name='توضیحات', blank=True)
-    cnt_post=models.IntegerField(default=0)
-    cnt_like=models.IntegerField(default=0)
-    score=models.IntegerField(default=0, db_index=True)
-    count_flag=models.IntegerField(default=0)
-    trusted=models.IntegerField(default=0)
-    trusted_by=models.ForeignKey(User, related_name='trusted_by', default=None, null=True, blank=True)
+    name = models.CharField(max_length=250, verbose_name='نام')
+    location = models.CharField(max_length=250, verbose_name='موقعیت', blank=True)
+    website = models.URLField(verbose_name='وب سایت', blank=True)
+    bio = models.TextField(verbose_name='توضیحات', blank=True)
+    cnt_post = models.IntegerField(default=0)
+    cnt_like = models.IntegerField(default=0)
+    score = models.IntegerField(default=0, db_index=True)
+    count_flag = models.IntegerField(default=0)
+    trusted = models.IntegerField(default=0)
+    trusted_by = models.ForeignKey(User, related_name='trusted_by', default=None, null=True, blank=True)
     avatar = models.ImageField(upload_to=avatar_file_name, default=None, null=True, blank=True)
-    jens = models.CharField(max_length=2, choices=(('M','مذکر'),('F','مونث')), default='M')
+    jens = models.CharField(max_length=2, choices=(('M', 'مذکر'), ('F', 'مونث')), default='M')
     user = models.OneToOneField(User)
 
     fault = models.IntegerField(default=0, null=True, blank=True)
-    fault_minus = models.IntegerField(default=0 ,null=True, blank=True)
+    fault_minus = models.IntegerField(default=0, null=True, blank=True)
 
     post_accept = models.BooleanField(default=False, blank=True)
     post_accept_admin = models.BooleanField(default=True, blank=True)
     email_active = models.BooleanField(default=False, blank=True)
     activation_key = models.CharField(max_length=50, default=0, blank=True)
 
-    
     def cnt_calculate(self):
         try:
-            cnt = Post.objects.filter(user=self.user,status=1).aggregate(models.Sum('cnt_like'), models.Count('id'))
+            cnt = Post.objects.filter(user=self.user, status=1).aggregate(models.Sum('cnt_like'), models.Count('id'))
         except Post.DoesNotExist:
             cnt = 0
-        
+
         self.cnt_like = 0 if not cnt['cnt_like__sum'] else cnt['cnt_like__sum']
         self.cnt_post = cnt['id__count']
-        
+
     def score_calculation(self):
-        score = self.cnt_post + (self.cnt_like * 10 )
+        score = self.cnt_post + (self.cnt_like * 10)
         #if self.trusted != 0:
         #    score = score+10000
         return score
 
     def user_statics(self):
         self.cnt_calculate()
-        self.score = self.score_calculation()                                   
+        self.score = self.score_calculation()
         self.count_flag = 1
 
     def save(self, *args, **kwargs):
+        """
         try:
             self.user_statics()
         except:
             pass
+        """
 
-        super(Profile, self).save(*args,**kwargs)
+        super(Profile, self).save(*args, **kwargs)
 
-def create_user_profile(sender, instance, created, **kwargs):  
-    if created:  
-       profile, created = Profile.objects.get_or_create(user=instance)  
+
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        profile, created = Profile.objects.get_or_create(user=instance)
 
 post_save.connect(create_user_profile, sender=User)

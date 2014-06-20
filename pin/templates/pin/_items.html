@@ -79,7 +79,7 @@
 		<div class="feed-actions">
 		<div class="sharing-actions">
 			<div class="controls controls-row">
-				<a href="{% url "pin-item-like" item.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"> <i class="icon-heart"></i> {{item.cnt_likes}} </a>
+				<a href="{% url "pin-item-like" item.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"> <i class="icon-heart"></i> {{item.cnt_like}} </a>
 				{% if user.is_authenticated and user.id != item.user_id%}
 					<a href="{% url "report_pin" item.id%}" style="margin-right: 5px" class="btn btn_report "> <i class="icon-eye-open"></i></a>
 				{% endif %}

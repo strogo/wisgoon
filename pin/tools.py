@@ -4,6 +4,7 @@ from datetime import datetime
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db.models import F
 
 from tastypie.models import ApiKey
 
@@ -14,6 +15,15 @@ from daddy_avatar.templatetags import daddy_avatar
 
 user_keys = {}
 USERDATA_TIMEOUT = 300
+
+
+def inc_user_cnt_like(user_id):
+    Profile.objects.filter(user_id=user_id)\
+        .update(cnt_like=F('cnt_like')+1, score=F('score')+10)
+
+def dec_user_cnt_like(user_id):
+    Profile.objects.filter(user_id=user_id)\
+        .update(cnt_like=F('cnt_like')-1, score=F('score')-10)
 
 
 def create_filename(filename):
@@ -110,8 +120,6 @@ class CatCache(MyCache):
         cat = Category.objects.get(id=cat_id)
         cache.set(cc_str, cat, self.LONG_TIME)
         return cat
-
-
 
 
 class AuthCache(MyCache):
