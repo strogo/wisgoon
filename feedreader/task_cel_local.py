@@ -20,3 +20,7 @@ def notif_send(user_id, type, post, actor_id, seen=False):
 
     print "notif_test"
     return "hello notif"
+
+@app.task(name="tasks.inc_prof")
+def inc_prof(user_id):
+	print "inc_prof", user_id
