@@ -27,8 +27,4 @@ def notif_send(user_id, type, post, actor_id, seen=False):
 
 @app.task(name="tasks.inc_prof")
 def inc_prof(user_id):
-    Profile.objects.filter(user_id=user_id)\
-        .update(cnt_like=F('cnt_like')+1, score=F('score')+10)
-
-    print "inc prof"
-    return "inc_prof"
+	print "inc_prof", user_id
