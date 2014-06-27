@@ -62,12 +62,10 @@ class Profile(models.Model):
         self.count_flag = 1
 
     def save(self, *args, **kwargs):
-        """
         try:
             self.user_statics()
         except:
             pass
-        """
 
         super(Profile, self).save(*args, **kwargs)
 
