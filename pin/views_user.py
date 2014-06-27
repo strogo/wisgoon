@@ -123,15 +123,15 @@ def like(request, item_id):
             Likes.objects.get(user=request.user, post=post).delete()
             user_act = -1
 
-        if created:
-            inc_user_cnt_like(user_id=post.user_id)
-        else:
-            dec_user_cnt_like(user_id=post.user_id)
-        # try:
-        #     #profile = Profile.objects.get(user=post.user)
-        #     #profile.save()
-        # except Exception, e:
-        #     print str(e)
+        # if created:
+        #     inc_user_cnt_like(user_id=post.user_id)
+        # else:
+        #     dec_user_cnt_like(user_id=post.user_id)
+        try:
+            profile = Profile.objects.get(user=post.user)
+            profile.save()
+        except Exception, e:
+            print str(e)
 
         if request.is_ajax():
             data = [{'likes': current_like, 'user_act': user_act}]

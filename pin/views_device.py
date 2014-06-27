@@ -55,10 +55,15 @@ def like(request):
 
         try:
             l, created = Likes.objects.get_or_create(user_id=user.id, post_id=post_id, ip = user._ip)
-            if created:
-                inc_user_cnt_like(user_id=l.post.user_id)
-            else:
-                dec_user_cnt_like(user_id=l.post.user_id)
+            # if created:
+            #     inc_user_cnt_like(user_id=l.post.user_id)
+            # else:
+            #     dec_user_cnt_like(user_id=l.post.user_id)
+            try:
+                profile = Profile.objects.get(user=l.post.user)
+                profile.save()
+            except Exception, e:
+                print str(e)
         except Exception, e:
             print str(e)
             return HttpResponse('-1')
