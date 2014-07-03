@@ -19,7 +19,7 @@ from sorl.thumbnail import get_thumbnail
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
-from model_mongo import Notif
+from model_mongo import Notif as Notif_mongo
 
 
 LIKE_TO_DEFAULT_PAGE = 10
@@ -399,7 +399,7 @@ class Comments(models.Model):
             #notif = send_notif(user=post.user, type=2, post=post.id, actor=comment.user)
             notif = send_notif_bar(user=post.user_id, type=2, post=post.id, actor=comment.user_id)
 
-        for notif in Notif.objects.filter(type=2, post=post.id):
+        for notif in Notif_mongo.objects.filter(type=2, post=post.id):
             print "notif actors:", notif.actors
             for act in notif.actors:
                 print "actor is:", act
