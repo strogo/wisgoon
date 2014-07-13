@@ -20,16 +20,19 @@ class Command(BaseCommand):
         all_rows = []
 
         for u in User.objects.values('id', 'username').filter(id__gt=cur_id)[:1000]:
-        	p = Profile.objects.get_or_create(user_id=u['id'])
-        	row = {
-        		"id": u['id'],
-        		"name_s": p.name,
-        		"username_s": u['username'],
-        		"name_t": p.name,
-        		"username_t": u['username'],
-        	}
-        	all_rows.append(row)
-        	cache.set('cur_solr_user_id', u['id'], 86400)
+        	try:
+	        	p = Profile.objects.values('name').get(user_id=u['id'])
+	        	row = {
+	        		"id": u['id'],
+	        		"name_s": p['name'],
+	        		"username_s": u['username'],
+	        		"name_t": p['name'],
+	        		"username_t": u['username'],
+	        	}
+	        	all_rows.append(row)
+	        except Profile.DoesNotExist:
+	        	print "not profile exists"
+	        cache.set('cur_solr_user_id', u['id'], 86400)
         	
         solr.add(all_rows)
 
