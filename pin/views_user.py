@@ -86,7 +86,7 @@ def follow(request, following, action):
             #with transaction.commit_on_success():
             for post in posts:
                 print "post", post.id
-                stream, created = Stream.objects.get_or_create(post=post,
+                Stream.objects.get_or_create(post=post,
                                 user=request.user,
                                 date=post.timestamp,
                                 following=following)
