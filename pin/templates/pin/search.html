@@ -1,0 +1,25 @@
+{% extends "pin/pure.html"%}
+{% load daddy_avatar%}
+{% load pin_tags %}
+
+{% block box-title %} جستجو {%endblock %}
+
+
+{% block box-content %}
+
+<form>
+	<input type="text" name="q"> 
+	<input type="submit" value="جستجو" >
+</form>
+
+<div >
+    {% for u in results %}
+    <div style="padding:5px; width:100px; float:right; text-align:center">
+        <a href="{% url "pin-user" u.id %}">
+            <img src="{{u.id|get_avatar:165}}" style="float:left" >
+        </a>
+        <a href="{% url "pin-user" u.id %}">{{u.id|get_username}}</a></td>
+    </div>
+    {%endfor%}
+</div>
+{% endblock box-content %}

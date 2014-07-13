@@ -91,6 +91,10 @@ def get_user_notify(userid):
 
 @register.filter
 def get_username(user):
+
+    if isinstance(user, (unicode)):
+        user = int(user)
+
     if isinstance(user, (int, long)):
         #user = User.objects.only('email').get(pk=user)
         user_str = "user_name_%d" % (user)

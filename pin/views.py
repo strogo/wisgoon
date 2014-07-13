@@ -43,6 +43,18 @@ def home(request):
         return render(request, 'pin/home.html', {'latest_items': latest_items})
 
 
+def search(request):
+    results = []
+    import pysolr
+    solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
+    query = request.GET.get('q', '')
+    if query:
+        q_str = "*%s*" % query
+        fq = 'username_s:*%s*' % query
+        results = solr.search("*:*", fq=fq,)
+
+    return render(request, 'pin/search.html', {'results': results})
+
 def user_friends(request, user_id):
     user_id = int(user_id)
     ROW_PER_PAGE = 20
