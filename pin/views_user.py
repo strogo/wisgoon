@@ -82,7 +82,7 @@ def follow(request, following, action):
             follow.delete()
             Stream.objects.filter(following=following, user=request.user)\
                 .all().delete()
-        else:
+        elif created:
             posts = Post.objects.filter(user=following, status=1)[:100]
             with transaction.commit_on_success():
                 for post in posts:

@@ -107,6 +107,7 @@ urlpatterns += patterns('pin.views_device',
     url(r'^d/post/delete/(?P<item_id>\d+)/$', 'post_delete'),
     url(r'^d/post/update/(?P<item_id>\d+)/$', 'post_update'),
     url(r'^d/comment/report/(?P<comment_id>\d+)/$', 'comment_report'),
+    url(r'^d/follow/(?P<following>\d+)/(?P<action>\d+)/$', 'follow'),
 
 )
 

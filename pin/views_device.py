@@ -4,14 +4,17 @@ import time
 
 from django.conf import settings
 from django.core.cache import cache
+from django.db import transaction
 from django.db.models import F, Sum
+from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseForbidden,\
     HttpResponseBadRequest, HttpResponseNotFound
 
 from tastypie.models import ApiKey
 
-from pin.models import Post, Likes, Comments, Comments_score
+from pin.models import Post, Likes, Comments, Comments_score,\
+    Follow, Stream
 from pin.forms import PinDirectForm, PinDeviceUpdate
 from pin.tools import create_filename, AuthCache,\
     inc_user_cnt_like, dec_user_cnt_like
@@ -194,6 +197,39 @@ def post_update(request, item_id):
 
     return HttpResponseBadRequest('bad request')
 
+def follow(request, following, action):
+    user = check_auth(request)
+    if not user:
+        return HttpResponseForbidden('error in user validation')
+
+    if int(following) == user.id:
+        return HttpResponseForbidden('not need following himself')
+
+    try:
+        following = User.objects.get(pk=int(following))
+        follow, created = Follow.objects.get_or_create(follower=user,
+                                                       following=following)
+
+        if int(action) == 0:
+            follow.delete()
+            Stream.objects.filter(following=following, user=user)\
+                .all().delete()
+        elif created:
+            posts = Post.objects.filter(user=following, status=1)[:100]
+            with transaction.commit_on_success():
+                for post in posts:
+                    stream = Stream(post=post,
+                                    user=user,
+                                    date=post.timestamp,
+                                    following=following)
+                    try:
+                        stream.save()
+                    except Exception, e:
+                        print "duplicate in stream", str(e)
+    except User.DoesNotExist:
+        return HttpResponse('User does not exists')
+
+    return HttpResponse('1')
 
 @csrf_exempt
 def post_send(request):
