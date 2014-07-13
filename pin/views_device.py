@@ -15,6 +15,8 @@ from tastypie.models import ApiKey
 
 from pin.models import Post, Likes, Comments, Comments_score,\
     Follow, Stream
+
+from user_profile.models import Profile
 from pin.forms import PinDirectForm, PinDeviceUpdate
 from pin.tools import create_filename, AuthCache,\
     inc_user_cnt_like, dec_user_cnt_like
