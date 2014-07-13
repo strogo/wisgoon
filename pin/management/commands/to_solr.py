@@ -20,7 +20,7 @@ class Command(BaseCommand):
         u = None
         all_rows = []
 
-        for u in User.objects.values('id', 'username').filter(id__gt=cur_id)[:1000]:
+        for u in User.objects.values('id', 'username').filter(id__gt=cur_id)[:100]:
             try:
                 p = Profile.objects.values('name', 'score').get(user_id=u['id'])
                 row = {
