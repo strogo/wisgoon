@@ -84,16 +84,16 @@ def follow(request, following, action):
                 .all().delete()
         elif created:
             posts = Post.objects.filter(user=following, status=1)[:100]
-            with transaction.commit_on_success():
-                for post in posts:
-                    stream = Stream(post=post,
-                                    user=request.user,
-                                    date=post.timestamp,
-                                    following=following)
-                    try:
-                        stream.save()
-                    except IntegrityError:
-                        print "duplicate in stream"
+            #with transaction.commit_on_success():
+            for post in posts:
+                stream = Stream(post=post,
+                                user=request.user,
+                                date=post.timestamp,
+                                following=following)
+                try:
+                    stream.save()
+                except IntegrityError:
+                    print "duplicate in stream"
         return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
     except User.DoesNotExist:
         return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
