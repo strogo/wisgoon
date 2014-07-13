@@ -5,18 +5,22 @@
 
 <html>
 <head>
-	<title>ویسگون {% block title%}{% endblock%}</title>
-	<meta name="keywords" content="social,rss,reader" />
-	<meta name="description" content="{%block description%}what is going on, social rss reader{%endblock%}" />
-<link rel="alternate" type="application/rss+xml" href="{% url "pin-latest-feed%}"" />
+<title>ویسگون {% block title%}{% endblock%}</title>
+<meta name="keywords" content="social, image, sharing" />
+<meta name="description" content="{%block description%}what is going on, social image sharing{%endblock%}" />
+{% block nextpost%}{%endblock%}
+{% block prevpost%}{%endblock%}
+{% comment %}
+<link rel="alternate" type="application/rss+xml" href="{% url "pin-latest-feed" %}" />
+{% endcomment %}
 {% block opengraph%}{% endblock opengraph%}
 
 {% include "base/all_header.html"%}
 
 {% compress css %}
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css?ver=1.1.1">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css?ver=1.2.0">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css?v=0.0.1">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css?v=0.1.0">
 {%endcompress%}
 
 {% compress js%}
@@ -28,68 +32,101 @@
 {% block extra_css%}{% endblock extra_css%}
 {% endcompress %}
 
-<style type="text/css">
-/* thanks to http://afsaran.ir/ */
-@font-face
-{
-	font-family: afsFont;
-	src: local('Koodak Bold'),
-	url('{{MEDIA_URL}}/fonts/BKoodakBold.woff') format('woff'),
-	url('{{MEDIA_URL}}/fonts/BKoodakBold.ttf') format('truetype'),
-	url('{{MEDIA_URL}}/fonts/BKoodakBold.eot');
-}
-</style>
+
 {% include "base/analytics.html"%}
+
+<script type="text/javascript">
+var media_url = "{{MEDIA_URL}}";
+var upload_url = "{% url "pin-upload" %}";
+</script>
 </head>
 
 	<body dir="rtl">
 		
 		<div class="container row-fluid" id="wrapper">
-			<div class="navbar-fixed-top">
+			<div class="">
 			{% include "base/bar_first.html" with pinactive="active" %}
 			
 			<ul class="nav nav-tabs nav-second">
-				<li>
-					<form class="navbar-search pull-left" action="/search/" method="get">
-						<input type="text" name="q" class="search-query" placeholder="جستجو">
-					</form>
-				</li>
 				<li class="nav-right">
-					<a href="{% url "pin-home" %}">آخرین مطالب</a></li>
+					<a href="{% url "pin-latest" %}">آخرین مطالب</a></li>
 			  <li class="nav-right">
 			  {% if user.is_authenticated%}
-			  	<a data-toggle="modal" data-target="#myModal" href="#myModal"><i class="icon-plus-sign"></i> ارسال مطلب جدید </a>
+			  	<a data-toggle="modal" data-target="#myModal" href="#myModal"><img src="{{MEDIA_URL}}img/new/add.png">ارسال تصویر</a>
 			  {%else%}
-			  	<a href="/accounts/login/?next=/pin"><i class="icon-plus-sign"></i> ارسال مطلب جدید</a>
+			  	<a href="/accounts/login/?next=/pin"><img src="{{MEDIA_URL}}img/new/add.png">ارسال تصویر</a>
 			  {%endif%}
 			  </li>
 			  <li class="nav-right">
 			  {% if user.is_authenticated%}
-			  	<a data-toggle="modal" data-target="#pin-from-url" href="#pin-from-url"><i class=" icon-globe"></i> ارسال از وب</a>
+			  	<a data-toggle="modal" data-target="#pin-from-url" href="#pin-from-url"><img src="{{MEDIA_URL}}img/new/web.png"> ارسال از وب</a>
 			  {%else%}
-			  	<a href="/accounts/login/?next=/pin"><i class=" icon-globe"></i> ارسال از وب</a>
+			  	<a href="/accounts/login/?next=/pin"><img src="{{MEDIA_URL}}img/new/web.png"> ارسال از وب</a>
 			  {%endif%}
 			  </li>
 
-<li class="nav-right">
-	<a href="{% url "pin-popular%}""><i class="icon-fire"></i> برترینها</a>
+<li class="nav-right dropdown ">
+	<a class="dropdown-toggle" data-toggle="dropdown"  href="#"><img src="{{MEDIA_URL}}img/new/bartarin.png"> برترینها</a>
+    <ul class="dropdown-menu">
+        <li><a href="{% url "pin-popular" %}">همه زمانها</a></li>
+        <li><a href="{% url "pin-popular-offset" "month" %}">یک ماه گذشته</a></li>
+        <li><a href="{% url "pin-popular-offset" "lastweek" %}">هفته گذشته</a></li>
+        <li><a href="{% url "pin-popular-offset" "lastday" %} ">24 ساعت گذشته</a></li>
+        <li><a href="{% url "pin-popular-offset" "lasteigth" %} ">8 ساعت گذشته</a></li>
+      <!-- links -->
+    </ul>
 </li>
-			  
+
+<li class="nav-right dropdown ">
+    <a class="dropdown-toggle" data-toggle="dropdown"  href="#"><img src="{{MEDIA_URL}}img/new/category.png">  گروه ها</a>
+    <ul class="dropdown-menu">
+        {% for cat in cats %}
+        <li><a href="{% url "pin-category" cat.id %}">{{cat.title}}</a></li>
+        {% endfor %}
+      <!-- links -->
+    </ul>
+</li>
+
+<li class="nav-right dropdown ">
+	<a class="dropdown-toggle" data-toggle="dropdown"  href="#">برترین کاربران</a>
+    <ul class="dropdown-menu">
+        <li><a href="{% url "pin-topuser" %}">کل سایت</a></li>
+        <li><a href="{% url "pin-topgroupuser" %}">گروه ها</a></li>
+    </ul>
+</li>
+
 {% if user.is_authenticated%}
 <li class="nav-right">
-	<a href="{% url "pin-following%}"">دنبال شوندگان</a>
+	<a href="{% url "pin-following" %}">مطالب دوستان</a>
 </li>
 <li class="nav-right">
-	<a href="#notify" data-load="{% url "show_notify%}"" title="اعلانات" class="popnotify"><i class="icon-bell"> </i> {{user.id|get_user_notify}} </a>
+	<a href="{% url "pin-user-like" user.id %}"><i class="icon-heart"></i></a>
+</li>
+<li class="nav-right">
+	<a href="#notify" data-load="{% url "show_notify" %}" title="اعلانات" class="popnotify"><i class="icon-bell"> </i> {{user.id|get_user_notify}} </a>
 </li>
 {%endif%}
 			  
 			  {%block pin-ex-nav%}{%endblock pin-ex-nav%}
 
+<li><g:plusone href="http://www.wisgoon.com/"></g:plusone></li>
 			  
 			</ul>
 			</div>
-			<div id="content" class="container row-fluid" style="padding-top:80px">
+			<div >
+				{% if messages %}
+				
+			    {% for message in messages %}
+			    <div class="span6 alert alert-{{ message.tags }}" style="float: none; margin: 5px auto;">
+			    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+			    {{ message|safe}}
+				</div>
+			    {% endfor %}
+			
+				{% endif %}
+			</div>
+			<div id="content" class="container row-fluid" style="">
+				
 				{% block content %}
 				{% endblock content %}
 			</div>
@@ -141,71 +178,18 @@
   </div>
 </div>
 
-{% load compress %}
-{% compress js inline%}
-<script type="text/javascript">
-jQuery(function($) {
-    $('form[data-async]').live('submit', function(event) {
-        var $form = $(this);
-        var $target = $($form.attr('data-target'));
-
-        $.ajax({
-            type: $form.attr('method'),
-            url: $form.attr('action'),
-            data: $form.serialize(),
-
-            success: function(data, status) {
-                alert(data);
-                $('#pinitem').modal('hide').children('.modal-body').html('');
-                
-            }
-        });
-
-        event.preventDefault();
-    });
-});
-$('#pinitem').on('hide', function() {
-    $(this).removeData('modal');
-    $(this).children('.modal-body').html('');
-});
-
-// for notification popover
-var isVisible = false;
-var clickedAway = false;
-var notifCache=false;
-$(".popnotify").bind('click',function(){
-	var el=$(this);
-	if (isVisible){
-		$(el).popover('hide');
-	}else{
-		isVisible = true;
-		if(!notifCache){
-		    $.get(el.attr('data-load'),function(d){
-		    	notifCache=d;
-		    	el.unbind('click').popover({content: d, placement:'bottom',html:true}).popover('show');
-		    });
-		}else{
-		    el.unbind('click').popover({content: notifCache, placement:'bottom',html:true}).popover('show');   	
-	    }
-    }
-    
-});
-
-</script>
-{% endcompress %}
 {% include 'base/all_footer.html'%}
-<script type="text/javascript" src="http://static-cdn.anetwork.ir/showad/aw-apfbc.js?v=0.12"></script>
-<div class="anetwork-xfb-120-125-main" style="left: 4px; top: 4px; display: none" id="anetwork-xfb-125-lt">
-<div class="anetwork-xfb-120-125-title" onClick="document.getElementById('anetwork-xfb-125-lt').style.display = 'none'; setCookie('anetwork-xfb-125-lt', 1)">
-<span class="anetwork-xfb-120-125-close">×</span> بستـن تبلـیــغ
+{% if user.is_authenticated %}
+<script type="text/javascript" src="{{MEDIA_URL}}js/pin-user.js?ver=1.1"></script>
+{% endif %}
+
+{% if user.is_superuser %}
+<script type="text/javascript" src="{{MEDIA_URL}}js/pin-admin.js?ver=1.2"></script>
+{% endif %}
+
+<script type="text/javascript" src="{{MEDIA_URL}}js/all.js?ver=1"></script>
+{% block footer_script %}
+{% endblock %}
 </div>
-<script type="text/javascript"> 
-var anetwork_pram = anetwork_pram || []; 
-anetwork_pram['aduser'] = '1377550367'; 
-anetwork_pram['adheight'] = '125'; 
-anetwork_pram['adwidth'] = '125'; 
-</script> 
-<script type="text/javascript" src="http://static-cdn.anetwork.ir/showad/pub.js"></script>
-</div>
-	</body>
+	</body><!-- end body -->
 </html>
