@@ -24,6 +24,8 @@ case $1 in
         ;;
 
     jsend)
+		git add .
+		git commit -m "change on file"
 		jsend
         ;;
 
