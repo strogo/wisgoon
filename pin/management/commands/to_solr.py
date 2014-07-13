@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
         all_rows = []
 
-        for u in User.objects.values('id', 'username').filter(id__gt=cur_id)[:1]:
+        for u in User.objects.values('id', 'username').filter(id__gt=cur_id)[:1000]:
         	p = Profile.objects.values('name').get(user_id=u['id'])
         	row = {
         		"id": u['id'],
