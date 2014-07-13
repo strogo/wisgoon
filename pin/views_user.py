@@ -74,29 +74,31 @@ def follow(request, following, action):
 
     try:
         following = User.objects.get(pk=int(following))
-
-        follow, created = Follow.objects.get_or_create(follower=request.user,
-                                                       following=following)
-
-        if int(action) == 0:
-            follow.delete()
-            Stream.objects.filter(following=following, user=request.user).delete()
-        elif created:
-            posts = Post.objects.filter(user=following, status=1)[:100]
-            #with transaction.commit_on_success():
-            for post in posts:
-                print "post", post.id
-                Stream.objects.get_or_create(post=post,
-                                user=request.user,
-                                date=post.timestamp,
-                                following=following)
-                #try:
-                #    stream.save()
-                #except IntegrityError:
-                #    print "duplicate in stream"
-        return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
     except User.DoesNotExist:
         return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
+
+    follow, created = Follow.objects.get_or_create(follower=request.user,
+                                                   following=following)
+
+    if int(action) == 0:
+        follow.delete()
+        Stream.objects.filter(following=following, user=request.user).delete()
+    elif created:
+        posts = Post.objects.filter(user=following, status=1)[:100]
+        #with transaction.commit_on_success():
+        for post in posts:
+            
+            s, created = Stream.objects.get_or_create(post=post,
+                            user=request.user,
+                            date=post.timestamp,
+                            following=following)
+            print "post", post.id, s, created
+            #try:
+            #    stream.save()
+            #except IntegrityError:
+            #    print "duplicate in stream"
+    return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
+    
 
 
 @login_required
