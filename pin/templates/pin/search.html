@@ -14,7 +14,7 @@
 
 <div >
     {% for u in results %}
-    <div style="padding:5px; width:100px; float:right; text-align:center;heigth:146px;">
+    <div style="padding:5px; width:100px; float:right; text-align:center;heigth:160px;">
         <a href="{% url "pin-user" u.id %}">
             <img src="{{u.id|get_avatar:165}}" style="float:left" >
         </a>
