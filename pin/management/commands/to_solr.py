@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
     	solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
         print "tuning execute"
-
+        cache.delete('cur_solr_user_id')
         cur_id = cache.get('cur_solr_user_id', 0)
         print "cur id is", cur_id
 
@@ -29,9 +29,15 @@ class Command(BaseCommand):
 	        		"name_t": p['name'],
 	        		"username_t": u['username'],
 	        	}
-	        	all_rows.append(row)
+	        	
 	        except Profile.DoesNotExist:
-	        	print "not profile exists"
+	        	row = {
+	        		"id": u['id'],
+	        		"username_s": u['username'],
+	        		"username_t": u['username'],
+	        	}
+
+	        all_rows.append(row)
 	        cache.set('cur_solr_user_id', u['id'], 86400)
         	
         solr.add(all_rows)
