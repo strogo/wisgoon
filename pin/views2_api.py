@@ -10,7 +10,7 @@ from django.core.cache import cache
 from sorl.thumbnail import get_thumbnail
 
 from pin.tools import userdata_cache, AuthCache, CatCache
-from pin.models import Post, Category, Likes
+from pin.models import Post, Category, Likes, Stream
 from pin.model_mongo import Notif
 
 
@@ -165,6 +165,107 @@ def post(request):
         posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
                               'image', 'user_id', 'cnt_like', 'category_id')\
                 .filter(**filters).order_by(*sort_by)[:10]
+
+    for p in posts:
+        o = {}
+        o['id'] = p['id']
+        o['text'] = p['text']
+        o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
+        o['image'] = p['image']
+
+        av = AuthCache.avatar(user_id=p['user_id'])
+        o['user_avatar'] = AuthCache.avatar(user_id=p['user_id'])[1:]
+        o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
+
+        o['user'] = p['user_id']
+        o['url'] = 'v'
+        o['like'] = p['cnt_like']
+        o['likers'] = None
+        o['like_with_user'] = False
+
+        o['permalink'] = "/pin/%d/" % p['id']
+        o['resource_uri'] = "/pin/api/post/%d/" % p['id']
+
+        if cur_user and p['cnt_like'] > 0:
+            # post likes users
+            c_key = "post_like_%s" % (p['id'])
+
+            plu = cache.get(c_key)
+            if plu:
+                #print "get like_with_user from memcache", c_key
+                if cur_user in plu:
+                    o['like_with_user'] = True
+            else:
+                post_likers = Likes.objects.values_list('user_id', flat=True)\
+                    .filter(post_id=p['id'])
+                cache.set(c_key, post_likers, 60 * 60)
+
+                if cur_user in post_likers:
+                    o['like_with_user'] = True
+
+        thumb_size = request.GET.get('thumb_size', "100x100")
+        thumb_quality = 99
+
+        o_image = p['image']
+
+        imo = get_thumb(o_image, thumb_size, thumb_quality)
+
+        if imo:
+            o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
+            o['hw'] = imo['hw']
+
+        cat = get_cat(cat_id=p['category_id'])
+        o['category'] = {
+            'id': cat.id,
+            'image': "/media/" + str(cat.image),
+            'resource_uri': "/pin/apic/category/"+str(cat.id)+"/",
+            'title': cat.title,
+        }
+        objects_list.append(o)
+
+    #cache.set(cache_stream_name, posts, cache_ttl)
+
+    data['objects'] = objects_list
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
+
+
+def friends_post(request):
+    #print "we are in post"
+    data = {}
+    data['meta'] = {'limit': 10,
+                    'next': '',
+                    'offset': 0,
+                    'previous': '',
+                    'total_count': 1000}
+
+    objects_list = []
+    filters = {}
+    cur_user = None
+    cache_ttl = 120
+    filters.update(dict(status=Post.APPROVED))
+    before = request.GET.get('before', None)
+    
+    user_id = request.GET.get('user_id', None)
+
+    token = request.GET.get('token', '')
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+
+    if before:
+        sort_by = ['-timestamp']
+    else:
+        stream = Stream.objects.filter(user=cur_user)\
+            .order_by('-date')[:20]
+        sort_by = ['-timestamp']
+
+    idis = []
+    for p in stream:
+        idis.append(int(p.post_id))
+
+    posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
+                          'image', 'user_id', 'cnt_like', 'category_id')\
+            .filter(id__in=idis).order_by('-id')[:10]
 
     for p in posts:
         o = {}

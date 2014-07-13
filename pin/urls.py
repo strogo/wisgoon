@@ -114,6 +114,7 @@ urlpatterns += patterns('',
     url(r'^comments/', include('django.contrib.comments.urls')),
     url(r'^api/post/(?P<item_id>\d+)/', 'pin.views2_api.post_item', name="post_api_item"),
     url(r'^api/post/', 'pin.views2_api.post', name="post_api"),
+    url(r'^api/friends_post/', 'pin.views2_api.friends_post', name="post_friends_api"),
     url(r'^api/like/likes/', 'pin.views2_api.likes', name="likes_api"),
     url(r'^api/notif/notify/', 'pin.views2_api.notif', name="new_notif"),
 )
