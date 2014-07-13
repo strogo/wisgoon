@@ -68,9 +68,9 @@ def like(request):
                 profile = Profile.objects.get(user=l.post.user)
                 profile.save()
             except Exception, e:
-                print str(e)
+                print str(e), "views_device 71"
         except Exception, e:
-            print str(e)
+            print str(e), "views_device 73"
             return HttpResponse('-1')
 
         return HttpResponse('+1')
