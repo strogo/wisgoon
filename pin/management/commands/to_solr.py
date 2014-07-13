@@ -20,12 +20,12 @@ class Command(BaseCommand):
         all_rows = []
 
         for u in User.objects.values('id', 'username').filter(id__gt=cur_id)[:1000]:
-        	p = Profile.objects.values('name').get(user_id=u['id'])
+        	p = Profile.objects.get_or_create(user_id=u['id'])
         	row = {
         		"id": u['id'],
-        		"name_s": p['name'],
+        		"name_s": p.name,
         		"username_s": u['username'],
-        		"name_t": p['name'],
+        		"name_t": p.name,
         		"username_t": u['username'],
         	}
         	all_rows.append(row)
