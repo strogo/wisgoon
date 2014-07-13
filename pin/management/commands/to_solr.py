@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
     	solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
         print "tuning execute"
-        cache.delete('cur_solr_user_id')
+        
         cur_id = cache.get('cur_solr_user_id', 0)
         print "cur id is", cur_id
 
