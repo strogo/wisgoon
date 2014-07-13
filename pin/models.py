@@ -400,14 +400,13 @@ class Comments(models.Model):
             notif = send_notif_bar(user=post.user_id, type=2, post=post.id, actor=comment.user_id)
 
         for notif in Notif_mongo.objects.filter(type=2, post=post.id):
-            print "notif actors:", notif.actors
+            #print "notif actors:", notif.actors
             for act in notif.actors:
-                print "actor is:", act
+                #print "actor is:", act
                 if act != comment.user_id:
-                    print "no equal"
+                    #print "no equal"
                     send_notif_bar(user=act, type=2, post=post.id, actor=comment.user_id)
-                else:
-                    print "equal"
+                
 
                 
 
