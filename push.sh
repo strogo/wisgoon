@@ -5,6 +5,11 @@ send(){
 	ssh wisgoon@direct.wisgoon.com "cd /home2/wisgoon/wisgoon.com/www && git merge devel && touch reload"
 }
 
+jsend(){
+	git push origin devel
+	ssh wisgoon@direct.wisgoon.com "cd /home2/wisgoon/wisgoon.com/www && git merge devel"
+}
+
 case $1 in
 	
 	
@@ -16,6 +21,10 @@ case $1 in
 	
 	send)
 		send
+        ;;
+
+    jsend)
+		jsend
         ;;
 
 	*)

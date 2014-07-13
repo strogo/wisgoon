@@ -51,7 +51,7 @@ def search(request):
     if query:
         q_str = "*%s*" % query
         fq = 'username_s:*%s* name_s:*%s*' % (query, query)
-        results = solr.search("*:*", fq=fq,)
+        results = solr.search("*:*", fq=fq, limit=50)
 
     return render(request, 'pin/search.html', {'results': results})
 
