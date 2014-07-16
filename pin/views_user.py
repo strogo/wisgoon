@@ -431,7 +431,10 @@ def show_notify(request):
     nl = []
     for n in notif:
         anl = {}
-        anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+        try:
+            anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+        except Post.DoesNotExist:
+            continue
         anl['id'] = n.post
         anl['type'] = n.type
         anl['actors'] = n.actors
@@ -453,7 +456,10 @@ def notif_user(request):
     nl = []
     for n in notif:
         anl = {}
-        anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+        try:
+            anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+        except Post.DoesNotExist:
+            continue
         anl['id'] = n.post
         anl['type'] = n.type
         anl['actors'] = n.last_actors
@@ -468,3 +474,22 @@ def notif_user(request):
         return render(request, 'pin/_notif.html', {'notif': nl})
     else:
         return render(request, 'pin/notif_user.html', {'notif': nl})
+
+@login_required
+def notif_all(request):
+    notif = Notif.objects.order_by('-date')[:20]
+
+    nl = []
+    for n in notif:
+        anl = {}
+        try:
+            anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+        except Post.DoesNotExist:
+            continue
+        anl['id'] = n.post
+        anl['type'] = n.type
+        anl['actors'] = n.last_actors
+
+        nl.append(anl)
+        
+    return render(request, 'pin/notif_user.html', {'notif': nl})

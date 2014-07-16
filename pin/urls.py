@@ -57,6 +57,7 @@ urlpatterns = patterns('pin.views',
 
 urlpatterns += patterns('pin.views_user',
     url(r'^notif/$', 'notif_user', name="pin-notif-user"),
+    url(r'^notif/all/$', 'notif_all', name="pin-notif-user-all"),
     url(r'^like/(?P<item_id>\d+)', 'like', name="pin-item-like"),
     url(r'^following/$', 'following', name='pin-following'),
     url(r'^follow/(?P<following>\d+)/(?P<action>\d+)$', 'follow', name='pin-follow'),
