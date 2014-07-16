@@ -486,7 +486,7 @@ def notif_all(request):
         try:
             po = anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
             if po not in idis:
-                idis.append(po):
+                idis.append(po)
             else:
                 continue
         except Post.DoesNotExist:
