@@ -480,10 +480,15 @@ def notif_all(request):
     notif = Notif.objects.order_by('-date')[:20]
 
     nl = []
+    idis = []
     for n in notif:
         anl = {}
         try:
-            anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+            po = anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+            if po not in idis:
+                idis.append(po):
+            else:
+                continue
         except Post.DoesNotExist:
             continue
         anl['id'] = n.post
