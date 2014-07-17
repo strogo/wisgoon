@@ -134,6 +134,11 @@ class Post(models.Model):
         return timestamp < lt_timestamp
 
     @classmethod
+    def hot(self, post_id, amount=1):
+        r_server.zincrby('hot', int(post_id), amount=amount)
+        r_server.zremrangebyrank('hot', 0, -101)
+
+    @classmethod
     def add_to_set(self, set_name, post, set_cat=True):
         r_server.zadd(set_name, int(post.timestamp), post.id)
         #r_server.ltrim(set_name, 0, 1000)
@@ -320,6 +325,8 @@ class Likes(models.Model):
         str_likers = "web_likes_%s" % post.id
         all_likers = "post_like_%s" % (post.id)
         cache.delete(str_likers)
+
+        Post.hot(post.id, amount=0.5)
         
         from pin.tasks import send_notif, send_notif_bar
 
@@ -416,7 +423,6 @@ class Comments(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             Post.objects.filter(pk=self.object_pk.id).update(cnt_comment=F('cnt_comment')+1)
-        
         try:
             if ((self.date_lt( self.user.date_joined, 5) and self.user.profile.score > 500) \
                 or self.user.profile.score > 500 ):
@@ -440,6 +446,8 @@ class Comments(models.Model):
             return None
         comment = instance
         post = comment.object_pk
+
+        Post.hot(post.id, amount=1)
 
         if comment.user != post.user:
             #notif = send_notif(user=post.user, type=2, post=post.id, actor=comment.user)
