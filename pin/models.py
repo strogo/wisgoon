@@ -133,6 +133,12 @@ class Post(models.Model):
         #print timestamp, older_timestamp
         return timestamp < lt_timestamp
 
+    @classmethod
+    def add_to_set(self, set_name, post_id):
+        r_server.lpush(set_name, post_id)
+        r_server.ltrim(set_name, 0, 1000)
+
+
     def save(self, *args, **kwargs):
         from user_profile.models import Profile
         try:
@@ -225,6 +231,8 @@ class Post(models.Model):
         Post.objects.filter(pk=self.id)\
             .update(status=self.APPROVED, timestamp=time.time())
 
+        Post.add_to_set('latest', self.id)
+
         send_notif_bar(user=self.user.id, type=3, post=self.id, actor=self.user.id)
 
 
@@ -244,8 +252,8 @@ class Stream(models.Model):
 
     @classmethod
     def add_post(cls, sender, instance, *args, **kwargs):
+        post = instance
         if kwargs['created']:
-            post = instance
             user = post.user
             followers = Follow.objects.all().filter(following=user)
             for follower in followers:
@@ -253,6 +261,9 @@ class Stream(models.Model):
                     stream, created = Stream.objects.get_or_create(post=post, user=follower.follower, date=post.timestamp, following=user)
                 except:
                     pass
+        
+        if post.status == Post.APPROVED:
+            Post.add_to_set('latest', post.id)
                 
     
 class Likes(models.Model):

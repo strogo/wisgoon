@@ -190,24 +190,6 @@ def post(request):
         if cur_user:
             o['like_with_user'] = Likes.user_in_likers(post_id=p['id'], user_id=cur_user)
 
-
-        # if cur_user and p['cnt_like'] > 0:
-        #     # post likes users
-        #     c_key = "post_like_%s" % (p['id'])
-
-        #     plu = cache.get(c_key)
-        #     if plu:
-        #         #print "get like_with_user from memcache", c_key
-        #         if cur_user in plu:
-        #             o['like_with_user'] = True
-        #     else:
-        #         post_likers = Likes.objects.values_list('user_id', flat=True)\
-        #             .filter(post_id=p['id'])
-        #         cache.set(c_key, post_likers, 60 * 60)
-
-        #         if cur_user in post_likers:
-        #             o['like_with_user'] = True
-
         thumb_size = request.GET.get('thumb_size', "100x100")
         thumb_quality = 99
 
@@ -288,23 +270,6 @@ def friends_post(request):
         if cur_user:
             o['like_with_user'] = Likes.user_in_likers(post_id=p['id'], user_id=cur_user)
 
-        # if cur_user and p['cnt_like'] > 0:
-        #     # post likes users
-        #     c_key = "post_like_%s" % (p['id'])
-
-        #     plu = cache.get(c_key)
-        #     if plu:
-        #         #print "get like_with_user from memcache", c_key
-        #         if cur_user in plu:
-        #             o['like_with_user'] = True
-        #     else:
-        #         post_likers = Likes.objects.values_list('user_id', flat=True)\
-        #             .filter(post_id=p['id'])
-        #         cache.set(c_key, post_likers, 60 * 60)
-
-        #         if cur_user in post_likers:
-        #             o['like_with_user'] = True
-
         thumb_size = request.GET.get('thumb_size', "100x100")
         thumb_quality = 99
 
@@ -316,13 +281,6 @@ def friends_post(request):
             o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
             o['hw'] = imo['hw']
 
-        # cat = get_cat(cat_id=p['category_id'])
-        # o['category'] = {
-        #     'id': cat.id,
-        #     'image': "/media/" + str(cat.image),
-        #     'resource_uri': "/pin/apic/category/"+str(cat.id)+"/",
-        #     'title': cat.title,
-        # }
         o['category'] = Category.get_json(cat_id=p['category_id'])
         objects_list.append(o)
 
@@ -460,23 +418,6 @@ def notif(request):
 
         if cur_user:
             o['like_with_user'] = Likes.user_in_likers(post_id=cur_p['id'], user_id=cur_user)
-
-        # if cur_user and cur_p['cnt_like'] > 0:
-        #     # post likes users
-        #     c_key = "post_like_%s" % (cur_p['id'])
-
-        #     plu = cache.get(c_key)
-        #     if plu:
-        #         #print "get like_with_user from memcache", c_key
-        #         if cur_user in plu:
-        #             o['like_with_user'] = True
-        #     else:
-        #         post_likers = Likes.objects.values_list('user_id', flat=True)\
-        #             .filter(post_id=cur_p['id'])
-        #         cache.set(c_key, post_likers, 60 * 60)
-
-        #         if cur_user in post_likers:
-        #             o['like_with_user'] = True
 
         thumb_size = request.GET.get('thumb_size', "100x100")
         thumb_quality = 99
