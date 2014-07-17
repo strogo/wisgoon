@@ -141,6 +141,7 @@ class Post(models.Model):
     @classmethod
     def get_hot(self, values=False):
         h = r_server.zrange('hot', 0, 0, withscores=True, desc=True)
+        r_server.zincrby('hot', h[0][0], amount=-0.1)
         try:
             if values:
                 post = Post.objects\
