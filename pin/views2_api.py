@@ -67,15 +67,15 @@ def post_item(request, item_id):
     p = cache.get(cache_pi_str)
     if p:
         return HttpResponse(p)
-    
+
     try:
         p = Post.objects.values('id', 'image').get(id=item_id)
     except Exception, e:
         print str(e)
         return HttpResponse('{}')
-    
+
     data = {}
-    
+
     o_image = p['image']
 
     imo = get_thumb(o_image, thumb_size, thumb_quality)
@@ -127,7 +127,7 @@ def post(request):
         filters.update(dict(id__lt=before))
 
     if user_id:
-        filters.update(dict(user_id=user_id))        
+        filters.update(dict(user_id=user_id))
 
     if popular:
         cache_ttl = 60 * 60 * 4
@@ -148,7 +148,7 @@ def post(request):
             filters.update(dict(timestamp__gt=start_from))
 
     cache_stream_str = "%s_%s" % (str(filters), sort_by)
-    
+
     cache_stream_name = md5(cache_stream_str).hexdigest()
     #print cache_stream_str, cache_stream_name
 
@@ -156,15 +156,17 @@ def post(request):
     #print cache_stream_str, cache_stream_name, posts
     if before:
         if not posts:
-            posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
-                              'image', 'user_id', 'cnt_like', 'category_id')\
+            posts = Post.objects\
+                .values('id', 'text', 'cnt_comment', 'timestamp',
+                        'image', 'user_id', 'cnt_like', 'category_id')\
                 .filter(**filters).order_by(*sort_by)[:10]
 
             cache.set(cache_stream_name, posts, 86400)
     else:
-        posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
-                              'image', 'user_id', 'cnt_like', 'category_id')\
-                .filter(**filters).order_by(*sort_by)[:10]
+        posts = Post.objects\
+            .values('id', 'text', 'cnt_comment', 'timestamp',
+                    'image', 'user_id', 'cnt_like', 'category_id')\
+            .filter(**filters).order_by(*sort_by)[:10]
 
     for p in posts:
         o = {}
@@ -245,7 +247,6 @@ def friends_post(request):
     cache_ttl = 120
     filters.update(dict(status=Post.APPROVED))
     before = request.GET.get('before', None)
-    
     user_id = request.GET.get('user_id', None)
 
     token = request.GET.get('token', '')
@@ -263,9 +264,10 @@ def friends_post(request):
     for p in stream:
         idis.append(int(p.post_id))
 
-    posts = Post.objects.values('id', 'text', 'cnt_comment', 'timestamp',
-                          'image', 'user_id', 'cnt_like', 'category_id')\
-            .filter(id__in=idis).order_by('-id')[:10]
+    posts = Post.objects\
+        .values('id', 'text', 'cnt_comment', 'timestamp',
+                'image', 'user_id', 'cnt_like', 'category_id')\
+        .filter(id__in=idis).order_by('-id')[:10]
 
     for p in posts:
         o = {}
@@ -337,7 +339,7 @@ def likes(request):
     post_id = request.GET.get('post_id', None)
     offset = int(request.GET.get('offset', 0))
     limit = int(request.GET.get('limit', 20))
-    
+
     next = {
         'url': "/api/v1/tone/?limit=%s&offset=%s" % (limit, offset+limit),
     }
@@ -359,13 +361,15 @@ def likes(request):
         return HttpResponse('fault')
 
     cache_stream_str = "wislikes_%s_%s_%s" % (str(filters), str(offset), str(limit))
-    
+
     cache_stream_name = md5(cache_stream_str).hexdigest()
     #print cache_stream_str, cache_stream_name
 
     post_likes = cache.get(cache_stream_name)
     if not post_likes:
-        post_likes = Likes.objects.values('id', 'post_id', 'user_id').filter(**filters).all()[offset:offset+limit]
+        post_likes = Likes.objects\
+            .values('id', 'post_id', 'user_id')\
+            .filter(**filters).all()[offset:offset+limit]
         if len(post_likes) == limit:
             #print "store likes in cache"
             cache.set(cache_stream_name, post_likes, 86400)
@@ -374,14 +378,12 @@ def likes(request):
         o = {}
         o['post_id'] = p['post_id']
 
-        av = AuthCache.avatar(user_id=p['user_id'])
         o['user_avatar'] = AuthCache.avatar(user_id=p['user_id'])[1:]
         o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
 
         o['user_url'] = p['user_id']
         o['resource_uri'] = "/pin/api/like/likes/%d/" % p['id']
 
-        
         objects_list.append(o)
 
     #cache.set(cache_stream_name, posts, cache_ttl)
@@ -389,6 +391,7 @@ def likes(request):
     data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
+
 
 def notif(request):
     #print "we are in post"
@@ -421,7 +424,8 @@ def notif(request):
 
     notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 
-    rf = ['id', 'text', 'cnt_comment', 'image', 'user_id', 'cnt_like', 'category_id']
+    rf = ['id', 'text', 'cnt_comment', 'image',
+          'user_id', 'cnt_like', 'category_id']
 
     for p in notifs:
         try:
@@ -452,7 +456,6 @@ def notif(request):
         o['likers'] = None
         o['like_with_user'] = False
 
-        
         o['resource_uri'] = "/pin/api/notif/notify/%d/" % cur_p['id']
 
         if cur_user and cur_p['cnt_like'] > 0:
@@ -498,11 +501,10 @@ def notif(request):
                 AuthCache.get_username(ac)[1:],
                 AuthCache.avatar(ac, size=100)
             ])
-        
+
         o['actors'] = ar
         from collections import OrderedDict
         o = OrderedDict(sorted(o.items(), key=lambda o: o[0]))
-
 
         objects_list.append(o)
 
