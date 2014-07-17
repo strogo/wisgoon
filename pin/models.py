@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import time
 import hashlib
 #import datetime
 from datetime import datetime, timedelta
@@ -20,7 +21,6 @@ from taggit.managers import TaggableManager
 from taggit.models import Tag
 
 from model_mongo import Notif as Notif_mongo
-
 
 LIKE_TO_DEFAULT_PAGE = 10
 
@@ -216,6 +216,14 @@ class Post(models.Model):
             cnt = self.cnt_comment
 
         return cnt
+
+    def approve(self):
+        from tasks import send_notif_bar
+
+        Post.objects.filter(pk=self.id)\
+            .update(status=self.APPROVED, timestamp=time.time())
+
+        send_notif_bar(user=self.user.id, type=3, post=self.id, actor=self.user.id)
 
 
 class Follow(models.Model):
