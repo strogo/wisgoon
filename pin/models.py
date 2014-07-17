@@ -139,6 +139,15 @@ class Post(models.Model):
         r_server.zremrangebyrank('hot', 0, -1001)
 
     @classmethod
+    def get_hot(self):
+        h = r_server.zrange('hot', 0, 0, withscores=True, desc=True)
+        try:
+            post = Post.objects.filter(id=h[0][0])
+            return post
+        except Post.DoesNotExist:
+            return False
+
+    @classmethod
     def add_to_set(self, set_name, post, set_cat=True):
         r_server.zadd(set_name, int(post.timestamp), post.id)
         #r_server.ltrim(set_name, 0, 1000)

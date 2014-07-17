@@ -1,6 +1,7 @@
 # coding: utf-8
 from time import mktime
 import datetime
+import itertools
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -156,6 +157,11 @@ def latest(request):
         latest_items = Post.accepted\
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
+
+    hp = Post.get_hot()
+    if hp:
+
+        latest_items = itertools.chain(hp, latest_items)
 
     if request.is_ajax():
         if latest_items.exists():
