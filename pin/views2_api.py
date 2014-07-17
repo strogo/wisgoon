@@ -479,7 +479,7 @@ def notif(request):
             o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
             o['hw'] = imo['hw']
 
-        o['category'] = Category.get_json(cat_id=p['category_id'])
+        o['category'] = Category.get_json(cat_id=cur_p['category_id'])
 
         ar = []
         for ac in p.last_actors():

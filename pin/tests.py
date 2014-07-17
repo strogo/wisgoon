@@ -7,10 +7,13 @@ Replace this with more appropriate tests for your application.
 
 from django.test import TestCase
 
+from models import Post
 
-class SimpleTest(TestCase):
+
+class Test(TestCase):
+    def setup(self):
+        Post.objects.create(title="test")
+
     def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+        post = Post.objects.get(title="test")
+        self.assertEqual(post.id, 1)
