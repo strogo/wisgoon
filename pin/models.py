@@ -134,9 +134,14 @@ class Post(models.Model):
         return timestamp < lt_timestamp
 
     @classmethod
-    def add_to_set(self, set_name, post_id):
-        r_server.lpush(set_name, post_id)
+    def add_to_set(self, set_name, post, set_cat=True):
+        r_server.lpush(set_name, post.id)
         r_server.ltrim(set_name, 0, 1000)
+
+        if set_cat:
+            cat_set_key = "latest_%s" % post.category.id
+            r_server.lpush(cat_set_key, post.id)
+            r_server.ltrim(cat_set_key, 0, 1000)
 
 
     def save(self, *args, **kwargs):
@@ -231,7 +236,7 @@ class Post(models.Model):
         Post.objects.filter(pk=self.id)\
             .update(status=self.APPROVED, timestamp=time.time())
 
-        Post.add_to_set('latest', self.id)
+        Post.add_to_set('latest', self)
 
         send_notif_bar(user=self.user.id, type=3, post=self.id, actor=self.user.id)
 
@@ -258,12 +263,19 @@ class Stream(models.Model):
             followers = Follow.objects.all().filter(following=user)
             for follower in followers:
                 try:
-                    stream, created = Stream.objects.get_or_create(post=post, user=follower.follower, date=post.timestamp, following=user)
+                    stream_set_key = "following_%s" % follower.follower_id
+                    Post.add_to_set(stream_set_key, post, set_cat=False)
+                    
+                    stream, created = Stream.objects\
+                        .get_or_create(post=post,
+                                       user=follower.follower,
+                                       date=post.timestamp,
+                                       following=user)
                 except:
                     pass
         
         if post.status == Post.APPROVED:
-            Post.add_to_set('latest', post.id)
+            Post.add_to_set('latest', post)
                 
     
 class Likes(models.Model):
