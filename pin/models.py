@@ -139,10 +139,16 @@ class Post(models.Model):
         r_server.zremrangebyrank('hot', 0, -1001)
 
     @classmethod
-    def get_hot(self):
+    def get_hot(self, values=False):
         h = r_server.zrange('hot', 0, 0, withscores=True, desc=True)
         try:
-            post = Post.objects.filter(id=h[0][0])
+            if values:
+                post = Post.objects\
+                    .values('id', 'text', 'cnt_comment', 'timestamp',
+                            'image', 'user_id', 'cnt_like', 'category_id')\
+                    .filter(id=h[0][0])
+            else:
+                post = Post.objects.filter(id=h[0][0])
             return post
         except Post.DoesNotExist:
             return False
