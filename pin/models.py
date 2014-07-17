@@ -37,6 +37,25 @@ class Category(models.Model):
 
     admin_image.allow_tags = True
 
+    @classmethod
+    def get_json(self, cat_id):
+        # json cat cache str
+        jccs = "json_cat_%s" % cat_id
+        jcc = cache.get(jccs)
+        if jcc:
+            return jcc
+
+        cat = Category.objects.get(id=cat_id)
+        
+        cat_json = {
+            'id': cat.id,
+            'image': cat.image.url,
+            'resource_uri': "/pin/apic/category/"+str(cat.id)+"/",
+            'title': cat.title,
+        }
+        cache.set(jccs, cat_json, 86400)
+        return cat_json
+
 
 class AcceptedManager(models.Manager):
     def get_query_set(self):
