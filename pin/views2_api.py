@@ -175,7 +175,6 @@ def post(request):
         o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
         o['image'] = p['image']
 
-        av = AuthCache.avatar(user_id=p['user_id'])
         o['user_avatar'] = AuthCache.avatar(user_id=p['user_id'])[1:]
         o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
 
@@ -270,7 +269,6 @@ def friends_post(request):
         o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
         o['image'] = p['image']
 
-        av = AuthCache.avatar(user_id=p['user_id'])
         o['user_avatar'] = AuthCache.avatar(user_id=p['user_id'])[1:]
         o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
 
