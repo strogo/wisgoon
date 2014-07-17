@@ -135,13 +135,13 @@ class Post(models.Model):
 
     @classmethod
     def add_to_set(self, set_name, post, set_cat=True):
-        r_server.zadd(set_name, post.timestamp, post.id)
+        r_server.zadd(set_name, int(post.timestamp), post.id)
         #r_server.ltrim(set_name, 0, 1000)
         r_server.zremrangebyrank(set_name, 0, -1001)
 
         if set_cat:
             cat_set_key = "post_latest_%s" % post.category.id
-            r_server.zadd(cat_set_key, post.timestamp, post.id)
+            r_server.zadd(cat_set_key, int(post.timestamp), post.id)
             r_server.zremrangebyrank(cat_set_key, 0, -1001)
             #r_server.ltrim(cat_set_key, 0, 1000)
 
