@@ -311,13 +311,14 @@ def friends_post(request):
             o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
             o['hw'] = imo['hw']
 
-        cat = get_cat(cat_id=p['category_id'])
-        o['category'] = {
-            'id': cat.id,
-            'image': "/media/" + str(cat.image),
-            'resource_uri': "/pin/apic/category/"+str(cat.id)+"/",
-            'title': cat.title,
-        }
+        # cat = get_cat(cat_id=p['category_id'])
+        # o['category'] = {
+        #     'id': cat.id,
+        #     'image': "/media/" + str(cat.image),
+        #     'resource_uri': "/pin/apic/category/"+str(cat.id)+"/",
+        #     'title': cat.title,
+        # }
+        o['category'] = Category.get_json(cat_id=p['category_id'])
         objects_list.append(o)
 
     #cache.set(cache_stream_name, posts, cache_ttl)
@@ -480,13 +481,7 @@ def notif(request):
             o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
             o['hw'] = imo['hw']
 
-        cat = get_cat(cat_id=cur_p['category_id'])
-        o['category'] = {
-            'id': cat.id,
-            'image': "/media/" + str(cat.image),
-            'resource_uri': "/pin/apic/category/"+str(cat.id)+"/",
-            'title': cat.title,
-        }
+        o['category'] = Category.get_json(cat_id=p['category_id'])
 
         ar = []
         for ac in p.last_actors():
