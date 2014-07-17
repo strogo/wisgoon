@@ -2,6 +2,7 @@
 import os
 import time
 import hashlib
+import redis
 #import datetime
 from datetime import datetime, timedelta
 from time import mktime
@@ -24,6 +25,7 @@ from model_mongo import Notif as Notif_mongo
 
 LIKE_TO_DEFAULT_PAGE = 10
 
+r_server = redis.Redis("localhost", db=11)
 
 class Category(models.Model):
     title = models.CharField(max_length=250)
@@ -268,6 +270,10 @@ class Likes(models.Model):
 
     def delete(self, *args, **kwargs):
         Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like')-1)
+
+        key_str = "wis_likers_%d" % self.post.id
+        r_server.srem(key_str, int(self.user.id))
+
         super(Likes, self).delete(*args, **kwargs)
 
     @classmethod
@@ -275,6 +281,9 @@ class Likes(models.Model):
         like = instance
         post = like.post
         sender = like.user
+
+        key_str = "wis_likers_%d" % post.id
+        r_server.sadd(key_str, int(like.user.id))
 
         hcpstr = "like_max_%d" % post.id
         cp = cache.get(hcpstr)
@@ -289,42 +298,27 @@ class Likes(models.Model):
         
         from pin.tasks import send_notif, send_notif_bar
 
-        #send_notif(user=post.user, type=1, post=post.id, actor=sender)
         send_notif_bar(user=post.user_id, type=1, post=post.id, actor=sender.id)
-        #send_notif(fun)
-        #notif, created = Notif.objects.get_or_create(post=post, user=post.user, type=1)
-        #notif.seen = False
 
-        #notif.date = datetime.now()
-        #notif.save()
-        #Notif_actors.objects.get_or_create(actor=sender, notif=notif)
-
-        
-        #c_key = "post_like_%s" % (post.id)
-        #post_likers = Likes.objects.values_list('user_id', flat=True).filter(post_id=post.id)
-        #cache.set(c_key, post_likers, 60*60)
-        #cache.set(c_key, [sender.id], 60*60)
-
-    """
     @classmethod
-    def user_unlike_post(cls, sender, instance, *args, **kwargs):
-        try:
-            like = instance
-            post = like.post
-            sender = like.user
-            notify = Notify.objects.get(type=1,post=post)
-            if notify.actors:
-                notify.actors.remove(sender)
-            else:
-                notify.delete()
+    def user_in_likers(self, post_id, user_id):
+        key_str = "wis_likers_%d" % post_id
+        post_likers = r_server.smembers(key_str)
+        if post_likers == set([]):
+            post_likers = Likes.objects.values_list('user_id', flat=True)\
+                .filter(post_id=post_id)
 
-            if not notify.actors.all():
-                notify.delete()
-        except Notify.DoesNotExist:
-            pass
-        except Post.DoesNotExist:
-            pass
-    """
+            if post_likers:
+                for pl in post_likers:
+                    r_server.sadd(key_str, int(pl))
+            else:
+                r_server.sadd(key_str, int(-1))
+
+        if str(user_id) in post_likers or user_id in post_likers:
+            return True
+
+        return False
+
 
 class Notifbar(models.Model):
     LIKE = 1

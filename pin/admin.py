@@ -33,18 +33,8 @@ class PinAdmin(admin.ModelAdmin):
     def make_approve(self, request, queryset):
         for obj in queryset:
             obj.approve()
-            # Post.objects.filter(pk=obj.id)\
-            #     .update(status=Post.APPROVED, timestamp=time.time())
-
-        #for obj in queryset:
-        #    send_notif(user=obj.user, type=Notif.APPROVE, post=obj.id, actor=request.user)
-
+            
     make_approve.short_description = u"تایید مطلب"
-
-    # def make_approve_go_default(modeladmin, request, queryset):
-    #     queryset.update(status=1, show_in_default=True, timestamp=time.time())
-
-    # make_approve_go_default.short_description = u"تایید و ارسال برای صفحه اصلی"
 
     def no_problem(self, request, queryset):
         for obj in queryset:
