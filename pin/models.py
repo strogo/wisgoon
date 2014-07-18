@@ -135,7 +135,7 @@ class Post(models.Model):
 
     @classmethod
     def hot(self, post_id, amount=1):
-        hotest = r_server.smembers('hotest')
+        hotest = r_server.smembers('hottest')
         if str(post_id) not in hotest:
             r_server.zincrby('hot', int(post_id), amount=1)
         
