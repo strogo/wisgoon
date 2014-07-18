@@ -135,13 +135,17 @@ class Post(models.Model):
 
     @classmethod
     def hot(self, post_id, amount=1):
-        r_server.zincrby('hot', int(post_id), amount=1)
+        hotest = r_server.smembers('hotest')
+        if post_id not in hotest:
+            r_server.zincrby('hot', int(post_id), amount=1)
+        
         r_server.zremrangebyrank('hot', 0, -1001)
 
     @classmethod
     def get_hot(self, values=False):
         h = r_server.zrange('hot', 0, 0, withscores=True, desc=True)
         if h[0][1] > 110:
+            r_server.sadd('hottest', h[0][0])
             r_server.zincrby('hot', h[0][0], amount=-100)
 
         if h[0][1] <= 49:
