@@ -153,14 +153,14 @@ def latest(request):
     if timestamp == 0:
         latest_items = Post.accepted\
             .order_by('-is_ads', '-timestamp')[:20]
+
+        hp = Post.get_hot()
+        if hp:
+            latest_items = itertools.chain(hp, latest_items)
     else:
         latest_items = Post.accepted\
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
-
-    hp = Post.get_hot()
-    if hp:
-        latest_items = itertools.chain(hp, latest_items)
 
     if request.is_ajax():
         if latest_items:
