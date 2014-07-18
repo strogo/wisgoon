@@ -136,7 +136,7 @@ class Post(models.Model):
     @classmethod
     def hot(self, post_id, amount=1):
         hotest = r_server.smembers('hotest')
-        if post_id not in hotest:
+        if str(post_id) not in hotest:
             r_server.zincrby('hot', int(post_id), amount=1)
         
         r_server.zremrangebyrank('hot', 0, -1001)
