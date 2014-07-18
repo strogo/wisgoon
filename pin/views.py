@@ -160,11 +160,10 @@ def latest(request):
 
     hp = Post.get_hot()
     if hp:
-
         latest_items = itertools.chain(hp, latest_items)
 
     if request.is_ajax():
-        if latest_items.exists():
+        if latest_items:
             return render(request,
                           'pin/_items.html',
                           {'latest_items': latest_items})
