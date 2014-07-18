@@ -153,6 +153,7 @@ class Post(models.Model):
                 post = Post.objects.filter(id=h[0][0])
             return post
         except Post.DoesNotExist:
+            r_server.zrem('hot', h[0][0])
             return False
 
     @classmethod
