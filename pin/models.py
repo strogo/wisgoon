@@ -143,21 +143,22 @@ class Post(models.Model):
         h = r_server.zrange('hot', 0, 0, withscores=True, desc=True)
         if h[0][1] > 110:
             r_server.zincrby('hot', h[0][0], amount=-100)
-        try:
-            if values:
-                post = Post.objects\
-                    .values('id', 'text', 'cnt_comment', 'timestamp',
-                            'image', 'user_id', 'cnt_like', 'category_id')\
-                    .filter(id=h[0][0])
-            else:
-                post = Post.objects.filter(id=h[0][0])
 
-            if not post:
-                r_server.zrem('hot', h[0][0])    
-            return post
-        except Post.DoesNotExist:
-            r_server.zrem('hot', h[0][0])
+        if h[0][1] <= 49:
             return False
+
+        if values:
+            post = Post.objects\
+                .values('id', 'text', 'cnt_comment', 'timestamp',
+                        'image', 'user_id', 'cnt_like', 'category_id')\
+                .filter(id=h[0][0])
+        else:
+            post = Post.objects.filter(id=h[0][0])
+
+        if not post:
+            r_server.zrem('hot', h[0][0])    
+        return post
+    
 
     @classmethod
     def add_to_set(self, set_name, post, set_cat=True):
