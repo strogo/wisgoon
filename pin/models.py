@@ -152,7 +152,8 @@ class Post(models.Model):
             else:
                 post = Post.objects.filter(id=h[0][0])
 
-            print "hot post is", post
+            if not post:
+                r_server.zrem('hot', h[0][0])    
             return post
         except Post.DoesNotExist:
             r_server.zrem('hot', h[0][0])
