@@ -167,7 +167,7 @@ def post(request):
             .values('id', 'text', 'cnt_comment', 'timestamp',
                     'image', 'user_id', 'cnt_like', 'category_id')\
             .filter(**filters).order_by(*sort_by)[:10]
-        if not user_id:
+        if not user_id and not category_id:
             posts = list(Post.get_hot(values=True)) + list(posts)
         #posts.insert(0, {'user_id': 1L, 'text': u' test final', 'image': u'pin/images/o/2014/7/18/3/1405638687140154.JPG', 'cnt_comment': 3L, 'cnt_like': 1L, 'timestamp': 1405638699L, 'category_id': 1L, 'id': 901L})
 
