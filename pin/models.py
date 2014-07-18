@@ -144,7 +144,7 @@ class Post(models.Model):
         if h[0][1] > 110:
             r_server.zincrby('hot', h[0][0], amount=-100)
 
-        if h[0][1] <= 59:
+        if h[0][1] <= 49:
             return False
 
         if values:
