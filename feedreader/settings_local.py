@@ -97,33 +97,26 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    #'django.contrib.sitemaps',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.humanize',
-    #'cacheops',
-    #'rss',
     'pin',
     'registration',
     'south',
-    'debug_toolbar',
     'sorl.thumbnail',
     'social_auth',
-    #'django.contrib.flatpages',
     'django.contrib.comments',
-    #'djangosphinx',
     'daddy_avatar',
-    #'ban',
-    #'socialacc',
     'contactus',
     'compressor',
     'taggit',
     'user_profile',
     'captcha',
-    #'google_contacts',
-    'devserver',
     'tastypie',
+    
+    'devserver',
+    'debug_toolbar',
 )
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
@@ -141,9 +134,11 @@ DEBUG_TOOLBAR_CONFIG ={
 }
 
 SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
+
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_ACTIVATION_DAYS = 7
 LOGIN_REDIRECT_URL = '/'
+
 INTERNAL_IPS = ('127.0.0.1',)
 DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.version.VersionDebugPanel',
@@ -167,58 +162,60 @@ CACHES = {
     )
 }
 
-JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_myproj'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+JOHNNY_MIDDLEWARE_KEY_PREFIX='wis_cac2'
 
-CACHEOPS_REDIS = {
-    'host': 'localhost', # redis-server is on same machine
-    'port': 6379,        # default redis port
-    'db': 5,             # SELECT non-default redis database
-                         # using separate redis db or redis instance
-                         # is highly recommended
-    'socket_timeout': 3,
-}
-CACHEOPS = {
-    #'auth.user': ('get', 60*15),
-    'pin.category': ('all', 60*60),
-    'pin.post': ('all', 60),
-    #'pin.post': ('count', 60*60*60),
-    'social_auth.usersocialauth': ('all', 60),
-    'django.flatpage': ('all', 60*60*60),
-    'taggit.tag': ('all', 60*60),
-    'pin.comments': ('all', 60),
-    'pin.likes': ('all', 60),
-    '*.*': ('count', 60),
-}
-
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_myproj2'
-SPHINX_SERVER = 'localhost'
-SPHINX_PORT = 9312
 COMPRESS_URL = MEDIA_URL
 COMPRESS_ROOT = MEDIA_ROOT
 COMPRESS_OUTPUT_DIR = 'static_cache'
-NODE_URL='http://127.0.0.1:1312/'
+
+FACEBOOK_APP_ID = 242648675868616
+FACEBOOK_APP_SECRET = '459f3ab2b3ccd33e1f0eef65c0dfcfcd'
+FACEBOOK_REGISTRATION_BACKEND = 'registration.backends.default.DefaultBackend'
+
 API_LIMIT_PER_PAGE = 10
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
+    'disable_existing_loggers': True,
+    'formatters': {
+        'standard': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
     },
     'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
+        'null': {
+            'level':'DEBUG',
+            'class':'django.utils.log.NullHandler',
+        },
+        'logfile': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': SITE_ROOT + "/logfile",
+            'maxBytes': 50000,
+            'backupCount': 2,
+            'formatter': 'standard',
+        },
+        'console':{
+            'level':'INFO',
+            'class':'logging.StreamHandler',
+            'formatter': 'standard'
+        },
     },
     'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
+        'django': {
+            'handlers':['console'],
             'propagate': True,
+            'level':'WARN',
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'pin': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
         },
     }
 }
