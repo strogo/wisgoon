@@ -42,7 +42,9 @@ def d_change(request):
 
     profile, created = Profile.objects.get_or_create(user=user)
 
-    if request.method == "POST" and user.is_active:
+    if request.method == "POST":
+        if not user.is_active:
+            return HttpResponse('user not active')
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             profile = form.save(commit=False)
@@ -51,6 +53,8 @@ def d_change(request):
             return HttpResponse('profile saved')
         else:
             return HttpResponse('form not valid')
+    else:
+        return HttpResponse('request method != POST')
 
     return HttpResponse('error in data')
 
