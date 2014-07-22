@@ -13,11 +13,11 @@ if (disable_masonry==0){
     });
 }
 
-
+var next_pref = next_pref || '?older='
 
 function load_posts(page) {
     $.get(
-        a_url+'?older=' + page + '&'+extend_query,
+        a_url + next_pref + page + '&'+extend_query,
         function(response) {
             if(response==0){
                 loadingobj.hide();
@@ -27,7 +27,7 @@ function load_posts(page) {
                 feedobj.masonry('reload');
                 loadingobj.hide();
                 start_loading=0;
-                ana_ajax(a_url+'?older=' + page + '&'+extend_query);
+                ana_ajax(a_url + next_pref + page + '&'+extend_query);
             }
         }
     );

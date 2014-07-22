@@ -105,6 +105,13 @@ def get_request_timestamp(request):
         timestamp = 0
     return timestamp
 
+def get_request_pid(request):
+    try:
+        pid = int(request.GET.get('pid', 0))
+    except ValueError:
+        pid = 0
+    return pid
+
 
 def get_user_ip(request):
     return request.META.get('REMOTE_ADDR', None)

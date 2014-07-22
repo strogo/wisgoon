@@ -14,7 +14,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 
 from pin.models import Post, Follow, Likes, Category, Comments
-from pin.tools import get_request_timestamp
+from pin.tools import get_request_timestamp, get_request_pid
 
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
@@ -148,30 +148,42 @@ def user_like(request, user_id):
                        'user_id': user_id})
 
 
+# hp = Post.get_hot()
+# if hp:
+#     latest_items = itertools.chain(hp, latest_items)
+
 def latest(request):
-    timestamp = get_request_timestamp(request)
+    pid = get_request_pid(request)
 
-    if timestamp == 0:
-        latest_items = Post.accepted\
-            .order_by('-timestamp')[:20]
+    pl = Post.latest(pid=pid)
+        
+    print pl
+    latest_items = Post.objects.filter(id__in=pl)
+    latest_items = sorted(latest_items, 
+                          key=operator.attrgetter('timestamp'),
+                          reverse=True)
 
-        hp = Post.get_hot()
-        if hp:
-            latest_items = itertools.chain(hp, latest_items)
-    else:
-        latest_items = Post.accepted\
-            .extra(where=['timestamp<%s'], params=[timestamp])\
-            .order_by('-timestamp')[:20]
+    # if timestamp == 0:
+    #     latest_items = Post.accepted\
+    #         .order_by('-timestamp')[:20]
+
+    #     hp = Post.get_hot()
+    #     if hp:
+    #         latest_items = itertools.chain(hp, latest_items)
+    # else:
+    #     latest_items = Post.accepted\
+    #         .extra(where=['timestamp<%s'], params=[timestamp])\
+    #         .order_by('-timestamp')[:20]
 
     if request.is_ajax():
         if latest_items:
             return render(request,
-                          'pin/_items.html',
+                          'pin/_items_2.html',
                           {'latest_items': latest_items})
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin/home.html', {'latest_items': latest_items})
+        return render(request, 'pin/latest.html', {'latest_items': latest_items})
 
 
 def latest_back(request):

@@ -285,22 +285,17 @@ class Post(models.Model):
         send_notif_bar(user=self.user.id, type=3, post=self.id, actor=self.user.id)
 
     @classmethod
-    def latest(self, timestamp=0):
+    def latest(self, pid=0):
 
-        pl = r_server.zrange('post_latest', 0, 1000, withscores=True, desc=True)
-        if timestamp == 0:
+        pl = r_server.lrange(settings.STREAM_LATEST, 0, 1000)
+        if pid == 0:
             return pl[:20]
         
-        if timestamp:
+        if pid:
             alls = []
-            for row in pl:
-
-                if int(row[0]) < timestamp:
-                    print row[0], timestamp, row[1]
-                    alls.append(row)
-
-                if len(alls) == 20:
-                    break
+            pid_index = pl.index(str(pid))
+            idis = pl[pid_index+1:pid_index+20]
+            return idis
 
             return alls
 
