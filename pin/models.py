@@ -168,8 +168,8 @@ class Post(models.Model):
     def add_to_set(self, set_name, post, set_cat=True):
         r_server.zadd(set_name, int(post.timestamp), post.id)
         r_server.zremrangebyrank(set_name, 0, -1001)
-        
-        r_server.lpush(settings.STREAM_LATEST, post.id)
+
+        r_server.sadd(settings.STREAM_LATEST, post.id)
 
         if set_cat:
             cat_set_key = "post_latest_%s" % post.category.id

@@ -223,4 +223,4 @@ LOGGING = {
     }
 }
 
-STREAM_LATEST = 'lps'
+STREAM_LATEST = 'set_latest'
