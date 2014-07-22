@@ -165,10 +165,15 @@ class Post(models.Model):
     
     @classmethod
     def add_to_stream(self, post):
-        print "we are in add to set", post.id
-        r_server.lpush(settings.STREAM_LATEST, post.id)
 
-        r_server.ltrim(settings.STREAM_LATEST, 0, 1000)
+        latest_stream = settings.STREAM_LATEST 
+        r_server.lpush(latest_stream, post.id)
+
+        cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, post.category.id)
+        r_server.lpush(cat_stream, post.id)
+
+        r_server.ltrim(cat_stream, 0, 1000)
+        r_server.ltrim(latest_stream, 0, 1000)
 
     @classmethod
     def add_to_set(self, set_name, post, set_cat=True):

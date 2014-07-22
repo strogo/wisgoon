@@ -224,3 +224,4 @@ LOGGING = {
 }
 
 STREAM_LATEST = 'list_latest'
+STREAM_LATEST_CAT = 'list_latest_cat'
