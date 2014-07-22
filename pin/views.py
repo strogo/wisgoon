@@ -152,7 +152,7 @@ def user_like(request, user_id):
 # if hp:
 #     latest_items = itertools.chain(hp, latest_items)
 
-def latest(request):
+def latest_redis(request):
     pid = get_request_pid(request)
 
     pl = Post.latest(pid=pid)
@@ -184,6 +184,31 @@ def latest(request):
             return HttpResponse(0)
     else:
         return render(request, 'pin/latest.html', {'latest_items': latest_items})
+
+def latest(request):
+    timestamp = get_request_timestamp(request)
+
+    if timestamp == 0:
+        latest_items = Post.accepted\
+            .order_by('-timestamp')[:20]
+
+        hp = Post.get_hot()
+        if hp:
+            latest_items = itertools.chain(hp, latest_items)
+    else:
+        latest_items = Post.accepted\
+            .extra(where=['timestamp<%s'], params=[timestamp])\
+            .order_by('-timestamp')[:20]
+
+    if request.is_ajax():
+        if latest_items:
+            return render(request,
+                          'pin/_items.html',
+                          {'latest_items': latest_items})
+        else:
+            return HttpResponse(0)
+    else:
+        return render(request, 'pin/home.html', {'latest_items': latest_items})
 
 
 def latest_back(request):
