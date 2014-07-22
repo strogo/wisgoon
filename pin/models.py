@@ -192,7 +192,7 @@ class Post(models.Model):
                 or profile.score > 7000 ):
                 profile.post_accept = True
                 profile.save()
-            self.status = 1
+                self.status = 1
 
         except Profile.DoesNotExist:
             pass
