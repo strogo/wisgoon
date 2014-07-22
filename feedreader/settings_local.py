@@ -222,3 +222,5 @@ LOGGING = {
         },
     }
 }
+
+STREAM_LATEST = 'lps'
