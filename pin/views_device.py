@@ -64,11 +64,11 @@ def like(request):
             #     inc_user_cnt_like(user_id=l.post.user_id)
             # else:
             #     dec_user_cnt_like(user_id=l.post.user_id)
-            try:
-                profile = Profile.objects.get(user=l.post.user)
-                profile.save()
-            except Exception, e:
-                print str(e), "views_device 71"
+            # try:
+            #     profile = Profile.objects.get(user=l.post.user)
+            #     profile.save()
+            # except Exception, e:
+            #     print str(e), "views_device 71"
         except Exception, e:
             print str(e), "views_device 73"
             return HttpResponse('-1')

@@ -196,8 +196,10 @@ class Post(models.Model):
             if ((self.date_lt( self.user.date_joined, 30) and profile.score > 5000) \
                 or profile.score > 7000 ):
                 profile.post_accept = True
-                profile.save()
+                
                 self.status = 1
+
+            profile.save()
 
         except Profile.DoesNotExist:
             pass
