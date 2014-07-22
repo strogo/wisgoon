@@ -1,6 +1,7 @@
 # coding: utf-8
 from time import mktime
 import datetime
+import operator
 import itertools
 
 from django.conf import settings
@@ -152,7 +153,7 @@ def latest(request):
 
     if timestamp == 0:
         latest_items = Post.accepted\
-            .order_by('-is_ads', '-timestamp')[:20]
+            .order_by('-timestamp')[:20]
 
         hp = Post.get_hot()
         if hp:
@@ -161,6 +162,48 @@ def latest(request):
         latest_items = Post.accepted\
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
+
+    if request.is_ajax():
+        if latest_items:
+            return render(request,
+                          'pin/_items.html',
+                          {'latest_items': latest_items})
+        else:
+            return HttpResponse(0)
+    else:
+        return render(request, 'pin/home.html', {'latest_items': latest_items})
+
+
+def latest_back(request):
+    timestamp = get_request_timestamp(request)
+
+    # if timestamp == 0:
+    print "timestamp is:", timestamp
+    pl = Post.latest(timestamp=timestamp)
+    idis = []
+    for p in pl:
+        idis.append(int(p[1]))
+    
+    print idis
+    latest_items = Post.objects.filter(id__in=idis).order_by('-timestamp')[:20]
+    latest_items = sorted(latest_items, 
+                          key=operator.attrgetter('timestamp'),
+                          reverse=True)
+    for li in latest_items:
+        print li.id, li.timestamp
+
+    #auths = Author.objects.order_by('-score')[:30]
+    # latest_items = sorted(latest_items, 
+    #                       key=operator.attrgetter('timestamp'),
+    #                       reverse=True)
+
+        # hp = Post.get_hot()
+        # if hp:
+        #     latest_items = itertools.chain(hp, latest_items)
+    # else:
+    #     latest_items = Post.accepted\
+    #         .extra(where=['timestamp<%s'], params=[timestamp])\
+    #         .order_by('-timestamp')[:20]
 
     if request.is_ajax():
         if latest_items:

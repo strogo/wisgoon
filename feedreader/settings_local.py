@@ -174,6 +174,9 @@ FACEBOOK_APP_SECRET = '459f3ab2b3ccd33e1f0eef65c0dfcfcd'
 FACEBOOK_REGISTRATION_BACKEND = 'registration.backends.default.DefaultBackend'
 
 API_LIMIT_PER_PAGE = 10
+
+API_THUMB_QUALITY = 99
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,

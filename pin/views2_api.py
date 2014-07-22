@@ -6,6 +6,7 @@ from hashlib import md5
 
 from django.http import HttpResponse
 from django.core.cache import cache
+from django.conf import settings
 
 from sorl.thumbnail import get_thumbnail
 
@@ -35,7 +36,7 @@ def get_thumb(o_image, thumb_size, thumb_quality):
         try:
             im = get_thumbnail(o_image,
                                thumb_size,
-                               quality=thumb_quality,
+                               quality=settings.API_THUMB_QUALITY,
                                upscale=False)
             imo = {
                 'thumbnail': im.url,
@@ -78,7 +79,7 @@ def post_item(request, item_id):
 
     o_image = p['image']
 
-    imo = get_thumb(o_image, thumb_size, thumb_quality)
+    imo = get_thumb(o_image, thumb_size, settings.API_THUMB_QUALITY)
 
     if imo:
         data['id'] = p['id']
@@ -200,7 +201,7 @@ def post(request):
 
         o_image = p['image']
 
-        imo = get_thumb(o_image, thumb_size, thumb_quality)
+        imo = get_thumb(o_image, thumb_size, settings.API_THUMB_QUALITY)
 
         if imo:
             o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
@@ -276,11 +277,10 @@ def friends_post(request):
             o['like_with_user'] = Likes.user_in_likers(post_id=p['id'], user_id=cur_user)
 
         thumb_size = request.GET.get('thumb_size', "100x100")
-        thumb_quality = 99
 
         o_image = p['image']
 
-        imo = get_thumb(o_image, thumb_size, thumb_quality)
+        imo = get_thumb(o_image, thumb_size, settings.API_THUMB_QUALITY)
 
         if imo:
             o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
@@ -379,7 +379,8 @@ def notif(request):
     if before:
         sort_by = ['-timestamp']
     else:
-        sort_by = ['-is_ads', '-timestamp']
+        #sort_by = ['-is_ads', '-timestamp']
+        sort_by = ['-timestamp']
 
     token = request.GET.get('api_key', '')
     if token:
