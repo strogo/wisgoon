@@ -163,13 +163,17 @@ class Post(models.Model):
             r_server.zrem('hot', h[0][0])    
         return post
     
+    @classmethod
+    def add_to_stream(self, post):
+        print "we are in add to set", post.id
+        r_server.lpush(settings.STREAM_LATEST, post.id)
+
+        r_server.ltrim(settings.STREAM_LATEST, 0, 1000)
 
     @classmethod
     def add_to_set(self, set_name, post, set_cat=True):
         r_server.zadd(set_name, int(post.timestamp), post.id)
         r_server.zremrangebyrank(set_name, 0, -1001)
-
-        r_server.sadd(settings.STREAM_LATEST, post.id)
 
         if set_cat:
             cat_set_key = "post_latest_%s" % post.category.id
@@ -188,7 +192,7 @@ class Post(models.Model):
                 or profile.score > 7000 ):
                 profile.post_accept = True
                 profile.save()
-                self.status = 1
+            self.status = 1
 
         except Profile.DoesNotExist:
             pass
@@ -270,7 +274,8 @@ class Post(models.Model):
         Post.objects.filter(pk=self.id)\
             .update(status=self.APPROVED, timestamp=time.time())
 
-        Post.add_to_set('post_latest', self)
+        #Post.add_to_set('post_latest', self)
+        Post.add_to_stream(post=self)
 
         send_notif_bar(user=self.user.id, type=3, post=self.id, actor=self.user.id)
 
@@ -319,7 +324,7 @@ class Stream(models.Model):
             for follower in followers:
                 try:
                     stream_set_key = "post_following_%s" % follower.follower_id
-                    Post.add_to_set(stream_set_key, post, set_cat=False)
+                    #Post.add_to_set(stream_set_key, post, set_cat=False)
 
                     stream, created = Stream.objects\
                         .get_or_create(post=post,
@@ -330,7 +335,8 @@ class Stream(models.Model):
                     pass
         
         if post.status == Post.APPROVED:
-            Post.add_to_set('post_latest', post)
+            #Post.add_to_set('post_latest', post)
+            Post.add_to_stream(post=post)
                 
     
 class Likes(models.Model):

@@ -223,4 +223,4 @@ LOGGING = {
     }
 }
 
-STREAM_LATEST = 'set_latest'
+STREAM_LATEST = 'list_latest'
