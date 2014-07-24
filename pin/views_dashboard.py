@@ -22,17 +22,17 @@ def home(request):
     post_pending = Post.objects.filter(status=0).count()
     return render(request, 'dashboard/home.html', {"post_pending": post_pending})
 
-def photos(request):
+def get_from_db():
+    plist = Post.objects.filter(status=0).values_list('id', flat=True)[:100]
+    for idp in plist:
+        r_server.sadd('pending_photos', int(idp))
 
-    def get_from_db():
-        plist = Post.objects.filter(status=0).values_list('id', flat=True)[:100]
-        for idp in plist:
-            r_server.sadd('pending_photos', int(idp))
+def photos(request):
 
     if not is_admin(request.user):
         return HttpResponseForbidden('cant access')
 
-    pendings = r_server.srandmember('pending_photos')
+    pendings = r_server.srandmember('pending_photos', 300)
     if not pendings:
         get_from_db()
         pendings = r_server.smembers('pending_photos')
