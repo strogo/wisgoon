@@ -80,6 +80,10 @@ urlpatterns += patterns('pin.views_backbone',
     url(r'new/notif/', 'notif', name='new-notif'),
 )
 
+urlpatterns += patterns('pin.views_dashboard',
+    url(r'dashboard/home/', 'home', name='dashboard-home'),
+)
+
 urlpatterns += patterns('pin.views_oauth',
     url(r'invite/google', 'invite_google', name='invite-google'),
     url(r'email/activation/$', 'activation_email', name='activation_email'),

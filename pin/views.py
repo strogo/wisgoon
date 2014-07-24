@@ -183,7 +183,7 @@ def latest_redis(request):
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin/latest.html', {'latest_items': latest_items})
+        return render(request, 'pin/latest_redis.html', {'latest_items': latest_items})
 
 def latest(request):
     timestamp = get_request_timestamp(request)
