@@ -14,10 +14,13 @@ DATABASES = {
         'NAME': 'feedreader',
         'USER': 'root',
         'PASSWORD': 'somaye',
-        'HOST': '',
+        'HOST': 'wisgoon.db',
         'PORT': '',
     }
 }
+
+REDIS_DB = 'wisgoon.db'
+
 GOOGLE_COOKIE_CONSENT = 'google_token_consent'
 GOOGLE_REDIRECT_SESSION_VAR = 'google_contacts_redirect'
 GOOGLE_REDIRECT_BASE_URL = 'http://localhost:8000'

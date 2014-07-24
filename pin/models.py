@@ -25,7 +25,7 @@ from model_mongo import Notif as Notif_mongo
 
 LIKE_TO_DEFAULT_PAGE = 10
 
-r_server = redis.Redis("localhost", db=11)
+r_server = redis.Redis(settings.REDIS_DB, db=11)
 
 class Category(models.Model):
     title = models.CharField(max_length=250)
