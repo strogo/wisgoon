@@ -23,17 +23,26 @@ def home(request):
     return render(request, 'dashboard/home.html', {"post_pending": post_pending})
 
 def photos(request):
-    if not is_admin(request.user):
-        return HttpResponseForbidden('cant access')
-    pendings = r_server.smembers('pending_photos')
-    if not pendings:
-        plist = Post.objects.filter(status=0).values_list('id', flat=True)[:100]
+
+    def get_from_db():
+        plist = Post.objects.filter(status=0).values_list('id', flat=True)[:1000]
         for idp in plist:
             r_server.sadd('pending_photos', int(idp))
-        
+
+    if not is_admin(request.user):
+        return HttpResponseForbidden('cant access')
+
+    pendings = r_server.srandmember('pending_photos')
+    if not pendings:
+        get_from_db()
         pendings = r_server.smembers('pending_photos')
     
-    idis = list(pendings)[:20]
+    lp = list(pendings)
+    print "lp len", len(lp)
+    if len(lp) < 50 :
+        get_from_db()
+
+    idis = lp[:20]
     posts = Post.objects.filter(id__in=idis, status=0)
     return render(request, 'dashboard/photos.html', {'posts': posts})
 
