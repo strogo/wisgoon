@@ -31,8 +31,8 @@
                     </tr>
                     </thead>
                     <tbody>
+                    {% for item in posts %}
                     <tr>
-                        {% for item in posts %}
                         <td>{{item.id}}</td>
                         <td>{{item.admin_image|safe}}</td>
                         <td>{{item.text}}</td>
@@ -44,8 +44,8 @@
                                 تایید
                             </a>
                         </td>
-                        {% endfor %}
                     </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
