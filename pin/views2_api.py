@@ -183,7 +183,7 @@ def post(request):
         o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
         o['image'] = p['image']
 
-        o['user_avatar'] = AuthCache.avatar(user_id=p['user_id'])[1:]
+        o['user_avatar'] = get_avatar(p['user_id'], size=100)
         o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
 
         o['user'] = p['user_id']
@@ -263,7 +263,7 @@ def friends_post(request):
         o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
         o['image'] = p['image']
 
-        o['user_avatar'] = AuthCache.avatar(user_id=p['user_id'])[1:]
+        o['user_avatar'] = get_avatar(p['user_id'], size=100)
         o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
 
         o['user'] = p['user_id']
@@ -343,7 +343,7 @@ def likes(request):
         o = {}
         o['post_id'] = p['post_id']
 
-        o['user_avatar'] = AuthCache.avatar(user_id=p['user_id'])[1:]
+        o['user_avatar'] = get_avatar(p['user_id'], size=100)
         o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
 
         o['user_url'] = p['user_id']
