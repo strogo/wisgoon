@@ -277,12 +277,14 @@ class Post(models.Model):
 
     def approve(self):
         from tasks import send_notif_bar
+        print "current approve:", self.status
 
         Post.objects.filter(pk=self.id)\
             .update(status=self.APPROVED, timestamp=time.time())
 
         #Post.add_to_set('post_latest', self)
-        Post.add_to_stream(post=self)
+        if self.status == self.PENDING:
+            Post.add_to_stream(post=self)
 
         send_notif_bar(user=self.user.id, type=3, post=self.id, actor=self.user.id)
 
@@ -299,7 +301,7 @@ class Post(models.Model):
             idis = pl[pid_index+1:pid_index+20]
             return idis
 
-            return alls
+        return []
 
 
 
