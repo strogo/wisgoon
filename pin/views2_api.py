@@ -14,6 +14,8 @@ from pin.tools import userdata_cache, AuthCache, CatCache
 from pin.models import Post, Category, Likes, Stream
 from pin.model_mongo import Notif
 
+from daddy_avatar.templatetags.daddy_avatar import get_avatar
+
 
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -443,7 +445,8 @@ def notif(request):
             ar.append([
                 ac,
                 AuthCache.get_username(ac)[1:],
-                AuthCache.avatar(ac, size=100)
+                #AuthCache.avatar(ac, size=100)
+                get_avatar(ac, size=100)
             ])
 
         o['actors'] = ar

@@ -2,7 +2,7 @@ import os
 DEBUG = True
 THUMBNAIL_DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-REPORT_TYPE = {'PIN':1,'COMMENT':2,'RSS':3}
+REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
 SITE_ROOT = os.path.dirname(__file__)
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -10,12 +10,12 @@ ADMINS = (
 MANAGERS = ADMINS
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'feedreader',                      # Or path to database file if using sqlite3.
-        'USER': 'root',                      # Not used with sqlite3.
-        'PASSWORD': 'somaye',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'feedreader',
+        'USER': 'root',
+        'PASSWORD': 'somaye',
+        'HOST': '',
+        'PORT': '',
     }
 }
 GOOGLE_COOKIE_CONSENT = 'google_token_consent'
@@ -28,17 +28,21 @@ SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-MEDIA_ROOT = os.path.join(SITE_ROOT,'media')
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.join(SITE_ROOT,'statics')
+STATIC_ROOT = os.path.join(SITE_ROOT, 'statics')
 STATIC_URL = '/static/'
 
 THUMBNAIL_PREFIX = 'cache2/'
 THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.cached_db_kvstore.KVStore'
+#THUMBNAIL_QUALITY = 90
 
-IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT,'image_cache')
+IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT, 'image_cache')
 
 TASTYPIE_DEFAULT_FORMATS = ['json']
+
+API_LIMIT_PER_PAGE = 10
+API_THUMB_QUALITY = 99
 
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
@@ -114,7 +118,6 @@ INSTALLED_APPS = (
     'user_profile',
     'captcha',
     'tastypie',
-    
     'devserver',
     'debug_toolbar',
 )
@@ -129,7 +132,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-DEBUG_TOOLBAR_CONFIG ={
+DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
 }
 
@@ -153,17 +156,15 @@ DEBUG_TOOLBAR_PANELS = (
 )
 
 CACHES = {
-    'default' : dict(
-        #BACKEND = 'johnny.backends.memcached.MemcachedCache',
-        BACKEND = 'johnny.backends.memcached.MemcachedCache',
-        #BACKEND= 'django.core.cache.backends.memcached.MemcachedCache',
-        LOCATION = ['127.0.0.1:11211'],
-        JOHNNY_CACHE = True,
+    'default': dict(
+        BACKEND='johnny.backends.memcached.MemcachedCache',
+        LOCATION=['127.0.0.1:11211'],
+        JOHNNY_CACHE=True,
     )
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
-JOHNNY_MIDDLEWARE_KEY_PREFIX='wis_cac2'
+JOHNNY_MIDDLEWARE_KEY_PREFIX = 'wis_cac2'
 
 COMPRESS_URL = MEDIA_URL
 COMPRESS_ROOT = MEDIA_ROOT
@@ -173,43 +174,39 @@ FACEBOOK_APP_ID = 242648675868616
 FACEBOOK_APP_SECRET = '459f3ab2b3ccd33e1f0eef65c0dfcfcd'
 FACEBOOK_REGISTRATION_BACKEND = 'registration.backends.default.DefaultBackend'
 
-API_LIMIT_PER_PAGE = 10
-
-API_THUMB_QUALITY = 99
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'formatters': {
         'standard': {
-            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt' : "%d/%b/%Y %H:%M:%S"
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
         },
     },
     'handlers': {
         'null': {
-            'level':'DEBUG',
-            'class':'django.utils.log.NullHandler',
+            'level': 'DEBUG',
+            'class': 'django.utils.log.NullHandler',
         },
         'logfile': {
-            'level':'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': SITE_ROOT + "/logfile",
             'maxBytes': 50000,
             'backupCount': 2,
             'formatter': 'standard',
         },
-        'console':{
-            'level':'INFO',
-            'class':'logging.StreamHandler',
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
             'formatter': 'standard'
         },
     },
     'loggers': {
         'django': {
-            'handlers':['console'],
+            'handlers': ['console'],
             'propagate': True,
-            'level':'WARN',
+            'level': 'WARN',
         },
         'django.db.backends': {
             'handlers': ['console'],
