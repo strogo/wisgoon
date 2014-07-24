@@ -82,7 +82,9 @@ urlpatterns += patterns('pin.views_backbone',
 
 urlpatterns += patterns('pin.views_dashboard',
     url(r'dashboard/$', 'home', name='dashboard-home'),
-    url(r'dashboard/photos/', 'photos', name='dashboard-photos'),
+    url(r'dashboard/photos/$', 'photos', name='dashboard-photos'),
+    url(r'dashboard/photos/accept/(?P<post_id>\d+)/$', 'photos_accept', name='dashboard-photos-accept'),
+
 )
 
 urlpatterns += patterns('pin.views_oauth',

@@ -286,6 +286,8 @@ class Post(models.Model):
         if self.status == self.PENDING:
             Post.add_to_stream(post=self)
 
+        r_server.srem('pending_photos', self.id)
+
         send_notif_bar(user=self.user.id, type=3, post=self.id, actor=self.user.id)
 
     @classmethod
