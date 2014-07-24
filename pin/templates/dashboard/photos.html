@@ -23,26 +23,26 @@
                 <table class="table table-bordered table-hover">
                     <thead>
                     <tr>
+                        <td>امکانات</td>
                         <td>شماره</td>
                         <td>تصویر</td>
                         <td>متن</td>
                         <td>کاربر</td>
-                        <td>امکانات</td>
                     </tr>
                     </thead>
                     <tbody>
                     {% for item in posts %}
                     <tr>
+                        <td>
+                            <a href="{% url "dashboard-photos-accept" item.id %}" class="btn btn-primary">
+                                تایید
+                            </a>
+                        </td>
                         <td>{{item.id}}</td>
                         <td>{{item.admin_image|safe}}</td>
                         <td>{{item.text}}</td>
                         <td>
                 <a href="{% url "pin-user" item.user_id %}" target="_blank" >{{item.user_id}}</a>
-                        </td>
-                        <td>
-                            <a href="{% url "dashboard-photos-accept" item.id %}" class="btn btn-primary">
-                                تایید
-                            </a>
                         </td>
                     </tr>
                     {% endfor %}
