@@ -32,7 +32,7 @@ def photos(request):
     if not is_admin(request.user):
         return HttpResponseForbidden('cant access')
 
-    pendings = r_server.srandmember('pending_photos', 300)
+    pendings = r_server.smembers('pending_photos')
     if not pendings:
         get_from_db()
         pendings = r_server.smembers('pending_photos')
