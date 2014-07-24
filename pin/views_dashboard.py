@@ -38,7 +38,7 @@ def photos(request):
         pendings = r_server.smembers('pending_photos')
     
     lp = list(pendings)
-    print "lp len", len(lp)
+    print "lp len", len(lp), lp
     if len(lp) < 50 :
         get_from_db()
 
