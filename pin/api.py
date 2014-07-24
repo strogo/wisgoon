@@ -253,7 +253,7 @@ class CommentResource(ModelResource):
     def dehydrate(self, bundle):
         user = bundle.data['user_url']
 
-        bundle.data['user_avatar'] = AuthCache.avatar(user)[1:]
+        bundle.data['user_avatar'] = daddy_avatar.get_avatar(user)# AuthCache.avatar(user)[1:]
         bundle.data['user_name'] = AuthCache.get_username(user)
         return bundle
 
