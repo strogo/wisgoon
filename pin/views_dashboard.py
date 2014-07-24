@@ -25,7 +25,7 @@ def home(request):
 def photos(request):
 
     def get_from_db():
-        plist = Post.objects.filter(status=0).values_list('id', flat=True)[:1000]
+        plist = Post.objects.filter(status=0).values_list('id', flat=True)[:100]
         for idp in plist:
             r_server.sadd('pending_photos', int(idp))
 
