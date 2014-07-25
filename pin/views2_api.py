@@ -464,6 +464,7 @@ def notif(request):
 
 def following(request, user_id=1):
     data = {}
+    cur_user = None
     follow_cnt = Follow.objects.filter(follower_id=user_id).count()
 
     offset = int(request.GET.get('offset', 0))
@@ -481,11 +482,22 @@ def following(request, user_id=1):
 
     objects_list = []
 
+    token = request.GET.get('token', '')
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+
     for fol in Follow.objects.filter(follower_id=user_id)[offset:offset+limit]:
         o = {}
         o['user_id'] = fol.following_id
         o['user_avatar'] = get_avatar(fol.following_id, size=100)
         o['user_name'] = AuthCache.get_username(fol.following_id)
+
+        if cur_user:
+            o['follow_by_user'] = Follow.objects\
+                .filter(follower_id=cur_user, following_id=fol.following_id).exists()
+        else:
+            o['follow_by_user'] = False
+
 
         objects_list.append(o)
 
@@ -496,7 +508,7 @@ def following(request, user_id=1):
 
 def follower(request, user_id=1):
     data = {}
-
+    cur_user = None
     follow_cnt = Follow.objects.filter(following_id=user_id).count()
 
     offset = int(request.GET.get('offset', 0))
@@ -514,11 +526,21 @@ def follower(request, user_id=1):
 
     objects_list = []
 
+    token = request.GET.get('token', '')
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+
     for fol in Follow.objects.filter(following_id=user_id)[offset:offset+limit]:
         o = {}
         o['user_id'] = fol.follower_id
         o['user_avatar'] = get_avatar(fol.follower_id, size=100)
         o['user_name'] = AuthCache.get_username(fol.follower_id)
+
+        if cur_user:
+            o['follow_by_user'] = Follow.objects\
+                .filter(follower_id=cur_user, following_id=fol.follower_id).exists()
+        else:
+            o['follow_by_user'] = False
 
         objects_list.append(o)
 
