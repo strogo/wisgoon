@@ -494,7 +494,7 @@ def following(request, user_id=1):
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
 
-def followers(request, user_id=1):
+def follower(request, user_id=1):
     data = {}
 
     follow_cnt = Follow.objects.filter(following_id=user_id).count()
