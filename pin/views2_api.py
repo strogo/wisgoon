@@ -11,7 +11,7 @@ from django.conf import settings
 from sorl.thumbnail import get_thumbnail
 
 from pin.tools import userdata_cache, AuthCache, CatCache
-from pin.models import Post, Category, Likes, Stream
+from pin.models import Post, Category, Likes, Stream, Follow
 from pin.model_mongo import Notif
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
@@ -458,5 +458,29 @@ def notif(request):
     #cache.set(cache_stream_name, posts, cache_ttl)
 
     data['objects'] = objects_list
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
+
+
+def following(request, user_id=1):
+    data = {}
+    data['meta'] = {'limit': 10,
+                    'next': '',
+                    'offset': 0,
+                    'previous': '',
+                    'total_count': 1000}
+
+    objects_list = []
+
+    for fol in Follow.objects.filter(follower_id=user_id):
+        o = {}
+        o['user_id'] = fol.following_id
+        o['user_avatar'] = get_avatar(fol.following_id, size=100)
+        o['user_name'] = AuthCache.get_username(fol.following_id)
+
+        objects_list.append(o)
+
+    data['objects'] = objects_list
+
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)

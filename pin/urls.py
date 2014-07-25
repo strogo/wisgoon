@@ -129,5 +129,7 @@ urlpatterns += patterns('',
     url(r'^api/friends_post/', 'pin.views2_api.friends_post', name="post_friends_api"),
     url(r'^api/like/likes/', 'pin.views2_api.likes', name="likes_api"),
     url(r'^api/notif/notify/', 'pin.views2_api.notif', name="new_notif"),
+
+    url(r'^api/following/(?P<user_id>\d+)/', 'pin.views2_api.following', name="api-following"),
 )
 
