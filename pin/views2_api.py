@@ -464,15 +464,24 @@ def notif(request):
 
 def following(request, user_id=1):
     data = {}
-    data['meta'] = {'limit': 10,
-                    'next': '',
-                    'offset': 0,
+    follow_cnt = Follow.objects.filter(follower_id=user_id).count()
+
+    offset = int(request.GET.get('offset', 0))
+    limit = int(request.GET.get('limit', 20))
+
+    next = {
+        'url': "/pin/api/following/%s/?limit=%s&offset=%s" % (user_id, limit, offset+limit),
+    }
+
+    data['meta'] = {'limit': limit,
+                    'next': next['url'],
+                    'offset': offset,
                     'previous': '',
-                    'total_count': 1000}
+                    'total_count': follow_cnt}
 
     objects_list = []
 
-    for fol in Follow.objects.filter(follower_id=user_id):
+    for fol in Follow.objects.filter(follower_id=user_id)[offset:offset+limit]:
         o = {}
         o['user_id'] = fol.following_id
         o['user_avatar'] = get_avatar(fol.following_id, size=100)
@@ -487,15 +496,25 @@ def following(request, user_id=1):
 
 def followers(request, user_id=1):
     data = {}
-    data['meta'] = {'limit': 10,
-                    'next': '',
-                    'offset': 0,
+
+    follow_cnt = Follow.objects.filter(following_id=user_id).count()
+
+    offset = int(request.GET.get('offset', 0))
+    limit = int(request.GET.get('limit', 20))
+
+    next = {
+        'url': "/pin/api/followers/%s/?limit=%s&offset=%s" % (user_id, limit, offset+limit),
+    }
+
+    data['meta'] = {'limit': limit,
+                    'next': next['url'],
+                    'offset': offset,
                     'previous': '',
-                    'total_count': 1000}
+                    'total_count': follow_cnt}
 
     objects_list = []
 
-    for fol in Follow.objects.filter(following_id=user_id):
+    for fol in Follow.objects.filter(following_id=user_id)[offset:offset+limit]:
         o = {}
         o['user_id'] = fol.follower_id
         o['user_avatar'] = get_avatar(fol.follower_id, size=100)
