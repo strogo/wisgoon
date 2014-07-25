@@ -497,9 +497,9 @@ def followers(request, user_id=1):
 
     for fol in Follow.objects.filter(following_id=user_id):
         o = {}
-        o['user_id'] = fol.following_id
-        o['user_avatar'] = get_avatar(fol.following_id, size=100)
-        o['user_name'] = AuthCache.get_username(fol.following_id)
+        o['user_id'] = fol.follower_id
+        o['user_avatar'] = get_avatar(fol.follower_id, size=100)
+        o['user_name'] = AuthCache.get_username(fol.follower_id)
 
         objects_list.append(o)
 
