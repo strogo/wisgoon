@@ -37,6 +37,7 @@
                             <a href="{% url "dashboard-photos-accept" item.id %}" class="btn btn-primary">
                                 تایید
                             </a>
+                            <a href="{% url "dashboard-photos-delete" item.id %}" class="btn btn-danger">حذف</a>
                         </td>
                         <td>{{item.id}}</td>
                         <td>{{item.admin_image|safe}}</td>

@@ -124,6 +124,8 @@ class Post(models.Model):
         except Exception, e:
             print str(e)
 
+        r_server.srem('pending_photos', self.id)
+
         super(Post, self).delete(*args, **kwargs)
 
     def date_lt(self, date, how_many_days=15):

@@ -57,5 +57,17 @@ def photos_accept(request, post_id):
     return HttpResponseRedirect(reverse('dashboard-photos'))
 
 
+def photos_delete(request, post_id):
+    if not is_admin(request.user):
+        return HttpResponseForbidden('cant access')
+
+    post = Post.objects.get(id=post_id)
+    post.delete()
+
+    if request.is_ajax():
+        return HttpResponse('1')
+    return HttpResponseRedirect(reverse('dashboard-photos'))
+
+
 def home_base(request):
     return render(request, 'dashboard/home.html')
