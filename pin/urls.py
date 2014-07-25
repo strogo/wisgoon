@@ -131,5 +131,6 @@ urlpatterns += patterns('',
     url(r'^api/notif/notify/', 'pin.views2_api.notif', name="new_notif"),
 
     url(r'^api/following/(?P<user_id>\d+)/', 'pin.views2_api.following', name="api-following"),
+    url(r'^api/followers/(?P<user_id>\d+)/', 'pin.views2_api.followers', name="api-followers"),
 )
 

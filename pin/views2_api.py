@@ -484,3 +484,26 @@ def following(request, user_id=1):
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
+
+def followers(request, user_id=1):
+    data = {}
+    data['meta'] = {'limit': 10,
+                    'next': '',
+                    'offset': 0,
+                    'previous': '',
+                    'total_count': 1000}
+
+    objects_list = []
+
+    for fol in Follow.objects.filter(following_id=user_id):
+        o = {}
+        o['user_id'] = fol.following_id
+        o['user_avatar'] = get_avatar(fol.following_id, size=100)
+        o['user_name'] = AuthCache.get_username(fol.following_id)
+
+        objects_list.append(o)
+
+    data['objects'] = objects_list
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
