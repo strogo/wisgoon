@@ -559,3 +559,33 @@ def follower(request, user_id=1):
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
+
+def search(request):
+
+    limit = request.GET.get('limit', 1)
+    start = request.GET.get('start', 0)
+
+    data = {}
+    import pysolr
+    solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
+    query = request.GET.get('q', '')
+    if query:
+        q_str = "*%s*" % query
+        fq = 'username_s:*%s* name_s:*%s*' % (query, query)
+        results = solr.search("*:*", fq=fq, rows=limit, start=start, sort="score_i desc")
+
+        data['objects'] = []
+        for r in results:
+            o = {}
+            o['id'] = r['id']
+            o['avatar'] = get_avatar(r['id'], 100)
+            o['username'] = r['username_s']
+            try:
+                o['name'] = r['name_s']
+            except:
+                pass
+
+            data['objects'].append(o)
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
