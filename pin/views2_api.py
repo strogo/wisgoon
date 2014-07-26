@@ -221,10 +221,18 @@ def post(request):
 
 def friends_post(request):
     #print "we are in post"
+
+    offset = int(request.GET.get('offset', 0))
+    limit = int(request.GET.get('limit', 20))
+
+    next = {
+        'url': "/api/post/friends_post/?limit=%s&offset=%s" % (limit, offset+limit),
+    }
+
     data = {}
     data['meta'] = {'limit': 10,
-                    'next': '',
-                    'offset': 0,
+                    'next': next['url'],
+                    'offset': offset,
                     'previous': '',
                     'total_count': 1000}
 
@@ -244,7 +252,7 @@ def friends_post(request):
         sort_by = ['-timestamp']
     else:
         stream = Stream.objects.filter(user=cur_user)\
-            .order_by('-date')[:20]
+            .order_by('-date')[offset:offset+limit]
         sort_by = ['-timestamp']
 
     idis = []
