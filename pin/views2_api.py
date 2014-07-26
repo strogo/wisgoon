@@ -561,8 +561,8 @@ def follower(request, user_id=1):
     return HttpResponse(json_data)
 
 def search(request):
-
-    limit = request.GET.get('limit', 1)
+    cur_user = None
+    limit = request.GET.get('limit', 20)
     start = request.GET.get('start', 0)
 
     data = {}
@@ -574,6 +574,10 @@ def search(request):
         fq = 'username_s:*%s* name_s:*%s*' % (query, query)
         results = solr.search("*:*", fq=fq, rows=limit, start=start, sort="score_i desc")
 
+        token = request.GET.get('token', '')
+        if token:
+            cur_user = AuthCache.id_from_token(token=token)
+
         data['objects'] = []
         for r in results:
             o = {}
@@ -584,6 +588,12 @@ def search(request):
                 o['name'] = r['name_s']
             except:
                 pass
+
+            if cur_user:
+                o['follow_by_user'] = Follow.objects\
+                    .filter(follower_id=cur_user, following_id=r['id']).exists()
+            else:
+                o['follow_by_user'] = False
 
             data['objects'].append(o)
 
