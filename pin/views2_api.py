@@ -249,7 +249,7 @@ def friends_post(request):
         cur_user = AuthCache.id_from_token(token=token)
 
     if before:
-        s = Stream.objects.filter(post_id=before)[:1]
+        s = Stream.objects.get(user=cur_user, post_id=before)
         stream = Stream.objects.filter(user=cur_user, date__lt=s.date)\
             .order_by('-date')[offset:offset+limit]
         sort_by = ['-timestamp']
