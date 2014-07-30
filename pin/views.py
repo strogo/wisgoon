@@ -194,7 +194,7 @@ def latest_redis(request):
     else:
         return render(request, 'pin/latest_redis.html', {'latest_items': latest_items})
 
-def latest(request):
+def latest_backup(request):
     timestamp = get_request_timestamp(request)
 
     if timestamp == 0:

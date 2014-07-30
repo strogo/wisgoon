@@ -23,8 +23,8 @@ stream_resource = StreamResource()
 
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
-    url(r'^latest_post/', 'latest', name='pin-latest'),
-    url(r'^latest_redis/', 'latest_redis', name='pin-latest-redis'),
+    url(r'^latest_post/', 'latest_redis', name='pin-latest'),
+    url(r'^latest_backup/', 'latest_backup', name='pin-latest-redis'),
     url(r'^search/', 'search', name='search'),
     url(r'^(?P<item_id>\d+)/$', 'item', name="pin-item"),
     url(r'^user/(?P<user_id>\d+)/likes/$', 'user_like', name='pin-user-like'),

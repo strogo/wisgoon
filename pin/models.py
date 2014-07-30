@@ -125,6 +125,7 @@ class Post(models.Model):
             print str(e)
 
         r_server.srem('pending_photos', self.id)
+        r_server.lrem(settings.STREAM_LATEST, str(self.id))
 
         super(Post, self).delete(*args, **kwargs)
 
