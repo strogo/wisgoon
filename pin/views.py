@@ -166,7 +166,10 @@ def latest_redis(request):
 
     for pll in pl:
         print pll
-        arp.append(Post.objects.get(id=pll))
+        try:
+            arp.append(Post.objects.get(id=pll))
+        except:
+            pass
 
     latest_items = arp
 
