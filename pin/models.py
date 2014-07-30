@@ -170,7 +170,7 @@ class Post(models.Model):
 
         latest_stream = settings.STREAM_LATEST
         pl = r_server.lrange(settings.STREAM_LATEST, 0, 1005)
-        print pl, str(post.id)
+        #print pl, str(post.id)
         if str(post.id) not in pl:
             r_server.lpush(latest_stream, post.id)
 
