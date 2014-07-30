@@ -157,12 +157,11 @@ def latest_redis(request):
 
     pl = Post.latest(pid=pid)
         
-    print pl
     arp = []
-    latest_items = Post.objects.filter(id__in=pl)
-    latest_items = sorted(latest_items, 
-                          key=operator.attrgetter('timestamp'),
-                          reverse=True)
+    # latest_items = Post.objects.filter(id__in=pl)
+    # latest_items = sorted(latest_items, 
+    #                       key=operator.attrgetter('timestamp'),
+    #                       reverse=True)
 
     for pll in pl:
         print pll
