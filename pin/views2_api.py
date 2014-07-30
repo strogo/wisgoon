@@ -157,7 +157,25 @@ def post(request):
 
     posts = cache.get(cache_stream_name)
     #print cache_stream_str, cache_stream_name, posts
-    if before:
+    if not category_id and not popular and not user_id:
+
+        if not before:
+            before = 0
+        pl = Post.latest(pid=before)
+        
+        arp = []
+
+        for pll in pl:
+            try:
+                arp.append(Post.objects\
+                        .values('id', 'text', 'cnt_comment', 'timestamp',
+                        'image', 'user_id', 'cnt_like', 'category_id')\
+                        .get(id=pll))
+            except Exception, e:
+                print str(e)
+
+        posts = arp
+    elif before:
         if not posts:
             posts = Post.objects\
                 .values('id', 'text', 'cnt_comment', 'timestamp',

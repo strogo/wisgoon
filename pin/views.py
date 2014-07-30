@@ -164,7 +164,6 @@ def latest_redis(request):
     #                       reverse=True)
 
     for pll in pl:
-        print pll
         try:
             arp.append(Post.objects.get(id=pll))
         except:
