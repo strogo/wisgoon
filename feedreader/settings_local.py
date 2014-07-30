@@ -225,3 +225,6 @@ LOGGING = {
 
 STREAM_LATEST = 'list_latest'
 STREAM_LATEST_CAT = 'list_latest_cat'
+
+POST_LIKERS = "wis_likers_"
+USER_NAME_CACHE = "un_"

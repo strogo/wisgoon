@@ -142,7 +142,7 @@ class AuthCache(MyCache):
 
     @classmethod
     def get_username(self, user_id):
-        cun_str = "un_%d" % user_id
+        cun_str = "%s%d" % (settings.USER_NAME_CACHE, user_id)
         c_str = cache.get(cun_str)
         if c_str:
             return c_str

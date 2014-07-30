@@ -158,10 +158,17 @@ def latest_redis(request):
     pl = Post.latest(pid=pid)
         
     print pl
+    arp = []
     latest_items = Post.objects.filter(id__in=pl)
     latest_items = sorted(latest_items, 
                           key=operator.attrgetter('timestamp'),
                           reverse=True)
+
+    for pll in pl:
+        print pll
+        arp.append(Post.objects.get(id=pll))
+
+    latest_items = arp
 
     # if timestamp == 0:
     #     latest_items = Post.accepted\

@@ -168,8 +168,11 @@ class Post(models.Model):
     @classmethod
     def add_to_stream(self, post):
 
-        latest_stream = settings.STREAM_LATEST 
-        r_server.lpush(latest_stream, post.id)
+        latest_stream = settings.STREAM_LATEST
+        pl = r_server.lrange(settings.STREAM_LATEST, 0, 1005)
+        print pl, str(post.id)
+        if str(post.id) not in pl:
+            r_server.lpush(latest_stream, post.id)
 
         cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, post.category.id)
         r_server.lpush(cat_stream, post.id)
@@ -363,7 +366,7 @@ class Likes(models.Model):
     def delete(self, *args, **kwargs):
         Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like')-1)
 
-        key_str = "wis_likers_%d" % self.post.id
+        key_str = "%s%d" % (settings.POST_LIKERS, self.post.id)
         r_server.srem(key_str, int(self.user.id))
 
         super(Likes, self).delete(*args, **kwargs)
@@ -374,7 +377,7 @@ class Likes(models.Model):
         post = like.post
         sender = like.user
 
-        key_str = "wis_likers_%d" % post.id
+        key_str = "%s%d" % (settings.POST_LIKERS, post.id)
         r_server.sadd(key_str, int(like.user.id))
 
         hcpstr = "like_max_%d" % post.id
@@ -396,7 +399,7 @@ class Likes(models.Model):
 
     @classmethod
     def user_in_likers(self, post_id, user_id):
-        key_str = "wis_likers_%d" % post_id
+        key_str = "%s_%d" % (settings.POST_LIKERS, post_id)
         post_likers = r_server.smembers(key_str)
         if post_likers == set([]):
             post_likers = Likes.objects.values_list('user_id', flat=True)\
