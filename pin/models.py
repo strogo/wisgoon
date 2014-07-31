@@ -313,12 +313,11 @@ class Post(models.Model):
             pl = r_server.lrange(cat_stream, 0, 1000)
 
         if pid == 0:
-
             import collections
             dups = [x for x, y in collections.Counter(pl).items() if y > 1]
-            print "dups in", cat_stream, dups
-            # for dup in dups:
-            #     r_server.lrem(cat_stream, dup)
+
+            for dup in dups:
+                r_server.lrem(cat_stream, dup)
 
             return pl[:20]
         
