@@ -30,7 +30,11 @@ class MyEncoder(json.JSONEncoder):
 
 def get_thumb(o_image, thumb_size, thumb_quality):
     c_str = "s2%s_%s_%s" % (o_image, thumb_size, thumb_quality)
-    img_cache = cache.get(c_str)
+    try:
+        img_cache = cache.get(c_str)
+    except Exception,e:
+        print c_str, str(e)
+        img_cache = None
     if img_cache:
         imo = img_cache
         #print imo, "cache"
@@ -127,8 +131,6 @@ def post(request):
 
         category_ids = category_id.replace(',', ' ').split(' ')
         filters.update(dict(category_id__in=category_ids))
-
-        print "cat id", category_id, len(category_ids)
 
     if before:
         filters.update(dict(id__lt=before))
