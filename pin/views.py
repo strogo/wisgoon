@@ -261,7 +261,7 @@ def latest_back(request):
         return render(request, 'pin/home.html', {'latest_items': latest_items})
 
 
-def category(request, cat_id):
+def category_back(request, cat_id):
     cat = get_object_or_404(Category, pk=cat_id)
     cat_id = cat.id
     timestamp = get_request_timestamp(request)

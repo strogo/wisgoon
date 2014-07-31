@@ -42,8 +42,8 @@ urlpatterns = patterns('pin.views',
     #url(r'^mylike/', 'mylike', name='pin-mylike'),
     #url(r'^send_mail', 'send_mail', name='pin-sendmail'),
     #url(r'^test_page', 'test_page', name='google_contacts_login'),
-    url(r'^category/(?P<cat_id>\d+)', 'category', name='pin-category'),
-    url(r'^category_redis/(?P<cat_id>\d+)', 'category_redis', name='pin-category_redis'),
+    url(r'^category_back/(?P<cat_id>\d+)', 'category', name='pin-category_back'),
+    url(r'^category/(?P<cat_id>\d+)', 'category_redis', name='pin-category'),
     #url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     #not stables
 
