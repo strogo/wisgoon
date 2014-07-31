@@ -123,6 +123,7 @@ def post(request):
         cur_user = AuthCache.id_from_token(token=token)
 
     if category_id:
+        print "cat id", category_id
         category_ids = category_id.replace(',', ' ').split(' ')
         filters.update(dict(category_id__in=category_ids))
 
