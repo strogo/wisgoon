@@ -103,6 +103,7 @@ def post(request):
                     'total_count': 1000}
 
     objects_list = []
+    category_ids = []
     filters = {}
     cur_user = None
     cache_ttl = 120
@@ -178,6 +179,24 @@ def post(request):
                 print str(e)
 
         posts = arp
+    elif category_id and len(category_ids) == 1:
+        if not before:
+            before = 0
+        pl = Post.latest(pid=before, cat_id=category_id)
+        
+        arp = []
+
+        for pll in pl:
+            try:
+                arp.append(Post.objects\
+                        .values('id', 'text', 'cnt_comment', 'timestamp',
+                        'image', 'user_id', 'cnt_like', 'category_id')\
+                        .get(id=pll))
+            except Exception, e:
+                print str(e)
+
+        posts = arp
+
     elif before:
         if not posts:
             posts = Post.objects\
