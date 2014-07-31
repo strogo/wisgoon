@@ -300,9 +300,14 @@ class Post(models.Model):
         send_notif_bar(user=self.user.id, type=3, post=self.id, actor=self.user.id)
 
     @classmethod
-    def latest(self, pid=0):
+    def latest(self, pid=0, cat_id=0):
 
-        pl = r_server.lrange(settings.STREAM_LATEST, 0, 1000)
+        if cat_id:
+            cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, cat_id)
+            pl = r_server.lrange(cat_stream, 0, 1000)
+        else:
+            pl = r_server.lrange(settings.STREAM_LATEST, 0, 1000)
+
         if pid == 0:
             return pl[:20]
         

@@ -287,6 +287,42 @@ def category(request, cat_id):
                       {'latest_items': latest_items, 'cur_cat': cat})
 
 
+def category_redis(request, cat_id):
+    cat = get_object_or_404(Category, pk=cat_id)
+    cat_id = cat.id
+    timestamp = get_request_timestamp(request)
+
+    pid = get_request_pid(request)
+
+    pl = Post.latest(pid=pid, cat_id=cat_id)
+        
+    arp = []
+    # latest_items = Post.objects.filter(id__in=pl)
+    # latest_items = sorted(latest_items, 
+    #                       key=operator.attrgetter('timestamp'),
+    #                       reverse=True)
+
+    for pll in pl:
+        try:
+            arp.append(Post.objects.get(id=pll))
+        except:
+            pass
+
+    latest_items = arp
+
+    if request.is_ajax():
+        if latest_items:
+            return render(request,
+                          'pin/_items_2.html',
+                          {'latest_items': latest_items})
+        else:
+            return HttpResponse(0)
+    else:
+        return render(request,
+                      'pin/category_redis.html',
+                      {'latest_items': latest_items, 'cur_cat': cat})
+
+
 def popular(request, interval=""):
     ROW_PER_PAGE = 20
 
