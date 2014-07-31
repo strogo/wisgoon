@@ -60,8 +60,6 @@ def like(request):
 
         try:
             l, created = Likes.objects.get_or_create(user_id=user.id, post_id=post_id)
-            if not created:
-                l.delete()
             # if created:
             #     inc_user_cnt_like(user_id=l.post.user_id)
             # else:
