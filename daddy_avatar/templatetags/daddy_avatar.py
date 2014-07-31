@@ -42,8 +42,11 @@ def get_avatar(user, size=200):
         if user_cache:
             user = user_cache
         else:
-            user = User.objects.only('email').get(pk=user)
-            cache.set(user_str, user, 60*60*24)
+            try:
+                user = User.objects.only('email').get(pk=user)
+                cache.set(user_str, user, 60*60*24)
+            except:
+                return 'None'
 
     ava_str = "avatar_%d_%d" % (user.id, size)
     try:
