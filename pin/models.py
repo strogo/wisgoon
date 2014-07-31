@@ -171,12 +171,15 @@ class Post(models.Model):
 
         latest_stream = settings.STREAM_LATEST
         pl = r_server.lrange(settings.STREAM_LATEST, 0, 1005)
-        #print pl, str(post.id)
+        
         if str(post.id) not in pl:
             r_server.lpush(latest_stream, post.id)
 
         cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, post.category.id)
-        r_server.lpush(cat_stream, post.id)
+        pl = r_server.lrange(cat_stream, 0, 1005)
+        if str(post.id) not in pl:
+            r_server.lpush(cat_stream, post.id)
+        
 
         r_server.ltrim(cat_stream, 0, 1000)
         r_server.ltrim(latest_stream, 0, 1000)
