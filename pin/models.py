@@ -127,6 +127,9 @@ class Post(models.Model):
         r_server.srem('pending_photos', self.id)
         r_server.lrem(settings.STREAM_LATEST, str(self.id))
 
+        cat_stream = "%s_%s" % (settings.STREAM_LATEST, self.category.id)
+        r_server.lrem(cat_stream, str(self.id))
+
         super(Post, self).delete(*args, **kwargs)
 
     def date_lt(self, date, how_many_days=15):
@@ -306,9 +309,17 @@ class Post(models.Model):
             cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, cat_id)
             pl = r_server.lrange(cat_stream, 0, 1000)
         else:
-            pl = r_server.lrange(settings.STREAM_LATEST, 0, 1000)
+            cat_stream = settings.STREAM_LATEST
+            pl = r_server.lrange(cat_stream, 0, 1000)
 
         if pid == 0:
+
+            import collections
+            dups = [x for x, y in collections.Counter(pl).items() if y > 1]
+            print "dups in", cat_stream, dups
+            # for dup in dups:
+            #     r_server.lrem(cat_stream, dup)
+
             return pl[:20]
         
         if pid:
