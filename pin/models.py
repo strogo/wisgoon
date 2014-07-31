@@ -385,7 +385,7 @@ class Likes(models.Model):
     def delete(self, *args, **kwargs):
         Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like')-1)
 
-        key_str = "%s%d" % (settings.POST_LIKERS, self.post.id)
+        key_str = "%s_%d" % (settings.POST_LIKERS, self.post.id)
         r_server.srem(key_str, int(self.user.id))
 
         super(Likes, self).delete(*args, **kwargs)
@@ -396,7 +396,7 @@ class Likes(models.Model):
         post = like.post
         sender = like.user
 
-        key_str = "%s%d" % (settings.POST_LIKERS, post.id)
+        key_str = "%s_%d" % (settings.POST_LIKERS, post.id)
         r_server.sadd(key_str, int(like.user.id))
 
         hcpstr = "like_max_%d" % post.id
