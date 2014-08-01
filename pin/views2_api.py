@@ -228,6 +228,8 @@ def post(request):
         o['user_avatar'] = get_avatar(p['user_id'], size=100)
         o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
 
+        o['timestamp'] = p['timestamp']
+
         o['user'] = p['user_id']
         o['url'] = 'v'
         o['like'] = p['cnt_like']
