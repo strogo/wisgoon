@@ -300,6 +300,12 @@ class Post(models.Model):
 
         r_server.srem('pending_photos', self.id)
 
+        try:
+            profile = Profile.objects.get(user=self.user)
+            profile.save()
+        except Exception, e:
+            print str(e), "views_device 71"
+
         send_notif_bar(user=self.user.id, type=3, post=self.id, actor=self.user.id)
 
     @classmethod
