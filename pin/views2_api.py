@@ -32,7 +32,7 @@ def get_thumb(o_image, thumb_size, thumb_quality):
     c_str = "s2%s_%s_%s" % (o_image, thumb_size, thumb_quality)
     try:
         img_cache = cache.get(c_str)
-    except Exception,e:
+    except Exception, e:
         print c_str, str(e)
         img_cache = None
     if img_cache:
@@ -168,7 +168,7 @@ def post(request):
         if not before:
             before = 0
         pl = Post.latest(pid=before)
-        
+
         arp = []
 
         for pll in pl:
@@ -629,11 +629,13 @@ def search(request):
             try:
                 o['name'] = r['name_s']
             except:
-                pass
+                o['name'] = ""
 
             if cur_user:
-                o['follow_by_user'] = Follow.objects\
-                    .filter(follower_id=cur_user, following_id=r['id']).exists()
+                o['follow_by_user'] = Follow\
+                    .get_follow_status(follower=cur_user, following=r['id'])
+                # o['follow_by_user'] = Follow.objects\
+                #     .filter(follower_id=cur_user, following_id=r['id']).exists()
             else:
                 o['follow_by_user'] = False
 

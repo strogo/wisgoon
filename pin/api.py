@@ -23,7 +23,7 @@ from PIL import Image
 
 from sorl.thumbnail import get_thumbnail
 from pin.models import Post, Likes, Category, Comments,\
-    App_data, Stream
+    App_data, Stream, Follow
 from user_profile.models import Profile
 from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
@@ -105,6 +105,8 @@ class ProfileResource(ModelResource):
     user = fields.IntegerField(attribute='user__id')
     user_name = fields.CharField(attribute='user__username')
 
+    cur_user = None
+
     class Meta:
         allowed_methods = ['get']
         ordering = ['score']
@@ -118,9 +120,28 @@ class ProfileResource(ModelResource):
             "user": ('exact'),
         }
 
+    def pre_dispatch(self, request, token_name):
+        self.dispatch_exec = True
+        token = request.GET.get(token_name, '')
+        if token:
+            self.cur_user = AuthCache.id_from_token(token=token)
+
+    def dispatch(self, request_type, request, **kwargs):
+        self.dispatch_exec = True
+        self.pre_dispatch(request, 'token')
+
+        return super(ProfileResource, self)\
+            .dispatch(request_type, request, **kwargs)
+
     def dehydrate(self, bundle):
         user = bundle.data['user']
         bundle.data['user_avatar'] = AuthCache.avatar(user, size=300)[1:]
+        if self.cur_user:
+            bundle.data['follow_by_user'] = Follow\
+                .get_follow_status(follower=self.cur_user,
+                                   following=user)
+        else:
+            bundle.data['follow_by_user'] = False
         return bundle
 
 

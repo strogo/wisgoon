@@ -27,6 +27,7 @@ LIKE_TO_DEFAULT_PAGE = 10
 
 r_server = redis.Redis(settings.REDIS_DB, db=11)
 
+
 class Category(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/category/')
@@ -48,7 +49,6 @@ class Category(models.Model):
             return jcc
 
         cat = Category.objects.get(id=cat_id)
-        
         cat_json = {
             'id': cat.id,
             'image': cat.image.url,
@@ -334,6 +334,12 @@ class Post(models.Model):
 class Follow(models.Model):
     follower = models.ForeignKey(User, related_name='follower')
     following = models.ForeignKey(User, related_name='following')
+
+    @classmethod
+    def get_follow_status(self, follower, following):
+        fstatus = Follow.objects.filter(follower_id=follower,
+                              following_id=following).exists()
+        return fstatus
 
 
 class Stream(models.Model):
