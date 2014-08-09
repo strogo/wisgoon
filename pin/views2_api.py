@@ -166,54 +166,46 @@ def post(request):
 
     posts = cache.get(cache_stream_name)
     #print cache_stream_str, cache_stream_name, posts
-    if not category_id and not popular and not user_id:
 
-        if not before:
-            before = 0
-        pl = Post.latest(pid=before)
+    NEED_KEYS = ['id', 'text', 'cnt_comment', 'timestamp',
+                 'image', 'user_id', 'cnt_like', 'category_id',
+                 'status']
 
+    def get_list_post(pl):
         arp = []
 
         for pll in pl:
             try:
-                arp.append(Post.objects\
-                        .values('id', 'text', 'cnt_comment', 'timestamp',
-                        'image', 'user_id', 'cnt_like', 'category_id')\
-                        .get(id=pll))
+                arp.append(Post.objects.values(*NEED_KEYS).get(id=pll))
             except Exception, e:
                 print str(e)
 
         posts = arp
+        return posts
+
+    if not category_id and not popular and not user_id:
+        if not before:
+            before = 0
+        pl = Post.latest(pid=before)
+
+        posts = get_list_post(pl)
     elif category_id and len(category_ids) == 1:
         if not before:
             before = 0
         pl = Post.latest(pid=before, cat_id=category_id)
         
-        arp = []
-
-        for pll in pl:
-            try:
-                arp.append(Post.objects\
-                        .values('id', 'text', 'cnt_comment', 'timestamp',
-                        'image', 'user_id', 'cnt_like', 'category_id')\
-                        .get(id=pll))
-            except Exception, e:
-                print str(e)
-
-        posts = arp
+        posts = get_list_post(pl)
 
     elif before:
         if not posts:
             posts = Post.objects\
-                .values('id', 'text', 'cnt_comment', 'timestamp',
-                        'image', 'user_id', 'cnt_like', 'category_id')\
+                .values(*NEED_KEYS)\
                 .filter(**filters).order_by(*sort_by)[:10]
 
             cache.set(cache_stream_name, posts, 86400)
     else:
         posts = Post.objects\
-            .values('id', 'text', 'cnt_comment', 'timestamp',
-                    'image', 'user_id', 'cnt_like', 'category_id')\
+            .values(*NEED_KEYS)\
             .filter(**filters).order_by(*sort_by)[:10]
         if not user_id and not category_id:
             hot_post = Post.get_hot(values=True)
@@ -238,6 +230,7 @@ def post(request):
         o['like'] = p['cnt_like']
         o['likers'] = None
         o['like_with_user'] = False
+        o['status'] = p['status']
 
         o['permalink'] = "/pin/%d/" % p['id']
         o['resource_uri'] = "/pin/api/post/%d/" % p['id']
