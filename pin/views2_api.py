@@ -176,6 +176,7 @@ def post(request):
 
     def get_list_post(pl, from_model='latest'):
         arp = []
+        print pl
 
         for pll in pl:
             try:
