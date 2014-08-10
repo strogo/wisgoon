@@ -1,2 +1,10 @@
 create symbolyc link for cache storage
 	ln -s /mnt/nfs/cache_storage /home2/wisgoon/wisgoon.com/www/feedreader/media/cache2
+
+fix johny-cache
+	pip install git+https://github.com/jmoiron/johnny-cache.git
+
+fix site
+	from django.contrib.sites.models import Site
+	new_site = Site.objects.create(domain='foo.com', name='foo.com')
+	print new_site.id
