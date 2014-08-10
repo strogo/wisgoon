@@ -160,13 +160,14 @@ class Post(models.Model):
         if values:
             post = Post.objects\
                 .values('id', 'text', 'cnt_comment', 'timestamp',
-                        'image', 'user_id', 'cnt_like', 'category_id')\
+                        'image', 'user_id', 'cnt_like', 'category_id',
+                        'status')\
                 .filter(id=h[0][0])
         else:
             post = Post.objects.filter(id=h[0][0])
 
         if not post:
-            r_server.zrem('hot', h[0][0])    
+            r_server.zrem('hot', h[0][0])
         return post
     
     @classmethod
