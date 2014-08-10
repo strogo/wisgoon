@@ -179,7 +179,7 @@ def post(request):
             try:
                 arp.append(Post.objects.values(*NEED_KEYS).get(id=pll))
             except Exception, e:
-                print str(e)
+                print str(e), 'line 182'
 
         posts = arp
         return posts
