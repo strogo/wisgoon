@@ -182,10 +182,7 @@ def post(request):
 
         posts = cache.get(cache_pl)
         if posts:
-            print "return data from cache"
             return posts
-        else:
-            print "get data from db"
 
         for pll in pl:
             try:
