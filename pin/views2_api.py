@@ -2,6 +2,7 @@
 import json
 import datetime
 import time
+import redis
 from hashlib import md5
 
 from django.http import HttpResponse
@@ -16,6 +17,7 @@ from pin.model_mongo import Notif
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
+r_server = redis.Redis(settings.REDIS_DB, db=11)
 
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -172,14 +174,15 @@ def post(request):
                  'image', 'user_id', 'cnt_like', 'category_id',
                  'status']
 
-    def get_list_post(pl):
+    def get_list_post(pl, from_model='latest'):
         arp = []
 
         for pll in pl:
             try:
                 arp.append(Post.objects.values(*NEED_KEYS).get(id=pll))
             except Exception, e:
-                print str(e), 'line 182'
+                print str(e), 'line 182', pll
+                r_server.lrem(from_model, str(pll))
 
         posts = arp
         return posts
@@ -189,13 +192,15 @@ def post(request):
             before = 0
         pl = Post.latest(pid=before)
 
-        posts = get_list_post(pl)
+        posts = get_list_post(pl, from_model=settings.STREAM_LATEST)
     elif category_id and len(category_ids) == 1:
         if not before:
             before = 0
+
         pl = Post.latest(pid=before, cat_id=category_id)
         
-        posts = get_list_post(pl)
+        from_model = "%s_%s" % (settings.STREAM_LATEST_CAT, category_id)
+        posts = get_list_post(pl, from_model=from_model)
 
     elif before:
         if not posts:
