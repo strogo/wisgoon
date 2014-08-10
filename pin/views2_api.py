@@ -5,7 +5,7 @@ import time
 import redis
 from hashlib import md5
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.core.cache import cache
 from django.conf import settings
 
@@ -28,6 +28,19 @@ class MyEncoder(json.JSONEncoder):
             return str(obj)"""
 
         return json.JSONEncoder.default(self, obj)
+
+
+def notif_count(request):
+    cur_user_id = None
+    token = request.GET.get('token', '')
+    if token:
+        cur_user_id = AuthCache.id_from_token(token=token)
+
+    if not cur_user_id:
+        return HttpResponseForbidden('Token problem')
+
+    notify = Notif.objects.filter(owner=cur_user_id, seen=False).count()
+    return HttpResponse(notify)
 
 
 def get_thumb(o_image, thumb_size, thumb_quality):
