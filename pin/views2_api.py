@@ -245,7 +245,7 @@ def post(request):
             o['like_with_user'] = Likes.user_in_likers(post_id=p['id'], user_id=cur_user)
 
         thumb_size = request.GET.get('thumb_size', "100x100")
-        print thumb_size
+        #print thumb_size
         thumb_quality = 99
 
         o_image = p['image']
