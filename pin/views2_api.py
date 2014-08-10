@@ -177,7 +177,15 @@ def post(request):
     def get_list_post(pl, from_model='latest'):
         arp = []
         pl_str = '_'.join(pl)
-        print pl_str
+        cache_pl = md5(pl_str).hexdigest()
+        #print cache_stream_str, cache_stream_name
+
+        posts = cache.get(cache_pl)
+        if posts:
+            print "return data from cache"
+            return posts
+        else:
+            print "get data from db"
 
         for pll in pl:
             try:
@@ -187,6 +195,7 @@ def post(request):
                 r_server.lrem(from_model, str(pll))
 
         posts = arp
+        cache.set(cache_pl, posts, 3600)
         return posts
 
     if not category_id and not popular and not user_id:
