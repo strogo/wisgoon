@@ -5,11 +5,10 @@
 <!-- start pin item -->
 <div class="feed-item feed-inner-item" itemscope itemtype="http://schema.org/CreativeWork" >
 	<div class="feed-inner">
-		{% thumbnail post.image "400" upscale=False as im %}
-		<div style="height: {{im.height}}px; width: {{im.width}}px; margin: 0 auto">
-			<a href="{{MEDIA_URL}}{{post.image}}" ><img itemprop="image" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}"></a>
+		<div style="text-align:center; margin: 0 auto">
+			<a href="{{MEDIA_URL}}{{post.image}}" >
+				<img style="margin:0 auto" itemprop="image" src="{{MEDIA_URL}}{{ post.image }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}"></a>
 		</div>
-		{% endthumbnail %}
 		
 		<div class="feed-item-desc" itemprop="name" >
 			{{post.text|safe|linebreaksbr}}
