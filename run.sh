@@ -1,3 +1,3 @@
 #!/bin/bash
-source wenv/bin/activate
+source env/bin/activate
 ./manage_local.py runserver
