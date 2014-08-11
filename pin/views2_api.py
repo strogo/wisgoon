@@ -116,7 +116,6 @@ def get_objects_list(posts, cur_user_id, thumb_size):
 
         #print thumb_size
         thumb_quality = 99
-        r_server.sadd('tlist', thumb_size)
 
         o_image = p['image']
 
