@@ -159,7 +159,7 @@ def get_list_post(pl, from_model='latest'):
 def post_item(request, item_id):
     thumb_size = "500"
 
-    cache_pi_str = "post_item_%s_%s" % (item_id, thumb_size)
+    cache_pi_str = "cpost_item_%s_%s" % (item_id, thumb_size)
     p = cache.get(cache_pi_str)
     if p:
         return HttpResponse(p)
