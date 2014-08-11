@@ -44,7 +44,7 @@ def notif_count(request):
 
 
 def get_thumb(o_image, thumb_size, thumb_quality):
-    thumb_size = "500"
+    thumb_size = "236"
     c_str = "s2%s_%s_%s" % (o_image, thumb_size, thumb_quality)
     try:
         img_cache = cache.get(c_str)
@@ -157,7 +157,7 @@ def get_list_post(pl, from_model='latest'):
 
 
 def post_item(request, item_id):
-    thumb_size = request.GET.get('thumb_size', "100x100")
+    thumb_size = "500"
 
     cache_pi_str = "post_item_%s_%s" % (item_id, thumb_size)
     p = cache.get(cache_pi_str)
@@ -290,7 +290,7 @@ def post(request):
             if hot_post:
                 posts = list(hot_post) + list(posts)
 
-    thumb_size = request.GET.get('thumb_size', "100x100")
+    thumb_size = "236"
 
     #cache.set(cache_stream_name, posts, cache_ttl)
 
