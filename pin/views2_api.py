@@ -114,7 +114,7 @@ def get_objects_list(posts, cur_user_id, thumb_size):
         if cur_user_id:
             o['like_with_user'] = Likes.user_in_likers(post_id=p['id'], user_id=cur_user_id)
 
-        #print thumb_size
+        thumb_size = "250"
         thumb_quality = 99
 
         o_image = p['image']
