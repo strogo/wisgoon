@@ -81,9 +81,74 @@ def get_cat(cat_id):
     return cat
 
 
+def get_objects_list(posts, cur_user_id, thumb_size):
+    objects_list = []
+    for p in posts:
+        o = {}
+        o['id'] = p['id']
+        o['text'] = p['text']
+        o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
+        o['image'] = p['image']
+
+        o['user_avatar'] = get_avatar(p['user_id'], size=100)
+        o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
+
+        o['timestamp'] = p['timestamp']
+
+        o['user'] = p['user_id']
+        o['url'] = 'v'
+        o['like'] = p['cnt_like']
+        o['likers'] = None
+        o['like_with_user'] = False
+        o['status'] = p['status']
+
+        o['permalink'] = "/pin/%d/" % p['id']
+        o['resource_uri'] = "/pin/api/post/%d/" % p['id']
+
+        if cur_user_id:
+            o['like_with_user'] = Likes.user_in_likers(post_id=p['id'], user_id=cur_user_id)
+
+        #print thumb_size
+        thumb_quality = 99
+
+        o_image = p['image']
+
+        imo = get_thumb(o_image, thumb_size, settings.API_THUMB_QUALITY)
+
+        if imo:
+            o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
+            o['hw'] = imo['hw']
+
+        o['category'] = Category.get_json(cat_id=p['category_id'])
+        objects_list.append(o)
+
+    return objects_list
+
+
+def get_list_post(pl, from_model='latest'):
+    arp = []
+    pl_str = '_'.join(pl)
+    cache_pl = md5(pl_str).hexdigest()
+    #print cache_stream_str, cache_stream_name
+
+    posts = cache.get(cache_pl)
+    if posts:
+        return posts
+
+    for pll in pl:
+        try:
+            arp.append(Post.objects.values(*Post.NEED_KEYS).get(id=pll))
+        except Exception, e:
+            print str(e), 'line 182', pll
+            r_server.lrem(from_model, str(pll))
+
+    posts = arp
+    cache.set(cache_pl, posts, 3600)
+    return posts
+
+
 def post_item(request, item_id):
     thumb_size = request.GET.get('thumb_size', "100x100")
-    thumb_quality = 99
 
     cache_pi_str = "post_item_%s_%s" % (item_id, thumb_size)
     p = cache.get(cache_pi_str)
@@ -121,7 +186,6 @@ def post(request):
                     'previous': '',
                     'total_count': 1000}
 
-    objects_list = []
     category_ids = []
     filters = {}
     cur_user = None
@@ -130,7 +194,6 @@ def post(request):
     before = request.GET.get('before', None)
     category_id = request.GET.get('category_id', None)
     popular = request.GET.get('popular', None)
-    just_image = request.GET.get('just_image', 0)
     user_id = request.GET.get('user_id', None)
 
     if before:
@@ -158,7 +221,6 @@ def post(request):
                 filters.pop('status', None)
 
     if popular:
-        cache_ttl = 60 * 60 * 4
         sort_by = ['-cnt_like']
         date_from = None
         dn = datetime.datetime.now()
@@ -186,27 +248,6 @@ def post(request):
     NEED_KEYS = ['id', 'text', 'cnt_comment', 'timestamp',
                  'image', 'user_id', 'cnt_like', 'category_id',
                  'status']
-
-    def get_list_post(pl, from_model='latest'):
-        arp = []
-        pl_str = '_'.join(pl)
-        cache_pl = md5(pl_str).hexdigest()
-        #print cache_stream_str, cache_stream_name
-
-        posts = cache.get(cache_pl)
-        if posts:
-            return posts
-
-        for pll in pl:
-            try:
-                arp.append(Post.objects.values(*NEED_KEYS).get(id=pll))
-            except Exception, e:
-                print str(e), 'line 182', pll
-                r_server.lrem(from_model, str(pll))
-
-        posts = arp
-        cache.set(cache_pl, posts, 3600)
-        return posts
 
     if not category_id and not popular and not user_id:
         if not before:
@@ -238,51 +279,12 @@ def post(request):
             hot_post = Post.get_hot(values=True)
             if hot_post:
                 posts = list(hot_post) + list(posts)
-        #posts.insert(0, {'user_id': 1L, 'text': u' test final', 'image': u'pin/images/o/2014/7/18/3/1405638687140154.JPG', 'cnt_comment': 3L, 'cnt_like': 1L, 'timestamp': 1405638699L, 'category_id': 1L, 'id': 901L})
 
-    for p in posts:
-        o = {}
-        o['id'] = p['id']
-        o['text'] = p['text']
-        o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
-        o['image'] = p['image']
-
-        o['user_avatar'] = get_avatar(p['user_id'], size=100)
-        o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
-
-        o['timestamp'] = p['timestamp']
-
-        o['user'] = p['user_id']
-        o['url'] = 'v'
-        o['like'] = p['cnt_like']
-        o['likers'] = None
-        o['like_with_user'] = False
-        o['status'] = p['status']
-
-        o['permalink'] = "/pin/%d/" % p['id']
-        o['resource_uri'] = "/pin/api/post/%d/" % p['id']
-
-        if cur_user:
-            o['like_with_user'] = Likes.user_in_likers(post_id=p['id'], user_id=cur_user)
-
-        thumb_size = request.GET.get('thumb_size', "100x100")
-        #print thumb_size
-        thumb_quality = 99
-
-        o_image = p['image']
-
-        imo = get_thumb(o_image, thumb_size, settings.API_THUMB_QUALITY)
-
-        if imo:
-            o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
-            o['hw'] = imo['hw']
-
-        o['category'] = Category.get_json(cat_id=p['category_id'])
-        objects_list.append(o)
+    thumb_size = request.GET.get('thumb_size', "100x100")
 
     #cache.set(cache_stream_name, posts, cache_ttl)
 
-    data['objects'] = objects_list
+    data['objects'] = get_objects_list(posts, cur_user_id=cur_user, thumb_size=thumb_size)
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
 
@@ -294,7 +296,7 @@ def friends_post(request):
     limit = int(request.GET.get('limit', 20))
 
     next = {
-        'url': "/api/post/friends_post/?limit=%s&offset=%s" % (limit, offset+limit),
+        'url': "/api/post/friends_post/?limit=%s&offset=%s" % (limit, offset + limit),
     }
 
     data = {}
@@ -304,13 +306,8 @@ def friends_post(request):
                     'previous': '',
                     'total_count': 1000}
 
-    objects_list = []
-    filters = {}
     cur_user = None
-    cache_ttl = 120
-    filters.update(dict(status=Post.APPROVED))
     before = request.GET.get('before', None)
-    user_id = request.GET.get('user_id', None)
 
     token = request.GET.get('token', '')
     if token:
@@ -319,62 +316,25 @@ def friends_post(request):
     if before:
         s = Stream.objects.get(user=cur_user, post_id=before)
         stream = Stream.objects.filter(user=cur_user, date__lt=s.date)\
-            .order_by('-date')[offset:offset+limit]
+            .order_by('-date')[offset:offset + limit]
         sort_by = ['-timestamp']
     else:
         stream = Stream.objects.filter(user=cur_user)\
-            .order_by('-date')[offset:offset+limit]
-        sort_by = ['-timestamp']
+            .order_by('-date')[offset:offset + limit]
 
     idis = []
     for p in stream:
         idis.append(int(p.post_id))
 
     posts = Post.objects\
-        .values('id', 'text', 'cnt_comment', 'timestamp',
-                'image', 'user_id', 'cnt_like', 'category_id')\
+        .values(*Post.NEED_KEYS)\
         .filter(id__in=idis).order_by('-id')[:limit]
 
-    for p in posts:
-        o = {}
-        o['id'] = p['id']
-        o['text'] = p['text']
-        o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
-        o['image'] = p['image']
+    thumb_size = request.GET.get('thumb_size', "100x100")
 
-        o['user_avatar'] = get_avatar(p['user_id'], size=100)
-        o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
+    data['objects'] = get_objects_list(posts, cur_user_id=cur_user, thumb_size=thumb_size)
 
-        o['timestamp'] = p['timestamp']
-
-        o['user'] = p['user_id']
-        o['url'] = 'v'
-        o['like'] = p['cnt_like']
-        o['likers'] = None
-        o['like_with_user'] = False
-
-        o['permalink'] = "/pin/%d/" % p['id']
-        o['resource_uri'] = "/pin/api/post/%d/" % p['id']
-
-        if cur_user:
-            o['like_with_user'] = Likes.user_in_likers(post_id=p['id'], user_id=cur_user)
-
-        thumb_size = request.GET.get('thumb_size', "100x100")
-
-        o_image = p['image']
-
-        imo = get_thumb(o_image, thumb_size, settings.API_THUMB_QUALITY)
-
-        if imo:
-            o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
-            o['hw'] = imo['hw']
-
-        o['category'] = Category.get_json(cat_id=p['category_id'])
-        objects_list.append(o)
-
-    #cache.set(cache_stream_name, posts, cache_ttl)
-
-    data['objects'] = objects_list
+    #data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
 

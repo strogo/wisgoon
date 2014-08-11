@@ -69,6 +69,10 @@ class Post(models.Model):
     APPROVED = 1
     FAULT = 2
 
+    NEED_KEYS = ['id', 'text', 'cnt_comment', 'timestamp',
+                 'image', 'user_id', 'cnt_like', 'category_id',
+                 'status']
+
     STATUS_CHOICES = (
         (PENDING, 'منتظر تایید'),
         (APPROVED, 'تایید شده'),
