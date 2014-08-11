@@ -261,8 +261,9 @@ def post(request):
         if not before:
             before = 0
         pl = Post.latest(pid=before)
-
+        
         posts = get_list_post(pl, from_model=settings.STREAM_LATEST)
+
     elif category_id and len(category_ids) == 1:
         if not before:
             before = 0

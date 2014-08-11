@@ -378,9 +378,9 @@ class Stream(models.Model):
                 except:
                     pass
         
-        if post.status == Post.APPROVED:
-            #Post.add_to_set('post_latest', post)
-            Post.add_to_stream(post=post)
+            if post.status == Post.APPROVED:
+                #Post.add_to_set('post_latest', post)
+                Post.add_to_stream(post=post)
                 
     
 class Likes(models.Model):
