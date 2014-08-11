@@ -291,6 +291,8 @@ def post(request):
 
     thumb_size = request.GET.get('thumb_size', "100x100")
 
+    r_server.sadd('tlist', thumb_size)
+
     #cache.set(cache_stream_name, posts, cache_ttl)
 
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user, thumb_size=thumb_size)
