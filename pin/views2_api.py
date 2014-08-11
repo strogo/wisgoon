@@ -82,11 +82,11 @@ def get_cat(cat_id):
 
 
 def get_objects_list(posts, cur_user_id, thumb_size):
-    cache_key = md5(json.dumps(posts)).hexdigest()
-    list_cache_str = "olist_%s" % (cache_key)
-    cache_list = cache.get(list_cache_str)
-    if cache_list:
-        return cache_list
+    # cache_key = md5(json.dumps(posts)).hexdigest()
+    # list_cache_str = "olist_%s" % (cache_key)
+    # cache_list = cache.get(list_cache_str)
+    # if cache_list:
+    #     return cache_list
     
     objects_list = []
     for p in posts:
@@ -128,7 +128,7 @@ def get_objects_list(posts, cur_user_id, thumb_size):
         o['category'] = Category.get_json(cat_id=p['category_id'])
         objects_list.append(o)
 
-    cache.set(list_cache_str, objects_list, 600)
+    # cache.set(list_cache_str, objects_list, 600)
 
     return objects_list
 
