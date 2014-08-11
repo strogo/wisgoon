@@ -478,7 +478,8 @@ def notif(request):
         if cur_user:
             o['like_with_user'] = Likes.user_in_likers(post_id=cur_p['id'], user_id=cur_user)
 
-        thumb_size = request.GET.get('thumb_size', "100x100")
+        #thumb_size = request.GET.get('thumb_size', "100x100")
+        thumb_size = "236"
         thumb_quality = 99
 
         o_image = cur_p['image']
