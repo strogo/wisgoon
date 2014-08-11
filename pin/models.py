@@ -163,9 +163,7 @@ class Post(models.Model):
 
         if values:
             post = Post.objects\
-                .values('id', 'text', 'cnt_comment', 'timestamp',
-                        'image', 'user_id', 'cnt_like', 'category_id',
-                        'status')\
+                .values(*self.NEED_KEYS)\
                 .filter(id=h[0][0])
         else:
             post = Post.objects.filter(id=h[0][0])
@@ -339,7 +337,6 @@ class Post(models.Model):
             return idis
 
         return []
-
 
 
 class Follow(models.Model):
