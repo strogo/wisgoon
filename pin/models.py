@@ -134,6 +134,9 @@ class Post(models.Model):
         cat_stream = "%s_%s" % (settings.STREAM_LATEST, self.category.id)
         r_server.lrem(cat_stream, str(self.id))
 
+        from user_profile.models import Profile
+        Profile.objects.filter(user_id=self.user_id).update(cnt_post=F('cnt_post')-1)
+
         super(Post, self).delete(*args, **kwargs)
 
     def date_lt(self, date, how_many_days=15):
@@ -363,6 +366,9 @@ class Stream(models.Model):
     def add_post(cls, sender, instance, *args, **kwargs):
         post = instance
         if kwargs['created']:
+            from user_profile.models import Profile
+            Profile.objects.filter(user_id=post.user_id).update(cnt_post=F('cnt_post')+1)
+
             user = post.user
             followers = Follow.objects.all().filter(following=user)
             for follower in followers:
@@ -392,12 +398,16 @@ class Likes(models.Model):
         unique_together = (("post", "user"),)
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like')+1)
+        # if not self.pk:
+        #     Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like')+1)
         super(Likes, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        from user_profile.models import Profile
+
         Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like')-1)
+
+        Profile.objects.filter(user_id=self.post.user_id).update(cnt_like=F('cnt_like')-1)
 
         key_str = "%s_%d" % (settings.POST_LIKERS, self.post.id)
         r_server.srem(key_str, int(self.user.id))
@@ -406,9 +416,14 @@ class Likes(models.Model):
 
     @classmethod
     def user_like_post(cls, sender, instance, *args, **kwargs):
+        from user_profile.models import Profile
         like = instance
         post = like.post
         sender = like.user
+
+        Post.objects.filter(pk=post.id).update(cnt_like=F('cnt_like')+1)
+
+        Profile.objects.filter(user_id=post.user_id).update(cnt_like=F('cnt_like')+1)
 
         key_str = "%s_%d" % (settings.POST_LIKERS, post.id)
         r_server.sadd(key_str, int(like.user.id))

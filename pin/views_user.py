@@ -117,8 +117,8 @@ def like(request, item_id):
             current_like = current_like + 1
             user_act = 1
 
-            liked.ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
-            liked.save()
+            # liked.ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
+            # liked.save()
         elif liked:
             current_like = current_like - 1
             Likes.objects.get(user=request.user, post=post).delete()

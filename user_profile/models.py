@@ -57,9 +57,9 @@ class Profile(models.Model):
         return score
 
     def user_statics(self):
-        self.cnt_calculate()
+        # self.cnt_calculate()
         self.score = self.score_calculation()
-        self.count_flag = 1
+        # self.count_flag = 1
 
     def save(self, *args, **kwargs):
         try:
