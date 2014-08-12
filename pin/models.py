@@ -209,7 +209,7 @@ class Post(models.Model):
         from user_profile.models import Profile
         try:
             profile = Profile.objects.get(user=self.user)
-            profile.cnt_post += 1
+            #profile.cnt_post += 1
 
             if ((self.date_lt( self.user.date_joined, 30) and profile.score > 5000) \
                 or profile.score > 7000 ):
@@ -217,7 +217,7 @@ class Post(models.Model):
                 
                 self.status = 1
 
-            profile.save()
+            #profile.save()
 
         except Profile.DoesNotExist:
             pass
@@ -306,11 +306,11 @@ class Post(models.Model):
 
         r_server.srem('pending_photos', self.id)
 
-        try:
-            profile = Profile.objects.get(user=self.user)
-            profile.save()
-        except Exception, e:
-            print str(e), "views_device 71"
+        # try:
+        #     profile = Profile.objects.get(user=self.user)
+        #     profile.save()
+        # except Exception, e:
+        #     print str(e), "views_device 71"
 
         send_notif_bar(user=self.user.id, type=3, post=self.id, actor=self.user.id)
 
@@ -405,9 +405,10 @@ class Likes(models.Model):
     def delete(self, *args, **kwargs):
         from user_profile.models import Profile
 
-        Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like')-1)
+        Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like') - 1)
 
-        Profile.objects.filter(user_id=self.post.user_id).update(cnt_like=F('cnt_like')-1)
+        Profile.objects.filter(user_id=self.post.user_id)\
+            .update(cnt_like=F('cnt_like') - 1)
 
         key_str = "%s_%d" % (settings.POST_LIKERS, self.post.id)
         r_server.srem(key_str, int(self.user.id))
@@ -417,13 +418,15 @@ class Likes(models.Model):
     @classmethod
     def user_like_post(cls, sender, instance, *args, **kwargs):
         from user_profile.models import Profile
+
         like = instance
         post = like.post
         sender = like.user
 
-        Post.objects.filter(pk=post.id).update(cnt_like=F('cnt_like')+1)
+        Post.objects.filter(pk=post.id).update(cnt_like=F('cnt_like') + 1)
 
-        Profile.objects.filter(user_id=post.user_id).update(cnt_like=F('cnt_like')+1)
+        Profile.objects.filter(user_id=post.user_id)\
+            .update(cnt_like=F('cnt_like') + 1)
 
         key_str = "%s_%d" % (settings.POST_LIKERS, post.id)
         r_server.sadd(key_str, int(like.user.id))
@@ -436,12 +439,11 @@ class Likes(models.Model):
             print "delete ", hstr, hcpstr
 
         str_likers = "web_likes_%s" % post.id
-        all_likers = "post_like_%s" % (post.id)
         cache.delete(str_likers)
 
         Post.hot(post.id, amount=0.5)
         
-        from pin.tasks import send_notif, send_notif_bar
+        from pin.tasks import send_notif_bar
 
         send_notif_bar(user=post.user_id, type=1, post=post.id, actor=sender.id)
 
