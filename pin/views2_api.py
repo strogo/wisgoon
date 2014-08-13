@@ -232,15 +232,19 @@ def post(request):
     if popular:
         sort_by = ['-cnt_like']
         date_from = None
-        dn = datetime.datetime.now()
+
+        dt_now = datetime.datetime.now()
+        dt_now = dt_now.replace(minute=0, second=0, microsecond=0)
+
+        #dn = datetime.datetime.now()
         if popular == 'month':
-            date_from = dn - datetime.timedelta(days=30)
+            date_from = dt_now - datetime.timedelta(days=30)
         elif popular == 'lastday':
-            date_from = dn - datetime.timedelta(days=1)
+            date_from = dt_now - datetime.timedelta(days=1)
         elif popular == 'lastweek':
-            date_from = dn - datetime.timedelta(days=7)
+            date_from = dt_now - datetime.timedelta(days=7)
         elif popular == 'lasteigth':
-            date_from = dn - datetime.timedelta(hours=8)
+            date_from = dt_now - datetime.timedelta(hours=8)
 
         if date_from:
             start_from = time.mktime(date_from.timetuple())

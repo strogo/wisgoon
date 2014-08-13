@@ -42,25 +42,25 @@ class Profile(models.Model):
     email_active = models.BooleanField(default=False, blank=True)
     activation_key = models.CharField(max_length=50, default=0, blank=True)
 
-    def cnt_calculate(self):
-        try:
-            cnt = Post.objects.filter(user=self.user, status=1).aggregate(models.Sum('cnt_like'), models.Count('id'))
-        except Post.DoesNotExist:
-            cnt = 0
+    # def cnt_calculate(self):
+    #     try:
+    #         cnt = Post.objects.filter(user=self.user, status=1).aggregate(models.Sum('cnt_like'), models.Count('id'))
+    #     except Post.DoesNotExist:
+    #         cnt = 0
 
-        self.cnt_like = 0 if not cnt['cnt_like__sum'] else cnt['cnt_like__sum']
-        self.cnt_post = cnt['id__count']
+    #     self.cnt_like = 0 if not cnt['cnt_like__sum'] else cnt['cnt_like__sum']
+    #     self.cnt_post = cnt['id__count']
 
-    def score_calculation(self):
-        score = self.cnt_post + (self.cnt_like * 10)
-        #if self.trusted != 0:
-        #    score = score+10000
-        return score
+    # def score_calculation(self):
+    #     score = self.cnt_post + (self.cnt_like * 10)
+    #     #if self.trusted != 0:
+    #     #    score = score+10000
+    #     return score
 
-    def user_statics(self):
-        # self.cnt_calculate()
-        self.score = self.score_calculation()
-        # self.count_flag = 1
+    # def user_statics(self):
+    #     # self.cnt_calculate()
+    #     self.score = self.score_calculation()
+    #     # self.count_flag = 1
 
     @classmethod
     def after_like(self, user_id):

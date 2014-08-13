@@ -325,16 +325,25 @@ def category_redis(request, cat_id):
 
 def popular(request, interval=""):
     ROW_PER_PAGE = 20
+    dt_now = datetime.datetime.now()
+    dt_now = dt_now.replace(minute=0, second=0, microsecond=0)
+
+    print "last eigth:", dt_now, dt_now - datetime.timedelta(hours = 8)
+    print "last week:", dt_now, dt_now - datetime.timedelta(days=7)
+
+    # lastHourDateTime = datetime.datetime.now() - datetime.timedelta(hours = 8)
+    # lh = lastHourDateTime.strftime('%Y-%m-%d %H')
+    # print "date is", lastHourDateTime.strftime('%Y-%m-%d %H')
 
     if interval and interval in ['month', 'lastday', 'lasteigth', 'lastweek']:
         if interval == 'month':
-            data_from = datetime.datetime.now() - datetime.timedelta(days=30)
+            data_from = dt_now - datetime.timedelta(days=30)
         elif interval == 'lastday':
-            data_from = datetime.datetime.now() - datetime.timedelta(days=1)
+            data_from = dt_now - datetime.timedelta(days=1)
         elif interval == 'lastweek':
-            data_from = datetime.datetime.now() - datetime.timedelta(days=7)
+            data_from = dt_now - datetime.timedelta(days=7)
         elif interval == 'lasteigth':
-            data_from = datetime.datetime.now() - datetime.timedelta(hours=8)
+            data_from = dt_now - datetime.timedelta(hours = 8)
 
         start_from = mktime(data_from.timetuple())
         post_list = Post.objects.filter(status=1)\
