@@ -3,6 +3,7 @@ import os
 import time
 from datetime import datetime
 from django.db import models
+from django.db.models import F
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
@@ -61,12 +62,17 @@ class Profile(models.Model):
         self.score = self.score_calculation()
         # self.count_flag = 1
 
-    def save(self, *args, **kwargs):
-        try:
-            self.user_statics()
-        except:
-            pass
+    @classmethod
+    def after_like(self, user_id):
+        Profile.objects.filter(user_id=user_id)\
+            .update(cnt_like=F('cnt_like') + 1, score=F('score') + 10)
 
+    @classmethod
+    def after_dislike(self, user_id):
+        Profile.objects.filter(user_id=user_id)\
+            .update(cnt_like=F('cnt_like') - 1, score=F('score') - 10)
+
+    def save(self, *args, **kwargs):
         super(Profile, self).save(*args, **kwargs)
 
 

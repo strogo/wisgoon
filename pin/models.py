@@ -407,8 +407,11 @@ class Likes(models.Model):
 
         Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like') - 1)
 
-        Profile.objects.filter(user_id=self.post.user_id)\
-            .update(cnt_like=F('cnt_like') - 1)
+        Profile.after_dislike(user_id=self.post.user_id)
+
+        # Profile.objects.filter(user_id=self.post.user_id)\
+        #     .update(cnt_like=F('cnt_like') - 1)
+
 
         key_str = "%s_%d" % (settings.POST_LIKERS, self.post.id)
         r_server.srem(key_str, int(self.user.id))
@@ -425,8 +428,10 @@ class Likes(models.Model):
 
         Post.objects.filter(pk=post.id).update(cnt_like=F('cnt_like') + 1)
 
-        Profile.objects.filter(user_id=post.user_id)\
-            .update(cnt_like=F('cnt_like') + 1)
+        # Profile.objects.filter(user_id=post.user_id)\
+        #     .update(cnt_like=F('cnt_like') + 1)
+
+        Profile.after_like(user_id=post.user_id)
 
         key_str = "%s_%d" % (settings.POST_LIKERS, post.id)
         r_server.sadd(key_str, int(like.user.id))
