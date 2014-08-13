@@ -25,8 +25,7 @@ from pin.models import Post, Stream, Follow, Likes,\
 from pin.model_mongo import Notif
 
 import pin_image
-from pin.tools import get_request_timestamp, create_filename, get_user_ip,\
-    inc_user_cnt_like, dec_user_cnt_like
+from pin.tools import get_request_timestamp, create_filename, get_user_ip
 
 from user_profile.models import Profile
 
@@ -99,49 +98,37 @@ def follow(request, following, action):
     return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
     
 
-
 @login_required
 def like(request, item_id):
     try:
         post = Post.objects.get(pk=item_id, status=1)
-        current_like = post.cnt_likes()
-
-        try:
-            liked = Likes.objects.get(user=request.user, post=post)
-            created = False
-        except Likes.DoesNotExist:
-            liked = Likes.objects.create(user=request.user, post=post)
-            created = True
-
-        if created:
-            current_like = current_like + 1
-            user_act = 1
-
-            # liked.ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
-            # liked.save()
-        elif liked:
-            current_like = current_like - 1
-            Likes.objects.get(user=request.user, post=post).delete()
-            user_act = -1
-
-        # if created:
-        #     inc_user_cnt_like(user_id=post.user_id)
-        # else:
-        #     dec_user_cnt_like(user_id=post.user_id)
-        # try:
-        #     profile = Profile.objects.get(user=post.user)
-        #     profile.save()
-        # except Exception, e:
-        #     print str(e)
-
-        if request.is_ajax():
-            data = [{'likes': current_like, 'user_act': user_act}]
-            return HttpResponse(json.dumps(data))
-        else:
-            return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
-
     except Post.DoesNotExist:
         return HttpResponseRedirect('/')
+
+    current_like = post.cnt_likes()
+
+    try:
+        liked = Likes.objects.get(user=request.user, post=post)
+        created = False
+    except Likes.DoesNotExist:
+        liked = Likes.objects.create(user=request.user, post=post)
+        created = True
+
+    if created:
+        current_like = current_like + 1
+        user_act = 1
+    elif liked:
+        current_like = current_like - 1
+        Likes.objects.get(user=request.user, post=post).delete()
+        user_act = -1
+
+    if request.is_ajax():
+        data = [{'likes': current_like, 'user_act': user_act}]
+        return HttpResponse(json.dumps(data))
+    else:
+        return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
+
+    
 
 
 @login_required

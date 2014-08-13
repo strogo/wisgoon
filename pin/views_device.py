@@ -18,8 +18,7 @@ from pin.models import Post, Likes, Comments, Comments_score,\
 
 from user_profile.models import Profile
 from pin.forms import PinDirectForm, PinDeviceUpdate
-from pin.tools import create_filename, AuthCache,\
-    inc_user_cnt_like, dec_user_cnt_like
+from pin.tools import create_filename, AuthCache
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -33,6 +32,8 @@ def check_auth(request):
         # api = ApiKey.objects.get(key=token)
         # user = api.user
         user = AuthCache.user_from_token(token)
+        if not user:
+            return False
         user._ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
 
         if not user.is_active:
@@ -59,19 +60,20 @@ def like(request):
             return HttpResponseBadRequest('erro in post id')
 
         try:
-            l, created = Likes.objects.get_or_create(user_id=user.id, post_id=post_id)
-            # if created:
-            #     inc_user_cnt_like(user_id=l.post.user_id)
-            # else:
-            #     dec_user_cnt_like(user_id=l.post.user_id)
-            # try:
-            #     profile = Profile.objects.get(user=l.post.user)
-            #     profile.save()
-            # except Exception, e:
-            #     print str(e), "views_device 71"
-        except Exception, e:
-            print str(e), "views_device 73"
+            liked = Likes.objects.get(user_id=user.id, post_id=post_id)
+            if liked:
+                Likes.objects.get(user_id=user.id, post_id=post_id).delete()
+
             return HttpResponse('-1')
+        except Likes.DoesNotExist:
+            liked = Likes.objects.create(user_id=user.id, post_id=post_id)
+            return HttpResponse('+1')
+
+        # try:
+        #     l, created = Likes.objects.get_or_create(user_id=user.id, post_id=post_id)
+        # except Exception, e:
+        #     print str(e), "views_device 73"
+        #     return HttpResponse('-1')
 
         return HttpResponse('+1')
 

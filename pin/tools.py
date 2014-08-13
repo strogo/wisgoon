@@ -4,7 +4,7 @@ from datetime import datetime
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.models import F
+# from django.db.models import F
 
 from tastypie.models import ApiKey
 
@@ -16,20 +16,20 @@ from daddy_avatar.templatetags import daddy_avatar
 user_keys = {}
 USERDATA_TIMEOUT = 300
 
-if settings.DEBUG:
-    from feedreader.task_cel_local import inc_prof
-else:
-    from feedreader.task_cel import inc_prof
+# if settings.DEBUG:
+#     from feedreader.task_cel_local import inc_prof
+# else:
+#     from feedreader.task_cel import inc_prof
 
-def inc_user_cnt_like(user_id):
-    inc_prof.delay(user_id)
-    #print "inc for ", user_id
-    # Profile.objects.filter(user_id=user_id)\
-    #     .update(cnt_like=F('cnt_like')+1, score=F('score')+10)
+# def inc_user_cnt_like(user_id):
+#     inc_prof.delay(user_id)
+#     #print "inc for ", user_id
+#     # Profile.objects.filter(user_id=user_id)\
+#     #     .update(cnt_like=F('cnt_like')+1, score=F('score')+10)
 
-def dec_user_cnt_like(user_id):
-    Profile.objects.filter(user_id=user_id)\
-        .update(cnt_like=F('cnt_like')-1, score=F('score')-10)
+# def dec_user_cnt_like(user_id):
+#     Profile.objects.filter(user_id=user_id)\
+#         .update(cnt_like=F('cnt_like')-1, score=F('score')-10)
 
 
 def create_filename(filename):
