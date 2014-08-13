@@ -16,7 +16,6 @@ from tastypie.models import ApiKey
 from pin.models import Post, Likes, Comments, Comments_score,\
     Follow, Stream
 
-from user_profile.models import Profile
 from pin.forms import PinDirectForm, PinDeviceUpdate
 from pin.tools import create_filename, AuthCache
 
@@ -69,12 +68,6 @@ def like(request):
             liked = Likes.objects.create(user_id=user.id, post_id=post_id)
             return HttpResponse('+1')
 
-        # try:
-        #     l, created = Likes.objects.get_or_create(user_id=user.id, post_id=post_id)
-        # except Exception, e:
-        #     print str(e), "views_device 73"
-        #     return HttpResponse('-1')
-
         return HttpResponse('+1')
 
     return HttpResponseBadRequest('error in parameters')
@@ -91,7 +84,10 @@ def post_comment(request):
     object_pk = data.get("object_pk")
     if data and comment and object_pk and Post.objects.filter(pk=object_pk).exists():
 
-        Comments.objects.create(object_pk_id=object_pk, comment=comment, user_id=user.id, ip_address=user._ip)
+        Comments.objects.create(object_pk_id=object_pk,
+                                comment=comment,
+                                user_id=user.id,
+                                ip_address=user._ip)
         return HttpResponse(1)
 
     return HttpResponse(0)
@@ -201,6 +197,7 @@ def post_update(request, item_id):
 
     return HttpResponseBadRequest('bad request')
 
+
 def follow(request, following, action):
     user = check_auth(request)
     if not user:
@@ -214,26 +211,28 @@ def follow(request, following, action):
         follow, created = Follow.objects.get_or_create(follower=user,
                                                        following=following)
 
-        if int(action) == 0:
+        if int(action) == 0 and follow:
             follow.delete()
             Stream.objects.filter(following=following, user=user)\
                 .all().delete()
         elif created:
-            posts = Post.objects.filter(user=following, status=1)[:100]
-            with transaction.commit_on_success():
-                for post in posts:
-                    stream = Stream(post=post,
-                                    user=user,
-                                    date=post.timestamp,
-                                    following=following)
-                    try:
-                        stream.save()
-                    except Exception, e:
-                        print "duplicate in stream", str(e)
+            posts = Post.objects.only('timestamp').filter(user=following)\
+                .order_by('-timestamp')[:100]
+
+            for post in posts:
+                s, created = Stream.objects\
+                    .get_or_create(post=post,
+                                   user=user,
+                                   date=post.timestamp,
+                                   following=following)
+
+                print "post", post.id, s, created
+
     except User.DoesNotExist:
         return HttpResponse('User does not exists')
 
     return HttpResponse('1')
+
 
 @csrf_exempt
 def post_send(request):

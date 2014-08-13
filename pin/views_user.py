@@ -79,22 +79,20 @@ def follow(request, following, action):
     follow, created = Follow.objects.get_or_create(follower=request.user,
                                                    following=following)
 
-    if int(action) == 0:
+    if int(action) == 0 and follow:
         follow.delete()
         Stream.objects.filter(following=following, user=request.user).delete()
     elif created:
-        posts = Post.objects.filter(user=following, status=1)[:100]
-        #with transaction.commit_on_success():
+        posts = Post.objects.only('timestamp').filter(user=following)\
+            .order_by('-timestamp')[:100]
+
         for post in posts:
             s, created = Stream.objects.get_or_create(post=post,
-                            user=request.user,
-                            date=post.timestamp,
-                            following=following)
+                                                      user=request.user,
+                                                      date=post.timestamp,
+                                                      following=following)
             print "post", post.id, s, created
-            #try:
-            #    stream.save()
-            #except IntegrityError:
-            #    print "duplicate in stream"
+
     return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
     
 
