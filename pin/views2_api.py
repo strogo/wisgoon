@@ -83,9 +83,8 @@ def get_cat(cat_id):
     cache.set(cat_cache_str, cat, 8600)
     return cat
 
-r = None
 
-def get_objects_list(posts, cur_user_id, thumb_size):
+def get_objects_list(posts, cur_user_id, thumb_size, r=None):
     # cache_key = md5(json.dumps(posts)).hexdigest()
     # list_cache_str = "olist_%s" % (cache_key)
     # cache_list = cache.get(list_cache_str)
@@ -318,12 +317,13 @@ def post(request):
 
     #cache.set(cache_stream_name, posts, cache_ttl)
 
-    data['objects'] = get_objects_list(posts, cur_user_id=cur_user, thumb_size=thumb_size)
+    data['objects'] = get_objects_list(posts, cur_user_id=cur_user, thumb_size=thumb_size, r=request)
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
 
 
 def friends_post(request):
+    r = request
     #print "we are in post"
 
     offset = int(request.GET.get('offset', 0))
@@ -366,7 +366,7 @@ def friends_post(request):
 
     thumb_size = request.GET.get('thumb_size', "100x100")
 
-    data['objects'] = get_objects_list(posts, cur_user_id=cur_user, thumb_size=thumb_size)
+    data['objects'] = get_objects_list(posts, cur_user_id=cur_user, thumb_size=thumb_size, r=request)
 
     #data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
