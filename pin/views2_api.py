@@ -105,7 +105,11 @@ def get_objects_list(posts, cur_user_id, thumb_size):
         o['timestamp'] = p['timestamp']
 
         o['user'] = p['user_id']
-        o['url'] = p['url']
+        try:
+            o['url'] = p['url']
+        except Exception, e:
+            print str(e)
+            o['url'] = None
         o['like'] = p['cnt_like']
         o['likers'] = None
         o['like_with_user'] = False
@@ -299,7 +303,7 @@ def post(request):
             if hot_post:
                 posts = list(hot_post) + list(posts)
 
-    if not user_id:
+    if not category_id and not popular and not user_id:
         hot_post = Post.objects\
             .values(*Post.NEED_KEYS)\
             .filter(id=2416517)
