@@ -306,12 +306,12 @@ def post(request):
             if hot_post:
                 posts = list(hot_post) + list(posts)
 
-    if not category_id and not popular and not user_id:
-        hot_post = Post.objects\
-            .values(*Post.NEED_KEYS)\
-            .filter(id=2416517)
-        if hot_post:
-            posts = list(hot_post) + list(posts)
+    # if not category_id and not popular and not user_id:
+    #     hot_post = Post.objects\
+    #         .values(*Post.NEED_KEYS)\
+    #         .filter(id=2416517)
+    #     if hot_post:
+    #         posts = list(hot_post) + list(posts)
 
     thumb_size = "236"
 

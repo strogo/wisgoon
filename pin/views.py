@@ -328,9 +328,6 @@ def popular(request, interval=""):
     dt_now = datetime.datetime.now()
     dt_now = dt_now.replace(minute=0, second=0, microsecond=0)
 
-    print "last eigth:", dt_now, dt_now - datetime.timedelta(hours = 8)
-    print "last week:", dt_now, dt_now - datetime.timedelta(days=7)
-
     # lastHourDateTime = datetime.datetime.now() - datetime.timedelta(hours = 8)
     # lh = lastHourDateTime.strftime('%Y-%m-%d %H')
     # print "date is", lastHourDateTime.strftime('%Y-%m-%d %H')
