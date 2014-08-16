@@ -283,13 +283,13 @@ def post(request):
     elif before:
         if not posts:
             posts = Post.objects\
-                .values(*NEED_KEYS)\
+                .values(*Post.NEED_KEYS)\
                 .filter(**filters).order_by(*sort_by)[:10]
 
             cache.set(cache_stream_name, posts, 86400)
     else:
         posts = Post.objects\
-            .values(*NEED_KEYS)\
+            .values(*Post.NEED_KEYS)\
             .filter(**filters).order_by(*sort_by)[:10]
         if not user_id and not category_id:
             # hot_post = Post.get_hot(values=True)
