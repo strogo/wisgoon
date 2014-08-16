@@ -71,7 +71,7 @@ class Post(models.Model):
 
     NEED_KEYS = ['id', 'text', 'cnt_comment', 'timestamp',
                  'image', 'user_id', 'cnt_like', 'category_id',
-                 'status']
+                 'status', 'url']
 
     STATUS_CHOICES = (
         (PENDING, 'منتظر تایید'),

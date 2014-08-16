@@ -105,7 +105,7 @@ def get_objects_list(posts, cur_user_id, thumb_size):
         o['timestamp'] = p['timestamp']
 
         o['user'] = p['user_id']
-        o['url'] = 'v'
+        o['url'] = p['url']
         o['like'] = p['cnt_like']
         o['likers'] = None
         o['like_with_user'] = False
