@@ -138,7 +138,7 @@ def get_objects_list(posts, cur_user_id, thumb_size):
 
 def get_list_post(pl, from_model='latest'):
     arp = []
-    pl_str = '_'.join(pl)
+    pl_str = '2_'.join(pl)
     cache_pl = md5(pl_str).hexdigest()
     #print cache_stream_str, cache_stream_name
 
