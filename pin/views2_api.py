@@ -299,11 +299,12 @@ def post(request):
             if hot_post:
                 posts = list(hot_post) + list(posts)
 
-    hot_post = Post.objects\
-        .values(*Post.NEED_KEYS)\
-        .filter(id=2416517)
-    if hot_post:
-        posts = list(hot_post) + list(posts)
+    if not user_id:
+        hot_post = Post.objects\
+            .values(*Post.NEED_KEYS)\
+            .filter(id=2416517)
+        if hot_post:
+            posts = list(hot_post) + list(posts)
 
     thumb_size = "236"
 
@@ -602,7 +603,7 @@ def comments(request):
         com_date = str(com.submit_date)
         com_date = com_date.replace(' ', 'T')
         com_date = com_date.split('+')[0]
-        print com_date
+        #print com_date
 
         
         o['submit_date'] = com_date
