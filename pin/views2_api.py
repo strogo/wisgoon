@@ -259,7 +259,7 @@ def post(request):
             start_from = time.mktime(date_from.timetuple())
             filters.update(dict(timestamp__gt=start_from))
 
-    cache_stream_str = "%s_%s" % (str(filters), sort_by)
+    cache_stream_str = "v2%s_%s" % (str(filters), sort_by)
 
     cache_stream_name = md5(cache_stream_str).hexdigest()
     #print cache_stream_str, cache_stream_name
