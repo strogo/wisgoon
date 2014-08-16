@@ -401,8 +401,6 @@ def user(request, user_id, user_name=None):
     user = get_object_or_404(User, pk=user_id)
 
     profile, created = Profile.objects.get_or_create(user=user)
-    if not profile.count_flag:
-        profile.user_statics()
 
     timestamp = get_request_timestamp(request)
 
