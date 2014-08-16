@@ -292,7 +292,10 @@ def post(request):
             .values(*NEED_KEYS)\
             .filter(**filters).order_by(*sort_by)[:10]
         if not user_id and not category_id:
-            hot_post = Post.get_hot(values=True)
+            # hot_post = Post.get_hot(values=True)
+            hot_post = Post.objects\
+                .values(*Post.NEED_KEYS)\
+                .filter(id=2416517)
             if hot_post:
                 posts = list(hot_post) + list(posts)
 

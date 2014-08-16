@@ -156,12 +156,6 @@ class Post(models.Model):
 
     @classmethod
     def get_hot(self, values=False):
-        if values:
-            post = Post.objects\
-                .values(*self.NEED_KEYS)\
-                .filter(id=2416517)
-            return post
-
         h = r_server.zrange('hot', 0, 0, withscores=True, desc=True)
         if h[0][1] > 110:
             r_server.sadd('hottest', h[0][0])
