@@ -299,6 +299,12 @@ def post(request):
             if hot_post:
                 posts = list(hot_post) + list(posts)
 
+    hot_post = Post.objects\
+        .values(*Post.NEED_KEYS)\
+        .filter(id=2416517)
+    if hot_post:
+        posts = list(hot_post) + list(posts)
+
     thumb_size = "236"
 
     #cache.set(cache_stream_name, posts, cache_ttl)
