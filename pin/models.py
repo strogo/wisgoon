@@ -160,6 +160,7 @@ class Post(models.Model):
             post = Post.objects\
                 .values(*self.NEED_KEYS)\
                 .filter(id=2416517)
+            return post
 
         h = r_server.zrange('hot', 0, 0, withscores=True, desc=True)
         if h[0][1] > 110:
