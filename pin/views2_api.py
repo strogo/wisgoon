@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 import json
+import re
 import datetime
 import time
 import redis
@@ -12,17 +13,18 @@ from django.conf import settings
 from sorl.thumbnail import get_thumbnail
 
 from pin.tools import userdata_cache, AuthCache, CatCache
-from pin.models import Post, Category, Likes, Stream, Follow
+from pin.models import Post, Category, Likes, Stream, Follow, Comments
 from pin.model_mongo import Notif
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
 r_server = redis.Redis(settings.REDIS_DB, db=11)
 
+
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, datetime.datetime):
-            return int(mktime(obj.timetuple()))
+        # if isinstance(obj, datetime.datetime):
+        #     return int(mktime(obj.timetuple()))
 
         """if isinstance(obj, FieldFile):
             return str(obj)"""
@@ -554,6 +556,52 @@ def following(request, user_id=1):
         else:
             o['follow_by_user'] = False
 
+
+        objects_list.append(o)
+
+    data['objects'] = objects_list
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
+
+
+def comments(request):
+    data = {}
+
+    offset = int(request.GET.get('offset', 0))
+    limit = int(request.GET.get('limit', 20))
+    object_pk = int(request.GET.get('object_pk', 0))
+
+    next = {
+        'url': "/pin/api2/com/comments/?limit=%s&offset=%s&object_pk=%s" % (limit, offset+limit, object_pk)
+    }
+
+    data['meta'] = {'limit': limit,
+                    'next': next['url'],
+                    'offset': offset,
+                    'previous': '',
+                    'total_count': 1000}
+
+    objects_list = []
+
+    for com in Comments.objects.filter(object_pk_id=object_pk)[offset:offset+limit]:
+        o = {}
+        o['id'] = com.id
+        o['object_pk'] = com.object_pk_id
+        o['score'] = com.score
+
+        com_date = str(com.submit_date)
+        com_date = com_date.replace(' ', 'T')
+        com_date = com_date.split('+')[0]
+        print com_date
+
+        
+        o['submit_date'] = com_date
+        o['comment'] = com.comment
+        o['user_url'] = com.user_id
+        o['user_avatar'] = get_avatar(com.user_id, size=100)
+        o['user_name'] = AuthCache.get_username(com.user_id)
+        o['resource_uri'] = "/pin/api/com/comments/1/"
 
         objects_list.append(o)
 
