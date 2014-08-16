@@ -262,7 +262,7 @@ def post(request):
 
     NEED_KEYS = ['id', 'text', 'cnt_comment', 'timestamp',
                  'image', 'user_id', 'cnt_like', 'category_id',
-                 'status']
+                 'status', 'url']
 
     if not category_id and not popular and not user_id:
         if not before:
