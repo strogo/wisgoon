@@ -83,6 +83,7 @@ def get_cat(cat_id):
     cache.set(cat_cache_str, cat, 8600)
     return cat
 
+r = None
 
 def get_objects_list(posts, cur_user_id, thumb_size):
     # cache_key = md5(json.dumps(posts)).hexdigest()
@@ -109,6 +110,8 @@ def get_objects_list(posts, cur_user_id, thumb_size):
             o['url'] = p['url']
         except Exception, e:
             print str(e)
+            if r:
+                print r.get_full_path()
             o['url'] = None
         o['like'] = p['cnt_like']
         o['likers'] = None
@@ -193,6 +196,7 @@ def post_item(request, item_id):
 
 
 def post(request):
+    r = request
     #print "we are in post"
     data = {}
     data['meta'] = {'limit': 10,
