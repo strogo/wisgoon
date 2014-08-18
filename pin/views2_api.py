@@ -123,7 +123,8 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
         if cur_user_id:
             o['like_with_user'] = Likes.user_in_likers(post_id=p['id'], user_id=cur_user_id)
 
-        thumb_size = "236"
+        if not thumb_size:
+            thumb_size = "236"
         thumb_quality = 99
 
         o_image = p['image']
@@ -313,7 +314,12 @@ def post(request):
         if hot_post:
             posts = list(hot_post) + list(posts)
 
-    thumb_size = "236"
+    thumb_size = int(request.GET.get('thumb_size', "236"))
+    print "thumb_size", thumb_size
+    if thumb_size > 400:
+        thumb_size = 500
+    else:
+        thumb_size = "236"
 
     #cache.set(cache_stream_name, posts, cache_ttl)
 
