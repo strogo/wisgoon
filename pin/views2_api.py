@@ -384,14 +384,15 @@ def likes(request):
     before = request.GET.get('before', None)
     post_id = request.GET.get('post_id', None)
     offset = int(request.GET.get('offset', 0))
-    limit = int(request.GET.get('limit', 20))
+    #limit = int(request.GET.get('limit', 20))
+    limit = 20
 
     next = {
         'url': "/api/v1/tone/?limit=%s&offset=%s" % (limit, offset+limit),
     }
 
     data = {}
-    data['meta'] = {'limit': 10,
+    data['meta'] = {'limit': 20,
                     'next': next['url'],
                     'offset': 0,
                     'previous': '',
