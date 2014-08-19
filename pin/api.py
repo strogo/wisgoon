@@ -266,7 +266,7 @@ class CommentResource(ModelResource):
         #fields = ['id', 'comment', 'object_pk', 'user_id', 'score', 'submit_date']
         excludes = ['ip_address', 'is_public', 'object_pk', 'reported']
         cache = SimpleCache(timeout=300)
-        limit = 10
+        limit = 20
         filtering = {
             "object_pk": ('exact',),
         }
