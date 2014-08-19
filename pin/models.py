@@ -370,6 +370,13 @@ class Stream(models.Model):
             Profile.objects.filter(user_id=post.user_id).update(cnt_post=F('cnt_post')+1)
 
             user = post.user
+
+            stream, created = Stream.objects\
+                .get_or_create(post=post,
+                               user=user,
+                               date=post.timestamp,
+                               following=user)
+
             followers = Follow.objects.all().filter(following=user)
             for follower in followers:
                 try:
