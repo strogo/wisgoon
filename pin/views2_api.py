@@ -473,7 +473,7 @@ def notif(request):
 
     notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 
-    Notif.objects.filter(owner=cur_user).update(set__seen=True)
+    Notif.objects.filter(owner=cur_user,seen=False).update(set__seen=True)
 
 
     rf = ['id', 'text', 'cnt_comment', 'image',
