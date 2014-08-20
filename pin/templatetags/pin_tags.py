@@ -41,7 +41,8 @@ class UserItemLike(template.Node):
         try:
             item = int(self.item.resolve(context))
             user = context['user']
-            liked = pin_likes.objects.filter(user=user, item=item).count()
+            #liked = pin_likes.objects.filter(user=user, item=item).count()
+            liked = pin_likes.user_in_likers(post_id=item, user_id=user.id)
             if liked:
                 return 'btn-danger'
             else:
