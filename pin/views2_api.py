@@ -771,7 +771,7 @@ def password_reset(request, is_admin_site=False,
 def change_password(request):
     token = request.GET.get('token', '')
     if token:
-        user = AuthCache.id_from_token(token=token)
+        user = AuthCache.user_from_token(token=token)
     
     if not user or not token:
         raise Http404
