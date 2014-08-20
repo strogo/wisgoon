@@ -12,6 +12,7 @@ from django.core.urlresolvers import reverse
 from django.template.response import TemplateResponse
 from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.core.cache import cache
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
 from sorl.thumbnail import get_thumbnail
@@ -728,7 +729,7 @@ def search(request):
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
 
-
+@csrf_exempt
 def password_reset(request, is_admin_site=False,
                    template_name='registration/password_reset_form.html',
                    email_template_name='registration/password_reset_email.html',
@@ -736,13 +737,10 @@ def password_reset(request, is_admin_site=False,
                    password_reset_form=PasswordResetForm,
                    token_generator=default_token_generator,
                    post_reset_redirect=None,
-                   from_email='info@ringbaz.com',
+                   from_email='info@wisgoon.com',
                    current_app=None,
                    extra_context=None):
-    if post_reset_redirect is None:
-        post_reset_redirect = reverse('password_reset_done')
-    else:
-        post_reset_redirect = resolve_url(post_reset_redirect)
+    
     if request.method == "POST":
         form = password_reset_form(request.POST)
         if form.is_valid():
