@@ -6,7 +6,11 @@ import time
 import redis
 from hashlib import md5
 
-from django.http import HttpResponse, HttpResponseForbidden
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
+from django.contrib.auth.tokens import default_token_generator
+from django.core.urlresolvers import reverse
+from django.template.response import TemplateResponse
+from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.core.cache import cache
 from django.conf import settings
 
@@ -723,3 +727,66 @@ def search(request):
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
+
+
+def password_reset(request, is_admin_site=False,
+                   template_name='registration/password_reset_form.html',
+                   email_template_name='registration/password_reset_email.html',
+                   subject_template_name='registration/password_reset_subject.txt',
+                   password_reset_form=PasswordResetForm,
+                   token_generator=default_token_generator,
+                   post_reset_redirect=None,
+                   from_email='info@ringbaz.com',
+                   current_app=None,
+                   extra_context=None):
+    if post_reset_redirect is None:
+        post_reset_redirect = reverse('password_reset_done')
+    else:
+        post_reset_redirect = resolve_url(post_reset_redirect)
+    if request.method == "POST":
+        form = password_reset_form(request.POST)
+        if form.is_valid():
+            opts = {
+                'use_https': request.is_secure(),
+                'token_generator': token_generator,
+                'from_email': from_email,
+                'email_template_name': email_template_name,
+                'subject_template_name': subject_template_name,
+                'request': request,
+            }
+            if is_admin_site:
+                opts = dict(opts, domain_override=request.get_host())
+            form.save(**opts)
+            return HttpResponse('email sent')
+    else:
+        form = password_reset_form()
+    context = {
+        'form': form,
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+    return TemplateResponse(request, template_name, context,
+                            current_app=current_app)
+
+
+def change_password(request):
+    token = request.GET.get('token', '')
+    if token:
+        user = AuthCache.id_from_token(token=token)
+    
+    if not user or not token:
+        raise Http404
+
+    try:
+        new_pass = request.POST.get('new_pass', '')
+        if new_pass:
+            user.set_password(new_pass)
+            user.save()
+            return HttpResponse('password changed')
+
+        return HttpResponse('error in parameters')
+            
+    except Exception, e:
+        print str(e)
+
+    return HttpResponse('error in change password')
