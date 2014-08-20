@@ -767,6 +767,7 @@ def password_reset(request, is_admin_site=False,
                             current_app=current_app)
 
 
+@csrf_exempt
 def change_password(request):
     token = request.GET.get('token', '')
     if token:
