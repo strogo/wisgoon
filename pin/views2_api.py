@@ -332,6 +332,31 @@ def post(request):
     return HttpResponse(json_data)
 
 
+def post_details(request, post_id):
+    #print "we are in post"
+    data = {}
+    cur_user = None
+
+    token = request.GET.get('token', '')
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+
+    posts = Post.objects\
+        .values(*Post.NEED_KEYS)\
+        .filter(id=post_id)
+
+    thumb_size = int(request.GET.get('thumb_size', "236"))
+    if thumb_size > 400:
+        thumb_size = 500
+    else:
+        thumb_size = "236"
+
+    #cache.set(cache_stream_name, posts, cache_ttl)
+
+    data['objects'] = get_objects_list(posts, cur_user_id=cur_user, thumb_size=thumb_size)
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
+
 def friends_post(request):
     r = request
     #print "we are in post"
