@@ -540,7 +540,7 @@ def notif(request):
         o['like_with_user'] = False
 
         #o['resource_uri'] = "/pin/api/notif/notify/%d/" % cur_p['id']
-        o['resource_uri'] = "/pin/api/post/%d/" % p['id']
+        o['resource_uri'] = "/pin/api/post/%d/" % cur_p['id']
 
         if cur_user:
             o['like_with_user'] = Likes.user_in_likers(post_id=cur_p['id'], user_id=cur_user)
