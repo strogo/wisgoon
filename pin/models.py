@@ -352,6 +352,18 @@ class Follow(models.Model):
                               following_id=following).exists()
         return fstatus
 
+    @classmethod
+    def new_follow(cls, sender, instance, *args, **kwargs):
+        pass
+        # print "new follow"
+        # print cls, sender, instance, args, kwargs
+        # print "instance follow:", instance.follower.id
+        # Notif_mongo.objects(owner=instance.following.id, type=10, post=0)\
+        #     .update_one(set__last_actor=instance.follower.id,
+        #                 set__date=datetime.now,
+        #                 set__seen=False,
+        #                 add_to_set__actors=instance.follower.id, upsert=True)
+
 
 class Stream(models.Model):
     following = models.ForeignKey(User, related_name='stream_following')
@@ -622,3 +634,4 @@ post_save.connect(Likes.user_like_post, sender=Likes)
 #post_delete.connect(Likes.user_unlike_post, sender=Likes)
 post_save.connect(Post.change_tag_slug, sender=Tag)
 post_save.connect(Comments.add_comment, sender=Comments)
+post_save.connect(Follow.new_follow, sender=Follow)

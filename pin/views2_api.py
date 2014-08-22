@@ -511,7 +511,7 @@ def notif(request):
 
     for p in notifs:
         try:
-            cur_p = Post.objects.values(*rf).get(id=p.post)
+            cur_p = Post.objects.values(*Post.NEED_KEYS).get(id=p.post)
         except Post.DoesNotExist:
             continue
         o = {}
@@ -534,6 +534,7 @@ def notif(request):
         o['user'] = cur_p['user_id']
         o['type'] = p['type']
         o['like'] = cur_p['cnt_like']
+        o['timestamp'] = cur_p['timestamp']
         o['url'] = ""
         o['likers'] = None
         o['like_with_user'] = False
