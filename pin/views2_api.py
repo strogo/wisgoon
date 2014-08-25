@@ -319,7 +319,7 @@ def post(request):
     #         posts = list(hot_post) + list(posts)
 
     thumb_size = int(request.GET.get('thumb_size', "236"))
-    print "thumb_size", thumb_size
+    #print "thumb_size", thumb_size
     if thumb_size > 400:
         thumb_size = 500
     else:

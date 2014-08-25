@@ -76,8 +76,14 @@ def follow(request, following, action):
     except User.DoesNotExist:
         return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
 
-    follow, created = Follow.objects.get_or_create(follower=request.user,
-                                                   following=following)
+    try:
+        follow, created = Follow.objects.get_or_create(follower=request.user,
+                                                       following=following)
+    except Exception, e:
+        follow = Follow.objects.filter(follower=request.user,
+                                       following=following).first()
+        created = False
+        print str(e)
 
     if int(action) == 0 and follow:
         follow.delete()
