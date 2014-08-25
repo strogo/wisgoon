@@ -81,7 +81,7 @@ def follow(request, following, action):
                                                        following=following)
     except Exception, e:
         follow = Follow.objects.filter(follower=request.user,
-                                       following=following)[0].get()
+                                       following=following)[0]
         created = False
         print str(e)
 
