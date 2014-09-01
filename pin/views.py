@@ -113,10 +113,12 @@ def user_like(request, user_id):
 
     # paginator = Paginator(likes, ROW_PER_PAGE)
 
-    # try:
-    #     offset = int(request.GET.get('older', 1))
-    # except ValueError:
-    #     offset = 1
+    try:
+        offset = int(request.GET.get('older', 1))
+        if offset == -1:
+            return HttpResponse(0)
+    except ValueError:
+        offset = 1
 
     # try:
     #     likes = paginator.page(offset)
