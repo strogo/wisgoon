@@ -229,3 +229,4 @@ STREAM_LATEST_CAT = 'list_latest_cat'
 POST_LIKERS = "wis_likers_2_"
 USER_NAME_CACHE = "un_"
 
+LIKE_WITH_CELERY = False

@@ -2,6 +2,8 @@
 import os
 import time
 from datetime import datetime
+
+from django.conf import settings
 from django.db import models
 from django.db.models import F
 from django.contrib.auth.models import User
@@ -64,11 +66,23 @@ class Profile(models.Model):
 
     @classmethod
     def after_like(self, user_id):
+        if settings.LIKE_WITH_CELERY:
+            from pin.tasks import send_profile_after_like
+            send_profile_after_like(user_id=user_id)
+
+            return
+
         Profile.objects.filter(user_id=user_id)\
             .update(cnt_like=F('cnt_like') + 1, score=F('score') + 10)
 
     @classmethod
     def after_dislike(self, user_id):
+        if settings.LIKE_WITH_CELERY:
+            from pin.tasks import send_profile_after_dislike
+            send_profile_after_dislike(user_id=user_id)
+            
+            return
+
         Profile.objects.filter(user_id=user_id)\
             .update(cnt_like=F('cnt_like') - 1, score=F('score') - 10)
 

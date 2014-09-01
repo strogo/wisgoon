@@ -14,6 +14,7 @@ from pin.model_mongo import Notif
 
 from user_profile.models import Profile
 
+
 @app.task(name="tasks.notif_test")
 def notif_send(user_id, type, post, actor_id, seen=False):
     Notif.objects(owner=user_id, type=type, post=post)\
@@ -25,6 +26,24 @@ def notif_send(user_id, type, post, actor_id, seen=False):
     print "notif_test"
     return "hello notif"
 
+
 @app.task(name="tasks.inc_prof")
 def inc_prof(user_id):
-	print "inc_prof", user_id
+    print "inc_prof", user_id
+
+
+@app.task(name="tasks.profile_after_like")
+def profile_after_like(user_id):
+    Profile.objects.filter(user_id=user_id)\
+        .update(cnt_like=F('cnt_like') + 1, score=F('score') + 10)
+    print "after like"
+    return "after like"
+
+
+@app.task(name="tasks.profile_after_dislike")
+def profile_after_dislike(user_id):
+    Profile.objects.filter(user_id=user_id)\
+        .update(cnt_like=F('cnt_like') - 1, score=F('score') - 10)
+
+    print "after dislike"
+    return "after dislike"
