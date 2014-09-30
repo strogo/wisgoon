@@ -10,7 +10,7 @@ DATABASES = {
         'NAME': 'feedreader',
         'USER': 'root',
         'PASSWORD': '-)**Z{QT',
-        'HOST': 'wisgoon.db',
+        'HOST': '79.127.125.149',
         'PORT': '',
     }
 }
