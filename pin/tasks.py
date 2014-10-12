@@ -23,11 +23,7 @@ def send_notif_bar(user, type, post, actor, seen=False):
 
 def send_profile_after_like(user_id):
     profile_after_like.delay(user_id=user_id)
-    
-    print "here is profile_after_like"
 
 
 def send_profile_after_dislike(user_id):
     profile_after_dislike.delay(user_id=user_id)
-    
-    print "here is profile_after_dislike"
