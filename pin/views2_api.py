@@ -499,8 +499,6 @@ def notif(request):
     if token:
         cur_user = AuthCache.id_from_token(token=token)
 
-    print token, cur_user
-
     notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 
     Notif.objects.filter(owner=cur_user,seen=False).update(set__seen=True)
