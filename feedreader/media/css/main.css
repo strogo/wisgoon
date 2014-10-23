@@ -683,3 +683,29 @@ width: 100px;
 #user_boxes_list li a:hover{
 	background: #f2f4f8;
 }
+
+.card-con{
+	width: 50%;
+	margin: 20px auto;
+	background-color: #fff;
+	border-radius: 2px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	padding: 5px;
+	overflow: hidden;
+}
+
+.app-img{
+	width: 100px;
+	height: 100px;
+	float: right;
+}
+
+.text-speech{
+	font-family:"afsfont";
+	font-size: 21px;
+}
+
+.app-text{
+	padding-top: 20px;
+	margin-right: 115px;
+}
