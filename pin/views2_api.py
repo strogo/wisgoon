@@ -303,20 +303,20 @@ def post(request):
         posts = Post.objects\
             .values(*Post.NEED_KEYS)\
             .filter(**filters).order_by(*sort_by)[:10]
-        if not user_id and not category_id:
-            # hot_post = Post.get_hot(values=True)
-            hot_post = Post.objects\
-                .values(*Post.NEED_KEYS)\
-                .filter(id=2416517)
-            if hot_post:
-                posts = list(hot_post) + list(posts)
+        # if not user_id and not category_id:
+        #     # hot_post = Post.get_hot(values=True)
+        #     hot_post = Post.objects\
+        #         .values(*Post.NEED_KEYS)\
+        #         .filter(id=2416517)
+        #     if hot_post:
+        #         posts = list(hot_post) + list(posts)
 
-    # if not popular and not user_id:
-    #     hot_post = Post.objects\
-    #         .values(*Post.NEED_KEYS)\
-    #         .filter(id=2467224)
-    #     if hot_post:
-    #         posts = list(hot_post) + list(posts)
+    if not popular and not user_id:
+        hot_post = Post.objects\
+            .values(*Post.NEED_KEYS)\
+            .filter(id=3005550)
+        if hot_post:
+            posts = list(hot_post) + list(posts)
 
     thumb_size = int(request.GET.get('thumb_size', "236"))
     #print "thumb_size", thumb_size

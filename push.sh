@@ -2,12 +2,12 @@
 
 send(){
 	git push origin devel
-	ssh wisgoon@79.127.125.102 "cd /home2/wisgoon/wisgoon.com/www && git merge devel && touch reload"
+	ssh wisgoon@79.127.125.146 "cd /home/wisgoon/www/wisgoon.com/www && git merge devel && touch reload"
 }
 
 jsend(){
 	git push origin devel
-	ssh wisgoon@79.127.125.102 "cd /home2/wisgoon/wisgoon.com/www && git merge devel"
+	ssh wisgoon@79.127.125.146 "cd /home/wisgoon/www/wisgoon.com/www && git merge devel"
 }
 
 case $1 in
