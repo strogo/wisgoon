@@ -272,10 +272,6 @@ def post(request):
     posts = cache.get(cache_stream_name)
     #print cache_stream_str, cache_stream_name, posts
 
-    NEED_KEYS = ['id', 'text', 'cnt_comment', 'timestamp',
-                 'image', 'user_id', 'cnt_like', 'category_id',
-                 'status', 'url']
-
     if not category_id and not popular and not user_id:
         if not before:
             before = 0
