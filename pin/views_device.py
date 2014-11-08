@@ -273,6 +273,7 @@ def post_send(request):
 
         return HttpResponseBadRequest('bad request in form')
     else:
+        print form.errors
         HttpResponseBadRequest('error in form validation')
 
     return HttpResponseBadRequest('bad request')

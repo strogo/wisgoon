@@ -353,6 +353,7 @@ def post_details(request, post_id):
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
 
+
 def friends_post(request):
     r = request
     #print "we are in post"
@@ -413,7 +414,7 @@ def likes(request):
     limit = 20
 
     next = {
-        'url': "/api/v1/tone/?limit=%s&offset=%s" % (limit, offset+limit),
+        'url': "/pin/api/like/likes/?limit=%s&offset=%s" % (limit, offset+limit),
     }
 
     data = {}
