@@ -97,7 +97,7 @@ def follow(request, following, action):
                                                       user=request.user,
                                                       date=post.timestamp,
                                                       following=following)
-            print "post", post.id, s, created
+            # print "post", post.id, s, created
 
     return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
     
