@@ -52,6 +52,7 @@ def notif_count(request):
 
 def get_thumb(o_image, thumb_size, thumb_quality):
     #thumb_size = thumb_size
+    im = 00
     c_str = "s2%s_%s_%s" % (o_image, thumb_size, thumb_quality)
     try:
         img_cache = cache.get(c_str)
@@ -73,7 +74,7 @@ def get_thumb(o_image, thumb_size, thumb_quality):
             }
             cache.set(c_str, imo, 8600)
         except Exception, e:
-            print str(e)
+            print str(e), im
 
             imo = ""
         #print imo
