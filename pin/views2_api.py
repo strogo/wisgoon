@@ -130,7 +130,6 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
 
         if not thumb_size:
             thumb_size = "236"
-        thumb_quality = 99
 
         o_image = p['image']
 
@@ -139,6 +138,8 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
         if imo:
             o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
             o['hw'] = imo['hw']
+        else:
+            continue
 
         o['category'] = Category.get_json(cat_id=p['category_id'])
         objects_list.append(o)
