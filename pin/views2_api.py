@@ -140,7 +140,7 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
             o['hw'] = imo['hw']
         else:
             print "*******"
-            print "we dont have imo"
+            print "we dont have imo", p['id'], o_image
             print "*******"
             continue
 
