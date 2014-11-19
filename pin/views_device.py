@@ -226,7 +226,7 @@ def follow(request, following, action):
                                    date=post.timestamp,
                                    following=following)
 
-                print "post", post.id, s, created
+                # print "post", post.id, s, created
 
     except User.DoesNotExist:
         return HttpResponse('User does not exists')
