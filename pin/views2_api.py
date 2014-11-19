@@ -64,6 +64,7 @@ def get_thumb(o_image, thumb_size, thumb_quality):
         # print imo, "cache"
     else:
         try:
+            print "get_thumb", o_image, thumb_size, settings.API_THUMB_QUALITY
             im = get_thumbnail(o_image,
                                thumb_size,
                                quality=settings.API_THUMB_QUALITY,
