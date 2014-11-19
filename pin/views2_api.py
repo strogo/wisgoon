@@ -60,7 +60,7 @@ def get_thumb(o_image, thumb_size, thumb_quality):
         img_cache = None
     if img_cache:
         imo = img_cache
-        print imo, "cache"
+        # print imo, "cache"
     else:
         try:
             im = get_thumbnail(o_image,
