@@ -77,8 +77,17 @@ def get_thumb(o_image, thumb_size, thumb_quality):
             cache.set(c_str, imo, 8600)
         except Exception, e:
             print "exception in get_thumb", str(e), im
+            if thumb_size == "500":
+                default_image = 'media/noPhoto_max.jpg'
+                dfsize = "500x500"
+            else:
+                default_image = 'media/noPhoto_mini.jpg'
+                dfsize = "236x236"
 
-            imo = ""
+            imo = {
+                'thumbnail': default_image,
+                'hw': dfsize
+            }
         #print imo
     return imo
 
