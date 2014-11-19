@@ -76,7 +76,7 @@ def get_thumb(o_image, thumb_size, thumb_quality):
             }
             cache.set(c_str, imo, 8600)
         except Exception, e:
-            print str(e), im
+            print "exception in get_thumb", str(e), im
 
             imo = ""
         #print imo
