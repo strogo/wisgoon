@@ -69,6 +69,7 @@ def get_thumb(o_image, thumb_size, thumb_quality):
                                thumb_size,
                                quality=settings.API_THUMB_QUALITY,
                                upscale=False)
+            print "after im, im is:", im
             imo = {
                 'thumbnail': im.url,
                 'hw': "%sx%s" % (im.height, im.width)
