@@ -7,7 +7,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print "approve posts"
         
-        for p in Post.objects.filter(status=Post.PENDING)[:3]:
+        for p in Post.objects.filter(status=Post.PENDING)[:10]:
             p.approve()
 
         
