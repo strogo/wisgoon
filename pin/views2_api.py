@@ -139,6 +139,9 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
             o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
             o['hw'] = imo['hw']
         else:
+            print "*******"
+            print "we dont have imo"
+            print "*******"
             continue
 
         o['category'] = Category.get_json(cat_id=p['category_id'])
