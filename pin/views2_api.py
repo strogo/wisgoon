@@ -496,19 +496,7 @@ def notif(request):
     objects_list = []
     filters = {}
     cur_user = None
-    cache_ttl = 120
     filters.update(dict(status=Post.APPROVED))
-    before = request.GET.get('before', None)
-    category_id = request.GET.get('category_id', None)
-    popular = request.GET.get('popular', None)
-    just_image = request.GET.get('just_image', 0)
-    user_id = request.GET.get('user_id', None)
-
-    if before:
-        sort_by = ['-timestamp']
-    else:
-        #sort_by = ['-is_ads', '-timestamp']
-        sort_by = ['-timestamp']
 
     token = request.GET.get('api_key', '')
     if token:
@@ -516,11 +504,7 @@ def notif(request):
 
     notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 
-    Notif.objects.filter(owner=cur_user,seen=False).update(set__seen=True)
-
-
-    rf = ['id', 'text', 'cnt_comment', 'image',
-          'user_id', 'cnt_like', 'category_id']
+    Notif.objects.filter(owner=cur_user, seen=False).update(set__seen=True)
 
     for p in notifs:
         try:
@@ -534,7 +518,7 @@ def notif(request):
         o['image'] = cur_p['image']
         o['date'] = "2014-05-28T20:22:14"
 
-        av = AuthCache.avatar(user_id=cur_p['user_id'])
+        # av = AuthCache.avatar(user_id=cur_p['user_id'])
         #o['user_avatar'] = AuthCache.avatar(user_id=cur_p['user_id'])[1:]
         #o['user_name'] = AuthCache.get_username(user_id=cur_p['user_id'])
 
@@ -670,7 +654,6 @@ def comments(request):
         com_date = com_date.split('+')[0]
         #print com_date
 
-        
         o['submit_date'] = com_date
         o['comment'] = com.comment
         o['user_url'] = com.user_id
@@ -684,6 +667,7 @@ def comments(request):
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
+
 
 def follower(request, user_id=1):
     data = {}
@@ -727,6 +711,7 @@ def follower(request, user_id=1):
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
+
 
 def search(request):
     cur_user = None
