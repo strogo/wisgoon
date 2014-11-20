@@ -577,7 +577,7 @@ def notif(request):
         for ac in p.last_actors():
             ar.append([
                 ac,
-                AuthCache.get_username(ac)[1:],
+                AuthCache.get_username(ac),
                 #AuthCache.avatar(ac, size=100)
                 get_avatar(ac, size=100)
             ])
