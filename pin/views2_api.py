@@ -258,8 +258,8 @@ def post(request):
         sort_by = ['-timestamp']
         filters.update(dict(user_id=user_id))
         if cur_user:
-            if int(cur_user) == int(user_id):
-                filters.pop('status', None)
+            # if int(cur_user) == int(user_id):
+            filters.pop('status', None)
 
     if popular:
         sort_by = ['-cnt_like']
