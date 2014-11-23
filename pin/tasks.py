@@ -17,7 +17,10 @@ def send_notif(user, type, post, actor, seen=False):
 
 def send_notif_bar(user, type, post, actor, seen=False):
     try:
-        notif_send.delay(user, type, post, actor, seen=False)
+        if settings.USE_CELERY:
+            notif_send.delay(user, type, post, actor, seen=False)
+        else:
+            notif_send.delay(user, type, post, actor, seen=False)
     except Exception, e:
         print str(e)
     return None
