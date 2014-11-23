@@ -1,14 +1,13 @@
 #-*- coding: utf-8 -*-
 import json
-import re
 import datetime
 import time
 import redis
 from hashlib import md5
 
-from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.tokens import default_token_generator
-from django.core.urlresolvers import reverse
+
 from django.template.response import TemplateResponse
 from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.core.cache import cache
@@ -17,13 +16,13 @@ from django.conf import settings
 
 from sorl.thumbnail import get_thumbnail
 
-from pin.tools import userdata_cache, AuthCache, CatCache
+from pin.tools import AuthCache
 from pin.models import Post, Category, Likes, Stream, Follow, Comments
 from pin.model_mongo import Notif
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
-r_server = redis.Redis(settings.REDIS_DB, db=11)
+r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 
 class MyEncoder(json.JSONEncoder):
@@ -64,7 +63,6 @@ def get_thumb(o_image, thumb_size, thumb_quality):
         # print imo, "cache"
     else:
         try:
-            # print "get_thumb", o_image, thumb_size, settings.API_THUMB_QUALITY
             im = get_thumbnail(o_image,
                                thumb_size,
                                quality=settings.API_THUMB_QUALITY,
@@ -109,7 +107,7 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
     # cache_list = cache.get(list_cache_str)
     # if cache_list:
     #     return cache_list
-    
+
     objects_list = []
     for p in posts:
         o = {}
@@ -140,7 +138,8 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
         o['resource_uri'] = "/pin/api/post/%d/" % p['id']
 
         if cur_user_id:
-            o['like_with_user'] = Likes.user_in_likers(post_id=p['id'], user_id=cur_user_id)
+            o['like_with_user'] = Likes.user_in_likers(post_id=p['id'],
+                                                       user_id=cur_user_id)
 
         if not thumb_size:
             thumb_size = "236"
@@ -230,7 +229,6 @@ def post(request):
     category_ids = []
     filters = {}
     cur_user = None
-    cache_ttl = 120
     filters.update(dict(status=Post.APPROVED))
     before = request.GET.get('before', None)
     category_id = request.GET.get('category_id', None)
@@ -294,7 +292,6 @@ def post(request):
         if not before:
             before = 0
         pl = Post.latest(pid=before)
-        
         posts = get_list_post(pl, from_model=settings.STREAM_LATEST)
 
     elif category_id and len(category_ids) == 1:
@@ -302,7 +299,6 @@ def post(request):
             before = 0
 
         pl = Post.latest(pid=before, cat_id=category_id)
-        
         from_model = "%s_%s" % (settings.STREAM_LATEST_CAT, category_id)
         posts = get_list_post(pl, from_model=from_model)
 
@@ -341,7 +337,10 @@ def post(request):
 
     #cache.set(cache_stream_name, posts, cache_ttl)
 
-    data['objects'] = get_objects_list(posts, cur_user_id=cur_user, thumb_size=thumb_size, r=request)
+    data['objects'] = get_objects_list(posts,
+                                       cur_user_id=cur_user,
+                                       thumb_size=thumb_size,
+                                       r=request)
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
 
@@ -367,20 +366,20 @@ def post_details(request, post_id):
 
     #cache.set(cache_stream_name, posts, cache_ttl)
 
-    data['objects'] = get_objects_list(posts, cur_user_id=cur_user, thumb_size=thumb_size)
+    data['objects'] = get_objects_list(posts,
+                                       cur_user_id=cur_user,
+                                       thumb_size=thumb_size)
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
 
 
 def friends_post(request):
-    r = request
-    #print "we are in post"
-
     offset = int(request.GET.get('offset', 0))
     limit = int(request.GET.get('limit', 20))
 
     next = {
-        'url': "/api/post/friends_post/?limit=%s&offset=%s" % (limit, offset + limit),
+        'url': "/api/post/friends_post/?limit=%s&offset=%s" % (
+            limit, offset + limit),
     }
 
     data = {}
@@ -401,7 +400,6 @@ def friends_post(request):
         s = Stream.objects.get(user=cur_user, post_id=before)
         stream = Stream.objects.filter(user=cur_user, date__lt=s.date)\
             .order_by('-date')[offset:offset + limit]
-        sort_by = ['-timestamp']
     else:
         stream = Stream.objects.filter(user=cur_user)\
             .order_by('-date')[offset:offset + limit]
@@ -416,7 +414,8 @@ def friends_post(request):
 
     thumb_size = request.GET.get('thumb_size', "100x100")
 
-    data['objects'] = get_objects_list(posts, cur_user_id=cur_user, thumb_size=thumb_size, r=request)
+    data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
+                                       thumb_size=thumb_size, r=request)
 
     #data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
@@ -424,15 +423,14 @@ def friends_post(request):
 
 
 def likes(request):
-
-    before = request.GET.get('before', None)
     post_id = request.GET.get('post_id', None)
     offset = int(request.GET.get('offset', 0))
     #limit = int(request.GET.get('limit', 20))
     limit = 20
 
     next = {
-        'url': "/pin/api/like/likes/?limit=%s&offset=%s" % (limit, offset+limit),
+        'url': "/pin/api/like/likes/?limit=%s&offset=%s" % (
+            limit, offset + limit),
     }
 
     data = {}
@@ -444,14 +442,14 @@ def likes(request):
 
     objects_list = []
     filters = {}
-    cache_ttl = 120
 
     if post_id:
         filters.update(dict(post_id=post_id))
     else:
         return HttpResponse('fault')
 
-    cache_stream_str = "wislikes_%s_%s_%s" % (str(filters), str(offset), str(limit))
+    cache_stream_str = "wislikes_%s_%s_%s" % (str(filters),
+                                              str(offset), str(limit))
 
     cache_stream_name = md5(cache_stream_str).hexdigest()
     #print cache_stream_str, cache_stream_name
@@ -460,7 +458,7 @@ def likes(request):
     if not post_likes:
         post_likes = Likes.objects\
             .values('id', 'post_id', 'user_id')\
-            .filter(**filters).all()[offset:offset+limit]
+            .filter(**filters).all()[offset:offset + limit]
         if len(post_likes) == limit:
             #print "store likes in cache"
             cache.set(cache_stream_name, post_likes, 86400)
@@ -514,7 +512,8 @@ def notif(request):
         o = {}
         o['id'] = cur_p['id']
         o['text'] = cur_p['text']
-        o['cnt_comment'] = 0 if cur_p['cnt_comment'] == -1 else cur_p['cnt_comment']
+        o['cnt_comment'] = 0 if cur_p['cnt_comment'] == -1 else \
+            cur_p['cnt_comment']
         o['image'] = cur_p['image']
         o['date'] = "2014-05-28T20:22:14"
 
@@ -526,7 +525,8 @@ def notif(request):
         o['post_id'] = cur_p['id']
         o['post_owner_avatar'] = AuthCache.avatar(user_id=cur_p['user_id'])[1:]
         o['post_owner_id'] = cur_p['user_id']
-        o['post_owner_user_name'] = AuthCache.get_username(user_id=cur_p['user_id'])
+        o['post_owner_user_name'] = AuthCache.get_username(
+            user_id=cur_p['user_id'])
 
         o['user'] = cur_p['user_id']
         o['type'] = p['type']
@@ -541,7 +541,8 @@ def notif(request):
         o['permalink'] = "/pin/%d/" % cur_p['id']
 
         if cur_user:
-            o['like_with_user'] = Likes.user_in_likers(post_id=cur_p['id'], user_id=cur_user)
+            o['like_with_user'] = Likes.user_in_likers(post_id=cur_p['id'],
+                                                       user_id=cur_user)
 
         #thumb_size = request.GET.get('thumb_size', "100x100")
         thumb_size = "236"
@@ -588,7 +589,8 @@ def following(request, user_id=1):
     limit = int(request.GET.get('limit', 20))
 
     next = {
-        'url': "/pin/api/following/%s/?limit=%s&offset=%s" % (user_id, limit, offset+limit),
+        'url': "/pin/api/following/%s/?limit=%s&offset=%s" % (
+            user_id, limit, offset + limit),
     }
 
     data['meta'] = {'limit': limit,
@@ -603,7 +605,8 @@ def following(request, user_id=1):
     if token:
         cur_user = AuthCache.id_from_token(token=token)
 
-    for fol in Follow.objects.filter(follower_id=user_id)[offset:offset+limit]:
+    fq = Follow.objects.filter(follower_id=user_id)[offset:offset + limit]
+    for fol in fq:
         o = {}
         o['user_id'] = fol.following_id
         o['user_avatar'] = get_avatar(fol.following_id, size=100)
@@ -611,10 +614,10 @@ def following(request, user_id=1):
 
         if cur_user:
             o['follow_by_user'] = Follow.objects\
-                .filter(follower_id=cur_user, following_id=fol.following_id).exists()
+                .filter(follower_id=cur_user, following_id=fol.following_id)\
+                .exists()
         else:
             o['follow_by_user'] = False
-
 
         objects_list.append(o)
 
@@ -632,7 +635,8 @@ def comments(request):
     object_pk = int(request.GET.get('object_pk', 0))
 
     next = {
-        'url': "/pin/api2/com/comments/?limit=%s&offset=%s&object_pk=%s" % (limit, offset+limit, object_pk)
+        'url': "/pin/api2/com/comments/?limit=%s&offset=%s&object_pk=%s" % (
+            limit, offset + limit, object_pk)
     }
 
     data['meta'] = {'limit': limit,
@@ -643,7 +647,8 @@ def comments(request):
 
     objects_list = []
 
-    for com in Comments.objects.filter(object_pk_id=object_pk)[offset:offset+limit]:
+    cq = Comments.objects.filter(object_pk_id=object_pk)[offset:offset + limit]
+    for com in cq:
         o = {}
         o['id'] = com.id
         o['object_pk'] = com.object_pk_id
@@ -678,7 +683,8 @@ def follower(request, user_id=1):
     limit = int(request.GET.get('limit', 20))
 
     next = {
-        'url': "/pin/api/followers/%s/?limit=%s&offset=%s" % (user_id, limit, offset+limit),
+        'url': "/pin/api/followers/%s/?limit=%s&offset=%s" % (
+            user_id, limit, offset + limit),
     }
 
     data['meta'] = {'limit': limit,
@@ -693,7 +699,8 @@ def follower(request, user_id=1):
     if token:
         cur_user = AuthCache.id_from_token(token=token)
 
-    for fol in Follow.objects.filter(following_id=user_id)[offset:offset+limit]:
+    fq = Follow.objects.filter(following_id=user_id)[offset:offset + limit]
+    for fol in fq:
         o = {}
         o['user_id'] = fol.follower_id
         o['user_avatar'] = get_avatar(fol.follower_id, size=100)
@@ -701,7 +708,8 @@ def follower(request, user_id=1):
 
         if cur_user:
             o['follow_by_user'] = Follow.objects\
-                .filter(follower_id=cur_user, following_id=fol.follower_id).exists()
+                .filter(follower_id=cur_user, following_id=fol.follower_id)\
+                .exists()
         else:
             o['follow_by_user'] = False
 
@@ -723,9 +731,9 @@ def search(request):
     solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
     query = request.GET.get('q', '')
     if query:
-        q_str = "*%s*" % query
         fq = 'username_s:*%s* name_s:*%s*' % (query, query)
-        results = solr.search("*:*", fq=fq, rows=limit, start=start, sort="score_i desc")
+        results = solr.search("*:*", fq=fq, rows=limit, start=start,
+                              sort="score_i desc")
 
         token = request.GET.get('token', '')
         if token:
@@ -745,8 +753,6 @@ def search(request):
             if cur_user:
                 o['follow_by_user'] = Follow\
                     .get_follow_status(follower=cur_user, following=r['id'])
-                # o['follow_by_user'] = Follow.objects\
-                #     .filter(follower_id=cur_user, following_id=r['id']).exists()
             else:
                 o['follow_by_user'] = False
 
@@ -754,6 +760,7 @@ def search(request):
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
+
 
 @csrf_exempt
 def password_reset(request, is_admin_site=False,
@@ -766,7 +773,7 @@ def password_reset(request, is_admin_site=False,
                    from_email='info@wisgoon.com',
                    current_app=None,
                    extra_context=None):
-    
+
     if request.method == "POST":
         form = password_reset_form(request.POST)
         if form.is_valid():
@@ -798,7 +805,7 @@ def change_password(request):
     token = request.GET.get('token', '')
     if token:
         user = AuthCache.user_from_token(token=token)
-    
+
     if not user or not token:
         raise Http404
 
@@ -810,7 +817,7 @@ def change_password(request):
             return HttpResponse('password changed')
 
         return HttpResponse('error in parameters')
-            
+
     except Exception, e:
         print str(e)
 
