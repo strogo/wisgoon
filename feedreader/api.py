@@ -35,8 +35,9 @@ class UserResource(ModelResource):
     def register(self, request, **kwargs):
         self.method_check(request, allowed=['post'])
         data = self.deserialize(request, request.raw_post_data,
-                                format=request.META.get('CONTENT_TYPE', 'application/json'))
-        
+                                format=request.META.get('CONTENT_TYPE',
+                                                        'application/json'))
+
         app_token = hashlib.sha1(settings.APP_TOKEN_STR).hexdigest()
         req_token = data.get('token', '')
 
@@ -45,7 +46,7 @@ class UserResource(ModelResource):
                 'success': False,
                 'reason': 'token problem for register'
             })
-        
+
         username = data.get('username', '')
         email = data.get('email', '')
         password = data.get('password', '')
@@ -55,7 +56,7 @@ class UserResource(ModelResource):
                 'status': False,
                 'reason': 'error in parameters'
             })
-        
+
         try:
             user = User.objects.create_user(username=username,
                                             email=email,
@@ -81,30 +82,31 @@ class UserResource(ModelResource):
         self.method_check(request, allowed=['post'])
         data = self.deserialize(request,
                                 request.raw_post_data,
-                                format=request.META.get('CONTENT_TYPE', 'application/json'))
-        
+                                format=request.META.get('CONTENT_TYPE',
+                                                        'application/json'))
+
         app_token = hashlib.sha1(settings.APP_TOKEN_STR).hexdigest()
 
         req_token = data.get('token', '')
-        
+
         if req_token != app_token:
             print "%s, %s" % (req_token, app_token)
             return self.create_response(request, {
                 'success': False,
                 'reason': 'token problem',
             }, HttpForbidden)
-            
+
         username = data.get('username', '')
         password = data.get('password', '')
 
         user = authenticate(username=username, password=password)
-        
+
         if user:
             if user.is_active:
                 login(request, user)
-                
+
                 api_key, created = ApiKey.objects.get_or_create(user=user)
-                
+
                 return self.create_response(request, {
                     'success': True,
                     'token': api_key.key,
@@ -128,4 +130,6 @@ class UserResource(ModelResource):
             logout(request)
             return self.create_response(request, {'success': True})
         else:
-            return self.create_response(request, {'success': False}, HttpUnauthorized)
+            return self.create_response(request, {
+                'success': False
+            }, HttpUnauthorized)
