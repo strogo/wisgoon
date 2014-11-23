@@ -20,6 +20,7 @@ DATABASES = {
 }
 
 REDIS_DB = 'wisgoon.db'
+REDIS_DB_NUMBER = 11
 
 GOOGLE_COOKIE_CONSENT = 'google_token_consent'
 GOOGLE_REDIRECT_SESSION_VAR = 'google_contacts_redirect'
@@ -230,5 +231,7 @@ POST_LIKERS = "wis_likers_2_"
 USER_NAME_CACHE = "un_"
 
 LIKE_WITH_CELERY = True
+
+USE_CELERY = False
 
 APP_TOKEN_STR = 'app mobile-)**Z{QT'

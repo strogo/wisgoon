@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Sum, F
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 
@@ -51,11 +51,11 @@ def search(request):
     solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
     query = request.GET.get('q', '')
     if query:
-        q_str = "*%s*" % query
         fq = 'username_s:*%s* name_s:*%s*' % (query, query)
         results = solr.search("*:*", fq=fq, rows=50, sort="score_i desc")
 
     return render(request, 'pin/search.html', {'results': results})
+
 
 def user_friends(request, user_id):
     user_id = int(user_id)
@@ -105,7 +105,6 @@ def user_friends(request, user_id):
 
 def user_like(request, user_id):
     user_id = int(user_id)
-    ROW_PER_PAGE = 20
     likes_list = []
 
     likes = Likes.objects.values_list('post_id', flat=True)\
@@ -156,12 +155,10 @@ def user_like(request, user_id):
 
 def latest_redis(request):
     pid = get_request_pid(request)
-
     pl = Post.latest(pid=pid)
-        
     arp = []
     # latest_items = Post.objects.filter(id__in=pl)
-    # latest_items = sorted(latest_items, 
+    # latest_items = sorted(latest_items,
     #                       key=operator.attrgetter('timestamp'),
     #                       reverse=True)
 
@@ -193,7 +190,10 @@ def latest_redis(request):
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin/latest_redis.html', {'latest_items': latest_items})
+        return render(request, 'pin/latest_redis.html', {
+            'latest_items': latest_items
+        })
+
 
 def latest_backup(request):
     timestamp = get_request_timestamp(request)
@@ -230,17 +230,17 @@ def latest_back(request):
     idis = []
     for p in pl:
         idis.append(int(p[1]))
-    
+
     print idis
     latest_items = Post.objects.filter(id__in=idis).order_by('-timestamp')[:20]
-    latest_items = sorted(latest_items, 
+    latest_items = sorted(latest_items,
                           key=operator.attrgetter('timestamp'),
                           reverse=True)
     for li in latest_items:
         print li.id, li.timestamp
 
     #auths = Author.objects.order_by('-score')[:30]
-    # latest_items = sorted(latest_items, 
+    # latest_items = sorted(latest_items,
     #                       key=operator.attrgetter('timestamp'),
     #                       reverse=True)
 
@@ -292,15 +292,11 @@ def category_back(request, cat_id):
 def category_redis(request, cat_id):
     cat = get_object_or_404(Category, pk=cat_id)
     cat_id = cat.id
-    timestamp = get_request_timestamp(request)
-
     pid = get_request_pid(request)
-
     pl = Post.latest(pid=pid, cat_id=cat_id)
-        
     arp = []
     # latest_items = Post.objects.filter(id__in=pl)
-    # latest_items = sorted(latest_items, 
+    # latest_items = sorted(latest_items,
     #                       key=operator.attrgetter('timestamp'),
     #                       reverse=True)
 
@@ -330,10 +326,6 @@ def popular(request, interval=""):
     dt_now = datetime.datetime.now()
     dt_now = dt_now.replace(minute=0, second=0, microsecond=0)
 
-    # lastHourDateTime = datetime.datetime.now() - datetime.timedelta(hours = 8)
-    # lh = lastHourDateTime.strftime('%Y-%m-%d %H')
-    # print "date is", lastHourDateTime.strftime('%Y-%m-%d %H')
-
     if interval and interval in ['month', 'lastday', 'lasteigth', 'lastweek']:
         if interval == 'month':
             data_from = dt_now - datetime.timedelta(days=30)
@@ -342,7 +334,7 @@ def popular(request, interval=""):
         elif interval == 'lastweek':
             data_from = dt_now - datetime.timedelta(days=7)
         elif interval == 'lasteigth':
-            data_from = dt_now - datetime.timedelta(hours = 8)
+            data_from = dt_now - datetime.timedelta(hours=8)
 
         start_from = mktime(data_from.timetuple())
         post_list = Post.objects.filter(status=1)\
@@ -456,36 +448,15 @@ def item(request, item_id):
     if csl:
         post.likes = csl
     else:
-        pl = Likes.objects.filter(post_id=post.id).values_list('user_id', flat=True)[:12]
+        pl = Likes.objects.filter(post_id=post.id)\
+            .values_list('user_id', flat=True)[:12]
         ll = [liker for liker in pl]
         cache.set(str_likers, ll, 86400)
         post.likes = ll
 
-    
-    #cache.set("w_likes_"+str(post.id), pp, 30)
-
-    # try:
-    #     c_prev = cache.get('prev_post_'+str(post.id))
-    #     if c_prev:
-    #         post.prev = c_prev
-    #     else:
-    #         post.prev = Post.objects.filter(status=1)\
-    #             .extra(where=['id<%s'], params=[post.id]).order_by('-id')[:1][0]
-    #         cache.set('prev_post_'+str(post.id), post.prev, 3600)
-
-    #     c_next = cache.get('next_post_'+ str(post.id))
-    #     if c_next:
-    #         post.next = c_next
-    #     else:
-    #         post.next = Post.objects.filter(status=1)\
-    #             .extra(where=['id>%s'], params=[post.id]).order_by('id')[:1][0]
-    #         cache.set("next_post_"+str(post.id), post.next, 86400)
-    # except:
-    #     pass
-
     if request.user.is_authenticated:
         follow_status = Follow.objects.filter(follower=request.user.id,
-                                          following=post.user.id).count()
+                                              following=post.user.id).count()
 
     if request.is_ajax():
         return render(request, 'pin/item_inner.html',
