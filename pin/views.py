@@ -414,10 +414,10 @@ def user(request, user_id, user_name=None):
 
     else:
         if timestamp == 0:
-            latest_items = Post.objects.filter(status=1, user=user_id)\
+            latest_items = Post.objects.filter(user=user_id)\
                 .order_by('-timestamp')[:20]
         else:
-            latest_items = Post.objects.filter(user=user_id, status=1)\
+            latest_items = Post.objects.filter(user=user_id)\
                 .extra(where=['timestamp<%s'], params=[timestamp])\
                 .order_by('-timestamp')[:20]
 
