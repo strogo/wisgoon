@@ -230,3 +230,5 @@ POST_LIKERS = "wis_likers_2_"
 USER_NAME_CACHE = "un_"
 
 LIKE_WITH_CELERY = True
+
+APP_TOKEN_STR = 'app mobile-)**Z{QT'
