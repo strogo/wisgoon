@@ -441,7 +441,7 @@ def user(request, user_id, user_name=None):
 
 def item(request, item_id):
     post = get_object_or_404(
-        Post.objects.select_related().filter(id=item_id, status=1)[:1])
+        Post.objects.select_related().filter(id=item_id)[:1])
     #Post.objects.filter(id=item_id).update(view=F('view') + 1)
 
     post.tag = []
