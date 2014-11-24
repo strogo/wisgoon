@@ -29,10 +29,13 @@ class UserGraph():
 class PostGraph():
 
     @classmethod
-    def get_or_create(self, post_id):
+    def get_or_create(self, post_obj):
+        post_id = int(post_obj.id)
+        category_id = int(post_obj.category_id)
         try:
             post_node = post.get_or_create("post_id", post_id, {
-                "post_id": post_id
+                "post_id": post_id,
+                "category_id": category_id
             })
         except Exception as e:
             print str(e)
@@ -73,3 +76,10 @@ class PostGraph():
             return vids
         except Exception, e:
             print str(e)
+
+"""
+START p=node:Post(post_id = "3303226")
+match (p)<-[:LIKED]-(u)-[r:LIKED]->(ap)
+RETURN ap, count(r)
+order by count(r) desc limit 100
+"""
