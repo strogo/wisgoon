@@ -22,6 +22,8 @@ DATABASES = {
 REDIS_DB = 'wisgoon.db'
 REDIS_DB_NUMBER = 11
 
+MONGO_DB = "wisgoon"
+
 GOOGLE_COOKIE_CONSENT = 'google_token_consent'
 GOOGLE_REDIRECT_SESSION_VAR = 'google_contacts_redirect'
 GOOGLE_REDIRECT_BASE_URL = 'http://localhost:8000'

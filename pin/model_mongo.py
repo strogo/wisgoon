@@ -1,6 +1,8 @@
 from mongoengine import *
+from django.conf import settings
 
-connect('wisgoon')
+connect(settings.MONGO_DB)
+
 
 class Notif(Document):
     last_actor = IntField()

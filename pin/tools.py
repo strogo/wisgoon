@@ -105,6 +105,7 @@ def get_request_timestamp(request):
         timestamp = 0
     return timestamp
 
+
 def get_request_pid(request):
     try:
         pid = int(request.GET.get('pid', 0))
