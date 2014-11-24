@@ -105,7 +105,7 @@ def follow(request, following, action):
 @login_required
 def like(request, item_id):
     try:
-        post = Post.objects.get(pk=item_id, status=1)
+        post = Post.objects.get(pk=item_id)
     except Post.DoesNotExist:
         return HttpResponseRedirect('/')
 
