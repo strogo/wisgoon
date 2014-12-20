@@ -822,3 +822,40 @@ def change_password(request):
         print str(e)
 
     return HttpResponse('error in change password')
+
+
+def comment_delete(request, id):
+    user = None
+    token = request.GET.get('token', '')
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token:
+        raise Http404
+
+    try:
+        comment = Comments.objects.get(pk=id)
+    except Comments.DoesNotExist:
+        raise Http404
+
+    post_owner = int(comment.object_pk.user_id)
+    comment_owner = int(comment.user_id)
+    user_id = int(user.id)
+
+    if post_owner == user_id:
+        # post owner like to remove a comment
+        comment.delete()
+        return HttpResponse(1)
+
+    if comment_owner == user_id:
+        # comment owner like to remove a comment
+        comment.delete()
+        return HttpResponse(1)
+
+    # if user.is_superuser:
+    #     print "admin like to remove a comment"
+    #     comment.delete()
+    #     return HttpResponse(1)
+    
+    return HttpResponse(0)
+

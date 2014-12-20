@@ -133,6 +133,7 @@ urlpatterns += patterns('',
     url(r'^api/like/likes/', 'pin.views2_api.likes', name="likes_api"),
     url(r'^api/notif/notify/$', 'pin.views2_api.notif', name="new_notif"),
     url(r'^api/notif/count/$', 'pin.views2_api.notif_count', name="new_notif_count"),
+    url(r'^api/comment/delete/(?P<id>\d+)/$', 'pin.views2_api.comment_delete', name="new_comment_delete"),
 
     url(r'^api/following/(?P<user_id>\d+)/', 'pin.views2_api.following', name="api-following"),
     url(r'^api/follower/(?P<user_id>\d+)/', 'pin.views2_api.follower', name="api-follower"),
