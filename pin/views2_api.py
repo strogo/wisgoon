@@ -647,7 +647,7 @@ def comments(request):
 
     objects_list = []
 
-    cq = Comments.objects.filter(object_pk_id=object_pk)[offset:offset + limit]
+    cq = Comments.objects.filter(object_pk_id=object_pk, is_public=True)[offset:offset + limit]
     for com in cq:
         o = {}
         o['id'] = com.id
