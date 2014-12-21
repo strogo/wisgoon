@@ -443,9 +443,9 @@ def item(request, item_id):
     #     post.likes = Likes.objects.filter(post=post).order_by('ip')[:10]
     # else:
     if request.user.is_superuser:
-        post.comments = Comments.objects.filter(object_pk=post, is_public=True)
-    else:
         post.comments = Comments.objects.filter(object_pk=post)
+    else:
+        post.comments = Comments.objects.filter(object_pk=post, is_public=True)
     str_likers = "web_likes_%s" % post.id
     csl = cache.get(str_likers)
     if csl:
