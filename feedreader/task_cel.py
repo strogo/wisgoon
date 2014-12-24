@@ -11,8 +11,8 @@ app.conf.CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 from django.db.models import F
 
 from pin.model_mongo import Notif
-from pin.models import Post
-from pin.models_graph import PostGraph, UserGraph
+# from pin.models import Post
+# from pin.models_graph import PostGraph, UserGraph
 
 from user_profile.models import Profile
 
@@ -25,16 +25,16 @@ def notif_send(user_id, type, post, actor_id, seen=False):
                     set__seen=False,
                     add_to_set__actors=actor_id, upsert=True)
 
-    if type == 1:
-        try:
-            post = Post.objects.get(id=int(post))
-        except:
-            return "eee chera?"
-        post_node = PostGraph.get_or_create(post_obj=post)
-        # post_node = PostGraph.get_or_create(post_id=post)
-        user_node = UserGraph.get_or_create(user_id=actor_id)
+    # if type == 1:
+    #     try:
+    #         post = Post.objects.get(id=int(post))
+    #     except:
+    #         return "eee chera?"
+    #     post_node = PostGraph.get_or_create(post_obj=post)
+    #     # post_node = PostGraph.get_or_create(post_id=post)
+    #     user_node = UserGraph.get_or_create(user_id=actor_id)
 
-        PostGraph.like(user_id=user_node, post_id=post_node)
+    #     PostGraph.like(user_id=user_node, post_id=post_node)
 
     return "hello notif"
 
