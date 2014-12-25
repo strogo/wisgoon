@@ -204,11 +204,12 @@ class Post(models.Model):
         for ss in s:
             r_server.rpush(user_stream, ss)
 
-        Stream.objects.filter(user_id=user_id).delete()
-        # from django.db import connection, transaction
-        # cursor = connection.cursor()
-        # cursor.execute("DELETE FROM pin_stream where user_id=%s", [user_id])
-        # # connection.commit()
+        # Stream.objects.filter(user_id=user_id).delete()
+        from django.db import connection, transaction
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM pin_stream where user_id=%s", [user_id])
+        transaction.commit_unless_managed()
+        # connection.commit()
         # transaction.set_dirty()
         # transaction.commit()
 
