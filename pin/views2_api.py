@@ -397,16 +397,20 @@ def friends_post(request):
         cur_user = AuthCache.id_from_token(token=token)
 
     if before:
-        s = Stream.objects.get(user=cur_user, post_id=before)
-        stream = Stream.objects.filter(user=cur_user, date__lt=s.date)\
-            .order_by('-date')[offset:offset + limit]
+        # s = Stream.objects.get(user=cur_user, post_id=before)
+        # stream = Stream.objects.filter(user=cur_user, date__lt=s.date)\
+            # .order_by('-date')[offset:offset + limit]
+        idis = Post.user_stream_latest(user_id=cur_user, pid=before)
     else:
-        stream = Stream.objects.filter(user=cur_user)\
-            .order_by('-date')[offset:offset + limit]
+        # stream = Stream.objects.filter(user=cur_user)\
+            # .order_by('-date')[offset:offset + limit]
+        idis = Post.user_stream_latest(user_id=cur_user)
 
-    idis = []
-    for p in stream:
-        idis.append(int(p.post_id))
+    print "idis is:", idis
+
+    # idis = []
+    # for p in stream:
+        # idis.append(int(p.post_id))
 
     posts = Post.objects\
         .values(*Post.NEED_KEYS)\

@@ -197,6 +197,46 @@ class Post(models.Model):
         r_server.ltrim(latest_stream, 0, 1000)
 
     @classmethod
+    def set_stream_to_redis(self, user_id):
+        user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
+        s = Stream.objects.filter(user_id=user_id).values_list('post_id', flat=True).order_by('-id')[:200]
+        # print "geted s is:", s
+        for ss in s:
+            r_server.rpush(user_stream, ss)
+
+        Stream.objects.filter(user_id=user_id).delete()
+        # from django.db import connection, transaction
+        # cursor = connection.cursor()
+        # cursor.execute("DELETE FROM pin_stream where user_id=%s", [user_id])
+        # # connection.commit()
+        # transaction.set_dirty()
+        # transaction.commit()
+
+    @classmethod
+    def add_to_user_stream(self, post, user_id):
+        # print "add to user stream", post, post.id, user_id
+        user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
+        # user_stream = "ustream_%d" % (int(user_id))
+        # print "user_stream:", user_stream
+        # r_server.delete(user_stream)
+        pl = r_server.lrange(user_stream, 0, 205)
+        # print "pl is:", pl
+        if not pl:
+            Post.set_stream_to_redis(user_id=user_id)
+            pl = r_server.lrange(user_stream, 0, 205)
+            # s = Stream.objects.filter(user_id=user_id).values_list('post_id', flat=True).order_by('-id')[:200]
+            # print "geted s is:", s
+            # for ss in s:
+                # r_server.rpush(user_stream, ss)
+
+        # print "pl is:", pl
+
+        if str(post.id) not in pl:
+            r_server.lpush(user_stream, post.id)
+
+        r_server.ltrim(user_stream, 0, 200)
+
+    @classmethod
     def add_to_set(self, set_name, post, set_cat=True):
         r_server.zadd(set_name, int(post.timestamp), post.id)
         r_server.zremrangebyrank(set_name, 0, -1001)
@@ -346,6 +386,34 @@ class Post(models.Model):
 
         return []
 
+    @classmethod
+    def user_stream_latest(self, user_id, pid=0):
+        ROW_IN_PAGE = 20
+        # user_stream = "ustream_%d" % (user_id)
+        user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
+        pl = r_server.lrange(user_stream, 0, 1000)
+        if not pl:
+            Post.set_stream_to_redis(user_id=user_id)
+            pl = r_server.lrange(user_stream, 0, 1000)
+
+        # print pl
+
+        if pid == 0:
+            import collections
+            dups = [x for x, y in collections.Counter(pl).items() if y > 1]
+
+            for dup in dups:
+                r_server.lrem(user_stream, dup)
+
+            return pl[:ROW_IN_PAGE]
+
+        if pid:
+            pid_index = pl.index(str(pid))
+            idis = pl[pid_index + 1: pid_index + ROW_IN_PAGE]
+            return idis
+
+        return []
+
 
 class Follow(models.Model):
     follower = models.ForeignKey(User, related_name='follower')
@@ -389,20 +457,23 @@ class Stream(models.Model):
 
             user = post.user
 
-            stream, created = Stream.objects\
-                .get_or_create(post=post,
-                               user=user,
-                               date=post.timestamp,
-                               following=user)
+            Post.add_to_user_stream(post=post, user_id=user.id)
+
+            # stream, created = Stream.objects\
+            #     .get_or_create(post=post,
+            #                    user=user,
+            #                    date=post.timestamp,
+            #                    following=user)
 
             followers = Follow.objects.all().filter(following=user)
             for follower in followers:
                 try:
-                    stream, created = Stream.objects\
-                        .get_or_create(post=post,
-                                       user=follower.follower,
-                                       date=post.timestamp,
-                                       following=user)
+                    Post.add_to_user_stream(post=post, user_id=follower.follower.id)
+                    # stream, created = Stream.objects\
+                    #     .get_or_create(post=post,
+                    #                    user=follower.follower,
+                    #                    date=post.timestamp,
+                    #                    following=user)
                 except:
                     pass
 

@@ -25,7 +25,7 @@ from pin.models import Post, Stream, Follow, Likes,\
 from pin.model_mongo import Notif
 
 import pin_image
-from pin.tools import get_request_timestamp, create_filename, get_user_ip
+from pin.tools import get_request_timestamp, create_filename, get_user_ip, get_request_pid
 
 from user_profile.models import Profile
 
@@ -34,35 +34,51 @@ MEDIA_ROOT = settings.MEDIA_ROOT
 
 @login_required
 def following(request):
-    timestamp = get_request_timestamp(request)
+    pid = get_request_pid(request)
+    pl = Post.user_stream_latest(pid=pid, user_id=request.user.id)
+    # timestamp = get_request_timestamp(request)
 
-    if timestamp == 0:
-        stream = Stream.objects.filter(user=request.user)\
-            .order_by('-date')[:20]
-    else:
-        stream = Stream.objects.filter(user=request.user)\
-            .extra(where=['date<%s'], params=[timestamp])\
-            .order_by('-date')[:20]
+    arp = []
+    # latest_items = Post.objects.filter(id__in=pl)
+    # latest_items = sorted(latest_items,
+    #                       key=operator.attrgetter('timestamp'),
+    #                       reverse=True)
 
-    idis = []
-    for p in stream:
-        idis.append(int(p.post_id))
+    for pll in pl:
+        try:
+            arp.append(Post.objects.get(id=pll))
+        except:
+            pass
 
-    latest_items = Post.objects.filter(id__in=idis, status=1)\
-        .all().order_by('-id')
+    latest_items = arp
+    
+    # if timestamp == 0:
+    #     stream = Stream.objects.filter(user=request.user)\
+    #         .order_by('-date')[:20]
+    # else:
+    #     stream = Stream.objects.filter(user=request.user)\
+    #         .extra(where=['date<%s'], params=[timestamp])\
+    #         .order_by('-date')[:20]
+
+    # idis = []
+    # for p in stream:
+    #     idis.append(int(p.post_id))
+
+    # latest_items = Post.objects.filter(id__in=idis)\
+    #     .all().order_by('-id')
 
     sorted_objects = latest_items
 
     if request.is_ajax():
-        if latest_items.exists():
+        if latest_items:
             return render(request,
-                          'pin/_items.html',
+                          'pin/_items_2.html',
                           {'latest_items': sorted_objects})
         else:
             return HttpResponse(0)
     else:
         return render(request,
-                      'pin/home.html',
+                      'pin/following.html',
                       {'latest_items': sorted_objects})
 
 
@@ -295,8 +311,8 @@ def a_sendurl(request):
 def send(request):
     if request.method == "POST":
         post_values = request.POST.copy()
-        tags = post_values['tags']
-        post_values['tags'] = tags[tags.find("[") + 1:tags.find("]")]
+        # tags = post_values['tags']
+        # post_values['tags'] = tags[tags.find("[") + 1:tags.find("]")]
         form = PinForm(post_values)
         if form.is_valid():
             model = form.save(commit=False)
@@ -431,7 +447,7 @@ def show_notify(request):
         anl['actors'] = n.actors
 
         nl.append(anl)
-    return render(request, 'pin/notify.html', {'notif': nl})
+    return render(request, 'pin2/notify.html', {'notif': nl})
 
 @login_required
 def notif_user(request):

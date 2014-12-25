@@ -72,7 +72,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'johnny.middleware.LocalStoreClearMiddleware',
     'johnny.middleware.QueryCacheMiddleware',
     #'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
@@ -228,6 +228,8 @@ LOGGING = {
 
 STREAM_LATEST = 'list_latest'
 STREAM_LATEST_CAT = 'list_latest_cat'
+
+USER_STREAM = "user_stream2"
 
 POST_LIKERS = "wis_likers_2_"
 USER_NAME_CACHE = "un_"
