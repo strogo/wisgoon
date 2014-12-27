@@ -465,7 +465,7 @@ def item(request, item_id):
         return render(request, 'pin/item_inner.html',
                       {'post': post, 'follow_status': follow_status})
     else:
-        return render(request, 'pin/item.html',
+        return render(request, 'pin2/item.html',
                       {'post': post, 'follow_status': follow_status})
 
 
