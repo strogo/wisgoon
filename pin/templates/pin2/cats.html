@@ -8,8 +8,9 @@
         <li class="nav-i"><a href="{% url "pin-latest"%}">آخرین مطالب</a></li>
         <li class="nav-i"><a href="{% url "policy"%}">قوانین</a><li>
         <li class="nav-right dropdown ">
-			<a class="dropdown-toggle" data-toggle="dropdown"  href="#"><!-- <img src="{{MEDIA_URL}}img/new/bartarin.png"> --> برترینها</a>
-		    <ul class="dropdown-menu">
+			<a  class="dropdown-toggle" data-toggle="dropdown"  href="#"
+			class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><!-- <img src="{{MEDIA_URL}}img/new/bartarin.png"> --> برترینها</a>
+		    <ul class="dropdown-menu" role="menu">
 		        <li><a href="{% url "pin-popular" %}">همه زمانها</a></li>
 		        <li><a href="{% url "pin-popular-offset" "month" %}">یک ماه گذشته</a></li>
 		        <li><a href="{% url "pin-popular-offset" "lastweek" %}">هفته گذشته</a></li>
