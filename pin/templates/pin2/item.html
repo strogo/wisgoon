@@ -96,9 +96,9 @@
 						</div>
 					</div>
 					<div class="left-icons col-md-3 col-sm-3 col-xs-3">
-						{% if user.is_authenticated%}
-					<a alt="{{user.id}}/{{post.user.id}}" href="{% url "report_pin" post.id%}" style="margin-right: 5px" class="btn btn_report "> <i class="glyphicon glyphicon-camera"></i> گزارش تخلف</a>
-				{% endif %}
+{% if user.is_authenticated%}
+	<a alt="{{user.id}}/{{post.user.id}}" href="{% url "report_pin" post.id%}" style="margin-right: 5px" class="btn btn-default btn_report "> <i class="glyphicon glyphicon-camera"></i> گزارش تخلف</a>
+{% endif %}
 						
 							
 						

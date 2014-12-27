@@ -1,3 +1,70 @@
+{% load pin_tags %}
+<nav class="navbar navbar-default-items">
+  <div class="container-fluid">
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="nav-i"><a href="{% url "pin-latest"%}">آخرین مطالب</a></li>
+        <li class="nav-i"><a href="{% url "policy"%}">قوانین</a><li>
+        <li class="nav-right dropdown ">
+			<a class="dropdown-toggle" data-toggle="dropdown"  href="#"><!-- <img src="{{MEDIA_URL}}img/new/bartarin.png"> --> برترینها</a>
+		    <ul class="dropdown-menu">
+		        <li><a href="{% url "pin-popular" %}">همه زمانها</a></li>
+		        <li><a href="{% url "pin-popular-offset" "month" %}">یک ماه گذشته</a></li>
+		        <li><a href="{% url "pin-popular-offset" "lastweek" %}">هفته گذشته</a></li>
+		        <li><a href="{% url "pin-popular-offset" "lastday" %} ">24 ساعت گذشته</a></li>
+		        <li><a href="{% url "pin-popular-offset" "lasteigth" %} ">8 ساعت گذشته</a></li>
+		      <!-- links -->
+		    </ul>
+		</li>
+		<li class="nav-right dropdown ">
+		    <a class="dropdown-toggle" data-toggle="dropdown"  href="#"><!-- <img src="{{MEDIA_URL}}img/new/category.png"> -->  گروه ها</a>
+		    <ul class="dropdown-menu">
+		        {% for cat in cats %}
+		        <li><a href="{% url "pin-category" cat.id %}">{{cat.title}}</a></li>
+		        {% endfor %}
+		      <!-- links -->
+		    </ul>
+		</li>
+
+		<li class="nav-right dropdown ">
+			<a class="dropdown-toggle" data-toggle="dropdown"  href="#">برترین کاربران</a>
+		    <ul class="dropdown-menu">
+		        <li><a href="{% url "pin-topuser" %}">کل سایت</a></li>
+		        <li><a href="{% url "pin-topgroupuser" %}">گروه ها</a></li>
+		    </ul>
+		</li>
+
+		{% if user.is_authenticated%}
+		<li class="nav-right">
+			<a href="{% url "pin-following" %}">مطالب دوستان</a>
+		</li>
+		<li class="nav-right">
+			<a href="{% url "pin-user-like" user.id %}"><i class="glyphicon glyphicon-heart"></i></a>
+		</li>
+		{%endif%}
+					  
+					  {%block pin-ex-nav%}{%endblock pin-ex-nav%}
+        <!-- <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+            <li class="divider"></li>
+            <li><a href="#">One more separated link</a></li>
+          </ul>
+        </li> -->
+      </ul>
+      
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<!-- 
 <div id="top-categories">
 	<div class="container">
 		<div class="row">
@@ -14,3 +81,4 @@
 		</div>
 	</div>
 </div>
+ -->

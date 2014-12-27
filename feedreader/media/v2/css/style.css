@@ -1033,3 +1033,19 @@ a.img-move{
 .btn_like{
 	color: #FFF;
 }
+
+.navbar-default-items{
+	background-color: #f0f2f5;
+	/*min-height: 70px;*/
+	border: none !important;
+	border-radius: 0 !important;
+}
+
+.navbar-default-items a{
+	color: #656d78;
+}
+
+.nav-i>a:hover, .nav-i>li>a:focus{
+	color: #333;
+	background-color: #434a54;
+}
