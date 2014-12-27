@@ -3,7 +3,17 @@
 {% load daddy_avatar %}
 {% load thumbnail %}
 
-{%block title%} - قوانین {%endblock title%}
+
+{% block title%} - دانلود عکس و تصویر {{post.text|striptags|remove_newlines|truncatechars:66}}{% endblock title%}
+{%block description%}{{post.text|striptags|remove_newlines|truncatewords:30}}{%endblock%}
+
+{% block opengraph%}
+<meta property="og:title" content="{{post.text|striptags|remove_newlines|truncatechars:66}}" />
+<meta property="og:description" content="{{post.text|striptags|remove_newlines|truncatewords:30}}" />
+<meta property="og:type" content="image/jpeg" />
+<meta property="og:url" content="{{ post.get_host_url}}" />
+<meta property="og:image" content="{{ post.get_image_absolute_url }}" />
+{% endblock opengraph%}
 
 {% block content %}
 
