@@ -44,8 +44,7 @@
 		<div class="row likes">
 			<div class="content">
 				<div class="col-md-1 col-sm-1 col-xs-1 like-icon pull-right">
-					<span class="glyphicon glyphicon-heart-empty"></span>
-					{{post.cnt_like}}
+					<a href="{% url "pin-item-like" post.id%}" class="btn btn-default btn_like {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{post.cnt_likes}} </a>
 				</div>
 				<div class="liker col-md-11 col-sm-11 col-xs-11">
 					{% for liker in post.likes %}            
@@ -76,15 +75,15 @@
 			<div class="footer">
 				<div class="footer-icons">
 					<div class="right-icons col-md-9 col-sm-9 col-xs-9">
-						<div class="col-md-2 col-sm-2 col-xs-2 seen cat-border-left ">
+						<!-- <div class="col-md-2 col-sm-2 col-xs-2 seen cat-border-left ">
 						
 							<span class="glyphicon glyphicon-eye-open"></span>
 							
 						
 								{{post.cnt_like}}
 							
-						</div>
-						<div class="col-md-3 col-sm-3 col-xs-3 download cat-border-left cat-border-right">
+						</div> -->
+						<div class="col-md-3 col-sm-3 col-xs-3 download cat-border-left">
 							<span class="glyphicon glyphicon-download-alt"></span>
 							<a href="{{MEDIA_URL}}{{post.image}}">دانلود تصاویر</a>
 							

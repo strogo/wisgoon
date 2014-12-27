@@ -138,7 +138,7 @@ $('body').on('click', '.btn_like',function(){
             
             var o = jQuery.parseJSON(ret);
             
-            obj.html('<i class="icon-heart"></i>'+o[0].likes);
+            obj.html('<i class="glyphicon glyphicon-heart"></i>'+o[0].likes);
             obj.removeClass('disabled');
             
             if (o[0].user_act == 1){
