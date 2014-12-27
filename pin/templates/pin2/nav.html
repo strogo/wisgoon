@@ -1,4 +1,5 @@
 {% load daddy_avatar %}
+{% load pin_tags %}
 <div class="nav">
 	<div class="navbar navbar-default" role="navigation">
 		<div class="container">
@@ -25,26 +26,8 @@
 				</div>
 				<div class="col-md-6 col-sm-12 pull-left" id="top-userinfo">
 					<ul>
-						<li>
-							<div class="send-photo">
-								<a aria-expanded="true" data-toggle="dropdown" href="">
-									<span class="glyphicon glyphicon-camera"></span>
-									ارسال تصویر
-								</a>
-								<ul class="dropdown-menu send-dropdown"
-								role="menu" aria-labelledby="dropdownMenuDivider">
-									<li role="presentation" class="send-border-bottom">
-										<a href="">
-										ارسال از وب
-										</a>
-									</li>
-									<li role="presentation">
-										<span class="glyphicon glyphicon-camera"></span>
-										ارسال فایل</li>
-								</ul>
-							</div>
-						</li>
-							<li>
+						
+							<!-- <li>
 								<div class="setting">
 									<a aria-expanded="true" data-toggle="dropdown" href="">
 										<span class="glyphicon glyphicon-cog"></span>
@@ -63,32 +46,57 @@
 									
 								</ul>
 							</div>
-						</li>
-						<li>
-							<div class="notification">
-								<a aria-expanded="true" data-toggle="dropdown" href="">
-									<span class="glyphicon glyphicon-bell"></span>
-								</a>
-								<ul class="dropdown-menu notification-dropdown"
-								role="menu" aria-labelledby="dropdownMenuDivider">
-								<li role="presentation" class="notification-border-bottom">
-									<span class="glyphicon glyphicon-camera"></span>
-									ارسال از وب</li>
-									<li role="presentation">
-										<span class="glyphicon glyphicon-camera"></span>
-										ارسال فایل</li>
-									</ul>
-								</div>
-							</li>
+						</li> -->
+						
 							{% if user.is_authenticated %}
+						<li>
+							<div class="send-photo">
+								<a aria-expanded="true" data-toggle="dropdown" href="">
+									<span class="glyphicon glyphicon-camera"></span>
+									ارسال تصویر
+								</a>
+								<ul class="dropdown-menu send-dropdown"
+								role="menu" aria-labelledby="dropdownMenuDivider">
+									<li role="presentation" class="send-border-bottom">
+										<a data-toggle="modal" data-target="#fromImageModal" href="#fromImageModal">
+										ارسال فایل
+										</a>
+									</li>
+									<li role="presentation">
+										<a data-toggle="modal" data-target="#fromUrlModal" href="#fromUrlModal">
+										ارسال از وب
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+<li>
+	<div class="notification">
+		<a href="#notify" data-load="{% url "show_notify" %}" title="اعلانات" class="popnotify"><span class="glyphicon glyphicon-bell"></span> {{user.id|get_user_notify}} </a>
+		<!-- <a aria-expanded="true" data-toggle="dropdown" href="">
+			<span class="glyphicon glyphicon-bell"></span>
+		</a> -->
+</li>
 							<li>
-								<div class="avatar hidden-xs">
+								<div class="hidden-xs">
 									<a href="{% url "pin-user" user.id %}">
-										<img src="{{user|get_avatar:20}}">
+										<img class="nav-avatar" src="{{user|get_avatar:41}}">
 										<!-- <img src="{{MEDIA_URL}}v2/images/ava.jpg"> -->
 									</a>
 								</div>
 							</li>
+							{% else %}
+<li>
+	<div class="hidden-xs">
+		<a href="{% url "registration_register" %}"><img src="{{MEDIA_URL}}img/new/user.png"> عضویت</a>
+	</div>
+</li>
+
+<li>
+	<div class="hidden-xs">
+		<a href="/accounts/login/"><img src="{{MEDIA_URL}}img/new/login.png"> ورود</a>
+	</div>
+</li>
 							{% endif %}
 						</ul>
 					</div>

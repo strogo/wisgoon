@@ -136,7 +136,6 @@ a, a:link, a:hover, a:visited {
 	position: relative;
 } 
 .avatar{
-	
 	text-align: left;
 }
 .avatar img{
@@ -974,3 +973,37 @@ a, a:link, a:hover, a:visited {
 	border-bottom: 1px solid #e2e4e7;
 }
 /***********end send photo ******/
+
+.nav-avatar{
+	width: 41px;
+}
+
+.modal-body .form-horizontal .form-group{
+	margin-right: 0;
+	margin-left: 0;
+}
+
+.ltr{
+	text-align: left;
+	direction: ltr;
+}
+
+.notif {
+border-bottom: 1px solid #DADADA;
+clear: both;
+margin-bottom: 10px;
+padding-bottom: 10px;
+}
+.popover {
+width: 400px;
+height: 400px;
+text-align: right;
+}
+
+.popover-content {
+height: 350px;
+overflow-y: scroll;
+}
+.popover-content a{
+	color: #000;
+}

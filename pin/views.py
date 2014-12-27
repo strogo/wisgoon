@@ -514,4 +514,4 @@ def tag(request, keyword):
 
 
 def policy(request):
-    return render(request, 'pin/policy.html')
+    return render(request, 'pin2/policy.html')
