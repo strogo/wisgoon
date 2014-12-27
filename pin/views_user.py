@@ -254,8 +254,8 @@ def you_are_deactive(request):
 def sendurl(request):
     if request.method == "POST":
         post_values = request.POST.copy()
-        tags = post_values['tags']
-        post_values['tags'] = tags[tags.find("[")+1:tags.find("]")]
+        # tags = post_values['tags']
+        # post_values['tags'] = tags[tags.find("[")+1:tags.find("]")]
         form = PinForm(post_values)
         if form.is_valid():
             model = form.save(commit=False)

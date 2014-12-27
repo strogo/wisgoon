@@ -14,42 +14,38 @@
 <form class="form-horizontal" action="{% url "pin-sendurl" %}" method="post" id="pin-form-from-url">
 {%csrf_token%}
 {{ form.errors}}
-	<div class="control-group">
+	<div class="form-group">
 		<label class="control-label">آدرس:</label>
-		<div class="controls">
-			<input type="text" name="url" id="url" placeholder="URL" class="span3 ltr"> <br><br>
-			<input id="btn-pin-url" type="button" class="btn btn-primary" value="بررسی لینک" />
-		</div>
+		<input type="text" name="url" id="url" placeholder="URL" class="form-control span3 ltr">
+	</div>
+	<div class="form-group">
+		<input id="btn-pin-url" type="button" class="form-control btn btn-primary" value="بررسی لینک" />
+		
 	</div>
 	<input type="hidden" name="image" id="image_url">
 
 <div id="hidden_actions" style="display: none">
-	<div class="control-group" id="image_control" >
+	<div class="form-group" id="image_control" >
 		<div class="controls">
 			<div id="images" style="width:210px;text-align: center">
 				<div class="" style="width: 100%;">
-				<a style="float: right" class="img-move btn" rel="next" href="#"><i class="icon-forward"></i></a>
-				<a style="float: left" class="img-move btn" rel="back" href="#"><i class="icon-backward"></i></a>
+				<a style="float: right" class="img-move btn" rel="next" href="#"><i class="glyphicon glyphicon-forward"></i></a>
+				<a style="float: left" class="img-move btn" rel="back" href="#"><i class="glyphicon glyphicon-backward"></i></a>
 				</div><br>
 				<div class="clearfix"> </div>
 				<img src="" id="ajx-img" style="max-height: 100px;max-width: 150px;margin-top: 10px">
 			</div>
 		</div>
 	</div>
-	<div class="control-group ">
-            
-        <label class="control-label">توضیحات</label>
-		<div class="controls">
-			<textarea id="id_text" rows="4" cols="40" name="text"> </textarea>
-		<span class="help-inline"> </span>
-		</div>
+
+	<div class="form-group ">
+        <label>توضیحات: </label>
+		<textarea class="form-control" id="id_text" rows="5" cols="40" name="text"> </textarea>
     </div>
     
-    <div class="control-group">
-        <label class="control-label">گروه</label>
-        <div class="controls">
-            {{pin_form.category}}
-        </div>
+    <div class="form-group">
+        <label>گروه </label>
+        {{pin_form.category}}
     </div>
 
 </div>
