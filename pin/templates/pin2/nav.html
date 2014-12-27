@@ -77,6 +77,27 @@
 			<span class="glyphicon glyphicon-bell"></span>
 		</a> -->
 </li>
+
+<li>
+		<div class="setting">
+			<a aria-expanded="true" data-toggle="dropdown" href="">
+				<span class="glyphicon glyphicon-cog"></span>
+			</a>
+			<ul class="dropdown-menu setting-dropdown" role="menu" aria-labelledby="dropdownMenuDivider">
+			<li role="presentation" class="setting-border-bottom">
+				<div class="like">
+					<a href="/accounts/password/change/">تعویض رمز عبور</a>
+				</div>
+				<div class="comment">
+					<a href="/accounts/logout/">خروج</a>
+				</div>
+				
+			</li>
+			
+		</ul>
+	</div>
+</li>
+
 							<li>
 								<div class="hidden-xs">
 									<a href="{% url "pin-user" user.id %}">
@@ -87,14 +108,14 @@
 							</li>
 							{% else %}
 <li>
-	<div class="hidden-xs">
-		<a href="{% url "registration_register" %}"><img src="{{MEDIA_URL}}img/new/user.png"> عضویت</a>
+	<div class="notification hidden-xs">
+		<a href="{% url "registration_register" %}">عضویت</a>
 	</div>
 </li>
 
 <li>
-	<div class="hidden-xs">
-		<a href="/accounts/login/"><img src="{{MEDIA_URL}}img/new/login.png"> ورود</a>
+	<div class="notification hidden-xs">
+		<a href="/accounts/login/"> ورود</a>
 	</div>
 </li>
 							{% endif %}

@@ -989,11 +989,18 @@ a, a:link, a:hover, a:visited {
 }
 
 .notif {
-border-bottom: 1px solid #DADADA;
-clear: both;
-margin-bottom: 10px;
-padding-bottom: 10px;
+	border-bottom: 1px solid #DADADA;
+	clear: both;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	padding-bottom: 10px;
+	padding-bottom: 10px;
 }
+
+.notif a img{
+	padding: 2px;
+}
+
 .popover {
 width: 400px;
 height: 400px;

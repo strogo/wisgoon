@@ -3,7 +3,7 @@
 {% load daddy_avatar %}
 <a href="{% url "pin-notif-user" %}">مشاهده همه اعلانات</a>
 {% for noti in notif %}
-<div class="notif" style="height:100px">
+<div class="notif" style="">
         {% thumbnail noti.po "100x100" crop="center" as im %}
         <a href="{% url "pin-item" noti.id %}"><img src="{{im.url}}" style="float:left;margin-right:5px" /></a>
         {% endthumbnail%}
@@ -21,7 +21,7 @@
         {% for ac in noti.actors|slice:":9" reversed %}
         <a target="_blank" href="{% url "pin-user" ac %}"><img src="{{ac|get_avatar:30}}"></a>
         {% endfor %}
-	
+	<div class="clear"></div>
 </div>
 {% endfor %}
 
