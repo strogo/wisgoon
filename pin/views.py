@@ -279,10 +279,6 @@ def category_redis(request, cat_id):
     pid = get_request_pid(request)
     pl = Post.latest(pid=pid, cat_id=cat_id)
     arp = []
-    # latest_items = Post.objects.filter(id__in=pl)
-    # latest_items = sorted(latest_items,
-    #                       key=operator.attrgetter('timestamp'),
-    #                       reverse=True)
 
     for pll in pl:
         try:
@@ -295,13 +291,13 @@ def category_redis(request, cat_id):
     if request.is_ajax():
         if latest_items:
             return render(request,
-                          'pin/_items_2.html',
+                          'pin2/_items_2.html',
                           {'latest_items': latest_items})
         else:
             return HttpResponse(0)
     else:
         return render(request,
-                      'pin/category_redis.html',
+                      'pin2/category_redis.html',
                       {'latest_items': latest_items, 'cur_cat': cat})
 
 
