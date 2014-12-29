@@ -1,14 +1,31 @@
-{% extends "pin/pure.html" %}
+{% extends "pin2/flat.base.box.html" %}
+{% load widget_tweaks %}
 
 {% block box-title %} ورود {% endblock%}
 
-{% block box-content %}
+{% block content %}
 
-{% include "registration/social.html"%}
-<form method="post" >
-{% csrf_token %}
-{{form.as_p}}
-<input type="submit" value="ورود" class="btn"> <a href="/accounts/password/reset/">رمز عبور خود را فراموش کرده اید؟</a>
+<div class="panel panel-default">
+	<div class="panel-heading">ورود
+	</div>
+	<div class="panel-body">
+
+<!-- {% include "registration/social.html"%} -->
+<form method="post" class="form-inline" >
+	{% csrf_token %}
+	<div class="form-group">
+		{% render_field form.username class+="form-control" placeholder="نام کاربری" %}
+	</div>
+	<div class="form-group">
+		{% render_field form.password class+="form-control" placeholder="کلمه عبور" %}
+	</div>
+
+<!-- {{form.as_p}} -->
+	<input type="submit" value="ورود" class="btn btn-primary">
+	<br><br>
+	<a href="/accounts/password/reset/">رمز عبور خود را فراموش کرده اید؟</a>
 </form>
 
+	</div>
+</div>
 {% endblock %}

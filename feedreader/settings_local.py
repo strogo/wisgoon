@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     'tastypie',
     'devserver',
     'debug_toolbar',
+    'widget_tweaks',
 )
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',

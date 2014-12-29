@@ -1132,3 +1132,7 @@ a.img-move{
 .description p{
 	color: #333;
 }
+
+.form a, .form-inline a{
+	color: #333;
+}
