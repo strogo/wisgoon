@@ -1,0 +1,184 @@
+{% load pin_tags %}
+{% load daddy_avatar %}
+{% load thumbnail %}
+
+<div class="post-detail row ">
+			<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
+
+<div class="post-content">
+		<div class="photo">
+			<a href="{{MEDIA_URL}}{{post.image}}" >
+				<img style="margin:0 auto" itemprop="image" src="{{MEDIA_URL}}{{ post.image }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}"></a>
+		</div>
+		<div class="row">
+			<div class="discription">
+				<p> {{post.text|safe|linebreaksbr}}
+				</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="tags ">
+				<div class="tag ">
+				</div>
+
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="row likes">
+			<div class="content">
+				<div class="col-md-1 col-sm-1 col-xs-1 like-icon pull-right">
+					<a href="{% url "pin-item-like" post.id%}" class="btn btn-default btn_like {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{post.cnt_likes}} </a>
+				</div>
+				<div class="liker col-md-11 col-sm-11 col-xs-11">
+					{% for liker in post.likes %}            
+			            <a href="{% url "pin-user" liker %}">
+			                <img src="{{liker|get_avatar:50}}" style="display: inline;margin: 2px;" >
+			            </a>
+			        {% endfor %}
+					<!-- <a href="">
+						<img src="images/ava.jpg">
+					</a>
+					<a href="">
+						<img src="images/ava.jpg">
+					</a>
+					<a href="">
+						<img src="images/ava.jpg">
+					</a>
+					<a href="">
+						<img src="images/ava.jpg">
+					</a>
+					<a href="">
+						<img src="images/ava.jpg">
+					</a> -->
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="footer">
+				<div class="footer-icons">
+					<div class="right-icons col-md-9 col-sm-9 col-xs-9">
+						<!-- <div class="col-md-2 col-sm-2 col-xs-2 seen cat-border-left ">
+						
+							<span class="glyphicon glyphicon-eye-open"></span>
+							
+						
+								{{post.cnt_like}}
+							
+						</div> -->
+						<div class="col-md-3 col-sm-3 col-xs-3 download cat-border-left">
+							<span class="glyphicon glyphicon-download-alt"></span>
+							<a href="{{MEDIA_URL}}{{post.image}}">دانلود تصاویر</a>
+							
+						</div>
+						<div class="col-md-7 col-sm-7 col-xs-7 share cat-border-right">
+							<span class="glyphicon glyphicon-send"></span>
+							
+								ارسال به دیگر شبکه های اجتماعی
+							
+						</div>
+					</div>
+					<div class="left-icons col-md-3 col-sm-3 col-xs-3">
+{% if user.is_authenticated%}
+	<a alt="{{user.id}}/{{post.user.id}}" href="{% url "report_pin" post.id%}" style="margin-right: 5px" class="btn btn-default btn_report "> <i class="glyphicon glyphicon-camera"></i> گزارش تخلف</a>
+{% endif %}
+						
+							
+						
+						<!-- <span class="glyphicon glyphicon-camera"></span> -->
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="comment">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<div class="row">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<div class="user-comment">
+						<div class="avatar col-md-1 col-sm-2 col-xs-3">
+							<img class="nav-avatar" src="{{user|get_avatar:80}}">
+						</div>
+						<div class="text-box col-md-9 col-sm-8 col-xs-8">
+{% if user.is_authenticated and user.is_active %}
+		
+<form action="{% url "pin-comment" %}" method="post" class="form-inline">
+	<div class="form-group">
+		<textarea class="form-control" id="id_comment"  name="text" placeholder="نظر خود را وارد کنید" ></textarea>
+	</div>
+	<div class="form-group">
+		<input type="submit" class=" form-control btn btn-primary" name="submit" value="ارسال">
+	</div>
+<input type="hidden" name="post" value="{{post.id}}">
+</form>
+{% endif %}
+							<!-- <input type="text"> -->
+						</div>
+						<div class="comment-icon col-md-2 col-sm-2 hidden-xs">
+							<!-- 25
+							<span class="glyphicon glyphicon-comment"></span> -->
+						</div>
+						<div class="clear"></div>
+					</div>
+				</div>
+			</div>
+
+{% for comment in post.comments %}
+<div class="row">
+	<div class="col-md-12 col-sm-12 col-xs-12">
+		<div class="others-comment">
+			<div class="col-md-1 col-sm-1 col-xs-1 avatar">
+				<a href="{% url "pin-user" comment.user_id %}"><img src="{{comment.user_id|get_avatar:36}}" alt=""></a>
+			</div>
+
+
+			<div class="col-md-11 col-sm-11 col-xs-11">
+				<div class="time pull-left">
+					{{comment.submit_date|jalali_mysql_date}}
+				</div>
+				
+				<p>{{comment.comment}}</p>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>
+{% endfor %}
+
+		</div>
+
+<div class="clear"></div>
+			</div>
+				<br />
+				<br />
+			</div>
+			<div class="sidebar col-md-3 col-sm-3 col-xs-12">
+<div class="profile">
+					
+		<div class="col-md-8 col-sm-6 col-xs-8 pato20">
+			<div class="username">
+				<a href="{% url "pin-user" post.user_id %}">
+					{{post.user|get_username}}
+				</a>
+			</div>
+
+			<!-- <div class="score">
+				<p> ۵۴۸۵۶۷ : امتیاز</p>
+			</div> -->
+		</div>
+		<div class="col-md-4 col-sm-6 col-xs-4">
+			<div class="avatar">
+				<a href="{% url "pin-user" post.user_id %}">
+					<img src="{{post.user_id|get_avatar:65}}" />
+				</a>
+			</div>
+		</div>
+		<div class="clear"></div>
+	</div>
+	<?php include 'photo-detail-posts.php'; ?>
+	<?php include'post-detail-following-suggestion.php' ;?>
+</div>
+		</div>

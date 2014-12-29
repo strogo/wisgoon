@@ -1,6 +1,6 @@
 from settings_local import *
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 

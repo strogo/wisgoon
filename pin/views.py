@@ -442,7 +442,7 @@ def item(request, item_id):
                                               following=post.user.id).count()
 
     if request.is_ajax():
-        return render(request, 'pin/item_inner.html',
+        return render(request, 'pin2/items_inner.html',
                       {'post': post, 'follow_status': follow_status})
     else:
         return render(request, 'pin2/item.html',

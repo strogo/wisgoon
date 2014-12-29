@@ -32,6 +32,20 @@
 {% include "pin2/__from_image_modal.html" %}
 {% include "pin2/__from_url_modal.html" %}
 
+<div class="modal fade" id="postModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        <p>One fine body&hellip;</p>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 {% if user.is_authenticated %}
 <script type="text/javascript" src="{{MEDIA_URL}}js2/pin-user.js?ver=1.1.1"></script>
 {% endif %}
@@ -43,6 +57,8 @@
 <script type="text/javascript" src="{{MEDIA_URL}}js2/all.js?ver=1.1"></script>
 {% block footer_script %}
 {% endblock %}
+
+
 
 </body>
 </html>
