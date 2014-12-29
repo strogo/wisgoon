@@ -1,0 +1,56 @@
+{% load pin_tags%}
+{% load humanize %}
+{% load thumbnail %}
+{% load daddy_avatar %}
+
+{% spaceless %}
+<!-- {% include "pin/inner_pin_ad.html" %} -->
+{% for item in latest_items %}
+
+<div class="feed-item masonry-brick">
+	<div class="img-content">
+		{% thumbnail item.image "236" as im %}
+		<a class="pin-item-link" href="{% url "pin-item" item.id%}">
+		<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item.text|remove_newlines|truncatewords:5}}">
+		</a>
+		{% endthumbnail %}
+		<div class="likes">
+			<a href="">25</a>
+			<span class="glyphicon glyphicon-comment"></span>
+		</div>
+		<div class="comment">
+			<span class="glyphicon glyphicon-heart-empty"></span>
+			<a href="">5</a>
+		</div>
+		<div class="img-shadow"></div>
+	</div>
+	<div class="avatar post-avatar">
+		<a href="{% url "pin-user" item.user_id %}">
+			<img src="{{item.user_id|get_userdata_avatar:54}}" style="display: inline;" > 
+		</a>
+	</div>
+	<div class="username">
+		<a href="{% url "pin-user" item.user_id %}">
+			{{item.user_id|get_userdata_name}}
+		</a>
+	</div>
+	<div class="actions">
+		<a href="{% url "pin-item-like" item.id%}" class="btn btn-primary btn_like {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{item.cnt_like}} </a>
+	</div>
+	{% if item.text.strip|length > 0 %}
+	<div class="description">
+		<p class="{{item.text|length}}">{{item.text|safe|truncatewords:"50"|linebreaksbr}}
+		</p>
+	</div>
+	{% endif %}
+	<div class="clear"></div>
+</div>
+
+{% if offset %}
+		<span data-next="{{offset}}" ></span>
+		{%else%}
+		<span data-next="{{item.id}}" ></span>
+		{%endif%}
+
+{%endfor%}
+{% endspaceless %}

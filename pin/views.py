@@ -157,10 +157,6 @@ def latest_redis(request):
     pid = get_request_pid(request)
     pl = Post.latest(pid=pid)
     arp = []
-    # latest_items = Post.objects.filter(id__in=pl)
-    # latest_items = sorted(latest_items,
-    #                       key=operator.attrgetter('timestamp'),
-    #                       reverse=True)
 
     for pll in pl:
         try:
@@ -170,18 +166,6 @@ def latest_redis(request):
 
     latest_items = arp
 
-    # if timestamp == 0:
-    #     latest_items = Post.accepted\
-    #         .order_by('-timestamp')[:20]
-
-    #     hp = Post.get_hot()
-    #     if hp:
-    #         latest_items = itertools.chain(hp, latest_items)
-    # else:
-    #     latest_items = Post.accepted\
-    #         .extra(where=['timestamp<%s'], params=[timestamp])\
-    #         .order_by('-timestamp')[:20]
-
     if request.is_ajax():
         if latest_items:
             return render(request,
@@ -190,7 +174,7 @@ def latest_redis(request):
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin/latest_redis.html', {
+        return render(request, 'pin2/latest_redis.html', {
             'latest_items': latest_items
         })
 

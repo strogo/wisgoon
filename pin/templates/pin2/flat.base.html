@@ -8,7 +8,7 @@
 
 	{% include "pin2/all_header.html" %}
 
-	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/style.css?ver=1.1.4">
+	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/style.css?ver=1.1.5">
 	
 	<script type="text/javascript" src="{{MEDIA_URL}}v2/js/jquery-1.11.1.min.js"></script>
 	<script type="text/javascript" src="{{MEDIA_URL}}v2/js/bootstrap.min.js"></script>
@@ -26,7 +26,7 @@
 var media_url = "{{MEDIA_URL}}";
 var upload_url = "{% url "pin-upload" %}";
 </script>
-
+{% include "base/analytics.html"%}
 	</head>
 	<body>
 {% include "pin2/nav.html" %}
