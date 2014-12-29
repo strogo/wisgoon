@@ -37,7 +37,7 @@ def home(request):
     if request.is_ajax():
         if latest_items.exists():
             return render(request,
-                          'pin2/_items_2.html',
+                          'pin2/_items_2_1.html',
                           {'latest_items': latest_items})
         else:
             return HttpResponse(0)
