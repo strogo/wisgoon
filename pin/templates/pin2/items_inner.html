@@ -95,6 +95,7 @@
 
 	<div class="comment">
 		<div class="col-md-12 col-sm-12 col-xs-12">
+{% if user.is_authenticated and user.is_active %}
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 					<div class="user-comment">
@@ -102,7 +103,7 @@
 							<img class="nav-avatar" src="{{user|get_avatar:80}}">
 						</div>
 						<div class="text-box col-md-9 col-sm-8 col-xs-8">
-{% if user.is_authenticated and user.is_active %}
+
 		
 <form action="{% url "pin-comment" %}" method="post" class="form-inline">
 	<div class="form-group">
@@ -113,7 +114,6 @@
 	</div>
 <input type="hidden" name="post" value="{{post.id}}">
 </form>
-{% endif %}
 							<!-- <input type="text"> -->
 						</div>
 						<div class="comment-icon col-md-2 col-sm-2 hidden-xs">
@@ -124,6 +124,7 @@
 					</div>
 				</div>
 			</div>
+{% endif %}
 
 {% for comment in post.comments %}
 <div class="row">

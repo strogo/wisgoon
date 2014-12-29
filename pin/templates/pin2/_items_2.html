@@ -10,7 +10,7 @@
 <div class="feed-item masonry-brick">
 	<div class="img-content">
 		{% thumbnail item.image "236" as im %}
-		<a data-toggle="modal" data-target="#postModal" class="pin-item-link" href="{% url "pin-item" item.id%}">
+		<a class="pin-item-link" href="{% url "pin-item" item.id%}">
 		<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item.text|remove_newlines|truncatewords:5}}">
 		</a>
 		{% endthumbnail %}
