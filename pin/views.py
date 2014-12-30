@@ -103,6 +103,52 @@ def user_friends(request, user_id):
                        'user_id': user_id})
 
 
+def user_followers(request, user_id):
+    user_id = int(user_id)
+    ROW_PER_PAGE = 20
+
+    friends = Follow.objects.values_list('follower_id', flat=True)\
+        .filter(following_id=user_id).order_by('-id')
+    if len(friends) == 0:
+        return render(request, 'pin/user_friends_empty.html')
+    paginator = Paginator(friends, ROW_PER_PAGE)
+
+    try:
+        offset = int(request.GET.get('older', 1))
+    except ValueError:
+        offset = 1
+
+    try:
+        friends = paginator.page(offset)
+    except PageNotAnInteger:
+        friends = paginator.page(1)
+    except EmptyPage:
+        return HttpResponse(0)
+
+    if friends.has_next() is False:
+        friends.next_page_number = -1
+
+    friends_list = []
+    for l in friends:
+        friends_list.append(int(l))
+
+    user_items = User.objects.filter(id__in=friends_list)
+
+    if request.is_ajax():
+        if user_items.exists():
+            return render(request,
+                          'pin/_user_friends.html',
+                          {'user_items': user_items,
+                           'offset': friends.next_page_number})
+        else:
+            return HttpResponse(0)
+    else:
+        return render(request, 'pin/user_friends.html',
+                      {'user_items': user_items,
+                       'offset': friends.next_page_number,
+                       'user_id': user_id})
+
+
 def user_like(request, user_id):
     user_id = int(user_id)
     likes_list = []

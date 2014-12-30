@@ -29,6 +29,8 @@ urlpatterns = patterns('pin.views',
     url(r'^(?P<item_id>\d+)/$', 'item', name="pin-item"),
     url(r'^user/(?P<user_id>\d+)/likes/$', 'user_like', name='pin-user-like'),
     url(r'^user/(?P<user_id>\d+)/friends/$', 'user_friends', name='pin-user-friends'),
+    url(r'^user/(?P<user_id>\d+)/following/$', 'user_friends', name='pin-user-following'),
+    url(r'^user/(?P<user_id>\d+)/followers/$', 'user_followers', name='pin-user-followers'),
     url(r'^user/(?P<user_id>\d+)/$', 'user', name='pin-user'),
     url(r'^user/(?P<user_id>\d+)/(?P<user_name>\w+)/$', 'user', name='pin-user-new'),
     
