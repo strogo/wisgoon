@@ -98,7 +98,7 @@ var start_loading=0;
 					تاریخ عضویت : {{cur_user.date_joined|date:"d-m-Y"}}<br />
 
 					وب سایت :
-					{% if cur_user.profile.website != '' %}
+					{% if cur_user.profile.website.strip|length > 0 %}
         <a target="_blank" href="{{cur_user.profile.website}}"><i class="glyphicon glyphicon-globe"> </i></a>
         {% endif %}<br />
 
