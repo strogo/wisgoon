@@ -406,7 +406,7 @@ def friends_post(request):
             # .order_by('-date')[offset:offset + limit]
         idis = Post.user_stream_latest(user_id=cur_user)
 
-    print "idis is:", idis
+    # print "idis is:", idis
 
     # idis = []
     # for p in stream:
