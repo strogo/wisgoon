@@ -26,7 +26,7 @@ from pin.models import Post, Likes, Category, Comments,\
     App_data, Stream, Follow
 from user_profile.models import Profile
 from pin.templatetags.pin_tags import get_username
-from daddy_avatar.templatetags import daddy_avatar, get_avatar
+from daddy_avatar.templatetags import daddy_avatar
 
 from pin.tools import userdata_cache, AuthCache, CatCache
 
@@ -135,7 +135,7 @@ class ProfileResource(ModelResource):
 
     def dehydrate(self, bundle):
         user = bundle.data['user']
-        bundle.data['user_avatar'] = get_avatar(user, size=300)
+        bundle.data['user_avatar'] = daddy_avatar.get_avatar(user, size=300)
         if self.cur_user:
             bundle.data['follow_by_user'] = Follow\
                 .get_follow_status(follower=self.cur_user,
