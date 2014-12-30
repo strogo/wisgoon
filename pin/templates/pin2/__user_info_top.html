@@ -1,0 +1,27 @@
+{% load daddy_avatar %}
+{% load pin_tags %}
+
+<div class="avatar">
+	<img src="{{cur_user|get_avatar:210}}">
+</div>
+<div class="user-info">
+	<div class="col-md-12 col-sm-12 col-xs-12 username">
+		<h4>{{cur_user|get_username}}</h4>
+	</div>
+	<div class="col-md-12 col-sm-12 col-xs-12 likes f-black">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<a class="f-black" href="{% url "pin-user-like" cur_user.id %}">مطالب مورد علاقه</a>
+		</div>
+	</div>
+
+	<div class="col-md-12 col-sm-12 col-xs-12 likes f-black">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<a href="{% url "pin-user-following" cur_user.id %}" class="f-black">دنبال شوندگان</a>
+		</div>
+	</div>
+
+	<div class="col-md-12 col-sm-12 col-xs-12 likes f-black">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<a href="{% url "pin-user-followers" cur_user.id %}" class="f-black">دنبال کنندگان</a>
+		</div>
+	</div>

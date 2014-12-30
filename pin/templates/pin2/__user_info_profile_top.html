@@ -1,0 +1,11 @@
+{% if cur_user.id == request.user.id %}
+<div class="row">
+	<a href="{% url "user-profile-change" %}" class="btn btn-primary f-white" data-toggle="modal" data-target="#profileModal">ویرایش مشخصات</a>
+</div>
+{% endif %}
+
+{% if profile.bio %}
+<div class="bio">
+	{{profile.bio}}
+</div>
+{% endif %}

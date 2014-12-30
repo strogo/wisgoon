@@ -1,0 +1,28 @@
+{% load humanize %}
+<div class="col-md-12 col-sm-12 col-xs-12 detail-info">
+امتیاز : {{profile.score|intcomma}}
+<br />
+تعداد مطالب ارسالی : {{profile.cnt_post}}<br />
+
+تعداد لایک : {{profile.cnt_like}}<br />
+
+وضعیت ارسال مطلب : {% if cur_user.is_active %}
+    فعال
+    {% if user.is_superuser %}
+        <a href="{% url "activate-user" cur_user.id 0%}">غیر فعال کردن</a>
+    {% endif %}
+    {% else%}
+    غیرفعال
+    {% if user.is_superuser %}
+        <a href="{% url "activate-user" cur_user.id 1%}">فعال کردن</a>
+    {% endif %}
+    {%endif%}
+<br />
+
+تاریخ عضویت : {{cur_user.date_joined|date:"d-m-Y"}}<br />
+
+{% if cur_user.profile.website.strip|length > 0 %}
+وب سایت :
+<a target="_blank" href="{{cur_user.profile.website}}"><i class="glyphicon glyphicon-globe"> </i></a>
+{% endif %}<br />
+
