@@ -7,6 +7,7 @@ SITE_ROOT = os.path.dirname(__file__)
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
+ALLOWED_HOSTS = ["127.0.0.1:8000", "127.0.0.1"]
 MANAGERS = ADMINS
 DATABASES = {
     'default': {
