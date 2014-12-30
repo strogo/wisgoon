@@ -373,7 +373,7 @@ def user(request, user_id, user_name=None):
 
     # profile, created = Profile.objects.get_or_create(user=user)
     profile = Profile.objects.get(user_id=user_id)
-    print profile
+    # print profile
 
     timestamp = get_request_timestamp(request)
 
