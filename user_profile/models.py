@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 
 from django.conf import settings
+from django.core.cache import cache
 from django.db import models
 from django.db.models import F
 from django.contrib.auth.models import User
@@ -88,6 +89,17 @@ class Profile(models.Model):
 
     def save(self, *args, **kwargs):
         super(Profile, self).save(*args, **kwargs)
+        user_str = "user_name_%d" % (self.user_id)
+        cache.delete(user_str)
+
+        profile_str = "profile_name_%d" % (self.user_id)
+        cache.delete(profile_str)
+
+        new_avatar = "new_avatar_%d" % (self.user_id)
+        cache.set(new_avatar, 1, 160000)
+
+        ava_str = "avatar3210u_%d" % (self.user_id)
+        cache.delete(ava_str)
 
 
 def create_user_profile(sender, instance, created, **kwargs):

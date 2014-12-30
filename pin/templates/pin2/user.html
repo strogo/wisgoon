@@ -1,0 +1,162 @@
+{% extends "pin2/flat.base.html"%}
+{% load humanize %}
+{% load pin_tags %}
+{% load daddy_avatar%}
+
+{% block extra_js %}
+ <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
+{% endblock extra_js %}
+
+{% block content %}
+
+<script type="text/javascript">
+var start_loading=0;
+// var next_pref = '?pid=';
+</script>
+
+<!-- {% include "base/app.html" %} -->
+<div id="main">
+	<div class="container">
+		<div class="profile row">
+			<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
+
+				{% if cur_user.id == request.user.id %}
+				<div class="row">
+    				<a href="{% url "user-profile-change" %}" class="btn btn-primary" data-toggle="modal" data-target="#profileModal">ویرایش مشخصات</a>
+				</div>
+				{% endif %}
+
+				{% if profile.bio %}
+				<div class="bio">
+					{{profile.bio}}
+				</div>
+				{% endif %}
+
+				<div id="feed" class="masonry">
+
+					{% include "pin2/_items_2_1.html"%}
+
+				</div>
+			</div>
+			<div class="sidebar col-md-3 col-sm-3 col-xs-12">
+					<div class="avatar">
+					<img src="{{cur_user|get_avatar:210}}">
+				</div>
+				<div class="user-info">
+					<div class="col-md-12 col-sm-12 col-xs-12 username">
+						<h4>{{cur_user|get_username}}</h4>
+					</div>
+					<div class="col-md-12 col-sm-12 col-xs-12 likes">
+						<div class="col-md-9 col-sm-9 col-xs-9">
+							<a href="{% url "pin-user-like" cur_user.id %}">مطالب مورد علاقه</a>
+						</div>
+						<div class="col-md-3 col-sm-3 col-xs-3">
+							<span class="glyphicon glyphicon-heart-empty"></span>
+						</div>
+					</div>
+
+					<!-- <div class="col-md-12 col-sm-12 col-xs-12 friends">
+						
+						<a aria-expanded="true" data-toggle="dropdown" href="">
+							<div class="col-md-9 col-sm-9 col-xs-9">
+								دوستان
+							</div>
+							<div class="col-md-3 col-sm-3 col-xs-3">
+								<span class="glyphicon glyphicon-heart-empty"></span>
+							</div>
+						</a>
+
+						<ul class="dropdown-menu friends-dropdown col-md-12 col-sm-12 col-xs-12"
+						role="menu" aria-labelledby="dropdownMenuDivider">
+						<li role="presentation" class="friends-border-bottom col-md-12 col-sm-12 col-xs-12">
+							<div class="col-md-9 col-sm-9 col-xs-9">
+								دنبال کنندگان
+							</div>
+							<div class="col-md-3 col-sm-3 col-xs-3">
+								<span class="glyphicon glyphicon-camera"></span>
+							</div>
+						</li>
+						<li role="presentation" class="col-md-12 col-sm-12 col-xs-12">
+							<div class="col-md-9 col-sm-9 col-xs-9">
+								دنبال شوندگان
+							</div>
+							<div class="col-md-3 col-sm-3 col-xs-3">
+								<span class="glyphicon glyphicon-camera"></span>
+							</div>
+						</li>
+					</ul> 
+
+
+				</div> -->
+				<div class="col-md-12 col-sm-12 col-xs-12 detail-info">
+					امتیاز : {{profile.score|intcomma}}
+					<br />
+					تعداد مطالب ارسالی : {{profile.cnt_post}}<br />
+
+					تعداد لایک : {{profile.cnt_like}}<br />
+
+					وضعیت ارسال مطلب : {% if cur_user.is_active %}
+                فعال
+                {% if user.is_superuser %}
+                    <a href="{% url "activate-user" cur_user.id 0%}">غیر فعال کردن</a>
+                {% endif %}
+                {% else%}
+                غیرفعال
+                {% if user.is_superuser %}
+                    <a href="{% url "activate-user" cur_user.id 1%}">فعال کردن</a>
+                {% endif %}
+                {%endif%}
+            </li><br />
+
+					تاریخ عضویت : {{cur_user.date_joined|date:"d-m-Y"}}<br />
+
+					وب سایت :
+					{% if cur_user.profile.website != '' %}
+        <a target="_blank" href="{{cur_user.profile.website}}">{{profile.website}}</a>
+        {% endif %}<br />
+
+				</div>
+				<div class="clear"></div>
+			</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+<div class="clear"></div>
+
+<!-- <div id="profileModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h2 id="myModalLabel"></h2>
+  </div>
+  <div class="modal-body">
+  </div>
+</div> -->
+
+<!-- Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                 <h4 class="modal-title">Modal title</h4>
+
+            </div>
+            <div class="modal-body"><div class="te"></div></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+{% include "pin/feed_scripts.html" %}
+{% include "pin/pin_scripts.html" %}
+
+{% endblock content %}

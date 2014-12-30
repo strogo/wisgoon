@@ -110,8 +110,10 @@ def get_username(user):
     profile_str = "profile_name_%d" % (user.id)
     profile_cache = cache.get(profile_str)
     if profile_cache:
+        print "we have cache for profile"
         return profile_cache
 
+    print "we dont have cache for profile"
     try:
         profile = Profile.objects.only('name').get(user_id=user.id)
         if not profile:

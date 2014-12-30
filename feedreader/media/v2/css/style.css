@@ -124,7 +124,7 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 
 }
 a, a:link, a:hover, a:visited {
-	color: #fff;
+	/*color: #fff;*/
 
 }
 .notification{
@@ -1045,7 +1045,7 @@ a.img-move{
 }
 
 .navbar-default-items a{
-	color: #656d78;
+	color: #656d78!important;
 }
 
 .nav-i>a:hover, .nav-i>li>a:focus{
@@ -1135,4 +1135,11 @@ a.img-move{
 
 .form a, .form-inline a{
 	color: #333;
+}
+.navbar a{
+	color: #FFF;
+}
+
+.modal-content .form-horizontal{
+	padding: 10px;
 }

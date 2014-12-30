@@ -371,27 +371,29 @@ def topgroupuser(request):
 def user(request, user_id, user_name=None):
     user = get_object_or_404(User, pk=user_id)
 
-    profile, created = Profile.objects.get_or_create(user=user)
+    # profile, created = Profile.objects.get_or_create(user=user)
+    profile = Profile.objects.get(user_id=user_id)
+    print profile
 
     timestamp = get_request_timestamp(request)
 
-    if request.user == user:
-        if timestamp == 0:
-            latest_items = Post.objects.filter(user=user_id)\
-                .order_by('-timestamp')[:20]
-        else:
-            latest_items = Post.objects.filter(user=user_id)\
-                .extra(where=['timestamp<%s'], params=[timestamp])\
-                .order_by('-timestamp')[:20]
+    # if request.user == user:
+    #     if timestamp == 0:
+    #         latest_items = Post.objects.filter(user=user_id)\
+    #             .order_by('-timestamp')[:20]
+    #     else:
+    #         latest_items = Post.objects.filter(user=user_id)\
+    #             .extra(where=['timestamp<%s'], params=[timestamp])\
+    #             .order_by('-timestamp')[:20]
 
+    # else:
+    if timestamp == 0:
+        latest_items = Post.objects.filter(user=user_id)\
+            .order_by('-timestamp')[:20]
     else:
-        if timestamp == 0:
-            latest_items = Post.objects.filter(user=user_id)\
-                .order_by('-timestamp')[:20]
-        else:
-            latest_items = Post.objects.filter(user=user_id)\
-                .extra(where=['timestamp<%s'], params=[timestamp])\
-                .order_by('-timestamp')[:20]
+        latest_items = Post.objects.filter(user=user_id)\
+            .extra(where=['timestamp<%s'], params=[timestamp])\
+            .order_by('-timestamp')[:20]
 
     if request.is_ajax():
         if latest_items.exists():
@@ -404,7 +406,7 @@ def user(request, user_id, user_name=None):
         follow_status = Follow.objects\
             .filter(follower=request.user.id, following=user.id).count()
 
-        return render(request, 'pin/user.html',
+        return render(request, 'pin2/user.html',
                       {'latest_items': latest_items,
                        'follow_status': follow_status,
                        'profile': profile,

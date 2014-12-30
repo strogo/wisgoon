@@ -48,23 +48,46 @@ def get_avatar(user, size=200):
             except:
                 return 'None'
 
-    ava_str = "avatar_%d_%d" % (user.id, size)
-    try:
-        ava_cache = cache.get(ava_str)
-        if ava_cache:
-            #print "get avatar from cache", ava_cache
-            return ava_cache
+    ava_str = "avatar3210u_%d" % (user.id)
+    # ava_dict = {}
+    # try:
+    ava_dict = cache.get(ava_str)
+    # print "ava cache is:", ava_dict, ava_str, size
+    if ava_dict:
+        # print "step 1"
 
+        if size in ava_dict:
+            # print "step 1.1"
+            #print "get avatar from cache", ava_dict
+            return ava_dict[size]
+        else:
+            # print "step 1.2"
+            profile = Profile.objects.only('avatar').get(user=user)
+            
+            if profile.avatar:
+                # print "step 1.2.1"
+                t_size = '%sx%s' % (size, size)
+                im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
+                ava_dict[size] = im.url
+                cache.set(ava_str, ava_dict, 60 * 60 * 1)
+                return im.url
+    # except Exception, e:
+    #     print str(e)
+    else:
+        # print "step 2"
+        ava_dict = {}
+        # print "step 2.1"
         profile = Profile.objects.only('avatar').get(user=user)
         
         if profile.avatar:
+            # print "step 2.2.1"
             t_size = '%sx%s' % (size, size)
             im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
-            cache.set(ava_str, im.url, 60 * 60 * 1)
+            ava_dict[size] = im.url
+            cache.set(ava_str, ava_dict, 60 * 60 * 1)
             return im.url
-    except Exception, e:
-        print str(e)
-        
+
     glob_avatar = daddy_avatar(user.email, size)
-    cache.set(ava_str, glob_avatar, 60 * 60 * 1)
+    ava_dict[size] = glob_avatar
+    cache.set(ava_str, ava_dict, 60 * 60 * 1)
     return glob_avatar
