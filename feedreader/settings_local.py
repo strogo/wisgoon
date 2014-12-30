@@ -112,6 +112,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.humanize',
+
+    'haystack',
+
     'pin',
     'registration',
     'south',
@@ -129,6 +132,16 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'widget_tweaks',
 )
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'URL': 'http://127.0.0.1:8983/solr'
+        # ...or for multicore...
+        # 'URL': 'http://127.0.0.1:8983/solr/mysite',
+    },
+}
+
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
     'social_auth.backends.facebook.FacebookBackend',
@@ -241,3 +254,6 @@ LIKE_WITH_CELERY = True
 USE_CELERY = False
 
 APP_TOKEN_STR = 'app mobile-)**Z{QT'
+
+
+HAYSTACK_SIGNAL_PROCESSOR = 'pin.signals.MySignalProcessor'
