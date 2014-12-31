@@ -416,23 +416,9 @@ def topgroupuser(request):
 
 def user(request, user_id, user_name=None):
     user = get_object_or_404(User, pk=user_id)
-
-    # profile, created = Profile.objects.get_or_create(user=user)
     profile = Profile.objects.get(user_id=user_id)
-    # print profile
 
     timestamp = get_request_timestamp(request)
-
-    # if request.user == user:
-    #     if timestamp == 0:
-    #         latest_items = Post.objects.filter(user=user_id)\
-    #             .order_by('-timestamp')[:20]
-    #     else:
-    #         latest_items = Post.objects.filter(user=user_id)\
-    #             .extra(where=['timestamp<%s'], params=[timestamp])\
-    #             .order_by('-timestamp')[:20]
-
-    # else:
     if timestamp == 0:
         latest_items = Post.objects.filter(user=user_id)\
             .order_by('-timestamp')[:20]
@@ -443,7 +429,7 @@ def user(request, user_id, user_name=None):
 
     if request.is_ajax():
         if latest_items.exists():
-            return render(request, 'pin/_items.html',
+            return render(request, 'pin2/_items_2_1.html',
                           {'latest_items': latest_items})
         else:
             return HttpResponse(0)
