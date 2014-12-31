@@ -34,7 +34,7 @@ class MonthlyStats(Document):
     count = IntField()
 
     meta = {
-        'indexes': [('object_type', 'date')]
+        'indexes': ['date', ('object_type', 'date')]
     }
 
     @classmethod

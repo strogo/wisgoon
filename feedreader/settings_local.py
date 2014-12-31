@@ -102,6 +102,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'pin.context_processors.pin_categories',
     'pin.context_processors.is_super_user',
     'pin.context_processors.user__id',
+    'pin.context_processors.today_stats',
 )
 INSTALLED_APPS = (
     'django.contrib.auth',

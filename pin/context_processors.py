@@ -1,7 +1,8 @@
-from django.core.cache import cache
-from django.contrib.auth.models import User
+import datetime
+
 from pin.forms import PinForm
 from pin.models import Category
+from pin.model_mongo import MonthlyStats
 
 from pin.mycache import caching
 
@@ -15,11 +16,22 @@ def pin_categories(request):
     return {'cats': cats}
 
 
+def today_stats(request):
+    d = str(datetime.date.today())
+    m = MonthlyStats.objects(date=d)
+    ma = {}
+    for mm in m:
+        ma[mm.object_type] = mm.count
+
+    print ma
+    return {'stats': ma}
+
+
 def is_super_user(request):
     #return {'is_super_user': False}
     #print "re user", request.user
     if request.user.is_superuser:
-       return {'is_super_user': True}
+        return {'is_super_user': True}
 
     return {'is_super_user': False}
 
