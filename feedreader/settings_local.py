@@ -115,6 +115,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
 
     'haystack',
+    # 'feedreader',
 
     'pin',
     'registration',
