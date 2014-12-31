@@ -24,6 +24,10 @@ class Notif(Document):
 
 
 class MonthlyStats(Document):
+
+    POST = "post"
+    COMMENT = "comment"
+
     date = DateTimeField()
     object_type = StringField()
     count = IntField()

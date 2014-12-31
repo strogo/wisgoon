@@ -652,6 +652,8 @@ class Comments(models.Model):
         from pin.tasks import send_notif_bar
         if not created:
             return None
+
+        MonthlyStats.log_hit(object_type=MonthlyStats.COMMENT)
         comment = instance
         post = comment.object_pk
 
