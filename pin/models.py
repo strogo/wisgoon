@@ -388,6 +388,11 @@ class Post(models.Model):
         return []
 
     @classmethod
+    def last_likes(self):
+        pl = r_server.lrange(settings.LAST_LIKES, 0, 30)
+        return pl[:30]
+
+    @classmethod
     def user_stream_latest(self, user_id, pid=0):
         ROW_IN_PAGE = 20
         # user_stream = "ustream_%d" % (user_id)
@@ -514,7 +519,7 @@ class Likes(models.Model):
 
         r_server.lrem(settings.LAST_LIKES, post.id)
         r_server.lpush(settings.LAST_LIKES, post.id)
-        r_server.ltrim(settings.LAST_LIKES, 0, 100)
+        r_server.ltrim(settings.LAST_LIKES, 0, 1000)
 
         Profile.after_like(user_id=post.user_id)
 

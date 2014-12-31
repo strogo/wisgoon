@@ -101,6 +101,9 @@
 		        <li><a href="{% url "pin-topgroupuser" %}">گروه ها</a></li>
 		    </ul>
 		</li>
+		<li class="nav-right">
+			<a href="{% url "pin-last-likes" %}">آخرین پسندها</a>
+		</li>
 
 		{% if user.is_authenticated%}
 		<li class="nav-right">

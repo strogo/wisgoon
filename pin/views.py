@@ -225,6 +225,31 @@ def latest_redis(request):
         })
 
 
+def last_likes(request):
+    pl = Post.last_likes()
+    arp = []
+
+    for pll in pl:
+        try:
+            arp.append(Post.objects.get(id=pll))
+        except:
+            pass
+
+    latest_items = arp
+
+    if request.is_ajax():
+        # if latest_items:
+        #     return render(request,
+        #                   'pin2/_items_2.html',
+        #                   {'latest_items': latest_items})
+        # else:
+        return HttpResponse(0)
+    else:
+        return render(request, 'pin2/latest_redis.html', {
+            'latest_items': latest_items
+        })
+
+
 def latest_backup(request):
     timestamp = get_request_timestamp(request)
 
