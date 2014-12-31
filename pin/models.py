@@ -199,7 +199,8 @@ class Post(models.Model):
     @classmethod
     def set_stream_to_redis(self, user_id):
         user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
-        s = Stream.objects.filter(user_id=user_id).values_list('post_id', flat=True).order_by('-id')[:200]
+        s = Stream.objects.filter(user_id=user_id)\
+            .values_list('post_id', flat=True).order_by('-id')[:200]
         # print "geted s is:", s
         for ss in s:
             r_server.rpush(user_stream, ss)
@@ -252,15 +253,10 @@ class Post(models.Model):
         from user_profile.models import Profile
         try:
             profile = Profile.objects.get(user=self.user)
-            #profile.cnt_post += 1
 
             if ((self.date_lt(self.user.date_joined, 30) and
                  profile.score > 5000) or profile.score > 7000):
-                profile.post_accept = True
-
                 self.status = 1
-
-            #profile.save()
 
         except Profile.DoesNotExist:
             pass
@@ -273,7 +269,6 @@ class Post(models.Model):
 
         super(Post, self).save(*args, **kwargs)
         try:
-            get_thumbnail(self.image, "192")
             get_thumbnail(self.image, "236")
         except Exception, e:
             print "error in thumbnail create in post save", e
@@ -457,7 +452,7 @@ class Stream(models.Model):
     def add_post(cls, sender, instance, *args, **kwargs):
         post = instance
         if kwargs['created']:
-            
+
             MonthlyStats.log_hit(object_type="post")
 
             from user_profile.models import Profile

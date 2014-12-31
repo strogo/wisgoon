@@ -295,7 +295,6 @@ a, a:link, a:hover, a:visited {
 
 }
 .feed-item .tags a{
-
 	color: #d979b2;
 }
 .feed-item .description {
@@ -304,6 +303,7 @@ a, a:link, a:hover, a:visited {
 	font-size: 12px;
 	text-align: right;
 	padding: 10px;
+	overflow: hidden;
 }
 
 .img-content .img-shadow{
