@@ -1155,3 +1155,30 @@ a.img-move{
 .f-white{
 	color: #FFF!important;
 }
+
+/***********activity count ******/
+#activity-count {
+	background-color: #C1C1C1;
+	border-bottom: 1px solid  #b6bcc7;
+	color: #656D78;
+	font-size: 12px;
+	padding: 10px 0 ;
+	text-align: center;
+}
+#activity-count span {
+	color: #F0F2F5;
+	padding-left: 5px;
+}
+#activity-count ul li{
+	display: table;
+	float: right;
+	padding: 0 90px;
+	border-left: 1px solid #F0F2F5;
+}
+#activity-count .posts {
+	border-left: none;
+}
+#activity-count ul{
+	margin: 0 auto;
+}
+/***********end activity count ******/

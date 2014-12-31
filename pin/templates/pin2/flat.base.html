@@ -17,19 +17,7 @@ var upload_url = "{% url "pin-upload" %}";
 	<body>
 {% include "pin2/nav.html" %}
 {% include "pin2/cats.html" %}
-<div class="row">
-	<div class="col-md-8 col-md-offset-2">
-		<div class="col-md-4">
-			تعداد مطالب امروز: {{stats.post}}
-		</div>
-		<div class="col-md-4">
-			تعداد لایکهای امروز: {{stats.like}}
-		</div>
-		<div class="col-md-4">
-			تعداد کامنتهای امروز: {{stats.comment}}
-		</div>
-	</div>
-</div>
+
 {% block content %}
 
 {% endblock content%}
