@@ -512,8 +512,9 @@ class Likes(models.Model):
 
         Post.objects.filter(pk=post.id).update(cnt_like=F('cnt_like') + 1)
 
-        # Profile.objects.filter(user_id=post.user_id)\
-        #     .update(cnt_like=F('cnt_like') + 1)
+        r_server.lrem(settings.LAST_LIKES, post.id)
+        r_server.lpush(settings.LAST_LIKES, post.id)
+        r_server.ltrim(settings.LAST_LIKES, 0, 100)
 
         Profile.after_like(user_id=post.user_id)
 
