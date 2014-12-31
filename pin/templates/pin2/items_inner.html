@@ -27,7 +27,7 @@
 		<div class="row likes">
 			<div class="content">
 				<div class="col-md-1 col-sm-1 col-xs-1 like-icon pull-right">
-					<a href="{% url "pin-item-like" post.id%}" class="btn btn-default btn_like {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{post.cnt_likes}} </a>
+					<a href="{% url "pin-item-like" post.id%}" class="btn btn-primary btn_like {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{post.cnt_likes}} </a>
 				</div>
 				<div class="liker col-md-11 col-sm-11 col-xs-11">
 					{% for liker in post.likes %}            
@@ -35,21 +35,6 @@
 			                <img src="{{liker|get_avatar:50}}" style="display: inline;margin: 2px;" >
 			            </a>
 			        {% endfor %}
-					<!-- <a href="">
-						<img src="images/ava.jpg">
-					</a>
-					<a href="">
-						<img src="images/ava.jpg">
-					</a>
-					<a href="">
-						<img src="images/ava.jpg">
-					</a>
-					<a href="">
-						<img src="images/ava.jpg">
-					</a>
-					<a href="">
-						<img src="images/ava.jpg">
-					</a> -->
 				</div>
 				<div class="clear"></div>
 			</div>

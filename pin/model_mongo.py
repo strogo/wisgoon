@@ -1,3 +1,4 @@
+import datetime
 from mongoengine import *
 from django.conf import settings
 
@@ -20,3 +21,19 @@ class Notif(Document):
     def last_actors(self, num=12):
         la = self.actors[::-1][:num]
         return la
+
+
+class MonthlyStats(Document):
+    date = DateTimeField()
+    object_type = StringField()
+    count = IntField()
+
+    meta = {
+        'indexes': [('object_type', 'date')]
+    }
+
+    @classmethod
+    def log_hit(self, object_type):
+        d = str(datetime.date.today())
+        MonthlyStats.objects(date=d, object_type=object_type)\
+            .update_one(inc__count=1, upsert=True)

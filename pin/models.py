@@ -21,7 +21,7 @@ from sorl.thumbnail import get_thumbnail
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
-from model_mongo import Notif as Notif_mongo
+from model_mongo import Notif as Notif_mongo, MonthlyStats
 
 LIKE_TO_DEFAULT_PAGE = 10
 
@@ -452,6 +452,9 @@ class Stream(models.Model):
     def add_post(cls, sender, instance, *args, **kwargs):
         post = instance
         if kwargs['created']:
+            
+            MonthlyStats.log_hit(object_type="post")
+
             from user_profile.models import Profile
             Profile.objects.filter(user_id=post.user_id)\
                 .update(cnt_post=F('cnt_post') + 1)
@@ -460,26 +463,14 @@ class Stream(models.Model):
 
             Post.add_to_user_stream(post=post, user_id=user.id)
 
-            # stream, created = Stream.objects\
-            #     .get_or_create(post=post,
-            #                    user=user,
-            #                    date=post.timestamp,
-            #                    following=user)
-
             followers = Follow.objects.all().filter(following=user)
             for follower in followers:
                 try:
                     Post.add_to_user_stream(post=post, user_id=follower.follower.id)
-                    # stream, created = Stream.objects\
-                    #     .get_or_create(post=post,
-                    #                    user=follower.follower,
-                    #                    date=post.timestamp,
-                    #                    following=user)
                 except:
                     pass
 
             if post.status == Post.APPROVED:
-                #Post.add_to_set('post_latest', post)
                 Post.add_to_stream(post=post)
 
 
