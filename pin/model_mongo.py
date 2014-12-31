@@ -27,6 +27,7 @@ class MonthlyStats(Document):
 
     POST = "post"
     COMMENT = "comment"
+    LIKE = "like"
 
     date = DateTimeField()
     object_type = StringField()

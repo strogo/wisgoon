@@ -504,6 +504,8 @@ class Likes(models.Model):
     def user_like_post(cls, sender, instance, *args, **kwargs):
         from user_profile.models import Profile
 
+        MonthlyStats.log_hit(object_type=MonthlyStats.LIKE)
+
         like = instance
         post = like.post
         sender = like.user
