@@ -10,10 +10,10 @@
 {% include "pin2/__items_base.html" %}
 
 {% if offset %}
-		<span data-next="{{offset}}" ></span>
-		{%else%}
-		<span data-next="{{item.id}}" ></span>
-		{%endif%}
+	<span data-next="{{offset}}" ></span>
+{%else%}
+	<span data-next="{{item.id}}" ></span>
+{%endif%}
 
 {%endfor%}
 {% endspaceless %}

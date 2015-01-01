@@ -1143,7 +1143,7 @@ a.img-move{
 .modal-content .form-horizontal{
 	padding: 10px;
 }
-.btn_like, .btn-danger{
+.btn_like, .btn-danger, .btn-success{
 	color: #FFF!important;
 }
 .feed-item a{
