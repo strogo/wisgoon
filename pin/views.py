@@ -166,35 +166,6 @@ def user_like(request, user_id):
 
     latest_items = arp
 
-    # likes_list = []
-
-    # likes = Likes.objects.values_list('post_id', flat=True)\
-    #     .filter(user_id=user_id).order_by('-id')[:30]
-
-    # # paginator = Paginator(likes, ROW_PER_PAGE)
-
-    # try:
-    #     offset = int(request.GET.get('older', 1))
-    #     if offset == -1:
-    #         return HttpResponse(0)
-    # except ValueError:
-    #     offset = 1
-
-    # # try:
-    # #     likes = paginator.page(offset)
-    # # except PageNotAnInteger:
-    # #     likes = paginator.page(1)
-    # # except EmptyPage:
-    # #     return HttpResponse(0)
-
-    # # if likes.has_next() is False:
-    # likes.next_page_number = -1
-
-    # for l in likes:
-    #     likes_list.append(int(l))
-
-    # latest_items = Post.accepted.filter(id__in=likes_list)
-
     if request.is_ajax():
         if latest_items:
             return render(request,

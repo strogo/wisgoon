@@ -2,7 +2,9 @@
 {% load pin_tags %}
 
 <div class="avatar">
-	<img src="{{cur_user|get_avatar:210}}">
+	<a href="{% url "pin-user" cur_user.id %}">
+		<img src="{{cur_user|get_avatar:210}}">
+	</a>
 </div>
 <div class="user-info">
 	<div class="col-md-12 col-sm-12 col-xs-12 username">
@@ -25,3 +27,4 @@
 			<a href="{% url "pin-user-followers" cur_user.id %}" class="f-black">دنبال کنندگان</a>
 		</div>
 	</div>
+</div>
