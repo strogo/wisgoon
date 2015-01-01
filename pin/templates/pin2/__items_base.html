@@ -15,7 +15,7 @@
 			<span class="glyphicon glyphicon-comment"></span>
 		</div>
 		<div class="comment">
-			<a href="{% url "pin-item-like" item.id%}" class="btn btn-small btn-primary btn_like {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{item.cnt_like}} </a>
+			<a href="{% url "pin-item-like" item.id%}" class="btn btn-sm btn-primary btn_like {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{item.cnt_like}} </a>
 			<!-- <span class="glyphicon glyphicon-heart-empty"></span>
 			<span>{{item.cnt_like}}</span> -->
 		</div>
