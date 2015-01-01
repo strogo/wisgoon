@@ -493,12 +493,12 @@ class Likes(models.Model):
     def delete(self, *args, **kwargs):
         from user_profile.models import Profile
 
+        user_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(self.user.id))
+        r_server.lrem(user_last_likes, self.post.id)
+
         Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like') - 1)
 
         Profile.after_dislike(user_id=self.post.user_id)
-
-        # Profile.objects.filter(user_id=self.post.user_id)\
-        #     .update(cnt_like=F('cnt_like') - 1)
 
         key_str = "%s_%d" % (settings.POST_LIKERS, self.post.id)
         r_server.srem(key_str, int(self.user.id))
@@ -517,9 +517,21 @@ class Likes(models.Model):
 
         Post.objects.filter(pk=post.id).update(cnt_like=F('cnt_like') + 1)
 
+        # Stroe last likes
         r_server.lrem(settings.LAST_LIKES, post.id)
         r_server.lpush(settings.LAST_LIKES, post.id)
         r_server.ltrim(settings.LAST_LIKES, 0, 1000)
+
+        # Store user_last_likes
+        user_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(like.user.id))
+        if not r_server.exists(user_last_likes):
+            likes = Likes.objects.values_list('post_id', flat=True)\
+                .filter(user_id=like.user.id).order_by('-id')[:1000]
+            r_server.rpush(user_last_likes, *likes)
+        else:
+            r_server.lrem(user_last_likes, post.id)
+            r_server.lpush(user_last_likes, post.id)
+            r_server.ltrim(user_last_likes, 0, 1000)
 
         Profile.after_like(user_id=post.user_id)
 
@@ -541,6 +553,26 @@ class Likes(models.Model):
 
         send_notif_bar(user=post.user_id, type=1, post=post.id,
                        actor=sender.id)
+
+    @classmethod
+    def user_likes(self, user_id, pid=0):
+        ROW_IN_PAGE = 20
+
+        user_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(user_id))
+
+        if not r_server.exists(user_last_likes):
+            likes = Likes.objects.values_list('post_id', flat=True)\
+                .filter(user_id=user_id).order_by('-id')[:1000]
+            r_server.rpush(user_last_likes, *likes)
+
+        pl = r_server.lrange(user_last_likes, 0, 1000)
+        
+        if pid:
+            pid_index = pl.index(str(pid))
+            idis = pl[pid_index + 1: pid_index + ROW_IN_PAGE]
+            return idis
+        
+        return pl[:20]
 
     @classmethod
     def user_in_likers(self, post_id, user_id):

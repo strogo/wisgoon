@@ -250,6 +250,7 @@ STREAM_LATEST_CAT = 'list_latest_cat'
 USER_STREAM = "user_stream2"
 
 LAST_LIKES = 'list_last_likes'
+USER_LAST_LIKES = 'userlast_likes'
 
 POST_LIKERS = "wis_likers_2_"
 USER_NAME_CACHE = "un_"

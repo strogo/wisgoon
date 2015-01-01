@@ -1,0 +1,50 @@
+{% extends "pin2/flat.base.html"%}
+{% load humanize %}
+{% load pin_tags %}
+{% load daddy_avatar%}
+
+{% block extra_js %}
+ <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
+{% endblock extra_js %}
+
+{% block content %}
+
+<script type="text/javascript">
+var start_loading=0;
+var next_pref = '?pid=';
+</script>
+
+<!-- {% include "base/app.html" %} -->
+<div id="main">
+	<div class="container">
+		<div class="profile row">
+			<div class="sidebar col-md-3 col-sm-3 col-xs-12 pull-right">
+				{% include "pin2/__user_info_top.html" %}
+				
+				{% include "pin2/__user_info_stats.html" %}
+				
+				<!-- <div class="clear"></div> -->
+			</div>
+		</div>
+	</div>
+			<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
+
+				{% include "pin2/__user_info_profile_top.html" %}
+
+				<div id="feed" class="masonry">
+					{% include "pin2/_items_2.html"%}
+				</div>
+			</div>
+			
+		
+		</div>
+	</div>
+
+</div>
+<div class="clear"></div>
+
+{% include "pin/feed_scripts.html" %}
+{% include "pin/pin_scripts.html" %}
+
+{% endblock content %}

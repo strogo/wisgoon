@@ -151,48 +151,63 @@ def user_followers(request, user_id):
 
 def user_like(request, user_id):
     user_id = int(user_id)
-    likes_list = []
+    user = get_object_or_404(User, pk=user_id)
+    profile = Profile.objects.get(user_id=user_id)
 
-    likes = Likes.objects.values_list('post_id', flat=True)\
-        .filter(user_id=user_id).order_by('-id')[:30]
+    pid = get_request_pid(request)
+    pl = Likes.user_likes(user_id=user_id, pid=pid)
+    arp = []
 
-    # paginator = Paginator(likes, ROW_PER_PAGE)
+    for pll in pl:
+        try:
+            arp.append(Post.objects.get(id=pll))
+        except:
+            pass
 
-    try:
-        offset = int(request.GET.get('older', 1))
-        if offset == -1:
-            return HttpResponse(0)
-    except ValueError:
-        offset = 1
+    latest_items = arp
+
+    # likes_list = []
+
+    # likes = Likes.objects.values_list('post_id', flat=True)\
+    #     .filter(user_id=user_id).order_by('-id')[:30]
+
+    # # paginator = Paginator(likes, ROW_PER_PAGE)
 
     # try:
-    #     likes = paginator.page(offset)
-    # except PageNotAnInteger:
-    #     likes = paginator.page(1)
-    # except EmptyPage:
-    #     return HttpResponse(0)
+    #     offset = int(request.GET.get('older', 1))
+    #     if offset == -1:
+    #         return HttpResponse(0)
+    # except ValueError:
+    #     offset = 1
 
-    # if likes.has_next() is False:
-    likes.next_page_number = -1
+    # # try:
+    # #     likes = paginator.page(offset)
+    # # except PageNotAnInteger:
+    # #     likes = paginator.page(1)
+    # # except EmptyPage:
+    # #     return HttpResponse(0)
 
-    for l in likes:
-        likes_list.append(int(l))
+    # # if likes.has_next() is False:
+    # likes.next_page_number = -1
 
-    latest_items = Post.accepted.filter(id__in=likes_list)
+    # for l in likes:
+    #     likes_list.append(int(l))
+
+    # latest_items = Post.accepted.filter(id__in=likes_list)
 
     if request.is_ajax():
-        if latest_items.exists():
+        if latest_items:
             return render(request,
-                          'pin/_items.html',
-                          {'latest_items': latest_items,
-                           'offset': likes.next_page_number})
+                          'pin2/_items_2.html',
+                          {'latest_items': latest_items})
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin/mylike.html',
+        return render(request, 'pin2/user__likes.html',
                       {'latest_items': latest_items,
-                       'offset': likes.next_page_number,
-                       'user_id': user_id})
+                       'user_id': user_id,
+                       'profile': profile,
+                       'cur_user': user})
 
 
 # hp = Post.get_hot()
