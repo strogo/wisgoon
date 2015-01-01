@@ -1,10 +1,16 @@
 import datetime
+import time
+import redis
+
+from django.conf import settings
 
 from pin.forms import PinForm
 from pin.models import Category
 from pin.model_mongo import MonthlyStats
 
 from pin.mycache import caching
+
+r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 
 def pin_form(request):
@@ -23,6 +29,11 @@ def today_stats(request):
     for mm in m:
         ma[mm.object_type] = mm.count
     # print ma
+    current = int(time.time()) // 60
+    minutes = xrange(5)
+
+    ma['onlines'] = len(r_server.sunion(['online-users/%d' % (current - x) for x in minutes]))
+
     return {'stats': ma}
 
 
