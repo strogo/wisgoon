@@ -98,13 +98,14 @@
 			</div>
 
 
-			<div class="col-md-11 col-sm-11 col-xs-11">
-				<div class="time pull-left">
-					{{comment.submit_date|jalali_mysql_date}}
-				</div>
+			<div class="col-md-9 col-sm-9 col-xs-9">
 				
 				<p>{{comment.comment}}</p>
 			</div>
+			<div class="col-md-2 col-sm-2 col-xs-2">
+				{{comment.submit_date|jalali_mysql_date}}
+			</div>
+		
 			<div class="clear"></div>
 		</div>
 	</div>
