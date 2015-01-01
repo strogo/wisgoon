@@ -198,7 +198,9 @@ def delete(request, item_id):
         post = Post.objects.get(pk=item_id)
         if request.user.is_superuser or post.user == request.user:
             post.delete()
-            return HttpResponse('1')
+            if request.is_ajax():
+                return HttpResponse('1')
+            return HttpResponseRedirect('/')
 
     except Post.DoesNotExist:
         return HttpResponse('0')

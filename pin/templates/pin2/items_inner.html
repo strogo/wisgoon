@@ -5,6 +5,10 @@
 <div class="post-detail row ">
 			<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
 
+{% if user.is_superuser %}
+<a class="btn btn-danger" href="{% url "pin-item-delete" post.id %}">حذف پست</a>
+{% endif %}
+
 <div class="post-content">
 		<div class="photo">
 			<a href="{{MEDIA_URL}}{{post.image}}" >
