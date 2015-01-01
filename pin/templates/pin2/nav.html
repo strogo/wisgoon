@@ -129,23 +129,22 @@
 
 <div id="activity-count">
 	<div class="container">
-		<ul>
-			<li class="likes">
-				<span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
-				تعداد لایک های امروز : {{stats.like}}
-			</li>
-			<li class="comments">
-				<span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
-				تعداد نظرات های امروز : {{stats.comment}}
-			</li>
-			<li class="posts">
-				<span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
-				تعداد مطالب امروز : {{stats.post}}
-			</li>
-			<li >
-				تعداد کاربران آنلاین : {{stats.onlines}}
-			</li>
-			<div class="clear"></div>
-		</ul>
+		<div class="col-md-3">
+			<span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
+			تعداد لایک های امروز : {{stats.like}}
+		</div>
+		<div class="col-md-3">
+			<span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+			تعداد نظرات های امروز : {{stats.comment}}
+		</div>
+		<div class="col-md-3">
+			<span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
+			تعداد مطالب امروز : {{stats.post}}
+		</div>
+		<div class="col-md-3">
+			<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+			تعداد کاربران آنلاین : {{stats.onlines}}
+		</div>
+			
 	</div>
 </div>
