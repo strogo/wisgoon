@@ -17,7 +17,7 @@ from django.conf import settings
 from sorl.thumbnail import get_thumbnail
 
 from pin.tools import AuthCache
-from pin.models import Post, Category, Likes, Stream, Follow, Comments
+from pin.models import Post, Category, Likes, Stream, Follow, Comments, Block
 from pin.model_mongo import Notif
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
@@ -840,7 +840,7 @@ def comment_delete(request, id):
     try:
         comment = Comments.objects.get(pk=id)
     except Comments.DoesNotExist:
-        raise Http404
+        return HttpResponse('Comment Does Not Exist', status=404)
 
     post_owner = int(comment.object_pk.user_id)
     comment_owner = int(comment.user_id)
@@ -862,4 +862,16 @@ def comment_delete(request, id):
     #     return HttpResponse(1)
     
     return HttpResponse(0)
+
+
+def block_user(request, user_id):
+    user = None
+    token = request.GET.get('token', '')
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token:
+        raise Http404
+
+    Block.block_user(user_id=user_id, blocked_id=user_id)
 

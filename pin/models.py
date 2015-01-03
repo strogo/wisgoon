@@ -742,6 +742,23 @@ class Report(models.Model):
         unique_together = (("post", "user"),)
 
 
+class Block(models.Model):
+    user = models.ForeignKey(User, related_name='blocker')
+    blocked = models.ForeignKey(User, related_name='blocked')
+
+    @classmethod
+    def block_user(self, user_id, blocked_id):
+        if user_id == blocked_id:
+            return False
+        Block.objects.get_or_create(user_id=user_id, blocked_id=blocked_id)
+
+    @classmethod
+    def unblock_user(self, user_id, blocked_id):
+        if user_id == blocked_id:
+            return False
+        Block.objects.filter(user_id=user_id, blocked_id=blocked_id).delete()
+
+
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
 #post_delete.connect(Likes.user_unlike_post, sender=Likes)

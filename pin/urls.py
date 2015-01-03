@@ -142,6 +142,8 @@ urlpatterns += patterns('',
     url(r'^api/follower/(?P<user_id>\d+)/', 'pin.views2_api.follower', name="api-follower"),
     url(r'^api/search/$', 'pin.views2_api.search', name="api-search"),
 
+    url(r'^api/block/user/(?P<user_id>\d+)/', 'pin.views2_api.block_user', name="api-block"),
+
     url(r'^api/password/reset_mobile/$',
                     'pin.views2_api.password_reset',
                     name='api_password_reset'),
