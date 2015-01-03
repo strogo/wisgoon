@@ -1,33 +1,36 @@
+{% load widget_tweaks%}
 {% load thumbnail %}
 {% load pin_tags %}
-
+<div class="row col-md-12" style="background: #FFF">
 <form method="post" action="{% url "pin-item-edit" post.id%}" data-async class="form-horizontal" action="" id="pin_form-edit" >
 {% csrf_token%}
-	
-      	{{ form.errors}}
-        
-		
+	<div class="col-md-3">
 		{% thumbnail post.image "110" upscale=False as im %}
 		<div class="img-block" style="float:left;">
 			<img src="{{im.url}}" width="{{ im.width }}" height="{{ im.height }}">
 		</div>
 		{% endthumbnail %}
+	</div>
+	<div class="col-md-8">
+	
+      	{{ form.errors}}
 		<input type="hidden" value="{{post.image}}" id="image_field" name="image" />
-			<textarea id="id_text" rows="5" cols="40" name="text">{{form.text.value}}</textarea><br><br>
-
-            {{form.category}}<br><br>
-		
-			<input type="text" name="url" value="{{form.url.value}}" placeholder="URL" class="span3 ltr">
-	        <br><br>
-	        <p class="text-info">برچسب ها را با enter از یکدیگر جدا کنید</p>
-	        <textarea id="textareaEdit" name="tags" rows="1"></textarea>
-<div class="form-actions">
-	<input type="submit" class="btn btn-primary" value="ذخیره" />
-</div>
+       
+		<div class="form-group">
+			<textarea id="id_text" rows="5" class="form-control" cols="40" name="text">{{form.text.value}}</textarea>
+		</div>
+		<div class="form-group">
+			{% render_field form.category class+="form-control" %}
+			<!-- {{form.category}} -->
+		</div>
+		<div class="form-group">
+			<input type="text" name="url" value="{{form.url.value}}" placeholder="URL" class="span3 ltr form-control">
+		</div>
+	        
+		<div class="form-group col-md-2">
+			<input type="submit" class="btn btn-primary form-control" value="ذخیره" />
+		</div>
+	</div>
 </form>
-<script type="text/javascript">
-$('#textareaEdit').textext({ plugins: 'tags',
-	tagsItems: [{% for tag in post.tags.all %} '{{tag.name}}', {% endfor%}] });
 
-
-</script>
+</div>

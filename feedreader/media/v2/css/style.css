@@ -1182,3 +1182,7 @@ a.img-move{
 	margin: 0 auto;
 }
 /***********end activity count ******/
+
+.actions a{
+	color: #000;
+}

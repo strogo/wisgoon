@@ -34,6 +34,38 @@
 	<!-- <div class="actions">
 		<a href="{% url "pin-item-like" item.id%}" class="btn btn-primary btn_like {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{item.cnt_like}} </a>
 	</div> -->
+	{% if is_super_user %}
+		<div class="actions" style="margin:5px 0">
+			{% if item.show_in_default %}
+			<a href="{% url "pin-item-goto-index" item.id 0%}" title="remove from index" class="item-to-index " style="margin-right: 5px"> 
+				<i class="glyphicon glyphicon-remove-sign"></i> 
+			</a>
+			{% else %}
+			<a href="{% url "pin-item-goto-index" item.id 1%}" title="add to index" class="item-to-index f-black" style="margin-right: 5px"> 
+				<i class="glyphicon glyphicon-ok-sign"></i> 
+			</a>
+			{% endif %}
+		</div>
+	{% endif %}
+
+	{% if user__id == item.user_id or is_super_user %}
+	<div class="actions" style="margin:5px 0">
+		<a href="{% url "pin-item-edit" item.id%}" style="margin-right: 5px"  data-toggle="modal" data-target="#postModal"> 
+			<i class="glyphicon glyphicon-edit"></i> 
+		</a>
+		<a href="{% url "pin-item-delete" item.id%}" class=" delpost" style="margin-right: 5px"> 
+			<i class="glyphicon glyphicon-remove"></i> 
+		</a>
+		{% comment %}
+		{% if is_super_user %}
+		<a href="{% url "pin-item-fault" item.id%}" class=" postfault" style="margin-right: 5px"> 
+			<i class="glyphicon glyphicon-remove"></i> 
+		</a>
+		{% endif %}
+		{% endcomment %}
+	</div>
+	{% endif%}
+
 	{% if item.text.strip|length > 0 %}
 	<div class="description">
 		<p class="{{item.text|length}}">{{item.text|safe|truncatewords:"50"|linebreaksbr}}

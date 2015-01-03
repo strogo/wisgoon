@@ -340,15 +340,15 @@ def edit(request, post_id):
 
         if request.method == "POST":
             post_values = request.POST.copy()
-            tags = post_values['tags']
-            post_values['tags'] = tags[tags.find("[") + 1:tags.find("]")]
+            # tags = post_values['tags']
+            # post_values['tags'] = tags[tags.find("[") + 1:tags.find("]")]
             form = PinUpdateForm(post_values, instance=post)
             if form.is_valid():
-                model = form.save(commit=False)
-                model.save()
-                form.save_m2m()
-
-                return HttpResponse('با موفقیت به روزرسانی شد.')
+                form.save()
+                if request.is_ajax():
+                    return HttpResponse('با موفقیت به روزرسانی شد.')
+                else:
+                    return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
         else:
             form = PinUpdateForm(instance=post)
 
