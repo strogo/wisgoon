@@ -10,11 +10,11 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Sum
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 
 from pin.models import Post, Follow, Likes, Category, Comments
-from pin.tools import get_request_timestamp, get_request_pid
+from pin.tools import get_request_timestamp, get_request_pid, check_block
 
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
@@ -460,6 +460,9 @@ def item(request, item_id):
     post = get_object_or_404(
         Post.objects.select_related().filter(id=item_id)[:1])
     #Post.objects.filter(id=item_id).update(view=F('view') + 1)
+
+    if check_block(user_id=post.user_id, blocked_id=request.user.id):
+        return HttpResponseRedirect('/')
 
     post.tag = []
 
