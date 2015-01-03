@@ -752,6 +752,8 @@ class Block(models.Model):
             return False
         Block.objects.get_or_create(user_id=user_id, blocked_id=blocked_id)
 
+        return True
+
     @classmethod
     def unblock_user(self, user_id, blocked_id):
         if user_id == blocked_id:

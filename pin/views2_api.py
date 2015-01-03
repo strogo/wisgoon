@@ -873,5 +873,18 @@ def block_user(request, user_id):
     if not user or not token:
         raise Http404
 
-    Block.block_user(user_id=user_id, blocked_id=user_id)
+    Block.block_user(user_id=user.id, blocked_id=user_id)
+    return HttpResponse('1')
 
+
+def unblock_user(request, user_id):
+    user = None
+    token = request.GET.get('token', '')
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token:
+        raise Http404
+
+    Block.unblock_user(user_id=user.id, blocked_id=user_id)
+    return HttpResponse('1')

@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from tastypie.models import ApiKey
 
 from user_profile.models import Profile
-from pin.models import Category
+from pin.models import Category, Block
 
 from daddy_avatar.templatetags import daddy_avatar
 
@@ -216,3 +216,12 @@ class AuthCache(MyCache):
 
             cache.set(ct_str, u, self.TTL_TOKEN)
             return u
+
+
+def check_block(user_id, blocked_id):
+    block_cnt = Block.objects.filter(user_id=user_id, blocked_id=blocked_id).count()
+    print "block cnt is:", block_cnt
+    if block_cnt:
+        return True
+
+    return False

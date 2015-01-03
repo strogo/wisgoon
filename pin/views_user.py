@@ -25,7 +25,8 @@ from pin.models import Post, Stream, Follow, Likes,\
 from pin.model_mongo import Notif
 
 import pin_image
-from pin.tools import get_request_timestamp, create_filename, get_user_ip, get_request_pid
+from pin.tools import get_request_timestamp, create_filename,\
+    get_user_ip, get_request_pid, check_block
 
 from user_profile.models import Profile
 
@@ -217,6 +218,8 @@ def send_comment(request):
         post = request.POST.get('post', None)
         if text and post:
             post = get_object_or_404(Post, pk=post)
+            if check_block(user_id=post.user_id, blocked_id=request.user.id):
+                return HttpResponseRedirect('/')
             Comments.objects.create(object_pk=post,
                                     comment=text,
                                     user=request.user,

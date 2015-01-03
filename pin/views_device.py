@@ -17,7 +17,7 @@ from pin.models import Post, Likes, Comments, Comments_score,\
     Follow, Stream
 
 from pin.forms import PinDirectForm, PinDeviceUpdate
-from pin.tools import create_filename, AuthCache
+from pin.tools import create_filename, AuthCache, check_block
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -83,6 +83,10 @@ def post_comment(request):
     comment = data.get('comment')
     object_pk = data.get("object_pk")
     if data and comment and object_pk and Post.objects.filter(pk=object_pk).exists():
+
+        post = Post.objects.get(id=object_pk)
+        if check_block(user_id=post.user_id, blocked_id=user.id):
+            return HttpResponse(0)
 
         Comments.objects.create(object_pk_id=object_pk,
                                 comment=comment,
