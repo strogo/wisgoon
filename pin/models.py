@@ -381,9 +381,12 @@ class Post(models.Model):
             return pl[:20]
 
         if pid:
-            pid_index = pl.index(str(pid))
-            idis = pl[pid_index + 1: pid_index + 20]
-            return idis
+            try:
+                pid_index = pl.index(str(pid))
+                idis = pl[pid_index + 1: pid_index + 20]
+                return idis
+            except ValueError:
+                return []
 
         return []
 
