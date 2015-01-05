@@ -220,7 +220,7 @@ class AuthCache(MyCache):
 
 def check_block(user_id, blocked_id):
     block_cnt = Block.objects.filter(user_id=user_id, blocked_id=blocked_id).count()
-    print "block cnt is:", block_cnt
+    # print "block cnt is:", block_cnt
     if block_cnt:
         return True
 
