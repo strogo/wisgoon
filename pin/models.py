@@ -569,7 +569,11 @@ class Likes(models.Model):
         if not r_server.exists(user_last_likes):
             likes = Likes.objects.values_list('post_id', flat=True)\
                 .filter(user_id=user_id).order_by('-id')[:1000]
-            r_server.rpush(user_last_likes, *likes)
+            if likes:
+                r_server.rpush(user_last_likes, *likes)
+            else:
+                r_server.rpush(user_last_likes, [])
+
 
         pl = r_server.lrange(user_last_likes, 0, 1000)
         
