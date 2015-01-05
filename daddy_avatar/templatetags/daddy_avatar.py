@@ -85,7 +85,7 @@ def get_avatar(user, size=200):
         except Profile.DoesNotExist:
             profile = None
         
-        if profile.avatar:
+        if profile:
             # print "step 2.2.1"
             t_size = '%sx%s' % (size, size)
             try:
