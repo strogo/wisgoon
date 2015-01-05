@@ -82,10 +82,13 @@ def get_avatar(user, size=200):
         if profile.avatar:
             # print "step 2.2.1"
             t_size = '%sx%s' % (size, size)
-            im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
-            ava_dict[size] = im.url
-            cache.set(ava_str, ava_dict, 60 * 60 * 1)
-            return im.url
+            try:
+                im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
+                ava_dict[size] = im.url
+                cache.set(ava_str, ava_dict, 60 * 60 * 1)
+                return im.url
+            except Exception, e:
+                print "daddy_avatar line 91: ", str(e)
 
     glob_avatar = daddy_avatar(user.email, size)
     ava_dict[size] = glob_avatar
