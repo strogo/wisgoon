@@ -65,7 +65,10 @@ def like(request):
 
             return HttpResponse('-1')
         except Likes.DoesNotExist:
-            liked = Likes.objects.create(user_id=user.id, post_id=post_id)
+            try:
+                liked = Likes.objects.create(user_id=user.id, post_id=post_id)
+            except:
+                pass
             return HttpResponse('+1')
 
         return HttpResponse('+1')
