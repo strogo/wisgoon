@@ -4,6 +4,10 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 
+ADMINS = (
+    ('support', 'support@wisgoon.com'),
+)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
