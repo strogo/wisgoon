@@ -395,6 +395,8 @@ def friends_post(request):
     token = request.GET.get('token', '')
     if token:
         cur_user = AuthCache.id_from_token(token=token)
+    else:
+        raise Http404
 
     if before:
         # s = Stream.objects.get(user=cur_user, post_id=before)
