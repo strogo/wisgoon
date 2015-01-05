@@ -417,9 +417,12 @@ class Post(models.Model):
             return pl[:ROW_IN_PAGE]
 
         if pid:
-            pid_index = pl.index(str(pid))
-            idis = pl[pid_index + 1: pid_index + ROW_IN_PAGE]
-            return idis
+            try:
+                pid_index = pl.index(str(pid))
+                idis = pl[pid_index + 1: pid_index + ROW_IN_PAGE]
+                return idis
+            except:
+                return []
 
         return []
 
