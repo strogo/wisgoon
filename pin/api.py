@@ -23,7 +23,7 @@ from PIL import Image
 
 from sorl.thumbnail import get_thumbnail
 from pin.models import Post, Likes, Category, Comments,\
-    App_data, Stream, Follow
+    App_data, Stream, Follow, Block
 from user_profile.models import Profile
 from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
@@ -135,13 +135,19 @@ class ProfileResource(ModelResource):
 
     def dehydrate(self, bundle):
         user = bundle.data['user']
+        bundle.data['block_by_user'] = False
         bundle.data['user_avatar'] = daddy_avatar.get_avatar(user, size=300)
         if self.cur_user:
             bundle.data['follow_by_user'] = Follow\
                 .get_follow_status(follower=self.cur_user,
                                    following=user)
+
+            if Block.objects.filter(user_id=user, blocked_id=self.cur_user).count():
+                bundle.data['block_by_user'] = True
+
         else:
             bundle.data['follow_by_user'] = False
+            
         return bundle
 
 

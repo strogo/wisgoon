@@ -578,7 +578,10 @@ class Likes(models.Model):
         pl = r_server.lrange(user_last_likes, 0, 1000)
         
         if pid:
-            pid_index = pl.index(str(pid))
+            try:
+                pid_index = pl.index(str(pid))
+            except ValueError:
+                return []
             idis = pl[pid_index + 1: pid_index + ROW_IN_PAGE]
             return idis
         
