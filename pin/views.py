@@ -396,12 +396,12 @@ def popular(request, interval=""):
         return HttpResponse(0)
 
     if request.is_ajax():
-        return render(request, 'pin/_items.html',
+        return render(request, 'pin2/_items_2_1.html',
                       {'latest_items': latest_items,
                        'offset': latest_items.next_page_number})
 
     else:
-        return render(request, 'pin/home.html',
+        return render(request, 'pin2/home.html',
                       {'latest_items': latest_items,
                        'offset': latest_items.next_page_number})
 
