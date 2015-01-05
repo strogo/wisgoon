@@ -3,6 +3,8 @@
 {% load pin_tags %}
 {% load daddy_avatar%}
 
+{% block title%} - مطالب مورد علاقه {{cur_user|get_username}}{% endblock title%}
+
 {% block extra_js %}
  <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
 <!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->

@@ -629,7 +629,8 @@ a, a:link, a:hover, a:visited {
 	width: 55px;
 }
 .post-detail .post .comment .others-comment .avatar {
-	padding-right: 25px;
+	/*padding-right: 25px;*/
+	text-align: center;
 }
 .post-detail .sidebar {
 	padding: 0px;
