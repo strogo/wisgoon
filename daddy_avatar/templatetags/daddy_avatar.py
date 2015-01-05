@@ -80,7 +80,10 @@ def get_avatar(user, size=200):
         # print "step 2"
         ava_dict = {}
         # print "step 2.1"
-        profile = Profile.objects.only('avatar').get(user=user)
+        try:
+            profile = Profile.objects.only('avatar').get(user=user)
+        except Profile.DoesNotExist:
+            profile = None
         
         if profile.avatar:
             # print "step 2.2.1"
