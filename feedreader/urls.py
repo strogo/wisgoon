@@ -28,6 +28,8 @@ urlpatterns += patterns('pin.views',
 
     url(r'^category/(?P<cat_id>\d+)', 'category_redis', name='pin-category'),
 
+    url(r'^search/', 'search', name='search'),
+
     url(r'^user/(?P<user_id>\d+)/$', 'user', name='pin-user'),
     url(r'^user/(?P<user_id>\d+)/likes/$', 'user_like', name='pin-user-like'),
     url(r'^user/(?P<user_id>\d+)/friends/$', 'user_friends', name='pin-user-friends'),
