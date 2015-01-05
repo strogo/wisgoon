@@ -1,4 +1,5 @@
 {% load pin_tags%}
+{% load widget_tweaks %}
 <div class="modal fade" id="fromUrlModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -45,7 +46,7 @@
     
     <div class="form-group">
         <label>گروه </label>
-        {{pin_form.category}}
+        {% render_field pin_form.category class+="form-control" %}
     </div>
 
 </div>
