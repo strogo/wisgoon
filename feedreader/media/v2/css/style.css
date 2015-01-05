@@ -1187,3 +1187,10 @@ a.img-move{
 .actions a{
 	color: #000!important;
 }
+
+#top-userinfo .dropdown-menu a{
+	color: #FFF;
+}
+#top-userinfo .dropdown-menu a:hover{
+	color: #333;
+}

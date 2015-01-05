@@ -200,43 +200,23 @@ class Post(models.Model):
     def set_stream_to_redis(self, user_id):
         user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
         s = Stream.objects.filter(user_id=user_id)\
-            .values_list('post_id', flat=True).order_by('-id')[:200]
-        # print "geted s is:", s
+            .values_list('post_id', flat=True).order_by('-id')[:1000]
         for ss in s:
             r_server.rpush(user_stream, ss)
 
-        # Stream.objects.filter(user_id=user_id).delete()
-        # from django.db import connection, transaction
-        # cursor = connection.cursor()
-        # cursor.execute("DELETE FROM pin_stream where user_id=%s", [user_id])
-        # transaction.commit_unless_managed()
-        # connection.commit()
-        # transaction.set_dirty()
-        # transaction.commit()
-
     @classmethod
     def add_to_user_stream(self, post, user_id):
-        # print "add to user stream", post, post.id, user_id
         user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
-        # user_stream = "ustream_%d" % (int(user_id))
-        # print "user_stream:", user_stream
-        # r_server.delete(user_stream)
-        pl = r_server.lrange(user_stream, 0, 205)
-        # print "pl is:", pl
+
+        pl = r_server.lrange(user_stream, 0, 1000)
         if not pl:
             Post.set_stream_to_redis(user_id=user_id)
-            pl = r_server.lrange(user_stream, 0, 205)
-            # s = Stream.objects.filter(user_id=user_id).values_list('post_id', flat=True).order_by('-id')[:200]
-            # print "geted s is:", s
-            # for ss in s:
-                # r_server.rpush(user_stream, ss)
-
-        # print "pl is:", pl
+            pl = r_server.lrange(user_stream, 0, 1000)
 
         if str(post.id) not in pl:
             r_server.lpush(user_stream, post.id)
 
-        r_server.ltrim(user_stream, 0, 200)
+        r_server.ltrim(user_stream, 0, 1000)
 
     @classmethod
     def add_to_set(self, set_name, post, set_cat=True):
@@ -574,9 +554,7 @@ class Likes(models.Model):
             else:
                 r_server.rpush(user_last_likes, [])
 
-
         pl = r_server.lrange(user_last_likes, 0, 1000)
-        
         if pid:
             try:
                 pid_index = pl.index(str(pid))
