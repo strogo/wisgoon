@@ -20,6 +20,8 @@ from pin.tools import AuthCache
 from pin.models import Post, Category, Likes, Stream, Follow, Comments, Block
 from pin.model_mongo import Notif
 
+from haystack.query import SearchQuerySet
+
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
@@ -747,6 +749,55 @@ def search(request):
 
         data['objects'] = []
         for r in results:
+            o = {}
+            o['id'] = r['id']
+            o['avatar'] = get_avatar(r['id'], 100)
+            o['username'] = r['username_s']
+            try:
+                o['name'] = r['name_s']
+            except:
+                o['name'] = ""
+
+            if cur_user:
+                o['follow_by_user'] = Follow\
+                    .get_follow_status(follower=cur_user, following=r['id'])
+            else:
+                o['follow_by_user'] = False
+
+            data['objects'].append(o)
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
+
+
+def search2(request):
+    from user_profile.models import Profile
+    ROW_PER_PAGE = 20
+    cur_user = None
+    limit = request.GET.get('limit', 20)
+    start = request.GET.get('start', 0)
+
+    query = request.GET.get('q', '')
+    offset = int(request.GET.get('offset', 0))
+    results = SearchQuerySet().models(Profile)\
+        .filter(content__contains=query)[offset:offset + 1 * ROW_PER_PAGE]
+
+    data = {}
+    # import pysolr
+    # solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
+    # query = request.GET.get('q', '')
+    if query:
+        # fq = 'username_s:*%s* name_s:*%s*' % (query, query)
+        # results = solr.search("*:*", fq=fq, rows=limit, start=start,
+        #                       sort="score_i desc")
+
+        token = request.GET.get('token', '')
+        if token:
+            cur_user = AuthCache.id_from_token(token=token)
+
+        data['objects'] = []
+        for r in results:
+            r = r.object
             o = {}
             o['id'] = r['id']
             o['avatar'] = get_avatar(r['id'], 100)
