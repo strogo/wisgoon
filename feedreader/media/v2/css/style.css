@@ -94,8 +94,10 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 	background: transparent;
 	border: none;
 	padding: 10px 0px;
+	color: #FFF;
 }
 .top-search input{
+	color: #FFF;
 	background-color: transparent;
 	border: medium none;
 	height: 39px;
