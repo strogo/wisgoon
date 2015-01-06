@@ -2,7 +2,7 @@
 {% load pin_tags %}
 
 
-{% block title%} - دانلود عکس و تصویر {{post.text|striptags|remove_newlines|truncatechars:66}}{% endblock title%}
+{% block title%} - {{post.text|striptags|remove_newlines|truncatechars:66}}{% endblock title%}
 {%block description%}{{post.text|striptags|remove_newlines|truncatewords:30}}{%endblock%}
 
 {% block opengraph%}
