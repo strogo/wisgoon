@@ -55,7 +55,9 @@ def search(request):
     posts = SearchQuerySet().models(Post)\
         .filter(content__contains=query)[offset:offset + 1 * ROW_PER_PAGE]
 
-    tags = ['کربلا']
+    tags = ['کربلا',
+            'حرم',
+            'امام']
 
     if not query:
         return render(request, 'pin2/tags.html', {
