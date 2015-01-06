@@ -66,12 +66,14 @@ def search(request):
         return render(request, 'pin2/__search.html', {
             'results': results,
             'posts': posts,
+            'query': query,
             'offset': offset + ROW_PER_PAGE,
         })
 
     return render(request, 'pin2/search.html', {
         'results': results,
         'posts': posts,
+        'query': query,
         'offset': offset + ROW_PER_PAGE,
     })
 
