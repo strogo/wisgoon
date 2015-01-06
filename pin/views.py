@@ -50,7 +50,7 @@ def home(request):
 def search(request):
     results = []
     query = request.GET.get('q', '')
-    posts = SearchQuerySet().models(Post).filter(content__contains=query)
+    posts = SearchQuerySet().models(Post).filter(content__contains=query)[:50]
     print posts
     # import pysolr
     # solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
