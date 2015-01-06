@@ -19,6 +19,8 @@ from pin.tools import get_request_timestamp, get_request_pid, check_block
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
 
+from haystack.query import SearchQuerySet
+
 MEDIA_ROOT = settings.MEDIA_ROOT
 REPORT_TYPE = settings.REPORT_TYPE
 
@@ -47,14 +49,20 @@ def home(request):
 
 def search(request):
     results = []
-    import pysolr
-    solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
     query = request.GET.get('q', '')
-    if query:
-        fq = 'username_s:*%s* name_s:*%s*' % (query, query)
-        results = solr.search("*:*", fq=fq, rows=50, sort="score_i desc")
+    posts = SearchQuerySet().models(Post).filter(content__contains=query)
+    print posts
+    # import pysolr
+    # solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
+    # query = request.GET.get('q', '')
+    # if query:
+    #     fq = 'username_s:*%s* name_s:*%s*' % (query, query)
+    #     results = solr.search("*:*", fq=fq, rows=50, sort="score_i desc")
 
-    return render(request, 'pin/search.html', {'results': results})
+    return render(request, 'pin2/search.html', {
+        'results': results,
+        'posts': posts
+    })
 
 
 def user_friends(request, user_id):
