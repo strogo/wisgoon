@@ -1,0 +1,22 @@
+{% extends "pin2/flat.base.box.html"%}
+{% load pin_tags %}
+
+{% block extra_js %}
+ <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
+{% endblock extra_js %}
+
+{% block content %}
+
+<div class="panel panel-default">
+	<div class="panel-heading">جستجو در سایت
+	</div>
+	<div class="panel-body">
+		{% for tag in tags %}
+			<a href="/tag/{{tag}}">{{tag}}</a>
+		{% endfor %}
+	</div>
+
+</div>
+
+{% endblock content %}

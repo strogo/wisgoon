@@ -55,12 +55,43 @@ def search(request):
     posts = SearchQuerySet().models(Post)\
         .filter(content__contains=query)[offset:offset + 1 * ROW_PER_PAGE]
 
-    # import pysolr
-    # solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
-    # query = request.GET.get('q', '')
-    # if query:
-    #     fq = 'username_s:*%s* name_s:*%s*' % (query, query)
-    #     results = solr.search("*:*", fq=fq, rows=50, sort="score_i desc")
+    tags = ['کربلا']
+
+    if not query:
+        return render(request, 'pin2/tags.html', {
+            'tags': tags,
+        })
+
+    if request.is_ajax():
+        return render(request, 'pin2/__search.html', {
+            'results': results,
+            'posts': posts,
+            'query': query,
+            'offset': offset + ROW_PER_PAGE,
+        })
+
+    return render(request, 'pin2/search.html', {
+        'results': results,
+        'posts': posts,
+        'query': query,
+        'offset': offset + ROW_PER_PAGE,
+    })
+
+
+def tags(request, tag_name):
+    ROW_PER_PAGE = 20
+    results = []
+    query = tag_name
+    offset = int(request.GET.get('offset', 0))
+    posts = SearchQuerySet().models(Post)\
+        .filter(content__contains=query)[offset:offset + 1 * ROW_PER_PAGE]
+
+    tags = ['کربلا']
+
+    if not query:
+        return render(request, 'pin2/tags.html', {
+            'tags': tags,
+        })
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
