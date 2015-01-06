@@ -101,7 +101,7 @@ def tags(request, tag_name):
             'offset': offset + ROW_PER_PAGE,
         })
 
-    return render(request, 'pin2/search.html', {
+    return render(request, 'pin2/tag.html', {
         'results': results,
         'posts': posts,
         'query': query,
