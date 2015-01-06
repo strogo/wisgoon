@@ -240,6 +240,8 @@ a, a:link, a:hover, a:visited {
 	position: relative;
 	width: 236px;
 	/*padding-right: 10px;*/
+	overflow: hidden;
+	max-height: 500px;
 }
 .feed-item .img-content img{
 	border-radius: 10px 10px 0 0;
