@@ -48,10 +48,13 @@ def home(request):
 
 
 def search(request):
+    ROW_PER_PAGE = 20
     results = []
     query = request.GET.get('q', '')
-    posts = SearchQuerySet().models(Post).filter(content__contains=query)[:50]
-    print posts
+    offset = int(request.GET.get('offset', 0))
+    posts = SearchQuerySet().models(Post)\
+        .filter(content__contains=query)[offset:offset + 1 * ROW_PER_PAGE]
+
     # import pysolr
     # solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
     # query = request.GET.get('q', '')
@@ -59,9 +62,17 @@ def search(request):
     #     fq = 'username_s:*%s* name_s:*%s*' % (query, query)
     #     results = solr.search("*:*", fq=fq, rows=50, sort="score_i desc")
 
+    if request.is_ajax():
+        return render(request, 'pin2/__search.html', {
+            'results': results,
+            'posts': posts,
+            'offset': offset + ROW_PER_PAGE,
+        })
+
     return render(request, 'pin2/search.html', {
         'results': results,
-        'posts': posts
+        'posts': posts,
+        'offset': offset + ROW_PER_PAGE,
     })
 
 
