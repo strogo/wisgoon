@@ -2,7 +2,7 @@
 {% load daddy_avatar %}
 {% load thumbnail %}
 
-<div class="post-detail row ">
+<div class="post-detail row" itemscope itemtype="http://schema.org/CreativeWork">
 			<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
 
 {% if user.is_superuser %}
@@ -15,7 +15,7 @@
 				<img style="margin:0 auto" itemprop="image" src="{{MEDIA_URL}}{{ post.image }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}"></a>
 		</div>
 		<div class="row">
-			<div class="discription">
+			<div class="discription" itemprop="name">
 				<p> {{post.text|safe|linebreaksbr}}
 				</p>
 			</div>
