@@ -89,16 +89,17 @@ class Profile(models.Model):
 
     def save(self, *args, **kwargs):
         super(Profile, self).save(*args, **kwargs)
-        user_str = "user_name_%d" % (self.user_id)
+        user_id = int(self.user_id)
+        user_str = "user_name_%d" % (user_id)
         cache.delete(user_str)
 
-        profile_str = "profile_name_%d" % (self.user_id)
+        profile_str = "profile_name_%d" % (user_id)
         cache.delete(profile_str)
 
-        new_avatar = "new_avatar_%d" % (self.user_id)
+        new_avatar = "new_avatar_%d" % (user_id)
         cache.set(new_avatar, 1, 160000)
 
-        ava_str = "avatar3210u_%d" % (self.user_id)
+        ava_str = "avatar3210u_%d" % (user_id)
         cache.delete(ava_str)
 
 
