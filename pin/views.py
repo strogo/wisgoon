@@ -427,7 +427,7 @@ def topgroupuser(request):
 
 def user(request, user_id, user_name=None):
     user = get_object_or_404(User, pk=user_id)
-    profile = Profile.objects.get(user_id=user_id)
+    profile = Profile.objects.get_or_create(user_id=user_id)
 
     timestamp = get_request_timestamp(request)
     if timestamp == 0:
