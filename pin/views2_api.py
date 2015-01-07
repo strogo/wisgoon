@@ -255,6 +255,10 @@ def post(request):
         filters.update(dict(id__lt=before))
 
     if user_id:
+        if cur_user:
+            if Block.objects.filter(user_id=user_id, blocked_id=cur_user).count():
+                return HttpResponse('Blocked')
+
         sort_by = ['-timestamp']
         filters.update(dict(user_id=user_id))
         if cur_user:
