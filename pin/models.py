@@ -741,7 +741,11 @@ class Block(models.Model):
     def block_user(self, user_id, blocked_id):
         if user_id == blocked_id:
             return False
-        Block.objects.get_or_create(user_id=user_id, blocked_id=blocked_id)
+
+        try:
+            Block.objects.create(user_id=user_id, blocked_id=blocked_id)
+        except:
+            pass
 
         return True
 
