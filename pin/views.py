@@ -540,7 +540,7 @@ def item(request, item_id):
         post.likes = ll
 
     s = SearchQuerySet().models(Post).more_like_this(post)
-    print s[:5]
+    print "seems with:", post.id, s[:5]
 
     if request.user.is_authenticated:
         follow_status = Follow.objects.filter(follower=request.user.id,
