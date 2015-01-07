@@ -442,13 +442,11 @@ def popular(request, interval=""):
             data_from = dt_now - datetime.timedelta(hours=8)
 
         start_from = mktime(data_from.timetuple())
-        post_list = Post.objects.filter(status=1)\
-            .extra(where=['timestamp>%s'], params=[start_from])\
+        post_list = Post.objects.extra(where=['timestamp>%s'], params=[start_from])\
             .order_by('-cnt_like')
 
     else:
-        post_list = Post.objects.filter(status=1)\
-            .order_by('-cnt_like')
+        post_list = Post.objects.order_by('-cnt_like')
     paginator = Paginator(post_list, ROW_PER_PAGE)
 
     try:
