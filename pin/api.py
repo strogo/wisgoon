@@ -143,7 +143,7 @@ class ProfileResource(ModelResource):
                 .get_follow_status(follower=self.cur_user,
                                    following=user)
 
-            if Block.objects.filter(user_id=user, blocked_id=self.cur_user).count():
+            if Block.objects.filter(user_id=self.cur_user, blocked_id=user).count():
                 bundle.data['block_by_user'] = True
 
         else:
