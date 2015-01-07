@@ -1,4 +1,5 @@
 import json
+import redis
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -7,9 +8,12 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden,\
     HttpResponse
 
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 from user_profile.models import Profile
 
 from pin.models import Post, Comments
+
+r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 
 def is_admin(user):
@@ -51,7 +55,7 @@ def item_fault(request, item_id):
     p.save()
 
     user = p.user
-    user.profile.fault = user.profile.fault+1
+    user.profile.fault = user.profile.fault + 1
     user.profile.save()
     return HttpResponse('1')
 
@@ -63,11 +67,13 @@ def goto_index(request, item_id, status):
 
     if int(status) == 1:
         Post.objects.filter(pk=item_id).update(show_in_default=True)
+        r_server.lpush(settings.HOME_STREAM, item_id)
         data = [{'status': 1,
                  'url': reverse('pin-item-goto-index', args=[item_id, 0])}]
 
         return HttpResponse(json.dumps(data))
     else:
+        r_server.lrem(settings.HOME_STREAM, item_id)
         Post.objects.filter(pk=item_id).update(show_in_default=False)
         data = [{'status': 0,
                  'url': reverse('pin-item-goto-index', args=[item_id, 1])}]
@@ -111,4 +117,3 @@ def comment_unapprove(request, id):
     comment.save()
 
     return HttpResponseRedirect(reverse('pin-item', args=[comment.object_pk.id]))
-

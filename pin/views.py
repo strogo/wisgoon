@@ -26,18 +26,32 @@ REPORT_TYPE = settings.REPORT_TYPE
 
 
 def home(request):
-    timestamp = get_request_timestamp(request)
+    # timestamp = get_request_timestamp(request)
 
-    if timestamp == 0:
-        latest_items = Post.accepted.filter(show_in_default=1)\
-            .order_by('-is_ads', '-timestamp')[:20]
-    else:
-        latest_items = Post.accepted.filter(show_in_default=1)\
-            .extra(where=['timestamp<%s'], params=[timestamp])\
-            .order_by('-timestamp')[:20]
+    # Post.home_latest()
+
+    # if timestamp == 0:
+    #     latest_items = Post.accepted.filter(show_in_default=1)\
+    #         .order_by('-is_ads', '-timestamp')[:20]
+    # else:
+    #     latest_items = Post.accepted.filter(show_in_default=1)\
+    #         .extra(where=['timestamp<%s'], params=[timestamp])\
+    #         .order_by('-timestamp')[:20]
+
+    pid = get_request_pid(request)
+    pl = Post.home_latest(pid=pid)
+    arp = []
+
+    for pll in pl:
+        try:
+            arp.append(Post.objects.get(id=pll))
+        except:
+            pass
+
+    latest_items = arp
 
     if request.is_ajax():
-        if latest_items.exists():
+        if latest_items:
             return render(request,
                           'pin2/_items_2_1.html',
                           {'latest_items': latest_items})

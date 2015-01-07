@@ -342,6 +342,30 @@ class Post(models.Model):
                        actor=self.user.id)
 
     @classmethod
+    def home_latest(self, pid=0):
+        home_stream = settings.HOME_STREAM
+
+        if not r_server.exists(home_stream):
+            hposts = Post.objects.values_list('id', flat=True)\
+                .filter(show_in_default=1).order_by('-timestamp')[:5000]
+            r_server.rpush(home_stream, *hposts)
+
+        pl = r_server.lrange(home_stream, 0, 5000)
+
+        if pid == 0:
+            return pl[:20]
+
+        if pid:
+            try:
+                pid_index = pl.index(str(pid))
+                idis = pl[pid_index + 1: pid_index + 20]
+                return idis
+            except ValueError:
+                return []
+
+        return []
+
+    @classmethod
     def latest(self, pid=0, cat_id=0):
 
         if cat_id:

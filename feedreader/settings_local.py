@@ -255,6 +255,10 @@ USER_LAST_LIKES = 'userlast_likes'
 POST_LIKERS = "wis_likers_2_"
 USER_NAME_CACHE = "un_"
 
+HOME_STREAM = "home_stream"
+
+LIST_LONG = 10000
+
 LIKE_WITH_CELERY = True
 
 USE_CELERY = False
