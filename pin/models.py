@@ -743,7 +743,7 @@ class Block(models.Model):
             return False
 
         try:
-            Block.objects.create(user_id=user_id, blocked_id=blocked_id)
+            Block.objects.get_or_create(user_id=user_id, blocked_id=blocked_id)
         except:
             pass
 
