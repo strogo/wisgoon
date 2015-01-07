@@ -137,6 +137,7 @@ class ProfileResource(ModelResource):
         user = bundle.data['user']
         bundle.data['block_by_user'] = False
         bundle.data['user_avatar'] = daddy_avatar.get_avatar(user, size=300)
+
         if self.cur_user:
             bundle.data['follow_by_user'] = Follow\
                 .get_follow_status(follower=self.cur_user,
