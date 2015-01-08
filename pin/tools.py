@@ -43,7 +43,10 @@ def create_filename(filename):
     for path in paths:
         abs_path = "%s%s" % (path, folder)
         if not os.path.exists(abs_path):
-            os.makedirs(abs_path)
+            try:
+                os.makedirs(abs_path)
+            except Exception, e:
+                print str(e)
     filestr = "%s/%f" % (folder, time.time())
     filestr = filestr.replace('.', '')
     filename = "%s%s" % (filestr, os.path.splitext(filename)[1])

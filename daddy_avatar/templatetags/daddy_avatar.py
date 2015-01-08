@@ -23,7 +23,10 @@ def daddy_avatar(user_email, size=200):
     if not os.path.exists(hash_dir):
         os.makedirs(hash_dir)
     if not os.path.exists(ospath):
-        urllib.urlretrieve(gravatar_url, ospath)
+        try:
+            urllib.urlretrieve(gravatar_url, ospath)
+        except Exception, e:
+            print str(e)
     return media_avatar
 
 

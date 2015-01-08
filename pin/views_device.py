@@ -257,7 +257,11 @@ def post_send(request):
     if request.method != 'POST':
         return HttpResponseBadRequest('bad request post')
 
-    form = PinDirectForm(request.POST, request.FILES)
+    try:
+        form = PinDirectForm(request.POST, request.FILES)
+    except IOError:
+        return HttpResponseBadRequest('bad request')
+
     if form.is_valid():
         upload = request.FILES.values()[0]
         filename = create_filename(upload.name)

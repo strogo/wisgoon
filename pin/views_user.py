@@ -414,6 +414,8 @@ def upload(request):
         ret_json = {'success': success, 'file': filename}
         return HttpResponse(json.dumps(ret_json))
 
+    return HttpResponseBadRequest("Bad request")
+
 
 @login_required
 def show_notify(request):
