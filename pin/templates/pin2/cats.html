@@ -98,11 +98,6 @@
 				        <li><a href="/category/36">والیبال</a></li>
 	        		</ul>
 		        </li>
-		        
-		      <!-- links -->
-		        <!-- {% for cat in cats %}
-		        <li><a href="{% url "pin-category" cat.id %}">{{cat.title}}</a></li>
-		        {% endfor %} -->
 		      
 		    </ul>
 		</li>
@@ -127,40 +122,11 @@
 		</li>
 		{%endif%}
 					  
-					  {%block pin-ex-nav%}{%endblock pin-ex-nav%}
-        <!-- <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-            <li class="divider"></li>
-            <li><a href="#">One more separated link</a></li>
-          </ul>
-        </li> -->
+		{%block pin-ex-nav%}{%endblock pin-ex-nav%}
+
       </ul>
       
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
 
-<!-- 
-<div id="top-categories">
-	<div class="container">
-		<div class="row">
-			<div class="nav-cat col-md-12">
-				<div class="categories-title  cat-border-left col-md-1 col-sm-1 col-xs-1">
-					<a href="{% url "pin-latest"%}">آخرین مطالب</a>
-				</div>
-				
-				<div class="categories-title cat-border-right cat-border-left col-md-1 col-sm-1 col-xs-1">
-					<a href="{% url "policy"%}">قوانین</a>
-				</div>
-				
-			</div>
-		</div>
-	</div>
-</div>
- -->
