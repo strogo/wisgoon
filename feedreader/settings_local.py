@@ -272,4 +272,6 @@ APP_TOKEN_STR = 'app mobile-)**Z{QT'
 
 HAYSTACK_SIGNAL_PROCESSOR = 'pin.signals.MySignalProcessor'
 
-COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',  'compressor.filters.cssmin.CSSMinFilter']
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.CSSMinFilter']

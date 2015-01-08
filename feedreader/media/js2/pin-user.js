@@ -1,5 +1,3 @@
-
-
 // pin images
 var image_selected=0;
 $("#pin_form").submit(function(){
@@ -11,9 +9,6 @@ $("#pin_form").submit(function(){
         return true;
     }
 });
-
-$('#textarea').textext({ plugins: 'tags' });
-
 
 // uploader
 function createUploader(){            
