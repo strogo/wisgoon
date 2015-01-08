@@ -26,18 +26,6 @@ REPORT_TYPE = settings.REPORT_TYPE
 
 
 def home(request):
-    # timestamp = get_request_timestamp(request)
-
-    # Post.home_latest()
-
-    # if timestamp == 0:
-    #     latest_items = Post.accepted.filter(show_in_default=1)\
-    #         .order_by('-is_ads', '-timestamp')[:20]
-    # else:
-    #     latest_items = Post.accepted.filter(show_in_default=1)\
-    #         .extra(where=['timestamp<%s'], params=[timestamp])\
-    #         .order_by('-timestamp')[:20]
-
     pid = get_request_pid(request)
     pl = Post.home_latest(pid=pid)
     arp = []
@@ -52,13 +40,15 @@ def home(request):
 
     if request.is_ajax():
         if latest_items:
-            return render(request,
-                          'pin2/_items_2.html',
-                          {'latest_items': latest_items})
+            return render(request, 'pin2/_items_2.html', {
+                'latest_items': latest_items
+            })
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin2/home.html', {'latest_items': latest_items})
+        return render(request, 'pin2/home.html', {
+            'latest_items': latest_items,
+        })
 
 
 def search(request):

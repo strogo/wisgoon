@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>ویسگون {% block title%}{% endblock title%}</title>
 <meta name="description" content="{%block description%}what is going on, social image sharing{%endblock%}" />
@@ -16,13 +16,12 @@ var media_url = "{{MEDIA_URL}}";
 var upload_url = "{% url "pin-upload" %}";
 </script>
 {% include "base/analytics.html"%}
-	</head>
-	<body>
+</head>
+<body>
+
 {% include "pin2/nav.html" %}
 {% include "pin2/cats.html" %}
 
-{% block content %}
-
-{% endblock content%}
+{% block content %}{% endblock content%}
 
 {% include "pin2/footer.html" %}
