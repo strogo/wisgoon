@@ -1,9 +1,4 @@
-﻿@import url('bootstrap.min.css');
-@import url('bootstrap-rtl.min.css');
-@import url('font-awesome.min.css');
-@import url('font-awesome-animation.min.css');
-@import url('fonts.css');
-
+﻿
 /* basic */
 ::selection {background: #333333;color: #fff;}
 ::-moz-selection {background: #333333;color: #fff;}
