@@ -37,3 +37,5 @@ SESSION_COOKIE_DOMAIN = '.wisgoon.com'
 import warnings
 import exceptions
 warnings.filterwarnings("ignore", category=exceptions.RuntimeWarning)
+
+COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',  'compressor.filters.cssmin.CSSMinFilter']
