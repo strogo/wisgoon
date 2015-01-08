@@ -1,5 +1,5 @@
 import os
-DEBUG = True
+DEBUG = False
 THUMBNAIL_DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
@@ -271,3 +271,5 @@ APP_TOKEN_STR = 'app mobile-)**Z{QT'
 # NUMBER_GROUPING = 3
 
 HAYSTACK_SIGNAL_PROCESSOR = 'pin.signals.MySignalProcessor'
+
+COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',  'compressor.filters.cssmin.CSSMinFilter']
