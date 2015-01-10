@@ -84,7 +84,10 @@ def userdata_cache(user, field=None, size=100):
 
 def get_username(user):
     if isinstance(user, (int, long)):
-        user = User.objects.only('username').get(pk=user)
+        try:
+            user = User.objects.only('username').get(pk=user)
+        except User.DoesNotExist:
+            return user
 
     try:
         profile = Profile.objects.only('name').get(user_id=user.id)
