@@ -15,7 +15,9 @@ register = Library()
 
 @register.filter
 def daddy_avatar(user_email, size=200):
-    ahash = md5_constructor(user_email).hexdigest()
+
+    ahash = md5_constructor(user_email.decode('utf-8')).hexdigest()
+
     hash_dir = os.path.join(settings.MEDIA_ROOT, 'daddy_avatar/%d' % size)
     ospath = '%s/%s_%d.jpg' % (hash_dir, ahash, size)
     gravatar_url = "http://www.gravatar.com/avatar/%s.jpg/?s=%d" % (ahash, size)
