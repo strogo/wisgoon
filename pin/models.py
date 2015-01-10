@@ -403,6 +403,8 @@ class Post(models.Model):
     def user_stream_latest(self, user_id, pid=0):
         ROW_IN_PAGE = 20
         # user_stream = "ustream_%d" % (user_id)
+        if not user_id:
+            return []
         user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
         pl = r_server.lrange(user_stream, 0, 1000)
         if not pl:
