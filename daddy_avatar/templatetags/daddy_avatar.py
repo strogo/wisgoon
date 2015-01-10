@@ -67,18 +67,22 @@ def get_avatar(user, size=200):
             return ava_dict[size]
         else:
             # print "step 1.2"
-            profile = Profile.objects.only('avatar').get(user=user)
+            try:
+                profile = Profile.objects.only('avatar').get(user=user)
+            except Profile.DoesNotExist:
+                profile = None
             
-            if profile.avatar:
-                # print "step 1.2.1"
-                t_size = '%sx%s' % (size, size)
-                try:
-                    im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
-                    ava_dict[size] = im.url
-                    cache.set(ava_str, ava_dict, 60 * 60 * 1)
-                    return im.url
-                except Exception, e:
-                    print "daddy_avatar line 96: ", str(e)
+            if profile:
+                if profile.avatar:
+                    # print "step 1.2.1"
+                    t_size = '%sx%s' % (size, size)
+                    try:
+                        im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
+                        ava_dict[size] = im.url
+                        cache.set(ava_str, ava_dict, 60 * 60 * 1)
+                        return im.url
+                    except Exception, e:
+                        print "daddy_avatar line 96: ", str(e)
     # except Exception, e:
     #     print str(e)
     else:
