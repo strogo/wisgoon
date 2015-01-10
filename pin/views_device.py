@@ -4,6 +4,7 @@ import time
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.exceptions import MultipleObjectsReturned
 from django.db import transaction
 from django.db.models import F, Sum
 from django.contrib.auth.models import User
@@ -215,7 +216,12 @@ def follow(request, following, action):
 
     try:
         following = User.objects.get(pk=int(following))
-        follow, created = Follow.objects.get_or_create(follower=user,
+        try:
+            follow, created = Follow.objects.get_or_create(follower=user,
+                                                       following=following)
+        except MultipleObjectsReturned:
+            Follow.objects.filter(follower=user, following=following).delete()
+            follow, created = Follow.objects.get_or_create(follower=user,
                                                        following=following)
 
         if int(action) == 0 and follow:
