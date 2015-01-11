@@ -64,7 +64,8 @@ def search(request):
             'امام',
             'تصاویر_پس_زمینه',
             'رضا_صادقی',
-            'مهران_مدیری']
+            'مهران_مدیری',
+            'سعید_معروف']
 
     if not query:
         return render(request, 'pin2/tags.html', {
