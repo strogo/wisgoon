@@ -647,7 +647,7 @@ def comments(request):
     object_pk = int(request.GET.get('object_pk', 0))
 
     next = {
-        'url': "/pin/api2/com/comments/?limit=%s&offset=%s&object_pk=%s" % (
+        'url': "/pin/api/com/comments2/?limit=%s&offset=%s&object_pk=%s" % (
             limit, offset + limit, object_pk)
     }
 
