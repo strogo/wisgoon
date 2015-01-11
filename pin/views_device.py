@@ -228,16 +228,16 @@ def follow(request, following, action):
             follow.delete()
             Stream.objects.filter(following=following, user=user)\
                 .all().delete()
-        elif created:
-            posts = Post.objects.only('timestamp').filter(user=following)\
-                .order_by('-timestamp')[:100]
+        # elif created:
+            # posts = Post.objects.only('timestamp').filter(user=following)\
+            #     .order_by('-timestamp')[:100]
 
-            for post in posts:
-                s, created = Stream.objects\
-                    .get_or_create(post=post,
-                                   user=user,
-                                   date=post.timestamp,
-                                   following=following)
+            # for post in posts:
+            #     s, created = Stream.objects\
+            #         .get_or_create(post=post,
+            #                        user=user,
+            #                        date=post.timestamp,
+            #                        following=following)
 
                 # print "post", post.id, s, created
 
