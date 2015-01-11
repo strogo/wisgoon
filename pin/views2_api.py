@@ -744,8 +744,11 @@ def search(request):
     query = request.GET.get('q', '')
     if query:
         fq = 'username_s:*%s* name_s:*%s*' % (query, query)
-        results = solr.search("*:*", fq=fq, rows=limit, start=start,
+        try:
+            results = solr.search("*:*", fq=fq, rows=limit, start=start,
                               sort="score_i desc")
+        except:
+            results = []
 
         token = request.GET.get('token', '')
         if token:
