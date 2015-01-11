@@ -15,8 +15,10 @@ register = Library()
 
 @register.filter
 def daddy_avatar(user_email, size=200):
-
-    ahash = md5_constructor(user_email.decode('utf-8')).hexdigest()
+    try:
+        ahash = md5_constructor(user_email.decode('utf-8')).hexdigest()
+    except UnicodeEncodeError:
+        ahash = md5_constructor('a').hexdigest()
 
     hash_dir = os.path.join(settings.MEDIA_ROOT, 'daddy_avatar/%d' % size)
     ospath = '%s/%s_%d.jpg' % (hash_dir, ahash, size)
