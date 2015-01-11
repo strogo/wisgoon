@@ -90,7 +90,8 @@ def tags(request, tag_name):
     query = tag_name
     offset = int(request.GET.get('offset', 0))
     posts = SearchQuerySet().models(Post)\
-        .filter(content__contains=query)[offset:offset + 1 * ROW_PER_PAGE]
+        .filter(content__contains=query)\
+        .order_by('-timestamp_i')[offset:offset + 1 * ROW_PER_PAGE]
 
     tags = ['کربلا']
 
