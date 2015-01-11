@@ -62,7 +62,9 @@ def search(request):
     tags = ['کربلا',
             'حرم',
             'امام',
-            'تصاویر_پس_زمینه']
+            'تصاویر_پس_زمینه',
+            'رضا_صادقی',
+            'مهران_مدیری']
 
     if not query:
         return render(request, 'pin2/tags.html', {
