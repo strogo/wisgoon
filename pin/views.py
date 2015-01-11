@@ -111,6 +111,7 @@ def tags(request, tag_name):
         'results': results,
         'posts': posts,
         'query': query,
+        'page_title': tag_name,
         'offset': offset + ROW_PER_PAGE,
     })
 
