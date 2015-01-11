@@ -61,7 +61,8 @@ def search(request):
 
     tags = ['کربلا',
             'حرم',
-            'امام']
+            'امام',
+            'تصاویر_پس_زمینه']
 
     if not query:
         return render(request, 'pin2/tags.html', {
@@ -87,7 +88,7 @@ def search(request):
 def tags(request, tag_name):
     ROW_PER_PAGE = 20
     results = []
-    query = tag_name
+    query = tag_name.replace('_', ' ')
     offset = int(request.GET.get('offset', 0))
     posts = SearchQuerySet().models(Post)\
         .filter(content__contains=query)\
