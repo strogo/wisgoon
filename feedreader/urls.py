@@ -42,3 +42,8 @@ urlpatterns += patterns('pin.views',
     url(r'^topuser/$', 'topuser', name='pin-topuser'),
     url(r'^top-group-user/$', 'topgroupuser', name='pin-topgroupuser'),
 )
+
+urlpatterns += patterns('pin.views3_api',
+    url(r'^api/v3/post/latest/$', 'post_latest', name="post_api_item"),
+    
+)

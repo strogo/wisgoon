@@ -367,6 +367,7 @@ class Post(models.Model):
 
     @classmethod
     def latest(self, pid=0, cat_id=0):
+        print pid
 
         if cat_id:
             cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, cat_id)
@@ -375,6 +376,7 @@ class Post(models.Model):
             cat_stream = settings.STREAM_LATEST
             pl = r_server.lrange(cat_stream, 0, 1000)
 
+        print pl
         if pid == 0:
             import collections
             dups = [x for x, y in collections.Counter(pl).items() if y > 1]

@@ -1,0 +1,207 @@
+import json
+import redis
+from hashlib import md5
+
+from django.core.cache import cache
+from django.conf import settings
+from sorl.thumbnail import get_thumbnail
+
+from daddy_avatar.templatetags.daddy_avatar import get_avatar
+from pin.tools import AuthCache
+from pin.models import Category, Post
+
+r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
+
+
+def get_cat_json(cat_id):
+    # json cat cache str
+    jccs = "json_cat3_%s" % cat_id
+    jcc = cache.get(jccs)
+    if jcc:
+        return jcc
+
+    cat = Category.objects.get(id=cat_id)
+    cat_json = {
+        'id': cat.id,
+        'image': media_abs_url(cat.image.url),
+        'resource_uri': abs_url("/pin/apic/category/" + str(cat.id) + "/"),
+        'title': cat.title,
+    }
+    cache.set(jccs, cat_json, 86400)
+    return cat_json
+
+
+def abs_url(url):
+    if not url.startswith('http://'):
+        return settings.SITE_URL + url
+
+
+def media_abs_url(url):
+    if not url.startswith('/media/'):
+        return settings.SITE_URL + '/media/' + url
+    elif url.startswith('/media/'):
+        return settings.SITE_URL + url
+
+    return url
+
+
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        # if isinstance(obj, datetime.datetime):
+        #     return int(mktime(obj.timetuple()))
+
+        """if isinstance(obj, FieldFile):
+            return str(obj)"""
+
+        return json.JSONEncoder.default(self, obj)
+
+
+def get_user_dict(user_id):
+    o = {}
+    o['avatar'] = media_abs_url(get_avatar(user_id, size=100))
+    o['name'] = AuthCache.get_username(user_id=user_id)
+    o['id'] = user_id
+
+    return o
+
+
+def get_r_data(request):
+    before = request.GET.get('before', None)
+    cur_user = None
+    thumb_size = int(request.GET.get('thumb_size', "236"))
+
+    if thumb_size > 400:
+        thumb_size = 500
+    else:
+        thumb_size = "236"
+
+    if before is None:
+        before = 0
+
+    return before, cur_user, thumb_size, before
+
+
+def get_list_post(pl, from_model='latest'):
+    arp = []
+    pl_str = '32_'.join(pl)
+    cache_pl = md5(pl_str).hexdigest()
+    #print cache_stream_str, cache_stream_name
+
+    posts = cache.get(cache_pl)
+    if posts:
+        print "get list from cache"
+        return posts
+
+    for pll in pl:
+        try:
+            arp.append(Post.objects.values(*Post.NEED_KEYS).get(id=pll))
+        except Exception, e:
+            print str(e), 'line 182', pll
+            # r_server.lrem(from_model, str(pll))
+
+    posts = arp
+    cache.set(cache_pl, posts, 3600)
+    return posts
+
+
+def get_thumb(o_image, thumb_size, thumb_quality):
+    thumb_size = str(thumb_size)
+    im = 00
+    c_str = "s2%s_%s_%s" % (o_image, thumb_size, thumb_quality)
+    try:
+        img_cache = cache.get(c_str)
+    except Exception, e:
+        print c_str, str(e)
+        img_cache = None
+    if img_cache:
+        imo = img_cache
+        # print imo, "cache"
+    else:
+        try:
+            im = get_thumbnail(o_image,
+                               thumb_size,
+                               quality=settings.API_THUMB_QUALITY,
+                               upscale=False)
+            # print "after im, im is:", im
+            imo = {
+                'thumbnail': im.url,
+                'hw': "%sx%s" % (im.height, im.width)
+            }
+            cache.set(c_str, imo, 8600)
+        except Exception, e:
+            print "exception in get_thumb", str(e), im
+            if thumb_size == "500":
+                default_image = 'noPhoto_max.jpg'
+                dfsize = "500x500"
+            else:
+                default_image = 'noPhoto_mini.jpg'
+                dfsize = "236x236"
+
+            imo = {
+                'thumbnail': default_image,
+                'hw': dfsize
+            }
+        #print imo
+    return imo
+
+
+def get_objects_list(posts, cur_user_id, thumb_size, r=None):
+
+    objects_list = []
+    for p in posts:
+        o = {}
+        o['id'] = p['id']
+        o['text'] = p['text']
+        o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
+        # o['image'] = p['image']
+
+        o['user'] = get_user_dict(p['user_id'])
+
+        o['timestamp'] = p['timestamp']
+
+        try:
+            o['url'] = p['url']
+        except Exception, e:
+            print str(e)
+            if r:
+                print r.get_full_path()
+            o['url'] = None
+        o['like'] = p['cnt_like']
+        o['like_with_user'] = False
+        o['status'] = p['status']
+
+        o['permalink'] = abs_url("/pin/%d/" % p['id'])
+        o['resource_uri'] = "/pin/api/post/%d/" % p['id']
+
+        if cur_user_id:
+            o['like_with_user'] = Likes.user_in_likers(post_id=p['id'],
+                                                       user_id=cur_user_id)
+
+        if not thumb_size:
+            thumb_size = "236"
+
+        o_image = p['image']
+
+        imo_medium = get_thumb(o_image, "500", settings.API_THUMB_QUALITY)
+        imo_small = get_thumb(o_image, "236", settings.API_THUMB_QUALITY)
+
+        o['images'] = {
+            "original": {
+                "url": media_abs_url(p['image'])
+            },
+            "small": {
+                "url": media_abs_url(imo_small['thumbnail']),
+                "hw": imo_small['hw']
+            },
+            "medium": {
+                "url": media_abs_url(imo_medium['thumbnail']),
+                "hw": imo_medium['hw']
+            }
+        }
+
+        o['category'] = get_cat_json(cat_id=p['category_id'])
+        objects_list.append(o)
+
+    # cache.set(list_cache_str, objects_list, 600)
+
+    return objects_list

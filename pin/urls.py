@@ -154,4 +154,3 @@ urlpatterns += patterns('',
                     'pin.views2_api.change_password',
                     name='password_change_mobile'),
 )
-

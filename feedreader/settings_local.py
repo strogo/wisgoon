@@ -1,5 +1,5 @@
 import os
-DEBUG = False
+DEBUG = True
 THUMBNAIL_DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
@@ -275,3 +275,5 @@ HAYSTACK_SIGNAL_PROCESSOR = 'pin.signals.MySignalProcessor'
 COMPRESS_CSS_FILTERS = [
     'compressor.filters.css_default.CssAbsoluteFilter',
     'compressor.filters.cssmin.CSSMinFilter']
+
+SITE_URL = 'http://127.0.0.1:8000'
