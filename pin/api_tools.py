@@ -4,11 +4,13 @@ from hashlib import md5
 
 from django.core.cache import cache
 from django.conf import settings
+from django.core.urlresolvers import reverse
+
 from sorl.thumbnail import get_thumbnail
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from pin.tools import AuthCache
-from pin.models import Category, Post
+from pin.models import Category, Post, Likes
 
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
@@ -29,6 +31,14 @@ def get_cat_json(cat_id):
     }
     cache.set(jccs, cat_json, 86400)
     return cat_json
+
+
+def get_next_url(url_name, before, token):
+    n_url = reverse(url_name)
+    n_url_p = n_url + "?before=%s" % (before)
+    if token:
+        n_url_p = n_url_p + "&token=%s" % (token)
+    return abs_url(n_url_p)
 
 
 def abs_url(url):
@@ -78,7 +88,11 @@ def get_r_data(request):
     if before is None:
         before = 0
 
-    return before, cur_user, thumb_size, before
+    token = request.GET.get('token', '')
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+
+    return before, cur_user, thumb_size, before, token
 
 
 def get_list_post(pl, from_model='latest'):
@@ -158,14 +172,7 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
         o['user'] = get_user_dict(p['user_id'])
 
         o['timestamp'] = p['timestamp']
-
-        try:
-            o['url'] = p['url']
-        except Exception, e:
-            print str(e)
-            if r:
-                print r.get_full_path()
-            o['url'] = None
+        o['url'] = p['url']
         o['like'] = p['cnt_like']
         o['like_with_user'] = False
         o['status'] = p['status']
@@ -176,9 +183,6 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
         if cur_user_id:
             o['like_with_user'] = Likes.user_in_likers(post_id=p['id'],
                                                        user_id=cur_user_id)
-
-        if not thumb_size:
-            thumb_size = "236"
 
         o_image = p['image']
 

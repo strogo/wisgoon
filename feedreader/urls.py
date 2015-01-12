@@ -44,6 +44,6 @@ urlpatterns += patterns('pin.views',
 )
 
 urlpatterns += patterns('pin.views3_api',
-    url(r'^api/v3/post/latest/$', 'post_latest', name="post_api_item"),
+    url(r'^api/v3/post/latest/$', 'post_latest', name="api-3-latest"),
     
 )
