@@ -121,7 +121,11 @@ class Post(models.Model):
     def get_tags(self):
         hash_tags = re.compile(ur'(?i)(?<=\#)\w+', re.UNICODE)
         tags = hash_tags.findall(self.text)
-        return tags
+        all_tags = []
+        for t in tags:
+            if t not in all_tags:
+                all_tags.append(t)
+        return all_tags
 
     def md5_for_file(self, f, block_size=2 ** 20):
         md5 = hashlib.md5()
