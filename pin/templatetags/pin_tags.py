@@ -1,10 +1,13 @@
 import datetime
+import re
+
 from calverter import Calverter
 from urlparse import urlparse
 
 from django import template
 from django.contrib.auth.models import User
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
 from django.template import Library
 from django.template.defaultfilters import stringfilter
 from django.utils.text import normalize_newlines
@@ -19,6 +22,28 @@ from pin.tools import AuthCache
 
 
 register = Library()
+
+
+@register.filter
+def urlize_hashtag(obj):
+    return mark_safe(urlize_text(obj))
+urlize_hashtag.is_safe = True
+urlize_hashtag = stringfilter(urlize_hashtag)
+
+
+def urlize_text(text):
+    hashtag_pattern = re.compile(ur'(?i)#(\w+)', re.UNICODE)
+    text = hashtag_pattern.sub(hashtag_urlize, text)
+    return text
+
+
+def hashtag_urlize(m):
+    hashtag = m.group(0)
+    hashtag = hashtag.replace('#', '')
+
+    url = reverse('hashtags', args=[hashtag])
+
+    return '<a href="%s">&#35;%s</a>' % (url, hashtag)
 
 
 def user_item_like(parser, token):

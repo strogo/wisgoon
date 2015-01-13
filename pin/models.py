@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import time
 import hashlib
 import redis
@@ -11,6 +12,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.validators import URLValidator
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import F
 from django.db.models.signals import post_save
@@ -115,6 +117,11 @@ class Post(models.Model):
 
     def __unicode__(self):
         return self.text
+
+    def get_tags(self):
+        hash_tags = re.compile(ur'(?i)(?<=\#)\w+', re.UNICODE)
+        tags = hash_tags.findall(self.text)
+        return tags
 
     def md5_for_file(self, f, block_size=2 ** 20):
         md5 = hashlib.md5()

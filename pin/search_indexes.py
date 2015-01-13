@@ -1,3 +1,4 @@
+import re
 
 from haystack import indexes
 from pin.models import Post
@@ -13,6 +14,7 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
     cnt_comment_i = indexes.IntegerField(model_attr='cnt_comment', stored=True)
     hash_s = indexes.CharField(model_attr='hash', stored=True)
     author = indexes.CharField(model_attr='user')
+    tags = indexes.MultiValueField(indexed=True, stored=True)
     # pub_date = indexes.DateTimeField(model_attr='pub_date')
 
     def get_model(self):
@@ -21,6 +23,11 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
+
+    def prepare_tags(self, obj):
+        hash_tags = re.compile(ur'(?i)(?<=\#)\w+', re.UNICODE)
+        tags = hash_tags.findall(obj.text)
+        return tags
 
 
 class ProfileIndex(indexes.SearchIndex, indexes.Indexable):

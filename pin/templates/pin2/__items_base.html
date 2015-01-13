@@ -71,6 +71,11 @@
 		<p class="{{item.text|length}}">{{item.text|safe|truncatewords:"50"|linebreaksbr}}
 		</p>
 	</div>
+	<div class="tags">
+		{% for t in item.get_tags %}
+			<a href="/hashtag/{{t}}/">#{{t}}</a>
+		{% endfor %}
+		</div>
 	{% endif %}
 	<div class="clear"></div>
 </div>

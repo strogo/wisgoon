@@ -121,6 +121,38 @@ def tags(request, tag_name):
     })
 
 
+def hashtag(request, tag_name):
+    ROW_PER_PAGE = 20
+    results = []
+    query = tag_name
+    offset = int(request.GET.get('offset', 0))
+    posts = SearchQuerySet().models(Post)\
+        .filter(tags=tag_name)\
+        .order_by('-timestamp_i')[offset:offset + 1 * ROW_PER_PAGE]
+
+    tags = ['کربلا']
+
+    if not query:
+        return render(request, 'pin2/tags.html', {
+            'tags': tags,
+        })
+
+    if request.is_ajax():
+        return render(request, 'pin2/__search.html', {
+            'results': results,
+            'posts': posts,
+            'query': query,
+            'offset': offset + ROW_PER_PAGE,
+        })
+
+    return render(request, 'pin2/tag.html', {
+        'results': results,
+        'posts': posts,
+        'query': query,
+        'page_title': tag_name,
+        'offset': offset + ROW_PER_PAGE,
+    })
+
 def user_friends(request, user_id):
     user_id = int(user_id)
     ROW_PER_PAGE = 20
