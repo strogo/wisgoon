@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^pages/', include('django.contrib.flatpages.urls')),
     url(r'^api/', include(user_resource.urls)),
     url(r'^policy/', 'pin.views.policy', name='policy'),
+    url(r'^stats/', 'pin.views.stats', name='stats'),
     url(r'^captcha/', include('captcha.urls')),
 )
 

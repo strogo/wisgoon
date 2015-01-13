@@ -615,3 +615,15 @@ def tag(request, keyword):
 
 def policy(request):
     return render(request, 'pin2/policy.html')
+
+
+def stats(request):
+    from model_mongo import MonthlyStats
+    ms = MonthlyStats.objects().order_by("-date").limit(30)
+    op = {
+        'posts': [t.count for t in ms if t.object_type == "post"],
+        'comments': [t.count for t in ms if t.object_type == "comment"],
+        'likes': [t.count for t in ms if t.object_type == "like"]
+    }
+    print op
+    return render(request, 'pin2/stats.html', {'op': op})

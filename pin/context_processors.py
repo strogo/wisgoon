@@ -22,6 +22,10 @@ def pin_categories(request):
     return {'cats': cats}
 
 
+def media_prefix(request):
+    return {'media_prefix': settings.MEDIA_PREFIX}
+
+
 def today_stats(request):
     d = str(datetime.date.today())
     m = MonthlyStats.objects(date=d)

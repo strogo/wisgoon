@@ -38,6 +38,10 @@ import warnings
 import exceptions
 warnings.filterwarnings("ignore", category=exceptions.RuntimeWarning)
 
-COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',  'compressor.filters.cssmin.CSSMinFilter']
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.CSSMinFilter']
 
 SITE_URL = 'http://www.wisgoon.com'
+
+MEDIA_PREFIX = 'http://media.wisgoon.com'

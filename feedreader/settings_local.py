@@ -104,6 +104,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'pin.context_processors.is_super_user',
     'pin.context_processors.user__id',
     'pin.context_processors.today_stats',
+    'pin.context_processors.media_prefix',
 )
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -277,3 +278,5 @@ COMPRESS_CSS_FILTERS = [
     'compressor.filters.cssmin.CSSMinFilter']
 
 SITE_URL = 'http://127.0.0.1:8000'
+
+MEDIA_PREFIX = 'http://127.0.0.1:8000'
