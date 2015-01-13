@@ -623,7 +623,11 @@ def stats(request):
     op = {
         'posts': [t.count for t in ms if t.object_type == "post"],
         'comments': [t.count for t in ms if t.object_type == "comment"],
-        'likes': [t.count for t in ms if t.object_type == "like"]
+        'likes': [t.count for t in ms if t.object_type == "like"],
+        'dates': []
     }
-    print op
+    for m in ms:
+        if m.date not in op['dates']:
+            op['dates'].append(m.date)
+    # print op
     return render(request, 'pin2/stats.html', {'op': op})
