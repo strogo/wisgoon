@@ -396,6 +396,10 @@ def category_back(request, cat_id):
 
 def category_redis(request, cat_id):
     cat = get_object_or_404(Category, pk=cat_id)
+
+    if int(cat_id)==23:
+	return HttpResponse('/')
+
     cat_id = cat.id
     pid = get_request_pid(request)
     pl = Post.latest(pid=pid, cat_id=cat_id)
@@ -522,7 +526,9 @@ def item(request, item_id):
     post = get_object_or_404(
         Post.objects.select_related().filter(id=item_id)[:1])
     #Post.objects.filter(id=item_id).update(view=F('view') + 1)
-
+    
+    if post.category_id==23:
+	return HttpResponse('/')
     if check_block(user_id=post.user_id, blocked_id=request.user.id):
         return HttpResponseRedirect('/')
 
