@@ -628,6 +628,6 @@ def stats(request):
     }
     for m in ms:
         if m.date not in op['dates']:
-            op['dates'].append(m.date)
-    # print op
+            op['dates'].append(m.date.day)
+    print op
     return render(request, 'pin2/stats.html', {'op': op})
