@@ -3,6 +3,7 @@ import time
 import redis
 
 from django.conf import settings
+from django.core.cache import cache
 
 from pin.forms import PinForm
 from pin.models import Category
@@ -27,6 +28,10 @@ def media_prefix(request):
 
 
 def today_stats(request):
+    c_stats = cache.get("today_stats")
+    if c_stats:
+        return {'stats': c_stats}
+
     d = str(datetime.date.today())
     m = MonthlyStats.objects(date=d)
     ma = {}
@@ -37,6 +42,8 @@ def today_stats(request):
     minutes = xrange(5)
 
     ma['onlines'] = len(r_server.sunion(['online-users/%d' % (current - x) for x in minutes]))
+
+    cache.set("today_stats", ma, 300)
 
     return {'stats': ma}
 
