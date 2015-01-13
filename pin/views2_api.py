@@ -330,7 +330,7 @@ def post(request):
     if not user_id:
         hot_post = Post.objects\
             .values(*Post.NEED_KEYS)\
-            .filter(id=3655017)
+            .filter(id=3979949)
         if hot_post:
             posts = list(hot_post) + list(posts)
 
