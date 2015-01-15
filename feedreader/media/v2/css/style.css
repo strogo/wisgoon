@@ -291,6 +291,7 @@ a, a:link, a:hover, a:visited {
 	border-top: 1px solid #e2e4e7;
 	padding: 10px;
 	text-align: right;
+	overflow: hidden;
 
 }
 .feed-item .tags a{
