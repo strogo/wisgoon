@@ -43,7 +43,7 @@ def hashtag_urlize(m):
 
     url = reverse('hashtags', args=[hashtag])
 
-    return '<a href="%s">&#35;%s</a>' % (url, hashtag)
+    return '<a class="tag-item" href="%s">&#35;%s</a>' % (url, hashtag)
 
 
 def user_item_like(parser, token):
