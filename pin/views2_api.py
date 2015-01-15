@@ -836,7 +836,8 @@ def hashtag(request):
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
     results = SearchQuerySet().models(Post)\
-        .filter(tags=query)[offset:offset + 1 * ROW_PER_PAGE]
+        .filter(tags=query)\
+        .order_by('-timestamp_i')[offset:offset + 1 * ROW_PER_PAGE]
 
     data = {}
 
