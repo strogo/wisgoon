@@ -826,6 +826,40 @@ def search2(request):
     return HttpResponse(json_data)
 
 
+def hashtag(request):
+    ROW_PER_PAGE = 20
+    cur_user = None
+    limit = request.GET.get('limit', 20)
+    start = request.GET.get('start', 0)
+
+    query = request.GET.get('q', '')
+    offset = int(request.GET.get('offset', 0))
+    results = SearchQuerySet().models(Post)\
+        .filter(tags=query)[offset:offset + 1 * ROW_PER_PAGE]
+
+    data = {}
+
+    if query:
+        token = request.GET.get('token', '')
+        if token:
+            cur_user = AuthCache.id_from_token(token=token)
+        posts = []
+        for p in results:
+            pp = Post.objects\
+                .values(*Post.NEED_KEYS)\
+                .get(id=p.object.id)
+
+            posts.append(pp)
+
+        thumb_size = request.GET.get('thumb_size', "100x100")
+
+        data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
+                                       thumb_size=thumb_size, r=request)
+        
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
+
 @csrf_exempt
 def password_reset(request, is_admin_site=False,
                    template_name='registration/password_reset_form.html',
