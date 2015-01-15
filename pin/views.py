@@ -429,7 +429,7 @@ def category_back(request, cat_id):
 def category_redis(request, cat_id):
     cat = get_object_or_404(Category, pk=cat_id)
 
-    if int(cat_id) == 23:
+    if int(cat_id) in [23, 22]:
         return HttpResponse('/')
 
     cat_id = cat.id
@@ -559,7 +559,7 @@ def item(request, item_id):
         Post.objects.select_related().filter(id=item_id)[:1])
     #Post.objects.filter(id=item_id).update(view=F('view') + 1)
     
-    if post.category_id == 23:
+    if post.category_id in [23, 22]:
         return HttpResponse('/')
 
     if check_block(user_id=post.user_id, blocked_id=request.user.id):

@@ -327,13 +327,12 @@ def post(request):
         #     if hot_post:
         #         posts = list(hot_post) + list(posts)
 
-    if not user_id:
-        hot_post = Post.objects\
-            .values(*Post.NEED_KEYS)\
-            .filter(id=3979949)
-        if hot_post:
-            pass
-            # posts = list(hot_post) + list(posts)
+    # if not user_id:
+    #     hot_post = Post.objects\
+    #         .values(*Post.NEED_KEYS)\
+    #         .filter(id=3979949)
+    #     if hot_post:
+    # posts = list(hot_post) + list(posts)
 
     thumb_size = int(request.GET.get('thumb_size', "236"))
     #print "thumb_size", thumb_size
@@ -830,8 +829,6 @@ def search2(request):
 def hashtag(request):
     ROW_PER_PAGE = 20
     cur_user = None
-    limit = request.GET.get('limit', 20)
-    start = request.GET.get('start', 0)
 
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
