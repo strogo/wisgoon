@@ -81,6 +81,10 @@ class Post(models.Model):
                  'image', 'user_id', 'cnt_like', 'category_id',
                  'status', 'url']
 
+    NEED_KEYS2 = ['id', 'text', 'cnt_comment', 'timestamp',
+                 'image', 'user', 'cnt_like', 'category',
+                 'status', 'url']
+
     STATUS_CHOICES = (
         (PENDING, 'منتظر تایید'),
         (APPROVED, 'تایید شده'),
@@ -151,7 +155,7 @@ class Post(models.Model):
 
         return ibase, nname, h
 
-    def get_image_236(self):
+    def get_image_236(self, api=False):
         cname = "pmeta_%d_236" % int(self.id)
         ccache = cache.get(cname)
         if ccache:
@@ -181,16 +185,18 @@ class Post(models.Model):
             a = [new_image_url, str(h)]
             d = ":".join(a)
             cache.set(cname, d, 86400)
+
+        if api:
+            final_url = new_image_url
+        else:
+            final_url = settings.MEDIA_PREFIX + "/media/" + new_image_url
         data = {
-            'url': settings.MEDIA_PREFIX + "/media/" + new_image_url,
-            'h': int(h)
+            'url': final_url,
+            'h': int(h),
+            'hw': "%dx%d" % (int(h), 236)
         }
 
         return data
-
-        # o = get_thumbnail(self.image, "236")
-        # print "o is:", o
-        return o.url
 
     def md5_for_file(self, f, block_size=2 ** 20):
         md5 = hashlib.md5()

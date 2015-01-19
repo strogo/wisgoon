@@ -113,53 +113,54 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
     objects_list = []
     for p in posts:
         o = {}
-        o['id'] = p['id']
-        o['text'] = p['text']
-        o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
-        o['image'] = p['image']
+        o['id'] = p.id
+        o['text'] = p.text
+        o['cnt_comment'] = 0 if p.cnt_comment == -1 else p.cnt_comment
+        o['image'] = p.image
 
-        o['user_avatar'] = get_avatar(p['user_id'], size=100)
-        o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
+        o['user_avatar'] = get_avatar(p.user_id, size=100)
+        o['user_name'] = AuthCache.get_username(user_id=p.user_id)
 
-        o['timestamp'] = p['timestamp']
+        o['timestamp'] = p.timestamp
 
-        o['user'] = p['user_id']
+        o['user'] = p.user_id
         try:
-            o['url'] = p['url']
+            o['url'] = p.url
         except Exception, e:
             print str(e)
             if r:
                 print r.get_full_path()
             o['url'] = None
-        o['like'] = p['cnt_like']
+        o['like'] = p.cnt_like
         o['likers'] = None
         o['like_with_user'] = False
-        o['status'] = p['status']
+        o['status'] = p.status
 
-        o['permalink'] = "/pin/%d/" % p['id']
-        o['resource_uri'] = "/pin/api/post/%d/" % p['id']
+        o['permalink'] = "/pin/%d/" % p.id
+        o['resource_uri'] = "/pin/api/post/%d/" % p.id
 
         if cur_user_id:
-            o['like_with_user'] = Likes.user_in_likers(post_id=p['id'],
+            o['like_with_user'] = Likes.user_in_likers(post_id=p.id,
                                                        user_id=cur_user_id)
 
         if not thumb_size:
             thumb_size = "236"
 
-        o_image = p['image']
+        o_image = p.image
 
-        imo = get_thumb(o_image, thumb_size, settings.API_THUMB_QUALITY)
+        # imo = get_thumb(o_image, thumb_size, settings.API_THUMB_QUALITY)
+        imo = p.get_image_236(api=True)
 
         if imo:
-            o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
+            o['thumbnail'] = imo['url']
             o['hw'] = imo['hw']
         else:
             print "*******"
-            print "we dont have imo", p['id'], o_image, imo
+            print "we dont have imo", p.id, o_image, imo
             print "*******"
             continue
 
-        o['category'] = Category.get_json(cat_id=p['category_id'])
+        o['category'] = Category.get_json(cat_id=p.category_id)
         objects_list.append(o)
 
     # cache.set(list_cache_str, objects_list, 600)
@@ -169,20 +170,22 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
 
 def get_list_post(pl, from_model='latest'):
     arp = []
-    pl_str = '2_'.join(pl)
+    pl_str = 'p2_'.join(pl)
     cache_pl = md5(pl_str).hexdigest()
     #print cache_stream_str, cache_stream_name
 
     posts = cache.get(cache_pl)
     if posts:
+        # print "get post fro mcaches"
         return posts
 
     for pll in pl:
         try:
-            arp.append(Post.objects.values(*Post.NEED_KEYS).get(id=pll))
+            arp.append(Post.objects.only(*Post.NEED_KEYS2).get(id=pll))
+            # print arp
         except Exception, e:
             print str(e), 'line 182', pll
-            r_server.lrem(from_model, str(pll))
+            # r_server.lrem(from_model, str(pll))
 
     posts = arp
     cache.set(cache_pl, posts, 3600)
