@@ -314,13 +314,13 @@ def post(request):
     elif before:
         if not posts:
             posts = Post.objects\
-                .values(*Post.NEED_KEYS)\
+                .only(*Post.NEED_KEYS2)\
                 .filter(**filters).order_by(*sort_by)[:10]
 
             cache.set(cache_stream_name, posts, 86400)
     else:
         posts = Post.objects\
-            .values(*Post.NEED_KEYS)\
+            .only(*Post.NEED_KEYS2)\
             .filter(**filters).order_by(*sort_by)[:10]
         # if not user_id and not category_id:
         #     # hot_post = Post.get_hot(values=True)
@@ -364,7 +364,7 @@ def post_details(request, post_id):
         cur_user = AuthCache.id_from_token(token=token)
 
     posts = Post.objects\
-        .values(*Post.NEED_KEYS)\
+        .only(*Post.NEED_KEYS2)\
         .filter(id=post_id)
 
     thumb_size = int(request.GET.get('thumb_size', "236"))
@@ -424,7 +424,7 @@ def friends_post(request):
         # idis.append(int(p.post_id))
 
     posts = Post.objects\
-        .values(*Post.NEED_KEYS)\
+        .only(*Post.NEED_KEYS2)\
         .filter(id__in=idis).order_by('-id')[:limit]
 
     thumb_size = request.GET.get('thumb_size', "100x100")
