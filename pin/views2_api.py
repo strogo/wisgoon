@@ -185,7 +185,7 @@ def get_list_post(pl, from_model='latest'):
             # print arp
         except Exception, e:
             print str(e), 'line 182', pll
-            # r_server.lrem(from_model, str(pll))
+            r_server.lrem(from_model, str(pll))
 
     posts = arp
     cache.set(cache_pl, posts, 3600)
@@ -848,7 +848,7 @@ def hashtag(request):
         posts = []
         for p in results:
             pp = Post.objects\
-                .values(*Post.NEED_KEYS)\
+                .only(*Post.NEED_KEYS2)\
                 .get(id=p.object.id)
 
             posts.append(pp)
