@@ -180,7 +180,7 @@ class Post(models.Model):
 
             a = [new_image_url, str(h)]
             d = ":".join(a)
-            cache.set(cname, d, 10)
+            cache.set(cname, d, 86400)
         data = {
             'url': settings.MEDIA_PREFIX + "/media/" + new_image_url,
             'h': int(h)
