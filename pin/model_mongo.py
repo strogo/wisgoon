@@ -5,6 +5,19 @@ from django.conf import settings
 connect(settings.MONGO_DB)
 
 
+class PostMeta(Document):
+    post = IntField()
+    img_236 = StringField()
+    img_236_h = IntField()
+
+    img_500 = StringField()
+    img_500_h = IntField()
+
+    meta = {
+        'indexes': ['post']
+    }
+
+
 class Notif(Document):
     last_actor = IntField()
     date = DateTimeField()

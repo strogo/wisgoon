@@ -3,11 +3,11 @@
 {% load pin_tags%}
 {% load humanize %}
 
-{% thumbnail item.image "236" as im %}
+
 <div class="feed-item masonry-brick">
 	<div class="img-content">
 		<a class="pin-item-link" href="{% url "pin-item" item.id%}">
-		<img src="{{media_prefix}}{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{item.text|remove_newlines|truncatewords:5}}">
+		<img src="{{ item.get_image_236.url }}" width="236" height="{{ item.get_image_236.h }}" alt="{{item.text|remove_newlines|truncatewords:5}}">
 		</a>
 
 		<div class="likes">
@@ -81,4 +81,3 @@
 	{% endif %}
 	<div class="clear"></div>
 </div>
-{% endthumbnail %}

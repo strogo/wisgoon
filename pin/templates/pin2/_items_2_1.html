@@ -3,7 +3,9 @@
 
 {% for item in latest_items %}
 
+{% if item.get_image_236 %}
 {% include "pin2/__items_base.html" %}
+{% endif %}
 
 {% if offset %}
 	<span data-next="{{offset}}" ></span>

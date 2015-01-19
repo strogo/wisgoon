@@ -4,6 +4,10 @@ import re
 import time
 import hashlib
 import redis
+import PIL
+
+from PIL import Image
+
 #import datetime
 from datetime import datetime, timedelta
 from time import mktime
@@ -23,7 +27,7 @@ from sorl.thumbnail import get_thumbnail
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
-from model_mongo import Notif as Notif_mongo, MonthlyStats
+from model_mongo import Notif as Notif_mongo, MonthlyStats, PostMeta
 
 LIKE_TO_DEFAULT_PAGE = 10
 
@@ -70,6 +74,8 @@ class Post(models.Model):
     PENDING = 0
     APPROVED = 1
     FAULT = 2
+
+    META_DATA = None
 
     NEED_KEYS = ['id', 'text', 'cnt_comment', 'timestamp',
                  'image', 'user_id', 'cnt_like', 'category_id',
@@ -126,6 +132,65 @@ class Post(models.Model):
             if t not in all_tags:
                 all_tags.append(t)
         return all_tags
+
+    def save_thumb(self, basewidth):
+        ibase = os.path.dirname(self.image)
+        ipath = "%s/%s" % (settings.MEDIA_ROOT, self.image)
+        idir = os.path.dirname(ipath)
+        iname = os.path.basename(ipath)
+        
+        img = Image.open(ipath)
+        
+        wpercent = (basewidth/float(img.size[0]))
+        hsize = int((float(img.size[1])*float(wpercent)))
+        img = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
+        w, h = img.size
+        nname = "%dx%d_%s" % (w, h, iname)
+        npath = "%s/%s" % (idir, nname)
+        img.save(npath)
+
+        return ibase, nname, h
+
+    def get_image_236(self):
+        cname = "pmeta_%d_236" % int(self.id)
+        ccache = cache.get(cname)
+        if ccache:
+            new_image_url, h = ccache.split(":")
+        else:
+
+            try:
+                imeta = PostMeta.objects.get(post=int(self.id))
+                new_image_url = imeta.img_236
+                h = imeta.img_236_h
+            except PostMeta.DoesNotExist:
+                try:
+                    ibase, nname, h = self.save_thumb(basewidth=236)
+                except IOError, e:
+                    print str(e), "get_image_236"
+                    return False
+                except Exception, e:
+                    print str(e), "get_image_236"
+                    return False
+
+                new_image_url = ibase + "/" + nname
+                PostMeta.objects(post=self.id)\
+                    .update(set__img_236=new_image_url,
+                            set__img_236_h=h,
+                            upsert=True)
+
+            a = [new_image_url, str(h)]
+            d = ":".join(a)
+            cache.set(cname, d, 10)
+        data = {
+            'url': settings.MEDIA_PREFIX + "/media/" + new_image_url,
+            'h': int(h)
+        }
+
+        return data
+
+        # o = get_thumbnail(self.image, "236")
+        # print "o is:", o
+        return o.url
 
     def md5_for_file(self, f, block_size=2 ** 20):
         md5 = hashlib.md5()
