@@ -519,57 +519,57 @@ def notif(request):
 
     for p in notifs:
         try:
-            cur_p = Post.objects.values(*Post.NEED_KEYS).get(id=p.post)
+            cur_p = Post.objects.only(*Post.NEED_KEYS2).get(id=p.post)
         except Post.DoesNotExist:
             continue
         o = {}
-        o['id'] = cur_p['id']
-        o['text'] = cur_p['text']
-        o['cnt_comment'] = 0 if cur_p['cnt_comment'] == -1 else \
-            cur_p['cnt_comment']
-        o['image'] = cur_p['image']
+        o['id'] = cur_p.id
+        o['text'] = cur_p.text
+        o['cnt_comment'] = 0 if cur_p.cnt_comment == -1 else \
+            cur_p.cnt_comment
+        o['image'] = cur_p.image
         o['date'] = "2014-05-28T20:22:14"
 
-        # av = AuthCache.avatar(user_id=cur_p['user_id'])
-        #o['user_avatar'] = AuthCache.avatar(user_id=cur_p['user_id'])[1:]
-        #o['user_name'] = AuthCache.get_username(user_id=cur_p['user_id'])
+        # av = AuthCache.avatar(user_id=cur_p.user_id)
+        #o['user_avatar'] = AuthCache.avatar(user_id=cur_p.user_id)[1:]
+        #o['user_name'] = AuthCache.get_username(user_id=cur_p.user_id)
 
         o['post'] = "/pin/api1/post/879/"
-        o['post_id'] = cur_p['id']
-        o['post_owner_avatar'] = AuthCache.avatar(user_id=cur_p['user_id'])[1:]
-        o['post_owner_id'] = cur_p['user_id']
+        o['post_id'] = cur_p.id
+        o['post_owner_avatar'] = AuthCache.avatar(user_id=cur_p.user_id)[1:]
+        o['post_owner_id'] = cur_p.user_id
         o['post_owner_user_name'] = AuthCache.get_username(
-            user_id=cur_p['user_id'])
+            user_id=cur_p.user_id)
 
-        o['user'] = cur_p['user_id']
+        o['user'] = cur_p.user_id
         o['type'] = p['type']
-        o['like'] = cur_p['cnt_like']
-        o['timestamp'] = cur_p['timestamp']
+        o['like'] = cur_p.cnt_like
+        o['timestamp'] = cur_p.timestamp
         o['url'] = ""
         o['likers'] = None
         o['like_with_user'] = False
 
-        #o['resource_uri'] = "/pin/api/notif/notify/%d/" % cur_p['id']
-        o['resource_uri'] = "/pin/api/post/%d/" % cur_p['id']
-        o['permalink'] = "/pin/%d/" % cur_p['id']
+        #o['resource_uri'] = "/pin/api/notif/notify/%d/" % cur_p.id
+        o['resource_uri'] = "/pin/api/post/%d/" % cur_p.id
+        o['permalink'] = "/pin/%d/" % cur_p.id
 
         if cur_user:
-            o['like_with_user'] = Likes.user_in_likers(post_id=cur_p['id'],
+            o['like_with_user'] = Likes.user_in_likers(post_id=cur_p.id,
                                                        user_id=cur_user)
 
         #thumb_size = request.GET.get('thumb_size', "100x100")
         thumb_size = "236"
         thumb_quality = 99
 
-        o_image = cur_p['image']
+        o_image = cur_p.image
 
-        imo = get_thumb(o_image, thumb_size, thumb_quality)
+        imo = cur_p.get_image_236(api=True)
 
         if imo:
-            o['thumbnail'] = imo['thumbnail'].replace('/media/', '')
+            o['thumbnail'] = imo['url']
             o['hw'] = imo['hw']
 
-        o['category'] = Category.get_json(cat_id=cur_p['category_id'])
+        o['category'] = Category.get_json(cat_id=cur_p.category_id)
 
         ar = []
         for ac in p.last_actors():
