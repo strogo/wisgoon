@@ -18,6 +18,12 @@ class PostMeta(Document):
     }
 
 
+class UserMeta(Document):
+    insta_token = StringField()
+    insta_id = IntField()
+    user = IntField()
+
+
 class Notif(Document):
     last_actor = IntField()
     date = DateTimeField()

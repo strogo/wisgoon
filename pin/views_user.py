@@ -5,6 +5,8 @@ import datetime
 import urllib
 from shutil import copyfile
 
+from instagram.client import InstagramAPI
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
@@ -22,7 +24,7 @@ from pin.forms import PinForm, PinUpdateForm
 from pin.models import Post, Stream, Follow, Likes,\
     Report, Comments, Comments_score, Category
 
-from pin.model_mongo import Notif
+from pin.model_mongo import Notif, UserMeta
 
 import pin_image
 from pin.tools import get_request_timestamp, create_filename,\
@@ -31,6 +33,65 @@ from pin.tools import get_request_timestamp, create_filename,\
 from user_profile.models import Profile
 
 MEDIA_ROOT = settings.MEDIA_ROOT
+
+def hook_insta(request):
+    from instagram import client, subscriptions
+
+    mode         = request.GET.get('hub.mode')
+    challenge    = request.GET.get('hub.challenge')
+    verify_token = request.GET.get('hub.verify_token')
+    if challenge: 
+        return HttpResponse(challenge)
+    else:
+        reactor = subscriptions.SubscriptionsReactor()
+        reactor.register_callback(subscriptions.SubscriptionType.USER, parse_instagram_update)
+
+        x_hub_signature = request.headers.get('X-Hub-Signature')
+        raw_response    = request.data
+        try:
+            reactor.process(INSTAGRAM_SECRET, raw_response, x_hub_signature)
+        except subscriptions.SubscriptionVerifyError:
+            return HttpResponse('Instagram signature mismatch')
+    return HttpResponse('Parsed instagram')
+
+@login_required
+def get_insta(request):
+    client_id = "ecb7cbd35a11467fb2cf558583a44047"
+    client_secret = "74e85dfb6b904ac68139a93a9b047247"
+    redirect_uri = "http://127.0.0.1:8000/pin/get_insta/"
+    scope = ["basic"]
+
+    try:
+        um = UserMeta.objects.get(user=int(request.user.id))
+        access_token = um.insta_token
+        insta_id = um.insta_id
+
+        api = InstagramAPI(client_id=client_id, client_secret=client_secret)
+
+    except UserMeta.DoesNotExist:
+        api = InstagramAPI(client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri)
+
+        redirect_uri = api.get_authorize_login_url(scope = scope)
+        print redirect_uri
+        code = request.GET.get('code')
+        if not code:
+            return HttpResponseRedirect(redirect_uri)
+        print code
+
+        # api = InstagramAPI(access_token=access_token)
+        access_token = api.exchange_code_for_access_token(code)
+        print access_token, dir(access_token)
+        insta_id = access_token[1]["id"]
+        access_token = access_token[0]
+        UserMeta.objects(user=int(request.user.id))\
+            .update(set__insta_token=access_token,
+                    set__insta_id=insta_id,
+                    upsert=True)
+
+    from instagram import client
+    instagram_client = client.InstagramAPI(client_id=client_id, client_secret=client_secret)
+    callback_url = 'http://wisgoon.com/pin/hook/instagram'
+    instagram_client.create_subscription(object='user', aspect='media', callback_url=callback_url)
 
 
 @login_required
