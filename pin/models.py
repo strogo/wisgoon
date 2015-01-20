@@ -330,10 +330,10 @@ class Post(models.Model):
             self.hash = self.md5_for_file(image_file)
 
         super(Post, self).save(*args, **kwargs)
-        try:
-            get_thumbnail(self.image, "236")
-        except Exception, e:
-            print "error in thumbnail create in post save", e
+        # try:
+        #     get_thumbnail(self.image, "236")
+        # except Exception, e:
+        #     print "error in thumbnail create in post save", e
 
     @models.permalink
     def get_absolute_url(self):
