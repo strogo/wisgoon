@@ -118,7 +118,7 @@ INSTALLED_APPS = (
 
     'haystack',
     # 'feedreader',
-
+    'blog',
     'pin',
     'registration',
     'south',

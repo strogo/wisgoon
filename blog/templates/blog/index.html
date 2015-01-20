@@ -1,0 +1,42 @@
+{% extends "pin2/flat.base.box.html" %}
+
+{% block content%}
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="row">
+		{% if user.is_superuser %}
+			<a class="btn btn-primary" href="{% url "blog-admin" %}">Admin</a>
+		{% endif %}
+		</div>
+
+		<div class="col-md-9">
+		{% for p in posts %}
+			<div class="panel panel-default">
+				<div class="panel-heading">{{p.title}}
+				</div>
+				<div class="panel-body">
+					{{p.text}}
+				</div>
+			
+			</div>
+		{% endfor %}
+		</div>
+
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">برچسبها
+				</div>
+				<div class="panel-body">
+					{% for t in top_tags %}
+					<a class="btn btn-default" href="{% url "blog-tag" t %}">{{t}}</a>
+					{% endfor %}
+				</div>
+			
+			</div>
+		</div>
+		
+	</div>
+</div>
+
+{% endblock content%}

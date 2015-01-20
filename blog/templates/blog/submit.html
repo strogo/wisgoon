@@ -1,0 +1,61 @@
+{% extends "pin2/flat.base.box.html" %}
+{% load widget_tweaks %}
+
+{% block other_css %}
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css" />
+<style type="text/css">
+.select2-container{
+	width: 50%;
+	direction: ltr;
+	text-align: left;
+}
+</style>
+{% endblock %}
+
+{% block footer_script %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
+<script type="text/javascript">
+
+$("#id_tags").select2({
+    tags:[],
+});
+</script>
+{% endblock %}
+
+{% block content%}
+
+<div class="">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">ارسال مطلب جدید
+			</div>
+			<div class="panel-body">
+				<form method="post">
+				{% csrf_token%}
+				{% for f in form %}
+					<div class="form-group">
+						<label for="{{f.id}}" class="control-label">{{f.label}}</label>
+						<div class="">
+							{% if f.label == "Tags" %}
+							{{f}}
+							{% else %}
+
+							{% render_field f class+="form-control" placeholder=f.label %}
+							{% endif %}
+							<span id="helpBlock" class="help-block">{{f.errors.0}}</span>
+						</div>
+					</div>
+				{% endfor %}
+					<div class="form-group">
+						<input type="submit" class="btn btn-primary" value="save" />
+					</div>
+				</form>
+			</div>
+		
+		</div>
+			
+		
+	</div>
+</div>
+
+{% endblock content%}

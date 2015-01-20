@@ -1,0 +1,31 @@
+{% extends "pin2/flat.base.box.html" %}
+{% load widget_tweaks %}
+
+
+
+{% block content%}
+
+<div class="">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">ارسال مطلب جدید
+			</div>
+			<div class="panel-body">
+				<table class="table">
+				{% for p in posts %}
+					<tr>
+						<td>{{p.id}}</td>
+						<td>{{p.title}}</td>
+						<td><a href="{% url "blog-edit" p.id %}">Edit</a></td>
+					</tr>
+				{% endfor %}
+				</table>
+			</div>
+		
+		</div>
+			
+		
+	</div>
+</div>
+
+{% endblock content%}
