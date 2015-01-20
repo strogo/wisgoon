@@ -425,7 +425,7 @@ def show_notify(request):
     for n in notif:
         anl = {}
         try:
-            anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+            anl['po'] = Post.objects.only('image').get(pk=n.post)
         except Post.DoesNotExist:
             continue
         anl['id'] = n.post

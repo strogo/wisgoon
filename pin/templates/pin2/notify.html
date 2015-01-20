@@ -1,12 +1,12 @@
 {% load pin_tags %}
-{% load thumbnail %}
+
 {% load daddy_avatar %}
 <a href="{% url "pin-notif-user" %}">مشاهده همه اعلانات</a>
 {% for noti in notif %}
+
 <div class="notif" style="">
-        {% thumbnail noti.po "100x100" crop="center" as im %}
-        <a href="{% url "pin-item" noti.id %}"><img src="{{im.url}}" style="float:left;margin-right:5px" /></a>
-        {% endthumbnail%}
+        <a href="{% url "pin-item" noti.id %}" style="width:100px; height:100px"><img src="{{noti.po.get_image_236.url }}" style="float:left;margin-right:5px; width:100px" /></a>
+
         <div class="post-like-right">
         {% if noti.type == 1 %}
             <i class="glyphicon glyphicon-heart"></i>
