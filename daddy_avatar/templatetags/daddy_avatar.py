@@ -105,7 +105,8 @@ def get_avatar(user, size=200):
                 cache.set(ava_str, ava_dict, 60 * 60 * 1)
                 return im.url
             except Exception, e:
-                print "daddy_avatar line 94: ", str(e)
+                pass
+                # print "daddy_avatar line 94: ", str(e)
 
     glob_avatar = daddy_avatar(user.email, size)
     ava_dict[size] = glob_avatar
