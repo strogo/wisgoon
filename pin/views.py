@@ -56,8 +56,7 @@ def search(request):
     results = []
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
-    posts = SearchQuerySet().models(Post)\
-        .filter(content__contains=query)[offset:offset + 1 * ROW_PER_PAGE]
+    
 
     tags = ['کربلا',
             'حرم',
@@ -68,9 +67,17 @@ def search(request):
             'سعید_معروف']
 
     if not query:
+        sqs = SearchQuerySet().models(Post).facet('tags', limit=30)
+        print sqs.facet_counts()
+
+        tags = [t for t in sqs.facet_counts()['fields']['tags']]
+
         return render(request, 'pin2/tags.html', {
             'tags': tags,
         })
+
+    posts = SearchQuerySet().models(Post)\
+        .filter(content__contains=query)[offset:offset + 1 * ROW_PER_PAGE]
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
