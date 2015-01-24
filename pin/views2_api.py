@@ -159,6 +159,8 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
             imo = p.get_image_236(api=True)
         elif net_quality == "fast":
             imo = p.get_image_500(api=True)
+        else:
+            imo = p.get_image_236(api=True)
 
         if imo:
             o['thumbnail'] = imo['url']
