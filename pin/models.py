@@ -318,18 +318,15 @@ class Post(models.Model):
     @classmethod
     def add_to_stream(self, post):
         latest_stream = settings.STREAM_LATEST
-        pl = r_server.lrange(settings.STREAM_LATEST, 0, 1005)
-
-        if str(post.id) not in pl:
-            r_server.lpush(latest_stream, post.id)
+        r_server.lrem(latest_stream, post.id)
+        r_server.lpush(latest_stream, post.id)
 
         cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, post.category.id)
-        pl = r_server.lrange(cat_stream, 0, 1005)
-        if str(post.id) not in pl:
-            r_server.lpush(cat_stream, post.id)
+        r_server.lrem(cat_stream, post.id)
+        r_server.lpush(cat_stream, post.id)
 
-        r_server.ltrim(cat_stream, 0, 1000)
-        r_server.ltrim(latest_stream, 0, 1000)
+        r_server.ltrim(cat_stream, 0, settings.LIST_LONG)
+        r_server.ltrim(latest_stream, 0, settings.LIST_LONG)
 
     @classmethod
     def set_stream_to_redis(self, user_id):
@@ -482,7 +479,7 @@ class Post(models.Model):
                 .filter(show_in_default=1).order_by('-timestamp')[:5000]
             r_server.rpush(home_stream, *hposts)
 
-        pl = r_server.lrange(home_stream, 0, 5000)
+        pl = r_server.lrange(home_stream, 0, settings.LIST_LONG)
 
         if pid == 0:
             return pl[:20]
@@ -503,19 +500,13 @@ class Post(models.Model):
 
         if cat_id:
             cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, cat_id)
-            pl = r_server.lrange(cat_stream, 0, 1000)
+            pl = r_server.lrange(cat_stream, 0, settings.LIST_LONG)
         else:
             cat_stream = settings.STREAM_LATEST
-            pl = r_server.lrange(cat_stream, 0, 1000)
+            pl = r_server.lrange(cat_stream, 0, settings.LIST_LONG)
 
         # print pl
         if pid == 0:
-            import collections
-            dups = [x for x, y in collections.Counter(pl).items() if y > 1]
-
-            for dup in dups:
-                r_server.lrem(cat_stream, dup)
-
             return pl[:20]
 
         if pid:
