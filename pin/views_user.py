@@ -34,6 +34,14 @@ from user_profile.models import Profile
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
+def parse_instagram_update(update):
+    instagram_userid = update['object_id']
+    users = models.User.all().filter('instagram_userid =', instagram_userid).fetch(10)
+    if len(users) == 0:
+        logging.info('Didnt find matching users for this update')
+    for user in users:
+        deferred.defer(fetch_instagram_for_user, user.get_id(), _queue='instagram', _countdown=120)
+
 def hook_insta(request):
     from instagram import client, subscriptions
 

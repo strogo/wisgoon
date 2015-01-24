@@ -429,8 +429,9 @@ def category_back(request, cat_id):
 def category_redis(request, cat_id):
     cat = get_object_or_404(Category, pk=cat_id)
 
-    if int(cat_id) in [23, 22]:
-        return HttpResponse('/')
+    if not request.user.is_authenticated:
+        if int(cat_id) in [23, 22]:
+            return HttpResponse('/')
 
     cat_id = cat.id
     pid = get_request_pid(request)
