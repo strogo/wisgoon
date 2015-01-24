@@ -198,6 +198,55 @@ class Post(models.Model):
 
         return data
 
+    def get_image_500(self, api=False):
+        cname = "pmeta_%d_500" % int(self.id)
+        ccache = cache.get(cname)
+        if ccache:
+            new_image_url, h = ccache.split(":")
+        else:
+
+            try:
+                imeta = PostMeta.objects.get(post=int(self.id))
+                if not imeta.img_500:
+                    raise PostMeta.DoesNotExist
+                new_image_url = imeta.img_500
+                h = imeta.img_500_h
+
+            except PostMeta.DoesNotExist:
+                try:
+                    ibase, nname, h = self.save_thumb(basewidth=500)
+                except IOError, e:
+                    print str(e), "get_image_500"
+                    return False
+                except Exception, e:
+                    print str(e), "get_image_500"
+                    return False
+
+                new_image_url = ibase + "/" + nname
+                PostMeta.objects(post=self.id)\
+                    .update(set__img_500=new_image_url,
+                            set__img_500_h=h,
+                            upsert=True)
+
+            except Exception, e:
+                print str(e)
+
+            a = [new_image_url, str(h)]
+            d = ":".join(a)
+            cache.set(cname, d, 86400)
+
+        if api:
+            final_url = new_image_url
+        else:
+            final_url = settings.MEDIA_PREFIX + "/media/" + new_image_url
+        data = {
+            'url': final_url,
+            'h': int(h),
+            'hw': "%dx%d" % (int(h), 500)
+        }
+
+        return data
+
     def md5_for_file(self, f, block_size=2 ** 20):
         md5 = hashlib.md5()
         while True:
