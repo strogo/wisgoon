@@ -13,7 +13,7 @@
 	</div>
 	<div class="panel-body">
 		{% for tag in tags %}
-			<a class="btn btn-primary f-white" href="{% url "hashtags" tag %}">{{tag.0}} <span class="badge">{{tag.1}}</span> </a>
+			<a class="btn btn-primary f-white" href="{% url "hashtags" tag.0 %}">{{tag.0}} <span class="badge">{{tag.1}}</span> </a>
 		{% endfor %}
 	</div>
 
