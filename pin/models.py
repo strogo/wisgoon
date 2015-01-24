@@ -168,6 +168,10 @@ class Post(models.Model):
                     raise PostMeta.DoesNotExist
                 new_image_url = imeta.img_236
                 h = imeta.img_236_h
+                
+                a = [new_image_url, str(h)]
+                d = ":".join(a)
+                cache.set(cname, d, 86400)
             except PostMeta.DoesNotExist:
                 try:
                     ibase, nname, h = self.save_thumb(basewidth=236)
@@ -184,9 +188,7 @@ class Post(models.Model):
                             set__img_236_h=h,
                             upsert=True)
 
-            a = [new_image_url, str(h)]
-            d = ":".join(a)
-            cache.set(cname, d, 86400)
+            
 
         if api:
             final_url = new_image_url
@@ -214,6 +216,10 @@ class Post(models.Model):
                 new_image_url = imeta.img_500
                 h = imeta.img_500_h
 
+                a = [new_image_url, str(h)]
+                d = ":".join(a)
+                cache.set(cname, d, 86400)
+
             except PostMeta.DoesNotExist:
                 try:
                     ibase, nname, h = self.save_thumb(basewidth=500)
@@ -232,10 +238,6 @@ class Post(models.Model):
 
             except Exception, e:
                 print str(e)
-
-            a = [new_image_url, str(h)]
-            d = ":".join(a)
-            cache.set(cname, d, 86400)
 
         if api:
             final_url = new_image_url
