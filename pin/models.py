@@ -164,6 +164,8 @@ class Post(models.Model):
 
             try:
                 imeta = PostMeta.objects.get(post=int(self.id))
+                if not imeta.img_236:
+                    raise PostMeta.DoesNotExist
                 new_image_url = imeta.img_236
                 h = imeta.img_236_h
             except PostMeta.DoesNotExist:
