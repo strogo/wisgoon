@@ -67,7 +67,7 @@ def search(request):
             'سعید_معروف']
 
     if not query:
-        sqs = SearchQuerySet().models(Post).facet('tags', limit=30)
+        sqs = SearchQuerySet().models(Post).facet('tags', mincount=10, limit=100)
         print sqs.facet_counts()
 
         tags = [t for t in sqs.facet_counts()['fields']['tags']]
