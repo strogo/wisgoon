@@ -560,8 +560,9 @@ def item(request, item_id):
         Post.objects.select_related().filter(id=item_id)[:1])
     #Post.objects.filter(id=item_id).update(view=F('view') + 1)
     
-    if post.category_id in [23, 22]:
-        return HttpResponse('/')
+    if not request.user.is_authenticated:
+        if post.category_id in [23, 22]:
+            return HttpResponse('/')
 
     if check_block(user_id=post.user_id, blocked_id=request.user.id):
         return HttpResponseRedirect('/')
