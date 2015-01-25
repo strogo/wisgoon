@@ -40,7 +40,7 @@
     <tr>
         <td>موجودی حساب :</td>
         <td>{{cur_user.user_meta.credit}} تومان 
-            {% if request.user.id == user.id %}
+            {% if request.user.id == user_id %}
             <a href="{% url "pin-inc-credit"%}">افزایش</a>
             {% endif %}
         </td>
