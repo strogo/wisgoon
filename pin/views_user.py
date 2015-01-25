@@ -24,7 +24,7 @@ from pin.forms import PinForm, PinUpdateForm
 from pin.models import Post, Stream, Follow, Likes,\
     Report, Comments, Comments_score, Category
 
-from pin.model_mongo import Notif, UserMeta
+from pin.model_mongo import Notif, UserMeta, Bills
 
 import pin_image
 from pin.tools import get_request_timestamp, create_filename,\
@@ -36,6 +36,7 @@ from suds.client import Client
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 MERCHANT_ID = settings.MERCHANT_ID
+SITE_URL = settings.SITE_URL
 
 def parse_instagram_update(update):
     instagram_userid = update['object_id']
@@ -567,21 +568,26 @@ def notif_all(request):
 @login_required
 def inc_credit(request):
     if request.method == "POST":
-        callBackUrl = 'http://127.0.0.1:800/%s' % reverse('pin-verify-payment')
+
+        amount = request.POST.get('amount', 0)
+        if not amount:
+            return HttpResponseRedirect(reverse('inc_credit'))
+
+        bill = Bills.objects.create(user=int(request.user.id), amount=amount)
+        callBackUrl = '%s%s' % (SITE_URL, reverse('pin-verify-payment', args=[bill.id]))
 
         url = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'
         client = Client(url)
-        desc = u'پرداخت سورتحساب'
+        desc = u'پرداخت صورتحساب'
 
         data = {'MerchantID': MERCHANT_ID,
-                'Amount': 100,
+                'Amount': amount,
                 'Description': desc,
                 'Email': "vchakoshy@gmail.com",
                 'Mobile': "09195308965",
                 'CallbackURL': callBackUrl}
 
         result = client.service.PaymentRequest(**data)
-        print result
 
         if result['Status'] == 100:
             url = 'https://www.zarinpal.com/pg/StartPay/%s' % str(result['Authority'])
@@ -594,7 +600,8 @@ def inc_credit(request):
     })
 
 
-def verify_payment(request):
+def verify_payment(request, bill_id):
+    bill = Bills.objects.get(id=bill_id)
 
     Authority = request.GET.get('Authority', False)
     status = request.GET.get('Status', False)
@@ -604,15 +611,14 @@ def verify_payment(request):
         url = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'
         client = Client(url)
         data = {'MerchantID': MERCHANT_ID,
-                'Amount': 100,
+                'Amount': bill.amount,
                 'Authority': Authority}
 
         result = client.service.PaymentVerification(**data)
 
         if result['Status'] == 100:
             bill.trans_id = result['RefID']
-            bill.pay_status = True
-            bill.total_payed = bill.total_discount
+            bill.status = 1
             bill.save()
             messages.success(request, 'پرداخت با موفقیت انجام شد. کد رهگیری شما %s' % str(result['RefID']))
             return HttpResponseRedirect(reverse('bill_view', args=[bill.number]))

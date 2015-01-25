@@ -81,7 +81,7 @@ urlpatterns += patterns('pin.views_user',
     url(r'^sendurl/$', 'sendurl', name="pin-sendurl"),
     url(r'^send/$', 'send', name="pin-send"),
     url(r'^inc/credit/$', 'inc_credit', name="pin-inc-credit"),
-    url(r'^verify_payment/$', 'verify_payment', name="pin-verify-payment"),
+    url(r'^verify_payment/(?P<bill_id>\w+)/$', 'verify_payment', name="pin-verify-payment"),
 )
 
 urlpatterns += patterns('pin.views_backbone',

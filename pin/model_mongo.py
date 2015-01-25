@@ -4,6 +4,12 @@ from django.conf import settings
 
 connect(settings.MONGO_DB)
 
+class Bills(Document):
+    user = IntField()
+    status = IntField(default=0)
+    amount = IntField()
+    trans_id = StringField()
+
 
 class PostMeta(Document):
     post = IntField()
