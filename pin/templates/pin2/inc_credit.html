@@ -1,0 +1,34 @@
+{% extends "pin2/flat.base.box.html"%}
+
+{% block content %}
+
+<div class="panel panel-default">
+	<div class="panel-heading">افزایش موجودی
+	</div>
+	<div class="panel-body">
+		<div class="col-md-4">
+		<form method="post" class="form">
+			{% csrf_token %}
+			<div class="form-group">
+				<label>میزان اعتبار</label>
+				<select name="price" class="form-control">
+					<option value="100">100 تومان</option>
+					<option value="500">500 تومان</option>
+					<option value="100">1000 تومان</option>
+					<option value="2000">2000 تومان</option>
+					<option value="5000">5000 تومان</option>
+					<option value="10000">10000 تومان</option>
+				</select>
+			</div>
+
+			<div class="form-group col-md-6">
+				<input class="form-control btn btn-primary" type="submit" value="پرداخت"> 
+			</div>
+
+		</form>
+		</div>
+	</div>
+
+</div>
+
+{% endblock content %}

@@ -80,6 +80,8 @@ urlpatterns += patterns('pin.views_user',
     url(r'^edit/(?P<post_id>\d+)/$', 'edit', name="pin-item-edit"),
     url(r'^sendurl/$', 'sendurl', name="pin-sendurl"),
     url(r'^send/$', 'send', name="pin-send"),
+    url(r'^inc/credit/$', 'inc_credit', name="pin-inc-credit"),
+    url(r'^verify_payment/$', 'verify_payment', name="pin-verify-payment"),
 )
 
 urlpatterns += patterns('pin.views_backbone',

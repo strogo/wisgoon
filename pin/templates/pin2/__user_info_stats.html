@@ -39,7 +39,11 @@
     {% endif %}
     <tr>
         <td>موجودی حساب :</td>
-        <td>{{cur_user.user_meta.credit}} تومان</td>
+        <td>{{cur_user.user_meta.credit}} تومان 
+            {% if request.user.id == user.id %}
+            <a href="{% url "pin-inc-credit"%}">افزایش</a>
+            {% endif %}
+        </td>
     </tr>
     </table>
 

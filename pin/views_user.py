@@ -32,7 +32,10 @@ from pin.tools import get_request_timestamp, create_filename,\
 
 from user_profile.models import Profile
 
+from suds.client import Client
+
 MEDIA_ROOT = settings.MEDIA_ROOT
+MERCHANT_ID = settings.MERCHANT_ID
 
 def parse_instagram_update(update):
     instagram_userid = update['object_id']
@@ -560,3 +563,62 @@ def notif_all(request):
         nl.append(anl)
         
     return render(request, 'pin/notif_user.html', {'notif': nl})
+
+@login_required
+def inc_credit(request):
+    if request.method == "POST":
+        callBackUrl = 'http://127.0.0.1:800/%s' % reverse('pin-verify-payment')
+
+        url = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'
+        client = Client(url)
+        desc = u'پرداخت سورتحساب'
+
+        data = {'MerchantID': MERCHANT_ID,
+                'Amount': 100,
+                'Description': desc,
+                'Email': "vchakoshy@gmail.com",
+                'Mobile': "09195308965",
+                'CallbackURL': callBackUrl}
+
+        result = client.service.PaymentRequest(**data)
+        print result
+
+        if result['Status'] == 100:
+            url = 'https://www.zarinpal.com/pg/StartPay/%s' % str(result['Authority'])
+            return HttpResponseRedirect(url)
+        else:
+            messages.error(request, 'خطا هنگام وصل به سرور بانک')
+            return HttpResponseRedirect(reverse('bill_view'))
+    return render(request, 'pin2/inc_credit.html', {
+
+    })
+
+
+def verify_payment(request):
+
+    Authority = request.GET.get('Authority', False)
+    status = request.GET.get('Status', False)
+
+    if Authority and status == 'OK':
+
+        url = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'
+        client = Client(url)
+        data = {'MerchantID': MERCHANT_ID,
+                'Amount': 100,
+                'Authority': Authority}
+
+        result = client.service.PaymentVerification(**data)
+
+        if result['Status'] == 100:
+            bill.trans_id = result['RefID']
+            bill.pay_status = True
+            bill.total_payed = bill.total_discount
+            bill.save()
+            messages.success(request, 'پرداخت با موفقیت انجام شد. کد رهگیری شما %s' % str(result['RefID']))
+            return HttpResponseRedirect(reverse('bill_view', args=[bill.number]))
+        else:
+            messages.error(request, 'پرداخت نا موفق، در صورت کسر از حساب شما بانک مبلغ را برگشت خواهد داد.')
+            return HttpResponseRedirect(reverse('profile'))
+
+    else:
+        return HttpResponseRedirect(reverse('profile'))
