@@ -571,7 +571,7 @@ def inc_credit(request):
 
         amount = request.POST.get('amount', 0)
         if not amount:
-            return HttpResponseRedirect(reverse('inc_credit'))
+            return HttpResponseRedirect(reverse('pin-inc-credit'))
 
         bill = Bills.objects.create(user=int(request.user.id), amount=amount)
         callBackUrl = '%s%s' % (SITE_URL, reverse('pin-verify-payment', args=[bill.id]))
@@ -594,7 +594,7 @@ def inc_credit(request):
             return HttpResponseRedirect(url)
         else:
             messages.error(request, 'خطا هنگام وصل به سرور بانک')
-            return HttpResponseRedirect(reverse('bill_view'))
+            return HttpResponseRedirect(reverse('pin-inc-credit'))
     return render(request, 'pin2/inc_credit.html', {
 
     })
@@ -621,10 +621,10 @@ def verify_payment(request, bill_id):
             bill.status = 1
             bill.save()
             messages.success(request, 'پرداخت با موفقیت انجام شد. کد رهگیری شما %s' % str(result['RefID']))
-            return HttpResponseRedirect(reverse('inc_credit'))
+            return HttpResponseRedirect(reverse('pin-inc-credit'))
         else:
             messages.error(request, 'پرداخت نا موفق، در صورت کسر از حساب شما بانک مبلغ را برگشت خواهد داد.')
-            return HttpResponseRedirect(reverse('inc_credit'))
+            return HttpResponseRedirect(reverse('pin-inc-credit'))
 
     else:
-        return HttpResponseRedirect(reverse('inc_credit'))
+        return HttpResponseRedirect(reverse('pin-inc-credit'))
