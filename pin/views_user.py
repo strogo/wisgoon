@@ -621,10 +621,10 @@ def verify_payment(request, bill_id):
             bill.status = 1
             bill.save()
             messages.success(request, 'پرداخت با موفقیت انجام شد. کد رهگیری شما %s' % str(result['RefID']))
-            return HttpResponseRedirect(reverse('bill_view', args=[bill.number]))
+            return HttpResponseRedirect(reverse('inc_credit'))
         else:
             messages.error(request, 'پرداخت نا موفق، در صورت کسر از حساب شما بانک مبلغ را برگشت خواهد داد.')
-            return HttpResponseRedirect(reverse('profile'))
+            return HttpResponseRedirect(reverse('inc_credit'))
 
     else:
-        return HttpResponseRedirect(reverse('profile'))
+        return HttpResponseRedirect(reverse('inc_credit'))
