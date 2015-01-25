@@ -6,7 +6,7 @@
 	<div class="col-md-12">
 		<div class="row">
 		{% if user.is_superuser %}
-			<a class="btn btn-primary" href="{% url "blog-admin" %}">Admin</a>
+			<a class="btn btn-primary" href="{% url "blog-admin" %}" style="position:fixed;top:100px;left:10px;">Admin</a>
 		{% endif %}
 		</div>
 
@@ -16,7 +16,7 @@
 				<div class="panel-heading">{{p.title}}
 				</div>
 				<div class="panel-body">
-					{{p.text}}
+					{{p.text|safe}}
 				</div>
 			
 			</div>
