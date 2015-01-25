@@ -14,7 +14,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 
 from pin.models import Post, Follow, Likes, Category, Comments
-from pin.tools import get_request_timestamp, get_request_pid, check_block
+from pin.tools import get_request_timestamp, get_request_pid, check_block,\
+    get_user_meta
 
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
@@ -534,6 +535,8 @@ def topgroupuser(request):
 def user(request, user_id, user_name=None):
     user = get_object_or_404(User, pk=user_id)
     profile = Profile.objects.get_or_create(user_id=user_id)
+
+    user.user_meta = get_user_meta(user_id=user_id)
 
     timestamp = get_request_timestamp(request)
     if timestamp == 0:

@@ -1,29 +1,46 @@
 {% load humanize %}
 <div class="col-md-12 col-sm-12 col-xs-12 detail-info">
-امتیاز : {{cur_user.profile.score|intcomma}}
-<br />
-تعداد مطالب ارسالی : {{cur_user.profile.cnt_post}}<br />
-
-تعداد لایک : {{cur_user.profile.cnt_like}}<br />
-
-وضعیت ارسال مطلب : {% if cur_user.is_active %}
-    فعال
-    {% if user.is_superuser %}
-        <a href="{% url "activate-user" cur_user.id 0%}">غیر فعال کردن</a>
+    <table class="table">
+    <tr>
+        <td>امتیاز :</td>
+        <td>{{cur_user.profile.score|intcomma}}</td>
+    </tr>
+    <tr>
+        <td>تعداد مطالب :</td>
+        <td>{{cur_user.profile.cnt_post}}</td>
+    </tr>
+    <tr>
+        <td>تعداد لایک :</td>
+        <td>{{cur_user.profile.cnt_like}}</td>
+    </tr>
+    <tr>
+        <td>ارسال مطلب :</td>
+        <td>{% if cur_user.is_active %}
+        فعال
+        {% if user.is_superuser %}
+            <a href="{% url "activate-user" cur_user.id 0%}">غیر فعال کردن</a>
+        {% endif %}
+        {% else%}
+        غیرفعال
+        {% if user.is_superuser %}
+            <a href="{% url "activate-user" cur_user.id 1%}">فعال کردن</a>
+        {% endif %}
+        {%endif%}</td>
+    </tr>
+    <tr>
+        <td>تاریخ عضویت :</td>
+        <td>{{cur_user.date_joined|date:"d-m-Y"}}</td>
+    </tr>
+    {% if cur_user.profile.website.strip|length > 0 %}
+    <tr>
+        <td>وب سایت :</td>
+        <td><a target="_blank" href="{{cur_user.profile.website}}"><i class="glyphicon glyphicon-globe"> </i></a></td>
+    </tr>
     {% endif %}
-    {% else%}
-    غیرفعال
-    {% if user.is_superuser %}
-        <a href="{% url "activate-user" cur_user.id 1%}">فعال کردن</a>
-    {% endif %}
-    {%endif%}
-<br />
-
-تاریخ عضویت : {{cur_user.date_joined|date:"d-m-Y"}}<br />
-
-{% if cur_user.profile.website.strip|length > 0 %}
-وب سایت :
-<a target="_blank" href="{{cur_user.profile.website}}"><i class="glyphicon glyphicon-globe"> </i></a>
-{% endif %}<br />
+    <tr>
+        <td>موجودی حساب :</td>
+        <td>{{cur_user.user_meta.credit}}</td>
+    </tr>
+    </table>
 
 </div>

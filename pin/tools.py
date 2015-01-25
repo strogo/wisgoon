@@ -10,6 +10,7 @@ from tastypie.models import ApiKey
 
 from user_profile.models import Profile
 from pin.models import Category, Block
+from pin.model_mongo import UserMeta
 
 from daddy_avatar.templatetags import daddy_avatar
 
@@ -231,3 +232,11 @@ def check_block(user_id, blocked_id):
         return True
 
     return False
+
+def get_user_meta(user_id):
+    try:
+        user_meta = UserMeta.objects.get(user=user_id)
+    except UserMeta.DoesNotExist:
+        user_meta = UserMeta.objects.create(user=user_id)
+
+    return user_meta
