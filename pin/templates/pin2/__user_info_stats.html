@@ -1,10 +1,10 @@
 {% load humanize %}
 <div class="col-md-12 col-sm-12 col-xs-12 detail-info">
-امتیاز : {{profile.score|intcomma}}
+امتیاز : {{cur_user.profile.score|intcomma}}
 <br />
-تعداد مطالب ارسالی : {{profile.cnt_post}}<br />
+تعداد مطالب ارسالی : {{cur_user.profile.cnt_post}}<br />
 
-تعداد لایک : {{profile.cnt_like}}<br />
+تعداد لایک : {{cur_user.profile.cnt_like}}<br />
 
 وضعیت ارسال مطلب : {% if cur_user.is_active %}
     فعال

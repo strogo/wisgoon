@@ -188,8 +188,6 @@ class Post(models.Model):
                             set__img_236_h=h,
                             upsert=True)
 
-            
-
         if api:
             final_url = new_image_url
         else:
