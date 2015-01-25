@@ -1,9 +1,12 @@
 {% spaceless %}
 {% for post_one in posts %}
 	{% with post_one.object as item %}
+
+	{% if item %}
 		{% include "pin2/__items_base.html" %}
 
 		<span data-next="{{offset}}" ></span>
+	{% endif %}
 
 	{% endwith %}
 {%endfor%}
