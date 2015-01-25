@@ -5,6 +5,14 @@ from django.conf import settings
 connect(settings.MONGO_DB)
 
 
+class UserMeta(Document):
+    user = IntField()
+    credit = IntField(default=0)
+
+    meta = {
+        'indexes': ['user']
+    }
+
 class PostMeta(Document):
     post = IntField()
     img_236 = StringField()
