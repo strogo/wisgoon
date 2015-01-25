@@ -620,6 +620,7 @@ def verify_payment(request, bill_id):
             bill.trans_id = str(result['RefID'])
             bill.status = 1
             bill.save()
+            UserMeta.objects(user=bill.user).update(inc__credit=bill.amount)
             messages.success(request, 'پرداخت با موفقیت انجام شد. کد رهگیری شما %s' % str(result['RefID']))
             return HttpResponseRedirect(reverse('pin-inc-credit'))
         else:
