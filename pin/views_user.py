@@ -617,7 +617,7 @@ def verify_payment(request, bill_id):
         result = client.service.PaymentVerification(**data)
 
         if result['Status'] == 100:
-            bill.trans_id = result['RefID']
+            bill.trans_id = str(result['RefID'])
             bill.status = 1
             bill.save()
             messages.success(request, 'پرداخت با موفقیت انجام شد. کد رهگیری شما %s' % str(result['RefID']))
