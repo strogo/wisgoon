@@ -32,7 +32,7 @@ class UserMeta(Document):
     credit = IntField(default=0)
 
     meta = {
-        'indexes': ['user']
+        'indexes': ['user', '-credit']
     }
 
 
