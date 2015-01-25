@@ -563,6 +563,7 @@ def user(request, user_id, user_name=None):
         return render(request, 'pin2/user.html',
                       {'latest_items': latest_items,
                        'follow_status': follow_status,
+                       'user_id': int(user_id),
                        'profile': profile,
                        'cur_user': user})
 
