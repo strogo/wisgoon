@@ -40,7 +40,7 @@ class Ads(Document):
             ad = Ads.objects.filter(users__nin=[user_id], ended=False)[:1]
             if ad:
                 ad = ad[0]
-                if ad.cnt_view == self.MAX_TYPES[ad.ads_type]:
+                if ad.cnt_view >= self.MAX_TYPES[ad.ads_type]:
                     Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1, set__ended=True)
                 else:
                     # pass
