@@ -583,8 +583,8 @@ def inc_credit(request):
         data = {'MerchantID': MERCHANT_ID,
                 'Amount': amount,
                 'Description': desc,
-                'Email': "vchakoshy@gmail.com",
-                'Mobile': "09195308965",
+                'Email': str(request.user.email),
+                'Mobile': str(request.user.id),
                 'CallbackURL': callBackUrl}
 
         result = client.service.PaymentRequest(**data)
