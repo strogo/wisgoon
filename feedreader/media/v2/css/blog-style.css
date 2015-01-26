@@ -1,8 +1,8 @@
 ﻿hr{
 	margin: 5px;
 }
-.post,
-.widget{
+.blog-post,
+.blog-widget{
 	background-color: #fff;
 	border-radius: 20px;
 	box-shadow: 0 2px #e2e4e7;
@@ -10,29 +10,29 @@
 	margin-left: 10px;
 	padding: 30px 20px;
 }
-.post .header{
+.blog-post .blog-header{
 	margin-bottom: 50px;
 }
-.post .header small{
+.blog-post .blog-header small{
 	color: #aaa;
 }
-.post .title{
+.blog-post .blog-title{
 	font-weight: bold;
 }
-.post .footer .avatar{
+.blog-post .blog-footer .avatar{
 	float: right;
 }
-.post .footer {
+.blog-post .blog-footer {
 	opacity: .5;
 }
-.post .footer:hover{
+.blog-post .blog-footer:hover{
 	opacity: 1;
 }
-.post .footer .username{
+.blog-post .blog-footer .username{
 	float: right;
 	padding: 10px;
 }
-.post .footer img{
+.blog-post .blog-footer img{
 	width: 45px;
 	height: 45px;
 }

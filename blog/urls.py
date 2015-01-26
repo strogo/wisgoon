@@ -8,6 +8,7 @@ user_resource = UserResource()
 
 urlpatterns = patterns('blog.views',
     url(r'^$', 'home', name='blog-home'),
+    url(r'^post/$', 'view_post', name='blog-view_post'),
     url(r'^admin/$', 'admin', name='blog-admin'),
     url(r'^submit/$', 'submit', name='blog-submit'),
     url(r'^edit/(?P<id>\w+)/$', 'edit', name='blog-edit'),

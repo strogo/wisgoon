@@ -80,4 +80,11 @@ def edit(request, id):
         form = PostForm(d)
     return render(request, 'blog/submit.html', {
         'form': form,
-    }) 
+    })
+
+def view_post(request, post_id):
+    post = BlogPost.objects.get(id=post_id)
+
+    return render(request, 'blog/view_post.html',{
+        'post': post
+        })
