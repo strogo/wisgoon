@@ -176,10 +176,10 @@ class Post(models.Model):
                 try:
                     ibase, nname, h = self.save_thumb(basewidth=236)
                 except IOError, e:
-                    print str(e), "get_image_236"
+                    # print str(e), "get_image_236"
                     return False
                 except Exception, e:
-                    print str(e), "get_image_236"
+                    # print str(e), "get_image_236"
                     return False
 
                 new_image_url = ibase + "/" + nname
