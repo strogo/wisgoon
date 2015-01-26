@@ -68,7 +68,7 @@
 
 	{% if item.text.strip|length > 0 %}
 	<div class="description">
-		<p class="{{item.text|length}}">{{item.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:15}}
+		<p class="{{item.text|length}}">{{item.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:20}}
 		</p>
 	</div>
 	{% if item.get_tags %}
