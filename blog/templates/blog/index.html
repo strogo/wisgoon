@@ -1,38 +1,60 @@
 {% extends "pin2/flat.base.box.html" %}
+{% load thumbnail %}
+{% load daddy_avatar %}
+{% load pin_tags%}
+{% load humanize %}
+
 
 {% block content%}
 
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-12 blog">
 		<div class="row">
-		{% if user.is_superuser %}
-			<a class="btn btn-primary" href="{% url "blog-admin" %}">Admin</a>
-		{% endif %}
+			{% if user.is_superuser %}
+			<a class="btn btn-primary" href="{% url "blog-admin" %}" style="position:fixed;top:100px;left:10px;">Admin</a>
+			{% endif %}
 		</div>
 
 		<div class="col-md-9">
-		{% for p in posts %}
-			<div class="panel panel-default">
-				<div class="panel-heading">{{p.title}}
+			{% for p in posts %}
+			<div class="post">
+				<div class="header">
+					<h1 class="title pull-right">{{p.title}}</h1>
+					
+					<div class="clear"></div>
+					<hr/>
+					<div class="pull-left"><small>{{p.create_time}}</small><small class="sep"> :: </small><a href="#comments"><small class="comment-count pull-left">  ۲۲ دیدگاه</small></a></div>
 				</div>
-				<div class="panel-body">
-					{{p.text}}
+				<div class="content">
+					{{p.text|safe|linebreaks}}
 				</div>
-			
+				<hr />
+				<div class="footer">
+					<div class="avatar">
+						<a href="{% url "pin-user" p.user %}">
+							<img src="{{p.user_id|get_avatar:54}}" style="display: inline;" > 
+						</a>
+					</div>
+					<div class="username">
+						<a href="{% url "pin-user" p.user %}">
+							{{p.user|get_userdata_name}}
+						</a>
+					</div>
+				</div>
+				<div class="clear"></div>
+
 			</div>
-		{% endfor %}
+			{% endfor %}
 		</div>
 
-		<div class="col-md-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">برچسبها
-				</div>
-				<div class="panel-body">
+		<div class="col-md-3 sidebar">
+			<div class="tags widget">
+				<div class="">
 					{% for t in top_tags %}
 					<a class="btn btn-default" href="{% url "blog-tag" t %}">{{t}}</a>
 					{% endfor %}
 				</div>
-			
+
 			</div>
 		</div>
 		

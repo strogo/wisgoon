@@ -16,6 +16,7 @@ class BlogPost(Document):
     tags = ListField(StringField())
     create_time = DateTimeField()
     comments = ListField(EmbeddedDocumentField(Comment))
+    user = IntField()
 
     meta = {
         'indexes':['tags']
