@@ -638,12 +638,14 @@ def save_as_ads(request, post_id):
     if request.method == "POST":
         mode = request.POST.get('mode')
         if user_meta.credit > int(mode):
-            messages.success(request, "saved")
             try:
                 ad = Ads.objects.get(post=int(post_id))
                 messages.error(request, u"این پست قبلا آگهی شده است")
             except Exception, Ads.DoesNotExist:
                 ad = Ads.objects.create(user=request.user.id, post=int(post_id))
+                user_meta.credit = int(user_meta.credit) - int(mode)
+                user_meta.save()
+                messages.success(request, u'مطلب مورد نظر شما با موفقیت آگهی شد.')
 
         else:
             messages.error(request, u"موجودی حساب شما برای آگهی دادن کافی نیست.")

@@ -16,9 +16,9 @@ from django.conf import settings
 
 from sorl.thumbnail import get_thumbnail
 
-from pin.tools import AuthCache
+from pin.tools import AuthCache, get_user_ip
 from pin.models import Post, Category, Likes, Stream, Follow, Comments, Block
-from pin.model_mongo import Notif
+from pin.model_mongo import Notif, Ads
 
 from haystack.query import SearchQuerySet
 
@@ -343,12 +343,22 @@ def post(request):
         #     if hot_post:
         #         posts = list(hot_post) + list(posts)
 
-    # if not user_id:
-    #     hot_post = Post.objects\
-    #         .values(*Post.NEED_KEYS)\
-    #         .filter(id=3979949)
-    #     if hot_post:
-    # posts = list(hot_post) + list(posts)
+    if not user_id:
+        hot_post = None
+
+        if request.user.id:
+            viewer_id = str(request.user.id)
+        else:
+            viewer_id = str(get_user_ip(request))
+
+        ad = Ads.get_ad(user_id=viewer_id)
+        if ad:
+            hot_post = int(ad.post)
+        if hot_post:
+            hot_post = Post.objects\
+                .only(*Post.NEED_KEYS2)\
+                .filter(id=hot_post)
+            posts = list(hot_post) + list(posts)
 
     thumb_size = int(request.GET.get('thumb_size', "236"))
 
