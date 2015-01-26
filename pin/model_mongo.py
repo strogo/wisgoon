@@ -4,11 +4,45 @@ from django.conf import settings
 
 connect(settings.MONGO_DB)
 
+class Ads(Document):
+    TYPE_2000_USER = 1
+
+    user = IntField()
+    approved = BooleanField(default=True)
+    ended = BooleanField(default=False)
+    cnt_view = IntField(default=0)
+    post = IntField()
+    ads_type = IntField(default=TYPE_2000_USER)
+    users = ListField(StringField())
+
+    meta ={
+        'indexes': ['users', ('ads_type', 'users'), ('users', 'ended')]
+    }
+
+    @classmethod
+    def get_ad(self, user_id):
+        # print "viewer id:", user_id
+        ad = Ads.objects.filter(users__nin=[user_id], ended=False)[:1]
+        if ad:
+            ad = ad[0]
+            if ad.ads_type == self.TYPE_2000_USER and ad.cnt_view == 2000:
+                Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1, ended=True)
+            else:
+                Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1)
+            return ad
+        return None
+
+
+
 class Bills(Document):
     user = IntField()
     status = IntField(default=0)
     amount = IntField()
     trans_id = StringField()
+
+    meta = {
+        'indexes': ['user']
+    }
 
 
 class PostMeta(Document):
