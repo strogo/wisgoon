@@ -637,7 +637,7 @@ def save_as_ads(request, post_id):
 
     if request.method == "POST":
         mode = request.POST.get('mode')
-        if user_meta.credit > int(mode):
+        if user_meta.credit >= int(mode):
             try:
                 ad = Ads.objects.get(post=int(post_id))
                 messages.error(request, u"این پست قبلا آگهی شده است")
