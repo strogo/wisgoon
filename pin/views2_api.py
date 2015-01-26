@@ -163,14 +163,14 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
             else:
                 imo = p.get_image_236(api=True)
         except Exception, e:
-            print str(e), "166"
+            # print str(e), "166"
             continue
 
         if imo:
             o['thumbnail'] = imo['url']
             o['hw'] = imo['hw']
         else:
-            print "we dont have imo", p.id, o_image, imo
+            # print "we dont have imo", p.id, o_image, imo
             continue
 
         o['category'] = Category.get_json(cat_id=p.category_id)
