@@ -1156,6 +1156,9 @@ a.img-move{
 .f-white{
 	color: #FFF!important;
 }
+.description p > a{
+	color: blue!important;
+}
 
 /***********activity count ******/
 #activity-count {
