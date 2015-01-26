@@ -19,7 +19,7 @@
 			{% for p in posts %}
 			<div class="blog-post">
 				<div class="blog-header">
-					<h1 class="blog-title pull-right">{{p.title}}</h1>
+					<h1 class="blog-title pull-right"><a href="{% url "blog-post_view" %}">{{p.title}}</a></h1>
 					
 					<div class="clear"></div>
 					<hr/>

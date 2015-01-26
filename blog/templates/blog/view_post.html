@@ -16,35 +16,33 @@
 		</div>
 
 		<div class="col-md-9">
-			{% for p in posts %}
 			<div class="blog-post">
 				<div class="blog-header">
-					<h1 class="blog-title pull-right">{{p.title}}</h1>
+					<h1 class="blog-title pull-right">{{post.title}}</h1>
 					
 					<div class="clear"></div>
 					<hr/>
-					<div class="pull-left"><small>{{p.create_time}}</small><small class="sep"> :: </small><a href="#comments"><small class="comment-count pull-left">  ۲۲ دیدگاه</small></a></div>
+					<div class="pull-left"><small>{{post.create_time}}</small><small class="sep"> :: </small><a href="#comments"><small class="comment-count pull-left">  ۲۲ دیدگاه</small></a></div>
 				</div>
 				<div class="content">
-					{{p.text|safe|linebreaks}}
+					{{post.text|safe|linebreaks}}
 				</div>
 				<hr />
 				<div class="blog-footer">
 					<div class="avatar">
-						<a href="{% url "pin-user" p.user %}">
-							<img src="{{p.user_id|get_avatar:54}}" style="display: inline;" > 
+						<a href="{% url "pin-user" post.user %}">
+							<img src="{{post.user_id|get_avatar:54}}" style="display: inline;" > 
 						</a>
 					</div>
 					<div class="username">
-						<a href="{% url "pin-user" p.user %}">
-							{{p.user|get_userdata_name}}
+						<a href="{% url "pin-user" post.user %}">
+							{{post.user|get_userdata_name}}
 						</a>
 					</div>
 				</div>
 				<div class="clear"></div>
 
 			</div>
-			{% endfor %}
 		</div>
 
 		<div class="col-md-3 blog-sidebar">
