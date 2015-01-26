@@ -6,16 +6,19 @@ connect(settings.MONGO_DB)
 
 class Ads(Document):
     TYPE_2000_USER = 1
-    TYPE_4000_USER = 2
+    TYPE_10000_USER = 2
+    TYPE_50000_USER = 3
 
     MAX_TYPES = {
         TYPE_2000_USER: 2000,
-        TYPE_4000_USER: 4000
+        TYPE_10000_USER: 10000,
+        TYPE_50000_USER: 50000
     }
 
     TYPE_PRICES = {
         TYPE_2000_USER: 500,
-        TYPE_4000_USER: 1000
+        TYPE_10000_USER: 2000,
+        TYPE_50000_USER: 7000,
     }
 
     user = IntField()
@@ -32,14 +35,15 @@ class Ads(Document):
 
     @classmethod
     def get_ad(self, user_id):
-        # print "viewer id:", user_id
+        print "viewer id:", user_id
         try:
             ad = Ads.objects.filter(users__nin=[user_id], ended=False)[:1]
             if ad:
                 ad = ad[0]
-                if ad.cnt_view == MAX_TYPES[ad.ads_type]:
+                if ad.cnt_view == self.MAX_TYPES[ad.ads_type]:
                     Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1, set__ended=True)
                 else:
+                    # pass
                     Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1)
                 return ad
         except Exception, e:

@@ -304,12 +304,25 @@ def latest_redis(request):
     pl = Post.latest(pid=pid)
     arp = []
 
+    if request.user.id:
+        viewer_id = str(request.user.id)
+    else:
+        viewer_id = str(get_user_ip(request))
+
+    # print viewer_id
+    ad = Ads.get_ad(user_id=viewer_id)
+    if ad:
+        # print "ads is:",  ad, ad.post, len(arp), type(arp)
+        arp.append(Post.objects.get(id=int(ad.post)))
+        # print len(arp)
+
     for pll in pl:
         try:
             arp.append(Post.objects.get(id=pll))
         except:
             pass
 
+   
     latest_items = arp
 
     if request.is_ajax():

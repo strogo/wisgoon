@@ -632,18 +632,21 @@ def verify_payment(request, bill_id):
 
 @login_required
 def save_as_ads(request, post_id):
+    # for i in range(0, 50000):
+    #     Ads.objects(user=55).update(add_to_set__users=i, upsert=True)
     p = Post.objects.get(id=post_id)
     user_meta = get_user_meta(user_id=int(request.user.id))
 
     if request.method == "POST":
-        mode = request.POST.get('mode')
-        if user_meta.credit >= int(mode):
+        mode = int(request.POST.get('mode'))
+        mode_price = Ads.TYPE_PRICES[mode]
+        if user_meta.credit >= int(mode_price):
             try:
-                ad = Ads.objects.get(post=int(post_id))
+                ad = Ads.objects.get(post=int(post_id), ended=False)
                 messages.error(request, u"این پست قبلا آگهی شده است")
             except Exception, Ads.DoesNotExist:
-                ad = Ads.objects.create(user=request.user.id, post=int(post_id))
-                user_meta.credit = int(user_meta.credit) - int(mode)
+                ad = Ads.objects.create(user=request.user.id, post=int(post_id), ads_type=mode)
+                user_meta.credit = int(user_meta.credit) - int(mode_price)
                 user_meta.save()
                 messages.success(request, u'مطلب مورد نظر شما با موفقیت آگهی شد.')
 

@@ -1,4 +1,5 @@
 {% extends "pin2/flat.base.box.html"%}
+{% load pin_tags %}
 
 {% block content %}
 
@@ -12,11 +13,11 @@
 			{% csrf_token %}
 			<div class="form-group">
 				<select name="mode" class="form-control">
-					{% for tp in Ads.TYPE_PRICES %}
-					<option value="500">نمایش به 2,000 کاربر - 500 تومان</option>
+					{% for type, price in Ads.TYPE_PRICES.items %}
+					<option value="{{type}}">نمایش به {{Ads.MAX_TYPES|keyvalue:type}} کاربر - {{price}} تومان</option>
 					{% endfor %}
-					<option value="500">نمایش به 2,000 کاربر - 500 تومان</option>
-					<option value="1000">نمایش به 4,000 کاربر - 1000 تومان</option>
+					<!-- <option value="500">نمایش به 2,000 کاربر - 500 تومان</option>
+					<option value="1000">نمایش به 4,000 کاربر - 1000 تومان</option> -->
 				</select>
 			</div>
 			<div class="form-group">
