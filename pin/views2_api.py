@@ -346,8 +346,8 @@ def post(request):
     if not user_id:
         hot_post = None
 
-        if request.user.id:
-            viewer_id = str(request.user.id)
+        if cur_user:
+            viewer_id = str(cur_user)
         else:
             viewer_id = str(get_user_ip(request))
 
