@@ -35,7 +35,7 @@ class Ads(Document):
 
     @classmethod
     def get_ad(self, user_id):
-        print "viewer id:", user_id
+        # print "viewer id:", user_id
         try:
             ad = Ads.objects.filter(users__nin=[user_id], ended=False)[:1]
             if ad:
