@@ -26,7 +26,7 @@ class Ads(Document):
         if ad:
             ad = ad[0]
             if ad.ads_type == self.TYPE_2000_USER and ad.cnt_view == 2000:
-                Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1, ended=True)
+                Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1, set__ended=True)
             else:
                 Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1)
             return ad
