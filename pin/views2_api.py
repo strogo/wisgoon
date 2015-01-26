@@ -853,6 +853,29 @@ def search2(request):
     return HttpResponse(json_data)
 
 
+def hashtag_top(request):
+    tags = []
+    sqs = SearchQuerySet().models(Post).facet('tags', mincount=0, limit=100)
+    print sqs.facet_counts()
+    if sqs:
+        tags = [t for t in sqs.facet_counts()['fields']['tags']]
+
+    print tags
+
+    data = {}
+    o = []
+    for t in tags:
+        dt = {
+            "tag": t[0],
+            "count": t[1]
+        }
+        o.append(dt)
+        print dt
+    data['objects'] = o
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
+
 def hashtag(request):
     ROW_PER_PAGE = 20
     cur_user = None
