@@ -47,7 +47,7 @@ class Ads(Document):
                     Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1)
                 return ad
         except Exception, e:
-            print str(e)
+            print str(e), "models_mongo 50"
         return None
 
 
