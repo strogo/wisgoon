@@ -7,6 +7,10 @@ connect(settings.MONGO_DB)
 class Ads(Document):
     TYPE_2000_USER = 1
 
+    MAX_TYPES = {
+        TYPE_2000_USER: 2000
+    }
+
     user = IntField()
     approved = BooleanField(default=True)
     ended = BooleanField(default=False)
@@ -26,7 +30,7 @@ class Ads(Document):
             ad = Ads.objects.filter(users__nin=[user_id], ended=False)[:1]
             if ad:
                 ad = ad[0]
-                if ad.ads_type == self.TYPE_2000_USER and ad.cnt_view == 2000:
+                if ad.cnt_view == MAX_TYPES[ad.ads_type]:
                     Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1, set__ended=True)
                 else:
                     Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1)
