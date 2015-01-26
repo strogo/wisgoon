@@ -8,12 +8,21 @@
 	<div class="panel-body">
 		<table class="table">
 			<thead>
-			<th></th>
+				<tr>
+					<th>#</th>
+					<th>کاربر</th>
+					<th>شماره مطلب</th>
+					<th>تعداد نمایش</th>
+					<th>نوع آگهی</th>
+					<th>اتمام</th>
+					<th>تعداد بینندگان</th>
+				</tr>
 			</thead>
 			{% for ad in ads %}
 			<tr>
-				<td>{{ad.id}}</td>
-				<td>{{ad.user}}</td>
+				<td>{{forloop.counter}}</td>
+				<td><a href="{% url "pin-user" ad.user%}">{{ad.user}}</a></td>
+				<td><a href="{% url "pin-item" ad.post%}">{{ad.post}}</a></td>
 				<td>{{ad.cnt_view}}</td>
 				<td>{{ad.ads_type}}</td>
 				<td>{{ad.ended}}</td>
