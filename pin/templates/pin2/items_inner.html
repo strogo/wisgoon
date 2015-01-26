@@ -13,6 +13,9 @@
 <a class="btn btn-danger" href="{% url "pin-item-delete" post.id %}">حذف پست</a>
 {% endif %}
 
+{% if user.id == post.user_id %}
+<a class="btn btn-success" href="{% url "pin-save-as-ads" post.id %}">ایجاد آگهی </a>
+{% endif %}
 
 
 <div class="post-content">

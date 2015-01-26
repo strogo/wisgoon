@@ -24,11 +24,11 @@ from pin.forms import PinForm, PinUpdateForm
 from pin.models import Post, Stream, Follow, Likes,\
     Report, Comments, Comments_score, Category
 
-from pin.model_mongo import Notif, UserMeta, Bills
+from pin.model_mongo import Notif, UserMeta, Bills, Ads
 
 import pin_image
 from pin.tools import get_request_timestamp, create_filename,\
-    get_user_ip, get_request_pid, check_block
+    get_user_ip, get_request_pid, check_block, get_user_meta
 
 from user_profile.models import Profile
 
@@ -629,3 +629,26 @@ def verify_payment(request, bill_id):
 
     else:
         return HttpResponseRedirect(reverse('pin-inc-credit'))
+
+@login_required
+def save_as_ads(request, post_id):
+    p = Post.objects.get(id=post_id)
+    user_meta = get_user_meta(user_id=int(request.user.id))
+
+    if request.method == "POST":
+        mode = request.POST.get('mode')
+        if user_meta.credit > int(mode):
+            messages.success(request, "saved")
+            try:
+                ad = Ads.objects.get(post=int(post_id))
+                messages.error(request, u"این پست قبلا آگهی شده است")
+            except Exception, Ads.DoesNotExist:
+                ad = Ads.objects.create(user=request.user.id, post=int(post_id))
+
+        else:
+            messages.error(request, u"موجودی حساب شما برای آگهی دادن کافی نیست.")
+        
+    return render(request, 'pin2/save_as_ads.html', {
+        'post': p,
+        'user_meta': user_meta,
+    })

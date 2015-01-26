@@ -15,7 +15,9 @@ from django.shortcuts import get_object_or_404, render
 
 from pin.models import Post, Follow, Likes, Category, Comments
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
-    get_user_meta
+    get_user_meta, get_user_ip
+
+from pin.model_mongo import Ads
 
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
@@ -27,6 +29,12 @@ REPORT_TYPE = settings.REPORT_TYPE
 
 
 def home(request):
+    # if request.user.id:
+    #     user_id = str(request.user.id)
+    # else:
+    #     user_id = str(get_user_ip(request))
+    # print Ads.get_ad(user_id=user_id)
+    
     pid = get_request_pid(request)
     pl = Post.home_latest(pid=pid)
     arp = []
