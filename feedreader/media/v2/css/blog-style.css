@@ -1,0 +1,41 @@
+﻿hr{
+	margin: 5px;
+}
+.post,
+.widget{
+	background-color: #fff;
+	border-radius: 20px;
+	box-shadow: 0 2px #e2e4e7;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	padding: 30px 20px;
+}
+.post .header{
+	margin-bottom: 50px;
+}
+.post .header small{
+	color: #aaa;
+}
+.post .title{
+	font-weight: bold;
+}
+.post .footer .avatar{
+	float: right;
+}
+.post .footer {
+	opacity: .5;
+}
+.post .footer:hover{
+	opacity: 1;
+}
+.post .footer .username{
+	float: right;
+	padding: 10px;
+}
+.post .footer img{
+	width: 45px;
+	height: 45px;
+}
+.sep{
+	margin: 0 10px;
+}

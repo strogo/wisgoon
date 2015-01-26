@@ -47,7 +47,7 @@ def submit(request):
             title = form.cleaned_data['title']
             text = form.cleaned_data['text']
             ct = datetime.now()
-            BlogPost.objects.create(title=title, text=text, tags= tags, create_time=ct)
+            BlogPost.objects.create(title=title, text=text, tags= tags, create_time=ct, user=request.user.id)
 
             return HttpResponseRedirect(reverse('blog-admin'))
     else:
@@ -66,7 +66,7 @@ def edit(request, id):
             p.tags = [t.replace(' ', '_') for t in p.tags]
             p.title = form.cleaned_data['title']
             p.text = form.cleaned_data['text']
-            
+            p.user = request.user.id
             p.save()
             return HttpResponseRedirect(reverse('blog-admin'))
     else:
