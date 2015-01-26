@@ -6,9 +6,16 @@ connect(settings.MONGO_DB)
 
 class Ads(Document):
     TYPE_2000_USER = 1
+    TYPE_4000_USER = 2
 
     MAX_TYPES = {
-        TYPE_2000_USER: 2000
+        TYPE_2000_USER: 2000,
+        TYPE_4000_USER: 4000
+    }
+
+    TYPE_PRICES = {
+        TYPE_2000_USER: 500,
+        TYPE_4000_USER: 1000
     }
 
     user = IntField()

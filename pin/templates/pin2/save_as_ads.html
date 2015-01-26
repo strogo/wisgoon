@@ -12,7 +12,11 @@
 			{% csrf_token %}
 			<div class="form-group">
 				<select name="mode" class="form-control">
+					{% for tp in Ads.TYPE_PRICES %}
 					<option value="500">نمایش به 2,000 کاربر - 500 تومان</option>
+					{% endfor %}
+					<option value="500">نمایش به 2,000 کاربر - 500 تومان</option>
+					<option value="1000">نمایش به 4,000 کاربر - 1000 تومان</option>
 				</select>
 			</div>
 			<div class="form-group">

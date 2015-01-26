@@ -653,4 +653,5 @@ def save_as_ads(request, post_id):
     return render(request, 'pin2/save_as_ads.html', {
         'post': p,
         'user_meta': user_meta,
+        'Ads': Ads,
     })
