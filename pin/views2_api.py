@@ -894,11 +894,14 @@ def hashtag(request):
             cur_user = AuthCache.id_from_token(token=token)
         posts = []
         for p in results:
-            pp = Post.objects\
-                .only(*Post.NEED_KEYS2)\
-                .get(id=p.object.id)
+            try:
+                pp = Post.objects\
+                    .only(*Post.NEED_KEYS2)\
+                    .get(id=p.object.id)
 
-            posts.append(pp)
+                posts.append(pp)
+            except:
+                pass
 
         thumb_size = request.GET.get('thumb_size', "100x100")
 
