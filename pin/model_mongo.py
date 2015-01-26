@@ -22,14 +22,17 @@ class Ads(Document):
     @classmethod
     def get_ad(self, user_id):
         # print "viewer id:", user_id
-        ad = Ads.objects.filter(users__nin=[user_id], ended=False)[:1]
-        if ad:
-            ad = ad[0]
-            if ad.ads_type == self.TYPE_2000_USER and ad.cnt_view == 2000:
-                Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1, set__ended=True)
-            else:
-                Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1)
-            return ad
+        try:
+            ad = Ads.objects.filter(users__nin=[user_id], ended=False)[:1]
+            if ad:
+                ad = ad[0]
+                if ad.ads_type == self.TYPE_2000_USER and ad.cnt_view == 2000:
+                    Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1, set__ended=True)
+                else:
+                    Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1)
+                return ad
+        except Exception, e:
+            print str(e)
         return None
 
 
