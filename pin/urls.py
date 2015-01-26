@@ -113,6 +113,7 @@ urlpatterns += patterns('pin.views_admin',
     url(r'^goto_index/(?P<item_id>\d+)/(?P<status>\d+)/', 'goto_index', name='pin-item-goto-index'),
 
     url(r'^fault/(?P<item_id>\d+)/', 'item_fault', name='pin-item-fault'),
+    url(r'^ads/admin/$', 'ads_admin', name='ads-admin'),
 
     url(r'^comment/delete/(?P<id>\d+)', 'comment_delete', name="pin-comment-delete"),
     url(r'^comment/approve/(?P<id>\d+)', 'comment_approve', name="pin-comment-approve"),

@@ -1,0 +1,29 @@
+{% extends "pin2/flat.base.box.html"%}
+
+{% block content %}
+
+<div class="panel panel-default">
+	<div class="panel-heading">مدیریت آگهی ها
+	</div>
+	<div class="panel-body">
+		<table class="table">
+			<thead>
+			<th></th>
+			</thead>
+			{% for ad in ads %}
+			<tr>
+				<td>{{ad.id}}</td>
+				<td>{{ad.user}}</td>
+				<td>{{ad.cnt_view}}</td>
+				<td>{{ad.ads_type}}</td>
+				<td>{{ad.ended}}</td>
+				<td>{{ad.users|length}}</td>
+			</tr>
+			{% endfor %}
+
+		</table>
+	</div>
+
+</div>
+
+{% endblock content %}
