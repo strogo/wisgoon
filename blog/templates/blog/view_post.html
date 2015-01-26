@@ -15,36 +15,13 @@
 			{% endif %}
 		</div>
 
-		<div class="col-md-9">
-			<div class="blog-post">
-				<div class="blog-header">
-					<h1 class="blog-title pull-right">{{post.title}}</h1>
-					
-					<div class="clear"></div>
-					<hr/>
-					<div class="pull-left"><small>{{post.create_time}}</small><small class="sep"> :: </small><a href="#comments"><small class="comment-count pull-left">  ۲۲ دیدگاه</small></a></div>
-				</div>
-				<div class="content">
-					{{post.text|safe|linebreaks}}
-				</div>
-				<hr />
-				<div class="blog-footer">
-					<div class="avatar">
-						<a href="{% url "pin-user" post.user %}">
-							<img src="{{post.user_id|get_avatar:54}}" style="display: inline;" > 
-						</a>
-					</div>
-					<div class="username">
-						<a href="{% url "pin-user" post.user %}">
-							{{post.user|get_userdata_name}}
-						</a>
-					</div>
-				</div>
-				<div class="clear"></div>
-
-			</div>
+		<div class="col-md-12">
+			{% include "blog/post-view.html" %}
+			{% include "blog/comments.html" %}
 		</div>
 
+		{% comment %}
+			
 		<div class="col-md-3 blog-sidebar">
 			<div class="tags blog-widget">
 				<div class="">
@@ -55,6 +32,7 @@
 
 			</div>
 		</div>
+		{% endcomment %}
 		
 	</div>
 </div>

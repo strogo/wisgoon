@@ -1,0 +1,63 @@
+{% load thumbnail %}
+{% load daddy_avatar %}
+{% load widget_tweaks %}
+{% load pin_tags%}
+{% load humanize %}
+
+<div class="comment-box blog-post post-box">
+	<h3 class="blog-title pull-right">دیدگاه کاربران</h3>
+
+	<div class="clear"></div>
+
+	<div class="comments">
+		{% for comment in post.comments %}
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="others-comment">
+					<div class="col-md-1 col-sm-1 col-xs-1 avatar">
+						<a href="{% url "pin-user" comment.user %}">
+							<img src="{{comment.user|get_avatar:36}}" alt="">
+						</a>
+						<a href="{% url "pin-user" comment.user %}">
+							{{comment.user|get_username}}
+						</a>
+					</div>
+
+
+					<div class="col-md-9 col-sm-9 col-xs-9">
+						<p>{{comment.content}}</p>
+					</div>
+					<div class="col-md-2 col-sm-2 col-xs-1">
+						{% if comment.create_time %}
+						<small>{{comment.create_time|jalali_mysql_date}}</small>
+						{% else %}
+						<small>بی تاریخ</small>
+						{% endif %}
+					</div>
+
+					<div class="clear"></div>
+				</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+
+<div class="comment-form post-box blog-post">
+	<h3 class="blog-title pull-right">ارسال دیدگاه</h3>
+	<div class="clear"></div>
+	<hr />
+
+	<form action="" method="post">
+		{% csrf_token %}
+		{% for fm in form %}
+			<div class="form-group">
+				<label for="{{fm.name}}-id">متن پیام</label>
+				<br />
+				{{fm|attr:"class:form-control"}}
+			</div>
+		{% endfor %}
+		<input type="submit" value="ثبت دیدگاه" class="btn btn-primary" />
+	</form>
+</div>

@@ -39,3 +39,16 @@
 .sep{
 	margin: 0 10px;
 }
+.others-comment .avatar img{
+	width: 40px;
+	height: 40px;
+}
+
+.comment-box .comments .row{
+	border-top: 1px solid #eee;
+	padding: 15px 0;
+	opacity: .4;
+}
+.comment-box .comments .row:hover{
+	opacity: 1;
+}

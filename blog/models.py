@@ -6,7 +6,8 @@ connect(settings.MONGO_DB)
 
 class Comment(EmbeddedDocument):
     content = StringField()
-    name = StringField(max_length=120)
+    create_time = DateTimeField()
+    user = IntField()
 
 
 class BlogPost(Document):

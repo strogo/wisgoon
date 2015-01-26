@@ -4,8 +4,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from datetime import datetime
 
-from models import BlogPost
-from forms import PostForm
+from models import BlogPost, Comment
+from forms import PostForm, CommentForm
 
 def get_tags():
     tag_freqs = BlogPost.objects.item_frequencies('tags', normalize=True)
@@ -82,9 +82,22 @@ def edit(request, id):
         'form': form,
     })
 
-def view_post(request, post_id):
-    post = BlogPost.objects.get(id=post_id)
+def view_post(request, id):
+    post = BlogPost.objects.get(id=id)
 
-    return render(request, 'blog/view_post.html',{
-        'post': post
-        })
+    if request.POST:
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            text = form.cleaned_data['text']
+            ct = datetime.now()
+            c = Comment(content=text, create_time=ct, user=request.user.id)
+            post.update(add_to_set__comments=c)
+
+            return HttpResponseRedirect(reverse('blog-view-post', args=[post.id]))
+    else:
+        form = CommentForm()
+
+    return render(request, 'blog/view_post.html', {
+        'post': post,
+        'form': form
+    })
