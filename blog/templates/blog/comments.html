@@ -18,9 +18,11 @@
 						<a href="{% url "pin-user" comment.user %}">
 							<img src="{{comment.user|get_avatar:36}}" alt="">
 						</a>
+						{% if comment.user %}
 						<a href="{% url "pin-user" comment.user %}">
 							{{comment.user|get_username}}
 						</a>
+						{% endif %}
 					</div>
 
 
