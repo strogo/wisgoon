@@ -4,6 +4,11 @@ from django.conf import settings
 
 connect(settings.MONGO_DB)
 
+class FixedAds(Document):
+    post = IntField()
+    cnt_view = IntField(default=0)
+    ttl = IntField(default=86400)
+
 class Ads(Document):
     TYPE_1000_USER = 1
     TYPE_3000_USER = 2
@@ -12,7 +17,7 @@ class Ads(Document):
 
 
     MAX_TYPES = {
-        TYPE_1000_USER: 2000,
+        TYPE_1000_USER: 1000,
         TYPE_3000_USER: 3000,
         TYPE_6000_USER: 6000,
         TYPE_15000_USER: 15000,

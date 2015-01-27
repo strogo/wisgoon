@@ -10,7 +10,7 @@ from tastypie.models import ApiKey
 
 from user_profile.models import Profile
 from pin.models import Category, Block
-from pin.model_mongo import UserMeta
+from pin.model_mongo import UserMeta, FixedAds
 
 from daddy_avatar.templatetags import daddy_avatar
 
@@ -32,6 +32,17 @@ USERDATA_TIMEOUT = 300
 #     Profile.objects.filter(user_id=user_id)\
 #         .update(cnt_like=F('cnt_like')-1, score=F('score')-10)
 
+
+def get_fixed_ads():
+    c_e = cache.get(c_name)
+    if c_e:
+        c_name_p = "fixed_post_%d" % int(c_e)
+        c_p = cache.incr(c_name_p)
+        if (c_p % 100) == 0:
+            FixedAds.objects(post=c_e).update(set__cnt_view=c_p)
+
+        return c_e
+    return None
 
 def create_filename(filename):
     d = datetime.now()

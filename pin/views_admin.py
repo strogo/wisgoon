@@ -4,6 +4,7 @@ import redis
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.core.cache import cache
 from django.http import HttpResponseRedirect, HttpResponseForbidden,\
     HttpResponse
 
@@ -12,7 +13,7 @@ from django.conf import settings
 from user_profile.models import Profile
 
 from pin.models import Post, Comments
-from model_mongo import Ads
+from model_mongo import Ads, FixedAds
 
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
@@ -31,6 +32,37 @@ def ads_admin(request):
 
     return render(request, 'pin2/ads_admin.html', {
         'ads': ads
+    })
+
+def ads_fixed_admin(request):
+    if not is_admin(request.user):
+        return HttpResponseForbidden('cant access')
+
+    delete = request.GET.get('delete', None)
+    if delete:
+        a = FixedAds.objects.get(id=delete)
+        cache.delete("fixed_post")
+        cache.delete("fixed_post_%d" % int(a.post))
+        a.delete()
+        return HttpResponseRedirect(reverse('ads-fixed-admin'))
+
+    if request.method == "POST":
+        post = int(request.POST.get('post'))
+        ttl = int(request.POST.get('ttl'))
+        if ttl and post:
+            n_ttl = (ttl+1)*86400
+            c_name = "fixed_post"
+            c_name_p = "fixed_post_%d" % post
+            FixedAds.objects.create(post=post, ttl=n_ttl)
+            cache.set(c_name, post, n_ttl)
+            cache.set(c_name_p, 0, n_ttl)
+
+        return HttpResponseRedirect(reverse('ads-fixed-admin'))
+
+    ads = FixedAds.objects.all()
+
+    return render(request, 'pin2/ads_fixed_admin.html', {
+        'ads': ads,
     })
 
 
