@@ -5,20 +5,24 @@ from django.conf import settings
 connect(settings.MONGO_DB)
 
 class Ads(Document):
-    TYPE_2000_USER = 1
-    TYPE_10000_USER = 2
-    TYPE_15000_USER = 3
+    TYPE_1000_USER = 1
+    TYPE_3000_USER = 2
+    TYPE_6000_USER = 3
+    TYPE_15000_USER = 4
+
 
     MAX_TYPES = {
-        TYPE_2000_USER: 2000,
-        TYPE_10000_USER: 10000,
-        TYPE_15000_USER: 15000
+        TYPE_1000_USER: 2000,
+        TYPE_3000_USER: 3000,
+        TYPE_6000_USER: 6000,
+        TYPE_15000_USER: 15000,
     }
 
     TYPE_PRICES = {
-        TYPE_2000_USER: 500,
-        TYPE_10000_USER: 2000,
-        TYPE_15000_USER: 4000,
+        TYPE_1000_USER: 500,
+        TYPE_3000_USER: 1000,
+        TYPE_6000_USER: 2000,
+        TYPE_15000_USER: 5000,
     }
 
     user = IntField()
@@ -26,7 +30,7 @@ class Ads(Document):
     ended = BooleanField(default=False)
     cnt_view = IntField(default=0)
     post = IntField()
-    ads_type = IntField(default=TYPE_2000_USER)
+    ads_type = IntField(default=TYPE_1000_USER)
     users = ListField(StringField())
     start = DateTimeField()
     end = DateTimeField()
@@ -45,7 +49,7 @@ class Ads(Document):
                 if ad.cnt_view >= self.MAX_TYPES[ad.ads_type]:
                     Ads.objects(pk=ad.id).update(add_to_set__users=user_id,
                                                  inc__cnt_view=1,
-                                                 end=datetime.datetime.now(),
+                                                 set__end=datetime.datetime.now(),
                                                  set__ended=True)
                 else:
                     # pass

@@ -14,7 +14,7 @@
 			<div class="form-group">
 				<select name="mode" class="form-control">
 					{% for type, price in Ads.TYPE_PRICES.items %}
-					<option value="{{type}}">نمایش به {{Ads.MAX_TYPES|keyvalue:type}} کاربر - {{price}} تومان</option>
+					<option value="{{type}}">نمایش به {{Ads.MAX_TYPES|keyvalue:type}} کاربر - {{price}} ویس</option>
 					{% endfor %}
 					<!-- <option value="500">نمایش به 2,000 کاربر - 500 تومان</option>
 					<option value="1000">نمایش به 4,000 کاربر - 1000 تومان</option> -->
@@ -24,11 +24,27 @@
 				<input type="submit" class="btn btn-success" value="ذخیره">
 			</div>
 		</form>
+		
 		</div>
 
 		<div class="col-md-6">
 		<p>ایجاد آگهی بر اساس پست شماره {{post.id}}</p>
 		<p>با ویژه کردن این پست امکان مشاهده مطلب مورد نظر برای تعداد بیشتری از کاربران ممکن می شود.</p>
+		<!-- <hr> -->
+		<!-- <table class="table">
+			<thead>
+				<tr>
+					<td>تعداد نمایش</td>
+					<td>هزینه</td>
+					<td></td>
+				</tr>
+			</thead>
+			<tr>
+				<td>1000</td>
+				<td>1000</td>
+
+			</tr>
+		</table> -->
 		</div>
 	</div>
 
