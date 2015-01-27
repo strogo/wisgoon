@@ -135,6 +135,7 @@ INSTALLED_APPS = (
     # 'devserver',
     'debug_toolbar',
     'widget_tweaks',
+    'ckeditor',
 )
 
 HAYSTACK_CONNECTIONS = {
@@ -156,6 +157,13 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
+
+CKEDITOR_UPLOAD_PATH = "ckeditor_uploads/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+    },
+}
 
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': True,

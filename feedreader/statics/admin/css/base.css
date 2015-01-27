@@ -6,7 +6,7 @@ body {
     margin: 0;
     padding: 0;
     font-size: 12px;
-    font-family: tahoma,"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+    font-family: "Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
     color: #333;
     background: #fff;
 }
@@ -249,7 +249,7 @@ td, th {
     border-bottom: 1px solid #eee;
     vertical-align: top;
     padding: 5px;
-    font-family: tahoma, "Lucida Grande", Verdana, Arial, sans-serif;
+    font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 }
 
 th {
@@ -320,6 +320,10 @@ thead th a:link, thead th a:visited {
 
 thead th.sorted {
     background: #c5c5c5 url(../img/nav-bg-selected.gif) top left repeat-x;
+}
+
+thead th.sorted .text {
+	padding-right: 42px;
 }
 
 table thead th .text span {

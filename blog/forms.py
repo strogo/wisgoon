@@ -1,9 +1,10 @@
 from django import forms
+from ckeditor.widgets import CKEditorWidget
 
 
 class PostForm(forms.Form):
     title = forms.CharField(required=True)
-    text = forms.CharField(widget=forms.Textarea)
+    text = forms.CharField(widget=CKEditorWidget())
     tags = forms.CharField()
     
 
