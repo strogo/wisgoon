@@ -27,7 +27,7 @@ def ads_admin(request):
     if not is_admin(request.user):
         return HttpResponseForbidden('cant access')
 
-    ads = Ads.objects.all()
+    ads = Ads.objects..order_by('-id')
 
     return render(request, 'pin2/ads_admin.html', {
         'ads': ads
