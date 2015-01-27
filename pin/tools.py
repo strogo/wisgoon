@@ -34,6 +34,7 @@ USERDATA_TIMEOUT = 300
 
 
 def get_fixed_ads():
+    c_name = "fixed_post"
     c_e = cache.get(c_name)
     if c_e:
         c_name_p = "fixed_post_%d" % int(c_e)
