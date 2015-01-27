@@ -95,20 +95,25 @@ def get_r_data(request):
     return before, cur_user, thumb_size, before, token
 
 
+def get_cache(key):
+    if settings.ENABLE_CACHING:
+        return cache.get(key)
+
+    return None
+
 def get_list_post(pl, from_model='latest'):
     arp = []
     pl_str = '32_'.join(pl)
     cache_pl = md5(pl_str).hexdigest()
-    #print cache_stream_str, cache_stream_name
 
-    posts = cache.get(cache_pl)
+    posts = get_cache(cache_pl) # cache.get(cache_pl)
     if posts:
         print "get list from cache"
         return posts
 
     for pll in pl:
         try:
-            arp.append(Post.objects.values(*Post.NEED_KEYS).get(id=pll))
+            arp.append(Post.objects.only(*Post.NEED_KEYS2).get(id=pll))
         except Exception, e:
             print str(e), 'line 182', pll
             # r_server.lrem(from_model, str(pll))
@@ -164,46 +169,47 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
     objects_list = []
     for p in posts:
         o = {}
-        o['id'] = p['id']
-        o['text'] = p['text']
-        o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
-        # o['image'] = p['image']
+        o['id'] = p.id
+        o['text'] = p.text
+        o['cnt_comment'] = 0 if p.cnt_comment == -1 else p.cnt_comment
+        # o['image'] = p.image
 
-        o['user'] = get_user_dict(p['user_id'])
+        o['user'] = get_user_dict(p.user_id)
 
-        o['timestamp'] = p['timestamp']
-        o['url'] = p['url']
-        o['like'] = p['cnt_like']
+        o['timestamp'] = p.timestamp
+        o['url'] = p.url
+        o['like'] = p.cnt_like
         o['like_with_user'] = False
-        o['status'] = p['status']
+        o['status'] = p.status
 
-        o['permalink'] = abs_url("/pin/%d/" % p['id'])
-        o['resource_uri'] = "/pin/api/post/%d/" % p['id']
+        o['permalink'] = abs_url("/pin/%d/" % p.id)
+        o['resource_uri'] = abs_url(reverse('api-3-item', args=[p.id]))
 
         if cur_user_id:
-            o['like_with_user'] = Likes.user_in_likers(post_id=p['id'],
+            o['like_with_user'] = Likes.user_in_likers(post_id=p.id,
                                                        user_id=cur_user_id)
 
-        o_image = p['image']
-
-        imo_medium = get_thumb(o_image, "500", settings.API_THUMB_QUALITY)
-        imo_small = get_thumb(o_image, "236", settings.API_THUMB_QUALITY)
+        o_image = p.image
+        if not p.get_image_236():
+            continue
+        if not p.get_image_500():
+            continue
 
         o['images'] = {
             "original": {
-                "url": media_abs_url(p['image'])
+                "url": media_abs_url(p.image)
             },
             "small": {
-                "url": media_abs_url(imo_small['thumbnail']),
-                "hw": imo_small['hw']
+                "url": p.get_image_236()['url'],
+                "hw": p.get_image_236()['hw'],
             },
             "medium": {
-                "url": media_abs_url(imo_medium['thumbnail']),
-                "hw": imo_medium['hw']
+                "url": p.get_image_500()['url'],
+                "hw": p.get_image_500()['hw']
             }
         }
 
-        o['category'] = get_cat_json(cat_id=p['category_id'])
+        o['category'] = get_cat_json(cat_id=p.category_id)
         objects_list.append(o)
 
     # cache.set(list_cache_str, objects_list, 600)

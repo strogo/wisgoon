@@ -5,7 +5,7 @@ TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 
 ADMINS = (
-    ('bugs', 'bugs@wisgoon.com'),
+    ('support', 'support@wisgoon.com'),
 )
 
 DATABASES = {
@@ -45,3 +45,5 @@ COMPRESS_CSS_FILTERS = [
 SITE_URL = 'http://www.wisgoon.com'
 
 MEDIA_PREFIX = 'http://media.wisgoon.com'
+
+ENABLE_CACHING = True
