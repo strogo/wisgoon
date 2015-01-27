@@ -1148,13 +1148,16 @@ a.img-move{
 	color: #FFF!important;
 }
 .feed-item a{
-	color: #FFF;
+	color: #000;
 }
 .f-black{
 	color: #000!important;
 }
 .f-white{
 	color: #FFF!important;
+}
+.description p > a{
+	color: blue!important;
 }
 
 /***********activity count ******/

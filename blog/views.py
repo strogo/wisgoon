@@ -85,7 +85,7 @@ def edit(request, id):
 def view_post(request, id):
     post = BlogPost.objects.get(id=id)
 
-    if request.POST:
+    if request.POST and request.user.is_authenticated:
         form = CommentForm(request.POST)
         if form.is_valid():
             text = form.cleaned_data['text']

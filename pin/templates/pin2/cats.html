@@ -7,6 +7,7 @@
       <ul class="nav navbar-nav">
         <li class="nav-i"><a href="{% url "pin-latest"%}">آخرین مطالب</a></li>
         <li class="nav-i"><a href="{% url "policy"%}">قوانین</a><li>
+
         <li class="nav-i"><a href="{% url "stats"%}">آمار</a><li>
         <li class="nav-i"><a href="/search/">جستجو</a><li>
         <li class="nav-right dropdown ">
@@ -131,6 +132,8 @@
 			<a href="{% url "pin-user-like" user.id %}"><i class="glyphicon glyphicon-heart"></i> مطالب مورد علاقه</a>
 		</li>
 		{%endif%}
+
+		<li class="nav-i"><a href="{% url "blog-home"%}">وبلاگ <span style="background-color:red" class="badge label-danger">جدید</span></a><li>
 					  
 		{%block pin-ex-nav%}{%endblock pin-ex-nav%}
 

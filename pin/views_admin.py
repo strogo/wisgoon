@@ -7,11 +7,12 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseForbidden,\
     HttpResponse
 
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.conf import settings
 from user_profile.models import Profile
 
 from pin.models import Post, Comments
+from model_mongo import Ads
 
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
@@ -21,6 +22,16 @@ def is_admin(user):
         return True
 
     return False
+
+def ads_admin(request):
+    if not is_admin(request.user):
+        return HttpResponseForbidden('cant access')
+
+    ads = Ads.objects.all()
+
+    return render(request, 'pin2/ads_admin.html', {
+        'ads': ads
+    })
 
 
 def activate_user(request, user_id, status):

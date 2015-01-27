@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     # url(r'^latest_post/', 'latest_redis', name='pin-latest-old'),
     url(r'^profile/', include('user_profile.urls')),
     url(r'^pin/', include('pin.urls')),
-    url(r'^feedback/', include('contactus.urls')),
+    # url(r'^feedback/', include('contactus.urls')),
     url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'', include('social_auth.urls')),
     url(r'^acc/', include('allauth.urls')),
@@ -27,6 +27,7 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('pin.views',
     url(r'^latest/$', 'latest_redis', name='pin-latest'),
+    url(r'^feedback/$', 'feedback', name='pin-feedback'),
     url(r'^last/likes/$', 'last_likes', name='pin-last-likes'),
 
     url(r'^category/(?P<cat_id>\d+)', 'category_redis', name='pin-category'),
@@ -49,5 +50,6 @@ urlpatterns += patterns('pin.views',
 
 urlpatterns += patterns('pin.views3_api',
     url(r'^api/v3/post/latest/$', 'post_latest', name="api-3-latest"),
+    url(r'^api/v3/post/item/(?P<post_id>\d+)/$', 'post_item', name="api-3-item"),
     
 )

@@ -1,6 +1,7 @@
 {% load pin_tags %}
 {% load daddy_avatar %}
 {% load thumbnail %}
+{% load humanize %}
 
 <div class="post-detail row" itemscope itemtype="http://schema.org/CreativeWork">
 			<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
@@ -13,8 +14,8 @@
 <a class="btn btn-danger" href="{% url "pin-item-delete" post.id %}">حذف پست</a>
 {% endif %}
 
-{% if user.id == post.user_id %}
-<a class="btn btn-success" href="{% url "pin-save-as-ads" post.id %}">ایجاد آگهی </a>
+{% if request.user.is_authenticated %}
+<a class="btn btn-success" href="{% url "pin-save-as-ads" post.id %}">این مطلب را ویژه کنید</a>
 {% endif %}
 
 
@@ -114,8 +115,8 @@
 			<div class="col-md-9 col-sm-9 col-xs-9">
 				<p>{{comment.comment}}</p>
 			</div>
-			<div class="col-md-2 col-sm-2 col-xs-1">
-				{{comment.submit_date|jalali_mysql_date}}
+			<div class="col-md-2 col-sm-2 col-xs-1" style="color:#aaa">
+				{{comment.submit_date|naturaltime}}
 			</div>
 		
 			<div class="clear"></div>
@@ -154,8 +155,13 @@
 			</div>
 		</div>
 		<div class="clear"></div>
+
 	</div>
-	<?php include 'photo-detail-posts.php'; ?>
-	<?php include'post-detail-following-suggestion.php' ;?>
+	<div class=" hidden-sm hidden-xs" style="text-align:center">
+		<a target="_blank" title="دانلود نرم افزار موبایل" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">
+			<img src="{{MEDIA_URL}}v2/images/mobile.png">
+		</a>
+	</div>
+	
 </div>
 		</div>

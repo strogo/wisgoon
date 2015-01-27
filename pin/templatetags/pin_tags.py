@@ -25,6 +25,10 @@ register = Library()
 
 
 @register.filter
+def keyvalue(dict, key):    
+    return dict[key]
+
+@register.filter
 def urlize_hashtag(obj):
     return mark_safe(urlize_text(obj))
 urlize_hashtag.is_safe = True

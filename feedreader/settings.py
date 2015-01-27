@@ -45,3 +45,5 @@ COMPRESS_CSS_FILTERS = [
 SITE_URL = 'http://www.wisgoon.com'
 
 MEDIA_PREFIX = 'http://media.wisgoon.com'
+
+ENABLE_CACHING = True

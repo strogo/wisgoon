@@ -5,15 +5,35 @@ from django.conf import settings
 connect(settings.MONGO_DB)
 
 class Ads(Document):
-    TYPE_2000_USER = 1
+    TYPE_1000_USER = 1
+    TYPE_3000_USER = 2
+    TYPE_6000_USER = 3
+    TYPE_15000_USER = 4
+
+
+    MAX_TYPES = {
+        TYPE_1000_USER: 2000,
+        TYPE_3000_USER: 3000,
+        TYPE_6000_USER: 6000,
+        TYPE_15000_USER: 15000,
+    }
+
+    TYPE_PRICES = {
+        TYPE_1000_USER: 500,
+        TYPE_3000_USER: 1000,
+        TYPE_6000_USER: 2000,
+        TYPE_15000_USER: 5000,
+    }
 
     user = IntField()
     approved = BooleanField(default=True)
     ended = BooleanField(default=False)
     cnt_view = IntField(default=0)
     post = IntField()
-    ads_type = IntField(default=TYPE_2000_USER)
+    ads_type = IntField(default=TYPE_1000_USER)
     users = ListField(StringField())
+    start = DateTimeField()
+    end = DateTimeField()
 
     meta ={
         'indexes': ['users', ('ads_type', 'users'), ('users', 'ended')]
@@ -26,13 +46,17 @@ class Ads(Document):
             ad = Ads.objects.filter(users__nin=[user_id], ended=False)[:1]
             if ad:
                 ad = ad[0]
-                if ad.ads_type == self.TYPE_2000_USER and ad.cnt_view == 2000:
-                    Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1, set__ended=True)
+                if ad.cnt_view >= self.MAX_TYPES[ad.ads_type]:
+                    Ads.objects(pk=ad.id).update(add_to_set__users=user_id,
+                                                 inc__cnt_view=1,
+                                                 set__end=datetime.datetime.now(),
+                                                 set__ended=True)
                 else:
+                    # pass
                     Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1)
                 return ad
         except Exception, e:
-            print str(e)
+            print str(e), "models_mongo 50"
         return None
 
 

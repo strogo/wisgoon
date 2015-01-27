@@ -15,12 +15,14 @@
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="others-comment">
 					<div class="col-md-1 col-sm-1 col-xs-1 avatar">
+						{% if comment.user %}
 						<a href="{% url "pin-user" comment.user %}">
 							<img src="{{comment.user|get_avatar:36}}" alt="">
 						</a>
 						<a href="{% url "pin-user" comment.user %}">
 							{{comment.user|get_username}}
 						</a>
+						{% endif %}
 					</div>
 
 

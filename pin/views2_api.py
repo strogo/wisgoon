@@ -163,14 +163,14 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
             else:
                 imo = p.get_image_236(api=True)
         except Exception, e:
-            print str(e), "166"
+            # print str(e), "166"
             continue
 
         if imo:
             o['thumbnail'] = imo['url']
             o['hw'] = imo['hw']
         else:
-            print "we dont have imo", p.id, o_image, imo
+            # print "we dont have imo", p.id, o_image, imo
             continue
 
         o['category'] = Category.get_json(cat_id=p.category_id)
@@ -853,6 +853,29 @@ def search2(request):
     return HttpResponse(json_data)
 
 
+def hashtag_top(request):
+    tags = []
+    sqs = SearchQuerySet().models(Post).facet('tags', mincount=10, limit=100)
+    # print sqs.facet_counts()
+    if sqs:
+        tags = [t for t in sqs.facet_counts()['fields']['tags']]
+
+    # print tags
+
+    data = {}
+    o = []
+    for t in tags:
+        dt = {
+            "tag": t[0],
+            "count": t[1]
+        }
+        o.append(dt)
+        # print dt
+    data['objects'] = o
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
+
 def hashtag(request):
     ROW_PER_PAGE = 20
     cur_user = None
@@ -871,11 +894,14 @@ def hashtag(request):
             cur_user = AuthCache.id_from_token(token=token)
         posts = []
         for p in results:
-            pp = Post.objects\
-                .only(*Post.NEED_KEYS2)\
-                .get(id=p.object.id)
+            try:
+                pp = Post.objects\
+                    .only(*Post.NEED_KEYS2)\
+                    .get(id=p.object.id)
 
-            posts.append(pp)
+                posts.append(pp)
+            except:
+                pass
 
         thumb_size = request.GET.get('thumb_size', "100x100")
 
