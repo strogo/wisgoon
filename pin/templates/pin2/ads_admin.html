@@ -16,6 +16,8 @@
 					<th>نوع آگهی</th>
 					<th>اتمام</th>
 					<th>تعداد بینندگان</th>
+					<th>شروع</th>
+					<th>پایان</th>
 				</tr>
 			</thead>
 			{% for ad in ads %}
@@ -27,6 +29,8 @@
 				<td>{{ad.ads_type}}</td>
 				<td>{{ad.ended}}</td>
 				<td>{{ad.users|length}}</td>
+				<td>{{ad.start}}</td>
+				<td>{{ad.end}}</td>
 			</tr>
 			{% endfor %}
 

@@ -645,7 +645,7 @@ def save_as_ads(request, post_id):
                 ad = Ads.objects.get(post=int(post_id), ended=False)
                 messages.error(request, u"این پست قبلا آگهی شده است")
             except Exception, Ads.DoesNotExist:
-                ad = Ads.objects.create(user=request.user.id, post=int(post_id), ads_type=mode)
+                ad = Ads.objects.create(user=request.user.id, post=int(post_id), ads_type=mode, start=datetime.datetime.now())
                 user_meta.credit = int(user_meta.credit) - int(mode_price)
                 user_meta.save()
                 messages.success(request, u'مطلب مورد نظر شما با موفقیت آگهی شد.')

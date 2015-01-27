@@ -28,6 +28,8 @@ class Ads(Document):
     post = IntField()
     ads_type = IntField(default=TYPE_2000_USER)
     users = ListField(StringField())
+    start = DateTimeField()
+    end = DateTimeField()
 
     meta ={
         'indexes': ['users', ('ads_type', 'users'), ('users', 'ended')]
@@ -41,7 +43,10 @@ class Ads(Document):
             if ad:
                 ad = ad[0]
                 if ad.cnt_view >= self.MAX_TYPES[ad.ads_type]:
-                    Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1, set__ended=True)
+                    Ads.objects(pk=ad.id).update(add_to_set__users=user_id,
+                                                 inc__cnt_view=1,
+                                                 end=datetime.datetime.now(),
+                                                 set__ended=True)
                 else:
                     # pass
                     Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1)
