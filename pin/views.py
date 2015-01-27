@@ -699,3 +699,7 @@ def stats(request):
             op['dates'].append(m.date.day)
     print op
     return render(request, 'pin2/stats.html', {'op': op})
+
+
+def feedback(request):
+    return render(request, 'pin2/feedback.html')
