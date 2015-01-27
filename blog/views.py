@@ -16,7 +16,7 @@ def get_tags():
     return tags
 
 def home(request):
-    posts = BlogPost.objects.all()
+    posts = BlogPost.objects.order_by('-id')
     
     return render(request, 'blog/index.html', {
         'posts': posts,
@@ -32,7 +32,7 @@ def tag(request, tag_name):
     })
 
 def admin(request):
-    posts = BlogPost.objects.all()
+    posts = BlogPost.objects.order_by('-id')
     return render(request, 'blog/admin.html', {
         'posts': posts
     })
