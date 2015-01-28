@@ -551,6 +551,8 @@ def notif(request):
 
     Notif.objects.filter(owner=cur_user, seen=False).update(set__seen=True)
 
+    Notif.objects.filter(owner=1)[100:].delete()
+
     for p in notifs:
         try:
             cur_p = Post.objects.only(*Post.NEED_KEYS2).get(id=p.post)
