@@ -5,7 +5,7 @@ TEMPLATE_DEBUG = DEBUG
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
 SITE_ROOT = os.path.dirname(__file__)
 ADMINS = (
-    ('support', 'supprt@wisgoon.com'),
+    ('bugs', 'bugs@wisgoon.com'),
 )
 ALLOWED_HOSTS = ["127.0.0.1:8000", "127.0.0.1"]
 MANAGERS = ADMINS

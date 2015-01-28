@@ -5,7 +5,7 @@ TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 
 ADMINS = (
-    ('support', 'support@wisgoon.com'),
+    ('bugs', 'bugs@wisgoon.com'),
 )
 
 DATABASES = {
