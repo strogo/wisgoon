@@ -68,6 +68,7 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,6 +78,7 @@ MIDDLEWARE_CLASSES = (
     'johnny.middleware.LocalStoreClearMiddleware',
     'johnny.middleware.QueryCacheMiddleware',
     'pin.middleware.UrlRedirectMiddleware',
+    'pin.middleware.XsSharing',
     #'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     #'django_cprofile_middleware.middleware.ProfilerMiddleware',
 )
@@ -289,3 +291,5 @@ MEDIA_PREFIX = 'http://127.0.0.1:8000'
 MERCHANT_ID = '54c4fa4c-3458-409d-8f01-47d55bef37d4'
 
 ENABLE_CACHING = False
+
+CORS_URLS_REGEX = r'^/pin/api/.*$'
