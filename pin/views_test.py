@@ -6,6 +6,12 @@ from django.core.urlresolvers import resolve
 from django.shortcuts import render
 
 
+def buggy(request):
+    b = 1
+    b = b + c
+    return HttpResponse('buggy')
+
+
 def html_decorator(func):
     def _decorated(*args, ** kwargs):
         response = func(*args, **kwargs)

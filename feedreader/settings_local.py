@@ -1,11 +1,11 @@
 import os
-DEBUG = True
+DEBUG = False
 THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
 SITE_ROOT = os.path.dirname(__file__)
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('support', 'supprt@wisgoon.com'),
 )
 ALLOWED_HOSTS = ["127.0.0.1:8000", "127.0.0.1"]
 MANAGERS = ADMINS
@@ -232,7 +232,7 @@ LOGGING = {
         },
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
+            # 'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         }
     },

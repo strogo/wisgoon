@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     url(r'^captcha/', include('captcha.urls')),
     url(r'^blog/', include('blog.urls')),
     url(r'^ckeditor/', include('ckeditor.urls')),
+    url(r'^buggy/', 'pin.views_test.buggy', name='buggy'),
 )
 
 urlpatterns += patterns('pin.views',
