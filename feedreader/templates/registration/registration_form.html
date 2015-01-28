@@ -7,24 +7,32 @@
 	<div class="panel-heading">عضویت در ویسگون
 	</div>
 	<div class="panel-body">
-<!-- {% include "registration/social.html"%} -->
-<form method="post" class="form-horizontal">
-{% csrf_token %}
-{% for f in form %}
-<!-- {{form.as_p}} -->
-	<div class="form-group">
-		<label for="{{f.id}}" class="col-sm-2 control-label">{{f.label}}</label>
-		<div class="col-sm-5">
-			{% render_field f class+="form-control" placeholder=f.label %}
-			<span id="helpBlock" class="help-block">{{f.errors.0}}</span>
-		</div>
-	</div>
-{% endfor %}
 
-<div class="form-actions">
-	<input type="submit" class="btn btn-primary" value="تکمیل عضویت">
-</div>
-</form>
+<div class="col-md-12">
+	<div class="col-md-6">
+		<!-- {% include "registration/social.html"%} -->
+		<div class="clearfix"></div>
+		<form method="post" class="form">
+		{% csrf_token %}
+		{% for f in form %}
+		<!-- {{form.as_p}} -->
+			<div class="form-group">
+				<label for="{{f.id}}" class="control-label">{{f.label}}</label>
+				<div class="">
+					{% render_field f class+="form-control ltr" placeholder=f.label %}
+					<span id="helpBlock" class="help-block">{{f.errors.0}}</span>
+				</div>
+			</div>
+		{% endfor %}
+
+		<div class="form-actions">
+			<input type="submit" class="btn btn-primary" value="تکمیل عضویت">
+		</div>
+		</form>
+	</div>
+	<div class="col-md-6">
+		{% include "pin2/mobil_ads.html" %}
+	</div>
 
 </div>
 </div>

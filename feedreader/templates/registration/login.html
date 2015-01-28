@@ -11,21 +11,31 @@
 	<div class="panel-body">
 
 <!-- {% include "registration/social.html"%} -->
-<form method="post" class="form-inline" >
-	{% csrf_token %}
-	<div class="form-group">
-		{% render_field form.username class+="form-control" placeholder="نام کاربری" %}
+<div class="col-md-12">
+	<div class="col-md-6">
+		<form method="post" class="form" >
+			{% csrf_token %}
+			<div class="form-group">
+				<label>{{form.username.label}}</label>
+				{% render_field form.username class+="form-control ltr" placeholder="نام کاربری" %}
+			</div>
+			<div class="form-group">
+				<label>{{form.password.label}}</label>
+				{% render_field form.password class+="form-control ltr" placeholder="کلمه عبور" %}
+			</div>
+			<input type="submit" value="ورود" class="btn btn-primary">
+			<br><br>
+			<a href="/accounts/password/reset/">رمز عبور خود را فراموش کرده اید؟</a>
+		</form>
 	</div>
-	<div class="form-group">
-		{% render_field form.password class+="form-control" placeholder="کلمه عبور" %}
+	<div class="col-md-6">
+		<div class=" hidden-sm hidden-xs" style="text-align:center">
+			<a target="_blank" title="دانلود نرم افزار موبایل" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">
+				<img src="{{MEDIA_URL}}v2/images/mobile.png">
+			</a>
+		</div>
 	</div>
-
-<!-- {{form.as_p}} -->
-	<input type="submit" value="ورود" class="btn btn-primary">
-	<br><br>
-	<a href="/accounts/password/reset/">رمز عبور خود را فراموش کرده اید؟</a>
-</form>
-
+</div>
 	</div>
 </div>
 {% endblock %}

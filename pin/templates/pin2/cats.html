@@ -5,6 +5,10 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
+      	{% if not request.user.is_authenticated %}
+      	<li class="nav-i"><a href="/accounts/login/">ورود</a></li>
+        <li class="nav-i"><a href="{% url "registration_register" %}">عضویت</a><li>
+        {% endif %}
         <li class="nav-i"><a href="{% url "pin-latest"%}">آخرین مطالب</a></li>
         <li class="nav-i"><a href="{% url "policy"%}">قوانین</a><li>
 

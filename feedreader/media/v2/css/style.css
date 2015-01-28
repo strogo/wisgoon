@@ -1200,3 +1200,21 @@ a.img-move{
 .tag-item{
 	color: #d979b2!important;
 }
+
+#google-oauth{
+	background: #fff url(../images/openid-logos.png); background-position: -1px -1px;
+	width: 100px;
+	height: 60px;
+	border: 2px solid #DDD;
+	border-right: 2px solid #CCC;
+	border-bottom: 2px solid #CCC;
+}
+
+#yahoo-oauth{
+	background: #fff url(../images/openid-logos.png); background-position: -1px -63px;
+	width: 100px;
+	height: 60px;
+	border: 2px solid #DDD;
+	border-right: 2px solid #CCC;
+	border-bottom: 2px solid #CCC;
+}
