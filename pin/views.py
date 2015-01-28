@@ -280,7 +280,7 @@ def user_like(request, user_id):
 
     for pll in pl:
         try:
-            arp.append(Post.objects.get(id=pll))
+            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
         except:
             pass
 
@@ -513,7 +513,7 @@ def popular(request, interval=""):
             data_from = dt_now - datetime.timedelta(hours=8)
 
         start_from = mktime(data_from.timetuple())
-        post_list = Post.objects.extra(where=['timestamp>%s'], params=[start_from])\
+        post_list = Post.objects.only(*Post.NEED_KEYS_WEB).extra(where=['timestamp>%s'], params=[start_from])\
             .order_by('-cnt_like')
 
     else:
@@ -570,10 +570,10 @@ def user(request, user_id, user_name=None):
 
     timestamp = get_request_timestamp(request)
     if timestamp == 0:
-        latest_items = Post.objects.filter(user=user_id)\
+        latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
             .order_by('-timestamp')[:20]
     else:
-        latest_items = Post.objects.filter(user=user_id)\
+        latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
 
