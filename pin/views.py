@@ -34,15 +34,22 @@ def home(request):
     # else:
     #     user_id = str(get_user_ip(request))
     # print Ads.get_ad(user_id=user_id)
-    
     pid = get_request_pid(request)
     pl = Post.home_latest(pid=pid)
     arp = []
 
+    # fixed_post = get_fixed_ads()
+    # if fixed_post:
+    #     fixed_post = Post.objects\
+    #         .only(*Post.NEED_KEYS2)\
+    #         .filter(id=fixed_post)
+    #     posts = list(fixed_post) + list(posts)
+
     for pll in pl:
         try:
-            arp.append(Post.objects.get(id=pll))
-        except:
+            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
+        except Exception, e:
+            print str(e)
             pass
 
     latest_items = arp
@@ -65,7 +72,6 @@ def search(request):
     results = []
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
-    
 
     tags = ['کربلا',
             'حرم',
@@ -471,7 +477,8 @@ def category_redis(request, cat_id):
 
     for pll in pl:
         try:
-            arp.append(Post.objects.get(id=pll))
+            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
+            # arp.append(Post.objects.get(id=pll))
         except:
             pass
 
@@ -591,8 +598,8 @@ def user(request, user_id, user_name=None):
 
 def item(request, item_id):
     post = get_object_or_404(
-        Post.objects.select_related().filter(id=item_id)[:1])
-    #Post.objects.filter(id=item_id).update(view=F('view') + 1)
+        Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
+        .filter(id=item_id)[:1])
     
     if not request.user.is_authenticated:
         if post.category_id in [23, 22]:
