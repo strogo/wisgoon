@@ -7,7 +7,7 @@ SITE_ROOT = os.path.dirname(__file__)
 ADMINS = (
     ('bugs', 'bugs@wisgoon.com'),
 )
-ALLOWED_HOSTS = ["127.0.0.1:8000", "127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1:8000", "127.0.0.1", "127.0.0.1:3060", "127.0.0.1:3061", "127.0.0.1:3062"]
 MANAGERS = ADMINS
 DATABASES = {
     'default': {

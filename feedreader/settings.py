@@ -19,7 +19,7 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com', 'wisgoon.com']
+ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com', 'wisgoon.com', "127.0.0.1:3060", "127.0.0.1:3061", "127.0.0.1:3062"]
 EMAIL_HOST = "wisgoon.com"
 DEFAULT_FROM_EMAIL = "info@wisgoon.com"
 
