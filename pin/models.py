@@ -485,7 +485,8 @@ class Post(models.Model):
         if not r_server.exists(home_stream):
             hposts = Post.objects.values_list('id', flat=True)\
                 .filter(show_in_default=1).order_by('-timestamp')[:5000]
-            r_server.rpush(home_stream, *hposts)
+            if hposts:
+                r_server.rpush(home_stream, *hposts)
 
         pl = r_server.lrange(home_stream, 0, settings.LIST_LONG)
 
