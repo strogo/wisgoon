@@ -115,6 +115,7 @@ $(".popnotify").bind('click',function(){
     if (isVisible){
         $(el).popover('hide');
     }else{
+        el.parent().children('.loading-img').show('0');
         isVisible = true;
         if(!notifCache){
             $.get( el.attr('data-load'), function(d) {
@@ -123,8 +124,10 @@ $(".popnotify").bind('click',function(){
             })
             .done(function(d) {
                 el.unbind('click').popover({content: d, placement:'bottom',html:true}).popover('show');
+                el.parent().children('.loading-img').hide();
             })
             .fail(function(d) {
+                el.parent().children('.loading-img').hide();
                 alert( "error" );
             })
             .always(function(d) {
@@ -132,6 +135,7 @@ $(".popnotify").bind('click',function(){
             });
         }else{
             el.unbind('click').popover({content: notifCache, placement:'bottom',html:true}).popover('show');    
+            el.parent().children('.loading-img').hide();
         }
     }
     
