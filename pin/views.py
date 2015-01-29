@@ -319,7 +319,10 @@ def latest_redis(request):
     ad = Ads.get_ad(user_id=viewer_id)
     if ad:
         # print "ads is:",  ad, ad.post, len(arp), type(arp)
-        arp.append(Post.objects.get(id=int(ad.post)))
+        try:
+            arp.append(Post.objects.get(id=int(ad.post)))
+        except:
+            pass
         # print len(arp)
 
     for pll in pl:
