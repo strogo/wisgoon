@@ -13,7 +13,8 @@ from django.conf import settings
 from user_profile.models import Profile
 
 from pin.models import Post, Comments
-from model_mongo import Ads, FixedAds
+from pin.context_processors import is_police
+from model_mongo import Ads, FixedAds, UserMeta, PendingPosts
 
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
@@ -24,6 +25,7 @@ def is_admin(user):
 
     return False
 
+
 def ads_admin(request):
     if not is_admin(request.user):
         return HttpResponseForbidden('cant access')
@@ -33,6 +35,27 @@ def ads_admin(request):
     return render(request, 'pin2/ads_admin.html', {
         'ads': ads
     })
+
+
+def pending_post(request, post, status=1):
+    if is_police(request, flat=True):
+        if status == 1:
+            if not PendingPosts.objects(post=post).count():
+                PendingPosts.objects.create(user=request.user.id, post=post)
+        else:
+            PendingPosts.objects(user=request.user.id, post=post).delete()
+
+    return HttpResponseRedirect(reverse('pin-item', args=[int(post)]))
+
+
+def change_level(request, user_id, level):
+    if not is_admin(request.user):
+        return HttpResponseForbidden('cant access')
+
+    UserMeta.objects(user=user_id).update(set__level=level, upsert=True)
+
+    return HttpResponseRedirect(reverse('pin-user', args=[user_id]))
+
 
 def ads_fixed_admin(request):
     if not is_admin(request.user):

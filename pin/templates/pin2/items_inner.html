@@ -18,6 +18,16 @@
 <a class="btn btn-success" href="{% url "pin-save-as-ads" post.id %}">این تصویر را ویژه کنید</a>
 {% endif %}
 
+{% if is_police %}
+<br><br><br>
+	{% if post.is_pending %}
+		این پست تنها برای شما قابل مشاهده است.
+		<a class="btn btn-success" href="{% url "unpending_post" post.id 0 %}">پست مشکلی ندارد</a>
+	{% else %}
+		<a class="btn btn-danger" href="{% url "pending_post" post.id %}">حذف موقت پست</a>
+	{% endif %}
+{% endif %}
+
 
 <div class="post-content">
 		<div class="photo">

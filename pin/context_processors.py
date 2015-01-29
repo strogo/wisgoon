@@ -7,7 +7,7 @@ from django.core.cache import cache
 
 from pin.forms import PinForm
 from pin.models import Category
-from pin.model_mongo import MonthlyStats
+from pin.model_mongo import MonthlyStats, UserMeta
 
 from pin.mycache import caching
 
@@ -55,6 +55,21 @@ def is_super_user(request):
         return {'is_super_user': True}
 
     return {'is_super_user': False}
+
+
+def is_police(request, flat=False):
+    try:
+        um = UserMeta.objects.get(user=request.user.id)
+        if um.is_police():
+            if flat:
+                return True
+            return {'is_police': True}
+    except:
+        pass
+
+    if flat:
+        return False
+    return {'is_police': False}
 
 
 def user__id(request):

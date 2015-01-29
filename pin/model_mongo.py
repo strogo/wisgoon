@@ -1,6 +1,11 @@
+# -*- coding: utf-8
 import datetime
+import redis
 from mongoengine import *
+from mongoengine import signals
 from django.conf import settings
+
+r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 connect(settings.MONGO_DB)
 
@@ -90,16 +95,62 @@ class PostMeta(Document):
     }
 
 
+class PendingPosts(Document):
+    user = IntField()
+    post = IntField()
+
+    meta = {
+        'indexes': ['post']
+    }
+
+    @classmethod
+    def is_pending(self, post):
+        post = int(post)
+        if r_server.sismember(settings.PENDINGS, post):
+            print "this post is pending"
+            return True
+        print "this post is not pending"
+        return False
+
+    def save(self, *args, **kwargs):
+        print "save in pending"
+        r_server.sadd(settings.PENDINGS, int(self.post))
+        return super(PendingPosts, self).save(*args, **kwargs)
+
+    def delete(self, **write_concern):
+        print "delete in pending"
+        r_server.srem(settings.PENDINGS, int(self.post))
+        return super(PendingPosts, self).delete(**write_concern)
+
+
+def unpending(sender, document):
+    print "unpending"
+
+signals.post_delete.connect(unpending)
+
+
 class UserMeta(Document):
     insta_token = StringField()
     insta_id = IntField()
     user = IntField()
 
     credit = IntField(default=0)
+    level = IntField(default=1)
 
     meta = {
         'indexes': ['user', '-credit']
     }
+
+    def get_level_string(self):
+        if self.level == 1:
+            return u'عادی'
+        elif self.level == 2:
+            return u'پلیس'
+
+    def is_police(self):
+        if self.level == 2:
+            return True
+        return False
 
 
 class Notif(Document):

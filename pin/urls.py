@@ -116,6 +116,10 @@ urlpatterns += patterns('pin.views_admin',
     url(r'^ads/admin/$', 'ads_admin', name='ads-admin'),
     url(r'^ads/fixed/admin/$', 'ads_fixed_admin', name='ads-fixed-admin'),
 
+    url(r'^change_level/(?P<user_id>\d+)/(?P<level>\d+)/$', 'change_level', name='change-level'),
+    url(r'^pending/post/(?P<post>\d+)/$', 'pending_post', name='pending_post'),
+    url(r'^pending/post/(?P<post>\d+)/(?P<status>\d+)/$', 'pending_post', name='unpending_post'),
+
     url(r'^comment/delete/(?P<id>\d+)', 'comment_delete', name="pin-comment-delete"),
     url(r'^comment/approve/(?P<id>\d+)', 'comment_approve', name="pin-comment-approve"),
     url(r'^comment/unapprove/(?P<id>\d+)', 'comment_unapprove', name="pin-comment-unapprove"),

@@ -27,7 +27,7 @@ from sorl.thumbnail import get_thumbnail
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
-from model_mongo import Notif as Notif_mongo, MonthlyStats, PostMeta
+from model_mongo import Notif as Notif_mongo, MonthlyStats, PostMeta, PendingPosts
 
 LIKE_TO_DEFAULT_PAGE = 10
 
@@ -130,6 +130,12 @@ class Post(models.Model):
 
     def __unicode__(self):
         return self.text
+
+    def is_pending(self):
+        if PendingPosts.objects(post=int(self.id)).count():
+            return True
+
+        return False
 
     def get_tags(self):
         hash_tags = re.compile(ur'(?i)(?<=\#)\w+', re.UNICODE)
@@ -269,6 +275,7 @@ class Post(models.Model):
             print str(e)
 
         r_server.srem('pending_photos', self.id)
+        r_server.srem(settings.PENDINGS, int(self.id))
         r_server.lrem(settings.STREAM_LATEST, str(self.id))
 
         cat_stream = "%s_%s" % (settings.STREAM_LATEST, self.category.id)

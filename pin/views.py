@@ -17,7 +17,9 @@ from pin.models import Post, Follow, Likes, Category, Comments
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
     get_user_meta, get_user_ip
 
-from pin.model_mongo import Ads
+from pin.context_processors import is_police
+
+from pin.model_mongo import Ads, PendingPosts
 
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
@@ -603,10 +605,17 @@ def item(request, item_id):
     post = get_object_or_404(
         Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
         .filter(id=item_id)[:1])
-    
+
     if not request.user.is_authenticated:
         if post.category_id in [23, 22]:
-            return HttpResponse('/')
+            return render(request, 'pending.html')
+
+    if PendingPosts.is_pending(item_id):
+        print "is pending"
+        if not is_police(request, flat=True):
+            print "not police"
+            return render(request, 'pending.html')
+
 
     if check_block(user_id=post.user_id, blocked_id=request.user.id):
         return HttpResponseRedirect('/')

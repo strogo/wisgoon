@@ -106,6 +106,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'pin.context_processors.user__id',
     'pin.context_processors.today_stats',
     'pin.context_processors.media_prefix',
+    'pin.context_processors.is_police',
 )
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -263,6 +264,8 @@ POST_LIKERS = "wis_likers_2_"
 USER_NAME_CACHE = "un_"
 
 HOME_STREAM = "home_stream"
+
+PENDINGS = "pengings"
 
 LIST_LONG = 10000
 

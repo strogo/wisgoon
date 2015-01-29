@@ -45,6 +45,23 @@
             {% endif %}
         </td>
     </tr>
+    <tr>
+        <td>سطح کاربری :</td>
+        <td>{{cur_user.user_meta.get_level_string}}
+            {% if request.user.is_superuser %}
+    <div class="dropdown">
+  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    تغییر
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "change-level" cur_user.id 2 %}">پلیس</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "change-level" cur_user.id 1 %}">عادی</a></li>
+  </ul>
+</div>
+        {% endif %}
+        </td>
+    </tr>
     </table>
 
 </div>
