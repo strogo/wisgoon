@@ -119,7 +119,7 @@ $(".popnotify").bind('click',function(){
         if(!notifCache){
             $.get( el.attr('data-load'), function(d) {
                 notifCache=d;
-                el.parent().children('.loading-img').show('0');
+                el.parent().children('.loading-img').show();
             })
             .done(function(d) {
                 el.unbind('click').popover({content: d, placement:'bottom',html:true}).popover('show');
