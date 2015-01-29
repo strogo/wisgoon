@@ -16,6 +16,7 @@ if (disable_masonry==0){
 var next_pref = next_pref || '?older='
 
 function load_posts(page) {
+    $('.footer-loading-box').show(0);
     $.get(
         a_url + next_pref + page + '&'+extend_query,
         function(response) {
@@ -30,8 +31,17 @@ function load_posts(page) {
                 ana_ajax(a_url + next_pref + page + '&'+extend_query);
                 AnetworkAdMatcher("anetwork-xc-banner",_AWFP_user);
             }
-        }
-    );
+        })
+        .done(function(d) {
+            el.unbind('click').popover({content: d, placement:'bottom',html:true}).popover('show');
+            el.parent().children('.loading-img').hide(0);
+        })
+        .fail(function(d) {
+            alert( "error" );
+        })
+        .always(function(d) {
+            el.parent().children('.loading-img').hide(0);
+        });
 }
 
 

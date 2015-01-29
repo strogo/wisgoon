@@ -1224,3 +1224,7 @@ a.img-move{
 	position: absolute;
 	top: 30px;
 }
+.footer-loading-box{
+	padding: 40px;
+	display: none;
+}
