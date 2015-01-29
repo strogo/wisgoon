@@ -213,7 +213,8 @@ a, a:link, a:hover, a:visited {
 
 
 /****** main ************/
-
+.red{color: red;}
+.green{color: green;}
 #main {
 	border-top: 1px solid #fffff9;
 }
@@ -239,6 +240,25 @@ a, a:link, a:hover, a:visited {
 	/*padding-right: 10px;*/
 	overflow: hidden;
 	max-height: 500px;
+}
+.feed-item .img-content .user-liked{
+	color: red;
+}
+.feed-item .img-content .comment i{
+	margin-left: 5px;
+}
+.feed-item .img-content .comment,
+.feed-item .img-content .likes{
+	opacity: .6;
+}
+.feed-item .img-content:hover .comment,
+.feed-item .img-content:hover .likes{
+	opacity: 1;
+}
+.feed-item .img-content .likes .cnt-like-icon{
+}
+.feed-item .img-content .likes .cnt-like{
+	margin-left: 5px;
 }
 .feed-item .img-content img{
 	border-radius: 10px 10px 0 0;

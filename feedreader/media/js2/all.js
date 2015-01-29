@@ -31,18 +31,16 @@ function load_posts(page) {
                 ana_ajax(a_url + next_pref + page + '&'+extend_query);
                 AnetworkAdMatcher("anetwork-xc-banner",_AWFP_user);
             }
-        })
-        .done(function(d) {
-            el.unbind('click').popover({content: d, placement:'bottom',html:true}).popover('show');
-            el.parent().children('.loading-img').hide(0);
+        }).done(function(d) {
+            $('.footer-loading-box').hide(0);
         })
         .fail(function(d) {
             alert( "error" );
         })
         .always(function(d) {
-            el.parent().children('.loading-img').hide(0);
+            $('.footer-loading-box').hide(0);
         });
-}
+    }
 
 
 // window scroll

@@ -7,17 +7,15 @@
 <div class="feed-item masonry-brick">
 	<div class="img-content">
 		<a class="pin-item-link" href="{% url "pin-item" item.id%}">
-		<img src="{{ item.get_image_236.url }}" width="236" height="{{ item.get_image_236.h }}" alt="{{item.text|remove_newlines|truncatewords:5}}">
+			<img src="{{ item.get_image_236.url }}" width="236" height="{{ item.get_image_236.h }}" alt="{{item.text|remove_newlines|truncatewords:5}}">
 		</a>
 
 		<div class="likes">
-			<span>{{item.cnt_comments}}</span>
-			<span class="glyphicon glyphicon-comment"></span>
+			<span class="cnt-like">{{item.cnt_comments}}</span>
+			<span class="glyphicon glyphicon-comment cnt-like-icon"></span>
 		</div>
 		<div class="comment">
-			<a href="{% url "pin-item-like" item.id%}" class="btn btn-sm btn-primary btn_like {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{item.cnt_like}} </a>
-			<!-- <span class="glyphicon glyphicon-heart-empty"></span>
-			<span>{{item.cnt_like}}</span> -->
+			<a href="{% url "pin-item-like" item.id%}" class="btn_like"> <i class="glyphicon glyphicon-heart {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"></i> {{item.cnt_like}} </a>
 		</div>
 		<div class="img-shadow"></div>
 	</div>
@@ -35,26 +33,24 @@
 		<a href="{% url "pin-item-like" item.id%}" class="btn btn-primary btn_like {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{item.cnt_like}} </a>
 	</div> -->
 	{% if is_super_user %}
-		<div class="actions" style="margin:5px 0">
-			{% if item.show_in_default %}
-			<a href="{% url "pin-item-goto-index" item.id 0%}" title="remove from index" class="item-to-index " style="margin-right: 5px"> 
-				<i class="glyphicon glyphicon-remove-sign"></i> 
-			</a>
-			{% else %}
-			<a href="{% url "pin-item-goto-index" item.id 1%}" title="add to index" class="item-to-index f-black" style="margin-right: 5px"> 
-				<i class="glyphicon glyphicon-ok-sign"></i> 
-			</a>
-			{% endif %}
-		</div>
+	<div class="actions" style="margin:5px 0;padding: 0 10px">
+		{% if item.show_in_default %}
+		<a href="{% url "pin-item-goto-index" item.id 0%}" title="remove from index" class="item-to-index " style="margin-right: 5px;float:left;"> 
+			<i class="glyphicon glyphicon-remove-sign red"></i> 
+		</a>
+		{% else %}
+		<a href="{% url "pin-item-goto-index" item.id 1%}" title="add to index" class="item-to-index f-black" style="margin-right: 5px;float:left;"> 
+			<i class="glyphicon glyphicon-ok-sign green"></i> 
+		</a>
+		{% endif %}
 	{% endif %}
 
 	{% if user__id == item.user_id or is_super_user %}
-	<div class="actions" style="margin:5px 0">
-		<a href="{% url "pin-item-edit" item.id%}" style="margin-right: 5px"  data-toggle="modal" data-target="#postModal"> 
+		<a href="{% url "pin-item-edit" item.id%}" style="margin-right: 5px;float:right;"  data-toggle="modal" data-target="#postModal"> 
 			<i class="glyphicon glyphicon-edit"></i> 
 		</a>
-		<a href="{% url "pin-item-delete" item.id%}" class=" delpost" style="margin-right: 5px"> 
-			<i class="glyphicon glyphicon-remove"></i> 
+		<a href="{% url "pin-item-delete" item.id%}" class=" delpost" style="margin-right: 5px;float:right;"> 
+			<i class="glyphicon glyphicon-remove red"></i> 
 		</a>
 		{% comment %}
 		{% if is_super_user %}
@@ -64,6 +60,7 @@
 		{% endif %}
 		{% endcomment %}
 	</div>
+	<div class="clearfix"></div>
 	{% endif%}
 
 	{% if item.text.strip|length > 0 %}
@@ -74,7 +71,7 @@
 	{% if item.get_tags %}
 	<div class="tags">
 		{% for t in item.get_tags %}
-			<a href="/hashtag/{{t}}/">#{{t}}</a>
+		<a href="/hashtag/{{t}}/">#{{t}}</a>
 		{% endfor %}
 	</div>
 	{% endif %}

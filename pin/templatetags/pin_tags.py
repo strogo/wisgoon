@@ -105,7 +105,7 @@ class UserPostLike(template.Node):
             liked = pin_likes.user_in_likers(post_id=item, user_id=user.id)
             #liked = pin_likes.objects.filter(user=user, post=item).count()
             if liked:
-                return 'btn-danger'
+                return 'user-liked'
             else:
                 return ''
         except template.VariableDoesNotExist:
