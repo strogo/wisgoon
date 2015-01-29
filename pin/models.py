@@ -424,11 +424,11 @@ class Post(models.Model):
             tag.save()
 
     def admin_image(self):
-        img = self.get_image_thumb()
+        img = self.get_image_236()
         if img:
             return """
                 <a href="/media/%s" target="_blank"><img src="%s" /></a>
-            """ % (self.image, img.url)
+            """ % (self.image, img['url'])
         return 'None'
     admin_image.allow_tags = True
 
