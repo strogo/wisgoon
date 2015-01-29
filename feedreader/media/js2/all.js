@@ -112,6 +112,8 @@ $('body').on('click', '.pin-item-link', function(){
 
 $(".popnotify").bind('click',function(){
     var el=$(this);
+    el.parent().children('.loading-img').show();
+
     if (isVisible){
         $(el).popover('hide');
     }else{
@@ -119,22 +121,21 @@ $(".popnotify").bind('click',function(){
         if(!notifCache){
             $.get( el.attr('data-load'), function(d) {
                 notifCache=d;
-                el.parent().children('.loading-img').show();
             })
             .done(function(d) {
                 el.unbind('click').popover({content: d, placement:'bottom',html:true}).popover('show');
+                el.parent().children('.loading-img').hide(0);
             })
             .fail(function(d) {
                 alert( "error" );
             })
             .always(function(d) {
-                el.parent().children('.loading-img').hide();
             });
         }else{
             el.unbind('click').popover({content: notifCache, placement:'bottom',html:true}).popover('show');    
+            el.parent().children('.loading-img').hide(0);
         }
     }
-    
 });
 
 function live_content(){
