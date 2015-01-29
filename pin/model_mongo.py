@@ -113,11 +113,29 @@ class PendingPosts(Document):
         return False
 
     def save(self, *args, **kwargs):
+        from models import Post
+        p = Post.objects.only('category').get(id=int(self.post))
+        r_server.lrem(settings.STREAM_LATEST, str(self.post))
+
+        cat_stream = "%s_%s" % (settings.STREAM_LATEST, p.category.id)
+        r_server.lrem(cat_stream, str(self.post))
+
         print "save in pending"
         r_server.sadd(settings.PENDINGS, int(self.post))
         return super(PendingPosts, self).save(*args, **kwargs)
 
     def delete(self, **write_concern):
+        from models import Post
+        p = Post.objects.only('category').get(id=int(self.post))
+        r_server.lpush(settings.STREAM_LATEST, str(self.post))
+
+        # cat_stream = "%s_%s" % (settings.STREAM_LATEST, p.category.id)
+        # r_server.lpush(cat_stream, str(self.post))
+
+        cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, p.category.id)
+        r_server.lrem(cat_stream, p.id)
+        r_server.lpush(cat_stream, p.id)
+
         print "delete in pending"
         r_server.srem(settings.PENDINGS, int(self.post))
         return super(PendingPosts, self).delete(**write_concern)

@@ -112,6 +112,8 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
 
     objects_list = []
     for p in posts:
+        if p.is_pending():
+            continue
         o = {}
         o['id'] = p.id
         o['text'] = p.text
@@ -151,8 +153,6 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
             net_quality = str(r.GET.get('net_quality', "normal"))
 
         o_image = p.image
-
-
 
         # imo = get_thumb(o_image, thumb_size, settings.API_THUMB_QUALITY)
         try:
@@ -556,6 +556,8 @@ def notif(request):
     for p in notifs:
         try:
             cur_p = Post.objects.only(*Post.NEED_KEYS2).get(id=p.post)
+            if cur_p.is_pending():
+                continue
         except Post.DoesNotExist:
             continue
         o = {}
