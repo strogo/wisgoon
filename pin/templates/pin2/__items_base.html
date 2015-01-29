@@ -35,11 +35,11 @@
 	{% if is_super_user %}
 	<div class="actions" style="margin:5px 0;padding: 0 10px">
 		{% if item.show_in_default %}
-		<a href="{% url "pin-item-goto-index" item.id 0%}" title="remove from index" class="item-to-index " style="margin-right: 5px;float:left;"> 
+		<a href="{% url "pin-item-goto-index" item.id 0%}" title="remove from index" class="item-to-index " style="margin-bottom:15px;margin-right: 5px;float:left;"> 
 			<i class="glyphicon glyphicon-remove-sign red"></i> 
 		</a>
 		{% else %}
-		<a href="{% url "pin-item-goto-index" item.id 1%}" title="add to index" class="item-to-index f-black" style="margin-right: 5px;float:left;"> 
+		<a href="{% url "pin-item-goto-index" item.id 1%}" title="add to index" class="item-to-index f-black" style="margin-bottom:15px;margin-right: 5px;float:left;"> 
 			<i class="glyphicon glyphicon-ok-sign green"></i> 
 		</a>
 		{% endif %}
