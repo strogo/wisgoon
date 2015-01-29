@@ -117,9 +117,18 @@ $(".popnotify").bind('click',function(){
     }else{
         isVisible = true;
         if(!notifCache){
-            $.get(el.attr('data-load'),function(d){
+            $.get( el.attr('data-load'), function(d) {
                 notifCache=d;
+                el.parent().children('.loading-img').show('0');
+            })
+            .done(function(d) {
                 el.unbind('click').popover({content: d, placement:'bottom',html:true}).popover('show');
+            })
+            .fail(function(d) {
+                alert( "error" );
+            })
+            .always(function(d) {
+                el.parent().children('.loading-img').hide();
             });
         }else{
             el.unbind('click').popover({content: notifCache, placement:'bottom',html:true}).popover('show');    

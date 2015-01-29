@@ -27,7 +27,7 @@
 				<div class="col-md-6 col-sm-12 pull-left" id="top-userinfo">
 					<ul>
 						
-							{% if user.is_authenticated %}
+						{% if user.is_authenticated %}
 						<li>
 							<div class="send-photo">
 								<a aria-expanded="true" data-toggle="dropdown" href="">
@@ -36,75 +36,75 @@
 								</a>
 								<ul class="dropdown-menu send-dropdown"
 								role="menu" aria-labelledby="dropdownMenuDivider">
-									<li role="presentation" class="send-border-bottom">
-										<a data-toggle="modal" data-target="#fromImageModal" href="#fromImageModal">
+								<li role="presentation" class="send-border-bottom">
+									<a data-toggle="modal" data-target="#fromImageModal" href="#fromImageModal">
 										ارسال فایل
-										</a>
-									</li>
-									<li role="presentation">
-										<a data-toggle="modal" data-target="#fromUrlModal" href="#fromUrlModal">
+									</a>
+								</li>
+								<li role="presentation">
+									<a data-toggle="modal" data-target="#fromUrlModal" href="#fromUrlModal">
 										ارسال از وب
-										</a>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</li>
+					<li>
+						<div class="notification">
+							<a href="#notify" data-load="{% url "show_notify" %}" title="اعلانات" class="popnotify">
+								<span class="glyphicon glyphicon-bell"></span> {{user.id|get_user_notify}} 
+							</a>
+							<img src="{{MEDIA_URL}}v2/images/top-loading.gif" alt="..." class="loading-img" />
+						</li>
+
+						<li>
+							<div class="setting">
+								<a aria-expanded="true" data-toggle="dropdown" href="">
+									<span class="glyphicon glyphicon-cog"></span>
+								</a>
+								<ul class="dropdown-menu setting-dropdown" role="menu" aria-labelledby="dropdownMenuDivider">
+									<li role="presentation" class="setting-border-bottom">
+										<div class="like">
+											<a href="/accounts/password/change/">تعویض رمز عبور</a>
+										</div>
+										<div class="comment">
+											<a href="/accounts/logout/">خروج</a>
+										</div>
+
 									</li>
+
 								</ul>
 							</div>
 						</li>
-<li>
-	<div class="notification">
-		<a href="#notify" data-load="{% url "show_notify" %}" title="اعلانات" class="popnotify"><span class="glyphicon glyphicon-bell"></span> {{user.id|get_user_notify}} </a>
-		<!-- <a aria-expanded="true" data-toggle="dropdown" href="">
-			<span class="glyphicon glyphicon-bell"></span>
-		</a> -->
-</li>
 
-<li>
-		<div class="setting">
-			<a aria-expanded="true" data-toggle="dropdown" href="">
-				<span class="glyphicon glyphicon-cog"></span>
-			</a>
-			<ul class="dropdown-menu setting-dropdown" role="menu" aria-labelledby="dropdownMenuDivider">
-			<li role="presentation" class="setting-border-bottom">
-				<div class="like">
-					<a href="/accounts/password/change/">تعویض رمز عبور</a>
-				</div>
-				<div class="comment">
-					<a href="/accounts/logout/">خروج</a>
-				</div>
-				
-			</li>
-			
-		</ul>
-	</div>
-</li>
+						<li>
+							<div class="hidden-xs">
+								<a href="{% url "pin-user" user.id %}">
+									<img class="nav-avatar" src="{{user|get_avatar:41}}">
+									<!-- <img src="{{MEDIA_URL}}v2/images/ava.jpg"> -->
+								</a>
+							</div>
+						</li>
+						{% else %}
+						<li>
+							<div class="notification hidden-xs">
+								<a href="{% url "registration_register" %}">عضویت</a>
+							</div>
+						</li>
 
-							<li>
-								<div class="hidden-xs">
-									<a href="{% url "pin-user" user.id %}">
-										<img class="nav-avatar" src="{{user|get_avatar:41}}">
-										<!-- <img src="{{MEDIA_URL}}v2/images/ava.jpg"> -->
-									</a>
-								</div>
-							</li>
-							{% else %}
-<li>
-	<div class="notification hidden-xs">
-		<a href="{% url "registration_register" %}">عضویت</a>
-	</div>
-</li>
-
-<li>
-	<div class="notification hidden-xs">
-		<a href="/accounts/login/"> ورود</a>
-	</div>
-</li>
-							{% endif %}
-						</ul>
-					</div>
+						<li>
+							<div class="notification hidden-xs">
+								<a href="/accounts/login/"> ورود</a>
+							</div>
+						</li>
+						{% endif %}
+					</ul>
 				</div>
 			</div>
 		</div>
-		<div class="clear"></div>
 	</div>
+	<div class="clear"></div>
+</div>
 
 <div id="activity-count">
 	<div class="container">
@@ -124,6 +124,6 @@
 			<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
 			تعداد کاربران آنلاین : {{stats.onlines}}
 		</div>
-			
+
 	</div>
 </div>
