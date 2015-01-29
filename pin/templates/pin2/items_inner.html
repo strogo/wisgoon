@@ -99,7 +99,7 @@
 {% endif %}
 
 {% for comment in post.comments %}
-<div class="row">
+<div class="row" id="comment_row_{{comment.id}}">
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="others-comment">
 			<div class="col-md-1 col-sm-1 col-xs-1 avatar">
@@ -114,6 +114,9 @@
 
 			<div class="col-md-9 col-sm-9 col-xs-9">
 				<p>{{comment.comment}}</p>
+{% if request.user.is_superuser %}
+<a class="del-comment" rel="{{comment.id}}" href="{% url "pin-comment-delete" comment.id %}"><i class="glyphicon glyphicon-remove"></i></a>
+{% endif %}
 			</div>
 			<div class="col-md-2 col-sm-2 col-xs-1" style="color:#aaa">
 				{{comment.submit_date|naturaltime}}

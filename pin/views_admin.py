@@ -134,6 +134,8 @@ def comment_delete(request, id):
             return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
 
     comment.delete()
+    if request.is_ajax():
+        return HttpResponse(1)
 
     return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
 

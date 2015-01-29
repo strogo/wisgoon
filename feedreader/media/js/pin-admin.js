@@ -38,3 +38,22 @@ $( "body" ).on('click', ".postfault", function(){
     }
     return false;
 });
+
+$(".del-comment").click(function(){
+    var obj = $(this);
+    console.log(this);
+    var row_name = "comment_row_" + $(obj).attr("rel");
+    console.log(row_name);
+    var req_url = obj.attr('href');
+    $.ajax({
+        url: req_url,
+        success: function(html) {
+            ret = html;
+            if (ret==1){
+                $("#"+row_name).remove();
+            }
+        }
+    });
+    
+    return false;
+});
