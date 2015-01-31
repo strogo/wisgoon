@@ -112,6 +112,28 @@ def search(request):
     })
 
 
+def category_top(request, category_id):
+    ROW_PER_PAGE = 20
+    results = []
+    offset = int(request.GET.get('offset', 0))
+
+    posts = SearchQuerySet().models(Post)\
+        .order_by('-cnt_like_i')[offset:offset + 1 * ROW_PER_PAGE]
+
+    if request.is_ajax():
+        return render(request, 'pin2/__search.html', {
+            'results': results,
+            'posts': posts,
+            'offset': offset + ROW_PER_PAGE,
+        })
+
+    return render(request, 'pin2/category_top.html', {
+        'results': results,
+        'posts': posts,
+        'offset': offset + ROW_PER_PAGE,
+    })
+
+
 def tags(request, tag_name):
     ROW_PER_PAGE = 20
     results = []
