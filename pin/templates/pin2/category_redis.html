@@ -23,8 +23,8 @@ var next_pref = '?pid=';
 	</div>
 	<div class="container">
 		<div class="alert col-md-12" style="background: rgb(67, 74, 84); color: rgb(255, 255, 255);">
-				<h1 class="pull-right">دسته بندی: <strong>{{cur_cat.title}}</strong></h1>
-				<a class="label label-danger" href="{% url "pin-category-top" cur_cat.id %}">برترین ها</a>
+				<h1 class="pull-right">دسته بندی: <strong style='color:#d39e00;'>{{cur_cat.title}}</strong></h1>
+				<a class="label label-danger" style="margin: 18px 10px; display: inline-block; font-size: 18px; padding: 11px; color: rgb(255, 255, 255);" href="{% url "pin-category-top" cur_cat.id %}">برترین ها</a>
 		</div>
 	</div>
 	<div class="clearfix"></div>
