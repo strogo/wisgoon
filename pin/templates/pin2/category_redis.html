@@ -21,6 +21,13 @@ var next_pref = '?pid=';
 	<div class="col-md-12" style="text-align:center;height:97px;">
 		<div class="anetwork-xc-banner awsize-728-90"></div>
 	</div>
+	<div class="col-md-8 col-md-offset-2">
+		<blockquote>
+				<h1>{{cur_cat.title}}</h1>
+				<a href="{% url "pin-category-top" cur_cat.id %}">برترین ها</a>
+		</blockquote>
+	</div>
+	<div class="clearfix"></div>
 	<div class="container-fluid">
 		<div id="feed" class="masonry">
 			{% include "pin2/_items_2.html"%}

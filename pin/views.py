@@ -114,6 +114,7 @@ def search(request):
 
 def category_top(request, category_id):
     ROW_PER_PAGE = 20
+    cat = get_object_or_404(Category, pk=category_id)
     results = []
     offset = int(request.GET.get('offset', 0))
 
@@ -132,6 +133,7 @@ def category_top(request, category_id):
         'results': results,
         'posts': posts,
         'offset': offset + ROW_PER_PAGE,
+        'cur_cat': cat
     })
 
 

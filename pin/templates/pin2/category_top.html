@@ -6,6 +6,8 @@
 <!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
 {% endblock extra_js %}
 
+{% block title%} - برترین مطالب گروه {{cur_cat.title}} {% endblock title%}
+
 {% block content %}
 
 <script type="text/javascript">
@@ -17,6 +19,13 @@ var next_pref = '?q={{query}}&offset=';
 <div class="col-md-12" style="text-align:center;height:97px;">
 		<div class="anetwork-xc-banner awsize-728-90"></div>
 	</div>
+	<div class="col-md-8 col-md-offset-2">
+		<blockquote>
+				<h1>{{cur_cat.title}}</h1>
+				<a href="{% url "pin-category" cur_cat.id %}">آخرین مطالب</a>
+		</blockquote>
+	</div>
+	<div class="clearfix"></div>
 <div id="main">
 	<div class="container-fluid">
 		<div id="feed" class="masonry">
