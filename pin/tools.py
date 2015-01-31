@@ -248,8 +248,10 @@ def check_block(user_id, blocked_id):
 
 def get_user_meta(user_id):
     try:
-        user_meta = UserMeta.objects.get(user=user_id).first()
+        user_meta = UserMeta.objects.get(user=user_id)
     except UserMeta.DoesNotExist:
         user_meta = UserMeta.objects.create(user=user_id)
+    except MultipleObjectsReturned:
+        user_meta = UserMeta.objects.filter(user=user_id).first()
 
     return user_meta
