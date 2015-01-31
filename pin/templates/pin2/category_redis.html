@@ -21,11 +21,11 @@ var next_pref = '?pid=';
 	<div class="col-md-12" style="text-align:center;height:97px;">
 		<div class="anetwork-xc-banner awsize-728-90"></div>
 	</div>
-	<div class="col-md-8 col-md-offset-2">
-		<blockquote>
-				<h1>{{cur_cat.title}}</h1>
-				<a href="{% url "pin-category-top" cur_cat.id %}">برترین ها</a>
-		</blockquote>
+	<div class="container">
+		<div class="alert col-md-12">
+				<h1>دسته بندی: {{cur_cat.title}}</h1>
+				<a class="label label-danger" href="{% url "pin-category-top" cur_cat.id %}">برترین ها</a>
+		</div>
 	</div>
 	<div class="clearfix"></div>
 	<div class="container-fluid">
