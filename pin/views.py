@@ -118,6 +118,7 @@ def category_top(request, category_id):
     offset = int(request.GET.get('offset', 0))
 
     posts = SearchQuerySet().models(Post)\
+        .filter(category_i=category_id)\
         .order_by('-cnt_like_i')[offset:offset + 1 * ROW_PER_PAGE]
 
     if request.is_ajax():
