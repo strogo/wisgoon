@@ -50,14 +50,14 @@
 				</div>
 				<div class="row likes">
 					<div class="content">
-						<div class="liker col-md-11 col-sm-11 col-xs-11">
+						<div class="liker col-md-10 col-sm-10 col-xs-10">
 							{% for liker in post.likes %}            
 							<a href="{% url "pin-user" liker %}">
 								<img src="{{liker|get_avatar:50}}" style="display: inline;margin: 2px;" >
 							</a>
 							{% endfor %}
 						</div>
-						<div class="col-md-1 col-sm-1 col-xs-1 like-icon">
+						<div class="col-md-2 col-sm-2 col-xs-2 like-icon">
 							<a href="{% url "pin-item-like" post.id%}" class="btn_like"><i class="glyphicon glyphicon-heart {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"></i><i class="{% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}">{{post.cnt_likes}}</i></a>
 						</div>
 						
