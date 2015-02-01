@@ -137,6 +137,8 @@ def following(request):
 
 @login_required
 def follow(request, following, action):
+    message = ''
+    status = ''
     if int(following) == request.user.id:
         return HttpResponseRedirect(reverse('pin-home'))
 
@@ -157,6 +159,8 @@ def follow(request, following, action):
     if int(action) == 0 and follow:
         follow.delete()
         Stream.objects.filter(following=following, user=request.user).delete()
+        message = 'ارتباط شما با موفقیت قطع شد'
+        status = 'false'
     elif created:
         posts = Post.objects.only('timestamp').filter(user=following)\
             .order_by('-timestamp')[:100]
@@ -167,7 +171,12 @@ def follow(request, following, action):
                                                       date=post.timestamp,
                                                       following=following)
             # print "post", post.id, s, created
+        message = 'ارتباط شما با موفقیت برقرار شد'
+        status = 'true'
 
+    if request.is_ajax():
+        data = [{'status': status, 'message': message}]
+        return HttpResponse(json.dumps(data))
     return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
     
 

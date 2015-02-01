@@ -1274,3 +1274,49 @@ a.img-move{
 	padding: 40px;
 	display: none;
 }
+.topuser-item {
+	overflow: hidden;
+	background-color: #fff;
+	border-radius: 20px;
+	box-shadow: 0 2px #e2e4e7;
+	float: right;
+	margin-bottom: 10px;
+	text-align: center;
+}
+.topuser-item .topuser-name{
+	padding: 10px;
+}
+.topuser-item .topuser-name a{
+	color: #434a54;
+	font-weight: bold;
+}
+.topuser-item .topuser-thumb{
+	position: relative;
+	display: flex;
+}
+.topuser-item:hover .follow-btn{
+	display: block;
+}
+.topuser-item .follow-btn{
+	display: none;
+	background: rgba(255, 255, 255, 0.85);
+	height: 100%;
+	line-height: 100%;
+	position: absolute;
+	width: 100%;
+}
+.topuser-item .follow-btn a{
+	display: inline-block;
+	margin-top: 35%;
+	text-align: center;
+}
+.topuser-item  .topuser-info {
+	padding: 10px;
+	text-align: right;
+	color: #777;
+}
+.topuser-item .count{
+	color: #434a54;
+	font-weight: bold;
+	margin-right: 10px;
+}

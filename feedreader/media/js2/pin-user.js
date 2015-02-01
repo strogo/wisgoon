@@ -145,3 +145,30 @@ $('body').on('click', '.btn_like',function(){
     });
     return false;
 });
+
+$('body').on('click', '.topuser-hover-btn',function(){
+    var th = $(this);
+    var userid = th.data('userid');
+    var actionid = th.data('actionid');
+    var url = '/pin/follow/'+userid+'/'+actionid+'/';
+
+    $.ajax({
+        url: url,
+    })
+    .done(function(data) {
+        var d = $.parseJSON(data);
+        if (d['status'] == true) {
+            th.data('actionid', '0');
+            console.log(d['message']);
+        }else{
+            th.data('actionid', '1');
+            console.log(d['message']);
+        }
+    })
+    .fail(function() {
+    })
+    .always(function() {
+    });
+    
+
+});
