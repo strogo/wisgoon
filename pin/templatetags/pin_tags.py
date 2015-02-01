@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import datetime
 import re
 
@@ -200,6 +201,22 @@ def jalali_mysql_date(value):
     d = cal.jd_to_jalali(jd)
     d = "%s/%s/%s" % (d[0], d[1], d[2])
     return d
+
+
+@register.filter
+def pn(value):
+    value = str(value)
+    value = value.replace('1','۱')
+    value = value.replace('2','۲')
+    value = value.replace('3','۳')
+    value = value.replace('4','۴')
+    value = value.replace('5','۵')
+    value = value.replace('6','۶')
+    value = value.replace('7','۷')
+    value = value.replace('8','۸')
+    value = value.replace('9','۹')
+    value = value.replace('0','۰')
+    return value
 
 
 def remove_newlines(text):

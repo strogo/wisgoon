@@ -11,20 +11,22 @@
 	<div class="col-md-12 col-sm-12 col-xs-12 username">
 		<h4>{{cur_user|get_username}}</h4>
 	</div>
+	
 	{% if cur_user.id != request.user.id %}
-<div class="col-md-12">
-   {% if follow_status == 0 %}
+	<div class="col-md-12">
+		{% if follow_status == 0 %}
 
 		<a class="btn btn-success" href="{% url "pin-follow" cur_user.id 1 %}">ایجاد دوستی</a>
 
-	{% else %}
+		{% else %}
 
 		<a class="btn btn-danger" href="{% url "pin-follow" cur_user.id 0 %}">قطع ارتباط</a>
 
-	{%endif%}
+		{%endif%}
 
-</div>
-{% endif %}
+	</div>
+	{% endif %}
+
 	<div class="col-md-12 col-sm-12 col-xs-12 likes f-black">
 		<div class="col-md-12 col-sm-12 col-xs-12">
 			<a class="f-black" href="{% url "pin-user-like" cur_user.id %}">مطالب مورد علاقه</a>

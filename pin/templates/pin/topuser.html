@@ -1,4 +1,4 @@
-{% extends "base/pin.html"%}
+{% extends "pin2/flat.base.box.html"%}
 {% load pin_tags %}
 {% load daddy_avatar %}
 {%load cache %}
@@ -9,38 +9,61 @@
 {% cache 3600 topusers %}
 <div id="profile" class="row row-fluid">
 	<div id="feed-ul" class="container"style="width:940px;" >
-    <table style="width:100%" width="100%">
-        <tr>
         {% for u in top_user %}
-        <td>
-        <div class="feed-item" style="padding:5px">
-            <a href="{% url "pin-user" u.user.id %}">
-                {% if forloop.counter < 9 %}
-                <img src="{{u.user|get_avatar:326}}" style="float:left; width:326px;" >
-                {%else%}
-                <img src="{{u.user|get_avatar:50}}" style="float:left" >
-                {%endif%}
-            </a>
-            <table>
-            <tr>
-            <td><a href="{% url "pin-user" u.user.id %}">{{u.user|get_username}}</a></td>
-            </tr><tr>
-            <td>تعداد مطالب: {{u.cnt_post}}</td>
-            </tr>
-            <tr>
-            <td>امتیاز: {{u.score}}</td>
-            </tr>
-            </table>
-        </div>
-        </td>
-        {% if forloop.counter|divisibleby:4 %}
-        </tr>
-        <tr>
-        {% endif %}
+
+        <div class="col-md-3">
+            <div class="topuser-item">
+                <div class="topuser-thumb">
+                    {% if user.is_authenticated %}
+                    
+                    <div class="follow-btn">
+
+                        {% if u.user.id != request.user.id %}
+                        <div class="col-md-12">
+                            {% if follow_status == 0 %}
+                            <a href="javascript:;" class="hover-follow-btn topuser-hover-btn"  data-userid='{{u.user.id}}' data-actionid='1' >
+                                <img src="{{MEDIA_URL}}img/follow.png" alt=""><br/><br/> <b>ایجاد دوستی</b>
+                            </a>
+                            {% else %}
+                            <a href="javascript:;" class="hover-unfollow-btn topuser-hover-btn" data-userid='{{u.user.id}}' data-actionid='0'>
+                                <img src="{{MEDIA_URL}}img/unfollow.png" alt=""><br/><br/> <b>قع ارتباط</b>
+                            </a>
+
+                            {%endif%}
+
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                    {% endif %}
+                    <a href="{% url "pin-user" u.user.id %}" class="">
+                        {% if forloop.counter < 9 %}
+                        <img src="{{u.user|get_avatar:240}}" style="float:left; width:100%;" >
+                        {%else%}
+                        <img src="{{u.user|get_avatar:50}}" style="float:left" >
+                        {%endif%}
+                    </a>
+                </div>
+                <div class="clearfix"></div>
+                <div class="topuser-name">
+                    <a href="{% url 'pin-user' u.user.id %}">{{u.user|get_username}}</a>
+                </div>
+                <div class="topuser-info">
+                    <div class="">تعداد مطالب: <span class="count">{{u.cnt_post|pn}}</span></div>
+                    <div class="">امتیاز: <span class="count">{{u.score|pn}}</span></div>
+                </div>
+
+            </div>
+
+        </div>        
+
         {%endfor%}
-        </tr>
-    </table>
-	</div>
+    </div>
 </div>
+<br />
+<br />
+<br />
+<br />
 {% endcache %}
 {% endblock content %}
