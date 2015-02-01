@@ -576,7 +576,7 @@ def popular(request, interval=""):
 def topuser(request):
     top_user = Profile.objects.all().order_by('-score')[:152]
 
-    return render(request, 'pin/topuser.html', {'top_user': top_user})
+    return render(request, 'pin2/topuser.html', {'top_user': top_user})
 
 
 def topgroupuser(request):
