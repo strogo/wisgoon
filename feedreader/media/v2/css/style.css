@@ -1057,6 +1057,28 @@ a.img-move{
 .btn_like{
 	color: #FFF;
 }
+.likes .btn_like{
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	color: #ddd !important;
+	padding: 6px 10px 2px;
+	background: #fff;
+}
+.likes .btn_like .user-liked .glyphicon{
+	margin-left: 5px;
+}
+.likes .btn_like .user-liked,
+.likes .btn_like .user-liked *{
+	color: #d64b47 !important;
+}
+.likes .btn_like:hover{
+	background: #fff;
+	border: 1px solid #f26d00;
+}
+.likes .btn_like:hover,
+.likes .btn_like:hover *{
+	color: #f26d00 !important;
+}
 
 .navbar-default-items{
 	background-color: #f0f2f5;
