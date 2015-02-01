@@ -107,9 +107,9 @@ class PendingPosts(Document):
     def is_pending(self, post):
         post = int(post)
         if r_server.sismember(settings.PENDINGS, post):
-            print "this post is pending"
+            # print "this post is pending"
             return True
-        print "this post is not pending"
+        # print "this post is not pending"
         return False
 
     def save(self, *args, **kwargs):
