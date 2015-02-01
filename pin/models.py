@@ -505,13 +505,22 @@ class Post(models.Model):
 
     @classmethod
     def latest(self, pid=0, cat_id=0):
+        # print "this is latest", pid, cat_id
         # print pid
 
         if cat_id:
             cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, cat_id)
-            pl = r_server.lrange(cat_stream, 0, settings.LIST_LONG)
         else:
             cat_stream = settings.STREAM_LATEST
+
+        if pid == 0:
+            pl = r_server.lrange(cat_stream, 0, 20)
+        else:
+            cache_name = "cl_%s_%s" % (cat_stream, pid)
+            cache_data = cache.get(cache_name)
+            if cache_data:
+                # print "we have cached data", cache_data, cache_name
+                return cache_data
             pl = r_server.lrange(cat_stream, 0, settings.LIST_LONG)
 
         # print pl
@@ -522,6 +531,7 @@ class Post(models.Model):
             try:
                 pid_index = pl.index(str(pid))
                 idis = pl[pid_index + 1: pid_index + 20]
+                cache.set(cache_name, idis, 86400)
                 return idis
             except ValueError:
                 return []
