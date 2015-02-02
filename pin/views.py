@@ -575,6 +575,10 @@ def popular(request, interval=""):
 
 def topuser(request):
     top_user = Profile.objects.all().order_by('-score')[:152]
+    for tu in top_user:
+        tu.follow_status = Follow.objects\
+            .filter(follower=request.user.id, following=tu.user_id).count()
+        print tu.follow_status
 
     return render(request, 'pin2/topuser.html', {'top_user': top_user})
 
