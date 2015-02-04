@@ -1320,3 +1320,8 @@ a.img-move{
 	font-weight: bold;
 	margin-right: 10px;
 }
+.post-content .time-box{
+	color: #aaa;
+	padding: 10px 0;
+	margin-left: 30px;
+}
