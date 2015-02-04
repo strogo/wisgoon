@@ -397,6 +397,10 @@ class Post(models.Model):
                  profile.score > 5000) or profile.score > 7000):
                 self.status = 1
 
+            else:
+                print self.date_lt(self.user.date_joined, 30), profile.score
+                print "cant upload"
+
         except Profile.DoesNotExist:
             pass
 
@@ -410,6 +414,8 @@ class Post(models.Model):
             self.hash = self.md5_for_file(image_file)
         else:
             print "path does not exists", file_path
+
+        print "self status: ", self.status
 
         super(Post, self).save(*args, **kwargs)
         self.get_image_236()

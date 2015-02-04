@@ -275,16 +275,18 @@ def post_send(request):
             with BufferedWriter(FileIO("%s/pin/images/o/%s" % (MEDIA_ROOT, filename), "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
-                model = Post()
-                model.image = "pin/images/o/%s" % (filename)
-                model.user = user
-                model.timestamp = time.time()
-                model.text = form.cleaned_data['description']
-                model.category_id = form.cleaned_data['category']
-                model.device = 2
-                model.save()
-                
-                return HttpResponse('success')
+            print "complete write to file"
+            print filename
+            model = Post()
+            model.image = "pin/images/o/%s" % (filename)
+            model.user = user
+            model.timestamp = time.time()
+            model.text = form.cleaned_data['description']
+            model.category_id = form.cleaned_data['category']
+            model.device = 2
+            model.save()
+            
+            return HttpResponse('success')
         except IOError:
             return HttpResponseBadRequest('error')
 
