@@ -530,7 +530,6 @@ def likes(request):
 
 
 def notif(request):
-    #print "we are in post"
     data = {}
     data['meta'] = {'limit': 10,
                     'next': '',
@@ -551,7 +550,7 @@ def notif(request):
 
     Notif.objects.filter(owner=cur_user, seen=False).update(set__seen=True)
 
-    Notif.objects.filter(owner=1)[100:].delete()
+    Notif.objects.filter(owner=1).order_by('-date')[100:].delete()
 
     for p in notifs:
         try:
