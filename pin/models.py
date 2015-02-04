@@ -324,7 +324,11 @@ class Post(models.Model):
         return post
 
     @classmethod
-    def add_to_stream(self, post):
+    def add_to_stream(cls, post):
+        print "this is add to stream"
+        if not post.accept_for_stream():
+            print "post not accepted for streams"
+            return
         latest_stream = settings.STREAM_LATEST
         r_server.lrem(latest_stream, post.id)
         r_server.lpush(latest_stream, post.id)
@@ -369,6 +373,19 @@ class Post(models.Model):
             r_server.zremrangebyrank(cat_set_key, 0, -1001)
             #r_server.ltrim(cat_set_key, 0, 1000)
 
+    def accept_for_stream(self):
+        file_path = os.path.join(settings.MEDIA_ROOT, self.image)
+        if os.path.exists(file_path):
+            try:
+                img = Image.open(file_path)
+                if img.size[0] < 236:
+                    return False
+            except Exception, e:
+                print str(e), "models accept for stream"
+
+        return True
+
+
     def save(self, *args, **kwargs):
         from user_profile.models import Profile
         try:
@@ -383,6 +400,8 @@ class Post(models.Model):
 
         file_path = os.path.join(settings.MEDIA_ROOT, self.image)
         if os.path.exists(file_path):
+            if not self.accept_for_stream():
+                self.status = 0
             image_file = open(file_path)
 
             self.hash = self.md5_for_file(image_file)

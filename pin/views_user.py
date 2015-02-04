@@ -393,7 +393,7 @@ def send(request):
             model.user = request.user
             model.save()
 
-            form.save_m2m()
+            # form.save_m2m()
 
             if model.status == 1:
                 msg = 'مطلب شما با موفقیت ارسال شد. <a href="%s">مشاهده</a>' %\
