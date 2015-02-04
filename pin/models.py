@@ -231,10 +231,10 @@ class Post(models.Model):
                 try:
                     ibase, nname, h = self.save_thumb(basewidth=500)
                 except IOError, e:
-                    print str(e), "get_image_500"
+                    # print str(e), "get_image_500"
                     return False
                 except Exception, e:
-                    print str(e), "get_image_500"
+                    # print str(e), "get_image_500"
                     return False
 
                 new_image_url = ibase + "/" + nname
@@ -243,8 +243,9 @@ class Post(models.Model):
                             set__img_500_h=h,
                             upsert=True)
 
-            except Exception, e:
-                print str(e)
+            except Exception:
+                pass
+                # print str(e)
 
         if api:
             final_url = new_image_url

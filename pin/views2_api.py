@@ -197,7 +197,7 @@ def get_list_post(pl, from_model='latest'):
             arp.append(Post.objects.only(*Post.NEED_KEYS2).get(id=pll))
             # print arp
         except Exception, e:
-            print str(e), 'line 182', pll
+            # print str(e), 'line 182', pll
             r_server.lrem(from_model, str(pll))
 
     posts = arp
