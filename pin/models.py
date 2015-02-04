@@ -326,6 +326,7 @@ class Post(models.Model):
 
     @classmethod
     def add_to_stream(cls, post):
+
         print "this is add to stream"
         if not post.accept_for_stream():
             print "post not accepted for streams"
@@ -379,13 +380,13 @@ class Post(models.Model):
         if os.path.exists(file_path):
             try:
                 img = Image.open(file_path)
+                print "size:", img.size
                 if img.size[0] < 236:
                     return False
             except Exception, e:
                 print str(e), "models accept for stream"
 
         return True
-
 
     def save(self, *args, **kwargs):
         from user_profile.models import Profile
@@ -401,11 +402,14 @@ class Post(models.Model):
 
         file_path = os.path.join(settings.MEDIA_ROOT, self.image)
         if os.path.exists(file_path):
+            print "post accept_for_stream", self.accept_for_stream()
             if not self.accept_for_stream():
                 self.status = 0
             image_file = open(file_path)
 
             self.hash = self.md5_for_file(image_file)
+        else:
+            print "path does not exists", file_path
 
         super(Post, self).save(*args, **kwargs)
         self.get_image_236()
