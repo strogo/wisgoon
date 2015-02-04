@@ -650,7 +650,7 @@ class Stream(models.Model):
                 except:
                     pass
 
-            if post.status == Post.APPROVED:
+            if post.status == Post.APPROVED and post.accept_for_stream():
                 Post.add_to_stream(post=post)
 
 
