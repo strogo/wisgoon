@@ -375,12 +375,23 @@ class Post(models.Model):
             r_server.zremrangebyrank(cat_set_key, 0, -1001)
             #r_server.ltrim(cat_set_key, 0, 1000)
 
+    def hash_exists(self):
+        lname = "duplic"
+        r_dup = r_server.lrange(lname, 0, 100)
+        if self.hash in r_dup:
+            return True
+
+        r_server.lpush(lname, self.hash)
+        r_server.ltrim(lname, 0, 101)
+
+        return False
+
     def accept_for_stream(self):
         file_path = os.path.join(settings.MEDIA_ROOT, self.image)
         if os.path.exists(file_path):
             try:
                 img = Image.open(file_path)
-                print "size:", img.size
+                # print "size:", img.size
                 if img.size[0] < 236:
                     return False
             except Exception, e:
@@ -399,23 +410,25 @@ class Post(models.Model):
 
             else:
                 print self.date_lt(self.user.date_joined, 30), profile.score
-                print "cant upload"
+                # print "cant upload"
 
         except Profile.DoesNotExist:
             pass
 
         file_path = os.path.join(settings.MEDIA_ROOT, self.image)
         if os.path.exists(file_path):
-            print "post accept_for_stream", self.accept_for_stream()
+            image_file = open(file_path)
+            self.hash = self.md5_for_file(image_file)
+
+            if self.hash_exists():
+                self.status = 0
+
             if not self.accept_for_stream():
                 self.status = 0
-            image_file = open(file_path)
-
-            self.hash = self.md5_for_file(image_file)
         else:
             print "path does not exists", file_path
 
-        print "self status: ", self.status
+        # print "self status: ", self.status
 
         super(Post, self).save(*args, **kwargs)
         self.get_image_236()

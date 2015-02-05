@@ -257,7 +257,7 @@ def post_send(request):
     upload_cache = cache.get(upload_cache_str)
     if upload_cache:
         return HttpResponseForbidden('error in user validation')
-    
+
     cache.set(upload_cache_str, upload_cache, 300)
 
     if request.method != 'POST':
@@ -275,8 +275,7 @@ def post_send(request):
             with BufferedWriter(FileIO("%s/pin/images/o/%s" % (MEDIA_ROOT, filename), "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
-            print "complete write to file"
-            print filename
+
             model = Post()
             model.image = "pin/images/o/%s" % (filename)
             model.user = user
