@@ -11,6 +11,7 @@ from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 
 from pin.models import Post, Follow, Likes, Category, Comments
@@ -31,41 +32,37 @@ REPORT_TYPE = settings.REPORT_TYPE
 
 
 def home(request):
-    # if request.user.id:
-    #     user_id = str(request.user.id)
-    # else:
-    #     user_id = str(get_user_ip(request))
-    # print Ads.get_ad(user_id=user_id)
     pid = get_request_pid(request)
     pl = Post.home_latest(pid=pid)
     arp = []
 
-    # fixed_post = get_fixed_ads()
-    # if fixed_post:
-    #     fixed_post = Post.objects\
-    #         .only(*Post.NEED_KEYS2)\
-    #         .filter(id=fixed_post)
-    #     posts = list(fixed_post) + list(posts)
+    last_id = None
+    next_url = None
 
     for pll in pl:
         try:
             arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
+            last_id = pll
         except Exception, e:
             print str(e)
             pass
 
-    latest_items = arp
+    if arp:
+        next_url = reverse('home') + "?older=" + last_id
+        print next_url
 
     if request.is_ajax():
-        if latest_items:
+        if arp:
             return render(request, 'pin2/_items_2.html', {
-                'latest_items': latest_items
+                'latest_items': arp,
+                'next_url': next_url,
             })
         else:
             return HttpResponse(0)
     else:
         return render(request, 'pin2/home.html', {
-            'latest_items': latest_items,
+            'latest_items': arp,
+            'next_url': next_url
         })
 
 
@@ -336,41 +333,43 @@ def latest_redis(request):
     pid = get_request_pid(request)
     pl = Post.latest(pid=pid)
     arp = []
+    last_id = None
+    next_url = None
 
     if request.user.id:
         viewer_id = str(request.user.id)
     else:
         viewer_id = str(get_user_ip(request))
 
-    # print viewer_id
     ad = Ads.get_ad(user_id=viewer_id)
     if ad:
-        # print "ads is:",  ad, ad.post, len(arp), type(arp)
         try:
             arp.append(Post.objects.get(id=int(ad.post)))
         except:
             pass
-        # print len(arp)
 
     for pll in pl:
         try:
             arp.append(Post.objects.get(id=pll))
+            last_id = pll
         except:
             pass
 
-   
-    latest_items = arp
+    if arp:
+        next_url = reverse('pin-latest') + "?pid=" + last_id
 
     if request.is_ajax():
-        if latest_items:
-            return render(request,
-                          'pin2/_items_2.html',
-                          {'latest_items': latest_items})
+        if arp:
+            return render(request, 'pin2/_items_2.html', {
+                'latest_items': arp,
+                'next_url': next_url,
+            })
         else:
             return HttpResponse(0)
     else:
         return render(request, 'pin2/latest_redis.html', {
-            'latest_items': latest_items
+            'latest_items': arp,
+            'next_url': next_url,
         })
 
 

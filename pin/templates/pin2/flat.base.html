@@ -25,6 +25,22 @@ var upload_url = "{% url "pin-upload" %}";
 
 {% block content %}{% endblock content%}
 
+{% if next_url %}
+<div class="footer-loading-box">
+	<center>
+		<a id="next_url" href="{{next_url}}" title="کلیک کنید">
+		<img src="{{MEDIA_URL}}v2/images/big-loader.gif" alt="Loading..." class="footer-loading-img" />
+		</a>
+	</center>
+</div>
+{% else %}
+<div class="footer-loading-box">
+	<center>
+		<img src="{{MEDIA_URL}}v2/images/big-loader.gif" alt="Loading..." class="footer-loading-img" />
+	</center>
+</div>
+{% endif %}
+
 {% include "pin2/footer.html" %}
 
 {% block footer_script %}{% endblock %}

@@ -217,6 +217,7 @@ a, a:link, a:hover, a:visited {
 .green{color: green;}
 #main {
 	border-top: 1px solid #fffff9;
+	margin-bottom: 15px;
 }
 #feed {
 	margin-top: 20px;
@@ -1272,7 +1273,7 @@ a.img-move{
 }
 .footer-loading-box{
 	padding: 40px;
-	display: none;
+	/*display: none;*/
 }
 .topuser-item {
 	overflow: hidden;
