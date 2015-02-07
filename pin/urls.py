@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-from pin.feeds import LatestPinFeed
+from pin.feeds import EditorPinFeed
 from pin.api import PostResource, CategotyResource, CommentResource,\
     ProfileResource, AppResource, LikesResource,\
     StreamResource
@@ -37,7 +37,9 @@ urlpatterns = patterns('pin.views',
     url(r'^user/(?P<user_id>\d+)/(?P<user_name>\w+)/$', 'user', name='pin-user-new'),
     
     url(r'^tag/(.*)/', 'tag', name="pin-tag"),
-    url(r'^latest/feed/', LatestPinFeed(), name="pin-latest-feed"),
+    
+    url(r'^editor/choices/feed/', EditorPinFeed(), name="pin-latest-feed"),
+
     url(r'^popular/(?P<interval>\w+)/$', 'popular', name='pin-popular-offset'),
     url(r'^popular/', 'popular', name="pin-popular"),
     url(r'^topuser/$', 'topuser', name='pin-topuser'),

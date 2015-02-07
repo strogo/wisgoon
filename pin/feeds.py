@@ -8,7 +8,7 @@ from pin.models import Post
 class CorrectMimeTypeFeed(Rss201rev2Feed):
     mime_type = 'application/xml'
 
-class LatestPinFeed(Feed):
+class EditorPinFeed(Feed):
     feed_type = CorrectMimeTypeFeed
     title = 'آخرین مطالب پین - ویسگون'
     link = "http://www.wisgoon.com/pin/"
@@ -16,16 +16,16 @@ class LatestPinFeed(Feed):
     #creator = "http://www.wisgoon.com"
     
     def items(self):
-        return Post.objects.filter(status=1).order_by('-id')[:20]
+        return Post.objects.filter(show_in_default=True).order_by('-id')[:1000]
     
     def item_title(self, item):
         return item.text[:80]
     
     def item_description(self, item):
         text = item.text
-        img = item.get_image_thumb()
+        img = item.get_image_500()
         if img:
-            text = "<p>%s</> <br><br> <img src='%s'>" % (text, img.url )
+            text = "<p>%s</> <br><br> <img src='%s'>" % (text, img['url'])
         
         return text
     
