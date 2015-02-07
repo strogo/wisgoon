@@ -222,19 +222,19 @@ class AuthCache(MyCache):
         if not token:
             return None
 
-        ct_str = "tu_%s" % str(token)
-        c_token = cache.get(ct_str)
-        if c_token:
-            return c_token
-        else:
-            try:
-                api = ApiKey.objects.get(key=token)
-                u = api.user
-            except ApiKey.DoesNotExist:
-                return None
-
-            cache.set(ct_str, u, self.TTL_TOKEN)
+        # ct_str = "tu_%s" % str(token)
+        # c_token = cache.get(ct_str)
+        # if c_token:
+            # return c_token
+        # else:
+        try:
+            api = ApiKey.objects.get(key=token)
+            u = api.user
             return u
+        except ApiKey.DoesNotExist:
+            return None
+
+        return None
 
 
 def check_block(user_id, blocked_id):
