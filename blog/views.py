@@ -65,6 +65,7 @@ def edit(request, id):
             p.tags = form.cleaned_data['tags'].split(',')
             p.tags = [t.replace(' ', '_') for t in p.tags]
             p.title = form.cleaned_data['title']
+            p.abstract = form.cleaned_data['abstract']
             p.text = form.cleaned_data['text']
             p.user = request.user.id
             p.save()
@@ -73,6 +74,7 @@ def edit(request, id):
         p = BlogPost.objects.get(id=id)
         d = {
             'title': p.title,
+            'abstract': p.abstract,
             'text': p.text,
             'tags': ",".join([t for t in p.tags])
         }
