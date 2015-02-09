@@ -84,7 +84,7 @@ class Bills(Document):
 
 class InstaMeta(Document):
     post = IntField()
-    insta_id = IntField()
+    insta_id = StringField()
 
     meta = {
         'indexes': ['post', 'insta_id']
