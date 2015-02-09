@@ -51,3 +51,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         get_from_insta(insta_user_id="1462129775", cat=7)
         get_from_insta(insta_user_id="1222617046", cat=16)
+        get_from_insta(insta_user_id="306728731", cat=17)
