@@ -24,6 +24,8 @@ def get_from_insta():
             if InstaMeta.objects(insta_id=id).count() != 0:
                 continue
 
+            print "store:", id
+
             model = Post()
             model.text = media.caption.text
             model.image = media.get_standard_resolution_url()
@@ -39,6 +41,7 @@ def get_from_insta():
             model.timestamp = time.time()
             model.user_id = 636690
             model.status = Post.APPROVED
+            model.category_id = 7
             model.save()
 
             InstaMeta.objects.create(post=model.id, insta_id=id)
