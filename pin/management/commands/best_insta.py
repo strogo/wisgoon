@@ -33,6 +33,6 @@ class Command(BaseCommand):
                 urllib.urlretrieve(image_url, image_on)
 
                 model.image = "pin/images/o/%s" % (filename)
-                model.timestamp = time()
-                model.user = 1
+                model.timestamp = time.time()
+                model.user_id = 636690
                 model.save()
