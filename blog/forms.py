@@ -4,6 +4,7 @@ from ckeditor.widgets import CKEditorWidget
 
 class PostForm(forms.Form):
     title = forms.CharField(required=True)
+    abstract = forms.CharField(widget=CKEditorWidget())
     text = forms.CharField(widget=CKEditorWidget())
     tags = forms.CharField()
     

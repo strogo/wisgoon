@@ -13,6 +13,7 @@ class Comment(EmbeddedDocument):
 class BlogPost(Document):
     title = StringField()
     text = StringField()
+    abstract = StringField()
     likers = ListField(IntField())
     tags = ListField(StringField())
     create_time = DateTimeField()
