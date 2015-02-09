@@ -11,12 +11,12 @@ from pin.tools import create_filename
 MEDIA_ROOT = settings.MEDIA_ROOT
 
 
-def get_from_insta(insta_user_id, cat):
+def get_from_insta(insta_user_id, cat, user_id, cnt=5):
     client_id = "ecb7cbd35a11467fb2cf558583a44047"
     client_secret = "74e85dfb6b904ac68139a93a9b047247"
     api = client.InstagramAPI(client_id=client_id, client_secret=client_secret)
 
-    recent_media, next_ = api.user_recent_media(user_id=insta_user_id, count=5)
+    recent_media, next_ = api.user_recent_media(user_id=insta_user_id, count=cnt)
 
     for media in recent_media:
         if media.type == "image":
@@ -39,7 +39,7 @@ def get_from_insta(insta_user_id, cat):
 
             model.image = "pin/images/o/%s" % (filename)
             model.timestamp = time.time()
-            model.user_id = 636690
+            model.user_id = user_id
             model.status = Post.APPROVED
             model.category_id = cat
             model.save()
@@ -49,12 +49,14 @@ def get_from_insta(insta_user_id, cat):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        get_from_insta(insta_user_id="1462129775", cat=7)
-        get_from_insta(insta_user_id="1222617046", cat=16)
-        get_from_insta(insta_user_id="306728731", cat=17)
-        get_from_insta(insta_user_id="333554794", cat=17)
-        get_from_insta(insta_user_id="693947917", cat=13)
-        get_from_insta(insta_user_id="1683733211", cat=20)
-        get_from_insta(insta_user_id="1588368877", cat=4)
-        get_from_insta(insta_user_id="2772314", cat=17)
-        get_from_insta(insta_user_id="42059454", cat=1)
+        get_from_insta(insta_user_id="1462129775", cat=7, user_id=636690)
+        get_from_insta(insta_user_id="1222617046", cat=16, user_id=636690)
+        get_from_insta(insta_user_id="306728731", cat=17, user_id=636690)
+        get_from_insta(insta_user_id="333554794", cat=17, user_id=636690)
+        get_from_insta(insta_user_id="693947917", cat=13, user_id=636690)
+        get_from_insta(insta_user_id="1683733211", cat=20, user_id=636690)
+        get_from_insta(insta_user_id="1588368877", cat=4, user_id=636690)
+        get_from_insta(insta_user_id="2772314", cat=17, user_id=636690)
+        get_from_insta(insta_user_id="42059454", cat=1, user_id=636690)
+
+        get_from_insta(insta_user_id="197997900", cat=3, user_id=636878, cnt=30)
