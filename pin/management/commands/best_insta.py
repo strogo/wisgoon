@@ -54,3 +54,4 @@ class Command(BaseCommand):
         get_from_insta(insta_user_id="306728731", cat=17)
         get_from_insta(insta_user_id="333554794", cat=17)
         get_from_insta(insta_user_id="693947917", cat=13)
+        get_from_insta(insta_user_id="1683733211", cat=20)
