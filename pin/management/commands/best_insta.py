@@ -16,7 +16,7 @@ def get_from_insta():
     client_secret = "74e85dfb6b904ac68139a93a9b047247"
     api = client.InstagramAPI(client_id=client_id, client_secret=client_secret)
 
-    recent_media, next_ = api.user_recent_media(user_id="1462129775", count=30)
+    recent_media, next_ = api.user_recent_media(user_id="1462129775", count=5)
 
     for media in recent_media:
         if media.type == "image":
@@ -38,7 +38,7 @@ def get_from_insta():
             model.image = "pin/images/o/%s" % (filename)
             model.timestamp = time.time()
             model.user_id = 636690
-            # model.status = Post.APPROVED
+            model.status = Post.APPROVED
             model.save()
 
             InstaMeta.objects.create(post=model.id, insta_id=id)
