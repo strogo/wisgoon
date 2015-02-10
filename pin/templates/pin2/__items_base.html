@@ -25,7 +25,7 @@
 		</a>
 	</div>
 	<div class="username">
-		<a href="{% url "pin-user" item.user_id %}">
+		<a href="{% url "pin-absuser" item.user.username %}">
 			{{item.user_id|get_userdata_name}}
 		</a>
 	</div>

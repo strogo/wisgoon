@@ -819,16 +819,20 @@ def item(request, item_id):
         post.comments = Comments.objects.filter(object_pk=post)
     else:
         post.comments = Comments.objects.filter(object_pk=post, is_public=True)
-    str_likers = "web_likes_%s" % post.id
-    csl = cache.get(str_likers)
-    if csl:
-        post.likes = csl
-    else:
-        pl = Likes.objects.filter(post_id=post.id)\
-            .values_list('user_id', flat=True)[:12]
-        ll = [liker for liker in pl]
-        cache.set(str_likers, ll, 86400)
-        post.likes = ll
+
+    # str_likers = "web_likes_%s" % post.id
+    # csl = cache.get(str_likers)
+    # if csl:
+    #     post.likes = csl
+    # else:
+    #     pl = Likes.objects.filter(post_id=post.id)\
+    #         .values_list('user_id', flat=True)[:12]
+    #     ll = [liker for liker in pl]
+    #     cache.set(str_likers, ll, 86400)
+    #     post.likes = ll
+
+    pl = Likes.objects.filter(post_id=post.id)[:12]
+    post.likes = pl
 
     # s = SearchQuerySet().models(Post).more_like_this(post)
     # print "seems with:", post.id, s[:5]
