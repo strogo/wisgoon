@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.conf import settings
 from django.contrib import admin
 from feedreader.api import UserResource
 
@@ -13,7 +14,7 @@ urlpatterns = patterns('',
     url(r'^pin/', include('pin.urls')),
     # url(r'^feedback/', include('contactus.urls')),
     url(r'^accounts/', include('registration.backends.default.urls')),
-    url(r'', include('social_auth.urls')),
+    # url(r'', include('social_auth.urls')),
     url(r'^acc/', include('allauth.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^pages/', include('django.contrib.flatpages.urls')),
@@ -24,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^blog/', include('blog.urls')),
     url(r'^ckeditor/', include('ckeditor.urls')),
     url(r'^buggy/', 'pin.views_test.buggy', name='buggy'),
+
 )
 
 urlpatterns += patterns('pin.views',
@@ -53,5 +55,9 @@ urlpatterns += patterns('pin.views',
 urlpatterns += patterns('pin.views3_api',
     url(r'^api/v3/post/latest/$', 'post_latest', name="api-3-latest"),
     url(r'^api/v3/post/item/(?P<post_id>\d+)/$', 'post_item', name="api-3-item"),
-    
 )
+
+if not settings.DEBUG:
+    urlpatterns += patterns('', 
+        url(r'^(?P<user_name>.*)/', 'pin.views.absuser', name='buggy'),
+    )

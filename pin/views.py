@@ -629,6 +629,40 @@ def user(request, user_id, user_name=None):
                        'cur_user': user})
 
 
+def absuser(request, user_name=None):
+    user = get_object_or_404(User, username=user_name)
+    user_id = user.id
+    profile = Profile.objects.get_or_create(user_id=user_id)
+
+    user.user_meta = get_user_meta(user_id=user_id)
+
+    timestamp = get_request_timestamp(request)
+    if timestamp == 0:
+        latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
+            .order_by('-timestamp')[:20]
+    else:
+        latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
+            .extra(where=['timestamp<%s'], params=[timestamp])\
+            .order_by('-timestamp')[:20]
+
+    if request.is_ajax():
+        if latest_items.exists():
+            return render(request, 'pin2/_items_2_1.html',
+                          {'latest_items': latest_items})
+        else:
+            return HttpResponse(0)
+    else:
+
+        follow_status = Follow.objects\
+            .filter(follower=request.user.id, following=user.id).count()
+
+        return render(request, 'pin2/user.html',
+                      {'latest_items': latest_items,
+                       'follow_status': follow_status,
+                       'user_id': int(user_id),
+                       'profile': profile,
+                       'cur_user': user})
+
 def item(request, item_id):
     post = get_object_or_404(
         Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\

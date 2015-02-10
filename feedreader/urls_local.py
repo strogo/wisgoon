@@ -8,3 +8,8 @@ urlpatterns += patterns('',
     url(r'^media/(?P<path>.*)$','django.views.static.serve',
         {'document_root': os.path.join(SITE_ROOT, 'media')})
 )
+
+urlpatterns += patterns('', 
+    url(r'^(.*)/', 'pin.views.absuser', name='buggy'),
+)
+ 
