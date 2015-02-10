@@ -116,10 +116,10 @@
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="others-comment">
 								<div class="col-md-1 col-sm-1 col-xs-1 avatar">
-									<a href="{% url "pin-user" comment.user_id %}">
+									<a href="{% url "pin-absuser" comment.user.username %}">
 										<img src="{{comment.user_id|get_avatar:36}}" alt="">
 									</a>
-									<a href="{% url "pin-user" comment.user_id %}">
+									<a href="{% url "pin-absuser" comment.user.username %}">
 										{{comment.user|get_username}}
 									</a>
 								</div>
@@ -154,7 +154,7 @@
 
 				<div class="col-md-8 col-sm-6 col-xs-8 pato20">
 					<div class="username">
-						<a href="{% url "pin-user" post.user_id %}">
+						<a href="{% url "pin-absuser" post.user.username %}">
 							{{post.user|get_username}}
 						</a>
 					</div>
@@ -165,7 +165,7 @@
 				</div>
 				<div class="col-md-4 col-sm-6 col-xs-4">
 					<div class="avatar">
-						<a href="{% url "pin-user" post.user_id %}">
+						<a href="{% url "pin-absuser" post.user.username %}">
 							<img src="{{post.user_id|get_avatar:65}}" />
 						</a>
 					</div>

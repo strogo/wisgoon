@@ -2,7 +2,7 @@
 {% load pin_tags %}
 
 <div class="avatar">
-	<a href="{% url "pin-user" cur_user.id %}">
+	<a href="{% url "pin-absuser" cur_user.username %}">
 		<img src="{{cur_user|get_avatar:210}}">
 	</a>
 </div>
@@ -29,19 +29,19 @@
 
 	<div class="col-md-12 col-sm-12 col-xs-12 likes f-black">
 		<div class="col-md-12 col-sm-12 col-xs-12">
-			<a class="f-black" href="{% url "pin-user-like" cur_user.id %}">مطالب مورد علاقه</a>
+			<a class="f-black" href="{% url "pin-absuser-like" cur_user.username %}">مطالب مورد علاقه</a>
 		</div>
 	</div>
 
 	<div class="col-md-12 col-sm-12 col-xs-12 likes f-black">
 		<div class="col-md-12 col-sm-12 col-xs-12">
-			<a href="{% url "pin-user-following" cur_user.id %}" class="f-black">دنبال شوندگان</a>
+			<a href="{% url "pin-absuser-following" cur_user.username %}" class="f-black">دنبال شوندگان</a>
 		</div>
 	</div>
 
 	<div class="col-md-12 col-sm-12 col-xs-12 likes f-black">
 		<div class="col-md-12 col-sm-12 col-xs-12">
-			<a href="{% url "pin-user-followers" cur_user.id %}" class="f-black">دنبال کنندگان</a>
+			<a href="{% url "pin-absuser-followers" cur_user.username %}" class="f-black">دنبال کنندگان</a>
 		</div>
 	</div>
 </div>
