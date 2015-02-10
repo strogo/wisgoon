@@ -9,7 +9,10 @@ urlpatterns += patterns('',
         {'document_root': os.path.join(SITE_ROOT, 'media')})
 )
 
-urlpatterns += patterns('', 
-    url(r'^(.*)/', 'pin.views.absuser', name='buggy'),
+urlpatterns += patterns('pin.views',
+    url(r'^(?P<user_namefl>.*)/followers/$', 'absuser_followers', name='pin-user-followers'),
+    url(r'^(?P<user_namefg>.*)/following/$', 'absuser_friends', name='pin-user-following'),
+    url(r'^(?P<user_namel>.*)/likes/$', 'absuser_like', name='pin-user-like'),
+    url(r'^(?P<user_name>.*)/$', 'absuser', name='pin-user'),
+    # url(r'^(?P<user_namef>.*)/friends/$', 'user_friends', name='pin-user-friends'),
 )
- 

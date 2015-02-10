@@ -40,11 +40,11 @@ urlpatterns += patterns('pin.views',
     url(r'^tag/(?P<tag_name>.*)/$', 'tags', name='tags'),
     url(r'^hashtag/(?P<tag_name>.*)/$', 'hashtag', name='hashtags'),
 
-    url(r'^user/(?P<user_id>\d+)/$', 'user', name='pin-user'),
-    url(r'^user/(?P<user_id>\d+)/likes/$', 'user_like', name='pin-user-like'),
-    url(r'^user/(?P<user_id>\d+)/friends/$', 'user_friends', name='pin-user-friends'),
-    url(r'^user/(?P<user_id>\d+)/following/$', 'user_friends', name='pin-user-following'),
-    url(r'^user/(?P<user_id>\d+)/followers/$', 'user_followers', name='pin-user-followers'),
+    # url(r'^user/(?P<user_id>\d+)/$', 'user', name='pin-user'),
+    # url(r'^user/(?P<user_id>\d+)/likes/$', 'user_like', name='pin-user-like'),
+    # url(r'^user/(?P<user_id>\d+)/friends/$', 'user_friends', name='pin-user-friends'),
+    # url(r'^user/(?P<user_id>\d+)/following/$', 'user_friends', name='pin-user-following'),
+    # url(r'^user/(?P<user_id>\d+)/followers/$', 'user_followers', name='pin-user-followers'),
 
     url(r'^popular/(?P<interval>\w+)/$', 'popular', name='pin-popular-offset'),
     url(r'^popular/', 'popular', name="pin-popular"),
@@ -58,6 +58,9 @@ urlpatterns += patterns('pin.views3_api',
 )
 
 if not settings.DEBUG:
-    urlpatterns += patterns('', 
-        url(r'^(?P<user_name>.*)/', 'pin.views.absuser', name='buggy'),
+    urlpatterns += patterns('pin.views',
+        url(r'^(?P<user_namefl>.*)/followers/$', 'absuser_followers', name='pin-user-followers'),
+        url(r'^(?P<user_namefg>.*)/following/$', 'absuser_friends', name='pin-user-following'),
+        url(r'^(?P<user_namel>.*)/likes/$', 'absuser_like', name='pin-user-like'),
+        url(r'^(?P<user_name>.*)/$', 'absuser', name='pin-user'),
     )
