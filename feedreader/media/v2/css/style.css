@@ -548,6 +548,10 @@ a, a:link, a:hover, a:visited {
 	line-height: 1.8;
 	padding: 20px 40px;
 }
+.others-comment .col-md-9 a,
+.post-detail .post .post-content .discription a{
+	color: #d979b2 !important;
+}
 .post-detail .post .post-content .tags {
 	padding: 0 30px 10px;
 }
@@ -611,7 +615,6 @@ a, a:link, a:hover, a:visited {
 	border-bottom: 1px solid #e2e4e7;
 }
 .post-detail .post .comment .user-comment .text-box {
-	background-color: #f9fafd;
 	/*border-radius: 15px;*/
 	/*box-shadow: 0 1px #e2e4e7 inset;*/
 	/*height: 45px;*/

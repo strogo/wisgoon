@@ -33,7 +33,7 @@
 							</a>: 
 						</div>
 					{% endif %}
-						<p>{{comment.content}}</p>
+						<p>{{comment.content|urlizetrunc:50}}</p>
 					</div>
 					<div class="col-md-2 col-sm-2 col-xs-1">
 						{% if comment.create_time %}

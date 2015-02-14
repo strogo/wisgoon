@@ -37,7 +37,8 @@
 				</div>
 				<div class="row">
 					<div class="discription" itemprop="name">
-						<p> {{post.text|urlize_hashtag|safe|linebreaksbr}}
+						<p> 
+							{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
 						</p>
 					</div>
 					<small class="time-box pull-left">{{post.create|naturaltime}}</small>
@@ -128,7 +129,7 @@
 											{{comment.user|get_username}}
 										</a> : 
 									</div>
-									<div style="padding:10px;">{{comment.comment}}</div>
+									<div style="padding:10px;">{{comment.comment|urlizetrunc:100}}</div>
 									{% if request.user.is_superuser %}
 									<a class="del-comment" rel="{{comment.id}}" href="{% url "pin-comment-delete" comment.id %}"><i class="glyphicon glyphicon-remove"></i></a>
 									{% endif %}

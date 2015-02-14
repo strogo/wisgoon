@@ -23,7 +23,7 @@
 		</div>
 	</div>
 	<div class="content">
-		{{post.abstract|safe|linebreaks}}
+		{{post.abstract|safe|linebreaks|urlizetrunc:30}}
 	</div>
 	<a href="{% url 'blog-view-post' post.id %}" class="pull-left">  ادامه مطلب <span class="glyphicon glyphicon-circle-arrow-left"></span> </a>
 	
