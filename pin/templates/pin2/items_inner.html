@@ -115,7 +115,7 @@
 					<div class="row" id="comment_row_{{comment.id}}">
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="others-comment">
-								
+
 								<div class="col-md-1 col-sm-12 col-xs-12 avatar">
 									<a href="{% url "pin-user" comment.user_id %}">
 										<img src="{{comment.user_id|get_avatar:80}}" alt="">
@@ -126,7 +126,7 @@
 									<div class="">
 										<a href="{% url "pin-user" comment.user_id %}">
 											{{comment.user|get_username}}
-										</a> گفته: 
+										</a> : 
 									</div>
 									<div style="padding:10px;">{{comment.comment}}</div>
 									{% if request.user.is_superuser %}
