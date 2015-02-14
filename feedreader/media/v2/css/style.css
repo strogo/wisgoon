@@ -248,6 +248,9 @@ a, a:link, a:hover, a:visited {
 .feed-item .img-content .comment i{
 	margin-left: 5px;
 }
+.feed-item .img-content .comment .row:last-child hr{
+	display: none;
+}
 .feed-item .img-content .comment,
 .feed-item .img-content .likes{
 	opacity: .6;
@@ -626,7 +629,6 @@ a, a:link, a:hover, a:visited {
 .post-detail .post .comment .avatar img{
 	width: 80px;
 	border-radius: 80px 80px 80px 0;
-	float: right;
 	padding:10px;
 }
 .post-detail .post .comment .comment-icon{
@@ -651,7 +653,7 @@ a, a:link, a:hover, a:visited {
 	color: #333;
 }
 .post-detail .post .comment .others-comment .avatar img {
-	width: 55px;
+	width: 80px;
 }
 .post-detail .post .comment .others-comment .avatar {
 	/*padding-right: 25px;*/
@@ -1325,4 +1327,18 @@ a.img-move{
 	color: #aaa;
 	padding: 10px 0;
 	margin-left: 30px;
+}
+
+.del-comment{
+	background: #fcdbdb;
+	color: #fff !important;
+	display: block;
+	height: 25px;
+	left: 0;
+	padding: 5px;
+	position: absolute;
+	top: 3px;
+}
+div.comment div div.row:hover .del-comment{
+	background: red;
 }

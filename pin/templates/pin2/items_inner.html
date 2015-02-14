@@ -114,23 +114,25 @@
 					<div class="row" id="comment_row_{{comment.id}}">
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="others-comment">
-								<div class="col-md-1 col-sm-1 col-xs-1 avatar">
+								<div class="col-md-1 col-sm-12 col-xs-12 avatar">
 									<a href="{% url "pin-user" comment.user_id %}">
-										<img src="{{comment.user_id|get_avatar:36}}" alt="">
-									</a>
-									<a href="{% url "pin-user" comment.user_id %}">
-										{{comment.user|get_username}}
+										<img src="{{comment.user_id|get_avatar:80}}" alt="">
 									</a>
 								</div>
 
-
-								<div class="col-md-9 col-sm-9 col-xs-9">
-									<p>{{comment.comment}}</p>
+								<div class="col-md-9 col-sm-12 col-xs-12" style="color:#555;">
+									<div class="">
+										<a href="{% url "pin-user" comment.user_id %}">
+											{{comment.user|get_username}}
+										</a> گفته: 
+									</div>
+									<div style="padding:10px;">{{comment.comment}}</div>
 									{% if request.user.is_superuser %}
 									<a class="del-comment" rel="{{comment.id}}" href="{% url "pin-comment-delete" comment.id %}"><i class="glyphicon glyphicon-remove"></i></a>
 									{% endif %}
 								</div>
-								<div class="col-md-2 col-sm-2 col-xs-1" style="color:#aaa">
+
+								<div class="col-md-2 col-sm-12 col-xs-12" style="color:#aaa;text-align:left;">
 									{{comment.submit_date|naturaltime}}
 								</div>
 
@@ -138,6 +140,7 @@
 							</div>
 						</div>
 						<div class="clear"></div>
+						<hr>
 					</div>
 					{% endfor %}
 
