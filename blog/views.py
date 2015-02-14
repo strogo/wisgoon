@@ -45,9 +45,10 @@ def submit(request):
             tags = form.cleaned_data['tags'].split(',')
             tags = [t.replace(' ', '_') for t in tags]
             title = form.cleaned_data['title']
+            abstract = form.cleaned_data['abstract']
             text = form.cleaned_data['text']
             ct = datetime.now()
-            BlogPost.objects.create(title=title, text=text, tags= tags, create_time=ct, user=request.user.id)
+            BlogPost.objects.create(title=title, text=text, abstract=abstract,  tags= tags, create_time=ct, user=request.user.id)
 
             return HttpResponseRedirect(reverse('blog-admin'))
     else:
