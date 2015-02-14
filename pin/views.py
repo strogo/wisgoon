@@ -482,7 +482,7 @@ def latest_redis(request):
         except:
             pass
 
-    if arp:
+    if arp and last_id:
         next_url = reverse('pin-latest') + "?pid=" + last_id
 
     if request.is_ajax():
