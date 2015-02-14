@@ -244,6 +244,52 @@ def user_friends(request, user_id):
                        'offset': friends.next_page_number,
                        'user_id': user_id})
 
+def absuser_friends(request, user_namefg):
+    ROW_PER_PAGE = 20
+
+    user = get_object_or_404(User, username=user_namefg)
+    user_id = user.id
+
+    friends = Follow.objects.values_list('following_id', flat=True)\
+        .filter(follower_id=user_id).order_by('-id')
+    if len(friends) == 0:
+        return render(request, 'pin/user_friends_empty.html')
+    paginator = Paginator(friends, ROW_PER_PAGE)
+
+    try:
+        offset = int(request.GET.get('older', 1))
+    except ValueError:
+        offset = 1
+
+    try:
+        friends = paginator.page(offset)
+    except PageNotAnInteger:
+        friends = paginator.page(1)
+    except EmptyPage:
+        return HttpResponse(0)
+
+    if friends.has_next() is False:
+        friends.next_page_number = -1
+
+    friends_list = []
+    for l in friends:
+        friends_list.append(int(l))
+
+    user_items = User.objects.filter(id__in=friends_list)
+
+    if request.is_ajax():
+        if user_items.exists():
+            return render(request,
+                          'pin/_user_friends.html',
+                          {'user_items': user_items,
+                           'offset': friends.next_page_number})
+        else:
+            return HttpResponse(0)
+    else:
+        return render(request, 'pin/user_friends.html',
+                      {'user_items': user_items,
+                       'offset': friends.next_page_number,
+                       'user_id': user_id})
 
 def user_followers(request, user_id):
     user_id = int(user_id)
@@ -291,6 +337,53 @@ def user_followers(request, user_id):
                        'user_id': user_id})
 
 
+def absuser_followers(request, user_namefl):
+    ROW_PER_PAGE = 20
+
+    user = get_object_or_404(User, username=user_namefl)
+    user_id = user.id
+
+    friends = Follow.objects.values_list('follower_id', flat=True)\
+        .filter(following_id=user_id).order_by('-id')
+    if len(friends) == 0:
+        return render(request, 'pin/user_friends_empty.html')
+    paginator = Paginator(friends, ROW_PER_PAGE)
+
+    try:
+        offset = int(request.GET.get('older', 1))
+    except ValueError:
+        offset = 1
+
+    try:
+        friends = paginator.page(offset)
+    except PageNotAnInteger:
+        friends = paginator.page(1)
+    except EmptyPage:
+        return HttpResponse(0)
+
+    if friends.has_next() is False:
+        friends.next_page_number = -1
+
+    friends_list = []
+    for l in friends:
+        friends_list.append(int(l))
+
+    user_items = User.objects.filter(id__in=friends_list)
+
+    if request.is_ajax():
+        if user_items.exists():
+            return render(request,
+                          'pin/_user_friends.html',
+                          {'user_items': user_items,
+                           'offset': friends.next_page_number})
+        else:
+            return HttpResponse(0)
+    else:
+        return render(request, 'pin/user_friends.html',
+                      {'user_items': user_items,
+                       'offset': friends.next_page_number,
+                       'user_id': user_id})
+
 def user_like(request, user_id):
     user_id = int(user_id)
     user = get_object_or_404(User, pk=user_id)
@@ -324,6 +417,40 @@ def user_like(request, user_id):
                        'profile': profile,
                        'cur_user': user})
 
+
+def absuser_like(request, user_namel):
+
+    user = get_object_or_404(User, username=user_namel)
+    user_id = user.id
+    profile = Profile.objects.get(user_id=user_id)
+
+    user.user_meta = get_user_meta(user_id=user_id)
+
+    pid = get_request_pid(request)
+    pl = Likes.user_likes(user_id=user_id, pid=pid)
+    arp = []
+
+    for pll in pl:
+        try:
+            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
+        except:
+            pass
+
+    latest_items = arp
+
+    if request.is_ajax():
+        if latest_items:
+            return render(request,
+                          'pin2/_items_2.html',
+                          {'latest_items': latest_items})
+        else:
+            return HttpResponse(0)
+    else:
+        return render(request, 'pin2/user__likes.html',
+                      {'latest_items': latest_items,
+                       'user_id': user_id,
+                       'profile': profile,
+                       'cur_user': user})
 
 # hp = Post.get_hot()
 # if hp:
@@ -629,6 +756,40 @@ def user(request, user_id, user_name=None):
                        'cur_user': user})
 
 
+def absuser(request, user_name=None):
+    user = get_object_or_404(User, username=user_name)
+    user_id = user.id
+    profile = Profile.objects.get_or_create(user_id=user_id)
+
+    user.user_meta = get_user_meta(user_id=user_id)
+
+    timestamp = get_request_timestamp(request)
+    if timestamp == 0:
+        latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
+            .order_by('-timestamp')[:20]
+    else:
+        latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
+            .extra(where=['timestamp<%s'], params=[timestamp])\
+            .order_by('-timestamp')[:20]
+
+    if request.is_ajax():
+        if latest_items.exists():
+            return render(request, 'pin2/_items_2_1.html',
+                          {'latest_items': latest_items})
+        else:
+            return HttpResponse(0)
+    else:
+
+        follow_status = Follow.objects\
+            .filter(follower=request.user.id, following=user.id).count()
+
+        return render(request, 'pin2/user.html',
+                      {'latest_items': latest_items,
+                       'follow_status': follow_status,
+                       'user_id': int(user_id),
+                       'profile': profile,
+                       'cur_user': user})
+
 def item(request, item_id):
     post = get_object_or_404(
         Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
@@ -658,16 +819,20 @@ def item(request, item_id):
         post.comments = Comments.objects.filter(object_pk=post)
     else:
         post.comments = Comments.objects.filter(object_pk=post, is_public=True)
-    str_likers = "web_likes_%s" % post.id
-    csl = cache.get(str_likers)
-    if csl:
-        post.likes = csl
-    else:
-        pl = Likes.objects.filter(post_id=post.id)\
-            .values_list('user_id', flat=True)[:12]
-        ll = [liker for liker in pl]
-        cache.set(str_likers, ll, 86400)
-        post.likes = ll
+
+    # str_likers = "web_likes_%s" % post.id
+    # csl = cache.get(str_likers)
+    # if csl:
+    #     post.likes = csl
+    # else:
+    #     pl = Likes.objects.filter(post_id=post.id)\
+    #         .values_list('user_id', flat=True)[:12]
+    #     ll = [liker for liker in pl]
+    #     cache.set(str_likers, ll, 86400)
+    #     post.likes = ll
+
+    pl = Likes.objects.filter(post_id=post.id)[:12]
+    post.likes = pl
 
     # s = SearchQuerySet().models(Post).more_like_this(post)
     # print "seems with:", post.id, s[:5]

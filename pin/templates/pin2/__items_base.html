@@ -20,20 +20,24 @@
 		<div class="img-shadow"></div>
 	</div>
 	<div class="avatar post-avatar">
-		<a href="{% url "pin-user" item.user_id %}">
+		<a href="{% url "pin-absuser" item.user.username %}">
 			<img src="{{item.user_id|get_avatar:54}}" style="display: inline;" > 
 		</a>
 	</div>
 	<div class="username">
-		<a href="{% url "pin-user" item.user_id %}">
+		<a href="{% url "pin-absuser" item.user.username %}">
 			{{item.user_id|get_userdata_name}}
 		</a>
 	</div>
 	<!-- <div class="actions">
 		<a href="{% url "pin-item-like" item.id%}" class="btn btn-primary btn_like {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{item.cnt_like}} </a>
 	</div> -->
-	{% if is_super_user %}
+	
+	
+
+	{% if user__id == item.user_id or is_super_user %}
 	<div class="actions" style="margin:5px 0;padding: 0 10px">
+		{% if is_super_user %}
 		{% if item.show_in_default %}
 		<a href="{% url "pin-item-goto-index" item.id 0%}" title="remove from index" class="item-to-index " style="margin-bottom:15px;margin-right: 5px;float:left;"> 
 			<i class="glyphicon glyphicon-remove-sign red"></i> 
@@ -43,9 +47,8 @@
 			<i class="glyphicon glyphicon-ok-sign green"></i> 
 		</a>
 		{% endif %}
-	{% endif %}
+		{% endif %}
 
-	{% if user__id == item.user_id or is_super_user %}
 		<a href="{% url "pin-item-edit" item.id%}" style="margin-right: 5px;float:right;"  data-toggle="modal" data-target="#postModal"> 
 			<i class="glyphicon glyphicon-edit"></i> 
 		</a>

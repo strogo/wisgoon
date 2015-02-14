@@ -320,6 +320,8 @@ a, a:link, a:hover, a:visited {
 }
 .feed-item .tags a{
 	color: #d979b2;
+	float: right;
+	font-size: 11px;
 }
 .feed-item .description {
 	color: #aab2bd;

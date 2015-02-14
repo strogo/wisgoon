@@ -82,6 +82,15 @@ class Bills(Document):
     }
 
 
+class InstaMeta(Document):
+    post = IntField()
+    insta_id = StringField()
+
+    meta = {
+        'indexes': ['post', 'insta_id']
+    }
+
+
 class PostMeta(Document):
     post = IntField()
     img_236 = StringField()

@@ -54,8 +54,8 @@
 					<div class="content">
 						<div class="liker col-md-10 col-sm-10 col-xs-10">
 							{% for liker in post.likes %}            
-							<a href="{% url "pin-user" liker %}">
-								<img src="{{liker|get_avatar:50}}" style="display: inline;margin: 2px;" >
+							<a href="{% url "pin-absuser" liker.user.username %}">
+								<img src="{{liker.user|get_avatar:50}}" style="display: inline;margin: 2px;" >
 							</a>
 							{% endfor %}
 						</div>
@@ -109,11 +109,13 @@
 					{% if user.is_authenticated and user.is_active %}
 					{% include "pin2/__comment_submit.html" %}	
 					{% endif %}
+					<script id="rc_spot" type="text/javascript">rc_zone="1139"; rc_sizes="728x90"; rc_height="90"; rc_width="728";  rc_title_color="000fff"; rc_background_color="ffffff"; rc_border_color="ffffff"; rc_domain_color="00cc00"; rc_description_color="666666"; </script><script type="text/javascript" src="http://cdn.rastclick.com/rc_show.js"></script>
 
 					{% for comment in post.comments %}
 					<div class="row" id="comment_row_{{comment.id}}">
 						<div class="col-md-12 col-sm-12 col-xs-12">
 							<div class="others-comment">
+								
 								<div class="col-md-1 col-sm-12 col-xs-12 avatar">
 									<a href="{% url "pin-user" comment.user_id %}">
 										<img src="{{comment.user_id|get_avatar:80}}" alt="">
@@ -156,7 +158,7 @@
 
 				<div class="col-md-8 col-sm-6 col-xs-8 pato20">
 					<div class="username">
-						<a href="{% url "pin-user" post.user_id %}">
+						<a href="{% url "pin-absuser" post.user.username %}">
 							{{post.user|get_username}}
 						</a>
 					</div>
@@ -167,7 +169,7 @@
 				</div>
 				<div class="col-md-4 col-sm-6 col-xs-4">
 					<div class="avatar">
-						<a href="{% url "pin-user" post.user_id %}">
+						<a href="{% url "pin-absuser" post.user.username %}">
 							<img src="{{post.user_id|get_avatar:65}}" />
 						</a>
 					</div>
