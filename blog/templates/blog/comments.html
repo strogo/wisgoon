@@ -16,7 +16,7 @@
 				<div class="others-comment">
 					<div class="col-md-1 col-sm-1 col-xs-1 avatar">
 						{% if comment.user %}
-						<a href="{% url "pin-user" comment.user %}">
+						<a href="{% url "pin-user" comment.user.id %}">
 							<img src="{{comment.user|get_avatar:36}}" alt="">
 						</a>
 
@@ -27,7 +27,7 @@
 					<div class="col-md-9 col-sm-9 col-xs-9">
 					<div class="">
 						<div class="clearfix"></div>
-						<a href="{% url "pin-user" comment.user %}">
+						<a href="{% url "pin-user" comment.user.id %}">
 							{{comment.user|get_username}}
 						</a> گفته: 
 					</div>
