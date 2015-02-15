@@ -290,7 +290,8 @@ def post_send(request):
             model.save()
             
             return HttpResponse('success')
-        except IOError:
+        except IOError, e:
+            print str(e)
             print "294"
             return HttpResponseBadRequest('error')
 
