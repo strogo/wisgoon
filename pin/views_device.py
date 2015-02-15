@@ -251,21 +251,25 @@ def follow(request, following, action):
 def post_send(request):
     user = check_auth(request)
     if not user:
+        print 'error in user validation'
         return HttpResponseForbidden('error in user validation')
 
     upload_cache_str = "upload_cache_%s" % user.id
     upload_cache = cache.get(upload_cache_str)
     if upload_cache:
+        print 'error in user validation upload_cache'
         return HttpResponseForbidden('error in user validation')
 
     cache.set(upload_cache_str, upload_cache, 300)
 
     if request.method != 'POST':
+        print "not post"
         return HttpResponseBadRequest('bad request post')
 
     try:
         form = PinDirectForm(request.POST, request.FILES)
     except IOError:
+        print "ioerror"
         return HttpResponseBadRequest('bad request')
 
     if form.is_valid():
@@ -287,11 +291,15 @@ def post_send(request):
             
             return HttpResponse('success')
         except IOError:
+            print "294"
             return HttpResponseBadRequest('error')
 
+        print "297"
         return HttpResponseBadRequest('bad request in form')
     else:
         print form.errors
+        print 301
         HttpResponseBadRequest('error in form validation')
 
+    print "305"
     return HttpResponseBadRequest('bad request')
