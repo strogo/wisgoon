@@ -128,6 +128,9 @@ class Post(models.Model):
     objects = models.Manager()
     accepted = AcceptedManager()
 
+    data_236 = None
+    data_500 = None
+
     def __unicode__(self):
         return self.text
 
@@ -165,6 +168,8 @@ class Post(models.Model):
         return ibase, nname, h
 
     def get_image_236(self, api=False):
+        if self.data_236:
+            return self.data_236
         cname = "pmeta_%d_236" % int(self.id)
         ccache = cache.get(cname)
         if ccache:
@@ -177,7 +182,6 @@ class Post(models.Model):
                     raise PostMeta.DoesNotExist
                 new_image_url = imeta.img_236
                 h = imeta.img_236_h
-                
                 a = [new_image_url, str(h)]
                 d = ":".join(a)
                 cache.set(cname, d, 86400)
@@ -206,10 +210,13 @@ class Post(models.Model):
             'h': int(h),
             'hw': "%dx%d" % (int(h), 236)
         }
+        self.data_236 = data
 
         return data
 
     def get_image_500(self, api=False):
+        if self.data_500:
+            return self.data_500
         cname = "pmeta_%d_500" % int(self.id)
         ccache = cache.get(cname)
         if ccache:
@@ -256,6 +263,7 @@ class Post(models.Model):
             'h': int(h),
             'hw': "%dx%d" % (int(h), 500)
         }
+        self.data_500 = data
 
         return data
 
