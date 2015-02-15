@@ -291,7 +291,7 @@ def post_send(request):
             
             return HttpResponse('success')
         except IOError, e:
-            print str(e)
+            print str(e), MEDIA_ROOT
             print "294"
             return HttpResponseBadRequest('error')
 
