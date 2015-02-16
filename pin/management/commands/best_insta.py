@@ -50,6 +50,7 @@ def get_from_insta(insta_user_id, cat, user_id, cnt=5):
 class Command(BaseCommand):
     def handle(self, *args, **options):
         for ac in InstaAccount.objects.all():
+            print "going to get", ac.insta_id
             get_from_insta(str(ac.insta_id), ac.cat_id, ac.user_id)
         # get_from_insta(insta_user_id="1462129775", cat=7, user_id=636690)
         # get_from_insta(insta_user_id="1222617046", cat=16, user_id=636690)
