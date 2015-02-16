@@ -3,10 +3,12 @@ import time
 
 from django.contrib import admin
 
-from pin.models import Post, Category, App_data, Comments
+from pin.models import Post, Category, App_data, Comments, InstaAccount
 from pin.tasks import send_notif
 from user_profile.models import Profile
 
+class InstaAccountAdmin(admin.ModelAdmin):
+    raw_id_fields = ("user", "cat")
 
 class PinAdmin(admin.ModelAdmin):
     list_filter = ('status', 'report', 'is_ads', 'show_in_default', 'category__title')
@@ -152,3 +154,4 @@ admin.site.register(Category, CategoryAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(App_data, AppAdmin)
 admin.site.register(Comments, CommentsAdmin)
+admin.site.register(InstaAccount, InstaAccountAdmin)
