@@ -1347,3 +1347,33 @@ a.img-move{
 div.comment div div.row:hover .del-comment{
 	background: red;
 }
+#comments_box > div:last-child hr{
+	display: none;
+}
+#load-more{
+	text-align: center;
+	background: #fefefe;
+	border-top: 1px solid #eee;
+	border-radius: 0 0 10px 10px;
+}
+#load-more:hover{
+	background-color: #edc9e0;
+	border-top: 1px solid #d97bb7;
+}
+#load-more:hover #comment_load_more{
+	color: #888;
+}
+#comment_load_more{
+	border-radius: 0 0 10px 10px;
+	background: none;
+	border: medium none;
+	color: #999;
+	display: block;
+	padding: 10px;
+	width: 100%;
+	cursor: pointer;
+}
+#comment_load_more > div{
+	height: 25px;
+	display: block;
+}

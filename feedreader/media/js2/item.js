@@ -6,14 +6,32 @@ function load_comments(){
         return;
     }
     com_in_act = true;
-    $.get(
-        comments_url + "?offset=" + com_offset,
-        function(response) {
-            $("#comments_box").append(response);
+
+    $('#comment_load_more').children('.txt').css('display', 'none');
+    $('#comment_load_more').children('.loader').css('display', 'block');
+    $.ajax({
+        url: comments_url + "?offset=" + com_offset,
+    })
+    .done(function(d) {
+        $('#comment_load_more').children('.txt').css('display', 'block');
+        $('#comment_load_more').children('.loader').css('display', 'none');
+        if(d == '0'){
+            $('#comment_load_more').children('.txt').text('دیدگاه دیگری وجود ندارد');
+        }
+        else
+        {
+            $("#comments_box").append(d);
             com_offset += 10;
             com_in_act = false;
         }
-    );
+    })
+    .fail(function(d) {
+        console.log("error");
+    })
+    .always(function(d) {
+        $('#comment_load_more').children('.txt').css('display', 'block');
+        $('#comment_load_more').children('.loader').css('display', 'none');
+    });
 }
 
 load_comments();
