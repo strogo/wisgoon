@@ -1280,7 +1280,7 @@ a.img-move{
 }
 .footer-loading-box{
 	padding: 40px;
-	/*display: none;*/
+	display: none;
 }
 .topuser-item {
 	overflow: hidden;
