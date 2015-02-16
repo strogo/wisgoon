@@ -982,9 +982,14 @@ class InstaAccount(models.Model):
     cat = models.ForeignKey(Category)
     user = models.ForeignKey(User)
 
+
+class Official(models.Model):
+    user = models.ForeignKey(User)
+    mode = models.IntegerField(choices=((1, 'sp1'), (2, 'sp2')), default='1')
+
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
-#post_delete.connect(Likes.user_unlike_post, sender=Likes)
+# post_delete.connect(Likes.user_unlike_post, sender=Likes)
 post_save.connect(Post.change_tag_slug, sender=Tag)
 post_save.connect(Comments.add_comment, sender=Comments)
 post_save.connect(Follow.new_follow, sender=Follow)
