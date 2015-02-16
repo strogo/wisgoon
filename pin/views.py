@@ -858,6 +858,10 @@ def get_comments(request, post_id):
     offset = int(request.GET.get('offset', 0))
     comments = Comments.objects.filter(object_pk=post_id)\
         .order_by('-id')[offset:offset + 1 * 10]
+
+    if len(comments) == 0:
+        return HttpResponse(0)
+
     return render(request, 'pin2/__comments_box.html', {
         'comments': comments
     })
