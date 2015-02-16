@@ -39,7 +39,8 @@ $( "body" ).on('click', ".postfault", function(){
     return false;
 });
 
-$(".del-comment").click(function(){
+
+$('body').on("click", ".del-comment").click(function(){
     var obj = $(this);
     console.log(this);
     var row_name = "comment_row_" + $(obj).attr("rel");
