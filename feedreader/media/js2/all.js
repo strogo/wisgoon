@@ -39,7 +39,7 @@ function load_posts(page) {
             $("#next_url").addClass("btn btn-success").html('کلیک کنید');
         })
         .always(function(d) {
-            // $('.footer-loading-box').hide(0);
+            $('.footer-loading-box').hide(0);
         });
 }
 
