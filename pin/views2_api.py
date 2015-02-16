@@ -600,7 +600,7 @@ def notif(request):
 
         o_image = cur_p.image
 
-        imo = cur_p.get_image_236(api=True)
+        imo = cur_p.get_image_500(api=True)
 
         if imo:
             o['thumbnail'] = imo['url']
