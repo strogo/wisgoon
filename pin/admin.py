@@ -8,6 +8,7 @@ from pin.tasks import send_notif
 from user_profile.models import Profile
 
 class InstaAccountAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'cat', 'insta_id')
     raw_id_fields = ("user", "cat")
 
 class PinAdmin(admin.ModelAdmin):
