@@ -157,7 +157,7 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
         # imo = get_thumb(o_image, thumb_size, settings.API_THUMB_QUALITY)
         try:
             if net_quality == "normal":
-                imo = p.get_image_236(api=True)
+                imo = p.get_image_500(api=True)
             elif net_quality == "fast":
                 imo = p.get_image_500(api=True)
             else:

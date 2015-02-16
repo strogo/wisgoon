@@ -134,7 +134,7 @@ INSTALLED_APPS = (
     'user_profile',
     'captcha',
     'tastypie',
-    # 'devserver',
+    'devserver',
     'debug_toolbar',
     'widget_tweaks',
     'ckeditor',
