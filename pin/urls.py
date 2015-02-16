@@ -35,9 +35,9 @@ urlpatterns = patterns('pin.views',
     url(r'^user/(?P<user_id>\d+)/followers/$', 'user_followers', name='pin-user-followers'),
     url(r'^user/(?P<user_id>\d+)/$', 'user', name='pin-user'),
     url(r'^user/(?P<user_id>\d+)/(?P<user_name>\w+)/$', 'user', name='pin-user-new'),
-    
+
+    url(r'^com/posts/(?P<post_id>\d+)/', 'get_comments', name='pin-get-comments'),
     url(r'^tag/(.*)/', 'tag', name="pin-tag"),
-    
     url(r'^editor/choices/feed/', EditorPinFeed(), name="pin-latest-feed"),
 
     url(r'^popular/(?P<interval>\w+)/$', 'popular', name='pin-popular-offset'),

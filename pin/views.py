@@ -815,10 +815,10 @@ def item(request, item_id):
     #     post.comments = Comments.objects.filter(object_pk=post)
     #     post.likes = Likes.objects.filter(post=post).order_by('ip')[:10]
     # else:
-    if request.user.is_superuser:
-        post.comments = Comments.objects.filter(object_pk=post)
-    else:
-        post.comments = Comments.objects.filter(object_pk=post, is_public=True)
+    # if request.user.is_superuser:
+    #     post.comments = Comments.objects.filter(object_pk=post)
+    # else:
+    #     post.comments = Comments.objects.filter(object_pk=post, is_public=True)
 
     # str_likers = "web_likes_%s" % post.id
     # csl = cache.get(str_likers)
@@ -841,12 +841,26 @@ def item(request, item_id):
         follow_status = Follow.objects.filter(follower=request.user.id,
                                               following=post.user.id).count()
 
+    comments_url = reverse('pin-get-comments', args=[post.id])
+
     if request.is_ajax():
         return render(request, 'pin2/items_inner.html',
                       {'post': post, 'follow_status': follow_status})
     else:
-        return render(request, 'pin2/item.html',
-                      {'post': post, 'follow_status': follow_status})
+        return render(request, 'pin2/item.html', {
+            'post': post,
+            'follow_status': follow_status,
+            'comments_url': comments_url,
+        })
+
+
+def get_comments(request, post_id):
+    offset = int(request.GET.get('offset'))
+    comments = Comments.objects.filter(object_pk=post_id)\
+        .order_by('-id')[offset:offset + 1 * 10]
+    return render(request, 'pin2/__comments_box.html', {
+        'comments': comments
+    })
 
 
 def tag(request, keyword):

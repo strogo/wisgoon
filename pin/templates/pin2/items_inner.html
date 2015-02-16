@@ -112,40 +112,10 @@
 					{% endif %}
 					<script id="rc_spot" type="text/javascript">rc_zone="1139"; rc_sizes="728x90"; rc_height="90"; rc_width="728";  rc_title_color="000fff"; rc_background_color="ffffff"; rc_border_color="ffffff"; rc_domain_color="00cc00"; rc_description_color="666666"; </script><script type="text/javascript" src="http://cdn.rastclick.com/rc_show.js"></script>
 
-					{% for comment in post.comments %}
-					<div class="row" id="comment_row_{{comment.id}}">
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<div class="others-comment">
-
-								<div class="col-md-1 col-sm-12 col-xs-12 avatar">
-									<a href="{% url "pin-user" comment.user_id %}">
-										<img src="{{comment.user_id|get_avatar:80}}" alt="">
-									</a>
-								</div>
-
-								<div class="col-md-9 col-sm-12 col-xs-12" style="color:#555;">
-									<div class="">
-										<a href="{% url "pin-user" comment.user_id %}">
-											{{comment.user|get_username}}
-										</a> : 
-									</div>
-									<div style="padding:10px;">{{comment.comment|urlizetrunc:100}}</div>
-									{% if request.user.is_superuser %}
-									<a class="del-comment" rel="{{comment.id}}" href="{% url "pin-comment-delete" comment.id %}"><i class="glyphicon glyphicon-remove"></i></a>
-									{% endif %}
-								</div>
-
-								<div class="col-md-2 col-sm-12 col-xs-12" style="color:#aaa;text-align:left;">
-									{{comment.submit_date|naturaltime}}
-								</div>
-
-								<div class="clear"></div>
-							</div>
-						</div>
-						<div class="clear"></div>
-						<hr>
+					<div id="comments_box">
+					
 					</div>
-					{% endfor %}
+					<button class="btn btn-success" id="comment_load_more">ادامه..</button>
 
 				</div>
 

@@ -14,7 +14,9 @@
 {% endblock opengraph%}
 
 {% block content %}
-
+<script>
+var comments_url = "{{comments_url}}";
+</script>
 <div id="main">
 	<div class="container">
 		{% include "pin2/items_inner.html" %}
@@ -23,3 +25,8 @@
 
 <div class="clear"></div>
 {% endblock content%}
+
+
+{% block footer_ex_js %}
+<script type="text/javascript" src="{{MEDIA_URL}}js2/item.js?ver=1.0.0"></script>
+{% endblock footer_ex_js %}
