@@ -355,11 +355,18 @@ def post(request):
         if ad:
             hot_post = int(ad.post)
         if hot_post:
-            hot_post = Post.objects\
-                .only(*Post.NEED_KEYS2)\
-                .filter(id=hot_post)
-            posts = list(hot_post) + list(posts)
-        
+            exists_posts = False
+            for ppp in posts:
+                if ppp.id == hot_post:
+                    exists_posts = True
+                    break
+
+            if not exists_posts:
+                hot_post = Post.objects\
+                    .only(*Post.NEED_KEYS2)\
+                    .filter(id=hot_post)
+                posts = list(hot_post) + list(posts)
+
         if not hot_post:
             fixed_post = get_fixed_ads()
             if fixed_post:

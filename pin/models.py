@@ -408,6 +408,7 @@ class Post(models.Model):
         return True
 
     def save(self, *args, **kwargs):
+        is_official = False
         from user_profile.models import Profile
         try:
             profile = Profile.objects.get(user=self.user)
@@ -433,6 +434,10 @@ class Post(models.Model):
 
             if not self.accept_for_stream():
                 self.status = 0
+
+            if Official.objects.filter(user=self.user).count():
+                self.status = 1
+                is_official = True
         else:
             print "path does not exists", file_path
 
@@ -440,6 +445,11 @@ class Post(models.Model):
 
         super(Post, self).save(*args, **kwargs)
         self.get_image_236()
+        print "id of post:", self.id
+        if is_official:
+            from model_mongo import Ads
+            Ads.objects.create(user=self.user_id, post=int(self.id), start=datetime.now())
+            # Ads.objects.get(post=int(self.id), ended=False)
 
     @models.permalink
     def get_absolute_url(self):

@@ -471,7 +471,8 @@ def latest_redis(request):
     ad = Ads.get_ad(user_id=viewer_id)
     if ad:
         try:
-            arp.append(Post.objects.get(id=int(ad.post)))
+            if ad.post not in pl:
+                pl.append(str(ad.post))
         except:
             pass
 
