@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 
 from instagram import client
-from pin.models import Post
+from pin.models import Post, InstaAccount
 from pin.model_mongo import InstaMeta
 from pin.tools import create_filename
 
@@ -49,18 +49,20 @@ def get_from_insta(insta_user_id, cat, user_id, cnt=5):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        get_from_insta(insta_user_id="1462129775", cat=7, user_id=636690)
-        get_from_insta(insta_user_id="1222617046", cat=16, user_id=636690)
-        get_from_insta(insta_user_id="306728731", cat=17, user_id=636690)
-        get_from_insta(insta_user_id="333554794", cat=17, user_id=636690)
-        get_from_insta(insta_user_id="693947917", cat=13, user_id=636690)
-        get_from_insta(insta_user_id="1683733211", cat=20, user_id=636690)
-        get_from_insta(insta_user_id="1588368877", cat=4, user_id=636690)
-        get_from_insta(insta_user_id="2772314", cat=17, user_id=636690)
-        get_from_insta(insta_user_id="42059454", cat=1, user_id=636690)
-        get_from_insta(insta_user_id="675083963", cat=16, user_id=636690)
-        get_from_insta(insta_user_id="1072975326", cat=17, user_id=636690)
-        get_from_insta(insta_user_id="28584235", cat=39, user_id=636690)
-        get_from_insta(insta_user_id="1119171968", cat=39, user_id=636690)
+        for ac in InstaAccount.objects.all():
+            get_from_insta(str(ac.insta_id), ac.cat_id, ac.user_id)
+        # get_from_insta(insta_user_id="1462129775", cat=7, user_id=636690)
+        # get_from_insta(insta_user_id="1222617046", cat=16, user_id=636690)
+        # get_from_insta(insta_user_id="306728731", cat=17, user_id=636690)
+        # get_from_insta(insta_user_id="333554794", cat=17, user_id=636690)
+        # get_from_insta(insta_user_id="693947917", cat=13, user_id=636690)
+        # get_from_insta(insta_user_id="1683733211", cat=20, user_id=636690)
+        # get_from_insta(insta_user_id="1588368877", cat=4, user_id=636690)
+        # get_from_insta(insta_user_id="2772314", cat=17, user_id=636690)
+        # get_from_insta(insta_user_id="42059454", cat=1, user_id=636690)
+        # get_from_insta(insta_user_id="675083963", cat=16, user_id=636690)
+        # get_from_insta(insta_user_id="1072975326", cat=17, user_id=636690)
+        # get_from_insta(insta_user_id="28584235", cat=39, user_id=636690)
+        # get_from_insta(insta_user_id="1119171968", cat=39, user_id=636690)
 
-        get_from_insta(insta_user_id="197997900", cat=3, user_id=636878)
+        # get_from_insta(insta_user_id="197997900", cat=3, user_id=636878)
