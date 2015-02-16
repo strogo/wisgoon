@@ -26,7 +26,7 @@ class EditorPinFeed(Feed):
         text = item.text
         img = item.get_image_500()
         if img:
-            text = "<p>%s</> <br><br> <img src='%s'>" % (text, img['url'])
+            text = "<p>%s</p> <br><br> <img src='%s'>" % (text, img['url'])
 
         return text
 
