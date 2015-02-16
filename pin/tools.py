@@ -57,7 +57,7 @@ def create_filename(filename):
         abs_path = "%s%s" % (path, folder)
         if not os.path.exists(abs_path):
             try:
-                os.makedirs(abs_path)
+                os.makedirs(abs_path, mode=0777)
             except Exception, e:
                 print str(e)
     filestr = "%s/%f" % (folder, time.time())
