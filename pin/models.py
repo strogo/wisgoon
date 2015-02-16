@@ -977,6 +977,11 @@ class Block(models.Model):
         Block.objects.filter(user_id=user_id, blocked_id=blocked_id).delete()
 
 
+class InstaAccount(models.Model):
+    insta_id = models.IntegerField()
+    cat = models.ForeignKey(Category)
+    user = models.ForeignKey(User)
+
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
 #post_delete.connect(Likes.user_unlike_post, sender=Likes)
