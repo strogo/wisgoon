@@ -857,7 +857,7 @@ def item(request, item_id):
 def get_comments(request, post_id):
     offset = int(request.GET.get('offset', 0))
     comments = Comments.objects.filter(object_pk=post_id)\
-        .order_by('-id')[offset:offset + 1 * 10]
+        .order_by('-id').only('id', 'user__username', 'user__id', 'comment', 'submit_date')[offset:offset + 1 * 10]
 
     if len(comments) == 0:
         return HttpResponse(0)
