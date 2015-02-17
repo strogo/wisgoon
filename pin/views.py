@@ -687,12 +687,12 @@ def popular(request, interval=""):
     if request.is_ajax():
         return render(request, 'pin2/__search.html',
                       {'posts': posts,
-                       'offset': offset + 10})
+                       'offset': offset + 20})
 
     else:
         return render(request, 'pin2/popular.html',
                       {'posts': posts,
-                       'offset': offset + 10})
+                       'offset': offset + 20})
 
 
 def topuser(request):
