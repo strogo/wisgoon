@@ -296,11 +296,18 @@ def post(request):
         elif popular == 'lastweek':
             date_from = dt_now - datetime.timedelta(days=7)
         elif popular == 'lasteigth':
-            date_from = dt_now - datetime.timedelta(hours=8)
+            date_from = dt_now - datetime.timedelta(days=1)
 
         if date_from:
             start_from = time.mktime(date_from.timetuple())
-            filters.update(dict(timestamp__gt=start_from))
+            pop_posts = SearchQuerySet().models(Post)\
+                .filter(timestamp_i__gt=int(start_from))\
+                .order_by('-cnt_like_i')[0:30]
+        else:
+            start_from = time.mktime(date_from.timetuple())
+            pop_posts = SearchQuerySet().models(Post)\
+                .order_by('-cnt_like_i')[0:30]
+            # filters.update(dict(timestamp__gt=start_from))
 
     cache_stream_str = "v21%s_%s" % (str(filters), sort_by)
 
@@ -310,7 +317,12 @@ def post(request):
     posts = cache.get(cache_stream_name)
     #print cache_stream_str, cache_stream_name, posts
 
-    if not category_id and not popular and not user_id:
+    if popular:
+        posts = []
+        for p in pop_posts:
+            posts.append(p.object)
+
+    elif not category_id and not popular and not user_id:
         if not before:
             before = 0
         pl = Post.latest(pid=before)
