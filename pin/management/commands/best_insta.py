@@ -53,7 +53,7 @@ def get_from_insta(insta_user_id, cat, user_id, cnt=5):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for ac in InstaAccount.objects.all():
+        for ac in InstaAccount.objects.order_by('-lc'):
             print "going to get", ac.insta_id
             get_from_insta(str(ac.insta_id), ac.cat_id, ac.user_id)
             ac.lc = datetime.now()
