@@ -445,11 +445,11 @@ class Post(models.Model):
 
         super(Post, self).save(*args, **kwargs)
         self.get_image_236()
-        print "id of post:", self.id
-        if is_official:
-            from model_mongo import Ads
-            Ads.objects.create(user=self.user_id, post=int(self.id), start=datetime.now())
-            # Ads.objects.get(post=int(self.id), ended=False)
+        # print "id of post:", self.id
+        # if is_official:
+        #     from model_mongo import Ads
+        #     Ads.objects.create(user=self.user_id, post=int(self.id), start=datetime.now())
+        #     # Ads.objects.get(post=int(self.id), ended=False)
 
     @models.permalink
     def get_absolute_url(self):
