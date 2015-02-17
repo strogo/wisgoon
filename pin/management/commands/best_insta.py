@@ -1,5 +1,6 @@
 import urllib
 import time
+from datetime import datetime
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
@@ -20,31 +21,34 @@ def get_from_insta(insta_user_id, cat, user_id, cnt=5):
 
     for media in recent_media:
         if media.type == "image":
-            id = media.id
-            if InstaMeta.objects(insta_id=id).count() != 0:
-                continue
+            try:
+                id = media.id
+                if InstaMeta.objects(insta_id=id).count() != 0:
+                    continue
 
-            print "store:", id
+                print "store:", id
 
-            model = Post()
-            model.text = media.caption.text
-            model.image = media.get_standard_resolution_url()
+                model = Post()
+                model.text = media.caption.text
+                model.image = media.get_standard_resolution_url()
 
-            image_url = model.image
-            filename = image_url.split('/')[-1]
-            filename = create_filename(filename)
-            image_on = "%s/pin/images/o/%s" % (MEDIA_ROOT, filename)
+                image_url = model.image
+                filename = image_url.split('/')[-1]
+                filename = create_filename(filename)
+                image_on = "%s/pin/images/o/%s" % (MEDIA_ROOT, filename)
 
-            urllib.urlretrieve(image_url, image_on)
+                urllib.urlretrieve(image_url, image_on)
 
-            model.image = "pin/images/o/%s" % (filename)
-            model.timestamp = time.time()
-            model.user_id = user_id
-            model.status = Post.APPROVED
-            model.category_id = cat
-            model.save()
+                model.image = "pin/images/o/%s" % (filename)
+                model.timestamp = time.time()
+                model.user_id = user_id
+                model.status = Post.APPROVED
+                model.category_id = cat
+                model.save()
 
-            InstaMeta.objects.create(post=model.id, insta_id=id)
+                InstaMeta.objects.create(post=model.id, insta_id=id)
+            except Exception, e:
+                print str(e)
 
 
 class Command(BaseCommand):
@@ -52,6 +56,8 @@ class Command(BaseCommand):
         for ac in InstaAccount.objects.all():
             print "going to get", ac.insta_id
             get_from_insta(str(ac.insta_id), ac.cat_id, ac.user_id)
+            ac.lc = datetime.now()
+            ac.save()
         # get_from_insta(insta_user_id="1462129775", cat=7, user_id=636690)
         # get_from_insta(insta_user_id="1222617046", cat=16, user_id=636690)
         # get_from_insta(insta_user_id="306728731", cat=17, user_id=636690)

@@ -991,6 +991,7 @@ class InstaAccount(models.Model):
     insta_id = models.IntegerField()
     cat = models.ForeignKey(Category)
     user = models.ForeignKey(User)
+    lc = models.DateTimeField(auto_now_add=True, default=datetime.now())
 
 
 class Official(models.Model):
