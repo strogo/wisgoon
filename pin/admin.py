@@ -14,7 +14,7 @@ class OfficialAdmin(admin.ModelAdmin):
 
 
 class InstaAccountAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'cat', 'insta_id')
+    list_display = ('id', 'user', 'cat', 'insta_id', 'lc')
     raw_id_fields = ("user", "cat")
 
 
