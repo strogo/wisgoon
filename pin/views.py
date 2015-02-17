@@ -456,6 +456,7 @@ def absuser_like(request, user_namel):
 # if hp:
 #     latest_items = itertools.chain(hp, latest_items)
 
+
 def latest_redis(request):
     pid = get_request_pid(request)
     pl = Post.latest(pid=pid)
@@ -655,7 +656,11 @@ def category_redis(request, cat_id):
 
 
 def popular(request, interval=""):
-    ROW_PER_PAGE = 20
+    try:
+        offset = int(request.GET.get('offset', 0))
+    except ValueError:
+        offset = 0
+
     dt_now = datetime.datetime.now()
     dt_now = dt_now.replace(minute=0, second=0, microsecond=0)
 
@@ -667,37 +672,27 @@ def popular(request, interval=""):
         elif interval == 'lastweek':
             data_from = dt_now - datetime.timedelta(days=7)
         elif interval == 'lasteigth':
-            data_from = dt_now - datetime.timedelta(hours=8)
+            data_from = dt_now - datetime.timedelta(days=1)
 
         start_from = mktime(data_from.timetuple())
-        post_list = Post.objects.only(*Post.NEED_KEYS_WEB).extra(where=['timestamp>%s'], params=[start_from])\
-            .order_by('-cnt_like')
+
+        posts = SearchQuerySet().models(Post)\
+            .filter(timestamp_i__gt=int(start_from))\
+            .order_by('-cnt_like_i')[offset:offset + 1 * 20]
 
     else:
-        post_list = Post.objects.order_by('-cnt_like')
-    paginator = Paginator(post_list, ROW_PER_PAGE)
-
-    try:
-        offset = int(request.GET.get('older', 1))
-    except ValueError:
-        offset = 1
-
-    try:
-        latest_items = paginator.page(offset)
-    except PageNotAnInteger:
-        latest_items = paginator.page(1)
-    except EmptyPage:
-        return HttpResponse(0)
+        posts = SearchQuerySet().models(Post)\
+            .order_by('-cnt_like_i')[offset:offset + 1 * 20]
 
     if request.is_ajax():
-        return render(request, 'pin2/_items_2_1.html',
-                      {'latest_items': latest_items,
-                       'offset': latest_items.next_page_number})
+        return render(request, 'pin2/__search.html',
+                      {'posts': posts,
+                       'offset': offset + 10})
 
     else:
-        return render(request, 'pin2/home.html',
-                      {'latest_items': latest_items,
-                       'offset': latest_items.next_page_number})
+        return render(request, 'pin2/popular.html',
+                      {'posts': posts,
+                       'offset': offset + 10})
 
 
 def topuser(request):
