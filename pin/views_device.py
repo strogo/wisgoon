@@ -61,7 +61,7 @@ def like(request):
         return HttpResponseBadRequest('erro in post id')
 
     try:
-        Likes.objects.create(user_id=user.id, post_id=post_id)
+        Likes.objects.create(user_id=user.id, post_id=post_id, ip=user._ip)
         return HttpResponse('+1')
     except IntegrityError:
         Likes.objects.filter(user_id=user.id, post_id=post_id).delete()
