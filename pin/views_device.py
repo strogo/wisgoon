@@ -64,7 +64,7 @@ def like(request):
         Likes.objects.create(user_id=user.id, post_id=post_id)
         return HttpResponse('+1')
     except IntegrityError:
-        Likes.objects.get(user_id=user.id, post_id=post_id).delete()
+        Likes.objects.filter(user_id=user.id, post_id=post_id).delete()
         return HttpResponse('-1')
 
     # try:
