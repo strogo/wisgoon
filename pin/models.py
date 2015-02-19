@@ -765,7 +765,7 @@ class Likes(models.Model):
         str_likers = "web_likes_%s" % post.id
         cache.delete(str_likers)
 
-        Post.hot(post.id, amount=0.5)
+        # Post.hot(post.id, amount=0.5)
         from pin.tasks import send_notif_bar
 
         send_notif_bar(user=post.user_id, type=1, post=post.id,

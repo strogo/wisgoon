@@ -53,28 +53,28 @@ def like(request):
     if not user:
         return HttpResponseForbidden('error in user validation')
 
-    if request.method == 'POST':
-        try:
-            post_id = int(request.POST['post_id'])
-        except ValueError:
-            return HttpResponseBadRequest('erro in post id')
+    if request.method != "POST":
+        return HttpResponseBadRequest('error in parameters')
 
-        try:
-            liked = Likes.objects.get(user_id=user.id, post_id=post_id)
-            if liked:
-                Likes.objects.get(user_id=user.id, post_id=post_id).delete()
+    post_id = int(request.POST.get('post_id', None))
+    if not post_id:
+        return HttpResponseBadRequest('erro in post id')
 
-            return HttpResponse('-1')
-        except Likes.DoesNotExist:
-            try:
-                liked = Likes.objects.create(user_id=user.id, post_id=post_id)
-            except:
-                pass
+    try:
+        liked = Likes.objects.get(user_id=user.id, post_id=post_id)
+        if liked:
+            Likes.objects.get(user_id=user.id, post_id=post_id).delete()
+
+        return HttpResponse('-1')
+    except Likes.DoesNotExist:
+        try:
+            liked = Likes.objects.create(user_id=user.id, post_id=post_id)
             return HttpResponse('+1')
+        except:
+            pass
+        # return HttpResponse('+1')
 
-        return HttpResponse('+1')
-
-    return HttpResponseBadRequest('error in parameters')
+    return HttpResponse('-1')
 
 
 @csrf_exempt
