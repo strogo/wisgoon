@@ -63,6 +63,7 @@ def like(request):
     try:
         liked = Likes.objects.get(user_id=user.id, post_id=post_id)
         if liked:
+            print "carizma 1"
             Likes.objects.get(user_id=user.id, post_id=post_id).delete()
 
         return HttpResponse('-1')
