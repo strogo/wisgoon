@@ -351,7 +351,7 @@ class Post(models.Model):
         r_server.ltrim(latest_stream, 0, settings.LIST_LONG)
 
     @classmethod
-    def set_stream_to_redis(self, user_id):
+    def set_stream_to_redis(cls, user_id):
         user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
         s = Stream.objects.filter(user_id=user_id)\
             .values_list('post_id', flat=True).order_by('-id')[:1000]
@@ -359,21 +359,15 @@ class Post(models.Model):
             r_server.rpush(user_stream, ss)
 
     @classmethod
-    def add_to_user_stream(self, post, user_id):
+    def add_to_user_stream(cls, post, user_id):
         user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
 
-        pl = r_server.lrange(user_stream, 0, 1000)
-        if not pl:
-            Post.set_stream_to_redis(user_id=user_id)
-            pl = r_server.lrange(user_stream, 0, 1000)
-
-        if str(post.id) not in pl:
-            r_server.lpush(user_stream, post.id)
-
+        r_server.lrem(user_stream, post.id)
+        r_server.lpush(user_stream, post.id)
         r_server.ltrim(user_stream, 0, 1000)
 
     @classmethod
-    def add_to_set(self, set_name, post, set_cat=True):
+    def add_to_set(cls, set_name, post, set_cat=True):
         r_server.zadd(set_name, int(post.timestamp), post.id)
         r_server.zremrangebyrank(set_name, 0, -1001)
 
