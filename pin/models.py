@@ -756,6 +756,7 @@ class Likes(models.Model):
 
         key_str = "%s_%d" % (settings.POST_LIKERS, post.id)
         r_server.sadd(key_str, int(like.user.id))
+        r_server.expire(key_str, 86400)
 
         hcpstr = "like_max_%d" % post.id
         cp = cache.get(hcpstr)
@@ -774,9 +775,7 @@ class Likes(models.Model):
                        actor=sender.id)
 
     @classmethod
-    def user_likes(self, user_id, pid=0):
-        ROW_IN_PAGE = 20
-
+    def user_likes(cls, user_id, pid=0):
         user_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(user_id))
 
         if not r_server.exists(user_last_likes):
@@ -793,9 +792,9 @@ class Likes(models.Model):
                 pid_index = pl.index(str(pid))
             except ValueError:
                 return []
-            idis = pl[pid_index + 1: pid_index + ROW_IN_PAGE]
+            idis = pl[pid_index + 1: pid_index + 20]
             return idis
-        
+
         return pl[:20]
 
     @classmethod
@@ -803,7 +802,6 @@ class Likes(models.Model):
         key_str = "%s_%d" % (settings.POST_LIKERS, post_id)
 
         if r_server.sismember(key_str, str(user_id)):
-            r_server.expire(key_str, 86400)
             return True
 
         if not r_server.exists(key_str):
@@ -811,8 +809,8 @@ class Likes(models.Model):
                 .filter(post_id=post_id)
 
             if post_likers:
-                for pl in post_likers:
-                    r_server.sadd(key_str, int(pl))
+                r_server.sadd(key_str, *post_likers)
+                r_server.expire(key_str, 86400)
 
                 if user_id in post_likers:
                     return True
@@ -821,12 +819,6 @@ class Likes(models.Model):
 
             if user_id in post_likers:
                 return True
-
-        # else:
-        #     if r_server.sismember(key_str, str(user_id)):
-        #         return True
-
-        r_server.expire(key_str, 86400)
 
         return False
 
