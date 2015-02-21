@@ -4,6 +4,8 @@ from haystack import indexes
 from pin.models import Post
 from user_profile.models import Profile
 
+from pin.preprocessing import normalize_tags
+
 
 class PostIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
@@ -27,7 +29,11 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_tags(self, obj):
         hash_tags = re.compile(ur'(?i)(?<=\#)\w+', re.UNICODE)
         tags = hash_tags.findall(obj.text)
-        return tags
+        nt = []
+        for tag in tags:
+            nt.append(normalize_tags(tag))
+        print nt
+        return nt
 
 
 class ProfileIndex(indexes.SearchIndex, indexes.Indexable):

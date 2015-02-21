@@ -685,11 +685,15 @@ class Stream(models.Model):
 
             Post.add_to_user_stream(post=post, user_id=user.id)
 
-            followers = Follow.objects.all().filter(following=user)
-            for follower in followers:
+            # Get the users follow owner of post
+            followers = Follow.objects.filter(following=user).values_list('follower_id', flat=True)
+            # print followers
+            for follower_id in followers:
+                # print follower
                 try:
-                    Post.add_to_user_stream(post=post, user_id=follower.follower.id)
-                except:
+                    Post.add_to_user_stream(post=post, user_id=follower_id)
+                except Exception, e:
+                    print str(e)
                     pass
 
             if post.status == Post.APPROVED and post.accept_for_stream():
