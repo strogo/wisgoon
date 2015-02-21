@@ -14,7 +14,7 @@ from django.template.defaultfilters import stringfilter
 from django.utils.text import normalize_newlines
 from django.utils.safestring import mark_safe
 
-from pin.models import Likes as pin_likes
+from pin.models import Likes as pinLikes
 from pin.model_mongo import Notif
 from user_profile.models import Profile
 
@@ -26,8 +26,9 @@ register = Library()
 
 
 @register.filter
-def keyvalue(dict, key):    
+def keyvalue(dict, key):
     return dict[key]
+
 
 @register.filter
 def urlize_hashtag(obj):
@@ -71,8 +72,7 @@ class UserItemLike(template.Node):
         try:
             item = int(self.item.resolve(context))
             user = context['user']
-            #liked = pin_likes.objects.filter(user=user, item=item).count()
-            liked = pin_likes.user_in_likers(post_id=item, user_id=user.id)
+            liked = pinLikes.user_in_likers(post_id=item, user_id=user.id)
             if liked:
                 return 'user-liked'
             else:
@@ -103,8 +103,7 @@ class UserPostLike(template.Node):
         try:
             item = int(self.item.resolve(context))
             user = context['user']
-            liked = pin_likes.user_in_likers(post_id=item, user_id=user.id)
-            #liked = pin_likes.objects.filter(user=user, post=item).count()
+            liked = pinLikes.user_in_likers(post_id=item, user_id=user.id)
             if liked:
                 return 'user-liked'
             else:
@@ -128,7 +127,6 @@ def get_username(user):
         user = int(user)
 
     if isinstance(user, (int, long)):
-        #user = User.objects.only('email').get(pk=user)
         user_str = "user_name_%d" % (user)
         user_cache = cache.get(user_str)
         if user_cache:
@@ -193,7 +191,6 @@ def date_from_timestamp(value):
 
 @register.filter
 def jalali_mysql_date(value):
-    #gd = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
     gd = value
     cal = Calverter()
     jd = cal.gregorian_to_jd(gd.year, gd.month, gd.day)
@@ -206,16 +203,16 @@ def jalali_mysql_date(value):
 @register.filter
 def pn(value):
     value = str(value)
-    value = value.replace('1','۱')
-    value = value.replace('2','۲')
-    value = value.replace('3','۳')
-    value = value.replace('4','۴')
-    value = value.replace('5','۵')
-    value = value.replace('6','۶')
-    value = value.replace('7','۷')
-    value = value.replace('8','۸')
-    value = value.replace('9','۹')
-    value = value.replace('0','۰')
+    value = value.replace('1', '۱')
+    value = value.replace('2', '۲')
+    value = value.replace('3', '۳')
+    value = value.replace('4', '۴')
+    value = value.replace('5', '۵')
+    value = value.replace('6', '۶')
+    value = value.replace('7', '۷')
+    value = value.replace('8', '۸')
+    value = value.replace('9', '۹')
+    value = value.replace('0', '۰')
     return value
 
 
