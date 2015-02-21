@@ -5,7 +5,7 @@ import time
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import MultipleObjectsReturned
-from django.db import transaction, IntegrityError
+from django.db import transaction, IntegrityError, DatabaseError
 from django.db.models import F, Sum
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
@@ -64,23 +64,11 @@ def like(request):
         Likes.objects.create(user_id=user.id, post_id=post_id, ip=user._ip)
         return HttpResponse('+1')
     except IntegrityError:
-        Likes.objects.filter(user_id=user.id, post_id=post_id).delete()
+        try:
+            Likes.objects.filter(user_id=user.id, post_id=post_id).delete()
+        except DatabaseError:
+            Likes.objects.filter(user_id=user.id, post_id=post_id).delete()
         return HttpResponse('-1')
-
-    # try:
-    #     liked = Likes.objects.get(user_id=user.id, post_id=post_id)
-    #     if liked:
-    #         print "carizma 1"
-    #         Likes.objects.get(user_id=user.id, post_id=post_id).delete()
-
-    #     return HttpResponse('-1')
-    # except Likes.DoesNotExist:
-    #     try:
-    #         liked = Likes.objects.create(user_id=user.id, post_id=post_id)
-    #         return HttpResponse('+1')
-    #     except:
-    #         pass
-    #     # return HttpResponse('+1')
 
     return HttpResponse('-1')
 
