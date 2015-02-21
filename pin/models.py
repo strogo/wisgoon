@@ -799,21 +799,34 @@ class Likes(models.Model):
         return pl[:20]
 
     @classmethod
-    def user_in_likers(self, post_id, user_id):
+    def user_in_likers(cls, post_id, user_id):
         key_str = "%s_%d" % (settings.POST_LIKERS, post_id)
-        post_likers = r_server.smembers(key_str)
-        if post_likers == set([]):
+
+        if r_server.sismember(key_str, str(user_id)):
+            r_server.expire(key_str, 86400)
+            return True
+
+        if not r_server.exists(key_str):
             post_likers = Likes.objects.values_list('user_id', flat=True)\
                 .filter(post_id=post_id)
 
             if post_likers:
                 for pl in post_likers:
                     r_server.sadd(key_str, int(pl))
+
+                if user_id in post_likers:
+                    return True
             else:
                 r_server.sadd(key_str, int(-1))
 
-        if str(user_id) in post_likers or user_id in post_likers:
-            return True
+            if user_id in post_likers:
+                return True
+
+        # else:
+        #     if r_server.sismember(key_str, str(user_id)):
+        #         return True
+
+        r_server.expire(key_str, 86400)
 
         return False
 
