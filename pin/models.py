@@ -442,6 +442,7 @@ class Post(models.Model):
 
         super(Post, self).save(*args, **kwargs)
         self.get_image_236()
+        self.get_image_500()
         # print "id of post:", self.id
         # if is_official:
         #     from model_mongo import Ads
