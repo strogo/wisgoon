@@ -28,6 +28,7 @@ from taggit.managers import TaggableManager
 from taggit.models import Tag
 
 from model_mongo import Notif as Notif_mongo, MonthlyStats, PostMeta, PendingPosts
+from preprocessing import normalize_tags
 
 LIKE_TO_DEFAULT_PAGE = 10
 
@@ -436,6 +437,8 @@ class Post(models.Model):
             print "path does not exists", file_path
 
         # print "self status: ", self.status
+
+        self.text = normalize_tags(self.text)
 
         super(Post, self).save(*args, **kwargs)
         self.get_image_236()

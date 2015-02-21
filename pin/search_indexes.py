@@ -32,7 +32,7 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
         nt = []
         for tag in tags:
             nt.append(normalize_tags(tag))
-        print nt
+        # print nt
         return nt
 
 
