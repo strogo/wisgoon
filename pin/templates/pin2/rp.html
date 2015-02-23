@@ -3,17 +3,7 @@
 
 {% block title%} - آخرین مطالب{% endblock title%}
 
-{% block extra_js %}
- <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
-<!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
-{% endblock extra_js %}
-
 {% block content %}
-
-<script type="text/javascript">
-var start_loading=0;
-var next_pref = '?pid=';
-</script>
 
 <!-- {% include "base/app.html" %} -->
 
@@ -23,12 +13,22 @@ var next_pref = '?pid=';
 	</div>
 	<div class="container-fluid">
 		<div id="feed" class="masonry">
+		{% for item in rps %}
+			{% if item.get_image_236 %}
+				{% if not request.user.is_authenticated %}
+					{% include "pin2/__items_base_not_login.html" %}
+				{% else %}
+					{% include "pin2/__items_base.html" %}
+				{% endif %}
+
+			{% endif %}
+		{% endfor %}
+		{% comment %}
 			{% include "pin2/_items_2.html"%}
+		{% endcomment %}
 		</div>
 	</div>
 </div>
 
-{% include "pin/feed_scripts.html" %}
-{% include "pin/pin_scripts.html" %}
 
 {% endblock content %}

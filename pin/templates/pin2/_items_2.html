@@ -2,14 +2,14 @@
 
 {% for item in latest_items %}
 
-{% if item.get_image_236 %}
-	{% if not request.user.is_authenticated %}
-		{% include "pin2/__items_base_not_login.html" %}
-	{% else %}
-		{% include "pin2/__items_base.html" %}
-	{% endif %}
+	{% if item.get_image_236 %}
+		{% if not request.user.is_authenticated %}
+			{% include "pin2/__items_base_not_login.html" %}
+		{% else %}
+			{% include "pin2/__items_base.html" %}
+		{% endif %}
 
-{% endif %}
+	{% endif %}
 
 {% if offset %}
 	<span data-next="{{offset}}" ></span>

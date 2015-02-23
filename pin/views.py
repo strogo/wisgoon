@@ -455,9 +455,9 @@ def absuser_like(request, user_namel):
 
 
 def rp(request):
-    posts = Post.objects.all().exclude(report=0).order_by('-id')
+    posts = Post.objects.all().filter(report__gt=0).order_by('-id')
     return render(request, 'pin2/rp.html', {
-        'latest_items': posts
+        'rps': posts
         })
 
 
