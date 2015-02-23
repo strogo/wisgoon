@@ -455,10 +455,13 @@ def absuser_like(request, user_namel):
 
 
 def rp(request):
-    posts = Post.objects.all().filter(report__gt=0).order_by('-id')
-    return render(request, 'pin2/rp.html', {
-        'rps': posts
-        })
+    if request.user.is_superuser:
+        posts = Post.objects.all().filter(report__gt=0).order_by('-id')
+        return render(request, 'pin2/rp.html', {
+            'rps': posts
+            })
+    else:
+        return HttpResponseRedirect(reverse('home'))
 
 
 # hp = Post.get_hot()

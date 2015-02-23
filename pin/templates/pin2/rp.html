@@ -16,9 +16,9 @@
 		{% for item in rps %}
 			{% if item.get_image_236 %}
 				{% if not request.user.is_authenticated %}
-					{% include "pin2/__items_base_not_login.html" %}
+
 				{% else %}
-					{% include "pin2/__items_base.html" %}
+					{% include "pin2/__rp_items_base.html" %}
 				{% endif %}
 
 			{% endif %}
