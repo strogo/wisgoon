@@ -461,7 +461,7 @@ def rp(request):
             'rps': posts
             })
     else:
-        return HttpResponseRedirect(reverse('home'))
+        return HttpResponseRedirect(reverse('pin-home'))
 
 
 # hp = Post.get_hot()
