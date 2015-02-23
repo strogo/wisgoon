@@ -452,6 +452,14 @@ def absuser_like(request, user_namel):
                        'profile': profile,
                        'cur_user': user})
 
+
+def rp(request):
+    posts = Post.objects.filter(report=1)
+    return render(request, 'pin2/rp.html', {
+        'latest_items': posts
+        })
+
+
 # hp = Post.get_hot()
 # if hp:
 #     latest_items = itertools.chain(hp, latest_items)

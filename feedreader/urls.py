@@ -30,6 +30,9 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('pin.views',
     url(r'^latest/$', 'latest_redis', name='pin-latest'),
+    
+    url(r'^rp/$', 'rp', name='rp'),
+
     url(r'^feedback/$', 'feedback', name='pin-feedback'),
     url(r'^last/likes/$', 'last_likes', name='pin-last-likes'),
 
