@@ -10,6 +10,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Sum
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
@@ -454,7 +455,7 @@ def absuser_like(request, user_namel):
 
 
 def rp(request):
-    posts = Post.objects.filter(report=1)
+    posts = Post.objects.all().exclude(report=0).order_by('-id')
     return render(request, 'pin2/rp.html', {
         'latest_items': posts
         })
