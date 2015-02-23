@@ -37,13 +37,20 @@
 		{% if is_super_user %}
 		
 
-		<a href="{% url "pin-item-delete" item.id%}" class=" delpost btn btn-danger" style="margin-right: 5px;float:right;"> 
-			<i class="glyphicon glyphicon-remove"></i> حذف
-		</a>
-		
-		<a href="{% url "pin-item-nop" item.id%}" class=" noppost btn btn-success" style="margin-right: 5px;float:right;"> 
-			<i class="glyphicon glyphicon-ok"></i> مشکلی نداره
-		</a>
+		<div style="margin-bottom:10px;" class="alert alert-warning">
+		تعداد گزارش تخلف: {{item.report|pn}}
+		</div>
+		<div class="clear"></div>
+		<div style="margin-bottom:10px;">
+			<a href="{% url "pin-item-delete" item.id%}" class=" delpost btn btn-danger" style="margin-right: 5px;float:right;"> 
+				<i class="glyphicon glyphicon-remove"></i> حذف
+			</a>
+			
+			<a href="{% url "pin-item-nop" item.id%}" class=" noppost btn btn-success" style="margin-right: 5px;float:right;"> 
+				<i class="glyphicon glyphicon-ok"></i> مشکلی نداره
+			</a>
+			<div class="clear"></div>
+		</div>
 
 		{% endif %}
 		{% comment %}
