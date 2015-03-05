@@ -10,6 +10,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Sum
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
@@ -451,6 +452,17 @@ def absuser_like(request, user_namel):
                        'user_id': user_id,
                        'profile': profile,
                        'cur_user': user})
+
+
+def rp(request):
+    if request.user.is_superuser:
+        posts = Post.objects.all().filter(report__gt=0).order_by('-id')
+        return render(request, 'pin2/rp.html', {
+            'rps': posts
+            })
+    else:
+        return HttpResponseRedirect(reverse('pin-home'))
+
 
 # hp = Post.get_hot()
 # if hp:

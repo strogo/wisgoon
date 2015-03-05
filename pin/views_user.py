@@ -291,6 +291,23 @@ def delete(request, item_id):
     return HttpResponse('0')
 
 
+@login_required
+def nop(request, item_id):
+    try:
+        post = Post.objects.get(pk=item_id)
+        if request.user.is_superuser:
+            post.report = 0
+            post.save()
+            if request.is_ajax():
+                return HttpResponse('1')
+            return HttpResponseRedirect('/')
+
+    except Post.DoesNotExist:
+        return HttpResponse('0')
+
+    return HttpResponse('0')
+
+
 @csrf_exempt
 @login_required
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
