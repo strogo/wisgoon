@@ -528,11 +528,11 @@ def likes(request):
     # cache_stream_name = md5(cache_stream_str).hexdigest()
     #print cache_stream_str, cache_stream_name
 
-    post_likes = cache.get(cache_stream_name)
-    if not post_likes:
-        post_likes = Likes.objects\
-            .values('id', 'post_id', 'user_id')\
-            .filter(**filters).all()[offset:offset + limit]
+    # post_likes = cache.get(cache_stream_name)
+    # if not post_likes:
+    post_likes = Likes.objects\
+        .values('id', 'post_id', 'user_id')\
+        .filter(**filters).all()[offset:offset + limit]
         # if len(post_likes) == limit:
         #     #print "store likes in cache"
         #     cache.set(cache_stream_name, post_likes, 86400)
