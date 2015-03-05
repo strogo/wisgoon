@@ -4,6 +4,7 @@ import datetime
 import time
 import redis
 from hashlib import md5
+from pytz import timezone
 
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.tokens import default_token_generator
@@ -732,17 +733,15 @@ def comments(request):
         o['object_pk'] = com.object_pk_id
         o['score'] = com.score
 
-        com_date = str(com.submit_date)
-        com_date = com_date.replace(' ', 'T')
-        com_date = com_date.split('+')[0]
-        #print com_date
+        com_date = com.submit_date.astimezone(timezone('Asia/Tehran'))
+        com_date = com_date.strftime('%Y-%m-%dT%H:%m:%S')
 
         o['submit_date'] = com_date
         o['comment'] = com.comment
         o['user_url'] = com.user_id
         o['user_avatar'] = get_avatar(com.user_id, size=100)
         o['user_name'] = AuthCache.get_username(com.user_id)
-        o['resource_uri'] = "/pin/api/com/comments/1/"
+        o['resource_uri'] = "/pin/api/com/comments/%d/" %com.id
 
         objects_list.append(o)
 
