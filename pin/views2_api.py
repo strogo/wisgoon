@@ -494,6 +494,14 @@ def likes(request):
     #limit = int(request.GET.get('limit', 20))
     limit = 20
 
+    cache_stream_str = "wislikes_%s_%s_%s" % (str(post_id),
+                                              str(offset), str(limit))
+    cache_stream_name = md5(cache_stream_str).hexdigest()
+
+    post_likes = cache.get(cache_stream_name)
+    if post_likes:
+        return HttpResponse(post_likes)
+
     next = {
         'url': "/pin/api/like/likes/?limit=%s&offset=%s" % (
             limit, offset + limit),
@@ -514,10 +522,10 @@ def likes(request):
     else:
         return HttpResponse('fault')
 
-    cache_stream_str = "wislikes_%s_%s_%s" % (str(filters),
-                                              str(offset), str(limit))
+    # cache_stream_str = "wislikes_%s_%s_%s" % (str(filters),
+    #                                           str(offset), str(limit))
 
-    cache_stream_name = md5(cache_stream_str).hexdigest()
+    # cache_stream_name = md5(cache_stream_str).hexdigest()
     #print cache_stream_str, cache_stream_name
 
     post_likes = cache.get(cache_stream_name)
@@ -525,9 +533,9 @@ def likes(request):
         post_likes = Likes.objects\
             .values('id', 'post_id', 'user_id')\
             .filter(**filters).all()[offset:offset + limit]
-        if len(post_likes) == limit:
-            #print "store likes in cache"
-            cache.set(cache_stream_name, post_likes, 86400)
+        # if len(post_likes) == limit:
+        #     #print "store likes in cache"
+        #     cache.set(cache_stream_name, post_likes, 86400)
 
     for p in post_likes:
         o = {}
@@ -545,6 +553,8 @@ def likes(request):
 
     data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
+    if len(post_likes) == limit:
+        cache.set(cache_stream_name, json_data, 86400)
     return HttpResponse(json_data)
 
 
