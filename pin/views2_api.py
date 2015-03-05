@@ -494,7 +494,7 @@ def likes(request):
     #limit = int(request.GET.get('limit', 20))
     limit = 20
 
-    cache_stream_str = "wislikes2_%s_%s_%s" % (str(post_id), str(offset), str(limit))
+    cache_stream_str = "wislikes2_1_%s_%s_%s" % (str(post_id), str(offset), str(limit))
     cache_stream_name = md5(cache_stream_str).hexdigest()
 
     post_likes = cache.get(cache_stream_name)
