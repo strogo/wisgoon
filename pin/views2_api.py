@@ -734,7 +734,7 @@ def comments(request):
         o['score'] = com.score
 
         com_date = com.submit_date.astimezone(timezone('Asia/Tehran'))
-        com_date = com_date.strftime('%Y-%m-%dT%H:%m:%S')
+        com_date = com_date.strftime('%Y-%m-%dT%H:%M:%S')
 
         o['submit_date'] = com_date
         o['comment'] = com.comment
