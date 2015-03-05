@@ -725,7 +725,7 @@ def comments(request):
 
     objects_list = []
 
-    cq = Comments.objects.filter(object_pk_id=object_pk, is_public=True)[offset:offset + limit]
+    cq = Comments.objects.filter(object_pk_id=object_pk, is_public=True).order_by('-id')[offset:offset + limit]
     for com in cq:
         o = {}
         o['id'] = com.id
@@ -749,7 +749,7 @@ def comments(request):
     data['objects'] = objects_list
 
     json_data = json.dumps(data, cls=MyEncoder)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def follower(request, user_id=1):
