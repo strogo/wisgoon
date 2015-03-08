@@ -799,6 +799,9 @@ class Likes(models.Model):
 
     @classmethod
     def user_in_likers(cls, post_id, user_id):
+        # print "come on"
+        from models_redis import LikesRedis
+        return LikesRedis(post_id=post_id).user_liked(user_id=user_id)
         key_str = "%s_%d" % (settings.POST_LIKERS, post_id)
 
         if r_server.sismember(key_str, str(user_id)):

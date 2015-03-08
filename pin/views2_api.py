@@ -498,9 +498,9 @@ def likes(request):
     cache_stream_str = "wislikes2_1_%s_%s_%s" % (str(post_id), str(offset), str(limit))
     cache_stream_name = md5(cache_stream_str).hexdigest()
 
-    post_likes = cache.get(cache_stream_name)
-    if post_likes:
-        return HttpResponse(post_likes)
+    # post_likes = cache.get(cache_stream_name)
+    # if post_likes:
+    #     return HttpResponse(post_likes)
 
     next = {
         'url': "/pin/api/like/likes/?limit=%s&offset=%s" % (
@@ -530,22 +530,25 @@ def likes(request):
 
     # post_likes = cache.get(cache_stream_name)
     # if not post_likes:
-    post_likes = Likes.objects\
-        .values('id', 'post_id', 'user_id')\
-        .filter(post_id=post_id).order_by("id")[offset:offset + limit]
+    from models_redis import LikesRedis
+    post_likes = LikesRedis(post_id=post_id).get_likes(offset=offset)
+    # post_likes = Likes.objects\
+    #     .values('id', 'post_id', 'user_id')\
+    #     .filter(post_id=post_id).order_by("id")[offset:offset + limit]
         # if len(post_likes) == limit:
         #     #print "store likes in cache"
         #     cache.set(cache_stream_name, post_likes, 86400)
 
     for p in post_likes:
+        p = int(p)
         o = {}
-        o['post_id'] = p['post_id']
+        o['post_id'] = int(post_id)
 
-        o['user_avatar'] = get_avatar(p['user_id'], size=100)
-        o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
+        o['user_avatar'] = get_avatar(p, size=100)
+        o['user_name'] = AuthCache.get_username(user_id=p)
 
-        o['user_url'] = p['user_id']
-        o['resource_uri'] = "/pin/api/like/likes/%d/" % p['id']
+        o['user_url'] = int(p)
+        o['resource_uri'] = "/pin/api/like/likes/%d/" % p
 
         objects_list.append(o)
 
@@ -553,8 +556,8 @@ def likes(request):
 
     data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
-    if len(post_likes) == limit:
-        cache.set(cache_stream_name, json_data, 86400)
+    # if len(post_likes) == limit:
+    #     cache.set(cache_stream_name, json_data, 86400)
     return HttpResponse(json_data)
 
 
