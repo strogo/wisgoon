@@ -55,7 +55,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for ac in InstaAccount.objects.order_by('lc'):
             print "going to get", ac.insta_id
-            get_from_insta(str(ac.insta_id), ac.cat_id, ac.user_id)
+            try:
+                get_from_insta(str(ac.insta_id), ac.cat_id, ac.user_id)
+            except Exception, e:
+                print str(e)
             ac.lc = datetime.now()
             ac.save()
         # get_from_insta(insta_user_id="1462129775", cat=7, user_id=636690)
