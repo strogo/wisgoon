@@ -1,10 +1,11 @@
 import redis
 from django.conf import settings
+from django.core.cache import cache
 from django.db.models import F
 from django.contrib.auth.models import User
 
 from user_profile.models import Profile
-from models import Post
+from models import Post, Likes
 from model_mongo import MonthlyStats
 
 # r_server = redis.Redis(settings.REDIS_DB, db=12)
@@ -24,6 +25,17 @@ class LikesRedis(object):
 
         if not r_server.exists(self.keyName):
             self.first_store()
+        else:
+            del_cache_key = "likeDelete_" + str(post_id)
+            if not cache.get(del_cache_key):
+                cache.set(del_cache_key, 1, 86400*10)
+                from django.db import connection, transaction
+
+                cursor = connection.cursor()
+                with transaction.commit_on_success():
+                    cursor.execute('DELETE FROM pin_likes WHERE post_id = %s', [post_id])
+                    connection.commit()
+                # Likes.objects.filter(post_id=post_id).delete()
 
     def get_likes(self, offset, limit=20, as_user_object=False):
         data = r_server.lrange(self.keyName, offset, offset + limit - 1)
@@ -39,7 +51,6 @@ class LikesRedis(object):
         return ul
 
     def first_store(self):
-        from pin.models import Likes
         likes = Likes.objects.values_list('user_id', flat=True)\
             .filter(post_id=self.postId).order_by('-id')
         if likes:
