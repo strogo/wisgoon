@@ -839,8 +839,9 @@ def item(request, item_id):
     #     cache.set(str_likers, ll, 86400)
     #     post.likes = ll
 
-    pl = Likes.objects.filter(post_id=post.id)[:12]
-    post.likes = pl
+    # pl = Likes.objects.filter(post_id=post.id)[:12]
+    from models_redis import LikesRedis
+    post.likes = LikesRedis(post_id=post.id).get_likes(offset=0, limit=12, as_user_object=True)
 
     # s = SearchQuerySet().models(Post).more_like_this(post)
     # print "seems with:", post.id, s[:5]

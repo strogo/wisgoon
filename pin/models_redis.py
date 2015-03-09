@@ -1,6 +1,7 @@
 import redis
 from django.conf import settings
 from django.db.models import F
+from django.contrib.auth.models import User
 
 from user_profile.models import Profile
 from models import Post
@@ -24,8 +25,18 @@ class LikesRedis(object):
         if not r_server.exists(self.keyName):
             self.first_store()
 
-    def get_likes(self, offset):
-        return r_server.lrange(self.keyName, offset, offset + 20-1)
+    def get_likes(self, offset, limit=20, as_user_object=False):
+        data = r_server.lrange(self.keyName, offset, offset + limit - 1)
+        if not as_user_object:
+            return data
+
+        ul = []
+        for uid in data:
+            try:
+                ul.append(User.objects.only('id', 'username').get(pk=int(uid)))
+            except User.DoesNotExist:
+                r_server.lrem(self.keyName, uid)
+        return ul
 
     def first_store(self):
         from pin.models import Likes
@@ -37,7 +48,6 @@ class LikesRedis(object):
 
     def user_liked(self, user_id):
         self.likesData = r_server.lrange(self.keyName, 0, -1)
-        print self.likesData
         if str(user_id) in self.likesData:
             return True
         return False
