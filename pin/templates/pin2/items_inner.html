@@ -55,7 +55,7 @@
 					<div class="content">
 						<div class="liker col-md-10 col-sm-10 col-xs-10">
 							{% for liker in post.likes %}            
-							<a href="{% url "pin-absuser" liker|get_username %}">
+							<a href="{% url "pin-absuser" liker.username %}">
 								<img src="{{liker|get_avatar:50}}" style="display: inline;margin: 2px;" >
 							</a>
 							{% endfor %}
