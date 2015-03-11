@@ -1,4 +1,5 @@
 from settings_local import *
+from django.db import connections
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
