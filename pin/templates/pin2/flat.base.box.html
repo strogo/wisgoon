@@ -8,28 +8,28 @@
 
 	{% include "pin2/all_header.html" %}
 
-<script type="text/javascript">
-var media_url = "{{MEDIA_URL}}";
-var upload_url = "{% url "pin-upload" %}";
-</script>
-{% block other_css %} {% endblock %}
-{% include "base/analytics.html"%}
-	</head>
-	<body>
-{% include "pin2/nav.html" %}
-{% include "pin2/cats.html" %}
-<div class="col-md-12" style="text-align:center;height:97px;">
-		<div class="anetwork-xc-banner awsize-728-90"></div>
+	<script type="text/javascript">
+		var media_url = "{{MEDIA_URL}}";
+		var upload_url = "{% url "pin-upload" %}";
+	</script>
+	{% block other_css %} {% endblock %}
+	{% include "base/analytics.html"%}
+</head>
+<body>
+	{% include "pin2/nav.html" %}
+	{% include "pin2/cats.html" %}
+	<div class="col-md-12" style="text-align:center;height:97px;">
+		{% include "base/t.html" %}
 	</div>
-<div class="container">
-	
-{% block content %}
+	<div class="container">
+		
+		{% block content %}
 
-{% endblock content%}
-</div>
-{% include "pin2/footer.html" %}
+		{% endblock content%}
+	</div>
+	{% include "pin2/footer.html" %}
 
-{% block footer_script %}{% endblock %}
+	{% block footer_script %}{% endblock %}
 
 </body>
 </html>

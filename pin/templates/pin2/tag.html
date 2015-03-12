@@ -2,7 +2,7 @@
 {% load pin_tags %}
 
 {% block extra_js %}
- <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
 <!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
 {% endblock extra_js %}
 
@@ -11,18 +11,18 @@
 {% block content %}
 
 <script type="text/javascript">
-var start_loading=0;
-var next_pref = '?offset=';
+	var start_loading=0;
+	var next_pref = '?offset=';
 </script>
 
 <div class="col-md-12" style="text-align:center;height:97px;">
-	<div class="anetwork-xc-banner awsize-728-90"></div>
+	{% include "base/t.html" %}
 </div>
 
 <!-- {% include "base/app.html" %} -->
 <div class="col-md-8 col-md-offset-2">
 	<blockquote>
-			<h1>{{page_title}}</h1>
+		<h1>{{page_title}}</h1>
 	</blockquote>
 </div>
 <div class="clearfix"></div>

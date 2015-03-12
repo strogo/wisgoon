@@ -9,23 +9,23 @@
 
 <div id="main">
 	<div class="col-md-12" style="text-align:center;height:97px;">
-		<div class="anetwork-xc-banner awsize-728-90"></div>
+		{% include "base/t.html" %}
 	</div>
 	<div class="container-fluid">
 		<div id="feed" class="masonry">
-		{% for item in rps %}
+			{% for item in rps %}
 			{% if item.get_image_236 %}
-				{% if not request.user.is_authenticated %}
+			{% if not request.user.is_authenticated %}
 
-				{% else %}
-					{% include "pin2/__rp_items_base.html" %}
-				{% endif %}
+			{% else %}
+			{% include "pin2/__rp_items_base.html" %}
+			{% endif %}
 
 			{% endif %}
-		{% endfor %}
+			{% endfor %}
 		{% comment %}
 			{% include "pin2/_items_2.html"%}
-		{% endcomment %}
+			{% endcomment %}
 		</div>
 	</div>
 </div>

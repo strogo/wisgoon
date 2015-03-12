@@ -7,7 +7,7 @@
 	<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
 
 		<div class="col-sm-12" style="text-align:center;height:97px;">
-			<div class="anetwork-xc-banner awsize-728-90"></div>
+			{% include "base/t.html" %}
 		</div>
 
 		{% if user.is_superuser %}
@@ -60,14 +60,14 @@
 							</a>
 							{% endfor %}
 						</div>
-<!-- like icon -->
-<div class="col-md-2 col-sm-2 col-xs-2 like-icon">
-	<a href="{% url "pin-item-like" post.id%}" class="btn_like">
-		<i class="glyphicon glyphicon-heart {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"></i>
-		<i class="{% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}">{{post.cnt_likes}}</i>
-	</a>
-</div>
-<!-- end like icon -->
+						<!-- like icon -->
+						<div class="col-md-2 col-sm-2 col-xs-2 like-icon">
+							<a href="{% url "pin-item-like" post.id%}" class="btn_like">
+								<i class="glyphicon glyphicon-heart {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"></i>
+								<i class="{% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}">{{post.cnt_likes}}</i>
+							</a>
+						</div>
+						<!-- end like icon -->
 						<div class="clear"></div>
 					</div>
 				</div>
@@ -107,7 +107,7 @@
 				</div>
 			</div>
 			<div class="" style="text-align:center;height:97px;">
-				<div class="anetwork-xc-banner awsize-728-90"></div>
+				{% include "base/t.html" %}
 			</div>
 			<div class="comment">
 				<div class="col-md-12 col-sm-12 col-xs-12">
@@ -119,50 +119,50 @@
 					<script id="rc_spot" type="text/javascript">rc_zone="1139"; rc_sizes="728x90"; rc_height="90"; rc_width="728";  rc_title_color="000fff"; rc_background_color="ffffff"; rc_border_color="ffffff"; rc_domain_color="00cc00"; rc_description_color="666666"; </script><script type="text/javascript" src="http://cdn.rastclick.com/rc_show.js"></script>
 				-->
 
-					<div id="comments_box">
+				<div id="comments_box">
 
-					</div>
-					<div id="load-more" class="row">
-						<div class="" id="comment_load_more">
-							<div class="txt">ادامه‌ی دیدگاه ها</div> 
-							<div class="loader" style="display:none;">
-								<img width="30" class="footer-loading-img" alt="Loading..." src="/media/v2/images/big-loader.gif">
-							</div>
+				</div>
+				<div id="load-more" class="row">
+					<div class="" id="comment_load_more">
+						<div class="txt">ادامه‌ی دیدگاه ها</div> 
+						<div class="loader" style="display:none;">
+							<img width="30" class="footer-loading-img" alt="Loading..." src="/media/v2/images/big-loader.gif">
 						</div>
 					</div>
-
 				</div>
-
-				<div class="clear"></div>
-			</div>
-			<br />
-			<br />
-		</div>
-		<div class="sidebar col-md-3 col-sm-3 col-xs-12">
-			<div class="profile">
-
-				<div class="col-md-8 col-sm-6 col-xs-8 pato20">
-					<div class="username">
-						<a href="{% url "pin-absuser" post.user.username %}">
-							{{post.user|get_username}}
-						</a>
-					</div>
-
-					<div class="score">
-						<p> {{post.user.profile.score}} : امتیاز</p>
-					</div>
-				</div>
-				<div class="col-md-4 col-sm-6 col-xs-4">
-					<div class="avatar">
-						<a href="{% url "pin-absuser" post.user.username %}">
-							<img src="{{post.user_id|get_avatar:65}}" />
-						</a>
-					</div>
-				</div>
-				<div class="clear"></div>
 
 			</div>
-			{% include "pin2/mobil_ads.html" %}
 
+			<div class="clear"></div>
 		</div>
+		<br />
+		<br />
 	</div>
+	<div class="sidebar col-md-3 col-sm-3 col-xs-12">
+		<div class="profile">
+
+			<div class="col-md-8 col-sm-6 col-xs-8 pato20">
+				<div class="username">
+					<a href="{% url "pin-absuser" post.user.username %}">
+						{{post.user|get_username}}
+					</a>
+				</div>
+
+				<div class="score">
+					<p> {{post.user.profile.score}} : امتیاز</p>
+				</div>
+			</div>
+			<div class="col-md-4 col-sm-6 col-xs-4">
+				<div class="avatar">
+					<a href="{% url "pin-absuser" post.user.username %}">
+						<img src="{{post.user_id|get_avatar:65}}" />
+					</a>
+				</div>
+			</div>
+			<div class="clear"></div>
+
+		</div>
+		{% include "pin2/mobil_ads.html" %}
+
+	</div>
+</div>

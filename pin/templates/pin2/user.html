@@ -6,14 +6,14 @@
 {% block title%} - {{cur_user|get_username}}{% endblock title%}
 
 {% block extra_js %}
- <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
 <!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
 {% endblock extra_js %}
 
 {% block content %}
 
 <script type="text/javascript">
-var start_loading=0;
+	var start_loading=0;
 // var next_pref = '?pid=';
 </script>
 
@@ -30,7 +30,7 @@ var start_loading=0;
 			</div>
 			<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
 				<div class="row" style="text-align:center">
-					<div class="anetwork-xc-banner awsize-728-90"></div>
+					{% include "base/t.html" %}
 				</div>
 
 				{% include "pin2/__user_info_profile_top.html" %}
@@ -40,7 +40,7 @@ var start_loading=0;
 				</div>
 			</div>
 			
-		
+			
 		</div>
 	</div>
 

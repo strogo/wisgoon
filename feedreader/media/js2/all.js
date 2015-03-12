@@ -29,7 +29,7 @@ function load_posts(page) {
                 loadingobj.hide();
                 start_loading=0;
                 ana_ajax(a_url + next_pref + page + '&'+extend_query);
-                AnetworkAdMatcher("anetwork-xc-banner",_AWFP_user);
+                // AnetworkAdMatcher("anetwork-xc-banner",_AWFP_user);
             }
         }).done(function(d) {
             $('.footer-loading-box').hide(0);

@@ -6,15 +6,15 @@
 {% block title%} - مطالب مورد علاقه {{cur_user|get_username}}{% endblock title%}
 
 {% block extra_js %}
- <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
 <!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
 {% endblock extra_js %}
 
 {% block content %}
 
 <script type="text/javascript">
-var start_loading=0;
-var next_pref = '?pid=';
+	var start_loading=0;
+	var next_pref = '?pid=';
 </script>
 
 <!-- {% include "base/app.html" %} -->
@@ -27,12 +27,12 @@ var next_pref = '?pid=';
 				{% include "pin2/__user_info_stats.html" %}
 				
 				<!-- <div class="clear"></div> -->
-			<!-- </div> -->
-		<!-- </div> -->
-	</div>
+				<!-- </div> -->
+				<!-- </div> -->
+			</div>
 			<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
 				<div class="" style="text-align:center;height:97px;">
-					<div class="anetwork-xc-banner awsize-728-90"></div>
+					{% include "base/t.html" %}
 				</div>
 
 				{% include "pin2/__user_info_profile_top.html" %}
@@ -42,7 +42,7 @@ var next_pref = '?pid=';
 				</div>
 			</div>
 			
-		
+			
 		</div>
 	</div>
 

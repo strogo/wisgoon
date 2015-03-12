@@ -2,22 +2,22 @@
 {% load pin_tags %}
 
 {% block extra_js %}
- <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
 <!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
 {% endblock extra_js %}
 
 {% block content %}
 
 <script type="text/javascript">
-var start_loading=0;
-var next_pref = '?q={{query}}&offset=';
+	var start_loading=0;
+	var next_pref = '?q={{query}}&offset=';
 </script>
 
 <!-- {% include "base/app.html" %} -->
 
 <div id="main">
 	<div class="col-md-12" style="text-align:center;height:97px;">
-		<div class="anetwork-xc-banner awsize-728-90"></div>
+		{% include "base/t.html" %}
 	</div>
 	<div class="container">
 		<form rel="form" class="form-inline">
