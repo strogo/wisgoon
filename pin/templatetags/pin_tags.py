@@ -123,7 +123,7 @@ def get_user_notify(userid):
 @register.filter
 def get_username(user):
 
-    if isinstance(user, (unicode)):
+    if isinstance(user, (unicode, str)):
         user = int(user)
 
     if isinstance(user, (int, long)):

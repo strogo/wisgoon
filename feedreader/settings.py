@@ -1,4 +1,5 @@
 from settings_local import *
+# from django.db import connections
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -16,8 +17,27 @@ DATABASES = {
         'PASSWORD': '-)**Z{QT',
         'HOST': 'localhost',
         'PORT': '',
+    },
+    'slave': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'feedreader',
+        'USER': 'root',
+        'PASSWORD': '-)**Z{QT',
+        'HOST': '79.127.125.104',
+        'PORT': '',
     }
 }
+
+CACHES = {
+    'default': dict(
+        BACKEND='johnny.backends.memcached.MemcachedCache',
+        #LOCATION=['127.0.0.1:11211'],
+        LOCATION=['79.127.125.104:11211'],
+        JOHNNY_CACHE=True,
+    )
+}
+
+# DATABASE_ROUTERS = ['pin.MasterSlaveRouter']
 
 ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com', 'wisgoon.com', "Sib-DL2", "127.0.0.1:3060", "127.0.0.1:3061", "127.0.0.1:3062", "127.0.0.1"]
 EMAIL_HOST = "wisgoon.com"

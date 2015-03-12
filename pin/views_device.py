@@ -59,6 +59,19 @@ def like(request):
     post_id = int(request.POST.get('post_id', None))
     if not post_id:
         return HttpResponseBadRequest('erro in post id')
+    try:
+        post = Post.objects.get(pk=post_id)
+    except Post.DoesNotExist:
+        return HttpResponse('0')
+
+    from models_redis import LikesRedis
+    like, dislike, current_like = LikesRedis(post_id=post_id)\
+        .like_or_dislike(user_id=user.id,post_owner=post.user_id)
+
+    if like:
+        return HttpResponse('+1')
+    else:
+        return HttpResponse('-1')
 
     try:
         Likes.objects.create(user_id=user.id, post_id=post_id, ip=user._ip)

@@ -4,6 +4,7 @@ import datetime
 import time
 import redis
 from hashlib import md5
+from pytz import timezone
 
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.tokens import default_token_generator
@@ -494,6 +495,13 @@ def likes(request):
     #limit = int(request.GET.get('limit', 20))
     limit = 20
 
+    cache_stream_str = "wislikes2_1_%s_%s_%s" % (str(post_id), str(offset), str(limit))
+    cache_stream_name = md5(cache_stream_str).hexdigest()
+
+    # post_likes = cache.get(cache_stream_name)
+    # if post_likes:
+    #     return HttpResponse(post_likes)
+
     next = {
         'url': "/pin/api/like/likes/?limit=%s&offset=%s" % (
             limit, offset + limit),
@@ -514,30 +522,33 @@ def likes(request):
     else:
         return HttpResponse('fault')
 
-    cache_stream_str = "wislikes_%s_%s_%s" % (str(filters),
-                                              str(offset), str(limit))
+    # cache_stream_str = "wislikes_%s_%s_%s" % (str(filters),
+    #                                           str(offset), str(limit))
 
-    cache_stream_name = md5(cache_stream_str).hexdigest()
+    # cache_stream_name = md5(cache_stream_str).hexdigest()
     #print cache_stream_str, cache_stream_name
 
-    post_likes = cache.get(cache_stream_name)
-    if not post_likes:
-        post_likes = Likes.objects\
-            .values('id', 'post_id', 'user_id')\
-            .filter(**filters).all()[offset:offset + limit]
-        if len(post_likes) == limit:
-            #print "store likes in cache"
-            cache.set(cache_stream_name, post_likes, 86400)
+    # post_likes = cache.get(cache_stream_name)
+    # if not post_likes:
+    from models_redis import LikesRedis
+    post_likes = LikesRedis(post_id=post_id).get_likes(offset=offset)
+    # post_likes = Likes.objects\
+    #     .values('id', 'post_id', 'user_id')\
+    #     .filter(post_id=post_id).order_by("id")[offset:offset + limit]
+        # if len(post_likes) == limit:
+        #     #print "store likes in cache"
+        #     cache.set(cache_stream_name, post_likes, 86400)
 
     for p in post_likes:
+        p = int(p)
         o = {}
-        o['post_id'] = p['post_id']
+        o['post_id'] = int(post_id)
 
-        o['user_avatar'] = get_avatar(p['user_id'], size=100)
-        o['user_name'] = AuthCache.get_username(user_id=p['user_id'])
+        o['user_avatar'] = get_avatar(p, size=100)
+        o['user_name'] = AuthCache.get_username(user_id=p)
 
-        o['user_url'] = p['user_id']
-        o['resource_uri'] = "/pin/api/like/likes/%d/" % p['id']
+        o['user_url'] = int(p)
+        o['resource_uri'] = "/pin/api/like/likes/%d/" % p
 
         objects_list.append(o)
 
@@ -545,6 +556,8 @@ def likes(request):
 
     data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
+    # if len(post_likes) == limit:
+    #     cache.set(cache_stream_name, json_data, 86400)
     return HttpResponse(json_data)
 
 
@@ -704,7 +717,7 @@ def comments(request):
     object_pk = int(request.GET.get('object_pk', 0))
 
     next = {
-        'url': "/pin/api/com/comments2/?limit=%s&offset=%s&object_pk=%s" % (
+        'url': "/pin/api/com/comments/?limit=%s&offset=%s&object_pk=%s" % (
             limit, offset + limit, object_pk)
     }
 
@@ -716,31 +729,29 @@ def comments(request):
 
     objects_list = []
 
-    cq = Comments.objects.filter(object_pk_id=object_pk, is_public=True)[offset:offset + limit]
+    cq = Comments.objects.filter(object_pk_id=object_pk, is_public=True).order_by('-id')[offset:offset + limit]
     for com in cq:
         o = {}
         o['id'] = com.id
         o['object_pk'] = com.object_pk_id
         o['score'] = com.score
 
-        com_date = str(com.submit_date)
-        com_date = com_date.replace(' ', 'T')
-        com_date = com_date.split('+')[0]
-        #print com_date
+        com_date = com.submit_date.astimezone(timezone('Asia/Tehran'))
+        com_date = com_date.strftime('%Y-%m-%dT%H:%M:%S')
 
         o['submit_date'] = com_date
         o['comment'] = com.comment
         o['user_url'] = com.user_id
         o['user_avatar'] = get_avatar(com.user_id, size=100)
         o['user_name'] = AuthCache.get_username(com.user_id)
-        o['resource_uri'] = "/pin/api/com/comments/1/"
+        o['resource_uri'] = "/pin/api/com/comments/%d/" %com.id
 
         objects_list.append(o)
 
     data['objects'] = objects_list
 
     json_data = json.dumps(data, cls=MyEncoder)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def follower(request, user_id=1):

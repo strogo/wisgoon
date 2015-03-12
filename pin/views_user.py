@@ -187,22 +187,30 @@ def like(request, item_id):
     except Post.DoesNotExist:
         return HttpResponseRedirect('/')
 
-    current_like = post.cnt_likes()
+    from models_redis import LikesRedis
+    like, dislike, current_like = LikesRedis(post_id=item_id)\
+        .like_or_dislike(user_id=request.user.id, post_owner=post.user_id)
+    # current_like = post.cnt_likes()
 
-    try:
-        liked = Likes.objects.get(user=request.user, post=post)
-        created = False
-    except Likes.DoesNotExist:
-        liked = Likes.objects.create(user=request.user, post=post)
-        created = True
-
-    if created:
-        current_like = current_like + 1
+    if like:
         user_act = 1
-    elif liked:
-        current_like = current_like - 1
-        Likes.objects.get(user=request.user, post=post).delete()
+    elif dislike:
         user_act = -1
+
+    # try:
+    #     liked = Likes.objects.get(user=request.user, post=post)
+    #     created = False
+    # except Likes.DoesNotExist:
+    #     liked = Likes.objects.create(user=request.user, post=post)
+    #     created = True
+
+    # if created:
+    #     current_like = current_like + 1
+    #     user_act = 1
+    # elif liked:
+    #     current_like = current_like - 1
+    #     Likes.objects.get(user=request.user, post=post).delete()
+    #     user_act = -1
 
     if request.is_ajax():
         data = [{'likes': current_like, 'user_act': user_act}]

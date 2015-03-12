@@ -148,7 +148,10 @@ class ProfileResource(ModelResource):
 
         else:
             bundle.data['follow_by_user'] = False
-            
+
+        # bundle.data['cnt_follower'] = Follow.objects.filter(follower=self.cur_user).count()
+        # bundle.data['cnt_following'] = Follow.objects.filter(following=self.cur_user).count()
+
         return bundle
 
 
