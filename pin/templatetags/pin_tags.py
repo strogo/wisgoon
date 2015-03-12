@@ -201,6 +201,11 @@ def jalali_mysql_date(value):
 
 
 @register.filter
+def check_official(user_id):
+    pass
+
+
+@register.filter
 def pn(value):
     value = str(value)
     value = value.replace('1', '۱')
