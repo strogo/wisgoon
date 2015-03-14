@@ -9,20 +9,20 @@
 
 <div class="user-info">
 	<div class="col-md-12 col-sm-12 col-xs-12 username">
-		<h4>
-			{{cur_user|get_username}}
-			{% if cur_user.id == request.user.id %}
-			<a href="{% url "user-profile-change" %}" class="btn btn-xs btn-primary f-white" data-toggle="modal" data-target="#profileModal">ویرایش</a>
-			{% endif %}
+		<h4>{{cur_user|get_username}}</h4>
 
-			{% if cur_user.id != request.user.id %}
-			{% if follow_status == 0 %}
-			<a class="btn btn-xs btn-success" href='{% url "pin-follow" cur_user.id 1 %}'>ایجاد دوستی</a>
-			{% else %}
-			<a class="btn btn-xs btn-danger" href='{% url "pin-follow" cur_user.id 0 %}'>قطع ارتباط</a>
-			{%endif%}
-			{% endif %}
-		</h4>
+{% if cur_user.id == request.user.id %}
+	<a href="{% url "user-profile-change" %}" class="btn btn-xs btn-primary f-white" data-toggle="modal" data-target="#profileModal">ویرایش</a>
+{% endif %}
+
+{% if cur_user.id != request.user.id %}
+	{% if follow_status == 0 %}
+		<a class="btn btn-xs btn-success" href='{% url "pin-follow" cur_user.id 1 %}'>ایجاد دوستی</a>
+	{% else %}
+		<a class="btn btn-xs btn-danger" href='{% url "pin-follow" cur_user.id 0 %}'>قطع ارتباط</a>
+	{%endif%}
+{% endif %}
+
 		
 	</div>
 	
@@ -34,11 +34,6 @@
 	<div aria-label="Vertical button group" role="group" class=" col-md-12 btn-group-vertical">
 		<a class="btn btn-default" href='{% url "pin-absuser-like" cur_user.username %}' type="link">
 			مورد علاقه‌های کاربر
-			{% if cur_user.cnt_like %}
-			<small>(</small><strong>{{cur_user.cnt_like|pn}}</strong><small>)</small>
-			{% else %}
-			<small>(</small>۰<small>)</small>
-			{% endif %}
 		</a>
 		<a class="btn btn-default" href='{% url "pin-absuser-following" cur_user.username %}' type="button">
 			دنبال شوندگان

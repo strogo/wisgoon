@@ -439,6 +439,9 @@ def absuser_like(request, user_namel):
 
     latest_items = arp
 
+    user.cnt_follower = Follow.objects.filter(following_id=user.id).count()
+    user.cnt_following = Follow.objects.filter(follower_id=user.id).count()
+
     if request.is_ajax():
         if latest_items:
             return render(request,
@@ -447,9 +450,12 @@ def absuser_like(request, user_namel):
         else:
             return HttpResponse(0)
     else:
+        follow_status = Follow.objects\
+            .filter(follower=request.user.id, following=user.id).count()
         return render(request, 'pin2/user__likes.html',
                       {'latest_items': latest_items,
                        'user_id': user_id,
+                       'follow_status': follow_status,
                        'profile': profile,
                        'cur_user': user})
 
@@ -801,7 +807,6 @@ def absuser(request, user_name=None):
                        'profile': profile,
                        'cur_user': user})
 
-
 def item(request, item_id):
     post = get_object_or_404(
         Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
@@ -868,7 +873,7 @@ def item(request, item_id):
 
 def get_comments(request, post_id):
     offset = int(request.GET.get('offset', 0))
-    comments = Comments.objects.using('slave').filter(object_pk=post_id)\
+    comments = Comments.objects.filter(object_pk=post_id)\
         .order_by('-id').only('id', 'user__username', 'user__id', 'comment', 'submit_date')[offset:offset + 1 * 10]
 
     if len(comments) == 0:
