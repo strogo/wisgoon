@@ -2,7 +2,7 @@
 {% load pin_tags %}
 
 <div class="avatar">
-	<a href="{% url "pin-absuser" cur_user.username %}">
+	<a href='{% url "pin-absuser" cur_user.username %}'>
 		<img src="{{cur_user|get_avatar:210}}">
 	</a>
 </div>
@@ -11,34 +11,50 @@
 	<div class="col-md-12 col-sm-12 col-xs-12 username">
 		<h4>
 			{{cur_user|get_username}}
+			{% if cur_user.id == request.user.id %}
+			<a href="{% url "user-profile-change" %}" class="btn btn-xs btn-primary f-white" data-toggle="modal" data-target="#profileModal">ویرایش</a>
+			{% endif %}
+
 			{% if cur_user.id != request.user.id %}
 			{% if follow_status == 0 %}
-			<a class="btn btn-xs btn-success" href="{% url "pin-follow" cur_user.id 1 %}">ایجاد دوستی</a>
+			<a class="btn btn-xs btn-success" href='{% url "pin-follow" cur_user.id 1 %}'>ایجاد دوستی</a>
 			{% else %}
-			<a class="btn btn-xs btn-danger" href="{% url "pin-follow" cur_user.id 0 %}">قطع ارتباط</a>
+			<a class="btn btn-xs btn-danger" href='{% url "pin-follow" cur_user.id 0 %}'>قطع ارتباط</a>
 			{%endif%}
 			{% endif %}
 		</h4>
 		
 	</div>
 	
-	
+</div>
 
-	<div class="col-md-12 col-sm-12 col-xs-12 likes f-black">
-		<div class="col-md-12 col-sm-12 col-xs-12">
-			<a class="f-black" href="{% url "pin-absuser-like" cur_user.username %}">مطالب مورد علاقه</a>
-		</div>
-	</div>
+<div class="clear"></div>
 
-	<div class="col-md-12 col-sm-12 col-xs-12 likes f-black">
-		<div class="col-md-12 col-sm-12 col-xs-12">
-			<a href="{% url "pin-absuser-following" cur_user.username %}" class="f-black">دنبال شوندگان</a>
-		</div>
-	</div>
-
-	<div class="col-md-12 col-sm-12 col-xs-12 likes f-black">
-		<div class="col-md-12 col-sm-12 col-xs-12">
-			<a href="{% url "pin-absuser-followers" cur_user.username %}" class="f-black">دنبال کنندگان</a>
-		</div>
+<div class="row">
+	<div aria-label="Vertical button group" role="group" class=" col-md-12 btn-group-vertical">
+		<a class="btn btn-default" href='{% url "pin-absuser-like" cur_user.username %}' type="link">
+			مورد علاقه‌های کاربر
+			{% if cur_user.cnt_like %}
+			<small>(</small><strong>{{cur_user.cnt_like|pn}}</strong><small>)</small>
+			{% else %}
+			<small>(</small>۰<small>)</small>
+			{% endif %}
+		</a>
+		<a class="btn btn-default" href='{% url "pin-absuser-following" cur_user.username %}' type="button">
+			دنبال شوندگان
+			{% if cur_user.cnt_following %}
+			<small>(</small><strong>{{cur_user.cnt_following|pn}}</strong><small>)</small>
+			{% else %}
+			<small>(</small>۰<small>)</small>
+			{% endif %}
+		</a>
+		<a class="btn btn-default" href='{% url "pin-absuser-followers" cur_user.username %}' type="button">
+			دنبال کنندگان
+			{% if cur_user.cnt_follower %}
+			<small>(</small><strong>{{cur_user.cnt_follower|pn}}</strong><small>)</small>
+			{% else %}
+			<small>(</small>۰<small>)</small>
+			{% endif %}
+		</a>
 	</div>
 </div>

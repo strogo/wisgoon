@@ -60,7 +60,10 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 .pabo20{padding-bottom: 20px !important;}
 .pabo50{padding-bottom: 50px !important;}
 .pabo80{padding-bottom: 80px !important;}
-
+/******** margin *********/
+.mato50{
+	margin-top: 50px;
+}
 
 /***************navbar*****/
 #top-userinfo {
@@ -1399,4 +1402,37 @@ div.comment div div.row:hover .del-comment{
 	padding: 11px; 
 	color: rgb(255, 255, 255);
 	float:left;
+}
+.user-stat{
+	border: 1px solid #ddd;
+	border-top: 0;
+}
+.table {
+	margin-bottom: 0;
+}
+.user-friend .feed-item{
+	width: initial;
+	overflow: hidden;
+}
+.user-friend .feed-item .user-username{
+	padding: 10px;
+}
+.user-friend .feed-item .follow-btn{
+	border-radius: 0;
+	display: block;
+}
+.user-friend .feed-item .user-friend-stat{
+	margin-bottom: 5px;
+}
+.user-friend .feed-item .user-friend-stat .user-pincount,
+.user-friend .feed-item .user-friend-stat .user-score{
+	color: #888;
+	padding: 0 10px;
+	text-align: right;
+}
+.user-friend .feed-item .user-friend-stat > div:hover{
+	background: #eee;
+}
+.user-friend .feed-item .user-friend-stat strong{
+	color: #000;
 }

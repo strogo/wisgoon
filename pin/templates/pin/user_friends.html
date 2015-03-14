@@ -2,7 +2,7 @@
 {% load pin_tags %}
 
 {% block extra_js %}
- <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
 <!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
 {% endblock extra_js %}
 
@@ -17,13 +17,13 @@
 {% block content %}
 
 <script type="text/javascript">
-var start_loading=0;
-var disable_masonry=1;
+	var start_loading=0;
+	var disable_masonry=1;
 </script>
 
 <div class="row row-fluid">
 	<div class="span12">
-		<div id="feed">
+		<div id="">
 			{% include "pin/_user_friends.html"%}
 		</div>
 	</div>

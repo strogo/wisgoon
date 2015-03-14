@@ -780,6 +780,9 @@ def absuser(request, user_name=None):
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
 
+    user.cnt_follower = Follow.objects.filter(following_id=user.id).count()
+    user.cnt_following = Follow.objects.filter(follower_id=user.id).count()
+
     if request.is_ajax():
         if latest_items.exists():
             return render(request, 'pin2/_items_2_1.html',
