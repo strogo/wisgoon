@@ -18,13 +18,13 @@ var next_pref = '?pid=';
 <!-- {% include "base/app.html" %} -->
 
 <div id="main">
-	<div class="col-md-12" style="text-align:center;height:97px;">
-		{% include "base/ad-720x92.html" %}
-	</div>
 	<div class="container">
-		<div class="alert col-md-12" style="background: rgb(67, 74, 84); color: rgb(255, 255, 255);">
-				<h1 class="pull-right">دسته بندی: <strong style='color:#d39e00;'>{{cur_cat.title}}</strong></h1>
-				<a class="label label-danger" style="margin: 18px 10px; display: inline-block; font-size: 18px; padding: 11px; color: rgb(255, 255, 255);float:left;" href="{% url "pin-category-top" cur_cat.id %}">برترین های این دسته</a>
+
+	{% include "base/ad-720x92.html" %}
+
+		<div class="category-title alert col-md-12">
+				<h1 class="pull-right">دسته بندی: <strong>{{cur_cat.title}}</strong></h1>
+				<a class="label label-danger" style="" href="{% url "pin-category-top" cur_cat.id %}">برترین های این دسته</a>
 		</div>
 	</div>
 	<div class="clearfix"></div>

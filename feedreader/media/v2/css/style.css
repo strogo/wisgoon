@@ -1384,3 +1384,19 @@ div.comment div div.row:hover .del-comment{
 	text-align: center;
 	padding-top: 5px;
 }
+.category-title{
+	background: rgb(67, 74, 84); 
+	color: rgb(255, 255, 255);
+	margin-top: 20px;
+}
+.category-title h1 strong{
+	color:#d39e00;
+}
+.category-title > a{
+	margin: 18px 10px; 
+	display: inline-block; 
+	font-size: 18px; 
+	padding: 11px; 
+	color: rgb(255, 255, 255);
+	float:left;
+}
