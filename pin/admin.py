@@ -121,7 +121,7 @@ class CommentsAdmin(admin.ModelAdmin):
     raw_id_fields = ("user",)
 
     list_filter = ('submit_date', 'is_public', 'reported')
-    search_fields = ['comment', 'ip_address', 'user__id']
+    search_fields = ['comment', 'ip_address', 'user__id', 'user__username']
     date_hierarchy = 'submit_date'
 
     actions = ['accept', 'unaccept', 'delete_and_deactive_user',
