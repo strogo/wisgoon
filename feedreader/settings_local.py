@@ -17,6 +17,14 @@ DATABASES = {
         'PASSWORD': 'somaye',
         'HOST': 'wisgoon.db',
         'PORT': '',
+    },
+    'slave': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'feedreader',
+        'USER': 'root',
+        'PASSWORD': 'somaye',
+        'HOST': 'wisgoon.db',
+        'PORT': '',
     }
 }
 

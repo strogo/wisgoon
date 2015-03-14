@@ -18,7 +18,7 @@ from django.conf import settings
 from sorl.thumbnail import get_thumbnail
 
 from pin.tools import AuthCache, get_user_ip, get_fixed_ads
-from pin.models import Post, Category, Likes, Stream, Follow, Comments, Block
+from pin.models import Post, Category, Likes, Follow, Comments, Block
 from pin.model_mongo import Notif, Ads
 
 from haystack.query import SearchQuerySet
@@ -89,7 +89,6 @@ def get_thumb(o_image, thumb_size, thumb_quality):
                 'thumbnail': default_image,
                 'hw': dfsize
             }
-        #print imo
     return imo
 
 
@@ -729,7 +728,8 @@ def comments(request):
 
     objects_list = []
 
-    cq = Comments.objects.filter(object_pk_id=object_pk, is_public=True).order_by('-id')[offset:offset + limit]
+    cq = Comments.objects.using('slave').filter(object_pk_id=object_pk, is_public=True)\
+        .order_by('-id')[offset:offset + limit]
     for com in cq:
         o = {}
         o['id'] = com.id
