@@ -6,9 +6,8 @@
 <div class="post-detail row" itemscope itemtype="http://schema.org/CreativeWork">
 	<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
 
-		<div class="col-sm-12" style="text-align:center;height:97px;">
-			{% include "base/t.html" %}
-		</div>
+		{% include "base/ad-720x92.html" %}
+		<div class="clear"></div>
 
 		{% if user.is_superuser %}
 		<a class="btn btn-danger" href="{% url "pin-item-delete" post.id %}">حذف پست</a>
@@ -106,9 +105,11 @@
 					</div>
 				</div>
 			</div>
-			<div class="" style="text-align:center;height:97px;">
-				{% include "base/t.html" %}
-			</div>
+			{% include "base/ad-720x92.html" %}
+			<br>
+			<div class="clear"></div>
+			<br>
+			<div class="clear"></div>
 			<div class="comment">
 				<div class="col-md-12 col-sm-12 col-xs-12">
 
@@ -139,30 +140,6 @@
 		<br />
 	</div>
 	<div class="sidebar col-md-3 col-sm-3 col-xs-12">
-		<div class="profile">
-
-			<div class="col-md-8 col-sm-6 col-xs-8 pato20">
-				<div class="username">
-					<a href="{% url "pin-absuser" post.user.username %}">
-						{{post.user|get_username}}
-					</a>
-				</div>
-
-				<div class="score">
-					<p> {{post.user.profile.score}} : امتیاز</p>
-				</div>
-			</div>
-			<div class="col-md-4 col-sm-6 col-xs-4">
-				<div class="avatar">
-					<a href="{% url "pin-absuser" post.user.username %}">
-						<img src="{{post.user_id|get_avatar:65}}" />
-					</a>
-				</div>
-			</div>
-			<div class="clear"></div>
-
-		</div>
-		{% include "pin2/mobil_ads.html" %}
-
+		{% include "pin2/_pin_sidebar.html" %}
 	</div>
 </div>

@@ -1,0 +1,33 @@
+{% load daddy_avatar %}
+{% load thumbnail %}
+{% load pin_tags %}
+<div class="profile">
+
+	<div class="col-md-8 col-sm-6 col-xs-8 pato20">
+		<div class="username">
+			<a href="{% url "pin-absuser" post.user.username %}">
+				{{post.user|get_username}}
+			</a>
+		</div>
+
+		<div class="score">
+			<p> {{post.user.profile.score}} : امتیاز</p>
+		</div>
+	</div>
+	<div class="col-md-4 col-sm-6 col-xs-4">
+		<div class="avatar">
+			<a href="{% url "pin-absuser" post.user.username %}">
+				<img src="{{post.user_id|get_avatar:65}}" />
+			</a>
+		</div>
+	</div>
+	<div class="clear"></div>
+
+
+</div>
+{% include "pin2/mobil_ads.html" %}
+<br />
+<br />
+{% include "base/ad-290x170.html" %}
+<br />
+{% include "base/ad-290x100.html" %}
