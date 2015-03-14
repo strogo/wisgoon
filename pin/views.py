@@ -439,6 +439,9 @@ def absuser_like(request, user_namel):
 
     latest_items = arp
 
+    user.cnt_follower = Follow.objects.filter(following_id=user.id).count()
+    user.cnt_following = Follow.objects.filter(follower_id=user.id).count()
+
     if request.is_ajax():
         if latest_items:
             return render(request,
@@ -782,6 +785,9 @@ def absuser(request, user_name=None):
         latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
+
+    user.cnt_follower = Follow.objects.filter(following_id=user.id).count()
+    user.cnt_following = Follow.objects.filter(follower_id=user.id).count()
 
     if request.is_ajax():
         if latest_items.exists():
