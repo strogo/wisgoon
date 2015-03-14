@@ -447,9 +447,12 @@ def absuser_like(request, user_namel):
         else:
             return HttpResponse(0)
     else:
+        follow_status = Follow.objects\
+            .filter(follower=request.user.id, following=user.id).count()
         return render(request, 'pin2/user__likes.html',
                       {'latest_items': latest_items,
                        'user_id': user_id,
+                       'follow_status': follow_status,
                        'profile': profile,
                        'cur_user': user})
 
