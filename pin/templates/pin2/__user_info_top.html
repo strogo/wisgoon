@@ -34,11 +34,6 @@
 	<div aria-label="Vertical button group" role="group" class=" col-md-12 btn-group-vertical">
 		<a class="btn btn-default" href='{% url "pin-absuser-like" cur_user.username %}' type="link">
 			مورد علاقه‌های کاربر
-			{% if cur_user.cnt_like %}
-			<small>(</small><strong>{{cur_user.cnt_like|pn}}</strong><small>)</small>
-			{% else %}
-			<small>(</small>۰<small>)</small>
-			{% endif %}
 		</a>
 		<a class="btn btn-default" href='{% url "pin-absuser-following" cur_user.username %}' type="button">
 			دنبال شوندگان
