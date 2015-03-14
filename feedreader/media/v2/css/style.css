@@ -61,9 +61,8 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 .pabo50{padding-bottom: 50px !important;}
 .pabo80{padding-bottom: 80px !important;}
 /******** margin *********/
-.mato50{
-	margin-top: 50px;
-}
+.mato50{margin-top: 50px !important;}
+.mabo50{margin-bottom: 50px !important;}
 
 /***************navbar*****/
 #top-userinfo {
