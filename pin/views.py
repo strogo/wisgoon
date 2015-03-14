@@ -780,9 +780,6 @@ def absuser(request, user_name=None):
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
 
-    user.cnt_follower = Follow.objects.filter(following_id=user.id).count()
-    user.cnt_following = Follow.objects.filter(follower_id=user.id).count()
-
     if request.is_ajax():
         if latest_items.exists():
             return render(request, 'pin2/_items_2_1.html',
@@ -800,7 +797,6 @@ def absuser(request, user_name=None):
                        'user_id': int(user_id),
                        'profile': profile,
                        'cur_user': user})
-
 
 def item(request, item_id):
     post = get_object_or_404(
@@ -868,7 +864,7 @@ def item(request, item_id):
 
 def get_comments(request, post_id):
     offset = int(request.GET.get('offset', 0))
-    comments = Comments.objects.using('slave').filter(object_pk=post_id)\
+    comments = Comments.objects.filter(object_pk=post_id)\
         .order_by('-id').only('id', 'user__username', 'user__id', 'comment', 'submit_date')[offset:offset + 1 * 10]
 
     if len(comments) == 0:
