@@ -1,4 +1,4 @@
-{% extends "pin2/flat.base.html"%}
+\{% extends "pin2/flat.base.html"%}
 {% load pin_tags %}
 
 {% block title%} - آخرین مطالب{% endblock title%}
@@ -18,9 +18,10 @@
 <!-- {% include "base/app.html" %} -->
 
 <div id="main">
-	<div class="col-md-12" style="text-align:center;height:97px;">
+	<div class="container">
 		{% include "base/ad-720x92.html" %}
 	</div>
+	<div class="clear"></div>
 	<div class="container-fluid">
 		<div id="feed" class="masonry">
 			{% include "pin2/_items_2.html"%}
