@@ -932,17 +932,17 @@ class Comments(models.Model):
         Post.hot(post.id, amount=1)
 
         if comment.user != post.user:
-            notif = send_notif_bar(user=post.user_id, type=2, post=post.id,
-                                   actor=comment.user_id)
+            send_notif_bar(user=post.user_id, type=2, post=post.id,
+                           actor=comment.user_id)
 
-        for notif in Notif_mongo.objects.filter(type=2, post=post.id):
-            #print "notif actors:", notif.actors
-            for act in notif.actors:
-                #print "actor is:", act
-                if act != comment.user_id:
-                    #print "no equal"
-                    send_notif_bar(user=act, type=2, post=post.id,
-                                   actor=comment.user_id)
+        # for notif in Notif_mongo.objects.filter(type=2, post=post.id):
+        #     #print "notif actors:", notif.actors
+        #     for act in notif.actors:
+        #         #print "actor is:", act
+        #         if act != comment.user_id:
+        #             #print "no equal"
+        #             send_notif_bar(user=act, type=2, post=post.id,
+        #                            actor=comment.user_id)
 
     def delete(self, *args, **kwargs):
         Post.objects.filter(pk=self.object_pk.id)\
