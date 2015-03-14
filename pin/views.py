@@ -798,21 +798,21 @@ def absuser(request, user_name=None):
                        'profile': profile,
                        'cur_user': user})
 
+
 def item(request, item_id):
     post = get_object_or_404(
         Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
         .filter(id=item_id)[:1])
 
-    if not request.user.is_authenticated:
-        if post.category_id in [23, 22]:
-            return render(request, 'pending.html')
+    # if not request.user.is_authenticated:
+    #     if post.category_id in [23, 22]:
+    #         return render(request, 'pending.html')
 
     if PendingPosts.is_pending(item_id):
         print "is pending"
         if not is_police(request, flat=True):
             print "not police"
             return render(request, 'pending.html')
-
 
     if check_block(user_id=post.user_id, blocked_id=request.user.id):
         return HttpResponseRedirect('/')
@@ -865,7 +865,7 @@ def item(request, item_id):
 
 def get_comments(request, post_id):
     offset = int(request.GET.get('offset', 0))
-    comments = Comments.objects.filter(object_pk=post_id)\
+    comments = Comments.objects.using('slave').filter(object_pk=post_id)\
         .order_by('-id').only('id', 'user__username', 'user__id', 'comment', 'submit_date')[offset:offset + 1 * 10]
 
     if len(comments) == 0:
