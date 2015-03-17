@@ -7,19 +7,20 @@ from django.conf import settings
 
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
-connect(settings.MONGO_DB)
+connect(settings.MONGO_DB, host=settings.MONGO_DB_HOST)
+
 
 class FixedAds(Document):
     post = IntField()
     cnt_view = IntField(default=0)
     ttl = IntField(default=86400)
 
+
 class Ads(Document):
     TYPE_1000_USER = 1
     TYPE_3000_USER = 2
     TYPE_6000_USER = 3
     TYPE_15000_USER = 4
-
 
     MAX_TYPES = {
         TYPE_1000_USER: 1000,
@@ -45,30 +46,31 @@ class Ads(Document):
     start = DateTimeField()
     end = DateTimeField()
 
-    meta ={
+    meta = {
         'indexes': ['users', ('ads_type', 'users'), ('users', 'ended')]
     }
 
     @classmethod
-    def get_ad(self, user_id):
+    def get_ad(cls, user_id):
         # print "viewer id:", user_id
         try:
             ad = Ads.objects.filter(users__nin=[user_id], ended=False)[:1]
             if ad:
                 ad = ad[0]
-                if ad.cnt_view >= self.MAX_TYPES[ad.ads_type]:
-                    Ads.objects(pk=ad.id).update(add_to_set__users=user_id,
-                                                 inc__cnt_view=1,
-                                                 set__end=datetime.datetime.now(),
-                                                 set__ended=True)
+                if ad.cnt_view >= cls.MAX_TYPES[ad.ads_type]:
+                    Ads.objects(pk=ad.id)\
+                        .update(add_to_set__users=user_id,
+                                inc__cnt_view=1,
+                                set__end=datetime.datetime.now(),
+                                set__ended=True)
                 else:
                     # pass
-                    Ads.objects(pk=ad.id).update(add_to_set__users=user_id, inc__cnt_view=1)
+                    Ads.objects(pk=ad.id).update(add_to_set__users=user_id,
+                                                 inc__cnt_view=1)
                 return ad
         except Exception, e:
             print str(e), "models_mongo 50"
         return None
-
 
 
 class Bills(Document):
@@ -113,7 +115,7 @@ class PendingPosts(Document):
     }
 
     @classmethod
-    def is_pending(self, post):
+    def is_pending(cls, post):
         post = int(post)
         if r_server.sismember(settings.PENDINGS, post):
             # print "this post is pending"
@@ -213,7 +215,7 @@ class MonthlyStats(Document):
     }
 
     @classmethod
-    def log_hit(self, object_type):
+    def log_hit(cls, object_type):
         d = str(datetime.date.today())
         MonthlyStats.objects(date=d, object_type=object_type)\
             .update_one(inc__count=1, upsert=True)
