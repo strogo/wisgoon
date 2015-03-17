@@ -40,7 +40,9 @@
 						<td><a target="_blank" href="{{cur_user.profile.website}}"><i class="glyphicon glyphicon-globe"> </i></a></td>
 					</tr>
 					{% endif %}
+					{% comment %}
 					{% if cur_user.id == request.user.id %}
+					{% endcomment %}
 					<tr>
 						<td>موجودی حساب :</td>
 						<td><strong>{{cur_user.profile.get_credit|pn}} ویس</strong>  
@@ -49,7 +51,9 @@
 							{% endif %}
 						</td>
 					</tr>
+					{% comment %}
 					{%endif%}
+					{% endcomment %}
 
 					<tr>
 						<td>سطح کاربری :</td>
