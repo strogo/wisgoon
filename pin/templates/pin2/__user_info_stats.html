@@ -43,7 +43,7 @@
 					{% if cur_user.id == request.user.id %}
 					<tr>
 						<td>موجودی حساب :</td>
-						<td><strong>{{cur_user.user_meta.credit|pn}} ویس</strong>  
+						<td><strong>{{cur_user.profile.get_credit|pn}} ویس</strong>  
 							{% if request.user.id == user_id %}
 							<a href="{% url "pin-inc-credit"%}" class="btn btn-xs btn-success f-white">افزایش اعتبار</a>
 							{% endif %}
@@ -53,7 +53,7 @@
 
 					<tr>
 						<td>سطح کاربری :</td>
-						<td>{{cur_user.user_meta.get_level_string}}
+						<td>{{cur_user.profile.get_level_string}}
 							{% if request.user.is_superuser %}
 							<div class="btn-group">
 								<button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">

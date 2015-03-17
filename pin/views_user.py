@@ -12,7 +12,6 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.db import transaction
 from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect,\
     HttpResponseBadRequest, Http404
@@ -21,16 +20,14 @@ from django.views.decorators.csrf import csrf_exempt
 
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
-from pin.models import Post, Stream, Follow, Likes,\
-    Report, Comments, Comments_score, Category
+from pin.models import Post, Stream, Follow,\
+    Report, Comments, Comments_score, Category, Bills2 as Bills
 
-from pin.model_mongo import Notif, UserMeta, Bills, Ads
+from pin.model_mongo import Notif, UserMeta, Ads
 
 import pin_image
 from pin.tools import get_request_timestamp, create_filename,\
     get_user_ip, get_request_pid, check_block, get_user_meta
-
-from user_profile.models import Profile
 
 from suds.client import Client
 
@@ -38,33 +35,6 @@ MEDIA_ROOT = settings.MEDIA_ROOT
 MERCHANT_ID = settings.MERCHANT_ID
 SITE_URL = settings.SITE_URL
 
-def parse_instagram_update(update):
-    instagram_userid = update['object_id']
-    users = models.User.all().filter('instagram_userid =', instagram_userid).fetch(10)
-    if len(users) == 0:
-        logging.info('Didnt find matching users for this update')
-    for user in users:
-        deferred.defer(fetch_instagram_for_user, user.get_id(), _queue='instagram', _countdown=120)
-
-def hook_insta(request):
-    from instagram import client, subscriptions
-
-    mode         = request.GET.get('hub.mode')
-    challenge    = request.GET.get('hub.challenge')
-    verify_token = request.GET.get('hub.verify_token')
-    if challenge: 
-        return HttpResponse(challenge)
-    else:
-        reactor = subscriptions.SubscriptionsReactor()
-        reactor.register_callback(subscriptions.SubscriptionType.USER, parse_instagram_update)
-
-        x_hub_signature = request.headers.get('X-Hub-Signature')
-        raw_response    = request.data
-        try:
-            reactor.process(INSTAGRAM_SECRET, raw_response, x_hub_signature)
-        except subscriptions.SubscriptionVerifyError:
-            return HttpResponse('Instagram signature mismatch')
-    return HttpResponse('Parsed instagram')
 
 @login_required
 def get_insta(request):
@@ -81,9 +51,10 @@ def get_insta(request):
         api = InstagramAPI(client_id=client_id, client_secret=client_secret)
 
     except UserMeta.DoesNotExist:
-        api = InstagramAPI(client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri)
+        api = InstagramAPI(client_id=client_id, client_secret=client_secret,
+                           redirect_uri=redirect_uri)
 
-        redirect_uri = api.get_authorize_login_url(scope = scope)
+        redirect_uri = api.get_authorize_login_url(scope=scope)
         print redirect_uri
         code = request.GET.get('code')
         if not code:
@@ -101,9 +72,11 @@ def get_insta(request):
                     upsert=True)
 
     from instagram import client
-    instagram_client = client.InstagramAPI(client_id=client_id, client_secret=client_secret)
+    instagram_client = client.InstagramAPI(client_id=client_id,
+                                           client_secret=client_secret)
     callback_url = 'http://wisgoon.com/pin/hook/instagram'
-    instagram_client.create_subscription(object='user', aspect='media', callback_url=callback_url)
+    instagram_client.create_subscription(object='user', aspect='media',
+                                         callback_url=callback_url)
 
 
 @login_required
@@ -178,7 +151,7 @@ def follow(request, following, action):
         data = [{'status': status, 'message': message}]
         return HttpResponse(json.dumps(data))
     return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
-    
+
 
 @login_required
 def like(request, item_id):
@@ -217,8 +190,6 @@ def like(request, item_id):
         return HttpResponse(json.dumps(data))
     else:
         return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
-
-    
 
 
 @login_required
@@ -607,7 +578,7 @@ def inc_credit(request):
         if not amount:
             return HttpResponseRedirect(reverse('pin-inc-credit'))
 
-        bill = Bills.objects.create(user=int(request.user.id), amount=amount)
+        bill = Bills.objects.create(user=request.user, amount=amount)
         callBackUrl = '%s%s' % (SITE_URL, reverse('pin-verify-payment', args=[bill.id]))
 
         url = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'

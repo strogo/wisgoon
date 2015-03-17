@@ -65,7 +65,7 @@ urlpatterns = patterns('pin.views',
 
 urlpatterns += patterns('pin.views_user',
     url(r'^get_insta/$', 'get_insta', name="pin-get-insta"),
-    url(r'^hook/instagram/$', 'hook_insta', name="pin-get-hinsta"),
+    # url(r'^hook/instagram/$', 'hook_insta', name="pin-get-hinsta"),
     url(r'^notif/$', 'notif_user', name="pin-notif-user"),
     url(r'^notif/all/$', 'notif_all', name="pin-notif-user-all"),
     url(r'^like/(?P<item_id>\d+)', 'like', name="pin-item-like"),

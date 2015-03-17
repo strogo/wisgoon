@@ -36,20 +36,12 @@
 			مورد علاقه‌های کاربر
 		</a>
 		<a class="btn btn-default" href='{% url "pin-absuser-following" cur_user.username %}' type="button">
-			دنبال شوندگان
-			{% if cur_user.cnt_following %}
-			<small>(</small><strong>{{cur_user.cnt_following|pn}}</strong><small>)</small>
-			{% else %}
-			<small>(</small>۰<small>)</small>
-			{% endif %}
+			دنبال شوندگان 
+			<small>(</small><strong>{{cur_user.profile.get_cnt_following|pn}}</strong><small>)</small>
 		</a>
 		<a class="btn btn-default" href='{% url "pin-absuser-followers" cur_user.username %}' type="button">
 			دنبال کنندگان
-			{% if cur_user.cnt_follower %}
-			<small>(</small><strong>{{cur_user.cnt_follower|pn}}</strong><small>)</small>
-			{% else %}
-			<small>(</small>۰<small>)</small>
-			{% endif %}
+			<small>(</small><strong>{{cur_user.profile.get_cnt_followers|pn}}</strong><small>)</small>
 		</a>
 	</div>
 </div>

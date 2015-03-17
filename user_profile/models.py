@@ -54,10 +54,64 @@ class Profile(models.Model):
     credit = models.IntegerField(default=-1, blank=True, null=True)
     level = models.IntegerField(default=-1, blank=True, null=True)
 
-    # def get_cnt_following(self):
-    #     from pin.models import Follow
-    #     if self.cnt_following == -1:
-    #         Follow.objects.filter
+    def get_cnt_following(self):
+        if self.cnt_following == -1:
+            from pin.models import Follow
+            cnt_following = Follow.objects.filter(follower_id=self.user_id)\
+                .count()
+            Profile.objects.filter(id=self.id)\
+                .update(cnt_following=cnt_following)
+        else:
+            cnt_following = self.cnt_following
+
+        return cnt_following
+
+    def get_cnt_followers(self):
+        if self.cnt_followers == -1:
+            from pin.models import Follow
+            cnt_followers = Follow.objects.filter(following_id=self.user_id)\
+                .count()
+            Profile.objects.filter(id=self.id)\
+                .update(cnt_followers=cnt_followers)
+        else:
+            cnt_followers = self.cnt_followers
+
+        return cnt_followers
+
+    def get_credit(self):
+        if self.credit == -1:
+            from pin.tools import get_user_meta
+            um = get_user_meta(user_id=self.user_id)
+            Profile.objects.filter(id=self.id)\
+                .update(credit=um.credit)
+            return um.credit
+        else:
+            return self.credit
+
+    def get_level_string(self):
+        if self.level == -1:
+            from pin.tools import get_user_meta
+            um = get_user_meta(user_id=self.user_id)
+            Profile.objects.filter(id=self.id)\
+                .update(level=um.level)
+            self.level = um.level
+
+        if self.level == 1:
+            return u'عادی'
+        elif self.level == 2:
+            return u'پلیس'
+
+    def is_police(self):
+        if self.level == -1:
+            from pin.tools import get_user_meta
+            um = get_user_meta(user_id=self.user_id)
+            Profile.objects.filter(id=self.id)\
+                .update(level=um.level)
+            self.level = um.level
+
+        if self.level == 2:
+            return True
+        return False
 
     @classmethod
     def after_like(cls, user_id):

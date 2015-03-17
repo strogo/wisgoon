@@ -636,6 +636,25 @@ class Post(models.Model):
         return []
 
 
+class Bills2(models.Model):
+    status = models.IntegerField(blank=True, null=True, default=0)
+    amount = models.IntegerField(blank=True, null=True)
+    trans_id = models.CharField(max_length=250, blank=True, null=True)
+
+    user = models.ForeignKey(User)
+
+    # def __init__(self):
+    #     if Bills2.objects.all().count() == 0:
+    #         from model_mongo import Bills
+    #         for bb in Bills.objects.all():
+    #             b = Bills2()
+    #             b.status = bb.status
+    #             b.amount = bb.amount
+    #             b.trans_id = bb.trans_id
+    #             b.user_id = bb.user
+    #             b.save()
+
+
 class Follow(models.Model):
     follower = models.ForeignKey(User, related_name='follower')
     following = models.ForeignKey(User, related_name='following')
