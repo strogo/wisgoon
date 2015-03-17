@@ -109,6 +109,8 @@ class ProfileAdmin(admin.ModelAdmin):
     search_fields = ['user__id', 'user__username', 'name']
     list_filter = ('trusted',)
 
+    raw_id_fields = ("user",)
+
 
 class AppAdmin(admin.ModelAdmin):
     list_display = ('name', 'file', 'version', 'current')
