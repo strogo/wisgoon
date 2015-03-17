@@ -73,15 +73,15 @@ class Ads(Document):
         return None
 
 
-# class Bills(Document):
-#     user = IntField()
-#     status = IntField(default=0)
-#     amount = IntField()
-#     trans_id = StringField()
+class Bills(Document):
+    user = IntField()
+    status = IntField(default=0)
+    amount = IntField()
+    trans_id = StringField()
 
-#     meta = {
-#         'indexes': ['user']
-#     }
+    meta = {
+        'indexes': ['user']
+    }
 
 
 class InstaMeta(Document):
