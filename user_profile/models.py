@@ -48,8 +48,11 @@ class Profile(models.Model):
     email_active = models.BooleanField(default=False, blank=True)
     activation_key = models.CharField(max_length=50, default=0, blank=True)
 
-    # cnt_following = models.IntegerField(default=-1, blank=True, null=True)
-    # cnt_followers = models.IntegerField(default=-1, blank=True, null=True)
+    cnt_following = models.IntegerField(default=-1, blank=True, null=True)
+    cnt_followers = models.IntegerField(default=-1, blank=True, null=True)
+
+    credit = models.IntegerField(default=-1, blank=True, null=True)
+    level = models.IntegerField(default=-1, blank=True, null=True)
 
     # def get_cnt_following(self):
     #     from pin.models import Follow
