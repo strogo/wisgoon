@@ -113,6 +113,10 @@ class Profile(models.Model):
             return True
         return False
 
+    def inc_credit(self, amount):
+        Profile.objects.filter(id=self.id)\
+            .update(credit=F('credit') + amount)
+
     @classmethod
     def after_like(cls, user_id):
         if settings.LIKE_WITH_CELERY:

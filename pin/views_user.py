@@ -625,7 +625,9 @@ def verify_payment(request, bill_id):
             bill.trans_id = str(result['RefID'])
             bill.status = 1
             bill.save()
-            UserMeta.objects(user=bill.user).update(inc__credit=bill.amount)
+            # UserMeta.objects(user=bill.user).update(inc__credit=bill.amount)
+            p = bill.user.profile
+            p.inc_credit(amount=bill.amount)
             messages.success(request, 'پرداخت با موفقیت انجام شد. کد رهگیری شما %s' % str(result['RefID']))
             return HttpResponseRedirect(reverse('pin-inc-credit'))
         else:
@@ -635,31 +637,37 @@ def verify_payment(request, bill_id):
     else:
         return HttpResponseRedirect(reverse('pin-inc-credit'))
 
+
 @login_required
 def save_as_ads(request, post_id):
     # for i in range(0, 50000):
     #     Ads.objects(user=55).update(add_to_set__users=i, upsert=True)
     p = Post.objects.get(id=post_id)
-    user_meta = get_user_meta(user_id=int(request.user.id))
+
+    # user_meta = get_user_meta(user_id=int(request.user.id))
+    profile = request.user.profile
 
     if request.method == "POST":
         mode = int(request.POST.get('mode'))
         mode_price = Ads.TYPE_PRICES[mode]
-        if user_meta.credit >= int(mode_price):
+        if profile.credit >= int(mode_price):
             try:
                 ad = Ads.objects.get(post=int(post_id), ended=False)
                 messages.error(request, u"این پست قبلا آگهی شده است")
             except Exception, Ads.DoesNotExist:
-                ad = Ads.objects.create(user=request.user.id, post=int(post_id), ads_type=mode, start=datetime.datetime.now())
-                user_meta.credit = int(user_meta.credit) - int(mode_price)
-                user_meta.save()
+                Ads.objects.create(user=request.user.id,
+                                   post=int(post_id),
+                                   ads_type=mode,
+                                   start=datetime.datetime.now())
+                profile.credit = int(profile.credit) - int(mode_price)
+                profile.save()
                 messages.success(request, u'مطلب مورد نظر شما با موفقیت آگهی شد.')
 
         else:
             messages.error(request, u"موجودی حساب شما برای آگهی دادن کافی نیست.")
-        
+
     return render(request, 'pin2/save_as_ads.html', {
         'post': p,
-        'user_meta': user_meta,
+        'user_meta': profile,
         'Ads': Ads,
     })
