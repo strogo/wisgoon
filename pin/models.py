@@ -660,13 +660,34 @@ class Follow(models.Model):
     following = models.ForeignKey(User, related_name='following')
 
     @classmethod
-    def get_follow_status(self, follower, following):
+    def get_follow_status(cls, follower, following):
         fstatus = Follow.objects.filter(follower_id=follower,
                                         following_id=following).exists()
         return fstatus
 
+    def delete(self, *args, **kwargs):
+        from user_profile.models import Profile
+        follower_id = self.follower.id
+        following_id = self.following.id
+        Profile.objects.filter(user_id=follower_id)\
+            .update(cnt_following=F('cnt_following') - 1)
+
+        Profile.objects.filter(user_id=following_id)\
+            .update(cnt_followers=F('cnt_followers') - 1)
+
+        super(Follow, self).delete(*args, **kwargs)
+
     @classmethod
     def new_follow(cls, sender, instance, *args, **kwargs):
+        if kwargs['created']:
+            from user_profile.models import Profile
+            follower_id = instance.follower.id
+            following_id = instance.following.id
+            Profile.objects.filter(user_id=follower_id)\
+                .update(cnt_following=F('cnt_following') + 1)
+
+            Profile.objects.filter(user_id=following_id)\
+                .update(cnt_followers=F('cnt_followers') + 1)
         pass
         # print "new follow"
         # print cls, sender, instance, args, kwargs
@@ -1030,3 +1051,4 @@ post_save.connect(Likes.user_like_post, sender=Likes)
 post_save.connect(Post.change_tag_slug, sender=Tag)
 post_save.connect(Comments.add_comment, sender=Comments)
 post_save.connect(Follow.new_follow, sender=Follow)
+# post_delete.connect(Follow.un_follow, sender=Follow)
