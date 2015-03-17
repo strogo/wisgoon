@@ -109,7 +109,7 @@ class ProfileAdmin(admin.ModelAdmin):
     search_fields = ['user__id', 'user__username', 'name']
     list_filter = ('trusted',)
 
-    raw_id_fields = ("user", "trusted")
+    raw_id_fields = ("user", "trusted_by")
 
 
 class AppAdmin(admin.ModelAdmin):
