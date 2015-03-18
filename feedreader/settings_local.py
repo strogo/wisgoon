@@ -1,5 +1,5 @@
 import os
-from easy_thumbnails.conf import Settings as thumbnail_settings
+# from easy_thumbnails.conf import Settings as thumbnail_settings
 
 DEBUG = True
 THUMBNAIL_DEBUG = True
@@ -10,9 +10,9 @@ ADMINS = (
     ('bugs', 'bugs@wisgoon.com'),
 )
 
-THUMBNAIL_PROCESSORS = (
-    'image_cropping.thumbnail_processors.crop_corners',
-) + thumbnail_settings.THUMBNAIL_PROCESSORS
+# THUMBNAIL_PROCESSORS = (
+#     'image_cropping.thumbnail_processors.crop_corners',
+# ) + thumbnail_settings.THUMBNAIL_PROCESSORS
 
 ALLOWED_HOSTS = ["127.0.0.1:8000",
                  "127.0.0.1",
@@ -139,8 +139,8 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
 
     'haystack',
-    'easy_thumbnails',
-    'image_cropping',
+    # 'easy_thumbnails',
+    # 'image_cropping',
     # 'feedreader',
     'blog',
     'pin',
