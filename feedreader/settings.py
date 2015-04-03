@@ -15,7 +15,7 @@ DATABASES = {
         'NAME': 'feedreader',
         'USER': 'root',
         'PASSWORD': '-)**Z{QT',
-        'HOST': 'localhost',
+        'HOST': 'wisgoon.db',
         'PORT': '',
     },
     'slave': {

@@ -1016,6 +1016,7 @@ a, a:link, a:hover, a:visited {
 /***********end send photo ******/
 
 .nav-avatar{
+	border-radius: 40px 40px 40px 0;
 	width: 41px;
 }
 
