@@ -112,6 +112,8 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
 
     objects_list = []
     for p in posts:
+        if not p:
+            continue
         if p.is_pending():
             continue
         o = {}
