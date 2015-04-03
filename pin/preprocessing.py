@@ -13,4 +13,5 @@ def normalize_tags(t):
         c = text[i]
 
         text[i] = _farsi_unicode_norm.get(c, c)
-    return u''.join(text)
+    t = u''.join(text)
+    return t
