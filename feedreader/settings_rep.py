@@ -67,3 +67,12 @@ SITE_URL = 'http://www.wisgoon.com'
 MEDIA_PREFIX = 'http://media.wisgoon.com'
 
 ENABLE_CACHING = True
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'URL': 'http://79.127.125.146:8983/solr'
+        # ...or for multicore...
+        # 'URL': 'http://127.0.0.1:8983/solr/mysite',
+    },
+}
