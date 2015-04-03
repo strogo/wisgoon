@@ -55,7 +55,7 @@ class Profile(models.Model):
     level = models.IntegerField(default=-1, blank=True, null=True)
 
     def get_cnt_following(self):
-        if self.cnt_following == -1:
+        if self.cnt_following == -1 or self.cnt_following == None:
             from pin.models import Follow
             cnt_following = Follow.objects.filter(follower_id=self.user_id)\
                 .count()
@@ -67,7 +67,7 @@ class Profile(models.Model):
         return cnt_following
 
     def get_cnt_followers(self):
-        if self.cnt_followers == -1:
+        if self.cnt_followers == -1 or self.cnt_followers == None:
             from pin.models import Follow
             cnt_followers = Follow.objects.filter(following_id=self.user_id)\
                 .count()
@@ -79,7 +79,7 @@ class Profile(models.Model):
         return cnt_followers
 
     def get_credit(self):
-        if self.credit == -1:
+        if self.credit == -1 or self.credit == None:
             from pin.tools import get_user_meta
             um = get_user_meta(user_id=self.user_id)
             Profile.objects.filter(id=self.id)\
@@ -89,7 +89,7 @@ class Profile(models.Model):
             return self.credit
 
     def get_level_string(self):
-        if self.level == -1:
+        if self.level == -1 or self.level == None:
             from pin.tools import get_user_meta
             um = get_user_meta(user_id=self.user_id)
             Profile.objects.filter(id=self.id)\
@@ -102,7 +102,7 @@ class Profile(models.Model):
             return u'پلیس'
 
     def is_police(self):
-        if self.level == -1:
+        if self.level == -1 or self.level == None:
             from pin.tools import get_user_meta
             um = get_user_meta(user_id=self.user_id)
             Profile.objects.filter(id=self.id)\
