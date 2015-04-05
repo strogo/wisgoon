@@ -12,6 +12,20 @@ from model_mongo import MonthlyStats
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 
+class ChangedPosts(object):
+    KEY_PREFIX = "ChangedPostsV1"
+
+    @classmethod
+    def store_change(cls, post_id):
+        r_server.sadd(cls.KEY_PREFIX, post_id)
+
+    @classmethod
+    def get_changed(cls):
+        s = r_server.srandmember(cls.KEY_PREFIX)
+        r_server.srem(cls.KEY_PREFIX, s)
+        return s
+
+
 class LikesRedis(object):
     KEY_PREFIX = "postLikersV1"
     keyName = ""
@@ -28,7 +42,7 @@ class LikesRedis(object):
         else:
             del_cache_key = "likeDelete_" + str(post_id)
             if not cache.get(del_cache_key):
-                cache.set(del_cache_key, 1, 86400*10)
+                cache.set(del_cache_key, 1, 86400 * 10)
                 from django.db import connection, transaction
 
                 cursor = connection.cursor()
@@ -83,6 +97,8 @@ class LikesRedis(object):
             .update(cnt_like=F('cnt_like') + 1)
 
         MonthlyStats.log_hit(object_type=MonthlyStats.LIKE)
+
+        ChangedPosts.store_change(post_id=self.postId)
 
         self.store_last_likes()
 
