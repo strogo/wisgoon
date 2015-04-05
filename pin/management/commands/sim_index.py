@@ -7,8 +7,8 @@ import cv2
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        pmax = Sim.objects.order_by('-post_id')[:1][0]
-        for p in Post.objects.filter(post_id__gt=pmax.post.id)[:100]:
+        pmax = Sim.objects.order_by('-post')[:1][0]
+        for p in Post.objects.filter(id__gt=pmax.post.id)[:100]:
             im = p.get_image_500(api=True)
             if not im:
                 continue
