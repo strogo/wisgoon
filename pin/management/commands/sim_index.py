@@ -19,7 +19,11 @@ class Command(BaseCommand):
             image = cv2.imread(image_path)
 
             # describe the image
-            features = cd.describe(image)
+            try:
+                features = cd.describe(image)
+            except Exception, e:
+                print str(e)
+                continue
 
             # write the features to file
             features = [str(f) for f in features]
