@@ -71,6 +71,11 @@ class AcceptedManager(models.Manager):
         return super(AcceptedManager, self).get_query_set().filter(status=1)
 
 
+class Sim(models.Model):
+    post = models.OneToOneField('Post')
+    features = models.TextField()
+
+
 class Post(models.Model):
     PENDING = 0
     APPROVED = 1
