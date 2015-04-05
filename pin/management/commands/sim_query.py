@@ -28,13 +28,12 @@ def chi2_distance(hist_a, hist_b, eps=1e-10):
 
 
 class Command(BaseCommand):
-    
     args = '<poll_id poll_id ...>'
 
     def handle(self, *args, **options):
 
         print options, args
-        p = Post.objects.get(id=30)
+        p = Post.objects.get(id=6)
         features = [float(x) for x in p.sim.features.split(',')]
         results = search(features)
 
