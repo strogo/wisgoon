@@ -6,10 +6,8 @@ from pin.models import Post
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for i in range(1, 20):
-            cp = ChangedPosts.get_changed()
+        for cp in ChangedPosts.get_changed():
             if not cp:
-                continue
-            print cp
+                return
             pi = PostIndex()
             pi.update_object(Post.objects.get(id=cp))

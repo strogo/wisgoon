@@ -21,9 +21,12 @@ class ChangedPosts(object):
 
     @classmethod
     def get_changed(cls):
-        s = r_server.srandmember(cls.KEY_PREFIX)
-        r_server.srem(cls.KEY_PREFIX, s)
-        return s
+        s = r_server.smembers(cls.KEY_PREFIX)
+        l = [i for i in s][:20]
+        print l
+        if l:
+            r_server.srem(cls.KEY_PREFIX, *l)
+        return l
 
 
 class LikesRedis(object):
