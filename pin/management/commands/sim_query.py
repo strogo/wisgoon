@@ -34,7 +34,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         print options, args
-        p = Post.objects.get(id=53)
+        p = Post.objects.get(id=60)
         features = [float(x) for x in p.sim.features.split(',')]
         results = search(features)
 
