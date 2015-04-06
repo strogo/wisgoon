@@ -7,16 +7,25 @@ import cv2
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        pmax = Sim.objects.order_by('-post')[:1][0]
-        for p in Post.objects.filter(id__gt=pmax.post.id)[:100]:
-            im = p.get_image_500(api=True)
+        try:
+            pmax = Sim.objects.order_by('-post')[:1][0]
+            m = pmax.post.id
+        except Exception, e:
+            print str(e)
+            m = 0
+
+        print "m:", m
+        i = 0
+
+        for p in Post.objects.only('id').filter(category_id=15, id__gt=m)[:10000]:
+            im = p.get_image_236(api=True)
             if not im:
                 continue
 
             cd = ColorDescriptor((8, 12, 3))
 
             image_path = settings.MEDIA_ROOT + "/" + im['url']
-            print image_path
+            print ++i, image_path
             image = cv2.imread(image_path)
 
             # describe the image
