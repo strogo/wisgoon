@@ -810,7 +810,7 @@ def search(request):
 
     data = {}
     import pysolr
-    solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
+    solr = pysolr.Solr('http://79.127.125.146:8080/solr/wisgoon_user', timeout=10)
     query = request.GET.get('q', '')
     if query:
         fq = 'username_s:*%s* name_s:*%s*' % (query, query)
