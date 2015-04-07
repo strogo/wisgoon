@@ -37,6 +37,15 @@ CACHES = {
     )
 }
 
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'URL': 'http://79.127.125.146:8080/solr'
+        # ...or for multicore...
+        # 'URL': 'http://127.0.0.1:8983/solr/mysite',
+    },
+}
+
 # DATABASE_ROUTERS = ['pin.MasterSlaveRouter']
 
 ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com', 'wisgoon.com', "Sib-DL2", "127.0.0.1:3060", "127.0.0.1:3061", "127.0.0.1:3062", "127.0.0.1"]
