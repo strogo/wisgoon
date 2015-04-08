@@ -6,6 +6,6 @@ from pin.models_redis import LikesRedis
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for l in Likes.objects.only('post').all()[:10000]:
-            print l.post_id
-            LikesRedis(post_id=l.post_id)
+        for l in Likes.objects.values_list('post_id', flat=True).distinct()[:10000]:
+            print l
+            LikesRedis(post_id=l)
