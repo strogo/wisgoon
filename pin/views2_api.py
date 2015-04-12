@@ -924,6 +924,7 @@ def hashtag(request):
     cur_user = None
 
     query = request.GET.get('q', '')
+    query = query.replace('#', '')
     offset = int(request.GET.get('offset', 0))
     results = SearchQuerySet().models(Post)\
         .filter(tags=query)\
