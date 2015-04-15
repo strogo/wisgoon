@@ -17,7 +17,7 @@ from django.shortcuts import get_object_or_404, render
 
 from pin.models import Post, Follow, Likes, Category, Comments
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
-    get_user_meta, get_user_ip
+    get_user_meta, get_user_ip, log_act
 
 from pin.context_processors import is_police
 
@@ -33,6 +33,7 @@ REPORT_TYPE = settings.REPORT_TYPE
 
 
 def home(request):
+    log_act("wisgoon.home.view.count")
     pid = get_request_pid(request)
     pl = Post.home_latest(pid=pid)
     arp = []
