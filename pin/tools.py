@@ -16,7 +16,7 @@ from pin.model_mongo import UserMeta, FixedAds
 from daddy_avatar.templatetags import daddy_avatar
 from statsd import StatsClient
 
-statsd = StatsClient()
+statsd = StatsClient(host="79.127.125.104")
 
 user_keys = {}
 USERDATA_TIMEOUT = 300
