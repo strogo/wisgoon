@@ -238,7 +238,7 @@ def post_item(request, item_id):
 
 
 def post(request):
-    log_act("wisgoon.api.post.count")
+    log_act("wisgoon.api.post.all.count")
     #print "we are in post"
     data = {}
     data['meta'] = {'limit': 10,
@@ -263,9 +263,13 @@ def post(request):
 
     token = request.GET.get('token', '')
     if token:
+        log_act("wisgoon.api.post.registered.count")
         cur_user = AuthCache.id_from_token(token=token)
+    else:
+        log_act("wisgoon.api.post.unregistered.count")
 
     if category_id:
+        log_act("wisgoon.api.post.category.count")
 
         category_ids = category_id.replace(',', ' ').split(' ')
         filters.update(dict(category_id__in=category_ids))
@@ -274,6 +278,7 @@ def post(request):
         filters.update(dict(id__lt=before))
 
     if user_id:
+        log_act("wisgoon.api.post.users.count")
         if cur_user:
             if Block.objects.filter(user_id=user_id, blocked_id=cur_user).count():
                 return HttpResponse('Blocked')
@@ -437,6 +442,7 @@ def post_details(request, post_id):
 
 
 def friends_post(request):
+    log_act("wisgoon.api.post.friends_post.count")
     offset = int(request.GET.get('offset', 0))
     limit = int(request.GET.get('limit', 20))
 
@@ -492,6 +498,7 @@ def friends_post(request):
 
 
 def likes(request):
+    log_act("wisgoon.api.post.likes.count")
     post_id = request.GET.get('post_id', None)
     offset = int(request.GET.get('offset', 0))
     #limit = int(request.GET.get('limit', 20))
@@ -564,6 +571,7 @@ def likes(request):
 
 
 def notif(request):
+    log_act("wisgoon.api.notif.count")
     data = {}
     data['meta'] = {'limit': 10,
                     'next': '',
@@ -712,6 +720,7 @@ def following(request, user_id=1):
 
 
 def comments(request):
+    log_act("wisgoon.api.comments.count")
     data = {}
 
     offset = int(request.GET.get('offset', 0))
@@ -805,6 +814,7 @@ def follower(request, user_id=1):
 
 
 def search(request):
+    log_act("wisgoon.api.search.count")
     cur_user = None
     limit = request.GET.get('limit', 20)
     start = request.GET.get('start', 0)
