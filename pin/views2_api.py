@@ -17,7 +17,7 @@ from django.conf import settings
 
 from sorl.thumbnail import get_thumbnail
 
-from pin.tools import AuthCache, get_user_ip, get_fixed_ads
+from pin.tools import AuthCache, get_user_ip, get_fixed_ads, log_act
 from pin.models import Post, Category, Likes, Follow, Comments, Block
 from pin.model_mongo import Notif, Ads
 
@@ -238,6 +238,7 @@ def post_item(request, item_id):
 
 
 def post(request):
+    log_act("wisgoon.api.post.count")
     #print "we are in post"
     data = {}
     data['meta'] = {'limit': 10,
