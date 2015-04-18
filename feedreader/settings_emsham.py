@@ -5,6 +5,15 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 
+TEMPLATE_DIRS = (
+    os.path.join(SITE_ROOT, 'emsham_templates'),
+)
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'emsham_media')
+
+IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT, 'image_cache')
+COMPRESS_URL = MEDIA_URL
+COMPRESS_ROOT = MEDIA_ROOT
+
 ADMINS = (
     ('bugs', 'bugs@emsham.ir'),
 )
@@ -81,8 +90,3 @@ HAYSTACK_CONNECTIONS = {
         # 'URL': 'http://127.0.0.1:8983/solr/mysite',
     },
 }
-
-TEMPLATE_DIRS = (
-    os.path.join(SITE_ROOT, 'emsham_templates'),
-)
-MEDIA_ROOT = os.path.join(SITE_ROOT, 'emsham_media')
