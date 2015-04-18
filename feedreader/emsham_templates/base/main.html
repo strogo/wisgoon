@@ -1,0 +1,241 @@
+{% load rss_tags %}
+{% load compress %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html>
+<head>
+	<title>فید خوان {% block title%}{% endblock%}</title>
+
+	<meta name="keywords" content="social,rss,reader" />
+	<meta name="description" content="{%block description%}فیدخوان{%endblock%}" />
+
+<link rel="alternate" type="application/rss+xml" href="{% url "rss-item-latest-feed" %}" />
+<link rel="alternate" type="application/rss+xml" href="{% url "rss-list-feed" %}" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block opengraph %}
+{% endblock opengraph %}
+{% include "base/all_header.html"%}
+{% compress css %}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css?ver=3.1">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap.css?v=2">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css?ver=2.1">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap-responsive.css">
+{%endcompress%}
+{% compress js %}
+<script type="text/javascript" src="{{MEDIA_URL}}js/jquery.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}js/bootstrap.js?v=2"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}js/swfobject.js"></script>
+{% block extra_js %}{% endblock extra_js %}
+{% endcompress %}
+<style type="text/css">
+/* thanks to http://afsaran.ir/ */
+/*<![CDATA[*/
+@font-face
+{
+	font-family: afsFont;
+	src: local('Koodak Bold'),
+	url('{{MEDIA_URL}}/fonts/BKoodakBold.woff') format('woff'),
+	url('{{MEDIA_URL}}/fonts/BKoodakBold.ttf') format('truetype'),
+	url('{{MEDIA_URL}}/fonts/BKoodakBold.eot');
+}
+/*]]>*/
+</style>
+
+{% include "base/analytics.html"%}
+
+</head>
+	<body dir="rtl">
+		<div class="" id="wrapper">
+			<div class="navbar-fixed-top">
+			{% include "base/bar_first.html" with rssactive="active" %}
+			
+
+
+<ul class="nav nav-tabs">
+	<li>
+		<form class="navbar-search pull-left" action="{% url "rss-search" %}" method="get">
+			<input type="text" name="q" class="search-query span3" placeholder="{%if q%}{{q}}{%else%}جستجو{%endif%}" value="{%if q%}{{q}}{%endif%}">
+
+		</form>
+	</li>
+	<li class="pull-right">
+		<a href="{% url "rss-lastview" %}">دیده ها</a>
+	</li>
+    <li class="pull-right">
+        <a href="{% url "rss-category" %}">گروه ها</a>
+    </li>
+	{% if user.is_authenticated %}
+	<li class="dropdown nav-right">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#"> فیدهای شما <b class="caret"></b> </a>
+		<ul class="dropdown-menu">
+			{% get_user_feeds %}
+			{% for sub in user_feeds %}
+			<li>
+				<a href="{% url "rss-feed" sub.feed.id %}"><img class="favicon" src="{{MEDIA_URL}}favicon/{{sub.feed.url|get_favicon}}" />{{sub.feed.title|default:sub.feed.url|truncatechars:35}}</a>
+			</li>
+			{% endfor %}
+		</ul>
+	</li>
+	
+	{%endif%}
+	<li class="dropdown nav-right">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#"> فیدهای پیشنهادی <b class="caret"></b> </a>
+		<ul class="dropdown-menu">
+			{% get_recomend_feeds %}
+			{% for f in recomend_feeds %}
+			<li>
+				<a href="{% url "rss-feed" f.id %}"><img class="favicon" src="{{MEDIA_URL}}favicon/{{f.url|get_favicon}}" />{{f.title|truncatechars:35}}</a>
+			</li>
+			{% endfor %}
+		</ul>
+	</li>
+	{% block current_feed %}{% endblock current_feed %}
+	
+	{% if user.is_authenticated%}
+	<li class="nav-right">
+		<a class="tooltips" data-placement="bottom" rel="tooltip" title="علاقه مندیهای شما" href="{% url "rss-item-likes" user.id%}">
+			<i class="icon-heart"></i>
+		</a>
+	</li>
+	{%endif%}
+</ul>
+</div>
+	
+	
+	<div id="content" class="container " style="padding-top: 90px">
+		<div class="row">
+			
+			<div class="span9">
+				<div class="ads" style="text-align:center">
+				<script type="text/javascript"> 
+ var anetwork_pram = anetwork_pram || []; 
+ anetwork_pram['aduser'] = '1377550367'; 
+ anetwork_pram['adheight'] = '90'; 
+ anetwork_pram['adwidth'] = '728'; 
+ </script> 
+ <script type="text/javascript" src="http://static-cdn.anetwork.ir/showad/pub.js"></script>
+</div>
+				{% block content %}
+				{% endblock content %}
+			</div>
+	
+    <div style="margin-bottom:20px">
+    <script type="text/javascript">
+    swfobject.embedSWF("{{MEDIA_URL}}ads/iranneeds-300-250-new.swf", "adsContent", "270", "225", "9.0.0");
+    </script>
+
+        <div id="adsContent">
+            <p>Alternative content</p>
+        </div>        
+
+
+    </div>		
+	<div class="span3">
+
+    {% if user.is_authenticated %}
+    <div class="box"> 
+       <div class="box-title">فیدهای شما</div>
+       <div class="box-content">
+        <ul>
+         {% get_user_feeds %}
+         {% for subs in user_feeds %}
+            <li>
+                <a href="{% url "rss-feed" subs.feed.id %}"><img class="favicon" alt="{{subs.feed.url}}" src="{{MEDIA_URL}}favicon/{{subs.feed.url|get_favicon}}" />{{subs.feed|truncatechars:35}}</a>
+            </li>
+         {% endfor %}
+        </ul>
+       </div>
+    </div>
+    {% endif %}
+    
+    <div class="box">
+        <div class="box-title">امکانات سایت</div>
+        <div class="box-content">
+	        <a href="{% url "rss-search" %}">جستجو</a>
+        </div>
+	</div>
+	
+	{% block related_post %}
+	{% endblock %}
+	
+    <div class="box">
+        <div class="box-title">لیست فیدها</div>
+        <div class="box-content">
+            <ul>
+	{% get_all_feeds %}
+		{% for allfeed in all_feeds %}
+	<li>
+		<a href="{% url "rss-feed" allfeed.id %}"><img class="favicon" src="{{MEDIA_URL}}favicon/{{allfeed.url|get_favicon}}" />{{allfeed|truncatechars:35}}</a>
+	</li>
+		{% endfor %}
+	        </ul>
+        </div>
+	</div>
+    <div>&nbsp;</div>
+    <div>
+    <a href="http://www.wisgoon.com/pin/" target="_blank">
+        <img src="{{MEDIA_URL}}ads/ads-pin.png" alt="مطالب خود را با ما به اشتراک بگذارید" />
+    </a>
+    </div>
+
+		</div>
+	</div>
+			<div class="loading">
+				<img src="{{MEDIA_URL}}img/loader.gif" />
+			</div>
+		</div>
+{% if user.is_authenticated%}
+<div style="display: none;" class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h2 id="myModalLabel">ارسال گزارش تخلف</h2>
+  </div>
+  <div class="modal-body">
+    {% include "rss/report.html"%}
+  </div>
+</div>
+
+<div style="display: none;" class="modal" id="subModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h2 id="myModalLabel">اشتراک فید</h2>
+  </div>
+  <div class="modal-body">
+    {%include "rss/subscribe_modal.html"%}
+  </div>
+</div>
+
+{%endif%}
+{% include 'base/all_footer.html'%}
+
+<div class="ads-box" id="ads-box">
+    <div class="ads-title">نرم افزار موبایل امشام<a id="ads-close" class="close" href="#" >&times;</a></div>
+    <div class="ads-content">
+        <!--<script language='javascript' src='http://tabligheirani.com/showads.php?webid=903356ae8ff820105d57f744c8a24396&s=2'></script>-->
+    <img src="http://chart.apis.google.com/chart?chs=170x170&amp;cht=qr&amp;chl=http://cafebazaar.ir/app/?id=ir.mohsennavabi.wisgoon&amp;choe=UTF-8&amp;chld=Q|0" alt="برنامهٔ QR Code">
+    </div>
+</div>
+<script type="text/javascript">
+$('#ads-close').click(function(){
+    $("#ads-box").hide();
+});
+</script>
+
+<!-- Piwik --> 
+<!--
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://amarg.ir/" : "http://amarg.ir/");
+document.write(unescape("%3Cscript src='" + pkBaseURL + "media/piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "stat", 1);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p>amargir</p></noscript>
+-->
+<!-- End Piwik Tracking Code -->
+
+	</body>
+</html>

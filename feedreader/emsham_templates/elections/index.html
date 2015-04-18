@@ -1,0 +1,91 @@
+
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>اطلاعات آماری اشخاص سیاسی</title>
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript">
+$(function () {
+    var chart;
+    $(document).ready(function() {
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'container',
+                type: 'line'
+            },
+            title: {
+                text: 'مطالب در مورد اشخاص سیاسی'
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: {{dateList|safe}},
+                labels:{
+                	direction:'rtl',
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'مطالب وارد شده'
+                }
+            },
+            /*tooltip: {
+                enabled: true,
+                formatter: function() {
+                    return '<b>'+ this.series.name +'</b><br/>'+
+                        this.x +': '+ this.y +'°C';
+                }
+            },*/
+           tooltip: {
+                crosshairs: true,
+                shared: false,
+                formatter: function() {
+	                var serie = this.series;
+	                
+	                var s = '<span style="color: '+serie.color+'"> <b>' + this.y + '</b></span><br/>';
+	               
+                	return s;
+            	}
+            },/*
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: false
+                }
+            },*/
+            plotOptions: {
+                spline: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    }
+                }
+            },
+            series: [
+            {% for v in dv %}
+            {
+                name: '{{v.0}}',
+                data: {{v.1}}
+            },
+            {% endfor %}
+            ]
+        });
+    });
+    
+});
+		</script>
+	</head>
+	<body>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+
+	</body>
+</html>

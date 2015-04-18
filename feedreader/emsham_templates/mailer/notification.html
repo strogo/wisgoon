@@ -1,0 +1,109 @@
+{% load thumbnail %}
+{% load pin_tags %}
+{% load daddy_avatar%}
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body style="background-color: #eaeaea;">
+<table width="620" align="center" cellspacing="0" cellpadding="0" border="0">
+  <tbody>
+    <tr>
+      <td align="center" style="padding:20px 0 40px">
+      	<a target="_blank" style="border:none" title="Visit Wisgoon.com" href="http://www.wisgoon.com"> 
+      		<img src="http://www.wisgoon.com/media/img/wisgoon_logo.png" width="450" height="120" alt="Wisgoon" style="vertical-align:top;outline:none;border:none"> 
+      	</a>
+      </td>
+    </tr>
+    <tr>
+      <td background="double_line620.gif" align="center">
+      	<table align="center" cellspacing="0" cellpadding="0" border="0">
+          <tbody>
+            <tr>
+              <td style="background-color:#eaeaea">
+              	<h1 style="font-family:tahoma;font-weight:normal;font-size:11px;line-height:21px;color:#211922!important;margin:0;padding:0 20px; direction:rtl;">
+              		{{notify.0.user|get_username}}؛ سلام ما را پذیرا باشید</h1>
+              </td>
+            </tr>
+          </tbody>
+        </table></td>
+    </tr>
+    <tr>
+      <td style="padding:30px 0 20px 10px">
+      	<p style="font-family:'helvetica neue',helvetica,arial,sans-serif;font-size:16px;color:#211922;margin:0"></p>
+      </td>
+    </tr>
+    <tr>
+      <td dir="rtl"><table width="100%" cellspacing="0" cellpadding="0" border="0">
+          <tbody>
+            <tr>
+              <td width="200" style="padding:0 8px 20px;vertical-align:top"><table cellspacing="0" cellpadding="0" border="0">
+                  <tbody>
+                    <tr>
+                      <td><table cellspacing="0" cellpadding="0" border="0">
+                          <tbody>
+                            <tr>
+                              <td width="1" style="background-color:#eceaeb"></td>
+<td style="border-top:1px solid #eae9e9;border-right:1px solid #d4d2d3;border-bottom:1px solid #b2b1b1;border-left:1px solid #d4d2d3">
+<a target="_blank" title="وحید چکشی" href="#"> 
+	<img width="128" height="128" style="background-color:#ffffff;vertical-align:top;outline:none;border:none" 
+	src="http://127.0.0.1:8000{{notify.0.user.email|daddy_avatar}}"> </a></td>
+                              <td width="1" style="background-color:#eceaeb"></td>
+                            </tr>
+                            <tr>
+                              <td width="1" style="background-color:#eceaeb"></td>
+                              <td height="1" style="background-color:#d5d3d4"></td>
+                              <td width="1" style="background-color:#eceaeb"></td>
+                            </tr>
+                            <tr>
+                              <td width="1"></td>
+                              <td height="1" style="background-color:#e8e6e7"></td>
+                              <td width="1"></td>
+                            </tr>
+                          </tbody>
+                        </table></td>
+                    </tr>
+                    <tr>
+                      <td align="center"><p style="font-family:'helvetica neue',helvetica,arial,sans-serif;font-size:15px;color:#211922;margin:0;padding:5px 0 2px;word-wrap:break-word;width:132px"> <a target="_blank" style="color:#211922;font-weight:bold;text-decoration:none" href="#">وحید چکشی</a></p>
+                        <p style="font-family:'helvetica neue',helvetica,arial,sans-serif;font-size:11px;color:#8c7e7e;margin:0;padding:0"> <a target="_blank" style="color:#211922;font-weight:bold;text-decoration:none" href="#">www.wisgoon.com</a></p></td>
+                    </tr>
+                  </tbody>
+                </table></td>
+              <td width="400" valign="top" style="padding:0 10px">
+              	<table width="100%" cellspacing="0" cellpadding="0" border="0">
+                  <tbody>
+{% for noty in notify %}
+	{% thumbnail noty.post.image "192" as im %}
+<tr>
+	<td width="10%" style="padding:0 10px 10px">
+    	<a target="_blank" title=" عنوان پست " href="#"> 
+    		<img width="40" height="40" alt="عنوان پست" style="vertical-align:top;outline:none;border:none" src="http://127.0.0.1:8000{{ im. url "}}"">
+    	</a>
+    </td>
+	<td width="90%" style="padding:0 0 10px">
+		<p style="font-family:tahoma;font-size:13px;color:#211922;line-height:16px;margin:0;padding:2px 0 0">
+			این پست را (<a target="_blank" style="color:#211922;font-weight:bold;text-decoration:none" href="{{noty.post.get_absolute_url}}"></a>) برگزیده است.
+		</p>
+	</td>
+</tr>
+	{% endthumbnail %}
+{% endfor %}
+          </tbody>
+        </table></td>
+    </tr>
+    <tr>
+      <td align="center" style="padding:10px 0 30px"><h4 style="font-family:georgia,serif;font-weight:normal;font-size:21px;color:#211922!important;margin:0;padding:0"></h4></td>
+    </tr>
+    <tr>
+      <td width="100%" height="18" background="badge_line620.gif" align="center"></td>
+    </tr>
+    <tr>
+      <td align="center"><p style="font-family:'Tahoma';font-size:10px;color:#999999;line-height:1.35em;margin:0;padding:0; direction:rtl;">کپی‌رایت © 2013، تمامی حقوق برای «امشام» محفوظ است. <font style="color:#aaa;padding:0 2px"></font><br>
+          <a target="_blank" style="color:#999;text-decoration:underline" href="#"> حذف اشتراک</a> <font style="color:#aaa;padding:0 2px"> |</font> <a target="_blank" style="color:#999;text-decoration:underline" href="#">قوانین و شرایط</a></p>
+        <img src="wisgoon_logo_footer.gif"></td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>
