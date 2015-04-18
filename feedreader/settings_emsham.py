@@ -29,6 +29,9 @@ DATABASES = {
     }
 }
 
+REDIS_DB = '127.0.0.1'
+REDIS_DB_NUMBER = 12
+
 CACHES = {
     'default': dict(
         BACKEND='johnny.backends.memcached.MemcachedCache',
