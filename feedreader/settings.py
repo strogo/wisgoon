@@ -60,7 +60,7 @@ EMAIL_HOST_PASSWORD = '-)**Z{QT'
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 JOHNNY_MIDDLEWARE_KEY_PREFIX = 'wis_cac2'
 
-USE_CELERY = False
+USE_CELERY = True
 
 SESSION_COOKIE_DOMAIN = '.wisgoon.com'
 import warnings
