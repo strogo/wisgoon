@@ -18,7 +18,7 @@ from pin.models import Post, Likes, Comments, Comments_score,\
     Follow, Stream
 
 from pin.forms import PinDirectForm, PinDeviceUpdate
-from pin.tools import create_filename, AuthCache, check_block
+from pin.tools import create_filename, AuthCache, check_block, log_act
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -48,6 +48,7 @@ def check_auth(request):
 
 @csrf_exempt
 def like(request):
+    log_act("wisgoon.api.post.liking.count")
     user = check_auth(request)
 
     if not user:
@@ -88,6 +89,7 @@ def like(request):
 
 @csrf_exempt
 def post_comment(request):
+    log_act("wisgoon.api.post.commenting.count")
     user = check_auth(request)
     if not user:
         return HttpResponseForbidden('error in user validation')
