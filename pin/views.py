@@ -816,7 +816,8 @@ def item(request, item_id):
 
     p = Post.objects.get(id=item_id)
 
-    mlt = SearchQuerySet().models(Post).more_like_this(p)[:5]
+    mlt = SearchQuerySet()\
+        .models(Post).more_like_this(p)[:5]
     post.mlt = mlt
     # print post.related
 

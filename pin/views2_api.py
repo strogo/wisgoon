@@ -363,7 +363,7 @@ def post(request):
         #     if hot_post:
         #         posts = list(hot_post) + list(posts)
 
-    if not user_id:
+    if not user_id and not before:
         hot_post = None
 
         if cur_user:
