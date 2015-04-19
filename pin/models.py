@@ -8,7 +8,6 @@ import PIL
 
 from PIL import Image
 
-#import datetime
 from datetime import datetime, timedelta
 from time import mktime
 from django.conf import settings
@@ -141,10 +140,7 @@ class Post(models.Model):
         return self.text
 
     def is_pending(self):
-        if PendingPosts.objects(post=int(self.id)).count():
-            return True
-
-        return False
+        return PendingPosts.is_pending(post=int(self.id))
 
     def get_tags(self):
         hash_tags = re.compile(ur'(?i)(?<=\#)\w+', re.UNICODE)
