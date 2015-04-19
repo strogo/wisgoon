@@ -105,7 +105,7 @@ CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 ROOT_URLCONF = 'feedreader.urls_local'
 WSGI_APPLICATION = 'feedreader.wsgi.application'
 TEMPLATE_DIRS = (
-    os.path.join(SITE_ROOT, 'templates_emsham'),
+    os.path.join(SITE_ROOT, 'templates'),
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.debug",
