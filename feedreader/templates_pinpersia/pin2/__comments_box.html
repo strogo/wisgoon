@@ -1,0 +1,37 @@
+{% load daddy_avatar %}
+{% load humanize %}
+
+{% for comment in comments %}
+<div class="row" id="comment_row_{{comment.id}}">
+	<div class="col-md-12 col-sm-12 col-xs-12">
+		<div class="others-comment">
+
+			<div class="col-md-1 col-sm-12 col-xs-12 avatar">
+				<a href="{% url "pin-absuser" comment.user.username %}">
+					<img src="{{comment.user_id|get_avatar:80}}" alt="">
+				</a>
+			</div>
+
+			<div class="col-md-9 col-sm-12 col-xs-12" style="color:#555;">
+				<div class="">
+					<a href="{% url "pin-absuser" comment.user.username %}">
+						{{comment.user.username}}
+					</a> : 
+				</div>
+				<div style="padding:10px;">{{comment.comment|urlizetrunc:100}}</div>
+				{% if request.user.is_superuser %}
+				<a class="del-comment" rel="{{comment.id}}" href="{% url "pin-comment-delete" comment.id %}"><i class="glyphicon glyphicon-remove"></i></a>
+				{% endif %}
+			</div>
+
+			<div class="col-md-2 col-sm-12 col-xs-12" style="color:#aaa;text-align:left;">
+				{{comment.submit_date|naturaltime}}
+			</div>
+
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+	<hr>
+</div>
+{% endfor %}

@@ -1,0 +1,162 @@
+{% load pin_tags %}
+<nav class="navbar navbar-default-items">
+  <div class="container-fluid">
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+      	{% if not request.user.is_authenticated %}
+      	<li class="nav-i"><a href="/accounts/login/">ورود</a></li>
+        <li class="nav-i"><a href="{% url "registration_register" %}">عضویت</a><li>
+        {% endif %}
+        <li class="nav-i"><a href="{% url "pin-latest"%}">آخرین مطالب</a></li>
+        <li class="nav-i"><a href="{% url "policy"%}">قوانین</a><li>
+
+        <li class="nav-i"><a href="{% url "stats"%}">آمار</a><li>
+        <li class="nav-i"><a href="/search/">جستجو</a><li>
+        <li class="nav-right dropdown ">
+			<a  class="dropdown-toggle" data-toggle="dropdown"  href="#"
+			class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><!-- <img src="{{MEDIA_URL}}img/new/bartarin.png"> --> برترینها</a>
+		    <ul class="dropdown-menu" role="menu">
+		        <li><a href="{% url "pin-popular" %}">همه زمانها</a></li>
+		        <li><a href="{% url "pin-popular-offset" "month" %}">یک ماه گذشته</a></li>
+		        <li><a href="{% url "pin-popular-offset" "lastweek" %}">هفته گذشته</a></li>
+		        <li><a href="{% url "pin-popular-offset" "lastday" %} ">24 ساعت گذشته</a></li>
+		        <li><a href="{% url "pin-popular-offset" "lasteigth" %} ">8 ساعت گذشته</a></li>
+		      <!-- links -->
+		    </ul>
+		</li>
+		<li class="nav-right dropdown dropdown-large ">
+		    <a class="dropdown-toggle" data-toggle="dropdown"  href="#"><!-- <img src="{{MEDIA_URL}}img/new/category.png"> -->  گروه ها</a>
+		    <ul class="dropdown-menu dropdown-menu-large">
+		    	<li class="col-sm-4">
+						<ul>
+							<li class="dropdown-header">مذهبی</li>
+							<li><a href="/category/29">شهدا</a></li>
+							<li><a href="/category/4">مذهبی</a></li>
+							<li><a href="/category/6">فرهنگی</a></li>
+							<li class="divider"></li>
+							
+							<li class="dropdown-header">عمومی</li>
+		        			<li><a href="/category/1">عمومی</a></li>
+					        <li><a href="/category/2">اقتصاد</a></li>
+					        <li><a href="/category/3">سیاست</a></li>
+					        
+					        <li><a href="/category/5">علمی</a></li>
+					        
+					        <li class="dropdown-header">هنری</li>
+					        <li class="divider"></li>
+					        <li><a href="/category/7">هنری</a></li>
+							<li><a href="/category/38">فرش ایرانی</a></li>
+					        <li><a href="/category/8">طبیعت</a></li>
+					        <li><a href="/category/10">طنز</a></li>
+					        <li><a href="/category/37">موسیقی</a></li>
+					    </ul>
+				</li>
+				<li class="col-sm-4">
+					<ul>
+						<li class="dropdown-header">هوای دو نفره</li>
+						<li><a href="/category/22">عاشقانه ها</a></li>
+						<li><a href="/category/31">عروس و عروسی</a></li>
+						<li class="divider"></li>
+
+						<li class="dropdown-header">کاربردی</li>
+				        <li><a href="/category/11">بازی و اپلیکیشن</a></li>
+				        <li><a href="/category/15">تصاویر پس زمینه</a></li>
+				        <li><a href="/category/12">فیلم و کارتون</a></li>
+				        <li><a href="/category/23">مد و لباس</a></li>
+
+				        <li><a href="/category/13">کاریکاتور</a></li>
+				        <li><a href="/category/14">چهره های معروف</a></li>
+				        
+				        <li><a href="/category/16">در شهر</a></li>
+				        <li><a href="/category/17">دیدنی های جهان</a></li>
+				        <li><a href="/category/18">تازه های فناوری</a></li>
+				        <li><a href="/category/19">خوراکی</a></li>
+				        <li><a href="/category/20">مسابقه عکاسی</a></li>
+
+				        <li><a href="/category/40">خلاقیت</a></li>
+		        	</ul>
+				</li>
+		        <li class="col-sm-4">
+					<ul>
+				        <li><a href="/category/21">نوستالژی</a></li>
+				        
+				        
+				        <li><a href="/category/24">کودکان</a></li>
+				        <li><a href="/category/25">تاریخی</a></li>
+				        <li><a href="/category/26">حیوانات</a></li>
+				        <li><a href="/category/28">امشام</a></li>
+				        
+				        <li><a href="/category/30">تجهیزات جنگی</a></li>
+				    </ul>
+				</li>
+		        <li class="col-sm-4">
+					<ul>
+	        			
+	        			<li><a href="/category/32">عکس نوشته</a></li>
+	        			<li class="dropdown-header">سینما</li>
+				        <li class="divider"></li>
+
+				        <li><a href="/category/33">هنرمندان سینما</a></li>
+				        <li><a href="/category/34">فیلمهای سینمایی</a></li>
+
+						<li class="dropdown-header">ورزشی</li>
+				        <li class="divider"></li>
+				        <li><a href="/category/9">ورزشی</a></li>
+				        <li><a href="/category/35">فوتبال</a></li>
+				        <li><a href="/category/36">والیبال</a></li>
+	        		</ul>
+		        </li>
+		        <li class="col-sm-4">
+					<ul>
+	        			
+	        			
+	        			
+	        		</ul>
+		        </li>
+		      
+		    </ul>
+		</li>
+
+		<li class="nav-right dropdown ">
+			<a class="dropdown-toggle" data-toggle="dropdown"  href="#">برترین کاربران</a>
+		    <ul class="dropdown-menu">
+		        <li><a href="{% url "pin-topuser" %}">کل سایت</a></li>
+		        <li><a href="{% url "pin-topgroupuser" %}">گروه ها</a></li>
+		    </ul>
+		</li>
+		<li class="nav-right">
+			<a href="{% url "pin-last-likes" %}">آخرین پسندها</a>
+		</li>
+
+		{% if user.is_authenticated%}
+		<li class="nav-right">
+			<a href="{% url "pin-following" %}">مطالب دوستان</a>
+		</li>
+		<li class="nav-right">
+			<a href="{% url "pin-user-like" user.id %}"><i class="glyphicon glyphicon-heart"></i> مطالب مورد علاقه</a>
+		</li>
+		{%endif%}
+
+		<li class="nav-i"><a href="{% url "blog-home"%}">وبلاگ <span style="background-color:red" class="badge label-danger">جدید</span></a><li>
+					  
+		{%block pin-ex-nav%}{%endblock pin-ex-nav%}
+
+      </ul>
+      
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+
+{% if messages %}
+<div class="container">
+{% for message in messages %}
+<div class="span6 alert alert-{{ message.tags }}" style="float: none; margin: 5px auto;">
+	<button type="button" class="close" data-dismiss="alert">&times;</button>
+{{ message|safe}}
+</div>
+{% endfor %}
+</div>
+{% endif %}
