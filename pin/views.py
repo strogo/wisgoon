@@ -808,10 +808,16 @@ def absuser(request, user_name=None):
                        'profile': profile,
                        'cur_user': user})
 
+
 def item(request, item_id):
     post = get_object_or_404(
         Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
         .filter(id=item_id)[:1])
+
+    p = Post.objects.get(id=item_id)
+
+    post.mlt = SearchQuerySet().models(Post).more_like_this(p)
+    # print post.related
 
     # if not request.user.is_authenticated:
     #     if post.category_id in [23, 22]:
