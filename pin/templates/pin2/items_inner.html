@@ -143,7 +143,7 @@
 		{% include "pin2/_pin_sidebar.html" %}
 		<div>
 			{% for pm in mlt %}
-				{% with pm as item.object %}
+				{% with pm.object as item %}
 					{% if item.get_image_236 %}
 						{% if not request.user.is_authenticated %}
 							{% include "pin2/__items_base_not_login.html" %}
