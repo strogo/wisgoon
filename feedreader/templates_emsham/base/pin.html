@@ -18,9 +18,9 @@
 {% include "base/all_header.html"%}
 
 {% compress css %}
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css?ver=1.2.0">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css?ver=1.2.1">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css?v=0.1.0">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css?v=0.1.2">
 {%endcompress%}
 
 {% compress js%}
@@ -109,7 +109,7 @@ var upload_url = "{% url "pin-upload" %}";
 			  
 			  {%block pin-ex-nav%}{%endblock pin-ex-nav%}
 
-<li><g:plusone href="http://www.wisgoon.com/"></g:plusone></li>
+<li><g:plusone href="http://www.emsham.com/"></g:plusone></li>
 			  
 			</ul>
 			</div>
@@ -187,7 +187,7 @@ var upload_url = "{% url "pin-upload" %}";
 <script type="text/javascript" src="{{MEDIA_URL}}js/pin-admin.js?ver=1.2"></script>
 {% endif %}
 
-<script type="text/javascript" src="{{MEDIA_URL}}js/all.js?ver=1"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}js/all.js?ver=1.1"></script>
 {% block footer_script %}
 {% endblock %}
 </div>
