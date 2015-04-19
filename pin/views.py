@@ -816,7 +816,7 @@ def item(request, item_id):
 
     p = Post.objects.get(id=item_id)
 
-    post.mlt = SearchQuerySet().models(Post).more_like_this(p)
+    mlt = SearchQuerySet().models(Post).more_like_this(p)
     # print post.related
 
     # if not request.user.is_authenticated:
@@ -875,6 +875,7 @@ def item(request, item_id):
             'post': post,
             'follow_status': follow_status,
             'comments_url': comments_url,
+            'mlt': mlt
         })
 
 
