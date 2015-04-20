@@ -727,6 +727,16 @@ def comments(request):
     limit = int(request.GET.get('limit', 20))
     object_pk = int(request.GET.get('object_pk', 0))
 
+    comment_cache_name = "com_%d" % object_pk
+    cc = cache.get(comment_cache_name)
+    pc = "%d-%d" % (offset, limit)
+    if not cc:
+        print "empty cache"
+        cc = {}
+    elif pc in cc:
+        print "cache hooooray!!!"
+        return HttpResponse(cc[pc], content_type="application/json")
+
     next = {
         'url': "/pin/api/com/comments/?limit=%s&offset=%s&object_pk=%s" % (
             limit, offset + limit, object_pk)
@@ -763,6 +773,10 @@ def comments(request):
     data['objects'] = objects_list
 
     json_data = json.dumps(data, cls=MyEncoder)
+
+    pc = "%d-%d" % (offset, limit)
+    cc[pc] = json_data
+    cache.set(comment_cache_name, cc, 86400)
     return HttpResponse(json_data, content_type="application/json")
 
 

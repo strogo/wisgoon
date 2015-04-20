@@ -963,6 +963,9 @@ class Comments(models.Model):
             cache.delete(hstr)
             print "delete ", hstr, hcpstr
 
+        comment_cache_name = "com_%d" % self.object_pk.id
+        cache.delete(comment_cache_name)
+
         super(Comments, self).save(*args, **kwargs)
 
     @classmethod
