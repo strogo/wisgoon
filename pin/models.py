@@ -440,10 +440,12 @@ class Post(models.Model):
         # print "self status: ", self.status
 
         self.text = normalize_tags(self.text)
-
+        print "all save"
         super(Post, self).save(*args, **kwargs)
-        self.get_image_236()
-        self.get_image_500()
+        print "after save - thumbnail "
+
+        # self.get_image_236()
+        # self.get_image_500()
         # print "id of post:", self.id
         # if is_official:
         #     from model_mongo import Ads
@@ -711,7 +713,10 @@ class Stream(models.Model):
 
     @classmethod
     def add_post(cls, sender, instance, *args, **kwargs):
+        print "here is add post in stream"
         post = instance
+        post.get_image_236()
+        post.get_image_500()
         if kwargs['created']:
 
             MonthlyStats.log_hit(object_type="post")
