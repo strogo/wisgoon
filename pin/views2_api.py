@@ -587,12 +587,14 @@ def notif(request):
     token = request.GET.get('api_key', '')
     if token:
         cur_user = AuthCache.id_from_token(token=token)
+    else:
+        return HttpResponse("problem")
 
     notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 
     Notif.objects.filter(owner=cur_user, seen=False).update(set__seen=True)
 
-    Notif.objects.filter(owner=1).order_by('-date')[100:].delete()
+    # Notif.objects.filter(owner=1).order_by('-date')[100:].delete()
 
     for p in notifs:
         try:
@@ -658,6 +660,7 @@ def notif(request):
                 #AuthCache.avatar(ac, size=100)
                 get_avatar(ac, size=100)
             ])
+            break
 
         o['actors'] = ar
         from collections import OrderedDict
