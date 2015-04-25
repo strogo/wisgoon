@@ -290,7 +290,7 @@ HOME_STREAM = "home_stream"
 
 PENDINGS = "pengings"
 
-LIST_LONG = 10000
+LIST_LONG = 5000
 
 LIKE_WITH_CELERY = True
 
