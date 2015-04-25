@@ -572,6 +572,7 @@ def likes(request):
 
 def notif(request):
     log_act("wisgoon.api.notif.count")
+
     data = {}
     data['meta'] = {'limit': 10,
                     'next': '',
@@ -589,6 +590,12 @@ def notif(request):
         cur_user = AuthCache.id_from_token(token=token)
     else:
         return HttpResponse("problem")
+
+    notif_cache_key = "notif_v112_%d" % (int(cur_user))
+    c_data = cache.get(notif_cache_key)
+    if c_data:
+        print "get from cache"
+        return HttpResponse(c_data)
 
     notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 
@@ -672,6 +679,7 @@ def notif(request):
 
     data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
+    cache.set(notif_cache_key, json_data, 86400)
     return HttpResponse(json_data)
 
 
