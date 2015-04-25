@@ -574,16 +574,9 @@ def notif(request):
     log_act("wisgoon.api.notif.count")
 
     data = {}
-    data['meta'] = {'limit': 10,
-                    'next': '',
-                    'offset': 0,
-                    'previous': '',
-                    'total_count': 1000}
-
     objects_list = []
     filters = {}
     cur_user = None
-    filters.update(dict(status=Post.APPROVED))
 
     token = request.GET.get('api_key', '')
     if token:
@@ -594,8 +587,16 @@ def notif(request):
     notif_cache_key = "notif_v112_%d" % (int(cur_user))
     c_data = cache.get(notif_cache_key)
     if c_data:
-        print "get from cache"
+        print "get from cache", notif_cache_key
         return HttpResponse(c_data)
+
+    data['meta'] = {'limit': 10,
+                    'next': '',
+                    'offset': 0,
+                    'previous': '',
+                    'total_count': 1000}
+
+    filters.update(dict(status=Post.APPROVED))
 
     notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 
