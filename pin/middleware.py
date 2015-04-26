@@ -49,24 +49,25 @@ class QueryCacheMiddleware:
 class UrlRedirectMiddleware:
 
     def process_request(self, request):
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
-        else:
-            ip = request.META.get('REMOTE_ADDR')
+        pass
+        # x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        # if x_forwarded_for:
+        #     ip = x_forwarded_for.split(',')[0]
+        # else:
+        #     ip = request.META.get('REMOTE_ADDR')
 
-        # print "ip is:", ip
-        user_id = ip
-        now = int(time.time())
-        expires = now + (5 * 60) + 10
-        all_users_key = 'online-users/%d' % (now // 60)
-        user_key = 'user-activity/%s' % user_id
-        p = r_server.pipeline()
-        p.sadd(all_users_key, user_id)
-        p.set(user_key, now)
-        p.expireat(all_users_key, expires)
-        p.expireat(user_key, expires)
-        p.execute()
+        # # print "ip is:", ip
+        # user_id = ip
+        # now = int(time.time())
+        # expires = now + (5 * 60) + 10
+        # all_users_key = 'online-users/%d' % (now // 60)
+        # user_key = 'user-activity/%s' % user_id
+        # p = r_server.pipeline()
+        # p.sadd(all_users_key, user_id)
+        # p.set(user_key, now)
+        # p.expireat(all_users_key, expires)
+        # p.expireat(user_key, expires)
+        # p.execute()
 
         # current = int(time.time()) // 60
         # minutes = xrange(5)
