@@ -823,7 +823,7 @@ def item(request, item_id):
     else:
         mlt = SearchQuerySet()\
             .models(Post).more_like_this(p)[:30]
-        cache.set(cache_key_mlt, mlt)
+        cache.set(cache_key_mlt, mlt, 86400)
         post.mlt = mlt
     # print post.related
 
