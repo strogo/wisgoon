@@ -956,6 +956,7 @@ def hashtag_top(request):
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data)
 
+
 def hashtag(request):
     ROW_PER_PAGE = 20
     cur_user = None
@@ -963,13 +964,13 @@ def hashtag(request):
     query = request.GET.get('q', '')
     query = query.replace('#', '')
     offset = int(request.GET.get('offset', 0))
-    results = SearchQuerySet().models(Post)\
-        .filter(tags=query)\
-        .order_by('-timestamp_i')[offset:offset + 1 * ROW_PER_PAGE]
 
     data = {}
 
     if query:
+        results = SearchQuerySet().models(Post)\
+            .filter(tags=query)\
+            .order_by('-timestamp_i')[offset:offset + 1 * ROW_PER_PAGE]
         token = request.GET.get('token', '')
         if token:
             cur_user = AuthCache.id_from_token(token=token)
