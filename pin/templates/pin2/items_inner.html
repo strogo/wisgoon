@@ -141,20 +141,5 @@
 	</div>
 	<div class="sidebar col-md-3 col-sm-3 col-xs-12">
 		{% include "pin2/_pin_sidebar.html" %}
-		<div class="mlt">
-			{% for pm in post.mlt %}
-			<!-- pm.object.id -->
-				{% with pm.object as item %}
-					{% if item.get_image_236 %}
-						{% if not request.user.is_authenticated %}
-							{% include "pin2/__items_base_not_login.html" %}
-						{% else %}
-							{% include "pin2/__items_base.html" %}
-						{% endif %}
-
-					{% endif %}
-				{% endwith %}
-			{% endfor %}
-		</div>
 	</div>
 </div>

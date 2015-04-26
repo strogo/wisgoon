@@ -816,9 +816,15 @@ def item(request, item_id):
 
     p = Post.objects.get(id=item_id)
 
-    mlt = SearchQuerySet()\
-        .models(Post).more_like_this(p)[:5]
-    post.mlt = mlt
+    cache_key_mlt = "mlt:%d" % int(item_id)
+    cache_data_mlt = cache.get(cache_key_mlt)
+    if cache_data_mlt:
+        post.mlt = cache_data_mlt
+    else:
+        mlt = SearchQuerySet()\
+            .models(Post).more_like_this(p)[:30]
+        cache.set(cache_key_mlt, mlt)
+        post.mlt = mlt
     # print post.related
 
     # if not request.user.is_authenticated:
