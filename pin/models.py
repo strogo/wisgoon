@@ -993,6 +993,10 @@ class Comments(models.Model):
     def delete(self, *args, **kwargs):
         Post.objects.filter(pk=self.object_pk.id)\
             .update(cnt_comment=F('cnt_comment') - 1)
+
+        # print "here is delete comment"
+        comment_cache_name = "com_%d" % self.object_pk.id
+        cache.delete(comment_cache_name)
         super(Comments, self).delete(*args, **kwargs)
 
     @models.permalink
