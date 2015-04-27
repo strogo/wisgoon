@@ -945,6 +945,8 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
+        # if u"شارژ" in self.comment and u"ریاگان" in self.comment :
+        #     return
         if not self.pk:
             Post.objects.filter(pk=self.object_pk.id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
