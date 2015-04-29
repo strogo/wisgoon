@@ -1,0 +1,40 @@
+{% extends "pin2/flat.base.box.html"%}
+{% load widget_tweaks %}
+
+{% block title%}ارتباط با ما{% endblock title%}
+
+{% block content %}
+
+<script type="text/javascript">
+var start_loading=0;
+</script>
+
+<div class="panel panel-default">
+	<div class="panel-heading">ارتباط با ما
+	</div>
+	<div class="panel-body">
+		<!-- <div class="row">
+			<p>info [at] emsham [dot] ir</p>
+		</div> -->
+		{% if form_saved == 1 %}
+		<div class="alert">
+			پیام شما با موفقیت ثبت شد.
+		</div>
+		{% else %}
+		
+		<form method="post" class="form-horizontal">
+			{%csrf_token%}
+			{% include "pin2/forms-horizontal.html" %}
+			<div class="col-sm-2 col-sm-offset-2">
+				<div class="form-group">
+					<label class="control-label"></label>
+					<input type="submit" value="ارسال" class="btn btn-primary form-control" />
+				</div>
+			</div>
+		</form>
+		{% endif %}
+	</div>
+
+</div>
+
+{% endblock content %}

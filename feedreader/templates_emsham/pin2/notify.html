@@ -1,0 +1,27 @@
+{% load pin_tags %}
+
+{% load daddy_avatar %}
+<a href="{% url "pin-notif-user" %}">مشاهده همه اعلانات</a>
+{% for noti in notif %}
+
+<div class="notif" style="">
+        <a href="{% url "pin-item" noti.id %}" style="width:100px; height:100px"><img src="{{noti.po.get_image_236.url }}" style="float:left;margin-right:5px; width:100px" /></a>
+
+        <div class="post-like-right">
+        {% if noti.type == 1 %}
+            <i class="glyphicon glyphicon-heart"></i>
+        {% elif noti.type == 2 %}
+            <i class="glyphicon glyphicon-comment"></i>
+        {% elif noti.type == 3 %}
+            <i class="glyphicon glyphicon-ok"></i>
+        {% elif noti.type == 4 %}
+            <i class="glyphicon glyphicon-remove"></i>
+        {% endif %}
+        </div>
+        {% for ac in noti.actors|slice:":9" reversed %}
+        <a target="_blank" href="{% url "pin-user" ac %}"><img src="{{ac|get_avatar:30}}"></a>
+        {% endfor %}
+	<div class="clear"></div>
+</div>
+{% endfor %}
+

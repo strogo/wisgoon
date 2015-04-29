@@ -1,0 +1,32 @@
+{% extends "pin2/flat.base.html" %}
+{% load pin_tags %}
+
+
+{% block title%} - {{post.text|striptags|remove_newlines|truncatechars:66}}{% endblock title%}
+{%block description%}{{post.text|striptags|remove_newlines|truncatewords:30}}{%endblock%}
+
+{% block opengraph%}
+<meta property="og:title" content="{{post.text|striptags|remove_newlines|truncatechars:66}}" />
+<meta property="og:description" content="{{post.text|striptags|remove_newlines|truncatewords:30}}" />
+<meta property="og:type" content="image/jpeg" />
+<meta property="og:url" content="{{ post.get_host_url}}" />
+<meta property="og:image" content="{{ post.get_image_absolute_url }}" />
+{% endblock opengraph%}
+
+{% block content %}
+<script>
+var comments_url = "{{comments_url}}";
+</script>
+<div id="main">
+	<div class="container">
+		{% include "pin2/items_inner.html" %}
+	</div>
+</div>
+
+<div class="clear"></div>
+{% endblock content%}
+
+
+{% block footer_ex_js %}
+<script type="text/javascript" src="{{MEDIA_URL}}js2/item.js?ver=1.0.1"></script>
+{% endblock footer_ex_js %}
