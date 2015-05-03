@@ -1,0 +1,9 @@
+{% if follow_status == 0 %}
+<div class="feed-item">
+	<a class="btn btn-success" href="{% url "pin-follow" cur_user.id 1 %}">ایجاد دوستی</a>
+</div>
+{% else %}
+<div class="feed-item">
+	<a class="btn btn-danger" href="{% url "pin-follow" cur_user.id 0 %}">قطع ارتباط</a>
+</div>
+{%endif%}

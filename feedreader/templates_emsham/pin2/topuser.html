@@ -1,0 +1,69 @@
+{% extends "pin2/flat.base.box.html"%}
+{% load pin_tags %}
+{% load daddy_avatar %}
+{%load cache %}
+
+{%block title%} کاربران برتر {%endblock title%}
+
+{% block content %}
+
+<div id="profile" class="row row-fluid">
+	<div id="feed-ul" class="container"style="width:940px;" >
+        {% for u in top_user %}
+
+        <div class="col-md-3 fs-{{u.follow_status}}">
+            <div class="topuser-item">
+                <div class="topuser-thumb">
+                    {% if user.is_authenticated %}
+                    
+                    <div class="follow-btn">
+
+                        {% if u.user.id != request.user.id %}
+                        <div class="col-md-12 {{u.follow_status}}">
+                            {% if u.follow_status == 0 %}
+                            <a href="javascript:;" class="hover-follow-btn topuser-hover-btn"  data-userid='{{u.user.id}}' data-actionid='1' >
+                                <img src="{{MEDIA_URL}}img/follow.png" alt=""><br/><br/> <b>ایجاد دوستی</b>
+                            </a>
+                            {% else %}
+                            <a href="javascript:;" class="hover-unfollow-btn topuser-hover-btn" data-userid='{{u.user.id}}' data-actionid='0'>
+                                <img src="{{MEDIA_URL}}img/unfollow.png" alt=""><br/><br/> <b>قع ارتباط</b>
+                            </a>
+
+                            {%endif%}
+
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                    {% endif %}
+                    <a href="{% url "pin-absuser" u.user.username %}" class="">
+                        {% if forloop.counter < 9 %}
+                        <img src="{{u.user|get_avatar:240}}" style="float:left; width:100%;" >
+                        {%else%}
+                        <img src="{{u.user|get_avatar:50}}" style="float:left" >
+                        {%endif%}
+                    </a>
+                </div>
+                <div class="clearfix"></div>
+                <div class="topuser-name">
+                    <a href="{% url 'pin-absuser' u.user.username %}">{{u.user|get_username}}</a>
+                </div>
+                <div class="topuser-info">
+                    <div class="">تعداد مطالب: <span class="count">{{u.cnt_post|pn}}</span></div>
+                    <div class="">امتیاز: <span class="count">{{u.score|pn}}</span></div>
+                </div>
+
+            </div>
+
+        </div>        
+
+        {%endfor%}
+    </div>
+</div>
+<br />
+<br />
+<br />
+<br />
+
+{% endblock content %}

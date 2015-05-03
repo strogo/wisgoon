@@ -1436,3 +1436,7 @@ div.comment div div.row:hover .del-comment{
 .user-friend .feed-item .user-friend-stat strong{
 	color: #000;
 }
+.share{
+	max-height: 26px;
+	overflow: hidden;
+}

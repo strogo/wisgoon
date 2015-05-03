@@ -1,0 +1,55 @@
+{% extends "pin2/flat.base.box.html"%}
+{% load pin_tags %}
+
+{% block content %}
+
+<div class="panel panel-default">
+	<div class="panel-heading">ویژه کردن مطلب
+	</div>
+	<div class="panel-body">
+		<div class="col-md-12">
+			<p>موجودی حساب شما: {{user_meta.credit}} ویس </p>
+		</div>
+		<div class="col-md-6">
+		<form method="post" class="form">
+			{% csrf_token %}
+			<div class="form-group">
+				<select name="mode" class="form-control">
+					{% for type, price in Ads.TYPE_PRICES.items %}
+					<option value="{{type}}">نمایش به {{Ads.MAX_TYPES|keyvalue:type}} کاربر - {{price}} ویس</option>
+					{% endfor %}
+					<!-- <option value="500">نمایش به 2,000 کاربر - 500 تومان</option>
+					<option value="1000">نمایش به 4,000 کاربر - 1000 تومان</option> -->
+				</select>
+			</div>
+			<div class="form-group">
+				<input type="submit" class="btn btn-success" value="ذخیره">
+			</div>
+		</form>
+		
+		</div>
+
+		<div class="col-md-6">
+		<p>ویژه کردن پست شماره {{post.id}}</p>
+		<p>با ویژه کردن این پست امکان مشاهده مطلب مورد نظر برای تعداد بیشتری از کاربران ممکن می شود.</p>
+		<!-- <hr> -->
+		<!-- <table class="table">
+			<thead>
+				<tr>
+					<td>تعداد نمایش</td>
+					<td>هزینه</td>
+					<td></td>
+				</tr>
+			</thead>
+			<tr>
+				<td>1000</td>
+				<td>1000</td>
+
+			</tr>
+		</table> -->
+		</div>
+	</div>
+
+</div>
+
+{% endblock content %}

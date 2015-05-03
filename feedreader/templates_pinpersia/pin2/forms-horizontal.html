@@ -1,0 +1,12 @@
+{% load widget_tweaks %}
+
+{% for f in form %}
+<!-- {{form.as_p}} -->
+	<div class="form-group">
+		<label for="{{f.id}}" class="col-sm-2 control-label">{{f.label}}</label>
+		<div class="col-sm-5">
+			{% render_field f class+="form-control" placeholder=f.label %}
+			<span id="helpBlock" class="help-block">{{f.errors.0}}</span>
+		</div>
+	</div>
+{% endfor %}
