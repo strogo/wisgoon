@@ -5,10 +5,12 @@ from py2neo import rel
 
 try:
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
+except Exception as e:
+    print str(e), '9 models_graph'
 
+try:
     post = graph_db.get_or_create_index(neo4j.Node, "Post")
     user = graph_db.get_or_create_index(neo4j.Node, "WisUser")
-
 except Exception as e:
     print str(e), '15 models_graph'
 
