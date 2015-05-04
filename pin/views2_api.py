@@ -1074,6 +1074,7 @@ def unblock_user(request, user_id):
     return HttpResponse('1')
 
 
+# @cache_page(60 * 15)
 def packages(request):
     # return HttpResponse("hello")
     data = {
