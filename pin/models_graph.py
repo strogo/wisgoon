@@ -43,6 +43,24 @@ class PostGraph():
         return post_node
 
     @classmethod
+    def from_to(cls, from_post, to_post):
+        if not from_post or not to_post:
+            return ''
+
+        rels = graph_db.match_one(
+            start_node=from_post,
+            end_node=to_post,
+            rel_type="FROM_TO")
+        if not rels:
+            graph_db.create(rel(from_post, "FROM_TO", to_post, **{"rate": 1}))
+        else:
+            #print rels, dir(rels)
+            p = rels.get_properties()
+            rate = p.get('rate', 1)
+            #print rate
+            rels.update_properties({"rate": rate + 1})
+
+    @classmethod
     def like(self, user_id, post_id):
         if not user_id or not post_id:
             return ''

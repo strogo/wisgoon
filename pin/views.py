@@ -814,6 +814,20 @@ def item(request, item_id):
         Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
         .filter(id=item_id)[:1])
 
+    from_id = request.GET.get("from", None)
+    if from_id:
+        print "from:", from_id
+        from_id = int(from_id)
+        try:
+            p_from = Post.objects.get(pk=from_id)
+            from models_graph import PostGraph
+            from_post = PostGraph.get_or_create(post_obj=p_from)
+            to_post = PostGraph.get_or_create(post_obj=post)
+            PostGraph.from_to(from_post=from_post, to_post=to_post)
+
+        except:
+            pass
+
     p = Post.objects.get(id=item_id)
 
     cache_key_mlt = "mlt:%d" % int(item_id)
