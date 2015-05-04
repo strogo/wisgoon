@@ -1116,3 +1116,38 @@ def unblock_user(request, user_id):
 
     Block.unblock_user(user_id=user.id, blocked_id=user_id)
     return HttpResponse('1')
+
+
+def packages(request):
+    data = {
+        "objects":[
+            {
+                "name": "package1",
+                "wis": 500,
+                "price": 650
+            },
+            {
+                "name": "package2",
+                "wis": 1000,
+                "price": 1300
+            },
+            {
+                "name": "package3",
+                "wis": 2000,
+                "price": 2600
+            },
+            {
+                "name": "package4",
+                "wis": 5000,
+                "price": 6500
+            },
+            {
+                "name": "package5",
+                "wis": 10000,
+                "price": 13000
+            },
+        ]
+    }
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data)
