@@ -165,7 +165,8 @@ class Post(models.Model):
         w, h = img.size
         nname = "%dx%d_%s" % (w, h, iname)
         npath = "%s/%s" % (idir, nname)
-        img.save(npath)
+        if not os.path.exists(npath):
+            img.save(npath)
 
         return ibase, nname, h
 
