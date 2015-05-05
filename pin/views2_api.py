@@ -706,10 +706,10 @@ def comments(request):
     cc = cache.get(comment_cache_name)
     pc = "%d-%d" % (offset, limit)
     if not cc:
-        print "empty cache"
+        # print "empty cache"
         cc = {}
     elif pc in cc:
-        print "cache hooooray!!!"
+        # print "cache hooooray!!!"
         return HttpResponse(cc[pc], content_type="application/json")
 
     next = {
