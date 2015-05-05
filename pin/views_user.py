@@ -20,6 +20,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
+from pin.decorators import is_police
 from pin.models import Post, Stream, Follow,\
     Report, Comments, Comments_score, Category, Bills2 as Bills
 
@@ -297,7 +298,8 @@ def send_comment(request):
         if text and post:
             post = get_object_or_404(Post, pk=post)
             if check_block(user_id=post.user_id, blocked_id=request.user.id):
-                return HttpResponseRedirect('/')
+                if not is_police(request, flat=True):
+                    return HttpResponseRedirect('/')
             Comments.objects.create(object_pk=post,
                                     comment=text,
                                     user=request.user,

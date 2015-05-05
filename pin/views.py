@@ -846,13 +846,12 @@ def item(request, item_id):
     #         return render(request, 'pending.html')
 
     if PendingPosts.is_pending(item_id):
-        print "is pending"
         if not is_police(request, flat=True):
-            print "not police"
             return render(request, 'pending.html')
 
     if check_block(user_id=post.user_id, blocked_id=request.user.id):
-        return HttpResponseRedirect('/')
+        if not is_police(request, flat=True):
+            return HttpResponseRedirect('/')
 
     post.tag = []
 
