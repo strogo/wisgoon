@@ -19,7 +19,7 @@ from pin.models import Post, Likes, Comments, Comments_score,\
 
 from pin.forms import PinDirectForm, PinDeviceUpdate
 from pin.tools import create_filename, AuthCache, check_block, log_act
-from pin.decorators import is_police
+from pin.context_processors import is_police
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
