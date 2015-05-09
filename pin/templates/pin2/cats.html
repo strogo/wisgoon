@@ -29,7 +29,18 @@
 		<li class="nav-right dropdown dropdown-large ">
 		    <a class="dropdown-toggle" data-toggle="dropdown"  href="#"><!-- <img src="{{MEDIA_URL}}img/new/category.png"> -->  گروه ها</a>
 		    <ul class="dropdown-menu dropdown-menu-large">
-		    	<li class="col-sm-4">
+		    	{% for c in subs %}
+	    		<li class="col-sm-4">
+					<ul>
+						<li class="dropdown-header">{{c.title}}</li>
+						{% for cc in c.sub_category.all %}
+						<li><a href="/category/{{cc.id}}">{{cc.title}}</a></li>
+						{% endfor %}
+						<li class="divider"></li>
+					</ul>
+				</li>
+		    	{% endfor %}
+		    	<!--<li class="col-sm-4">
 						<ul>
 							<li class="dropdown-header">مذهبی</li>
 							<li><a href="/category/29">شهدا</a></li>
@@ -114,7 +125,7 @@
 	        			
 	        			
 	        		</ul>
-		        </li>
+		        </li>-->
 		      
 		    </ul>
 		</li>

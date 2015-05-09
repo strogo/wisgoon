@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.cache import cache
 
 from pin.forms import PinForm
-from pin.models import Category
+from pin.models import Category, SubCategory
 from pin.model_mongo import MonthlyStats, UserMeta
 
 from pin.mycache import caching
@@ -74,3 +74,7 @@ def is_police(request, flat=False):
 
 def user__id(request):
     return {'user__id': request.user.id}
+
+
+def subs(request):
+    return {'subs': SubCategory.objects.all()}
