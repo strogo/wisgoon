@@ -42,17 +42,17 @@ class LikesRedis(object):
 
         if not r_server.exists(self.keyName):
             self.first_store()
-        else:
-            del_cache_key = "likeDelete_" + str(post_id)
-            if not cache.get(del_cache_key):
-                cache.set(del_cache_key, 1, 86400 * 10)
-                from django.db import connection, transaction
+        # else:
+        #     del_cache_key = "likeDelete_" + str(post_id)
+        #     if not cache.get(del_cache_key):
+        #         cache.set(del_cache_key, 1, 86400 * 10)
+        #         from django.db import connection, transaction
 
-                cursor = connection.cursor()
-                with transaction.commit_on_success():
-                    cursor.execute('DELETE FROM pin_likes WHERE post_id = %s', [post_id])
-                    connection.commit()
-                # Likes.objects.filter(post_id=post_id).delete()
+        #         cursor = connection.cursor()
+        #         with transaction.commit_on_success():
+        #             cursor.execute('DELETE FROM pin_likes WHERE post_id = %s', [post_id])
+        #             connection.commit()
+        # Likes.objects.filter(post_id=post_id).delete()
 
     def get_likes(self, offset, limit=20, as_user_object=False):
         data = r_server.lrange(self.keyName, offset, offset + limit - 1)
