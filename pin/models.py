@@ -34,6 +34,13 @@ LIKE_TO_DEFAULT_PAGE = 10
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 
+class SubCategory(models.Model):
+    title = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.title
+
+
 class Category(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/category/')
