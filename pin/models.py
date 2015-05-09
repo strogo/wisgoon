@@ -44,6 +44,7 @@ class SubCategory(models.Model):
 class Category(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/category/')
+    parent = models.ForeignKey(SubCategory, related_name='sub_category', blank=True, null=True)
 
     def __unicode__(self):
         return self.title
