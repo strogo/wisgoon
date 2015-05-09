@@ -105,7 +105,7 @@ class PinAdmin(admin.ModelAdmin):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'admin_image')
+    list_display = ('id', 'title', 'admin_image', 'parent')
 
 
 class ProfileAdmin(admin.ModelAdmin):
