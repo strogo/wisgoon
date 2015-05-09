@@ -4,9 +4,13 @@ import time
 from django.contrib import admin
 from haystack.admin import SearchModelAdmin
 
-from pin.models import Post, Category, App_data, Comments, InstaAccount, Official
+from pin.models import Post, Category, App_data, Comments, InstaAccount, Official, SubCategory
 from pin.tasks import send_notif
 from user_profile.models import Profile
+
+
+class SubCategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
 
 
 class OfficialAdmin(admin.ModelAdmin):
@@ -215,3 +219,4 @@ admin.site.register(App_data, AppAdmin)
 # admin.site.register(Comments, CommentsAdmin)
 admin.site.register(InstaAccount, InstaAccountAdmin)
 admin.site.register(Official, OfficialAdmin)
+admin.site.register(SubCategory, SubCategoryAdmin)
