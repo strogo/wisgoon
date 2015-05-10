@@ -11,7 +11,7 @@ from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Sum
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 
@@ -810,9 +810,22 @@ def absuser(request, user_name=None):
 
 
 def item(request, item_id):
-    post = get_object_or_404(
-        Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
-        .filter(id=item_id)[:1])
+    enable_cacing = False
+    if not request.user.is_authenticated():
+        enable_cacing = True
+        cd = cache.get("page_v1_%s"%item_id)
+        if cd:
+            print "get data from cache"
+            # print cd
+            # return cd
+    try:
+        p = post = Post.objects.get(id=item_id)
+    except Post.DoesNotExist:
+        raise Http404("Post does not exist")
+
+    # post = get_object_or_404(
+    #     Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
+    #     .filter(id=item_id)[:1])
 
     from_id = request.GET.get("from", None)
     if from_id:
@@ -828,13 +841,15 @@ def item(request, item_id):
         except:
             pass
 
-    p = Post.objects.get(id=item_id)
+    # p = Post.objects.get(id=item_id)
 
     cache_key_mlt = "mlt:%d" % int(item_id)
     cache_data_mlt = cache.get(cache_key_mlt)
     if cache_data_mlt:
         post.mlt = cache_data_mlt
+        print "cached"
     else:
+        print "not in cache"
         mlt = SearchQuerySet()\
             .models(Post).more_like_this(p)[:30]
         cache.set(cache_key_mlt, mlt, 86400)
@@ -849,31 +864,12 @@ def item(request, item_id):
         if not is_police(request, flat=True):
             return render(request, 'pending.html')
 
-    if check_block(user_id=post.user_id, blocked_id=request.user.id):
-        if not is_police(request, flat=True):
-            return HttpResponseRedirect('/')
+    if request.user.is_authenticated():
+        if check_block(user_id=post.user_id, blocked_id=request.user.id):
+            if not is_police(request, flat=True):
+                return HttpResponseRedirect('/')
 
     post.tag = []
-
-    # if request.user.is_superuser and request.GET.get('ip', None):
-    #     post.comments = Comments.objects.filter(object_pk=post)
-    #     post.likes = Likes.objects.filter(post=post).order_by('ip')[:10]
-    # else:
-    # if request.user.is_superuser:
-    #     post.comments = Comments.objects.filter(object_pk=post)
-    # else:
-    #     post.comments = Comments.objects.filter(object_pk=post, is_public=True)
-
-    # str_likers = "web_likes_%s" % post.id
-    # csl = cache.get(str_likers)
-    # if csl:
-    #     post.likes = csl
-    # else:
-    #     pl = Likes.objects.filter(post_id=post.id)\
-    #         .values_list('user_id', flat=True)[:12]
-    #     ll = [liker for liker in pl]
-    #     cache.set(str_likers, ll, 86400)
-    #     post.likes = ll
 
     # pl = Likes.objects.filter(post_id=post.id)[:12]
     from models_redis import LikesRedis
@@ -881,8 +877,8 @@ def item(request, item_id):
 
     # s = SearchQuerySet().models(Post).more_like_this(post)
     # print "seems with:", post.id, s[:5]
-
-    if request.user.is_authenticated:
+    follow_status = 0
+    if request.user.is_authenticated():
         follow_status = Follow.objects.filter(follower=request.user.id,
                                               following=post.user.id).count()
 
@@ -891,12 +887,16 @@ def item(request, item_id):
     if request.is_ajax():
         return render(request, 'pin2/items_inner.html',
                       {'post': post, 'follow_status': follow_status})
-    else:
-        return render(request, 'pin2/item.html', {
+    else: 
+        d = render(request, 'pin2/item.html', {
             'post': post,
             'follow_status': follow_status,
             'comments_url': comments_url,
-        })
+        }, content_type="text/html")
+        if enable_cacing:
+            cache.set("page_v1_%s"%item_id, d, 300)
+
+        return d
 
 
 def get_comments(request, post_id):
