@@ -817,7 +817,7 @@ def item(request, item_id):
         if cd:
             print "get data from cache"
             # print cd
-            # return cd
+            return cd
     try:
         p = post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
