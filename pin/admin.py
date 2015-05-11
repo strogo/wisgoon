@@ -2,10 +2,15 @@
 import time
 
 from django.contrib import admin
+from haystack.admin import SearchModelAdmin
 
-from pin.models import Post, Category, App_data, Comments, InstaAccount, Official
+from pin.models import Post, Category, App_data, Comments, InstaAccount, Official, SubCategory
 from pin.tasks import send_notif
 from user_profile.models import Profile
+
+
+class SubCategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
 
 
 class OfficialAdmin(admin.ModelAdmin):
@@ -100,7 +105,7 @@ class PinAdmin(admin.ModelAdmin):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'admin_image')
+    list_display = ('id', 'title', 'admin_image', 'parent')
 
 
 class ProfileAdmin(admin.ModelAdmin):
@@ -159,10 +164,59 @@ class CommentsAdmin(admin.ModelAdmin):
 
     delete_all_user_comments.short_description = 'حذف تمام کامنت های این کاربر و غیر فعال کردن کاربر'
 
+
+class SearchCommentAdmin(SearchModelAdmin):
+    list_display = ('id', 'comment', 'ip_address', 'is_public',
+                    'reported', 'admin_link')
+
+    raw_id_fields = ("user",)
+
+    list_filter = ('submit_date', 'is_public', 'reported')
+    search_fields = ['comment', 'ip_address', 'user__id', 'user__username']
+    # date_hierarchy = 'submit_date'
+
+    actions = ['accept', 'unaccept', 'delete_and_deactive_user',
+               'delete_all_user_comments']
+
+    def accept(self, request, queryset):
+        for obj in queryset:
+            obj.is_public = True
+            obj.save()
+    accept.short_description = 'تایید'
+
+    def unaccept(self, request, queryset):
+        for obj in queryset:
+            obj.is_public = False
+            obj.save()
+    unaccept.short_description = 'عدم تایید'
+
+    def delete_and_deactive_user(self, request, queryset):
+        for obj in queryset:
+            user = obj.user
+            user.is_active = False
+            user.save()
+            obj.delete()
+
+    delete_and_deactive_user.short_description = 'حذف و غیر فعال کردن کاربر'
+
+    def delete_all_user_comments(self, request, queryset):
+        for obj in queryset:
+            user = obj.user
+            user.is_active = False
+            user.save()
+            Comments.objects.filter(user=obj.user).delete()
+
+    delete_all_user_comments.short_description = 'حذف تمام کامنت های این کاربر و غیر فعال کردن کاربر'
+
+
+
+admin.site.register(Comments, SearchCommentAdmin)
+
 admin.site.register(Post, PinAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(App_data, AppAdmin)
-admin.site.register(Comments, CommentsAdmin)
+# admin.site.register(Comments, CommentsAdmin)
 admin.site.register(InstaAccount, InstaAccountAdmin)
 admin.site.register(Official, OfficialAdmin)
+admin.site.register(SubCategory, SubCategoryAdmin)

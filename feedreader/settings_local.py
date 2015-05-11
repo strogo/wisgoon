@@ -127,6 +127,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'pin.context_processors.today_stats',
     'pin.context_processors.media_prefix',
     'pin.context_processors.is_police',
+    'pin.context_processors.subs',
     'pin.context_processors.is_mobile',
 )
 INSTALLED_APPS = (
@@ -291,7 +292,7 @@ HOME_STREAM = "home_stream"
 
 PENDINGS = "pengings"
 
-LIST_LONG = 10000
+LIST_LONG = 5000
 
 LIKE_WITH_CELERY = True
 

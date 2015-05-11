@@ -1,0 +1,129 @@
+{% load daddy_avatar %}
+{% load pin_tags %}
+<div class="nav">
+	<div class="navbar navbar-default" role="navigation">
+		<div class="container">
+			<div class="col-md-3 col-sm-4 navbar-header">
+				<button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse" type="button">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a href="{% url "home" %}" class="header-brand">
+					<img src="{{MEDIA_URL}}v2/images/logo.png" alt="امشام">
+				</a>
+			</div>
+			<div class="col-md-9 col-sm-8 navbar-collapse collapse">
+				<div class="col-md-6 top-search">
+					<form action="{% url "search" %}">
+						<button class="pull-left">
+							<span class="glyphicon glyphicon-search"></span>
+						</button>
+						<input name="q" type="text">
+						
+					</form>
+				</div>
+				<div class="col-md-6 col-sm-12 pull-left" id="top-userinfo">
+					<ul>
+						
+						{% if user.is_authenticated %}
+						<li>
+							<div class="send-photo">
+								<a aria-expanded="true" data-toggle="dropdown" href="">
+									<span class="glyphicon glyphicon-camera"></span>
+									ارسال تصویر
+								</a>
+								<ul class="dropdown-menu send-dropdown"
+								role="menu" aria-labelledby="dropdownMenuDivider">
+								<li role="presentation" class="send-border-bottom">
+									<a data-toggle="modal" data-target="#fromImageModal" href="#fromImageModal">
+										ارسال فایل
+									</a>
+								</li>
+								<li role="presentation">
+									<a data-toggle="modal" data-target="#fromUrlModal" href="#fromUrlModal">
+										ارسال از وب
+									</a>
+								</li>
+							</ul>
+						</div>
+					</li>
+					<li>
+						<div class="notification">
+							<a href="javascript:;" data-load="{% url "show_notify" %}" title="اعلانات" class="popnotify">
+								<span class="glyphicon glyphicon-bell"></span> {{user.id|get_user_notify}} 
+							</a>
+							<img src="{{MEDIA_URL}}v2/images/top-loading.gif" alt="..." class="loading-img" />
+						</li>
+
+						<li>
+							<div class="setting">
+								<a aria-expanded="true" data-toggle="dropdown" href="">
+									<span class="glyphicon glyphicon-cog"></span>
+								</a>
+								<ul class="dropdown-menu setting-dropdown" role="menu" aria-labelledby="dropdownMenuDivider">
+									<li role="presentation" class="setting-border-bottom">
+										<div class="like">
+											<a href="/accounts/password/change/">تعویض رمز عبور</a>
+										</div>
+										<div class="comment">
+											<a href="/accounts/logout/">خروج</a>
+										</div>
+
+									</li>
+
+								</ul>
+							</div>
+						</li>
+
+						<li>
+							<div class="hidden-xs">
+								<a href="{% url "pin-absuser" user.username %}">
+									<img class="nav-avatar" src="{{user|get_avatar:41}}">
+									<!-- <img src="{{MEDIA_URL}}v2/images/ava.jpg"> -->
+								</a>
+							</div>
+						</li>
+						{% else %}
+						<li>
+							<div class="notification hidden-xs">
+								<a href="{% url "registration_register" %}">عضویت</a>
+							</div>
+						</li>
+
+						<li>
+							<div class="notification hidden-xs">
+								<a href="/accounts/login/"> ورود</a>
+							</div>
+						</li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div id="activity-count">
+	<div class="container">
+		<div class="col-md-3">
+			<span class="glyphicon glyphicon-heart-empty" aria-hidden="true"></span>
+			تعداد لایک های امروز : {{stats.like}}
+		</div>
+		<div class="col-md-3">
+			<span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+			تعداد نظرات امروز : {{stats.comment}}
+		</div>
+		<div class="col-md-3">
+			<span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
+			تعداد مطالب امروز : {{stats.post}}
+		</div>
+		<div class="col-md-3">
+			<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+			تعداد کاربران آنلاین : {{stats.onlines}}
+		</div>
+
+	</div>
+</div>

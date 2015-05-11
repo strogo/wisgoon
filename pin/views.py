@@ -11,13 +11,13 @@ from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Sum
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 
 from pin.models import Post, Follow, Likes, Category, Comments
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
-    get_user_meta, get_user_ip
+    get_user_meta, get_user_ip, log_act
 
 from pin.context_processors import is_police
 
@@ -33,6 +33,7 @@ REPORT_TYPE = settings.REPORT_TYPE
 
 
 def home(request):
+    log_act("wisgoon.home.view.count")
     pid = get_request_pid(request)
     pl = Post.home_latest(pid=pid)
     arp = []
@@ -807,45 +808,68 @@ def absuser(request, user_name=None):
                        'profile': profile,
                        'cur_user': user})
 
+
 def item(request, item_id):
-    post = get_object_or_404(
-        Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
-        .filter(id=item_id)[:1])
+    enable_cacing = False
+    if not request.user.is_authenticated():
+        enable_cacing = True
+        cd = cache.get("page_v1_%s"%item_id)
+        if cd:
+            print "get data from cache"
+            # print cd
+            return cd
+    try:
+        p = post = Post.objects.get(id=item_id)
+    except Post.DoesNotExist:
+        raise Http404("Post does not exist")
+
+    # post = get_object_or_404(
+    #     Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
+    #     .filter(id=item_id)[:1])
+
+    from_id = request.GET.get("from", None)
+    if from_id:
+        print "from:", from_id
+        from_id = int(from_id)
+        try:
+            p_from = Post.objects.get(pk=from_id)
+            from models_graph import PostGraph
+            from_post = PostGraph.get_or_create(post_obj=p_from)
+            to_post = PostGraph.get_or_create(post_obj=post)
+            PostGraph.from_to(from_post=from_post, to_post=to_post)
+
+        except:
+            pass
+
+    # p = Post.objects.get(id=item_id)
+
+    cache_key_mlt = "mlt:%d" % int(item_id)
+    cache_data_mlt = cache.get(cache_key_mlt)
+    if cache_data_mlt:
+        post.mlt = cache_data_mlt
+        print "cached"
+    else:
+        print "not in cache"
+        mlt = SearchQuerySet()\
+            .models(Post).more_like_this(p)[:30]
+        cache.set(cache_key_mlt, mlt, 86400)
+        post.mlt = mlt
+    # print post.related
 
     # if not request.user.is_authenticated:
     #     if post.category_id in [23, 22]:
     #         return render(request, 'pending.html')
 
     if PendingPosts.is_pending(item_id):
-        print "is pending"
         if not is_police(request, flat=True):
-            print "not police"
             return render(request, 'pending.html')
 
-    if check_block(user_id=post.user_id, blocked_id=request.user.id):
-        return HttpResponseRedirect('/')
+    if request.user.is_authenticated():
+        if check_block(user_id=post.user_id, blocked_id=request.user.id):
+            if not is_police(request, flat=True):
+                return HttpResponseRedirect('/')
 
     post.tag = []
-
-    # if request.user.is_superuser and request.GET.get('ip', None):
-    #     post.comments = Comments.objects.filter(object_pk=post)
-    #     post.likes = Likes.objects.filter(post=post).order_by('ip')[:10]
-    # else:
-    # if request.user.is_superuser:
-    #     post.comments = Comments.objects.filter(object_pk=post)
-    # else:
-    #     post.comments = Comments.objects.filter(object_pk=post, is_public=True)
-
-    # str_likers = "web_likes_%s" % post.id
-    # csl = cache.get(str_likers)
-    # if csl:
-    #     post.likes = csl
-    # else:
-    #     pl = Likes.objects.filter(post_id=post.id)\
-    #         .values_list('user_id', flat=True)[:12]
-    #     ll = [liker for liker in pl]
-    #     cache.set(str_likers, ll, 86400)
-    #     post.likes = ll
 
     # pl = Likes.objects.filter(post_id=post.id)[:12]
     from models_redis import LikesRedis
@@ -853,8 +877,8 @@ def item(request, item_id):
 
     # s = SearchQuerySet().models(Post).more_like_this(post)
     # print "seems with:", post.id, s[:5]
-
-    if request.user.is_authenticated:
+    follow_status = 0
+    if request.user.is_authenticated():
         follow_status = Follow.objects.filter(follower=request.user.id,
                                               following=post.user.id).count()
 
@@ -863,12 +887,16 @@ def item(request, item_id):
     if request.is_ajax():
         return render(request, 'pin2/items_inner.html',
                       {'post': post, 'follow_status': follow_status})
-    else:
-        return render(request, 'pin2/item.html', {
+    else: 
+        d = render(request, 'pin2/item.html', {
             'post': post,
             'follow_status': follow_status,
             'comments_url': comments_url,
-        })
+        }, content_type="text/html")
+        if enable_cacing:
+            cache.set("page_v1_%s"%item_id, d, 300)
+
+        return d
 
 
 def get_comments(request, post_id):

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-import json
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
 import datetime
 import time
 import redis
@@ -13,11 +17,12 @@ from django.template.response import TemplateResponse
 from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.cache import cache_page
 from django.conf import settings
 
 from sorl.thumbnail import get_thumbnail
 
-from pin.tools import AuthCache, get_user_ip, get_fixed_ads
+from pin.tools import AuthCache, get_user_ip, get_fixed_ads, log_act
 from pin.models import Post, Category, Likes, Follow, Comments, Block
 from pin.model_mongo import Notif, Ads
 
@@ -49,7 +54,7 @@ def notif_count(request):
         return HttpResponseForbidden('Token problem')
 
     notify = Notif.objects.filter(owner=cur_user_id, seen=False).count()
-    return HttpResponse(notify)
+    return HttpResponse(notify, content_type="application/json")
 
 
 def get_thumb(o_image, thumb_size, thumb_quality):
@@ -112,6 +117,8 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
 
     objects_list = []
     for p in posts:
+        if not p:
+            continue
         if p.is_pending():
             continue
         o = {}
@@ -152,8 +159,7 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
         if r:
             net_quality = str(r.GET.get('net_quality', "normal"))
 
-        o_image = p.image
-
+        # o_image = p.image
         # imo = get_thumb(o_image, thumb_size, settings.API_THUMB_QUALITY)
         try:
             if net_quality == "normal":
@@ -185,7 +191,6 @@ def get_list_post(pl, from_model='latest'):
     arp = []
     pl_str = 'p2_'.join(pl)
     cache_pl = md5(pl_str).hexdigest()
-    #print cache_stream_str, cache_stream_name
 
     posts = cache.get(cache_pl)
     if posts:
@@ -196,7 +201,7 @@ def get_list_post(pl, from_model='latest'):
         try:
             arp.append(Post.objects.only(*Post.NEED_KEYS2).get(id=pll))
             # print arp
-        except Exception, e:
+        except Exception:
             # print str(e), 'line 182', pll
             r_server.lrem(from_model, str(pll))
 
@@ -232,11 +237,11 @@ def post_item(request, item_id):
 
     json_data = json.dumps(data, cls=MyEncoder)
     cache.set(cache_pi_str, json_data, 86400)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def post(request):
-    #print "we are in post"
+    log_act("wisgoon.api.post.all.count")
     data = {}
     data['meta'] = {'limit': 10,
                     'next': '',
@@ -260,9 +265,13 @@ def post(request):
 
     token = request.GET.get('token', '')
     if token:
+        log_act("wisgoon.api.post.registered.count")
         cur_user = AuthCache.id_from_token(token=token)
+    else:
+        log_act("wisgoon.api.post.unregistered.count")
 
     if category_id:
+        log_act("wisgoon.api.post.category.count")
 
         category_ids = category_id.replace(',', ' ').split(' ')
         filters.update(dict(category_id__in=category_ids))
@@ -271,8 +280,10 @@ def post(request):
         filters.update(dict(id__lt=before))
 
     if user_id:
+        log_act("wisgoon.api.post.users.count")
         if cur_user:
-            if Block.objects.filter(user_id=user_id, blocked_id=cur_user).count():
+            if Block.objects.filter(user_id=user_id, blocked_id=cur_user)\
+                    .count():
                 return HttpResponse('Blocked')
 
         sort_by = ['-timestamp']
@@ -288,7 +299,6 @@ def post(request):
         dt_now = datetime.datetime.now()
         dt_now = dt_now.replace(minute=0, second=0, microsecond=0)
 
-        #dn = datetime.datetime.now()
         if popular == 'month':
             date_from = dt_now - datetime.timedelta(days=30)
         elif popular == 'lastday':
@@ -312,10 +322,8 @@ def post(request):
     cache_stream_str = "v21%s_%s" % (str(filters), sort_by)
 
     cache_stream_name = md5(cache_stream_str).hexdigest()
-    #print cache_stream_str, cache_stream_name
 
     posts = cache.get(cache_stream_name)
-    #print cache_stream_str, cache_stream_name, posts
 
     if popular:
         posts = []
@@ -355,7 +363,7 @@ def post(request):
         #     if hot_post:
         #         posts = list(hot_post) + list(posts)
 
-    if not user_id:
+    if not user_id and not before:
         hot_post = None
 
         if cur_user:
@@ -389,24 +397,20 @@ def post(request):
 
     thumb_size = int(request.GET.get('thumb_size', "236"))
 
-    #print "thumb_size", thumb_size
     if thumb_size > 400:
         thumb_size = 500
     else:
         thumb_size = "236"
-
-    #cache.set(cache_stream_name, posts, cache_ttl)
 
     data['objects'] = get_objects_list(posts,
                                        cur_user_id=cur_user,
                                        thumb_size=thumb_size,
                                        r=request)
     json_data = json.dumps(data, cls=MyEncoder)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def post_details(request, post_id):
-    #print "we are in post"
     data = {}
     cur_user = None
 
@@ -424,16 +428,15 @@ def post_details(request, post_id):
     else:
         thumb_size = "236"
 
-    #cache.set(cache_stream_name, posts, cache_ttl)
-
     data['objects'] = get_objects_list(posts,
                                        cur_user_id=cur_user,
                                        thumb_size=thumb_size)
     json_data = json.dumps(data, cls=MyEncoder)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def friends_post(request):
+    log_act("wisgoon.api.post.friends_post.count")
     offset = int(request.GET.get('offset', 0))
     limit = int(request.GET.get('limit', 20))
 
@@ -483,19 +486,19 @@ def friends_post(request):
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        thumb_size=thumb_size, r=request)
 
-    #data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def likes(request):
+    log_act("wisgoon.api.post.likes.count")
     post_id = request.GET.get('post_id', None)
     offset = int(request.GET.get('offset', 0))
-    #limit = int(request.GET.get('limit', 20))
     limit = 20
 
-    cache_stream_str = "wislikes2_1_%s_%s_%s" % (str(post_id), str(offset), str(limit))
-    cache_stream_name = md5(cache_stream_str).hexdigest()
+    # cache_stream_str = "wislikes2_1_%s_%s_%s" % (str(post_id), str(offset),
+    #    str(limit))
+    # cache_stream_name = md5(cache_stream_str).hexdigest()
 
     # post_likes = cache.get(cache_stream_name)
     # if post_likes:
@@ -521,22 +524,8 @@ def likes(request):
     else:
         return HttpResponse('fault')
 
-    # cache_stream_str = "wislikes_%s_%s_%s" % (str(filters),
-    #                                           str(offset), str(limit))
-
-    # cache_stream_name = md5(cache_stream_str).hexdigest()
-    #print cache_stream_str, cache_stream_name
-
-    # post_likes = cache.get(cache_stream_name)
-    # if not post_likes:
     from models_redis import LikesRedis
     post_likes = LikesRedis(post_id=post_id).get_likes(offset=offset)
-    # post_likes = Likes.objects\
-    #     .values('id', 'post_id', 'user_id')\
-    #     .filter(post_id=post_id).order_by("id")[offset:offset + limit]
-        # if len(post_likes) == limit:
-        #     #print "store likes in cache"
-        #     cache.set(cache_stream_name, post_likes, 86400)
 
     for p in post_likes:
         p = int(p)
@@ -551,37 +540,46 @@ def likes(request):
 
         objects_list.append(o)
 
-    #cache.set(cache_stream_name, posts, cache_ttl)
-
     data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
     # if len(post_likes) == limit:
     #     cache.set(cache_stream_name, json_data, 86400)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def notif(request):
+    log_act("wisgoon.api.notif.count")
+
     data = {}
+    objects_list = []
+    filters = {}
+    cur_user = None
+
+    token = request.GET.get('api_key', '')
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+    else:
+        return HttpResponse("problem")
+
+    notif_cache_key = "notif_v112_%d" % (int(cur_user))
+    c_data = cache.get(notif_cache_key)
+    if c_data:
+        print "get from cache", notif_cache_key
+        return HttpResponse(c_data, content_type="application/json")
+
     data['meta'] = {'limit': 10,
                     'next': '',
                     'offset': 0,
                     'previous': '',
                     'total_count': 1000}
 
-    objects_list = []
-    filters = {}
-    cur_user = None
     filters.update(dict(status=Post.APPROVED))
-
-    token = request.GET.get('api_key', '')
-    if token:
-        cur_user = AuthCache.id_from_token(token=token)
 
     notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 
     Notif.objects.filter(owner=cur_user, seen=False).update(set__seen=True)
 
-    Notif.objects.filter(owner=1).order_by('-date')[100:].delete()
+    # Notif.objects.filter(owner=1).order_by('-date')[100:].delete()
 
     for p in notifs:
         try:
@@ -598,10 +596,6 @@ def notif(request):
         o['image'] = cur_p.image
         o['date'] = "2014-05-28T20:22:14"
 
-        # av = AuthCache.avatar(user_id=cur_p.user_id)
-        #o['user_avatar'] = AuthCache.avatar(user_id=cur_p.user_id)[1:]
-        #o['user_name'] = AuthCache.get_username(user_id=cur_p.user_id)
-
         o['post'] = "/pin/api1/post/879/"
         o['post_id'] = cur_p.id
         o['post_owner_avatar'] = AuthCache.avatar(user_id=cur_p.user_id)[1:]
@@ -617,19 +611,12 @@ def notif(request):
         o['likers'] = None
         o['like_with_user'] = False
 
-        #o['resource_uri'] = "/pin/api/notif/notify/%d/" % cur_p.id
         o['resource_uri'] = "/pin/api/post/%d/" % cur_p.id
         o['permalink'] = "/pin/%d/" % cur_p.id
 
         if cur_user:
             o['like_with_user'] = Likes.user_in_likers(post_id=cur_p.id,
                                                        user_id=cur_user)
-
-        #thumb_size = request.GET.get('thumb_size', "100x100")
-        thumb_size = "236"
-        thumb_quality = 99
-
-        o_image = cur_p.image
 
         imo = cur_p.get_image_500(api=True)
 
@@ -644,9 +631,9 @@ def notif(request):
             ar.append([
                 ac,
                 AuthCache.get_username(ac),
-                #AuthCache.avatar(ac, size=100)
                 get_avatar(ac, size=100)
             ])
+            break
 
         o['actors'] = ar
         from collections import OrderedDict
@@ -654,11 +641,10 @@ def notif(request):
 
         objects_list.append(o)
 
-    #cache.set(cache_stream_name, posts, cache_ttl)
-
     data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
-    return HttpResponse(json_data)
+    cache.set(notif_cache_key, json_data, 86400)
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def following(request, user_id=1):
@@ -705,15 +691,26 @@ def following(request, user_id=1):
     data['objects'] = objects_list
 
     json_data = json.dumps(data, cls=MyEncoder)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def comments(request):
+    log_act("wisgoon.api.comments.count")
     data = {}
 
     offset = int(request.GET.get('offset', 0))
     limit = int(request.GET.get('limit', 20))
     object_pk = int(request.GET.get('object_pk', 0))
+
+    comment_cache_name = "com_%d" % object_pk
+    cc = cache.get(comment_cache_name)
+    pc = "%d-%d" % (offset, limit)
+    if not cc:
+        # print "empty cache"
+        cc = {}
+    elif pc in cc:
+        # print "cache hooooray!!!"
+        return HttpResponse(cc[pc], content_type="application/json")
 
     next = {
         'url': "/pin/api/com/comments/?limit=%s&offset=%s&object_pk=%s" % (
@@ -744,13 +741,17 @@ def comments(request):
         o['user_url'] = com.user_id
         o['user_avatar'] = get_avatar(com.user_id, size=100)
         o['user_name'] = AuthCache.get_username(com.user_id)
-        o['resource_uri'] = "/pin/api/com/comments/%d/" %com.id
+        o['resource_uri'] = "/pin/api/com/comments/%d/" % com.id
 
         objects_list.append(o)
 
     data['objects'] = objects_list
 
     json_data = json.dumps(data, cls=MyEncoder)
+
+    pc = "%d-%d" % (offset, limit)
+    cc[pc] = json_data
+    cache.set(comment_cache_name, cc, 86400)
     return HttpResponse(json_data, content_type="application/json")
 
 
@@ -798,23 +799,24 @@ def follower(request, user_id=1):
     data['objects'] = objects_list
 
     json_data = json.dumps(data, cls=MyEncoder)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def search(request):
+    log_act("wisgoon.api.search.count")
     cur_user = None
     limit = request.GET.get('limit', 20)
     start = request.GET.get('start', 0)
 
     data = {}
     import pysolr
-    solr = pysolr.Solr('http://localhost:8983/solr/wisgoon_user', timeout=10)
+    solr = pysolr.Solr('http://79.127.125.146:8080/solr/wisgoon_user', timeout=10)
     query = request.GET.get('q', '')
     if query:
         fq = 'username_s:*%s* name_s:*%s*' % (query, query)
         try:
             results = solr.search("*:*", fq=fq, rows=limit, start=start,
-                              sort="score_i desc")
+                                  sort="score_i desc")
         except:
             results = []
 
@@ -842,20 +844,18 @@ def search(request):
             data['objects'].append(o)
 
     json_data = json.dumps(data, cls=MyEncoder)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def search2(request):
     from user_profile.models import Profile
-    ROW_PER_PAGE = 20
+    row_per_page = 20
     cur_user = None
-    limit = request.GET.get('limit', 20)
-    start = request.GET.get('start', 0)
 
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
     results = SearchQuerySet().models(Profile)\
-        .filter(content__contains=query)[offset:offset + 1 * ROW_PER_PAGE]
+        .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
     data = {}
     # import pysolr
@@ -891,7 +891,7 @@ def search2(request):
             data['objects'].append(o)
 
     json_data = json.dumps(data, cls=MyEncoder)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
 
 
 def hashtag_top(request):
@@ -915,21 +915,23 @@ def hashtag_top(request):
     data['objects'] = o
 
     json_data = json.dumps(data, cls=MyEncoder)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
+
 
 def hashtag(request):
-    ROW_PER_PAGE = 20
+    row_per_page = 20
     cur_user = None
 
     query = request.GET.get('q', '')
+    query = query.replace('#', '')
     offset = int(request.GET.get('offset', 0))
-    results = SearchQuerySet().models(Post)\
-        .filter(tags=query)\
-        .order_by('-timestamp_i')[offset:offset + 1 * ROW_PER_PAGE]
 
     data = {}
 
     if query:
+        results = SearchQuerySet().models(Post)\
+            .filter(tags=query)\
+            .order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
         token = request.GET.get('token', '')
         if token:
             cur_user = AuthCache.id_from_token(token=token)
@@ -947,11 +949,11 @@ def hashtag(request):
         thumb_size = request.GET.get('thumb_size', "100x100")
 
         data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
-                                       thumb_size=thumb_size, r=request)
-        
+                                           thumb_size=thumb_size, r=request)
 
     json_data = json.dumps(data, cls=MyEncoder)
-    return HttpResponse(json_data)
+    return HttpResponse(json_data, content_type="application/json")
+
 
 @csrf_exempt
 def password_reset(request, is_admin_site=False,
@@ -1043,11 +1045,6 @@ def comment_delete(request, id):
         comment.delete()
         return HttpResponse(1)
 
-    # if user.is_superuser:
-    #     print "admin like to remove a comment"
-    #     comment.delete()
-    #     return HttpResponse(1)
-    
     return HttpResponse(0)
 
 
@@ -1075,3 +1072,40 @@ def unblock_user(request, user_id):
 
     Block.unblock_user(user_id=user.id, blocked_id=user_id)
     return HttpResponse('1')
+
+
+# @cache_page(60 * 15)
+def packages(request):
+    # return HttpResponse("hello")
+    data = {
+        "objects": [
+            {
+                "name": "package1",
+                "wis": 500,
+                "price": 650
+            },
+            {
+                "name": "package2",
+                "wis": 1000,
+                "price": 1300
+            },
+            {
+                "name": "package3",
+                "wis": 2000,
+                "price": 2600
+            },
+            {
+                "name": "package4",
+                "wis": 5000,
+                "price": 6500
+            },
+            {
+                "name": "package5",
+                "wis": 10000,
+                "price": 13000
+            },
+        ]
+    }
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data, content_type="application/json")

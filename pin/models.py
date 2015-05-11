@@ -8,7 +8,6 @@ import PIL
 
 from PIL import Image
 
-#import datetime
 from datetime import datetime, timedelta
 from time import mktime
 from django.conf import settings
@@ -35,9 +34,17 @@ LIKE_TO_DEFAULT_PAGE = 10
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 
+class SubCategory(models.Model):
+    title = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.title
+
+
 class Category(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/category/')
+    parent = models.ForeignKey(SubCategory, related_name='sub_category', blank=True, null=True)
 
     def __unicode__(self):
         return self.title
@@ -69,6 +76,11 @@ class Category(models.Model):
 class AcceptedManager(models.Manager):
     def get_query_set(self):
         return super(AcceptedManager, self).get_query_set().filter(status=1)
+
+
+class Sim(models.Model):
+    post = models.OneToOneField('Post')
+    features = models.TextField()
 
 
 class Post(models.Model):
@@ -136,10 +148,7 @@ class Post(models.Model):
         return self.text
 
     def is_pending(self):
-        if PendingPosts.objects(post=int(self.id)).count():
-            return True
-
-        return False
+        return PendingPosts.is_pending(post=int(self.id))
 
     def get_tags(self):
         hash_tags = re.compile(ur'(?i)(?<=\#)\w+', re.UNICODE)
@@ -164,7 +173,8 @@ class Post(models.Model):
         w, h = img.size
         nname = "%dx%d_%s" % (w, h, iname)
         npath = "%s/%s" % (idir, nname)
-        img.save(npath)
+        if not os.path.exists(npath):
+            img.save(npath)
 
         return ibase, nname, h
 
@@ -439,10 +449,12 @@ class Post(models.Model):
         # print "self status: ", self.status
 
         self.text = normalize_tags(self.text)
-
+        print "all save"
         super(Post, self).save(*args, **kwargs)
-        self.get_image_236()
-        self.get_image_500()
+        print "after save - thumbnail "
+
+        # self.get_image_236()
+        # self.get_image_500()
         # print "id of post:", self.id
         # if is_official:
         #     from model_mongo import Ads
@@ -710,7 +722,10 @@ class Stream(models.Model):
 
     @classmethod
     def add_post(cls, sender, instance, *args, **kwargs):
+        print "here is add post in stream"
         post = instance
+        post.get_image_236()
+        post.get_image_500()
         if kwargs['created']:
 
             MonthlyStats.log_hit(object_type="post")
@@ -939,6 +954,8 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
+        # if u"شارژ" in self.comment and u"ریاگان" in self.comment :
+        #     return
         if not self.pk:
             Post.objects.filter(pk=self.object_pk.id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
@@ -956,6 +973,9 @@ class Comments(models.Model):
             hstr = "cmn_cache_%s%s" % (self.object_pk.id, cp)
             cache.delete(hstr)
             print "delete ", hstr, hcpstr
+
+        comment_cache_name = "com_%d" % self.object_pk.id
+        cache.delete(comment_cache_name)
 
         super(Comments, self).save(*args, **kwargs)
 
@@ -984,6 +1004,10 @@ class Comments(models.Model):
     def delete(self, *args, **kwargs):
         Post.objects.filter(pk=self.object_pk.id)\
             .update(cnt_comment=F('cnt_comment') - 1)
+
+        # print "here is delete comment"
+        comment_cache_name = "com_%d" % self.object_pk.id
+        cache.delete(comment_cache_name)
         super(Comments, self).delete(*args, **kwargs)
 
     @models.permalink

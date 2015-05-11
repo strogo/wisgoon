@@ -1,5 +1,6 @@
 import os
 import time
+
 from datetime import datetime
 from django.core.cache import cache
 from django.conf import settings
@@ -13,9 +14,15 @@ from pin.models import Category, Block
 from pin.model_mongo import UserMeta, FixedAds
 
 from daddy_avatar.templatetags import daddy_avatar
+from statsd import StatsClient
+
+statsd = StatsClient(host="79.127.125.104")
 
 user_keys = {}
 USERDATA_TIMEOUT = 300
+
+CARBON_SERVER = '127.0.0.1'
+CARBON_PORT = 2003
 
 # if settings.DEBUG:
 #     from feedreader.task_cel_local import inc_prof
@@ -33,6 +40,10 @@ USERDATA_TIMEOUT = 300
 #         .update(cnt_like=F('cnt_like')-1, score=F('score')-10)
 
 
+def log_act(path,):
+    statsd.incr(path)
+
+
 def get_fixed_ads():
     c_name = "fixed_post"
     c_e = cache.get(c_name)
@@ -44,6 +55,7 @@ def get_fixed_ads():
 
         return c_e
     return None
+
 
 def create_filename(filename):
     d = datetime.now()
@@ -144,14 +156,14 @@ class MyCache(object):
 class CatCache(MyCache):
 
     @classmethod
-    def get_cat(self, cat_id):
+    def get_cat(cls, cat_id):
         cc_str = "cat_%d" % cat_id
         cc_cache = cache.get(cc_str)
         if cc_cache:
             return cc_cache
 
         cat = Category.objects.get(id=cat_id)
-        cache.set(cc_str, cat, self.LONG_TIME)
+        cache.set(cc_str, cat, cls.LONG_TIME)
         return cat
 
 
@@ -161,7 +173,7 @@ class AuthCache(MyCache):
     TTL_USERNAME = 60 * 60 * 24
 
     @classmethod
-    def get_username(self, user_id):
+    def get_username(cls, user_id):
         cun_str = "%s%d" % (settings.USER_NAME_CACHE, user_id)
         c_str = cache.get(cun_str)
         if c_str:
@@ -186,22 +198,22 @@ class AuthCache(MyCache):
         if not username:
             username = user.username
 
-        cache.set(cun_str, username, self.TTL_USERNAME)
+        cache.set(cun_str, username, cls.TTL_USERNAME)
         return username
 
     @classmethod
-    def avatar(self, user_id, size=100):
+    def avatar(cls, user_id, size=100):
         ca_str = "ava_%d_%d" % (user_id, size)
         c_avatar = cache.get(ca_str)
         if c_avatar:
             return c_avatar
 
         avatar = daddy_avatar.get_avatar(user_id, size=size)
-        cache.set(ca_str, avatar, self.TTL_AVATAR)
+        cache.set(ca_str, avatar, cls.TTL_AVATAR)
         return avatar
 
     @classmethod
-    def id_from_token(self, token):
+    def id_from_token(cls, token):
         if not token:
             return None
 
@@ -214,11 +226,11 @@ class AuthCache(MyCache):
                 api = ApiKey.objects.get(key=token)
             except ApiKey.DoesNotExist:
                 return None
-            cache.set(ct_str, api.user_id, self.TTL_TOKEN)
+            cache.set(ct_str, api.user_id, cls.TTL_TOKEN)
             return api.user_id
 
     @classmethod
-    def user_from_token(self, token):
+    def user_from_token(cls, token):
         if not token:
             return None
 

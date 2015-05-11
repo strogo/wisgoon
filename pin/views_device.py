@@ -18,7 +18,8 @@ from pin.models import Post, Likes, Comments, Comments_score,\
     Follow, Stream
 
 from pin.forms import PinDirectForm, PinDeviceUpdate
-from pin.tools import create_filename, AuthCache, check_block
+from pin.tools import create_filename, AuthCache, check_block, log_act
+from pin.context_processors import is_police
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -48,49 +49,51 @@ def check_auth(request):
 
 @csrf_exempt
 def like(request):
+    log_act("wisgoon.api.post.liking.count")
     user = check_auth(request)
 
     if not user:
-        return HttpResponseForbidden('error in user validation')
+        return HttpResponseForbidden('error in user validation', content_type="application/json")
 
     if request.method != "POST":
-        return HttpResponseBadRequest('error in parameters')
+        return HttpResponseBadRequest('error in parameters', content_type="application/json")
 
     post_id = int(request.POST.get('post_id', None))
     if not post_id:
-        return HttpResponseBadRequest('erro in post id')
+        return HttpResponseBadRequest('erro in post id', content_type="application/json")
     try:
         post = Post.objects.get(pk=post_id)
     except Post.DoesNotExist:
-        return HttpResponse('0')
+        return HttpResponse('0', content_type="application/json")
 
     from models_redis import LikesRedis
     like, dislike, current_like = LikesRedis(post_id=post_id)\
         .like_or_dislike(user_id=user.id,post_owner=post.user_id)
 
     if like:
-        return HttpResponse('+1')
+        return HttpResponse('+1', content_type="application/json")
     else:
-        return HttpResponse('-1')
+        return HttpResponse('-1', content_type="application/json")
 
     try:
         Likes.objects.create(user_id=user.id, post_id=post_id, ip=user._ip)
-        return HttpResponse('+1')
+        return HttpResponse('+1', content_type="application/json")
     except IntegrityError:
         try:
             Likes.objects.filter(user_id=user.id, post_id=post_id).delete()
         except DatabaseError:
             Likes.objects.filter(user_id=user.id, post_id=post_id).delete()
-        return HttpResponse('-1')
+        return HttpResponse('-1', content_type="application/json")
 
-    return HttpResponse('-1')
+    return HttpResponse('-1', content_type="application/json")
 
 
 @csrf_exempt
 def post_comment(request):
+    log_act("wisgoon.api.post.commenting.count")
     user = check_auth(request)
     if not user:
-        return HttpResponseForbidden('error in user validation')
+        return HttpResponseForbidden('error in user validation', content_type="application/json")
 
     data = request.POST.copy()
     comment = data.get('comment')
@@ -99,15 +102,16 @@ def post_comment(request):
 
         post = Post.objects.get(id=object_pk)
         if check_block(user_id=post.user_id, blocked_id=user.id):
-            return HttpResponse(0)
+            if not is_police(request, flat=True):
+                return HttpResponse(0)
 
         Comments.objects.create(object_pk_id=object_pk,
                                 comment=comment,
                                 user_id=user.id,
                                 ip_address=user._ip)
-        return HttpResponse(1)
+        return HttpResponse(1, content_type="application/json")
 
-    return HttpResponse(0)
+    return HttpResponse(0, content_type="application/json")
 
 
 @csrf_exempt

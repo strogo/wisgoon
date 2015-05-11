@@ -1,0 +1,54 @@
+﻿hr{
+	margin: 5px;
+}
+.blog-post,
+.blog-widget{
+	background-color: #fff;
+	border-radius: 20px;
+	box-shadow: 0 2px #e2e4e7;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	padding: 30px 20px;
+}
+.blog-post .blog-header{
+	margin-bottom: 50px;
+}
+.blog-post .blog-header small{
+	color: #aaa;
+}
+.blog-post .blog-title{
+	font-weight: bold;
+}
+.blog-post .blog-footer .avatar{
+	float: right;
+}
+.blog-post .blog-footer {
+	opacity: .5;
+}
+.blog-post .blog-footer:hover{
+	opacity: 1;
+}
+.blog-post .blog-footer .username{
+	float: right;
+	padding: 10px;
+}
+.blog-post .blog-footer img{
+	width: 45px;
+	height: 45px;
+}
+.sep{
+	margin: 0 10px;
+}
+.comment-box .others-comment .avatar img{
+	width: 40px;
+	height: 40px;
+}
+
+.comment-box .comments .row{
+	border-top: 1px solid #eee;
+	padding: 15px 0;
+	opacity: .4;
+}
+.comment-box .comments .row:hover{
+	opacity: 1;
+}

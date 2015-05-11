@@ -1,0 +1,26 @@
+{% load daddy_avatar %}
+<div class="row">
+<div class="col-md-12 col-sm-12 col-xs-12">
+	<div class="user-comment">
+		<div class="avatar col-md-1 col-sm-2 col-xs-3">
+			<img class="nav-avatar" src="{{user|get_avatar:80}}">
+		</div>
+		<div class="text-box col-md-10 col-sm-8 col-xs-8">
+
+			<form action="{% url "pin-comment" %}" method="post" class="form">
+				<div class="row">
+					<div class="form-group col-md-12">
+						<textarea class="form-control" id="id_comment"  name="text" placeholder="نظر خود را وارد کنید" ></textarea>
+					</div>
+					<div class="form-group col-md-3">
+						<input type="submit" class=" form-control btn btn-primary" name="submit" value="ارسال">
+					</div>
+				</div>
+				<input type="hidden" name="post" value="{{post.id}}">
+			</form>
+		</div>
+		
+		<div class="clear"></div>
+	</div>
+</div>
+</div>

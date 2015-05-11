@@ -1,0 +1,47 @@
+{% extends "pin2/flat.base.box.html"%}
+
+{% block content %}
+
+<div class="panel panel-default">
+	<div class="panel-heading">افزایش موجودی
+	</div>
+	<div class="panel-body">
+		<div class="col-md-12">
+			در این صفحه می توانید حساب کاربری خود را شارژ کرده و از موجودی حساب خود در پین پرشیا استفاده کنید.
+			<br><br>
+			برای اطلاعات بیشتر به وبلاگ پین پرشیا مراجعه کنید.
+		</div>
+		<div class="clearfix"></div>
+		<hr style="margin:50px 0;">
+		<div class="col-md-4">
+		<form method="post" class="form">
+			{% csrf_token %}
+			<div class="form-group">
+				<label>میزان اعتبار</label>
+				<select name="amount" class="form-control">
+					<option value="500">500 ویس - 500 تومان</option>
+					<option value="1000">1000 ویس - 1000 تومان</option>
+					<option value="2000">2000 ویس - 2000 تومان</option>
+					<option value="5000">5000 ویس - 5000 تومان</option>
+					<option value="10000">10000 ویس - 10000 تومان</option>
+				</select>
+			</div>
+
+			<div class="form-group col-md-6">
+				<input class="form-control btn btn-primary" type="submit" value="پرداخت"> 
+			</div>
+
+		</form>
+		</div>
+		<div class="col-md-8">
+			<div class="alert alert-info">
+			<p>در حال حاضر پرداخت از طریق نرم افزار موبایل راه اندازی نشده است.<br>
+				هزینه ی پرداخت از سایت شامل تخفیف بیش از ۳۰ درصد می باشد.</p>
+		</div>
+			
+		</div>
+	</div>
+
+</div>
+
+{% endblock content %}

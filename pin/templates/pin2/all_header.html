@@ -1,12 +1,16 @@
 {% load compress %}
 <!-- Powered by:
 	Django -> Web application
-	MySQL -> post, auth  !! r/w in seperated databases
+	Nginx + Uwsgi -> Web server
+	MySQL -> post, auth
 	MongoDB -> Notification, Logs, Stats
 	Redis -> Denormalized data, streams, likes
 	Solr -> Search engine
 	Neo4j -> Relation between users and post,...
-	Celery, RabbitMQ, Pillow, Python, Memcache
+	GlusterFS -> Cloud Storage
+	Munin -> Server monitoring
+	Graphite -> Application monitoring
+	Celery, RabbitMQ, Pillow, Python, Memcache, Fabric
 
 	Learned it? Do it. :D -->
 
@@ -23,5 +27,5 @@
 <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/font-awesome-animation.min.css">
 <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/fonts.css">
 
-<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/style.css?ver=1.4.12">
+<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/style.css?ver=1.4.13">
 <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/blog-style.css?ver=1.4.4.28">

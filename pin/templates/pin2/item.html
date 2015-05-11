@@ -11,15 +11,24 @@
 <meta property="og:type" content="image/jpeg" />
 <meta property="og:url" content="{{ post.get_host_url}}" />
 <meta property="og:image" content="{{ post.get_image_absolute_url }}" />
+<link rel="canonical" href="{{ post.get_host_url}}" />
 {% endblock opengraph%}
 
 {% block content %}
 <script>
 var comments_url = "{{comments_url}}";
 </script>
+<!--
+mlt: {{mlt.0.object.id}}
+	-->
 <div id="main">
 	<div class="container">
 		{% include "pin2/items_inner.html" %}
+	</div>
+	<div class="container-fluid">
+		<div id="feed" class="masonry">
+			{% include "pin2/_items_related.html"%}
+		</div>
 	</div>
 </div>
 
@@ -29,4 +38,5 @@ var comments_url = "{{comments_url}}";
 
 {% block footer_ex_js %}
 <script type="text/javascript" src="{{MEDIA_URL}}js2/item.js?ver=1.0.1"></script>
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-553e6fc042430f60" async="async"></script>
 {% endblock footer_ex_js %}
