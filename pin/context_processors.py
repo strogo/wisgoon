@@ -74,3 +74,13 @@ def is_police(request, flat=False):
 
 def user__id(request):
     return {'user__id': request.user.id}
+
+
+def is_mobile(request):
+    from pin.tools import is_mobile
+
+    try:
+        mobile = is_mobile(request)
+    except:
+        mobile = False
+    return {'is_mobile': mobile}
