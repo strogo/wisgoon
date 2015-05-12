@@ -1,0 +1,37 @@
+<div class="modal fade" id="popupm">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">نرم افزار اندروید ویسگون</h4>
+			</div>
+			<div class="modal-body">
+				<center>
+					<img src="{{MEDIA_URL}}img/qr.png" alt="">
+				</center>
+			</div>
+			<div class="col-md-12">
+				<div class="col-md-4"></div>
+				<div class="col-md-4"><a style="color:#fff !important;" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/" class="btn btn-success col-md-12">دانلود از بازار</a></div>
+				<div class="col-md-4"></div>	
+			</div>
+			<br />
+			<br />
+			<br />
+			<div class="clearfix"></div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+<script type="text/javascript" src="{{MEDIA_URL}}js/jquery.cookie.js"></script>
+<script type="text/javascript">
+	$(function () {
+		if (!$.cookie('downloadapp2')) {
+			$('#popupm').modal();
+		}
+
+		$('#popupm').on('hide.bs.modal', function (e) {
+			$.cookie('downloadapp2', 'ok', { expires: 1 });
+		});
+	});
+</script>

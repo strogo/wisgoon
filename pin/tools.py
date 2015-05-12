@@ -267,3 +267,11 @@ def get_user_meta(user_id):
         user_meta = UserMeta.objects.filter(user=user_id).first()
 
     return user_meta
+
+
+def is_mobile(request):
+    agent = request.META.get('HTTP_USER_AGENT')
+    if 'android' in agent.lower():
+        return True
+    else:
+        return False

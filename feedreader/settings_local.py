@@ -128,7 +128,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'pin.context_processors.media_prefix',
     'pin.context_processors.is_police',
     'pin.context_processors.subs',
-
+    # 'pin.context_processors.is_mobile',
 )
 INSTALLED_APPS = (
     'django.contrib.auth',
