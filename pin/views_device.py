@@ -5,7 +5,7 @@ import time
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import MultipleObjectsReturned
-from django.db import transaction, IntegrityError, DatabaseError
+from django.db import IntegrityError, DatabaseError
 from django.db.models import F, Sum
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
