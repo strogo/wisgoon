@@ -1152,7 +1152,7 @@ def user_credit(request):
 def inc_credit(request):
     user = None
     token = request.GET.get('token', '')
-    price = request.GET.get('price', '')
+    price = int(request.GET.get('price', ''))
     baz_token = request.GET.get("baz_token", "")
     package_name = request.GET.get("package", "")
     if token:
@@ -1164,7 +1164,14 @@ def inc_credit(request):
     if package_name not in PACKS:
         raise Http404
 
+    print PACKS[package_name]['price'], price
+
     if PACKS[package_name]['price'] == price:
+        p = user.profile
+        p.credit = p.credit + PACKS[package_name]['wis']
+        p.save()
         return HttpResponse("success full", content_type="text/html")
+    else:
+        return HttpResponse("price error")
 
     return HttpResponse("failed", content_type="text/html")
