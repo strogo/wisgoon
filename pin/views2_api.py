@@ -23,7 +23,7 @@ from django.conf import settings
 from sorl.thumbnail import get_thumbnail
 
 from pin.tools import AuthCache, get_user_ip, get_fixed_ads, log_act
-from pin.models import Post, Category, Likes, Follow, Comments, Block
+from pin.models import Post, Category, Likes, Follow, Comments, Block, Packages
 from pin.model_mongo import Notif, Ads
 
 from haystack.query import SearchQuerySet
@@ -1094,14 +1094,23 @@ PACKS = {
 }
 
 
-# @cache_page(60 * 15)
+@cache_page(60 * 15)
 def packages(request):
     # return HttpResponse("hello")
 
     data = {
-        "objects": [{"name": p[0], "wis": p[1]['wis'], "price": p[1]['price']}
-                    for p in PACKS.iteritems()]
+        "objects": []
     }
+
+    for p in Packages.objects.all():
+        o = {
+            "name": p.name,
+            "title": p.title,
+            "price": p.price,
+            "wis": p.wis,
+            "icon": str(p.icon.url)
+        }
+        data['objects'].append(o)
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
