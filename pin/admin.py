@@ -19,7 +19,7 @@ class PackagesAdmin(admin.ModelAdmin):
 
 
 class BillAdmin(admin.ModelAdmin):
-    list_display = ('status', 'amount', 'trans_id', 'user',)
+    list_display = ('id', 'status', 'amount', 'trans_id', 'user',)
 
 
 class OfficialAdmin(admin.ModelAdmin):
