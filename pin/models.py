@@ -657,7 +657,13 @@ class Post(models.Model):
 
 
 class Bills2(models.Model):
-    status = models.IntegerField(blank=True, null=True, default=0)
+    COMPLETED = 1
+    UNCOMPLETED = 0
+    STATUS_CHOICES = (
+        (COMPLETED, 'Completed'),
+        (UNCOMPLETED, 'Uncompleted'),
+    )
+    status = models.IntegerField(blank=True, null=True, default=0, choices=STATUS_CHOICES)
     amount = models.IntegerField(blank=True, null=True)
     trans_id = models.CharField(max_length=250, blank=True, null=True)
 
