@@ -5,7 +5,7 @@ from django.contrib import admin
 from haystack.admin import SearchModelAdmin
 
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
-    Official, SubCategory, Packages
+    Official, SubCategory, Packages, Bills2 as Bill
 from pin.tasks import send_notif
 from user_profile.models import Profile
 
@@ -16,6 +16,10 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 class PackagesAdmin(admin.ModelAdmin):
     list_display = ('title', 'name', 'wis', 'price', 'icon',)
+
+
+class BillAdmin(admin.ModelAdmin):
+    list_display = ('status', 'amount', 'trans_id', 'user',)
 
 
 class OfficialAdmin(admin.ModelAdmin):
@@ -225,3 +229,4 @@ admin.site.register(InstaAccount, InstaAccountAdmin)
 admin.site.register(Official, OfficialAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(Packages, PackagesAdmin)
+admin.site.register(Bill, BillAdmin)
