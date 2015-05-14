@@ -83,6 +83,14 @@ class Sim(models.Model):
     features = models.TextField()
 
 
+class Packages(models.Model):
+    title = models.CharField(max_length=250)
+    name = models.CharField(max_length=250)
+    wis = models.IntegerField(default=0)
+    price = models.IntegerField(default=0)
+    icon = models.ImageField(upload_to="packages/")
+
+
 class Post(models.Model):
     PENDING = 0
     APPROVED = 1

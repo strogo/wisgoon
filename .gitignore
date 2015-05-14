@@ -14,6 +14,7 @@
 /feedreader/*media*/static_cache/
 /feedreader/*media*/avatars/
 /feedreader/*media*/app/
+/feedreader/*media*/packages/
 wenv/
 feedreader/*media*/cache2/
 /src/

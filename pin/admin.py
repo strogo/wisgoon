@@ -4,13 +4,18 @@ import time
 from django.contrib import admin
 from haystack.admin import SearchModelAdmin
 
-from pin.models import Post, Category, App_data, Comments, InstaAccount, Official, SubCategory
+from pin.models import Post, Category, App_data, Comments, InstaAccount,\
+    Official, SubCategory, Packages
 from pin.tasks import send_notif
 from user_profile.models import Profile
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'title')
+
+
+class PackagesAdmin(admin.ModelAdmin):
+    list_display = ('title', 'name', 'wis', 'price', 'icon',)
 
 
 class OfficialAdmin(admin.ModelAdmin):
@@ -209,7 +214,6 @@ class SearchCommentAdmin(SearchModelAdmin):
     delete_all_user_comments.short_description = 'حذف تمام کامنت های این کاربر و غیر فعال کردن کاربر'
 
 
-
 admin.site.register(Comments, SearchCommentAdmin)
 
 admin.site.register(Post, PinAdmin)
@@ -220,3 +224,4 @@ admin.site.register(App_data, AppAdmin)
 admin.site.register(InstaAccount, InstaAccountAdmin)
 admin.site.register(Official, OfficialAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
+admin.site.register(Packages, PackagesAdmin)
