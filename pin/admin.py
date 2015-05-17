@@ -19,7 +19,7 @@ class PackagesAdmin(admin.ModelAdmin):
 
 
 class BillAdmin(admin.ModelAdmin):
-    list_display = ('id', 'status', 'amount', 'trans_id', 'user',)
+    list_display = ('id', 'status', 'amount', 'trans_id', 'user', 'create_date')
     list_filter = ('status',)
     raw_id_fields = ("user",)
 
