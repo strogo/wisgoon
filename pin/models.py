@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.validators import URLValidator
-from django.core.urlresolvers import reverse
+# from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import F
 from django.db.models.signals import post_save
@@ -26,7 +26,8 @@ from sorl.thumbnail import get_thumbnail
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
-from model_mongo import Notif as Notif_mongo, MonthlyStats, PostMeta, PendingPosts
+from model_mongo import Notif as Notif_mongo, MonthlyStats, PostMeta,\
+    PendingPosts
 from preprocessing import normalize_tags
 
 LIKE_TO_DEFAULT_PAGE = 10
@@ -44,7 +45,8 @@ class SubCategory(models.Model):
 class Category(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/category/')
-    parent = models.ForeignKey(SubCategory, related_name='sub_category', blank=True, null=True)
+    parent = models.ForeignKey(SubCategory, related_name='sub_category',
+                               blank=True, null=True)
 
     def __unicode__(self):
         return self.title
@@ -55,7 +57,7 @@ class Category(models.Model):
     admin_image.allow_tags = True
 
     @classmethod
-    def get_json(self, cat_id):
+    def get_json(cls, cat_id):
         # json cat cache str
         jccs = "json_cat_%s" % cat_id
         jcc = cache.get(jccs)
@@ -115,7 +117,7 @@ class Post(models.Model):
         (FAULT, 'تخلف'),
     )
 
-    #title = models.CharField(max_length=250, blank=True)
+    # title = models.CharField(max_length=250, blank=True)
     text = models.TextField(blank=True, verbose_name=_('Text'))
     image = models.CharField(max_length=500, verbose_name='تصویر')
     create_date = models.DateField(auto_now_add=True)
@@ -172,11 +174,9 @@ class Post(models.Model):
         ipath = "%s/%s" % (settings.MEDIA_ROOT, self.image)
         idir = os.path.dirname(ipath)
         iname = os.path.basename(ipath)
-        
         img = Image.open(ipath)
-        
-        wpercent = (basewidth/float(img.size[0]))
-        hsize = int((float(img.size[1])*float(wpercent)))
+        wpercent = (basewidth / float(img.size[0]))
+        hsize = int((float(img.size[1]) * float(wpercent)))
         img = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
         w, h = img.size
         nname = "%dx%d_%s" % (w, h, iname)
@@ -207,10 +207,10 @@ class Post(models.Model):
             except PostMeta.DoesNotExist:
                 try:
                     ibase, nname, h = self.save_thumb(basewidth=236)
-                except IOError, e:
+                except IOError:
                     # print str(e), "get_image_236"
                     return False
-                except Exception, e:
+                except Exception:
                     # print str(e), "get_image_236"
                     return False
 
@@ -256,10 +256,10 @@ class Post(models.Model):
             except PostMeta.DoesNotExist:
                 try:
                     ibase, nname, h = self.save_thumb(basewidth=500)
-                except IOError, e:
+                except IOError:
                     # print str(e), "get_image_500"
                     return False
-                except Exception, e:
+                except Exception:
                     # print str(e), "get_image_500"
                     return False
 
@@ -310,8 +310,14 @@ class Post(models.Model):
         r_server.lrem(cat_stream, str(self.id))
 
         from user_profile.models import Profile
+        n_score = 10 * self.cnt_like
         Profile.objects.filter(user_id=self.user_id)\
-            .update(cnt_post=F('cnt_post') - 1, score=F('score') - (10 * self.cnt_like))
+            .update(cnt_post=F('cnt_post') - 1, score=F('score') - n_score)
+
+        # from tasks import send_notif_bar
+
+        # send_notif_bar(user=self.user.id, type=4, post=self.id,
+        #                actor=self.user.id)
 
         super(Post, self).delete(*args, **kwargs)
 
@@ -319,11 +325,10 @@ class Post(models.Model):
         lt_date = datetime.now() - timedelta(days=how_many_days)
         lt_timestamp = mktime(lt_date.timetuple())
         timestamp = mktime(date.timetuple())
-        #print timestamp, older_timestamp
         return timestamp < lt_timestamp
 
     @classmethod
-    def hot(self, post_id, amount=1):
+    def hot(cls, post_id, amount=1):
         hotest = r_server.smembers('hottest')
         if str(post_id) not in hotest:
             r_server.zincrby('hot', int(post_id), amount=1)
@@ -331,7 +336,7 @@ class Post(models.Model):
         r_server.zremrangebyrank('hot', 0, -1001)
 
     @classmethod
-    def get_hot(self, values=False):
+    def get_hot(cls, values=False):
         h = r_server.zrange('hot', 0, 0, withscores=True, desc=True)
         if h[0][1] > 110:
             r_server.sadd('hottest', h[0][0])
@@ -342,7 +347,7 @@ class Post(models.Model):
 
         if values:
             post = Post.objects\
-                .values(*self.NEED_KEYS)\
+                .values(*cls.NEED_KEYS)\
                 .filter(id=h[0][0])
         else:
             post = Post.objects.filter(id=h[0][0])
@@ -394,7 +399,7 @@ class Post(models.Model):
             cat_set_key = "post_latest_%s" % post.category.id
             r_server.zadd(cat_set_key, int(post.timestamp), post.id)
             r_server.zremrangebyrank(cat_set_key, 0, -1001)
-            #r_server.ltrim(cat_set_key, 0, 1000)
+            # r_server.ltrim(cat_set_key, 0, 1000)
 
     def hash_exists(self):
         lname = "duplic"
@@ -421,7 +426,7 @@ class Post(models.Model):
         return True
 
     def save(self, *args, **kwargs):
-        is_official = False
+        # is_official = False
         from user_profile.models import Profile
         try:
             profile = Profile.objects.get(user=self.user)
@@ -450,7 +455,7 @@ class Post(models.Model):
 
             if Official.objects.filter(user=self.user).count():
                 self.status = 1
-                is_official = True
+                # is_official = True
         else:
             print "path does not exists", file_path
 
@@ -460,14 +465,6 @@ class Post(models.Model):
         print "all save"
         super(Post, self).save(*args, **kwargs)
         print "after save - thumbnail "
-
-        # self.get_image_236()
-        # self.get_image_500()
-        # print "id of post:", self.id
-        # if is_official:
-        #     from model_mongo import Ads
-        #     Ads.objects.create(user=self.user_id, post=int(self.id), start=datetime.now())
-        #     # Ads.objects.get(post=int(self.id), ended=False)
 
     @models.permalink
     def get_absolute_url(self):
@@ -520,7 +517,6 @@ class Post(models.Model):
 
     def cnt_likes(self):
         return self.cnt_like
-        #return Likes.objects.filter(post_id=self.id).count()
 
         cnt = Likes.objects.filter(post_id=self.id).count()
         Post.objects.filter(pk=self.id).update(cnt_like=cnt)
@@ -542,7 +538,6 @@ class Post(models.Model):
         Post.objects.filter(pk=self.id)\
             .update(status=self.APPROVED, timestamp=time.time())
 
-        #Post.add_to_set('post_latest', self)
         if self.status == self.PENDING:
             Post.add_to_stream(post=self)
 
@@ -558,7 +553,7 @@ class Post(models.Model):
                        actor=self.user.id)
 
     @classmethod
-    def home_latest(self, pid=0):
+    def home_latest(cls, pid=0):
         home_stream = settings.HOME_STREAM
 
         if not r_server.exists(home_stream):
@@ -583,7 +578,7 @@ class Post(models.Model):
         return []
 
     @classmethod
-    def latest(self, pid=0, cat_id=0):
+    def latest(cls, pid=0, cat_id=0):
         # print "this is latest", pid, cat_id
         # print pid
 
@@ -618,13 +613,13 @@ class Post(models.Model):
         return []
 
     @classmethod
-    def last_likes(self):
+    def last_likes(cls):
         pl = r_server.lrange(settings.LAST_LIKES, 0, 30)
         return pl[:30]
 
     @classmethod
-    def user_stream_latest(self, user_id, pid=0):
-        ROW_IN_PAGE = 20
+    def user_stream_latest(cls, user_id, pid=0):
+        row_per_page = 20
         # user_stream = "ustream_%d" % (user_id)
         if not user_id:
             return []
@@ -643,12 +638,12 @@ class Post(models.Model):
             for dup in dups:
                 r_server.lrem(user_stream, dup)
 
-            return pl[:ROW_IN_PAGE]
+            return pl[:row_per_page]
 
         if pid:
             try:
                 pid_index = pl.index(str(pid))
-                idis = pl[pid_index + 1: pid_index + ROW_IN_PAGE]
+                idis = pl[pid_index + 1: pid_index + row_per_page]
                 return idis
             except:
                 return []
@@ -665,7 +660,8 @@ class Bills2(models.Model):
         (UNCOMPLETED, 'Uncompleted'),
     )
 
-    status = models.IntegerField(blank=True, null=True, default=0, choices=STATUS_CHOICES)
+    status = models.IntegerField(blank=True, null=True, default=0,
+                                 choices=STATUS_CHOICES)
     amount = models.IntegerField(blank=True, null=True)
     trans_id = models.CharField(max_length=250, blank=True, null=True)
 
@@ -757,7 +753,8 @@ class Stream(models.Model):
             Post.add_to_user_stream(post=post, user_id=user.id)
 
             # Get the users follow owner of post
-            followers = Follow.objects.filter(following=user).values_list('follower_id', flat=True)
+            followers = Follow.objects.filter(following=user)\
+                .values_list('follower_id', flat=True)
             # print followers
             for follower_id in followers:
                 # print follower
@@ -785,8 +782,8 @@ class Likes(models.Model):
     def delete(self, *args, **kwargs):
         from user_profile.models import Profile
 
-        user_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(self.user.id))
-        r_server.lrem(user_last_likes, self.post.id)
+        u_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(self.user.id))
+        r_server.lrem(u_last_likes, self.post.id)
 
         Post.objects.filter(pk=self.post.id).update(cnt_like=F('cnt_like') - 1)
 
@@ -815,15 +812,15 @@ class Likes(models.Model):
         r_server.ltrim(settings.LAST_LIKES, 0, 1000)
 
         # Store user_last_likes
-        user_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(like.user.id))
-        if not r_server.exists(user_last_likes):
+        u_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(like.user.id))
+        if not r_server.exists(u_last_likes):
             likes = Likes.objects.values_list('post_id', flat=True)\
                 .filter(user_id=like.user.id).order_by('-id')[:1000]
-            r_server.rpush(user_last_likes, *likes)
+            r_server.rpush(u_last_likes, *likes)
         else:
-            r_server.lrem(user_last_likes, post.id)
-            r_server.lpush(user_last_likes, post.id)
-            r_server.ltrim(user_last_likes, 0, 1000)
+            r_server.lrem(u_last_likes, post.id)
+            r_server.lpush(u_last_likes, post.id)
+            r_server.ltrim(u_last_likes, 0, 1000)
 
         Profile.after_like(user_id=post.user_id)
 
@@ -932,7 +929,7 @@ class Notif(models.Model):
     )
 
     post = models.ForeignKey(Post)
-    #sender = models.ForeignKey(User, related_name="sender")
+    # sender = models.ForeignKey(User, related_name="sender")
     user = models.ForeignKey(User, related_name="user_id")
     text = models.CharField(max_length=500)
     seen = models.BooleanField(default=False)
@@ -968,7 +965,7 @@ class Comments(models.Model):
         lt_date = datetime.now() - timedelta(days=how_many_days)
         lt_timestamp = mktime(lt_date.timetuple())
         timestamp = mktime(date.timetuple())
-        #print timestamp, older_timestamp
+        # print timestamp, older_timestamp
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
@@ -1058,7 +1055,7 @@ class Block(models.Model):
     blocked = models.ForeignKey(User, related_name='blocked')
 
     @classmethod
-    def block_user(self, user_id, blocked_id):
+    def block_user(cls, user_id, blocked_id):
         if user_id == blocked_id:
             return False
 
@@ -1070,7 +1067,7 @@ class Block(models.Model):
         return True
 
     @classmethod
-    def unblock_user(self, user_id, blocked_id):
+    def unblock_user(cls, user_id, blocked_id):
         if user_id == blocked_id:
             return False
         Block.objects.filter(user_id=user_id, blocked_id=blocked_id).delete()
