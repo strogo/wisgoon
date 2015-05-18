@@ -311,7 +311,7 @@ class Post(models.Model):
 
         from user_profile.models import Profile
         Profile.objects.filter(user_id=self.user_id)\
-            .update(cnt_post=F('cnt_post') - 1)
+            .update(cnt_post=F('cnt_post') - 1, score=F('score') - (10 * self.cnt_like))
 
         super(Post, self).delete(*args, **kwargs)
 
