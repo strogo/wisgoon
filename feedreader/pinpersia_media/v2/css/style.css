@@ -60,7 +60,9 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 .pabo20{padding-bottom: 20px !important;}
 .pabo50{padding-bottom: 50px !important;}
 .pabo80{padding-bottom: 80px !important;}
-
+/******** margin *********/
+.mato50{margin-top: 50px !important;}
+.mabo50{margin-bottom: 50px !important;}
 
 /***************navbar*****/
 #top-userinfo {
@@ -74,15 +76,14 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 	padding: 0px;
 }
 .navbar-default{
-	/*background-color: #244e71;*/
-	background-color: #244e71;
+	background-color: #434a54;
 	min-height: 70px;
 }
 .top-search{
 	height: 40px;
 	width: 350px;
 	border-radius: 30px;
-	background-color: #476282;
+	background-color: #4c535c;
 	margin: 15px 0;
 	box-shadow: 0 1px #5e656f;
 }
@@ -110,7 +111,7 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 
 }
 .send-photo{
-	background-color: #0e385b;
+	background-color: #282e38;
 	width: 150px;
 	height: 70px;
 	text-align: center;
@@ -350,7 +351,7 @@ a, a:link, a:hover, a:visited {
 /********** footer **********/
 
 #footer{
-	background-color: #244e71;
+	background-color: #434a54;
 	border-top: 1px solid #666c74;
 	font-size: 10px;
 	position: fixed;
@@ -538,7 +539,7 @@ a, a:link, a:hover, a:visited {
 }
 .post-detail .post .post-content img {
 	padding: 10px;
-	/*border-radius: 30px 30px 0 0;*/
+	border-radius: 25px 25px 0 0;
 	/*width:100%;*/
 	max-width: 100%;
 	/*height: 100%; */
@@ -876,7 +877,7 @@ a, a:link, a:hover, a:visited {
 	box-shadow: 0 2px #e2e4e7;
 }
 .footer-detail .content h4{
-	color: #244e71;
+	color: #434a54;
 	text-align: right;
 	padding: 10px 0;
 }
@@ -977,7 +978,7 @@ a, a:link, a:hover, a:visited {
 	background-color: transparent;
 }
 .send-dropdown {
-	background-color: #244e71;
+	background-color: #4c535c;
 	border: medium none;
 	border-radius: 0;
 	box-shadow: none;
@@ -992,7 +993,7 @@ a, a:link, a:hover, a:visited {
 	display: table;
 }
 .send-border-bottom {
-	border-bottom: 1px solid #0e385b;
+	border-bottom: 1px solid #282e38;
 }
 .friends-dropdown {
 	background-color: #f0f2f5;
@@ -1015,6 +1016,7 @@ a, a:link, a:hover, a:visited {
 /***********end send photo ******/
 
 .nav-avatar{
+	border-radius: 40px 40px 40px 0;
 	width: 41px;
 }
 
@@ -1106,7 +1108,7 @@ a.img-move{
 
 .nav-i>a:hover, .nav-i>li>a:focus{
 	color: #333;
-	background-color: #244e71;
+	background-color: #434a54;
 }
 
 .navbar-default-items ul li{
@@ -1296,7 +1298,7 @@ a.img-move{
 	padding: 10px;
 }
 .topuser-item .topuser-name a{
-	color: #244e71;
+	color: #434a54;
 	font-weight: bold;
 }
 .topuser-item .topuser-thumb{
@@ -1325,7 +1327,7 @@ a.img-move{
 	color: #777;
 }
 .topuser-item .count{
-	color: #244e71;
+	color: #434a54;
 	font-weight: bold;
 	margin-right: 10px;
 }
@@ -1377,4 +1379,64 @@ div.comment div div.row:hover .del-comment{
 #comment_load_more > div{
 	height: 25px;
 	display: block;
+}
+.tabliq{
+	border-radius: 10px;
+	margin-top: 20px;
+	background: #fff;
+	text-align: center;
+	padding-top: 5px;
+}
+.category-title{
+	background: rgb(67, 74, 84); 
+	color: rgb(255, 255, 255);
+	margin-top: 20px;
+}
+.category-title h1 strong{
+	color:#d39e00;
+}
+.category-title > a{
+	margin: 18px 10px; 
+	display: inline-block; 
+	font-size: 18px; 
+	padding: 11px; 
+	color: rgb(255, 255, 255);
+	float:left;
+}
+.user-stat{
+	border: 1px solid #ddd;
+	border-top: 0;
+}
+.table {
+	margin-bottom: 0;
+}
+.user-friend .feed-item{
+	width: initial;
+	overflow: hidden;
+}
+.user-friend .feed-item .user-username{
+	padding: 10px;
+}
+.user-friend .feed-item .follow-btn{
+	border-radius: 0;
+	display: block;
+}
+.user-friend .feed-item .user-friend-stat{
+	margin-bottom: 5px;
+}
+.user-friend .feed-item .user-friend-stat .user-pincount,
+.user-friend .feed-item .user-friend-stat .user-score{
+	color: #888;
+	padding: 0 10px;
+	text-align: right;
+}
+.user-friend .feed-item .user-friend-stat > div:hover{
+	background: #eee;
+}
+.user-friend .feed-item .user-friend-stat strong{
+	color: #000;
+}
+.share{
+	max-height: 26px;
+	overflow: hidden;
 }
