@@ -7,7 +7,7 @@
 <head>
 	<title>{{SITE_NAME_FA}} {% block title%}{% endblock%}</title>
 	<meta name="keywords" content="social, image, sharing" />
-	<meta name="description" content="{%block description%}what is going on, social image sharing{%endblock%}" />
+	<meta name="description" content="{%block description%}{{SITE_DESC}}{%endblock%}" />
 	{% block nextpost%}{%endblock%}
 	{% block prevpost%}{%endblock%}
 {% comment %}
@@ -109,7 +109,7 @@
 					
 					{%block pin-ex-nav%}{%endblock pin-ex-nav%}
 
-					<li><g:plusone href="http://www.wisgoon.com/"></g:plusone></li>
+					<li><g:plusone href="{{SITE_URL}}"></g:plusone></li>
 					
 				</ul>
 			</div>

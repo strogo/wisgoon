@@ -88,4 +88,5 @@ MEDIA_PREFIX = 'http://media.wisgoon.com'
 ENABLE_CACHING = True
 SITE_NAME_FA = 'ویسگون'
 SITE_NAME_EN = 'wisgoon'
+SITE_URL_NAME = 'wisgoon.com'
 SITE_DESC = 'what is going on, social image sharing'

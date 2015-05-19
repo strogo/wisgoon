@@ -99,4 +99,5 @@ HAYSTACK_CONNECTIONS = {
 }
 SITE_NAME_FA = 'امشام'
 SITE_NAME_EN = 'emsham'
+SITE_URL_NAME = 'emsham.com'
 SITE_DESC = 'what is going on, social image sharing'
