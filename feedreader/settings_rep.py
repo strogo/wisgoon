@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from settings_local import *
 # from django.db import connections
 
@@ -76,3 +77,6 @@ HAYSTACK_CONNECTIONS = {
         # 'URL': 'http://127.0.0.1:8983/solr/mysite',
     },
 }
+SITE_NAME_FA = 'ویسگون'
+SITE_NAME_EN = 'wisgoon'
+SITE_DESC = 'what is going on, social image sharing'

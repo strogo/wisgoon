@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from settings_local import *
 # from django.db import connections
 
@@ -76,3 +77,6 @@ SITE_URL = 'http://www.wisgoon.com'
 MEDIA_PREFIX = 'http://media.wisgoon.com'
 
 ENABLE_CACHING = True
+SITE_NAME_FA = 'ویسگون'
+SITE_NAME_EN = 'wisgoon'
+SITE_DESC = 'what is going on, social image sharing'
