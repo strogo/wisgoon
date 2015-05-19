@@ -83,7 +83,7 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 	height: 40px;
 	width: 350px;
 	border-radius: 30px;
-	background-color: #4c535c;
+	background-color: #476282;
 	margin: 15px 0;
 	box-shadow: 0 1px #5e656f;
 }
@@ -351,7 +351,7 @@ a, a:link, a:hover, a:visited {
 /********** footer **********/
 
 #footer{
-	background-color: #434a54;
+	background-color: #244e71;
 	border-top: 1px solid #666c74;
 	font-size: 10px;
 	position: fixed;
@@ -1108,7 +1108,7 @@ a.img-move{
 
 .nav-i>a:hover, .nav-i>li>a:focus{
 	color: #333;
-	background-color: #434a54;
+	background-color:  #244e71;
 }
 
 .navbar-default-items ul li{
