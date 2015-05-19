@@ -5,9 +5,9 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 
-TEMPLATE_DIRS = (
-    os.path.join(SITE_ROOT, 'templates_pinpersia'),
-)
+# TEMPLATE_DIRS = (
+#     os.path.join(SITE_ROOT, 'templates_pinpersia'),
+# )
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'pinpersia_media')
 
 IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT, 'image_cache')
