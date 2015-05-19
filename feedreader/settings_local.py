@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 # from easy_thumbnails.conf import Settings as thumbnail_settings
 
@@ -55,7 +56,7 @@ SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-MEDIA_ROOT = os.path.join(SITE_ROOT, 'pinpersia_media')
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(SITE_ROOT, 'statics')
 STATIC_URL = '/static/'
@@ -128,7 +129,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'pin.context_processors.media_prefix',
     'pin.context_processors.is_police',
     'pin.context_processors.subs',
-    # 'pin.context_processors.is_mobile',
+    'pin.context_processors.global_values',
 )
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -320,3 +321,7 @@ MERCHANT_ID = '54c4fa4c-3458-409d-8f01-47d55bef37d4'
 ENABLE_CACHING = False
 
 CORS_URLS_REGEX = r'^/pin/api/.*$'
+
+SITE_NAME_FA = 'ویسگون'
+SITE_NAME_EN = 'wisgoon'
+SITE_DESC = 'what is going on, social image sharing'
