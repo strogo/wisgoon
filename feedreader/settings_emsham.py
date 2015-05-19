@@ -5,9 +5,9 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 
-TEMPLATE_DIRS = (
-    os.path.join(SITE_ROOT, 'templates_emsham'),
-)
+# TEMPLATE_DIRS = (
+#     os.path.join(SITE_ROOT, 'templates_emsham'),
+# )
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'emsham_media')
 
 IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT, 'image_cache')
