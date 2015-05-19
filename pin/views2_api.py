@@ -23,7 +23,7 @@ from django.conf import settings
 from sorl.thumbnail import get_thumbnail
 
 from pin.tools import AuthCache, get_user_ip, get_fixed_ads, log_act
-from pin.models import Post, Category, Likes, Follow, Comments, Block
+from pin.models import Post, Category, Likes, Follow, Comments, Block, Packages
 from pin.model_mongo import Notif, Ads
 
 from haystack.query import SearchQuerySet
@@ -1074,38 +1074,113 @@ def unblock_user(request, user_id):
     return HttpResponse('1')
 
 
-# @cache_page(60 * 15)
+PACKS = {
+    "wisgoon_pack_1": {
+        "price": 650,
+        "wis": 500
+    },
+    "wisgoon_pack_2": {
+        "price": 1300,
+        "wis": 1000
+    },
+    "wisgoon_pack_3": {
+        "price": 2600,
+        "wis": 2000
+    },
+    "wisgoon_pack_4": {
+        "price": 6500,
+        "wis": 5000
+    },
+}
+
+
+@cache_page(60 * 15)
 def packages(request):
     # return HttpResponse("hello")
+
+    data = {
+        "objects": []
+    }
+
+    for p in Packages.objects.all():
+        o = {
+            "name": p.name,
+            "title": p.title,
+            "price": p.price,
+            "wis": p.wis,
+            "icon": str(p.icon.url)
+        }
+        data['objects'].append(o)
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data, content_type="application/json")
+
+
+def promotion_prices(request):
     data = {
         "objects": [
             {
-                "name": "package1",
-                "wis": 500,
-                "price": 650
+                "price": 500,
+                "visitors": 1000
             },
             {
-                "name": "package2",
-                "wis": 1000,
-                "price": 1300
+                "price": 1000,
+                "visitors": 3000
             },
             {
-                "name": "package3",
-                "wis": 2000,
-                "price": 2600
+                "price": 2000,
+                "visitors": 6000,
             },
             {
-                "name": "package4",
-                "wis": 5000,
-                "price": 6500
-            },
-            {
-                "name": "package5",
-                "wis": 10000,
-                "price": 13000
-            },
+                "price": 5000,
+                "visitors": 15000
+            }
         ]
+    }
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data, content_type="application/json")
+
+
+def user_credit(request):
+    user = None
+    token = request.GET.get('token', '')
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token:
+        raise Http404
+
+    data = {
+        "credit": user.profile.credit,
     }
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
+
+
+def inc_credit(request):
+    user = None
+    token = request.GET.get('token', '')
+    price = int(request.GET.get('price', ''))
+    baz_token = request.GET.get("baz_token", "")
+    package_name = request.GET.get("package", "")
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token or not baz_token or not package_name:
+        raise Http404
+
+    if package_name not in PACKS:
+        raise Http404
+
+    print PACKS[package_name]['price'], price
+
+    if PACKS[package_name]['price'] == price:
+        p = user.profile
+        p.credit = p.credit + PACKS[package_name]['wis']
+        p.save()
+        return HttpResponse("success full", content_type="text/html")
+    else:
+        return HttpResponse("price error")
+
+    return HttpResponse("failed", content_type="text/html")

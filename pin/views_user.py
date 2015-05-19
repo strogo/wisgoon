@@ -259,14 +259,14 @@ def comment_score(request, comment_id, score):
 def delete(request, item_id):
     try:
         post = Post.objects.get(pk=item_id)
-        if request.user.is_superuser or post.user == request.user:
-            post.delete()
-            if request.is_ajax():
-                return HttpResponse('1')
-            return HttpResponseRedirect('/')
-
     except Post.DoesNotExist:
         return HttpResponse('0')
+
+    if request.user.is_superuser or post.user == request.user:
+        post.delete()
+        if request.is_ajax():
+            return HttpResponse('1')
+        return HttpResponseRedirect('/')
 
     return HttpResponse('0')
 

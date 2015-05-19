@@ -166,6 +166,10 @@ urlpatterns += patterns('',
 
     url(r'^api/packages/$', 'pin.views2_api.packages', name="api-packages"),
 
+    url(r'^api/promotion/prices/$', 'pin.views2_api.promotion_prices', name="api-promotion-prices"),
+    url(r'^api/user/credit/$', 'pin.views2_api.user_credit', name="api-user-credit"),
+    url(r'^api/user/inc/credit/$', 'pin.views2_api.inc_credit', name="api-user-inc-credit"),
+
     url(r'^api/password/reset_mobile/$',
                     'pin.views2_api.password_reset',
                     name='api_password_reset'),
