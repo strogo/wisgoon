@@ -76,7 +76,7 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 	padding: 0px;
 }
 .navbar-default{
-	background-color: #434a54;
+	background-color: #244e71;
 	min-height: 70px;
 }
 .top-search{
@@ -111,7 +111,7 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 
 }
 .send-photo{
-	background-color: #282e38;
+	background-color: #0e385b;
 	width: 150px;
 	height: 70px;
 	text-align: center;
@@ -978,7 +978,7 @@ a, a:link, a:hover, a:visited {
 	background-color: transparent;
 }
 .send-dropdown {
-	background-color: #4c535c;
+	background-color: #244e71;
 	border: medium none;
 	border-radius: 0;
 	box-shadow: none;
@@ -993,7 +993,7 @@ a, a:link, a:hover, a:visited {
 	display: table;
 }
 .send-border-bottom {
-	border-bottom: 1px solid #282e38;
+	border-bottom: 1px solid #0e385b;
 }
 .friends-dropdown {
 	background-color: #f0f2f5;
@@ -1298,7 +1298,7 @@ a.img-move{
 	padding: 10px;
 }
 .topuser-item .topuser-name a{
-	color: #434a54;
+	color: #244e71;
 	font-weight: bold;
 }
 .topuser-item .topuser-thumb{
@@ -1327,7 +1327,7 @@ a.img-move{
 	color: #777;
 }
 .topuser-item .count{
-	color: #434a54;
+	color: #244e71;
 	font-weight: bold;
 	margin-right: 10px;
 }
