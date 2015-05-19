@@ -54,7 +54,7 @@ class Ads(Document):
     def get_ad(cls, user_id):
         # print "viewer id:", user_id
         try:
-            ad = Ads.objects.filter(users__nin=[user_id], ended=False)[:1]
+            ad = Ads.objects.only('ads_type', 'id', 'post').filter(users__nin=[user_id], ended=False)[:1]
             if ad:
                 ad = ad[0]
                 if ad.cnt_view >= cls.MAX_TYPES[ad.ads_type]:
