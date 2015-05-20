@@ -5,13 +5,19 @@ from django.contrib import admin
 from haystack.admin import SearchModelAdmin
 
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
-    Official, SubCategory, Packages, Bills2 as Bill
+    Official, SubCategory, Packages, Bills2 as Bill, Ad
 from pin.tasks import send_notif
 from user_profile.models import Profile
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'title')
+
+
+class AdAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'ended', 'get_cnt_view', 'post', 'ads_type', 'start', 'end',)
+
+    raw_id_fields = ("post", "user")
 
 
 class PackagesAdmin(admin.ModelAdmin):
@@ -232,3 +238,4 @@ admin.site.register(Official, OfficialAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(Packages, PackagesAdmin)
 admin.site.register(Bill, BillAdmin)
+admin.site.register(Ad, AdAdmin)
