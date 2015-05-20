@@ -15,9 +15,15 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 
 class AdAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'ended', 'get_cnt_view', 'post', 'ads_type', 'start', 'end',)
+    list_display = ('id', 'user_id', 'ended', 'get_cnt_view', 'post_id', 'ads_type', 'start', 'end',)
 
     raw_id_fields = ("post", "user")
+
+    def post_id(self, instance):
+        return instance.post_id
+
+    def user_id(self, instance):
+        return instance.user_id
 
 
 class PackagesAdmin(admin.ModelAdmin):
