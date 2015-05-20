@@ -1448,7 +1448,7 @@ div.comment div div.row:hover .del-comment{
 	overflow: hidden;
 }
 .nav a:focus {
-	background-color: #fff !important;
+	background-color: transparent !important;
 }
 .select2-container{
 	direction: rtl !important;
@@ -1466,4 +1466,29 @@ div.comment div div.row:hover .del-comment{
 }
 .nav .open > a, .nav .open > a:hover, .nav .open > a:focus{
 	background-color: transparent;
+}
+
+.alert_show {
+	border-radius: 0;
+	bottom: 65px;
+	color: #fff;
+	margin: 0;
+	min-width: 250px;
+	padding: 10px;
+	position: fixed;
+	right: 30px;
+	text-align: center;
+}
+.alert_show.error {
+	background-color: #f04124;
+	border: 1px solid #990000;
+}
+.alert_show.success {
+	background-color: #43ac6a;
+	border: 1px solid #3a945b;
+}
+.alert_show.info {
+	background-color: #a0d3e8;
+	border: 1px solid #74bfdd;
+	color: #4f4f4f;
 }

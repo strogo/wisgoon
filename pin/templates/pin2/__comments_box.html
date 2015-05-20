@@ -2,7 +2,7 @@
 {% load humanize %}
 
 {% for comment in comments %}
-<div class="row" id="comment_row_{{comment.id}}">
+<div class="row comment-item" id="comment_row_{{comment.id}}">
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="others-comment">
 
@@ -19,8 +19,10 @@
 					</a> : 
 				</div>
 				<div style="padding:10px;">{{comment.comment|urlizetrunc:100}}</div>
-				{% if request.user.is_superuser %}
-				<a class="del-comment" rel="{{comment.id}}" href="{% url "pin-comment-delete" comment.id %}"><i class="glyphicon glyphicon-remove"></i></a>
+				{% if request.user.is_superuser or request.user == post.user %}
+				<a class="del-comment" rel="{{comment.id}}" href="{% url 'pin-comment-delete' comment.id %}">
+					<i class="glyphicon glyphicon-remove"></i>
+				</a>
 				{% endif %}
 			</div>
 
