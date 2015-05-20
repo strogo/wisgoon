@@ -21,14 +21,15 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
 from pin.context_processors import is_police
-from pin.models import Post, Stream, Follow, Ad,\
+from pin.models import Post, Stream, Follow, Ad, Log,\
     Report, Comments, Comments_score, Category, Bills2 as Bills
 
 from pin.model_mongo import Notif, UserMeta
 
 import pin_image
 from pin.tools import get_request_timestamp, create_filename,\
-    get_user_ip, get_request_pid, check_block, get_user_meta
+    get_user_ip, get_request_pid, check_block, get_user_meta,\
+    post_after_delete
 
 from suds.client import Client
 
@@ -263,6 +264,7 @@ def delete(request, item_id):
         return HttpResponse('0')
 
     if request.user.is_superuser or post.user == request.user:
+        post_after_delete(post=post, user=request.user)
         post.delete()
         if request.is_ajax():
             return HttpResponse('1')
