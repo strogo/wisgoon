@@ -1154,6 +1154,23 @@ class InstaAccount(models.Model):
     lc = models.DateTimeField(auto_now_add=True, default=datetime.now())
 
 
+class Log(models.Model):
+    TYPES = (
+        (1, "post"),
+        (2, "comment"),
+    )
+    ACTIONS = (
+        (1, "delete"),
+    )
+
+    user = models.ForeignKey(User)
+    action = models.IntegerField(default=1, choices=ACTIONS)
+    object_id = models.IntegerField(default=0)
+    content_type = models.IntegerField(default=1, choices=TYPES)
+
+    post_image = models.CharField(max_length=250, blank=True, null=True)
+
+
 class Official(models.Model):
     user = models.ForeignKey(User)
     mode = models.IntegerField(choices=((1, 'sp1'), (2, 'sp2')), default='1')
