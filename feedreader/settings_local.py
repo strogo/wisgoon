@@ -6,6 +6,7 @@ DEBUG = True
 THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
+STATIC_VERSION = '0.0.3'
 SITE_ROOT = os.path.dirname(__file__)
 ADMINS = (
     ('bugs', 'bugs@wisgoon.com'),
@@ -63,7 +64,7 @@ STATIC_URL = '/static/'
 
 THUMBNAIL_PREFIX = 'cache2/'
 THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.cached_db_kvstore.KVStore'
-#THUMBNAIL_QUALITY = 90
+# THUMBNAIL_QUALITY = 90
 
 IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT, 'image_cache')
 
@@ -76,7 +77,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    #os.path.join(STATIC_ROOT,'stat'),
+    # os.path.join(STATIC_ROOT,'stat'),
 )
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -99,8 +100,8 @@ MIDDLEWARE_CLASSES = (
     'johnny.middleware.QueryCacheMiddleware',
     'pin.middleware.UrlRedirectMiddleware',
     'pin.middleware.XsSharing',
-    #'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-    #'django_cprofile_middleware.middleware.ProfilerMiddleware',
+    # 'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    # 'django_cprofile_middleware.middleware.ProfilerMiddleware',
 )
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 ROOT_URLCONF = 'feedreader.urls_local'
@@ -119,8 +120,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_backends',
     'social_auth.context_processors.social_auth_by_type_backends',
     'social_auth.context_processors.social_auth_login_redirect',
-    #'rss.context_processors.c_url',
-    #'rss.context_processors.node_url',
+    # 'rss.context_processors.c_url',
+    # 'rss.context_processors.node_url',
     'pin.context_processors.pin_form',
     'pin.context_processors.pin_categories',
     'pin.context_processors.is_super_user',
@@ -130,6 +131,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'pin.context_processors.is_police',
     'pin.context_processors.subs',
     'pin.context_processors.global_values',
+    'pin.context_processors.static_version',
 )
 INSTALLED_APPS = (
     'django.contrib.auth',
