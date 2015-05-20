@@ -1186,8 +1186,12 @@ def inc_credit(request):
     return HttpResponse("failed", content_type="text/html")
 
 
+@csrf_exempt
 def save_as_ads(request, post_id):
-    p = Post.objects.get(id=int(post_id))
+    try:
+        Post.objects.get(id=int(post_id))
+    except Exception, Post.DoesNotExist:
+        return HttpResponse("error in post id", status=404, content_type="text/html")
 
     user = None
     token = request.GET.get('token', '')
@@ -1196,31 +1200,64 @@ def save_as_ads(request, post_id):
         user = AuthCache.user_from_token(token=token)
 
     if not user or not token:
-        raise Http404
+        return HttpResponseForbidden("token error")
 
     profile = user.profile
 
     if request.method == "POST":
-        mode = int(request.POST.get('mode'))
-        mode_price = Ads.TYPE_PRICES[mode]
+        mode = int(request.POST.get('mode', 0))
+        if mode == 0:
+            return HttpResponseForbidden("mode error")
+        mode_price = Ad.TYPE_PRICES[mode]
         if profile.credit >= int(mode_price):
             try:
-                ad = Ads.objects.get(post=int(post_id), ended=False)
-                messages.error(request, u"این پست قبلا آگهی شده است")
-            except Exception, Ads.DoesNotExist:
-                Ads.objects.create(user=request.user.id,
-                                   post=int(post_id),
-                                   ads_type=mode,
-                                   start=datetime.datetime.now())
+                Ad.objects.get(post=int(post_id), ended=False)
+                return HttpResponseForbidden(u"این پست قبلا آگهی شده است")
+            except Exception, Ad.DoesNotExist:
+                Ad.objects.create(user_id=request.user.id,
+                                  post_id=int(post_id),
+                                  ads_type=mode,
+                                  start=datetime.datetime.now())
                 profile.credit = int(profile.credit) - int(mode_price)
                 profile.save()
-                messages.success(request, u'مطلب مورد نظر شما با موفقیت آگهی شد.')
+                return HttpResponse(u'مطلب مورد نظر شما با موفقیت آگهی شد.')
 
         else:
-            messages.error(request, u"موجودی حساب شما برای آگهی دادن کافی نیست.")
+            return HttpResponseForbidden(u"موجودی حساب شما برای آگهی دادن کافی نیست.")
 
-    return render(request, 'pin2/save_as_ads.html', {
-        'post': p,
-        'user_meta': profile,
-        'Ads': Ads,
-    })
+    return HttpResponseForbidden("error in data")
+
+
+def promoted(request):
+    data = {}
+
+    user = None
+    token = request.GET.get('token', '')
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user:
+        return HttpResponseForbidden("error in token")
+
+    objects = []
+
+    for ad in Ad.objects.filter(user=user):
+        o = {}
+        o['post'] = get_objects_list([ad.post], cur_user_id=user.id, thumb_size=250)
+        o['cnt_view'] = ad.cnt_view
+        o['user'] = ad.user.id
+        o['ended'] = ad.ended
+        o['cnt_view'] = ad.cnt_view
+        o['ads_type'] = ad.ads_type
+        o['start'] = str(ad.start)
+        o['end'] = str(ad.end)
+
+        objects.append(o)
+
+    data['objects'] = objects
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data, content_type="application/json")
+
+    # return HttpResponse(json.dumps(data))
