@@ -1240,9 +1240,21 @@ def promoted(request):
     if not user:
         return HttpResponseForbidden("error in token")
 
+    row_per_page = 20
+    offset = int(request.GET.get('offset', 0))
+
+    # Norton utility :D
+    nu = "/pin/api/promoted/post/?token=%s&offset=%s" % (token, offset + row_per_page)
+
+    data = {
+        "meta": {
+            "next": nu
+        }
+    }
+
     objects = []
 
-    for ad in Ad.objects.filter(user=user):
+    for ad in Ad.objects.filter(user=user).order_by("-id")[offset:offset + 1 * row_per_page]:
         o = {}
         o['post'] = get_objects_list([ad.post], cur_user_id=user.id, thumb_size=250)
         o['cnt_view'] = ad.cnt_view
