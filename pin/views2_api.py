@@ -23,8 +23,8 @@ from django.conf import settings
 from sorl.thumbnail import get_thumbnail
 
 from pin.tools import AuthCache, get_user_ip, get_fixed_ads, log_act
-from pin.models import Post, Category, Likes, Follow, Comments, Block, Packages
-from pin.model_mongo import Notif, Ads
+from pin.models import Post, Category, Likes, Follow, Comments, Block, Packages, Ad
+from pin.model_mongo import Notif
 
 from haystack.query import SearchQuerySet
 
@@ -371,9 +371,9 @@ def post(request):
         else:
             viewer_id = str(get_user_ip(request))
 
-        ad = Ads.get_ad(user_id=viewer_id)
+        ad = Ad.get_ad(user_id=viewer_id)
         if ad:
-            hot_post = int(ad.post)
+            hot_post = int(ad.post_id)
         if hot_post:
             exists_posts = False
             for ppp in posts:
@@ -1184,3 +1184,43 @@ def inc_credit(request):
         return HttpResponse("price error")
 
     return HttpResponse("failed", content_type="text/html")
+
+
+def save_as_ads(request, post_id):
+    p = Post.objects.get(id=int(post_id))
+
+    user = None
+    token = request.GET.get('token', '')
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token:
+        raise Http404
+
+    profile = user.profile
+
+    if request.method == "POST":
+        mode = int(request.POST.get('mode'))
+        mode_price = Ads.TYPE_PRICES[mode]
+        if profile.credit >= int(mode_price):
+            try:
+                ad = Ads.objects.get(post=int(post_id), ended=False)
+                messages.error(request, u"این پست قبلا آگهی شده است")
+            except Exception, Ads.DoesNotExist:
+                Ads.objects.create(user=request.user.id,
+                                   post=int(post_id),
+                                   ads_type=mode,
+                                   start=datetime.datetime.now())
+                profile.credit = int(profile.credit) - int(mode_price)
+                profile.save()
+                messages.success(request, u'مطلب مورد نظر شما با موفقیت آگهی شد.')
+
+        else:
+            messages.error(request, u"موجودی حساب شما برای آگهی دادن کافی نیست.")
+
+    return render(request, 'pin2/save_as_ads.html', {
+        'post': p,
+        'user_meta': profile,
+        'Ads': Ads,
+    })

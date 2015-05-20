@@ -492,7 +492,7 @@ def latest_redis(request):
     if ad:
         try:
             if ad.post not in pl:
-                pl.append(str(ad.post))
+                pl.append(str(ad.post.id))
         except:
             pass
 

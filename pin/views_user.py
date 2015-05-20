@@ -21,10 +21,10 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
 from pin.context_processors import is_police
-from pin.models import Post, Stream, Follow,\
+from pin.models import Post, Stream, Follow, Ad,\
     Report, Comments, Comments_score, Category, Bills2 as Bills
 
-from pin.model_mongo import Notif, UserMeta, Ads
+from pin.model_mongo import Notif, UserMeta
 
 import pin_image
 from pin.tools import get_request_timestamp, create_filename,\
@@ -642,7 +642,6 @@ def verify_payment(request, bill_id):
 
 @login_required
 def save_as_ads(request, post_id):
-    raise Http404
     # for i in range(0, 50000):
     #     Ads.objects(user=55).update(add_to_set__users=i, upsert=True)
     p = Post.objects.get(id=post_id)
@@ -652,25 +651,27 @@ def save_as_ads(request, post_id):
 
     if request.method == "POST":
         mode = int(request.POST.get('mode'))
-        mode_price = Ads.TYPE_PRICES[mode]
+        mode_price = Ad.TYPE_PRICES[mode]
         if profile.credit >= int(mode_price):
             try:
-                ad = Ads.objects.get(post=int(post_id), ended=False)
+                Ad.objects.get(post=int(post_id), ended=False)
                 messages.error(request, u"این پست قبلا آگهی شده است")
-            except Exception, Ads.DoesNotExist:
-                Ads.objects.create(user=request.user.id,
-                                   post=int(post_id),
-                                   ads_type=mode,
-                                   start=datetime.datetime.now())
+            except Exception, Ad.DoesNotExist:
+                Ad.objects.create(user_id=request.user.id,
+                                  post_id=int(post_id),
+                                  ads_type=mode,
+                                  start=datetime.datetime.now())
                 profile.credit = int(profile.credit) - int(mode_price)
                 profile.save()
-                messages.success(request, u'مطلب مورد نظر شما با موفقیت آگهی شد.')
+                messages.success(request,
+                                 u'مطلب مورد نظر شما با موفقیت آگهی شد.')
 
         else:
-            messages.error(request, u"موجودی حساب شما برای آگهی دادن کافی نیست.")
+            messages.error(request,
+                           u"موجودی حساب شما برای آگهی دادن کافی نیست.")
 
     return render(request, 'pin2/save_as_ads.html', {
         'post': p,
         'user_meta': profile,
-        'Ads': Ads,
+        'Ads': Ad,
     })
