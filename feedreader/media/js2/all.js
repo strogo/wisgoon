@@ -184,7 +184,7 @@ $('body').on('click', '.del-comment', function(event) {
         var res = $.parseJSON(d);
         if (res.status == true) {
             alert_show(res.message, 'success');
-            t.parents('.row').slideUp('fast');
+            t.parents('.comment-item').slideUp('fast');
         }else{
             alert_show('خطا در حذف دیدگاه', 'error');
         }
