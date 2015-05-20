@@ -1174,7 +1174,7 @@ class Log(models.Model):
 
     @classmethod
     def post_delete(cls, post, actor):
-        Log.objects.create(user=actor,
+        Log.objects.create(user_id=actor.id,
                            action=1,
                            object_id=post.id,
                            content_type=1,
