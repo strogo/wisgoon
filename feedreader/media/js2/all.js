@@ -1,3 +1,10 @@
+function alert_show(msg, status) {
+    $('body').append('<div class="alert alert_show ' + status + '">' + msg + '</div>');
+    setTimeout(function() {
+        $('.alert_show').slideUp();
+    }, 3000);
+}
+
 var feedobj = $('#feed');
 var loadingobj ;
 var a_url = a_url || "";
@@ -166,6 +173,30 @@ function live_content(){
     });
 }
 
+$('body').on('click', '.del-comment', function(event) {
+    event.preventDefault();
+    var t = $(this);
+    var href = t.attr('href');
+    $.ajax({
+        url: href,
+    })
+    .done(function(d) {
+        var res = $.parseJSON(d);
+        if (res.status == true) {
+            alert_show(res.message, 'success');
+            t.parents('.row').slideUp('fast');
+        }else{
+            alert_show('خطا در حذف دیدگاه', 'error');
+        }
+    })
+    .fail(function() {
+        alert_show('خطا در حذف دیدگاه', 'error');
+    })
+    .always(function(d) {
+    });
+
+    
+});
 
 
 live_content();

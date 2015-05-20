@@ -19,8 +19,10 @@
 					</a> : 
 				</div>
 				<div style="padding:10px;">{{comment.comment|urlizetrunc:100}}</div>
-				{% if request.user.is_superuser %}
-				<a class="del-comment" rel="{{comment.id}}" href="{% url "pin-comment-delete" comment.id %}"><i class="glyphicon glyphicon-remove"></i></a>
+				{% if request.user.is_superuser or request.user == post.user %}
+				<a class="del-comment" rel="{{comment.id}}" href="{% url 'pin-comment-delete' comment.id %}">
+					<i class="glyphicon glyphicon-remove"></i>
+				</a>
 				{% endif %}
 			</div>
 

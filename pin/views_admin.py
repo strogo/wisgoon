@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 import redis
 
@@ -73,7 +74,7 @@ def ads_fixed_admin(request):
         post = int(request.POST.get('post'))
         ttl = int(request.POST.get('ttl'))
         if ttl and post:
-            n_ttl = (ttl+1)*86400
+            n_ttl = (ttl + 1) * 86400
             c_name = "fixed_post"
             c_name_p = "fixed_post_%d" % post
             FixedAds.objects.create(post=post, ttl=n_ttl)
@@ -154,11 +155,13 @@ def comment_delete(request, id):
 
     if not request.user.is_superuser:
         if comment.user != request.user:
-            return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
+            if comment.post.user != request.user:
+                return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
 
     comment.delete()
     if request.is_ajax():
-        return HttpResponse(1)
+        data = {'status': True, 'message': 'دیدگاه حذف شد'}
+        return HttpResponse(json.dumps(data))
 
     return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
 
