@@ -15,7 +15,8 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 
 class AdAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user_id', 'ended', 'get_cnt_view', 'post_id', 'ads_type', 'start', 'end',)
+    list_display = ('id', 'user_id', 'ended', 'get_cnt_view', 'post_id',
+                    'ads_type', 'start', 'end',)
 
     raw_id_fields = ("post", "user")
 
@@ -31,7 +32,8 @@ class PackagesAdmin(admin.ModelAdmin):
 
 
 class BillAdmin(admin.ModelAdmin):
-    list_display = ('id', 'status', 'amount', 'trans_id', 'user', 'create_date')
+    list_display = ('id', 'status', 'amount', 'trans_id', 'user',
+                    'create_date')
     list_filter = ('status',)
     raw_id_fields = ("user",)
 
@@ -47,7 +49,8 @@ class InstaAccountAdmin(admin.ModelAdmin):
 
 
 class PinAdmin(admin.ModelAdmin):
-    list_filter = ('status', 'report', 'is_ads', 'show_in_default', 'category__title')
+    list_filter = ('status', 'report', 'is_ads', 'show_in_default',
+                   'category__title')
     search_fields = ['id', 'user__id']
 
     raw_id_fields = ("user",)
@@ -57,7 +60,6 @@ class PinAdmin(admin.ModelAdmin):
                     'show_in_default', 'report')
 
     actions = ['make_approve',
-               #'make_approve_go_default',
                'really_delete_selected',
                'delete_all_user_posts',
                'fault',
@@ -71,7 +73,7 @@ class PinAdmin(admin.ModelAdmin):
     def make_approve(self, request, queryset):
         for obj in queryset:
             obj.approve()
-            
+
     make_approve.short_description = u"تایید مطلب"
 
     def no_problem(self, request, queryset):
@@ -107,13 +109,9 @@ class PinAdmin(admin.ModelAdmin):
     def fault(self, request, queryset):
         for obj in queryset:
             Post.objects.filter(pk=obj.id).update(status=Post.FAULT, report=0)
-            #print obj.status
-            #obj.status = Post.FAULT
-            #print obj.status
-            #obj.save()
 
             user = obj.user
-            user.profile.fault = user.profile.fault+1
+            user.profile.fault = user.profile.fault + 1
             user.profile.save()
 
         for obj in queryset:
