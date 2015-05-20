@@ -1164,11 +1164,22 @@ class Log(models.Model):
     )
 
     user = models.ForeignKey(User)
-    action = models.IntegerField(default=1, choices=ACTIONS)
-    object_id = models.IntegerField(default=0)
-    content_type = models.IntegerField(default=1, choices=TYPES)
+    action = models.IntegerField(default=1, choices=ACTIONS, db_index=True)
+    object_id = models.IntegerField(default=0, db_index=True)
+    content_type = models.IntegerField(default=1, choices=TYPES, db_index=True)
+    owner = models.IntegerField(default=0)
 
     post_image = models.CharField(max_length=250, blank=True, null=True)
+
+    @classmethod
+    def post_delete(cls, post, actor):
+        Log.objects.create(user=actor,
+                           action=1,
+                           object_id=post.id,
+                           content_type=1,
+                           owner=post.user.id,
+                           post_image=post.get_image_236()["url"],
+                           )
 
 
 class Official(models.Model):
