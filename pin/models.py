@@ -42,6 +42,80 @@ class SubCategory(models.Model):
         return self.title
 
 
+class Ad(models.Model):
+    TYPE_1000_USER = 1
+    TYPE_3000_USER = 2
+    TYPE_6000_USER = 3
+    TYPE_15000_USER = 4
+
+    MAX_TYPES = {
+        TYPE_1000_USER: 1000,
+        TYPE_3000_USER: 3000,
+        TYPE_6000_USER: 6000,
+        TYPE_15000_USER: 15000,
+    }
+
+    TYPE_PRICES = {
+        TYPE_1000_USER: 500,
+        TYPE_3000_USER: 1000,
+        TYPE_6000_USER: 2000,
+        TYPE_15000_USER: 5000,
+    }
+
+    user = models.ForeignKey(User)
+    ended = models.BooleanField(default=False, db_index=True)
+    cnt_view = models.IntegerField(default=0)
+    post = models.ForeignKey("Post")
+    ads_type = models.IntegerField(default=TYPE_1000_USER)
+    start = models.DateTimeField(auto_now_add=True, auto_now=True)
+    end = models.DateTimeField(blank=True, null=True)
+
+    def get_cnt_view(self):
+        cache_key = "ad_%d" % self.id
+        return cache.get(cache_key)
+
+    @classmethod
+    def get_ad(cls, user_id):
+
+        if cache.get("no_ad"):
+            # print "no ad"
+            return None
+
+        if not Ad.objects.filter(ended=False).exists():
+            # print "ad not exists"
+            cache.set("no_ad", True, 86400)
+            return None
+
+        for ad in Ad.objects.filter(ended=False):
+            # print "objects"
+            cache_key = "ad_%d" % ad.id
+
+            if not cache.get(cache_key):
+                cache.set(cache_key, 0, 86400)
+
+            if r_server.sismember("ad_%d" % ad.id, user_id):
+                # print "is member"
+                return None
+            else:
+                r_server.sadd("ad_%d" % ad.id, user_id)
+
+            if ad.get_cnt_view() >= cls.MAX_TYPES[ad.ads_type]:
+                Ad.objects.filter(id=ad.id)\
+                    .update(cnt_view=ad.get_cnt_view(),
+                            end=datetime.now(),
+                            ended=True)
+            else:
+                cache.incr(cache_key)
+
+            return ad
+
+        return None
+
+    def save(self, *args, **kwargs):
+        cache.delete("no_ad")
+        super(Ad, self).save(*args, **kwargs)
+
+
 class Category(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/category/')
