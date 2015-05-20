@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404, render
 from django.conf import settings
 from user_profile.models import Profile
 
-from pin.models import Post, Comments
+from pin.models import Post, Comments, Log
 from pin.context_processors import is_police
 from model_mongo import Ads, FixedAds, UserMeta, PendingPosts
 
@@ -39,9 +39,11 @@ def ads_admin(request):
 
 def pending_post(request, post, status=1):
     if is_police(request, flat=True):
+        post_obj = Post.objects.get(id=post)
         if status == 1:
             if not PendingPosts.objects(post=post).count():
                 PendingPosts.objects.create(user=request.user.id, post=post)
+                Log.post_pending(post=post_obj, actor=request.user)
         else:
             PendingPosts.objects(user=request.user.id, post=post).delete()
 
