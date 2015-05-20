@@ -194,8 +194,7 @@ $('body').on('click', '.del-comment', function(event) {
     })
     .always(function(d) {
     });
-
-    
+    return false;
 });
 
 
