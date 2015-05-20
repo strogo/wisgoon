@@ -145,6 +145,11 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
         o['like_with_user'] = False
         o['status'] = p.status
 
+        try:
+            o['is_ad'] = p.is_ad
+        except:
+            o['is_ad'] = False
+
         o['permalink'] = "/pin/%d/" % p.id
         o['resource_uri'] = "/pin/api/post/%d/" % p.id
 
@@ -385,6 +390,7 @@ def post(request):
                 hot_post = Post.objects\
                     .only(*Post.NEED_KEYS2)\
                     .filter(id=hot_post)
+                hot_post.is_ad = True
                 posts = list(hot_post) + list(posts)
 
         if not hot_post:
