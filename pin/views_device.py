@@ -18,7 +18,8 @@ from pin.models import Post, Likes, Comments, Comments_score,\
     Follow, Stream
 
 from pin.forms import PinDirectForm, PinDeviceUpdate
-from pin.tools import create_filename, AuthCache, check_block, log_act
+from pin.tools import create_filename, AuthCache, check_block,\
+    log_act, post_after_delete
 from pin.context_processors import is_police
 
 MEDIA_ROOT = settings.MEDIA_ROOT
@@ -189,6 +190,7 @@ def post_delete(request, item_id):
     try:
         post = Post.objects.get(pk=item_id)
         if request.user.is_superuser or post.user == user:
+            post_after_delete(post=post, user=request.user)
             post.delete()
             return HttpResponse('1')
     except Post.DoesNotExist:

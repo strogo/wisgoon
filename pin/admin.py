@@ -5,13 +5,22 @@ from django.contrib import admin
 from haystack.admin import SearchModelAdmin
 
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
-    Official, SubCategory, Packages, Bills2 as Bill, Ad
+    Official, SubCategory, Packages, Bills2 as Bill, Ad, Log
 from pin.tasks import send_notif
 from user_profile.models import Profile
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'title')
+
+
+class LogAdmin(admin.ModelAdmin):
+    list_display = ('user', 'action', 'object_id', 'content_type',
+                    'owner', '_get_thumbnail', )
+
+    def _get_thumbnail(self, obj):
+        return u'<a href="%s" target="_blank"><img style="max-height:100px;" src="%s" /></a>' % (obj.post_image, obj.post_image)
+    _get_thumbnail.allow_tags = True
 
 
 class AdAdmin(admin.ModelAdmin):
@@ -243,3 +252,4 @@ admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(Packages, PackagesAdmin)
 admin.site.register(Bill, BillAdmin)
 admin.site.register(Ad, AdAdmin)
+admin.site.register(Log, LogAdmin)
