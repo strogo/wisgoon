@@ -642,6 +642,7 @@ def verify_payment(request, bill_id):
 
 @login_required
 def save_as_ads(request, post_id):
+    raise Http404
     # for i in range(0, 50000):
     #     Ads.objects(user=55).update(add_to_set__users=i, upsert=True)
     p = Post.objects.get(id=post_id)
