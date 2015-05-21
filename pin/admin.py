@@ -15,12 +15,19 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 
 class LogAdmin(admin.ModelAdmin):
-    list_display = ('user', 'action', 'object_id', 'content_type',
-                    'owner', '_get_thumbnail', )
+    list_display = ('id', 'user', 'owner', 'user_id', 'action', 'object_id',
+                    'content_type', '_get_thumbnail', 'create_time')
+
+    list_filter = ('action',)
+
+    raw_id_fields = ("user",)
 
     def _get_thumbnail(self, obj):
         return u'<a href="%s" target="_blank"><img style="max-height:100px;" src="%s" /></a>' % (obj.post_image, obj.post_image)
     _get_thumbnail.allow_tags = True
+
+    def user_id(self, instance):
+        return instance.user_id
 
 
 class AdAdmin(admin.ModelAdmin):

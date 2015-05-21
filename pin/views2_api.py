@@ -731,7 +731,7 @@ def comments(request):
 
     objects_list = []
 
-    cq = Comments.objects.filter(object_pk_id=object_pk, is_public=True)\
+    cq = Comments.objects.filter(object_pk_id=object_pk)\
         .order_by('-id')[offset:offset + limit]
     for com in cq:
         o = {}

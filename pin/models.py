@@ -1161,6 +1161,7 @@ class Log(models.Model):
     )
     ACTIONS = (
         (1, "delete"),
+        (2, "pending"),
     )
 
     user = models.ForeignKey(User)
@@ -1169,12 +1170,24 @@ class Log(models.Model):
     content_type = models.IntegerField(default=1, choices=TYPES, db_index=True)
     owner = models.IntegerField(default=0)
 
+    create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
+
     post_image = models.CharField(max_length=250, blank=True, null=True)
 
     @classmethod
     def post_delete(cls, post, actor):
-        Log.objects.create(user=actor,
+        Log.objects.create(user_id=actor.id,
                            action=1,
+                           object_id=post.id,
+                           content_type=1,
+                           owner=post.user.id,
+                           post_image=post.get_image_236()["url"],
+                           )
+
+    @classmethod
+    def post_pending(cls, post, actor):
+        Log.objects.create(user=actor,
+                           action=2,
                            object_id=post.id,
                            content_type=1,
                            owner=post.user.id,
