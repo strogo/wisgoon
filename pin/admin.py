@@ -16,7 +16,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 class LogAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'owner', 'user_id', 'action', 'object_id',
-                    'content_type', '_get_thumbnail')
+                    'content_type', '_get_thumbnail', 'create_time')
 
     list_filter = ('action',)
 

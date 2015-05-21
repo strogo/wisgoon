@@ -1170,6 +1170,8 @@ class Log(models.Model):
     content_type = models.IntegerField(default=1, choices=TYPES, db_index=True)
     owner = models.IntegerField(default=0)
 
+    create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
+
     post_image = models.CharField(max_length=250, blank=True, null=True)
 
     @classmethod
