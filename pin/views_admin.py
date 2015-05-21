@@ -156,8 +156,8 @@ def comment_delete(request, id):
     post_id = comment.object_pk.id
 
     if not request.user.is_superuser:
-        if comment.user != request.user:
-            if comment.post.user != request.user:
+        if comment.user.id != request.user.id:
+            if comment.object_pk.user.id != request.user.id:
                 return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
 
     comment.delete()
