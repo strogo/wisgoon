@@ -95,7 +95,7 @@ class Ad(models.Model):
 
             if r_server.sismember("ad_%d" % ad.id, user_id):
                 # print "is member"
-                return None
+                continue
             else:
                 r_server.sadd("ad_%d" % ad.id, user_id)
 
