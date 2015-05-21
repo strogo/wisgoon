@@ -18,7 +18,6 @@
 						{{comment.user.username}}
 					</a> : 
 				</div>
-				{{comment.id}}
 				<div style="padding:10px;">{{comment.comment|urlizetrunc:100}}</div>
 				{% if request.user.is_superuser or request.user.id == comment.object_pk.user.id or request.user.id == comment.user.id %}
 				<a class="del-comment" rel="{{comment.id}}" href="{% url 'pin-comment-delete' comment.id %}">
