@@ -72,7 +72,11 @@ class Ad(models.Model):
 
     def get_cnt_view(self):
         cache_key = "ad_%d" % self.id
-        return cache.get(cache_key)
+        v = cache.get(cache_key)
+        if v:
+            return v
+        else:
+            return self.cnt_view
 
     @classmethod
     def get_ad(cls, user_id):
