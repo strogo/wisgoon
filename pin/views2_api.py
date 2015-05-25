@@ -1220,7 +1220,7 @@ def save_as_ads(request, post_id):
                 Ad.objects.get(post=int(post_id), ended=False)
                 return HttpResponseForbidden(u"این پست قبلا آگهی شده است")
             except Exception, Ad.DoesNotExist:
-                Ad.objects.create(user_id=request.user.id,
+                Ad.objects.create(user_id=user.id,
                                   post_id=int(post_id),
                                   ads_type=mode,
                                   start=datetime.datetime.now())
