@@ -1263,7 +1263,7 @@ def promoted(request):
     for ad in Ad.objects.filter(user=user).order_by("-id")[offset:offset + 1 * row_per_page]:
         o = {}
         o['post'] = get_objects_list([ad.post], cur_user_id=user.id, thumb_size=250)
-        o['cnt_view'] = ad.cnt_view
+        o['cnt_view'] = ad.get_cnt_view()
         o['user'] = ad.user.id
         o['ended'] = ad.ended
         o['cnt_view'] = ad.cnt_view
