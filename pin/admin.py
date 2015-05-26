@@ -32,7 +32,7 @@ class LogAdmin(admin.ModelAdmin):
 
 class AdAdmin(admin.ModelAdmin):
     list_display = ('id', 'user_id', 'ended', 'get_cnt_view', 'post_id',
-                    'ads_type', 'start', 'end',)
+                    'ads_type', 'start', 'end', 'get_owner')
 
     raw_id_fields = ("post", "user")
 
@@ -41,6 +41,14 @@ class AdAdmin(admin.ModelAdmin):
 
     def user_id(self, instance):
         return instance.user_id
+
+    def get_owner(self, instance):
+        if instance.owner:
+            return instance.owner
+        
+        instance.owner = instance.post.user
+        instance.save()
+        return instance.owner
 
 
 class PackagesAdmin(admin.ModelAdmin):

@@ -63,6 +63,7 @@ class Ad(models.Model):
     }
 
     user = models.ForeignKey(User)
+    owner = models.ForeignKey(User, related_name='owner', blank=True, null=True)
     ended = models.BooleanField(default=False, db_index=True)
     cnt_view = models.IntegerField(default=0)
     post = models.ForeignKey("Post")
@@ -117,6 +118,7 @@ class Ad(models.Model):
 
     def save(self, *args, **kwargs):
         cache.delete("no_ad")
+        self.owner = self.post.user
         super(Ad, self).save(*args, **kwargs)
 
 
