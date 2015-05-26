@@ -118,6 +118,7 @@ class Ad(models.Model):
 
     def save(self, *args, **kwargs):
         cache.delete("no_ad")
+        self.owner = self.post.user
         super(Ad, self).save(*args, **kwargs)
 
 
