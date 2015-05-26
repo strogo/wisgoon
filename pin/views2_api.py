@@ -19,6 +19,7 @@ from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_page
 from django.conf import settings
+from django.db.models import Q
 
 from sorl.thumbnail import get_thumbnail
 
@@ -1260,7 +1261,7 @@ def promoted(request):
 
     objects = []
 
-    for ad in Ad.objects.filter(owner=user).order_by("-id")[offset:offset + 1 * row_per_page]:
+    for ad in Ad.objects.filter(Q(owner=user) | Q(user=user)).order_by("-id")[offset:offset + 1 * row_per_page]:
         o = {}
         o['post'] = get_objects_list([ad.post], cur_user_id=user.id, thumb_size=250)
         o['cnt_view'] = ad.get_cnt_view()
