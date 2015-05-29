@@ -1269,6 +1269,7 @@ def promoted(request):
         o['cnt_view'] = ad.get_cnt_view()
         o['user'] = ad.user.id
         o['ended'] = ad.ended
+        o['owner'] = ad.owner.id
         # o['cnt_view'] = ad.cnt_view
         o['ads_type'] = ad.ads_type
         o['start'] = str(ad.start)
