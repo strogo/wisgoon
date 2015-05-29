@@ -396,13 +396,13 @@ def post(request):
                     h.is_ad = True
                 posts = list(hot_post) + list(posts)
 
-        if not hot_post:
-            fixed_post = get_fixed_ads()
-            if fixed_post:
-                fixed_post = Post.objects\
-                    .only(*Post.NEED_KEYS2)\
-                    .filter(id=fixed_post)
-                posts = list(fixed_post) + list(posts)
+        # if not hot_post:
+        #     fixed_post = get_fixed_ads()
+        #     if fixed_post:
+        #         fixed_post = Post.objects\
+        #             .only(*Post.NEED_KEYS2)\
+        #             .filter(id=fixed_post)
+        #         posts = list(fixed_post) + list(posts)
 
     thumb_size = int(request.GET.get('thumb_size', "236"))
 
