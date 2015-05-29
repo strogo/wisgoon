@@ -148,7 +148,8 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
 
         try:
             o['is_ad'] = p.is_ad
-        except:
+        except Exception, e:
+            # print str(e)
             o['is_ad'] = False
 
         o['permalink'] = "/pin/%d/" % p.id
@@ -391,7 +392,8 @@ def post(request):
                 hot_post = Post.objects\
                     .only(*Post.NEED_KEYS2)\
                     .filter(id=hot_post)
-                hot_post.is_ad = True
+                for h in hot_post:
+                    h.is_ad = True
                 posts = list(hot_post) + list(posts)
 
         if not hot_post:
