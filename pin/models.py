@@ -80,7 +80,7 @@ class Ad(models.Model):
             return self.cnt_view
 
     @classmethod
-    def get_ad(cls, user_id):
+    def get_ad(cls, user_id, high_level=False):
 
         if cache.get("no_ad"):
             # print "no ad"
@@ -91,7 +91,12 @@ class Ad(models.Model):
             cache.set("no_ad", True, 86400)
             return None
 
-        for ad in Ad.objects.filter(ended=False):
+        if high_level:
+            query_set = Ad.objects.filter(ended=False)
+        else:
+            query_set = Ad.objects.filter(ended=False, ads_type=cls.TYPE_15000_USER)
+
+        for ad in query_set:
             # print "objects"
             cache_key = "ad_%d" % ad.id
 
