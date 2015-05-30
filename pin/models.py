@@ -739,10 +739,12 @@ class Post(models.Model):
 class Bills2(models.Model):
     COMPLETED = 1
     UNCOMPLETED = 0
+    FAKERY = 2
 
     STATUS_CHOICES = (
         (COMPLETED, 'Completed'),
         (UNCOMPLETED, 'Uncompleted'),
+        (FAKERY, 'Fakery'),
     )
 
     status = models.IntegerField(blank=True, null=True, default=0,

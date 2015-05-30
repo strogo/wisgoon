@@ -1228,6 +1228,14 @@ def inc_credit(request):
     print PACKS[package_name]['price'], price
 
     if PACKS[package_name]['price'] == price:
+        if Bills2.objects.filter(trans_id=str(baz_token)).count():
+            b = Bills2()
+            b.trans_id = str(baz_token)
+            b.user = user
+            b.amount = PACKS[package_name]['price']
+            b.status = Bills2.FAKERY
+            b.save()
+            return HttpResponse("price error")
         p = user.profile
         p.credit = p.credit + PACKS[package_name]['wis']
         p.save()
