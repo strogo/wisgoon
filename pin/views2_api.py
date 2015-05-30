@@ -24,7 +24,7 @@ from django.db.models import Q
 from sorl.thumbnail import get_thumbnail
 
 from pin.tools import AuthCache, get_user_ip, get_fixed_ads, log_act
-from pin.models import Post, Category, Likes, Follow, Comments, Block, Packages, Ad
+from pin.models import Post, Category, Likes, Follow, Comments, Block, Packages, Ad, Bills2
 from pin.model_mongo import Notif
 
 from haystack.query import SearchQuerySet
@@ -1206,6 +1206,16 @@ def inc_credit(request):
         p = user.profile
         p.credit = p.credit + PACKS[package_name]['wis']
         p.save()
+        try:
+            b = Bills2()
+            b.trans_id = str(baz_token)
+            b.user = user
+            b.amount = PACKS[package_name]['price']
+            b.status = Bills2.COMPLETED
+            b.save()
+        except Exception, e:
+            print str(e)
+
         return HttpResponse("success full", content_type="text/html")
     else:
         return HttpResponse("price error")
