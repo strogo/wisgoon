@@ -37,6 +37,8 @@ class AdAdmin(admin.ModelAdmin):
     raw_id_fields = ("post", "user")
     list_filter = ("ads_type", "ended")
 
+    date_hierarchy = 'start'
+
     def post_id(self, instance):
         return instance.post_id
 
