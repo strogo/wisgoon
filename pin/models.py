@@ -92,9 +92,9 @@ class Ad(models.Model):
             return None
 
         if high_level:
-            query_set = Ad.objects.filter(ended=False)
-        else:
             query_set = Ad.objects.filter(ended=False, ads_type=cls.TYPE_15000_USER)
+        else:
+            query_set = Ad.objects.filter(ended=False)
 
         for ad in query_set:
             # print "objects"
