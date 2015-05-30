@@ -4,7 +4,7 @@ from celery import Celery
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'feedreader.settings')
 
-app = Celery('tasks', broker='amqp://guest@79.127.125.146//')
+app = Celery('tasks', broker='amqp://guest@79.127.125.104//')
 app.conf.CELERY_TASK_SERIALIZER = 'json'
 app.conf.CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 
