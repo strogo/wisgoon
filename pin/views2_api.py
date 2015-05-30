@@ -602,6 +602,7 @@ def notif(request):
             cur_p.text = ""
             cur_p.cnt_comment = 0
             cur_p.post_image = p.post_image
+            cur_p.post_image['url'] = cur_p.post_image['url'].split("media/")[1]
             cur_p.image = p.post_image['url']
             cur_p.user_id = p.owner
             cur_p.cnt_like = 0
