@@ -35,6 +35,7 @@ class AdAdmin(admin.ModelAdmin):
                     'ads_type', 'start', 'end', 'get_owner')
 
     raw_id_fields = ("post", "user")
+    list_filter = ("ads_type", "ended")
 
     def post_id(self, instance):
         return instance.post_id
