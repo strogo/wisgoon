@@ -574,7 +574,7 @@ def notif(request):
     c_data = cache.get(notif_cache_key)
     if c_data:
         print "get from cache", notif_cache_key
-        return HttpResponse(c_data, content_type="application/json")
+        # return HttpResponse(c_data, content_type="application/json")
 
     data['meta'] = {'limit': 10,
                     'next': '',
@@ -591,12 +591,29 @@ def notif(request):
     # Notif.objects.filter(owner=1).order_by('-date')[100:].delete()
 
     for p in notifs:
-        try:
-            cur_p = Post.objects.only(*Post.NEED_KEYS2).get(id=p.post)
-            if cur_p.is_pending():
+        if p.type == 4:
+
+            class CurP:
+                def get_image_500(self, api):
+                    return self.post_image
+
+            cur_p = CurP()
+            cur_p.id = p.post
+            cur_p.text = ""
+            cur_p.cnt_comment = 0
+            cur_p.post_image = p.post_image
+            cur_p.image = p.post_image['url']
+            cur_p.user_id = p.owner
+            cur_p.cnt_like = 0
+            cur_p.timestamp = 0
+            cur_p.category_id = 1
+        else:
+            try:
+                cur_p = Post.objects.only(*Post.NEED_KEYS2).get(id=p.post)
+                if cur_p.is_pending():
+                    continue
+            except Post.DoesNotExist:
                 continue
-        except Post.DoesNotExist:
-            continue
         o = {}
         o['id'] = cur_p.id
         o['text'] = cur_p.text

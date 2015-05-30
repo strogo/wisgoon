@@ -509,13 +509,17 @@ def show_notify(request):
         try:
             anl['po'] = Post.objects.only('image').get(pk=n.post)
         except Post.DoesNotExist:
-            continue
+            if n.type == 4:
+                anl['po'] = n.post_image
+            else:
+                continue
         anl['id'] = n.post
         anl['type'] = n.type
         anl['actors'] = n.actors
 
         nl.append(anl)
     return render(request, 'pin2/notify.html', {'notif': nl})
+
 
 @login_required
 def notif_user(request):

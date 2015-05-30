@@ -187,6 +187,7 @@ class Notif(Document):
     last_actor = IntField()
     date = DateTimeField()
     post = IntField()
+    post_image = StringField()
     owner = IntField()
     actors = ListField()
     type = IntField()
