@@ -369,7 +369,7 @@ def post(request):
         #         .filter(id=2416517)
         #     if hot_post:
         #         posts = list(hot_post) + list(posts)
-    if not user_id and not category_id and not popular:
+    if not user_id:
         hot_post = None
 
         if cur_user:
