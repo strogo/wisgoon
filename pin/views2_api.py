@@ -147,7 +147,7 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
         o['status'] = p.status
 
         try:
-            o['is_ad'] = p.is_ad
+            o['is_ad'] = False  # p.is_ad
         except Exception, e:
             # print str(e)
             o['is_ad'] = False
@@ -369,7 +369,7 @@ def post(request):
         #         .filter(id=2416517)
         #     if hot_post:
         #         posts = list(hot_post) + list(posts)
-    if not user_id and not before:
+    if not user_id and not category_id and not popular:
         hot_post = None
 
         if cur_user:
@@ -395,31 +395,6 @@ def post(request):
                     h.is_ad = True
                 posts = list(hot_post) + list(posts)
 
-    if not user_id and before:
-        hot_post = None
-
-        if cur_user:
-            viewer_id = str(cur_user)
-        else:
-            viewer_id = str(get_user_ip(request))
-
-        ad = Ad.get_ad(user_id=viewer_id, high_level=True)
-        if ad:
-            hot_post = int(ad.post_id)
-        if hot_post:
-            exists_posts = False
-            for ppp in posts:
-                if ppp.id == hot_post:
-                    exists_posts = True
-                    break
-
-            if not exists_posts:
-                hot_post = Post.objects\
-                    .only(*Post.NEED_KEYS2)\
-                    .filter(id=hot_post)
-                for h in hot_post:
-                    h.is_ad = True
-                posts = list(hot_post) + list(posts)
 
         # if not hot_post:
         #     fixed_post = get_fixed_ads()
