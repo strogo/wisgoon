@@ -42,6 +42,10 @@ CARBON_PORT = 2003
 
 def post_after_delete(post, user):
     Log.post_delete(post=post, actor=user)
+    from tasks import send_notif_bar
+
+    send_notif_bar(user=post.user.id, type=4, post=post.id,
+                   actor=11253, post_image=post.get_image_236())
 
 
 def log_act(path,):
