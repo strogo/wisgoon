@@ -40,8 +40,8 @@ CARBON_PORT = 2003
 #         .update(cnt_like=F('cnt_like')-1, score=F('score')-10)
 
 
-def post_after_delete(post, user):
-    Log.post_delete(post=post, actor=user)
+def post_after_delete(post, user, ip_address=None):
+    Log.post_delete(post=post, actor=userm, ip_address=ip_address)
     from tasks import send_notif_bar
 
     send_notif_bar(user=post.user.id, type=4, post=post.id,
