@@ -1063,6 +1063,10 @@ class Comments(models.Model):
     def save(self, *args, **kwargs):
         for bw in self.BAD_WORDS:
             if bw in self.comment:
+                Log.bad_comment(post=self.object_pk,
+                                actor=self.user,
+                                ip_address=self.ip_address,
+                                text=self.comment)
                 return
 
         if not self.pk:
@@ -1182,6 +1186,7 @@ class Log(models.Model):
     ACTIONS = (
         (1, "delete"),
         (2, "pending"),
+        (3, "bad comment")
     )
 
     user = models.ForeignKey(User)
@@ -1190,6 +1195,7 @@ class Log(models.Model):
     content_type = models.IntegerField(default=1, choices=TYPES, db_index=True)
     ip_address = models.IPAddressField(default='127.0.0.1', db_index=True)
     owner = models.IntegerField(default=0)
+    text = models.TextField(default="", blank=True, null=True)
 
     create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
 
@@ -1204,6 +1210,17 @@ class Log(models.Model):
                            owner=post.user.id,
                            post_image=post.get_image_236()["url"],
                            ip_address=ip_address,
+                           )
+
+    @classmethod
+    def bad_comment(cls, post, actor, ip_address="127.0.0.1", text=""):
+        Log.objects.create(user_id=actor.id,
+                           action=3,
+                           object_id=post.id,
+                           content_type=2,
+                           owner=post.user.id,
+                           ip_address=ip_address,
+                           text=text,
                            )
 
     @classmethod
