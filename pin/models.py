@@ -1039,6 +1039,10 @@ class App_data(models.Model):
 
 
 class Comments(models.Model):
+    BAD_WORDS = [
+        u"شارژ",
+        u"ایرانس",
+    ]
     comment = models.TextField()
     submit_date = models.DateTimeField(auto_now_add=True)
     ip_address = models.IPAddressField(default='127.0.0.1', db_index=True)
@@ -1057,8 +1061,10 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
-        # if u"شارژ" in self.comment and u"ریاگان" in self.comment :
-        #     return
+        for bw in self.BAD_WORDS:
+            if bw in self.comment:
+                return
+
         if not self.pk:
             Post.objects.filter(pk=self.object_pk.id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
@@ -1182,6 +1188,7 @@ class Log(models.Model):
     action = models.IntegerField(default=1, choices=ACTIONS, db_index=True)
     object_id = models.IntegerField(default=0, db_index=True)
     content_type = models.IntegerField(default=1, choices=TYPES, db_index=True)
+    ip_address = models.IPAddressField(default='127.0.0.1', db_index=True)
     owner = models.IntegerField(default=0)
 
     create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
@@ -1189,7 +1196,7 @@ class Log(models.Model):
     post_image = models.CharField(max_length=250, blank=True, null=True)
 
     @classmethod
-    def post_delete(cls, post, actor):
+    def post_delete(cls, post, actor, ip_address="127.0.0.1"):
         Log.objects.create(user_id=actor.id,
                            action=1,
                            object_id=post.id,
@@ -1199,7 +1206,7 @@ class Log(models.Model):
                            )
 
     @classmethod
-    def post_pending(cls, post, actor):
+    def post_pending(cls, post, actor, ip_address="127.0.0.1"):
         Log.objects.create(user=actor,
                            action=2,
                            object_id=post.id,
