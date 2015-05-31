@@ -119,20 +119,20 @@ class Profile(models.Model):
         return False
 
     def inc_credit(self, amount):
-        Profile.objects.filter(id=self.id)\
-            .update(credit=F('credit') + amount)
-
         CreditLog.objects.create(profile_id=self.id,
                                  mode=CreditLog.INCREMENT,
                                  amount=amount)
 
-    def dec_credit(self, amount):
         Profile.objects.filter(id=self.id)\
-            .update(credit=F('credit') - amount)
+            .update(credit=F('credit') + amount)
 
+    def dec_credit(self, amount):
         CreditLog.objects.create(profile_id=self.id,
                                  mode=CreditLog.DECREMENT,
                                  amount=amount)
+
+        Profile.objects.filter(id=self.id)\
+            .update(credit=F('credit') - amount)
 
     @classmethod
     def after_like(cls, user_id):
