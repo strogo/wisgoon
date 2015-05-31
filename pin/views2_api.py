@@ -22,6 +22,7 @@ from django.conf import settings
 from django.db.models import Q
 
 from sorl.thumbnail import get_thumbnail
+from tastypie.models import ApiKey
 
 from pin.tools import AuthCache, get_user_ip, get_fixed_ads, log_act
 from pin.models import Post, Category, Likes, Follow, Comments, Block, Packages, Ad, Bills2
@@ -43,6 +44,29 @@ class MyEncoder(json.JSONEncoder):
             return str(obj)"""
 
         return json.JSONEncoder.default(self, obj)
+
+
+def check_auth(request):
+    token = request.GET.get('token', '')
+    if not token:
+        return False
+
+    try:
+        # api = ApiKey.objects.get(key=token)
+        # user = api.user
+        user = AuthCache.user_from_token(token)
+        if not user:
+            return False
+        user._ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
+
+        if not user.is_active:
+            return False
+        else:
+            return user
+    except ApiKey.DoesNotExist:
+        return False
+
+    return False
 
 
 def notif_count(request):
@@ -369,7 +393,7 @@ def post(request):
         #         .filter(id=2416517)
         #     if hot_post:
         #         posts = list(hot_post) + list(posts)
-    if not user_id:
+    if not user_id and not category_id:
         hot_post = None
 
         if cur_user:
@@ -946,6 +970,7 @@ def hashtag_top(request):
 
 
 def hashtag(request):
+    log_act("wisgoon.api.post.hashtag.count")
     row_per_page = 20
     cur_user = None
 
@@ -1192,7 +1217,7 @@ def inc_credit(request):
     baz_token = request.GET.get("baz_token", "")
     package_name = request.GET.get("package", "")
     if token:
-        user = AuthCache.user_from_token(token=token)
+        user = check_auth(request)
 
     print user, token, baz_token, package_name
 
@@ -1205,7 +1230,7 @@ def inc_credit(request):
     print PACKS[package_name]['price'], price
 
     if PACKS[package_name]['price'] == price:
-        if Bills2.objects.filter(trans_id=str(baz_token)).count():
+        if Bills2.objects.filter(trans_id=str(baz_token)).count() > 0:
             b = Bills2()
             b.trans_id = str(baz_token)
             b.user = user
@@ -1214,16 +1239,18 @@ def inc_credit(request):
             b.save()
             return HttpResponse("bazzar token error", status=404)
         else:
-            p = user.profile
-            p.credit = p.credit + PACKS[package_name]['wis']
-            p.save()
-
             b = Bills2()
             b.trans_id = str(baz_token)
             b.user = user
             b.amount = PACKS[package_name]['price']
             b.status = Bills2.COMPLETED
             b.save()
+
+            # p = user.profile
+            # p.credit = p.credit + PACKS[package_name]['wis']
+            # p.save()
+            p = user.profile
+            p.inc_credit(amount=PACKS[package_name]['wis'])
 
             return HttpResponse("success full", content_type="text/html")
     else:
@@ -1243,7 +1270,7 @@ def save_as_ads(request, post_id):
     token = request.GET.get('token', '')
 
     if token:
-        user = AuthCache.user_from_token(token=token)
+        user = check_auth(request)
 
     if not user or not token:
         return HttpResponseForbidden("token error")
@@ -1265,12 +1292,14 @@ def save_as_ads(request, post_id):
                 Ad.objects.get(post=int(post_id), ended=False)
                 return HttpResponseForbidden(u"این پست قبلا آگهی شده است")
             except Exception, Ad.DoesNotExist:
+                # p = bill.user.profile
+                profile.dec_credit(amount=int(mode_price))
+                # profile.credit = int(profile.credit) - int(mode_price)
+                # profile.save()
                 Ad.objects.create(user_id=user.id,
                                   post_id=int(post_id),
                                   ads_type=mode,
                                   start=datetime.datetime.now())
-                profile.credit = int(profile.credit) - int(mode_price)
-                profile.save()
                 return HttpResponse(u'مطلب مورد نظر شما با موفقیت آگهی شد.')
 
         else:

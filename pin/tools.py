@@ -40,8 +40,8 @@ CARBON_PORT = 2003
 #         .update(cnt_like=F('cnt_like')-1, score=F('score')-10)
 
 
-def post_after_delete(post, user):
-    Log.post_delete(post=post, actor=user)
+def post_after_delete(post, user, ip_address=None):
+    Log.post_delete(post=post, actor=user, ip_address=ip_address)
     from tasks import send_notif_bar
 
     send_notif_bar(user=post.user.id, type=4, post=post.id,
@@ -154,7 +154,13 @@ def get_request_pid(request):
 
 
 def get_user_ip(request):
-    return request.META.get('REMOTE_ADDR', None)
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR', None)
+    return ip
+    # return request.META.get('REMOTE_ADDR', None)
 
 
 class MyCache(object):

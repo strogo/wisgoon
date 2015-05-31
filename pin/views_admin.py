@@ -14,6 +14,7 @@ from django.conf import settings
 from user_profile.models import Profile
 
 from pin.models import Post, Comments, Log
+from pin.tools import get_user_ip
 from pin.context_processors import is_police
 from model_mongo import Ads, FixedAds, UserMeta, PendingPosts
 
@@ -44,7 +45,10 @@ def pending_post(request, post, status=1):
         if status == 1:
             if not PendingPosts.objects(post=post).count():
                 PendingPosts.objects.create(user=request.user.id, post=post)
-                Log.post_pending(post=post_obj, actor=request.user)
+
+                Log.post_pending(post=post_obj,
+                                 actor=request.user,
+                                 ip_address=get_user_ip(request))
         else:
             PendingPosts.objects(user=request.user.id, post=post).delete()
 

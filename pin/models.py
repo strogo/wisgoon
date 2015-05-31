@@ -83,28 +83,25 @@ class Ad(models.Model):
     def get_ad(cls, user_id, high_level=False):
 
         if cache.get("no_ad"):
-            # print "no ad"
             return None
 
         if not Ad.objects.filter(ended=False).exists():
-            # print "ad not exists"
             cache.set("no_ad", True, 86400)
             return None
 
         if high_level:
-            query_set = Ad.objects.filter(ended=False, ads_type=cls.TYPE_15000_USER)
+            query_set = Ad.objects.filter(ended=False,
+                                          ads_type=cls.TYPE_15000_USER)
         else:
             query_set = Ad.objects.filter(ended=False)
 
         for ad in query_set:
-            # print "objects"
             cache_key = "ad_%d" % ad.id
 
             if not cache.get(cache_key):
-                cache.set(cache_key, 0, 86400)
+                cache.set(cache_key, 0, 86400 * 2)
 
             if r_server.sismember("ad_%d" % ad.id, user_id):
-                # print "is member"
                 continue
             else:
                 r_server.sadd("ad_%d" % ad.id, user_id)
@@ -680,7 +677,7 @@ class Post(models.Model):
             if cache_data:
                 # print "we have cached data", cache_data, cache_name
                 return cache_data
-            pl = r_server.lrange(cat_stream, 0, settings.LIST_LONG)
+            pl = r_server.lrange(cat_stream, 0, -1)
 
         # print pl
         if pid == 0:
@@ -1039,6 +1036,10 @@ class App_data(models.Model):
 
 
 class Comments(models.Model):
+    BAD_WORDS = [
+        u"شارژ",
+        u"ایرانس",
+    ]
     comment = models.TextField()
     submit_date = models.DateTimeField(auto_now_add=True)
     ip_address = models.IPAddressField(default='127.0.0.1', db_index=True)
@@ -1057,8 +1058,14 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
-        # if u"شارژ" in self.comment and u"ریاگان" in self.comment :
-        #     return
+        for bw in self.BAD_WORDS:
+            if bw in self.comment:
+                Log.bad_comment(post=self.object_pk,
+                                actor=self.user,
+                                ip_address=self.ip_address,
+                                text=self.comment)
+                return
+
         if not self.pk:
             Post.objects.filter(pk=self.object_pk.id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
@@ -1176,36 +1183,52 @@ class Log(models.Model):
     ACTIONS = (
         (1, "delete"),
         (2, "pending"),
+        (3, "bad comment")
     )
 
     user = models.ForeignKey(User)
     action = models.IntegerField(default=1, choices=ACTIONS, db_index=True)
     object_id = models.IntegerField(default=0, db_index=True)
     content_type = models.IntegerField(default=1, choices=TYPES, db_index=True)
+    ip_address = models.IPAddressField(default='127.0.0.1', db_index=True)
     owner = models.IntegerField(default=0)
+    text = models.TextField(default="", blank=True, null=True)
 
     create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
 
     post_image = models.CharField(max_length=250, blank=True, null=True)
 
     @classmethod
-    def post_delete(cls, post, actor):
+    def post_delete(cls, post, actor, ip_address="127.0.0.1"):
         Log.objects.create(user_id=actor.id,
                            action=1,
                            object_id=post.id,
                            content_type=1,
                            owner=post.user.id,
                            post_image=post.get_image_236()["url"],
+                           ip_address=ip_address,
                            )
 
     @classmethod
-    def post_pending(cls, post, actor):
+    def bad_comment(cls, post, actor, ip_address="127.0.0.1", text=""):
+        Log.objects.create(user_id=actor.id,
+                           action=3,
+                           object_id=post.id,
+                           content_type=2,
+                           owner=post.user.id,
+                           ip_address=ip_address,
+                           text=text,
+                           )
+
+    @classmethod
+    def post_pending(cls, post, actor, ip_address="127.0.0.1"):
         Log.objects.create(user=actor,
                            action=2,
                            object_id=post.id,
                            content_type=1,
                            owner=post.user.id,
                            post_image=post.get_image_236()["url"],
+                           ip_address=ip_address,
                            )
 
 

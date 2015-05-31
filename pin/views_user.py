@@ -264,7 +264,9 @@ def delete(request, item_id):
         return HttpResponse('0')
 
     if request.user.is_superuser or post.user == request.user:
-        post_after_delete(post=post, user=request.user)
+        post_after_delete(post=post,
+                          user=request.user,
+                          ip_address=get_user_ip(request))
         post.delete()
         if request.is_ajax():
             return HttpResponse('1')
@@ -663,12 +665,15 @@ def save_as_ads(request, post_id):
                 Ad.objects.get(post=int(post_id), ended=False)
                 messages.error(request, u"این پست قبلا آگهی شده است")
             except Exception, Ad.DoesNotExist:
+                profile.dec_credit(amount=int(mode_price))
+
                 Ad.objects.create(user_id=request.user.id,
                                   post_id=int(post_id),
                                   ads_type=mode,
                                   start=datetime.datetime.now())
-                profile.credit = int(profile.credit) - int(mode_price)
-                profile.save()
+
+                # profile.credit = int(profile.credit) - int(mode_price)
+                # profile.save()
                 messages.success(request,
                                  u'مطلب مورد نظر شما با موفقیت آگهی شد.')
 
