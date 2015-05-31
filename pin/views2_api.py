@@ -393,7 +393,7 @@ def post(request):
         #         .filter(id=2416517)
         #     if hot_post:
         #         posts = list(hot_post) + list(posts)
-    if not user_id:
+    if not user_id and not category_id:
         hot_post = None
 
         if cur_user:
@@ -970,6 +970,7 @@ def hashtag_top(request):
 
 
 def hashtag(request):
+    log_act("wisgoon.api.post.hashtag.count")
     row_per_page = 20
     cur_user = None
 

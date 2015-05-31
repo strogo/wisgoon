@@ -83,28 +83,25 @@ class Ad(models.Model):
     def get_ad(cls, user_id, high_level=False):
 
         if cache.get("no_ad"):
-            # print "no ad"
             return None
 
         if not Ad.objects.filter(ended=False).exists():
-            # print "ad not exists"
             cache.set("no_ad", True, 86400)
             return None
 
         if high_level:
-            query_set = Ad.objects.filter(ended=False, ads_type=cls.TYPE_15000_USER)
+            query_set = Ad.objects.filter(ended=False,
+                                          ads_type=cls.TYPE_15000_USER)
         else:
             query_set = Ad.objects.filter(ended=False)
 
         for ad in query_set:
-            # print "objects"
             cache_key = "ad_%d" % ad.id
 
             if not cache.get(cache_key):
-                cache.set(cache_key, 0, 86400)
+                cache.set(cache_key, 0, 86400 * 2)
 
             if r_server.sismember("ad_%d" % ad.id, user_id):
-                # print "is member"
                 continue
             else:
                 r_server.sadd("ad_%d" % ad.id, user_id)
