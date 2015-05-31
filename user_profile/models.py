@@ -119,7 +119,7 @@ class Profile(models.Model):
         return False
 
     def inc_credit(self, amount):
-        CreditLog.objects.create(profile_id=self.id,
+        CreditLog.objects.create(prof_id=self.id,
                                  mode=CreditLog.INCREMENT,
                                  amount=amount)
 
@@ -127,7 +127,7 @@ class Profile(models.Model):
             .update(credit=F('credit') + amount)
 
     def dec_credit(self, amount):
-        CreditLog.objects.create(profile_id=self.id,
+        CreditLog.objects.create(prof_id=self.id,
                                  mode=CreditLog.DECREMENT,
                                  amount=amount)
 
@@ -181,7 +181,8 @@ class CreditLog(models.Model):
         (DECREMENT, 'Decrement'),
     )
 
-    profile = models.ForeignKey(Profile, related_name="user_credit_log")
+    # profile = models.ForeignKey(Profile, related_name="user_credit_log")
+    prof_id = models.IntegerField(default=0)
     mode = models.IntegerField(blank=True, null=True, default=1,
                                choices=MODE_CHOICES)
     amount = models.IntegerField(default=0)
