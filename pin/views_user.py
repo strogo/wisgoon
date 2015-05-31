@@ -264,7 +264,7 @@ def delete(request, item_id):
         return HttpResponse('0')
 
     if request.user.is_superuser or post.user == request.user:
-        post_after_delete(post=post, user=request.user)
+        post_after_delete(post=post, user=request.user, ip_address=get_user_ip())
         post.delete()
         if request.is_ajax():
             return HttpResponse('1')
