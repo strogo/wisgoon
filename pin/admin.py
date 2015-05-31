@@ -7,7 +7,16 @@ from haystack.admin import SearchModelAdmin
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log
 from pin.tasks import send_notif
-from user_profile.models import Profile
+from user_profile.models import Profile, CreditLog
+
+
+class CreditLogAdmin(admin.ModelAdmin):
+    list_display = ('id', 'prof_id', 'amount', 'mode', 'create_time')
+    list_filter = ('mode',)
+
+    search_fields = ['prof_id', ]
+
+    date_hierarchy = 'create_time'
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
@@ -275,3 +284,4 @@ admin.site.register(Packages, PackagesAdmin)
 admin.site.register(Bill, BillAdmin)
 admin.site.register(Ad, AdAdmin)
 admin.site.register(Log, LogAdmin)
+admin.site.register(CreditLog, CreditLogAdmin)
