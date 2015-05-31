@@ -677,7 +677,7 @@ class Post(models.Model):
             if cache_data:
                 # print "we have cached data", cache_data, cache_name
                 return cache_data
-            pl = r_server.lrange(cat_stream, 0, settings.LIST_LONG)
+            pl = r_server.lrange(cat_stream, 0, -1)
 
         # print pl
         if pid == 0:
