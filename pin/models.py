@@ -750,9 +750,10 @@ class Bills2(models.Model):
     status = models.IntegerField(blank=True, null=True, default=0,
                                  choices=STATUS_CHOICES)
     amount = models.IntegerField(blank=True, null=True)
-    trans_id = models.CharField(max_length=250, blank=True, null=True)
+    trans_id = models.CharField(max_length=250, blank=True, null=True, db_index=True)
 
     create_date = models.DateField(auto_now_add=True, default=datetime.now)
+    create_time = models.DateTimeField(auto_now_add=True, default=datetime.now)
 
     user = models.ForeignKey(User)
 

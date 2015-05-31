@@ -1188,17 +1188,19 @@ def user_credit(request):
 def inc_credit(request):
     user = None
     token = request.GET.get('token', '')
-    price = int(request.GET.get('price', ''))
+    price = int(request.GET.get('price', 0))
     baz_token = request.GET.get("baz_token", "")
     package_name = request.GET.get("package", "")
     if token:
         user = AuthCache.user_from_token(token=token)
 
+    print user, token, baz_token, package_name
+
     if not user or not token or not baz_token or not package_name:
-        raise Http404
+        return HttpResponse("default values erros", status=404)
 
     if package_name not in PACKS:
-        raise Http404
+        return HttpResponse("package error", status=404)
 
     print PACKS[package_name]['price'], price
 
@@ -1210,21 +1212,20 @@ def inc_credit(request):
             b.amount = PACKS[package_name]['price']
             b.status = Bills2.FAKERY
             b.save()
-            return HttpResponse("price error")
-        p = user.profile
-        p.credit = p.credit + PACKS[package_name]['wis']
-        p.save()
-        try:
+            return HttpResponse("bazzar token error", status=404)
+        else:
+            p = user.profile
+            p.credit = p.credit + PACKS[package_name]['wis']
+            p.save()
+
             b = Bills2()
             b.trans_id = str(baz_token)
             b.user = user
             b.amount = PACKS[package_name]['price']
             b.status = Bills2.COMPLETED
             b.save()
-        except Exception, e:
-            print str(e)
 
-        return HttpResponse("success full", content_type="text/html")
+            return HttpResponse("success full", content_type="text/html")
     else:
         return HttpResponse("price error")
 
@@ -1253,7 +1254,12 @@ def save_as_ads(request, post_id):
         mode = int(request.POST.get('mode', 0))
         if mode == 0:
             return HttpResponseForbidden("mode error")
-        mode_price = Ad.TYPE_PRICES[mode]
+
+        try:
+            mode_price = Ad.TYPE_PRICES[mode]
+        except KeyError:
+            return HttpResponseForbidden("mode error")
+
         if profile.credit >= int(mode_price):
             try:
                 Ad.objects.get(post=int(post_id), ended=False)
