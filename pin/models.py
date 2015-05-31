@@ -753,6 +753,7 @@ class Bills2(models.Model):
     trans_id = models.CharField(max_length=250, blank=True, null=True)
 
     create_date = models.DateField(auto_now_add=True, default=datetime.now)
+    create_time = models.DateTimeField(auto_now_add=True, default=datetime.now)
 
     user = models.ForeignKey(User)
 
