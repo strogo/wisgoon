@@ -122,6 +122,18 @@ class Profile(models.Model):
         Profile.objects.filter(id=self.id)\
             .update(credit=F('credit') + amount)
 
+        CreditLog.objects.create(profile_id=self.id,
+                                 mode=CreditLog.INCREMENT,
+                                 amount=amount)
+
+    def dec_credit(self, amount):
+        Profile.objects.filter(id=self.id)\
+            .update(credit=F('credit') - amount)
+
+        CreditLog.objects.create(profile_id=self.id,
+                                 mode=CreditLog.DECREMENT,
+                                 amount=amount)
+
     @classmethod
     def after_like(cls, user_id):
         if settings.LIKE_WITH_CELERY:
@@ -158,6 +170,22 @@ class Profile(models.Model):
 
         ava_str = "avatar3210u_%d" % (user_id)
         cache.delete(ava_str)
+
+
+class CreditLog(models.Model):
+    INCREMENT = 1
+    DECREMENT = 2
+
+    MODE_CHOICES = (
+        (INCREMENT, 'Increment'),
+        (DECREMENT, 'Decrement'),
+    )
+
+    profile = models.ForeignKey(Profile, related_name="user_credit_log")
+    mode = models.IntegerField(blank=True, null=True, default=1,
+                               choices=MODE_CHOICES)
+    amount = models.IntegerField(default=0)
+    create_time = models.DateTimeField(auto_now_add=True, default=datetime.now)
 
 
 def create_user_profile(sender, instance, created, **kwargs):

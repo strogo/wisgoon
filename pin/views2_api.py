@@ -1229,7 +1229,7 @@ def inc_credit(request):
     print PACKS[package_name]['price'], price
 
     if PACKS[package_name]['price'] == price:
-        if Bills2.objects.filter(trans_id=str(baz_token)).count():
+        if Bills2.objects.filter(trans_id=str(baz_token)).count() > 0:
             b = Bills2()
             b.trans_id = str(baz_token)
             b.user = user
@@ -1238,16 +1238,18 @@ def inc_credit(request):
             b.save()
             return HttpResponse("bazzar token error", status=404)
         else:
-            p = user.profile
-            p.credit = p.credit + PACKS[package_name]['wis']
-            p.save()
-
             b = Bills2()
             b.trans_id = str(baz_token)
             b.user = user
             b.amount = PACKS[package_name]['price']
             b.status = Bills2.COMPLETED
             b.save()
+
+            # p = user.profile
+            # p.credit = p.credit + PACKS[package_name]['wis']
+            # p.save()
+            p = user.profile
+            p.inc_credit(amount=PACKS[package_name]['wis'])
 
             return HttpResponse("success full", content_type="text/html")
     else:
@@ -1289,12 +1291,14 @@ def save_as_ads(request, post_id):
                 Ad.objects.get(post=int(post_id), ended=False)
                 return HttpResponseForbidden(u"این پست قبلا آگهی شده است")
             except Exception, Ad.DoesNotExist:
+                # p = bill.user.profile
+                profile.dec_credit(amount=int(mode_price))
+                # profile.credit = int(profile.credit) - int(mode_price)
+                # profile.save()
                 Ad.objects.create(user_id=user.id,
                                   post_id=int(post_id),
                                   ads_type=mode,
                                   start=datetime.datetime.now())
-                profile.credit = int(profile.credit) - int(mode_price)
-                profile.save()
                 return HttpResponse(u'مطلب مورد نظر شما با موفقیت آگهی شد.')
 
         else:
