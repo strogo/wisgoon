@@ -64,6 +64,10 @@ class BillAdmin(admin.ModelAdmin):
     list_filter = ('status',)
     raw_id_fields = ("user",)
 
+    search_fields = ['user__id', 'user__username']
+
+    date_hierarchy = 'create_date'
+
 
 class OfficialAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'mode')
