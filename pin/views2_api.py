@@ -19,12 +19,13 @@ from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_page
 from django.conf import settings
+from django.db.models import Q
 
 from sorl.thumbnail import get_thumbnail
 
 from pin.tools import AuthCache, get_user_ip, get_fixed_ads, log_act
-from pin.models import Post, Category, Likes, Follow, Comments, Block, Packages
-from pin.model_mongo import Notif, Ads
+from pin.models import Post, Category, Likes, Follow, Comments, Block, Packages, Ad, Bills2
+from pin.model_mongo import Notif
 
 from haystack.query import SearchQuerySet
 
@@ -144,6 +145,12 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
         o['likers'] = None
         o['like_with_user'] = False
         o['status'] = p.status
+
+        try:
+            o['is_ad'] = False  # p.is_ad
+        except Exception, e:
+            # print str(e)
+            o['is_ad'] = False
 
         o['permalink'] = "/pin/%d/" % p.id
         o['resource_uri'] = "/pin/api/post/%d/" % p.id
@@ -362,8 +369,7 @@ def post(request):
         #         .filter(id=2416517)
         #     if hot_post:
         #         posts = list(hot_post) + list(posts)
-
-    if not user_id and not before:
+    if not user_id:
         hot_post = None
 
         if cur_user:
@@ -371,9 +377,9 @@ def post(request):
         else:
             viewer_id = str(get_user_ip(request))
 
-        ad = Ads.get_ad(user_id=viewer_id)
+        ad = Ad.get_ad(user_id=viewer_id)
         if ad:
-            hot_post = int(ad.post)
+            hot_post = int(ad.post_id)
         if hot_post:
             exists_posts = False
             for ppp in posts:
@@ -385,15 +391,18 @@ def post(request):
                 hot_post = Post.objects\
                     .only(*Post.NEED_KEYS2)\
                     .filter(id=hot_post)
+                for h in hot_post:
+                    h.is_ad = True
                 posts = list(hot_post) + list(posts)
 
-        if not hot_post:
-            fixed_post = get_fixed_ads()
-            if fixed_post:
-                fixed_post = Post.objects\
-                    .only(*Post.NEED_KEYS2)\
-                    .filter(id=fixed_post)
-                posts = list(fixed_post) + list(posts)
+
+        # if not hot_post:
+        #     fixed_post = get_fixed_ads()
+        #     if fixed_post:
+        #         fixed_post = Post.objects\
+        #             .only(*Post.NEED_KEYS2)\
+        #             .filter(id=fixed_post)
+        #         posts = list(fixed_post) + list(posts)
 
     thumb_size = int(request.GET.get('thumb_size', "236"))
 
@@ -565,7 +574,7 @@ def notif(request):
     c_data = cache.get(notif_cache_key)
     if c_data:
         print "get from cache", notif_cache_key
-        return HttpResponse(c_data, content_type="application/json")
+        # return HttpResponse(c_data, content_type="application/json")
 
     data['meta'] = {'limit': 10,
                     'next': '',
@@ -582,12 +591,30 @@ def notif(request):
     # Notif.objects.filter(owner=1).order_by('-date')[100:].delete()
 
     for p in notifs:
-        try:
-            cur_p = Post.objects.only(*Post.NEED_KEYS2).get(id=p.post)
-            if cur_p.is_pending():
+        if p.type == 4:
+
+            class CurP:
+                def get_image_500(self, api):
+                    return self.post_image
+
+            cur_p = CurP()
+            cur_p.id = p.post
+            cur_p.text = ""
+            cur_p.cnt_comment = 0
+            cur_p.post_image = p.post_image
+            cur_p.post_image['url'] = cur_p.post_image['url'].split("media/")[1]
+            cur_p.image = p.post_image['url']
+            cur_p.user_id = p.owner
+            cur_p.cnt_like = 0
+            cur_p.timestamp = 0
+            cur_p.category_id = 1
+        else:
+            try:
+                cur_p = Post.objects.only(*Post.NEED_KEYS2).get(id=p.post)
+                if cur_p.is_pending():
+                    continue
+            except Post.DoesNotExist:
                 continue
-        except Post.DoesNotExist:
-            continue
         o = {}
         o['id'] = cur_p.id
         o['text'] = cur_p.text
@@ -725,7 +752,7 @@ def comments(request):
 
     objects_list = []
 
-    cq = Comments.objects.filter(object_pk_id=object_pk, is_public=True)\
+    cq = Comments.objects.filter(object_pk_id=object_pk)\
         .order_by('-id')[offset:offset + limit]
     for com in cq:
         o = {}
@@ -1176,11 +1203,119 @@ def inc_credit(request):
     print PACKS[package_name]['price'], price
 
     if PACKS[package_name]['price'] == price:
+        if Bills2.objects.filter(trans_id=str(baz_token)).count():
+            b = Bills2()
+            b.trans_id = str(baz_token)
+            b.user = user
+            b.amount = PACKS[package_name]['price']
+            b.status = Bills2.FAKERY
+            b.save()
+            return HttpResponse("price error")
         p = user.profile
         p.credit = p.credit + PACKS[package_name]['wis']
         p.save()
+        try:
+            b = Bills2()
+            b.trans_id = str(baz_token)
+            b.user = user
+            b.amount = PACKS[package_name]['price']
+            b.status = Bills2.COMPLETED
+            b.save()
+        except Exception, e:
+            print str(e)
+
         return HttpResponse("success full", content_type="text/html")
     else:
         return HttpResponse("price error")
 
     return HttpResponse("failed", content_type="text/html")
+
+
+@csrf_exempt
+def save_as_ads(request, post_id):
+    try:
+        Post.objects.get(id=int(post_id))
+    except Exception, Post.DoesNotExist:
+        return HttpResponse("error in post id", status=404, content_type="text/html")
+
+    user = None
+    token = request.GET.get('token', '')
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token:
+        return HttpResponseForbidden("token error")
+
+    profile = user.profile
+
+    if request.method == "POST":
+        mode = int(request.POST.get('mode', 0))
+        if mode == 0:
+            return HttpResponseForbidden("mode error")
+        mode_price = Ad.TYPE_PRICES[mode]
+        if profile.credit >= int(mode_price):
+            try:
+                Ad.objects.get(post=int(post_id), ended=False)
+                return HttpResponseForbidden(u"این پست قبلا آگهی شده است")
+            except Exception, Ad.DoesNotExist:
+                Ad.objects.create(user_id=user.id,
+                                  post_id=int(post_id),
+                                  ads_type=mode,
+                                  start=datetime.datetime.now())
+                profile.credit = int(profile.credit) - int(mode_price)
+                profile.save()
+                return HttpResponse(u'مطلب مورد نظر شما با موفقیت آگهی شد.')
+
+        else:
+            return HttpResponseForbidden(u"موجودی حساب شما برای آگهی دادن کافی نیست.")
+
+    return HttpResponseForbidden("error in data")
+
+
+def promoted(request):
+    data = {}
+
+    user = None
+    token = request.GET.get('token', '')
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user:
+        return HttpResponseForbidden("error in token")
+
+    row_per_page = 20
+    offset = int(request.GET.get('offset', 0))
+
+    # Norton utility :D
+    nu = "/pin/api/promoted/post/?token=%s&offset=%s" % (token, offset + row_per_page)
+
+    data = {
+        "meta": {
+            "next": nu
+        }
+    }
+
+    objects = []
+
+    for ad in Ad.objects.filter(Q(owner=user) | Q(user=user)).order_by("-id")[offset:offset + 1 * row_per_page]:
+        o = {}
+        o['post'] = get_objects_list([ad.post], cur_user_id=user.id, thumb_size=250)
+        o['cnt_view'] = ad.get_cnt_view()
+        o['user'] = ad.user.id
+        o['ended'] = ad.ended
+        o['owner'] = ad.owner.id
+        # o['cnt_view'] = ad.cnt_view
+        o['ads_type'] = ad.ads_type
+        o['start'] = str(ad.start)
+        o['end'] = str(ad.end)
+
+        objects.append(o)
+
+    data['objects'] = objects
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data, content_type="application/json")
+
+    # return HttpResponse(json.dumps(data))

@@ -4,7 +4,7 @@ from celery import Celery
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'feedreader.settings')
 
-app = Celery('tasks', broker='amqp://guest@79.127.125.146//')
+app = Celery('tasks', broker='amqp://guest@79.127.125.104//')
 app.conf.CELERY_TASK_SERIALIZER = 'json'
 app.conf.CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 
@@ -18,11 +18,12 @@ from user_profile.models import Profile
 
 
 @app.task(name="tasks.notif_test")
-def notif_send(user_id, type, post, actor_id, seen=False):
+def notif_send(user_id, type, post, actor_id, seen=False, post_image=None):
     Notif.objects(owner=user_id, type=type, post=post)\
         .update_one(set__last_actor=actor_id,
                     set__date=datetime.now,
                     set__seen=False,
+                    set__post_image=post_image,
                     add_to_set__actors=actor_id, upsert=True)
 
     # if type == 1:

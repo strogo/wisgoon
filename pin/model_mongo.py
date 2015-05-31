@@ -52,6 +52,7 @@ class Ads(Document):
 
     @classmethod
     def get_ad(cls, user_id):
+        return None
         # print "viewer id:", user_id
         try:
             ad = Ads.objects.only('ads_type', 'id', 'post').filter(users__nin=[user_id], ended=False)[:1]
@@ -186,6 +187,7 @@ class Notif(Document):
     last_actor = IntField()
     date = DateTimeField()
     post = IntField()
+    post_image = StringField()
     owner = IntField()
     actors = ListField()
     type = IntField()

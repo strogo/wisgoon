@@ -5,7 +5,7 @@ from django.contrib import admin
 from haystack.admin import SearchModelAdmin
 
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
-    Official, SubCategory, Packages, Bills2 as Bill
+    Official, SubCategory, Packages, Bills2 as Bill, Ad, Log
 from pin.tasks import send_notif
 from user_profile.models import Profile
 
@@ -14,14 +14,59 @@ class SubCategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'title')
 
 
+class LogAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'owner', 'user_id', 'action', 'object_id',
+                    'content_type', '_get_thumbnail', 'create_time')
+
+    list_filter = ('action',)
+
+    raw_id_fields = ("user",)
+
+    def _get_thumbnail(self, obj):
+        return u'<a href="%s" target="_blank"><img style="max-height:100px;" src="%s" /></a>' % (obj.post_image, obj.post_image)
+    _get_thumbnail.allow_tags = True
+
+    def user_id(self, instance):
+        return instance.user_id
+
+
+class AdAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user_id', 'ended', 'get_cnt_view', 'post_id',
+                    'ads_type', 'start', 'end', 'get_owner')
+
+    raw_id_fields = ("post", "user")
+    list_filter = ("ads_type", "ended")
+
+    date_hierarchy = 'start'
+
+    def post_id(self, instance):
+        return instance.post_id
+
+    def user_id(self, instance):
+        return instance.user_id
+
+    def get_owner(self, instance):
+        if instance.owner:
+            return instance.owner
+        
+        instance.owner = instance.post.user
+        instance.save()
+        return instance.owner
+
+
 class PackagesAdmin(admin.ModelAdmin):
     list_display = ('title', 'name', 'wis', 'price', 'icon',)
 
 
 class BillAdmin(admin.ModelAdmin):
-    list_display = ('id', 'status', 'amount', 'trans_id', 'user', 'create_date')
+    list_display = ('id', 'status', 'amount', 'trans_id', 'user',
+                    'create_date')
     list_filter = ('status',)
     raw_id_fields = ("user",)
+
+    search_fields = ['user__id', 'user__username']
+
+    date_hierarchy = 'create_date'
 
 
 class OfficialAdmin(admin.ModelAdmin):
@@ -35,7 +80,8 @@ class InstaAccountAdmin(admin.ModelAdmin):
 
 
 class PinAdmin(admin.ModelAdmin):
-    list_filter = ('status', 'report', 'is_ads', 'show_in_default', 'category__title')
+    list_filter = ('status', 'report', 'is_ads', 'show_in_default',
+                   'category__title')
     search_fields = ['id', 'user__id']
 
     raw_id_fields = ("user",)
@@ -45,7 +91,6 @@ class PinAdmin(admin.ModelAdmin):
                     'show_in_default', 'report')
 
     actions = ['make_approve',
-               #'make_approve_go_default',
                'really_delete_selected',
                'delete_all_user_posts',
                'fault',
@@ -59,7 +104,7 @@ class PinAdmin(admin.ModelAdmin):
     def make_approve(self, request, queryset):
         for obj in queryset:
             obj.approve()
-            
+
     make_approve.short_description = u"تایید مطلب"
 
     def no_problem(self, request, queryset):
@@ -95,13 +140,9 @@ class PinAdmin(admin.ModelAdmin):
     def fault(self, request, queryset):
         for obj in queryset:
             Post.objects.filter(pk=obj.id).update(status=Post.FAULT, report=0)
-            #print obj.status
-            #obj.status = Post.FAULT
-            #print obj.status
-            #obj.save()
 
             user = obj.user
-            user.profile.fault = user.profile.fault+1
+            user.profile.fault = user.profile.fault + 1
             user.profile.save()
 
         for obj in queryset:
@@ -232,3 +273,5 @@ admin.site.register(Official, OfficialAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(Packages, PackagesAdmin)
 admin.site.register(Bill, BillAdmin)
+admin.site.register(Ad, AdAdmin)
+admin.site.register(Log, LogAdmin)

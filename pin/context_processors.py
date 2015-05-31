@@ -14,6 +14,10 @@ from pin.mycache import caching
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 
+def static_version(request):
+    return {'STATIC_VERSION': settings.STATIC_VERSION}
+
+
 def pin_form(request):
     return {'pin_form': PinForm}
 
@@ -49,8 +53,8 @@ def today_stats(request):
 
 
 def is_super_user(request):
-    #return {'is_super_user': False}
-    #print "re user", request.user
+    # return {'is_super_user': False}
+    # print "re user", request.user
     if request.user.is_superuser:
         return {'is_super_user': True}
 

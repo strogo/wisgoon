@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from tastypie.models import ApiKey
 
 from user_profile.models import Profile
-from pin.models import Category, Block
+from pin.models import Category, Block, Log
 from pin.model_mongo import UserMeta, FixedAds
 
 from daddy_avatar.templatetags import daddy_avatar
@@ -38,6 +38,14 @@ CARBON_PORT = 2003
 # def dec_user_cnt_like(user_id):
 #     Profile.objects.filter(user_id=user_id)\
 #         .update(cnt_like=F('cnt_like')-1, score=F('score')-10)
+
+
+def post_after_delete(post, user):
+    Log.post_delete(post=post, actor=user)
+    from tasks import send_notif_bar
+
+    send_notif_bar(user=post.user.id, type=4, post=post.id,
+                   actor=11253, post_image=post.get_image_236())
 
 
 def log_act(path,):

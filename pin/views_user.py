@@ -21,14 +21,15 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
 from pin.context_processors import is_police
-from pin.models import Post, Stream, Follow,\
+from pin.models import Post, Stream, Follow, Ad, Log,\
     Report, Comments, Comments_score, Category, Bills2 as Bills
 
-from pin.model_mongo import Notif, UserMeta, Ads
+from pin.model_mongo import Notif, UserMeta
 
 import pin_image
 from pin.tools import get_request_timestamp, create_filename,\
-    get_user_ip, get_request_pid, check_block, get_user_meta
+    get_user_ip, get_request_pid, check_block, get_user_meta,\
+    post_after_delete
 
 from suds.client import Client
 
@@ -263,6 +264,7 @@ def delete(request, item_id):
         return HttpResponse('0')
 
     if request.user.is_superuser or post.user == request.user:
+        post_after_delete(post=post, user=request.user)
         post.delete()
         if request.is_ajax():
             return HttpResponse('1')
@@ -507,13 +509,17 @@ def show_notify(request):
         try:
             anl['po'] = Post.objects.only('image').get(pk=n.post)
         except Post.DoesNotExist:
-            continue
+            if n.type == 4:
+                anl['po'] = n.post_image
+            else:
+                continue
         anl['id'] = n.post
         anl['type'] = n.type
         anl['actors'] = n.actors
 
         nl.append(anl)
     return render(request, 'pin2/notify.html', {'notif': nl})
+
 
 @login_required
 def notif_user(request):
@@ -651,25 +657,27 @@ def save_as_ads(request, post_id):
 
     if request.method == "POST":
         mode = int(request.POST.get('mode'))
-        mode_price = Ads.TYPE_PRICES[mode]
+        mode_price = Ad.TYPE_PRICES[mode]
         if profile.credit >= int(mode_price):
             try:
-                ad = Ads.objects.get(post=int(post_id), ended=False)
+                Ad.objects.get(post=int(post_id), ended=False)
                 messages.error(request, u"این پست قبلا آگهی شده است")
-            except Exception, Ads.DoesNotExist:
-                Ads.objects.create(user=request.user.id,
-                                   post=int(post_id),
-                                   ads_type=mode,
-                                   start=datetime.datetime.now())
+            except Exception, Ad.DoesNotExist:
+                Ad.objects.create(user_id=request.user.id,
+                                  post_id=int(post_id),
+                                  ads_type=mode,
+                                  start=datetime.datetime.now())
                 profile.credit = int(profile.credit) - int(mode_price)
                 profile.save()
-                messages.success(request, u'مطلب مورد نظر شما با موفقیت آگهی شد.')
+                messages.success(request,
+                                 u'مطلب مورد نظر شما با موفقیت آگهی شد.')
 
         else:
-            messages.error(request, u"موجودی حساب شما برای آگهی دادن کافی نیست.")
+            messages.error(request,
+                           u"موجودی حساب شما برای آگهی دادن کافی نیست.")
 
     return render(request, 'pin2/save_as_ads.html', {
         'post': p,
         'user_meta': profile,
-        'Ads': Ads,
+        'Ads': Ad,
     })

@@ -16,14 +16,14 @@ def send_notif(user, type, post, actor, seen=False):
     return True
 
 
-def send_notif_bar(user, type, post, actor, seen=False):
+def send_notif_bar(user, type, post, actor, seen=False, post_image=None):
     notif_cache_key = "notif_v112_%d" % (int(user))
     cache.delete(notif_cache_key)
     try:
         if settings.USE_CELERY:
-            notif_send.delay(user, type, post, actor, seen=False)
+            notif_send.delay(user, type, post, actor, seen=False, post_image=post_image)
         else:
-            notif_send(user, type, post, actor, seen=False)
+            notif_send(user, type, post, actor, seen=False, post_image=post_image)
     except Exception, e:
         print str(e)
     return None

@@ -42,6 +42,91 @@ class SubCategory(models.Model):
         return self.title
 
 
+class Ad(models.Model):
+    TYPE_1000_USER = 1
+    TYPE_3000_USER = 2
+    TYPE_6000_USER = 3
+    TYPE_15000_USER = 4
+
+    MAX_TYPES = {
+        TYPE_1000_USER: 1000,
+        TYPE_3000_USER: 3000,
+        TYPE_6000_USER: 6000,
+        TYPE_15000_USER: 15000,
+    }
+
+    TYPE_PRICES = {
+        TYPE_1000_USER: 500,
+        TYPE_3000_USER: 1000,
+        TYPE_6000_USER: 2000,
+        TYPE_15000_USER: 5000,
+    }
+
+    user = models.ForeignKey(User)
+    owner = models.ForeignKey(User, related_name='owner', blank=True, null=True)
+    ended = models.BooleanField(default=False, db_index=True)
+    cnt_view = models.IntegerField(default=0)
+    post = models.ForeignKey("Post")
+    ads_type = models.IntegerField(default=TYPE_1000_USER)
+    start = models.DateTimeField(auto_now_add=True, auto_now=True)
+    end = models.DateTimeField(blank=True, null=True)
+
+    def get_cnt_view(self):
+        cache_key = "ad_%d" % self.id
+        v = cache.get(cache_key)
+        if v:
+            return v
+        else:
+            return self.cnt_view
+
+    @classmethod
+    def get_ad(cls, user_id, high_level=False):
+
+        if cache.get("no_ad"):
+            # print "no ad"
+            return None
+
+        if not Ad.objects.filter(ended=False).exists():
+            # print "ad not exists"
+            cache.set("no_ad", True, 86400)
+            return None
+
+        if high_level:
+            query_set = Ad.objects.filter(ended=False, ads_type=cls.TYPE_15000_USER)
+        else:
+            query_set = Ad.objects.filter(ended=False)
+
+        for ad in query_set:
+            # print "objects"
+            cache_key = "ad_%d" % ad.id
+
+            if not cache.get(cache_key):
+                cache.set(cache_key, 0, 86400)
+
+            if r_server.sismember("ad_%d" % ad.id, user_id):
+                # print "is member"
+                continue
+            else:
+                r_server.sadd("ad_%d" % ad.id, user_id)
+
+            if ad.get_cnt_view() >= cls.MAX_TYPES[ad.ads_type]:
+                Ad.objects.filter(id=ad.id)\
+                    .update(cnt_view=ad.get_cnt_view(),
+                            end=datetime.now(),
+                            ended=True)
+            else:
+                cache.incr(cache_key)
+
+            return ad
+
+        return None
+
+    def save(self, *args, **kwargs):
+        cache.delete("no_ad")
+        self.owner = self.post.user
+        super(Ad, self).save(*args, **kwargs)
+
+
 class Category(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/category/')
@@ -654,10 +739,12 @@ class Post(models.Model):
 class Bills2(models.Model):
     COMPLETED = 1
     UNCOMPLETED = 0
+    FAKERY = 2
 
     STATUS_CHOICES = (
         (COMPLETED, 'Completed'),
         (UNCOMPLETED, 'Uncompleted'),
+        (FAKERY, 'Fakery'),
     )
 
     status = models.IntegerField(blank=True, null=True, default=0,
@@ -1078,6 +1165,47 @@ class InstaAccount(models.Model):
     cat = models.ForeignKey(Category)
     user = models.ForeignKey(User)
     lc = models.DateTimeField(auto_now_add=True, default=datetime.now())
+
+
+class Log(models.Model):
+    TYPES = (
+        (1, "post"),
+        (2, "comment"),
+    )
+    ACTIONS = (
+        (1, "delete"),
+        (2, "pending"),
+    )
+
+    user = models.ForeignKey(User)
+    action = models.IntegerField(default=1, choices=ACTIONS, db_index=True)
+    object_id = models.IntegerField(default=0, db_index=True)
+    content_type = models.IntegerField(default=1, choices=TYPES, db_index=True)
+    owner = models.IntegerField(default=0)
+
+    create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
+
+    post_image = models.CharField(max_length=250, blank=True, null=True)
+
+    @classmethod
+    def post_delete(cls, post, actor):
+        Log.objects.create(user_id=actor.id,
+                           action=1,
+                           object_id=post.id,
+                           content_type=1,
+                           owner=post.user.id,
+                           post_image=post.get_image_236()["url"],
+                           )
+
+    @classmethod
+    def post_pending(cls, post, actor):
+        Log.objects.create(user=actor,
+                           action=2,
+                           object_id=post.id,
+                           content_type=1,
+                           owner=post.user.id,
+                           post_image=post.get_image_236()["url"],
+                           )
 
 
 class Official(models.Model):
