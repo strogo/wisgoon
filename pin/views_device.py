@@ -190,7 +190,8 @@ def post_delete(request, item_id):
     try:
         post = Post.objects.get(pk=item_id)
         if request.user.is_superuser or post.user == user:
-            post_after_delete(post=post, user=user, ip_address=get_user_ip())
+            post_after_delete(post=post, user=user,
+                              ip_address=get_user_ip(request))
             post.delete()
             return HttpResponse('1')
     except Post.DoesNotExist:
