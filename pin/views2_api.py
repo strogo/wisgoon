@@ -22,6 +22,7 @@ from django.conf import settings
 from django.db.models import Q
 
 from sorl.thumbnail import get_thumbnail
+from tastypie.models import ApiKey
 
 from pin.tools import AuthCache, get_user_ip, get_fixed_ads, log_act
 from pin.models import Post, Category, Likes, Follow, Comments, Block, Packages, Ad, Bills2
@@ -43,6 +44,29 @@ class MyEncoder(json.JSONEncoder):
             return str(obj)"""
 
         return json.JSONEncoder.default(self, obj)
+
+
+def check_auth(request):
+    token = request.GET.get('token', '')
+    if not token:
+        return False
+
+    try:
+        # api = ApiKey.objects.get(key=token)
+        # user = api.user
+        user = AuthCache.user_from_token(token)
+        if not user:
+            return False
+        user._ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
+
+        if not user.is_active:
+            return False
+        else:
+            return user
+    except ApiKey.DoesNotExist:
+        return False
+
+    return False
 
 
 def notif_count(request):
@@ -1192,7 +1216,7 @@ def inc_credit(request):
     baz_token = request.GET.get("baz_token", "")
     package_name = request.GET.get("package", "")
     if token:
-        user = AuthCache.user_from_token(token=token)
+        user = check_auth(request)
 
     print user, token, baz_token, package_name
 
@@ -1243,7 +1267,7 @@ def save_as_ads(request, post_id):
     token = request.GET.get('token', '')
 
     if token:
-        user = AuthCache.user_from_token(token=token)
+        user = check_auth(request)
 
     if not user or not token:
         return HttpResponseForbidden("token error")
