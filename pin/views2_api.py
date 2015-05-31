@@ -1254,7 +1254,12 @@ def save_as_ads(request, post_id):
         mode = int(request.POST.get('mode', 0))
         if mode == 0:
             return HttpResponseForbidden("mode error")
-        mode_price = Ad.TYPE_PRICES[mode]
+
+        try:
+            mode_price = Ad.TYPE_PRICES[mode]
+        except KeyError:
+            return HttpResponseForbidden("mode error")
+
         if profile.credit >= int(mode_price):
             try:
                 Ad.objects.get(post=int(post_id), ended=False)
