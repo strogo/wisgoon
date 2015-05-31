@@ -1203,6 +1203,7 @@ class Log(models.Model):
                            content_type=1,
                            owner=post.user.id,
                            post_image=post.get_image_236()["url"],
+                           ip_address=ip_address,
                            )
 
     @classmethod
@@ -1213,6 +1214,7 @@ class Log(models.Model):
                            content_type=1,
                            owner=post.user.id,
                            post_image=post.get_image_236()["url"],
+                           ip_address=ip_address,
                            )
 
 
