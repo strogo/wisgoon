@@ -98,4 +98,5 @@ def global_values(request):
     return {'SITE_URL': settings.SITE_URL,
             'SITE_NAME_FA': settings.SITE_NAME_FA,
             'SITE_NAME_EN': settings.SITE_NAME_EN,
-            'SITE_DESC': settings.SITE_DESC}
+            'SITE_DESC': settings.SITE_DESC,
+            'SITE_URL_NAME': settings.SITE_URL_NAME}

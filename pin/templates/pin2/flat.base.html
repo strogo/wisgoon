@@ -5,8 +5,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>ویسگون {% block title%}{% endblock title%}</title>
-	<meta name="description" content="{%block description%}what is going on, social image sharing{%endblock%}" />
+	<title>{{SITE_NAME_FA}} {% block title%}{% endblock title%}</title>
+	<meta name="description" content="{%block description%}{{SITE_DESC}}{%endblock%}" />
 	
 	{% block opengraph %} {% endblock %}
 	{% include "pin2/all_header.html" %}

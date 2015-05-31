@@ -1,6 +1,6 @@
 {% extends "pin2/flat.base.html" %}
 
-{%block title%} - آمار سایت ویسگون {%endblock title%}
+{%block title%} - آمار سایت {{SITE_NAME_FA}} {%endblock title%}
 
 {% block content %}
 
@@ -44,7 +44,7 @@ $(function () {
             x: -20 //center
         },
         subtitle: {
-            text: 'Source: wisgoon.com',
+            text: 'Source: {{SITE_URL_NAME}}',
             x: -20
         },
         xAxis: {

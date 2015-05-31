@@ -95,4 +95,5 @@ HAYSTACK_CONNECTIONS = {
 }
 SITE_NAME_FA = 'پین پرشیا'
 SITE_NAME_EN = 'pinpersia'
+SITE_URL_NAME = 'pinpersia.com'
 SITE_DESC = 'what is going on, social image sharing'

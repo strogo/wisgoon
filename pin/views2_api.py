@@ -393,31 +393,31 @@ def post(request):
         #         .filter(id=2416517)
         #     if hot_post:
         #         posts = list(hot_post) + list(posts)
-    if not user_id and not category_id:
-        hot_post = None
+    # if not user_id and not category_id:
+    #     hot_post = None
 
-        if cur_user:
-            viewer_id = str(cur_user)
-        else:
-            viewer_id = str(get_user_ip(request))
+    #     if cur_user:
+    #         viewer_id = str(cur_user)
+    #     else:
+    #         viewer_id = str(get_user_ip(request))
 
-        ad = Ad.get_ad(user_id=viewer_id)
-        if ad:
-            hot_post = int(ad.post_id)
-        if hot_post:
-            exists_posts = False
-            for ppp in posts:
-                if ppp.id == hot_post:
-                    exists_posts = True
-                    break
+    #     ad = Ad.get_ad(user_id=viewer_id)
+    #     if ad:
+    #         hot_post = int(ad.post_id)
+    #     if hot_post:
+    #         exists_posts = False
+    #         for ppp in posts:
+    #             if ppp.id == hot_post:
+    #                 exists_posts = True
+    #                 break
 
-            if not exists_posts:
-                hot_post = Post.objects\
-                    .only(*Post.NEED_KEYS2)\
-                    .filter(id=hot_post)
-                for h in hot_post:
-                    h.is_ad = True
-                posts = list(hot_post) + list(posts)
+    #         if not exists_posts:
+    #             hot_post = Post.objects\
+    #                 .only(*Post.NEED_KEYS2)\
+    #                 .filter(id=hot_post)
+    #             for h in hot_post:
+    #                 h.is_ad = True
+    #             posts = list(hot_post) + list(posts)
 
 
         # if not hot_post:

@@ -6,6 +6,15 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 
+# TEMPLATE_DIRS = (
+#     os.path.join(SITE_ROOT, 'templates'),
+# )
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
+
+IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT, 'image_cache')
+COMPRESS_URL = MEDIA_URL
+COMPRESS_ROOT = MEDIA_ROOT
+
 ADMINS = (
     ('bugs', 'bugs@wisgoon.com'),
 )
@@ -79,4 +88,5 @@ MEDIA_PREFIX = 'http://media.wisgoon.com'
 ENABLE_CACHING = True
 SITE_NAME_FA = 'ویسگون'
 SITE_NAME_EN = 'wisgoon'
+SITE_URL_NAME = 'wisgoon.com'
 SITE_DESC = 'what is going on, social image sharing'
