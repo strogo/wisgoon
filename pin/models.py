@@ -70,6 +70,7 @@ class Ad(models.Model):
     ads_type = models.IntegerField(default=TYPE_1000_USER)
     start = models.DateTimeField(auto_now_add=True, auto_now=True)
     end = models.DateTimeField(blank=True, null=True)
+    ip_address = models.IPAddressField(default="127.0.0.1")
 
     def get_cnt_view(self):
         cache_key = "ad_%d" % self.id

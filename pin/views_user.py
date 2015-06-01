@@ -670,7 +670,8 @@ def save_as_ads(request, post_id):
                 Ad.objects.create(user_id=request.user.id,
                                   post_id=int(post_id),
                                   ads_type=mode,
-                                  start=datetime.datetime.now())
+                                  start=datetime.datetime.now(),
+                                  ip_address=get_user_ip(request))
 
                 # profile.credit = int(profile.credit) - int(mode_price)
                 # profile.save()
