@@ -1262,7 +1262,13 @@ def inc_credit(request):
                     p = user.profile
                     p.inc_credit(amount=PACKS[package_name]['wis'])
                 else:
-                    raise Bills2.DoesNotExist
+                    b = Bills2()
+                    b.trans_id = str(baz_token)
+                    b.user = user
+                    b.amount = PACKS[package_name]['price']
+                    b.status = Bills2.NOT_VALID
+                    b.save()
+                    return HttpResponse("ex price error")
             except Exception, e:
                 b = Bills2()
                 b.trans_id = str(baz_token)

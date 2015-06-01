@@ -739,12 +739,14 @@ class Bills2(models.Model):
     UNCOMPLETED = 0
     FAKERY = 2
     VALIDATE_ERROR = 3
+    NOT_VALID = 4
 
     STATUS_CHOICES = (
         (COMPLETED, 'Completed'),
         (UNCOMPLETED, 'Uncompleted'),
         (FAKERY, 'Fakery'),
         (VALIDATE_ERROR, 'validate error'),
+        (NOT_VALID, 'not valid'),
     )
 
     status = models.IntegerField(blank=True, null=True, default=0,
