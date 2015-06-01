@@ -1294,12 +1294,11 @@ def save_as_ads(request, post_id):
             except Exception, Ad.DoesNotExist:
                 # p = bill.user.profile
                 profile.dec_credit(amount=int(mode_price))
-                # profile.credit = int(profile.credit) - int(mode_price)
-                # profile.save()
                 Ad.objects.create(user_id=user.id,
                                   post_id=int(post_id),
                                   ads_type=mode,
-                                  start=datetime.datetime.now())
+                                  start=datetime.datetime.now(),
+                                  ip_address=get_user_ip(request))
                 return HttpResponse(u'مطلب مورد نظر شما با موفقیت آگهی شد.')
 
         else:
