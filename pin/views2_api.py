@@ -4,6 +4,9 @@ try:
     import simplejson as json
 except ImportError:
     import json
+
+import urllib2
+
 import datetime
 import time
 import redis
@@ -1211,6 +1214,7 @@ def user_credit(request):
 
 
 def inc_credit(request):
+
     user = None
     token = request.GET.get('token', '')
     price = int(request.GET.get('price', 0))
@@ -1230,7 +1234,7 @@ def inc_credit(request):
     print PACKS[package_name]['price'], price
 
     if PACKS[package_name]['price'] == price:
-        if Bills2.objects.filter(trans_id=str(baz_token)).count() > 0:
+        if Bills2.objects.filter(trans_id=str(baz_token), status=Bills2.COMPLETED).count() > 0:
             b = Bills2()
             b.trans_id = str(baz_token)
             b.user = user
@@ -1239,18 +1243,34 @@ def inc_credit(request):
             b.save()
             return HttpResponse("bazzar token error", status=404)
         else:
-            b = Bills2()
-            b.trans_id = str(baz_token)
-            b.user = user
-            b.amount = PACKS[package_name]['price']
-            b.status = Bills2.COMPLETED
-            b.save()
+            url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=4L7bCSraE5iarXb2j5umbI5b9Ku0vJ" % (package_name, baz_token)
+            try:
+                u = urllib2.urlopen(url).read()
+                j = json.loads(u)
+                if j['purchaseState'] == 0:
 
-            # p = user.profile
-            # p.credit = p.credit + PACKS[package_name]['wis']
-            # p.save()
-            p = user.profile
-            p.inc_credit(amount=PACKS[package_name]['wis'])
+                    b = Bills2()
+                    b.trans_id = str(baz_token)
+                    b.user = user
+                    b.amount = PACKS[package_name]['price']
+                    b.status = Bills2.COMPLETED
+                    b.save()
+
+                    # p = user.profile
+                    # p.credit = p.credit + PACKS[package_name]['wis']
+                    # p.save()
+                    p = user.profile
+                    p.inc_credit(amount=PACKS[package_name]['wis'])
+                else:
+                    raise Bills2.DoesNotExist
+            except Exception, e:
+                b = Bills2()
+                b.trans_id = str(baz_token)
+                b.user = user
+                b.amount = PACKS[package_name]['price']
+                b.status = Bills2.VALIDATE_ERROR
+                b.save()
+                return HttpResponse("ex price error")
 
             return HttpResponse("success full", content_type="text/html")
     else:
