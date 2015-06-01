@@ -1170,6 +1170,26 @@ def packages(request):
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
 
+@cache_page(60 * 15)
+def packages_old(request):
+    # return HttpResponse("hello")
+
+    data = {
+        "objects": []
+    }
+    
+    o = {
+        "name": "update",
+        "title": u"لطفا نسخه ی جدید را نصب کنید - 5.0.3",
+        "price": 0,
+        "wis": 0,
+        "icon": "/media/packages/125x125.jpg"
+    }
+    data['objects'].append(o)
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data, content_type="application/json")
+
 
 def promotion_prices(request):
     data = {
