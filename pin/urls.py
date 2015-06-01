@@ -165,6 +165,7 @@ urlpatterns += patterns('',
     url(r'^api/block/user/(?P<user_id>\d+)/', 'pin.views2_api.block_user', name="api-block"),
     url(r'^api/unblock/user/(?P<user_id>\d+)/', 'pin.views2_api.unblock_user', name="api-block"),
 
+    url(r'^api/packages/$', 'pin.views2_api.packages_old', name="api-packages_old"),
     url(r'^api/packages2/$', 'pin.views2_api.packages', name="api-packages"),
 
     url(r'^api/promotion/prices/$', 'pin.views2_api.promotion_prices', name="api-promotion-prices"),
