@@ -123,7 +123,7 @@ class LikesRedis(object):
 
     def like_or_dislike(self, user_id, post_owner):
         if self.user_liked(user_id=user_id):
-            print "user liked"
+            # print "user liked"
             self.dislike(user_id=user_id)
             return False, True, self.cntlike()
         else:
