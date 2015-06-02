@@ -54,39 +54,32 @@ def like(request):
     user = check_auth(request)
 
     if not user:
-        return HttpResponseForbidden('error in user validation', content_type="application/json")
+        return HttpResponseForbidden('error in user validation',
+                                     content_type="application/json")
 
     if request.method != "POST":
-        return HttpResponseBadRequest('error in parameters', content_type="application/json")
+        return HttpResponseBadRequest('error in parameters',
+                                      content_type="application/json")
 
     post_id = int(request.POST.get('post_id', None))
     if not post_id:
-        return HttpResponseBadRequest('erro in post id', content_type="application/json")
+        return HttpResponseBadRequest('erro in post id',
+                                      content_type="application/json")
     try:
-        post = Post.objects.get(pk=post_id)
+        post = Post.objects.only('user').get(pk=post_id)
     except Post.DoesNotExist:
         return HttpResponse('0', content_type="application/json")
 
     from models_redis import LikesRedis
     like, dislike, current_like = LikesRedis(post_id=post_id)\
-        .like_or_dislike(user_id=user.id,post_owner=post.user_id)
+        .like_or_dislike(user_id=user.id, post_owner=post.user_id)
 
     if like:
         return HttpResponse('+1', content_type="application/json")
     else:
         return HttpResponse('-1', content_type="application/json")
 
-    try:
-        Likes.objects.create(user_id=user.id, post_id=post_id, ip=user._ip)
-        return HttpResponse('+1', content_type="application/json")
-    except IntegrityError:
-        try:
-            Likes.objects.filter(user_id=user.id, post_id=post_id).delete()
-        except DatabaseError:
-            Likes.objects.filter(user_id=user.id, post_id=post_id).delete()
-        return HttpResponse('-1', content_type="application/json")
-
-    return HttpResponse('-1', content_type="application/json")
+    return HttpResponse('0', content_type="application/json")
 
 
 @csrf_exempt
