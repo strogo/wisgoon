@@ -600,7 +600,8 @@ def notif(request):
     notif_cache_key = "notif_v112_%d" % (int(cur_user))
     c_data = cache.get(notif_cache_key)
     if c_data:
-        print "get from cache", notif_cache_key
+        pass
+        # print "get from cache", notif_cache_key
         # return HttpResponse(c_data, content_type="application/json")
 
     data['meta'] = {'limit': 10,
