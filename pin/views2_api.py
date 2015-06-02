@@ -1184,7 +1184,7 @@ def packages_old(request):
         "title": u"لطفا نسخه ی جدید را نصب کنید - 5.0.3",
         "price": 0,
         "wis": 0,
-        "icon": "/media/packages/125x125.jpg"
+        "icon": "/media/packages/ic_credit_gold.png"
     }
     data['objects'].append(o)
 
