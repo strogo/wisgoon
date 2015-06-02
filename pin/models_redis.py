@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 
 from user_profile.models import Profile
 from models import Post, Likes
-from model_mongo import MonthlyStats
 
 # r_server = redis.Redis(settings.REDIS_DB, db=12)
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
@@ -40,8 +39,8 @@ class LikesRedis(object):
         self.postId = str(post_id)
         self.keyName = self.KEY_PREFIX + self.postId
 
-        if not r_server.exists(self.keyName):
-            self.first_store()
+        # if not r_server.exists(self.keyName):
+        #     self.first_store()
         # else:
         #     del_cache_key = "likeDelete_" + str(post_id)
         #     if not cache.get(del_cache_key):
@@ -88,6 +87,11 @@ class LikesRedis(object):
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') - 1)
 
+        user_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(user_id))
+        r_server.lrem(user_last_likes, self.postId)
+
+        Profile.after_dislike(user_id=user_id)
+
     def store_last_likes(self):
         # Stroe last likes
         r_server.lrem(settings.LAST_LIKES, self.postId)
@@ -98,8 +102,6 @@ class LikesRedis(object):
         r_server.lpush(self.keyName, user_id)
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') + 1)
-
-        MonthlyStats.log_hit(object_type=MonthlyStats.LIKE)
 
         ChangedPosts.store_change(post_id=self.postId)
 
@@ -121,6 +123,7 @@ class LikesRedis(object):
 
     def like_or_dislike(self, user_id, post_owner):
         if self.user_liked(user_id=user_id):
+            print "user liked"
             self.dislike(user_id=user_id)
             return False, True, self.cntlike()
         else:
