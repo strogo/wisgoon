@@ -10,7 +10,6 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Sum
-from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
@@ -51,7 +50,7 @@ def home(request):
 
     if arp:
         next_url = reverse('home') + "?older=" + last_id
-        print next_url
+        # print next_url
 
     if request.is_ajax():
         if arp:
@@ -69,7 +68,7 @@ def home(request):
 
 
 def search(request):
-    ROW_PER_PAGE = 20
+    row_per_page = 20
     results = []
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
@@ -83,7 +82,8 @@ def search(request):
             'سعید_معروف']
 
     if not query:
-        sqs = SearchQuerySet().models(Post).facet('tags', mincount=10, limit=100)
+        sqs = SearchQuerySet().models(Post)\
+            .facet('tags', mincount=10, limit=100)
         # print sqs.facet_counts()
 
         tags = [t for t in sqs.facet_counts()['fields']['tags']]
@@ -93,57 +93,57 @@ def search(request):
         })
 
     posts = SearchQuerySet().models(Post)\
-        .filter(content__contains=query)[offset:offset + 1 * ROW_PER_PAGE]
+        .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
             'results': results,
             'posts': posts,
             'query': query,
-            'offset': offset + ROW_PER_PAGE,
+            'offset': offset + row_per_page,
         })
 
     return render(request, 'pin2/search.html', {
         'results': results,
         'posts': posts,
         'query': query,
-        'offset': offset + ROW_PER_PAGE,
+        'offset': offset + row_per_page,
     })
 
 
 def category_top(request, category_id):
-    ROW_PER_PAGE = 20
+    row_per_page = 20
     cat = get_object_or_404(Category, pk=category_id)
     results = []
     offset = int(request.GET.get('offset', 0))
 
     posts = SearchQuerySet().models(Post)\
         .filter(category_i=category_id)\
-        .order_by('-cnt_like_i')[offset:offset + 1 * ROW_PER_PAGE]
+        .order_by('-cnt_like_i')[offset:offset + 1 * row_per_page]
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
             'results': results,
             'posts': posts,
-            'offset': offset + ROW_PER_PAGE,
+            'offset': offset + row_per_page,
         })
 
     return render(request, 'pin2/category_top.html', {
         'results': results,
         'posts': posts,
-        'offset': offset + ROW_PER_PAGE,
+        'offset': offset + row_per_page,
         'cur_cat': cat
     })
 
 
 def tags(request, tag_name):
-    ROW_PER_PAGE = 20
+    row_per_page = 20
     results = []
     query = tag_name.replace('_', ' ')
     offset = int(request.GET.get('offset', 0))
     posts = SearchQuerySet().models(Post)\
         .filter(content__contains=query)\
-        .order_by('-timestamp_i')[offset:offset + 1 * ROW_PER_PAGE]
+        .order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
 
     tags = ['کربلا']
 
@@ -157,7 +157,7 @@ def tags(request, tag_name):
             'results': results,
             'posts': posts,
             'query': query,
-            'offset': offset + ROW_PER_PAGE,
+            'offset': offset + row_per_page,
         })
 
     return render(request, 'pin2/tag.html', {
@@ -165,18 +165,18 @@ def tags(request, tag_name):
         'posts': posts,
         'query': query,
         'page_title': tag_name,
-        'offset': offset + ROW_PER_PAGE,
+        'offset': offset + row_per_page,
     })
 
 
 def hashtag(request, tag_name):
-    ROW_PER_PAGE = 20
+    row_per_page = 20
     results = []
     query = tag_name
     offset = int(request.GET.get('offset', 0))
     posts = SearchQuerySet().models(Post)\
         .filter(tags=tag_name)\
-        .order_by('-timestamp_i')[offset:offset + 1 * ROW_PER_PAGE]
+        .order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
 
     tags = ['کربلا']
 
@@ -190,7 +190,7 @@ def hashtag(request, tag_name):
             'results': results,
             'posts': posts,
             'query': query,
-            'offset': offset + ROW_PER_PAGE,
+            'offset': offset + row_per_page,
         })
 
     return render(request, 'pin2/tag.html', {
@@ -198,18 +198,19 @@ def hashtag(request, tag_name):
         'posts': posts,
         'query': query,
         'page_title': tag_name,
-        'offset': offset + ROW_PER_PAGE,
+        'offset': offset + row_per_page,
     })
+
 
 def user_friends(request, user_id):
     user_id = int(user_id)
-    ROW_PER_PAGE = 20
+    row_per_page = 20
 
     friends = Follow.objects.values_list('following_id', flat=True)\
         .filter(follower_id=user_id).order_by('-id')
     if len(friends) == 0:
         return render(request, 'pin/user_friends_empty.html')
-    paginator = Paginator(friends, ROW_PER_PAGE)
+    paginator = Paginator(friends, row_per_page)
 
     try:
         offset = int(request.GET.get('older', 1))
@@ -246,8 +247,9 @@ def user_friends(request, user_id):
                        'offset': friends.next_page_number,
                        'user_id': user_id})
 
+
 def absuser_friends(request, user_namefg):
-    ROW_PER_PAGE = 20
+    row_per_page = 20
 
     user = get_object_or_404(User, username=user_namefg)
     user_id = user.id
@@ -256,7 +258,7 @@ def absuser_friends(request, user_namefg):
         .filter(follower_id=user_id).order_by('-id')
     if len(friends) == 0:
         return render(request, 'pin/user_friends_empty.html')
-    paginator = Paginator(friends, ROW_PER_PAGE)
+    paginator = Paginator(friends, row_per_page)
 
     try:
         offset = int(request.GET.get('older', 1))
@@ -293,15 +295,16 @@ def absuser_friends(request, user_namefg):
                        'offset': friends.next_page_number,
                        'user_id': user_id})
 
+
 def user_followers(request, user_id):
     user_id = int(user_id)
-    ROW_PER_PAGE = 20
+    row_per_page = 20
 
     friends = Follow.objects.values_list('follower_id', flat=True)\
         .filter(following_id=user_id).order_by('-id')
     if len(friends) == 0:
         return render(request, 'pin/user_friends_empty.html')
-    paginator = Paginator(friends, ROW_PER_PAGE)
+    paginator = Paginator(friends, row_per_page)
 
     try:
         offset = int(request.GET.get('older', 1))
@@ -340,7 +343,7 @@ def user_followers(request, user_id):
 
 
 def absuser_followers(request, user_namefl):
-    ROW_PER_PAGE = 20
+    row_per_page = 20
 
     user = get_object_or_404(User, username=user_namefl)
     user_id = user.id
@@ -349,7 +352,7 @@ def absuser_followers(request, user_namefl):
         .filter(following_id=user_id).order_by('-id')
     if len(friends) == 0:
         return render(request, 'pin/user_friends_empty.html')
-    paginator = Paginator(friends, ROW_PER_PAGE)
+    paginator = Paginator(friends, row_per_page)
 
     try:
         offset = int(request.GET.get('older', 1))
@@ -385,6 +388,7 @@ def absuser_followers(request, user_namefl):
                       {'user_items': user_items,
                        'offset': friends.next_page_number,
                        'user_id': user_id})
+
 
 def user_like(request, user_id):
     user_id = int(user_id)
@@ -466,7 +470,7 @@ def rp(request):
         posts = Post.objects.all().filter(report__gt=0).order_by('-id')
         return render(request, 'pin2/rp.html', {
             'rps': posts
-            })
+        })
     else:
         return HttpResponseRedirect(reverse('pin-home'))
 
@@ -590,7 +594,7 @@ def latest_back(request):
     for li in latest_items:
         print li.id, li.timestamp
 
-    #auths = Author.objects.order_by('-score')[:30]
+    # auths = Author.objects.order_by('-score')[:30]
     # latest_items = sorted(latest_items,
     #                       key=operator.attrgetter('timestamp'),
     #                       reverse=True)
@@ -813,19 +817,15 @@ def item(request, item_id):
     enable_cacing = False
     if not request.user.is_authenticated():
         enable_cacing = True
-        cd = cache.get("page_v1_%s"%item_id)
+        cd = cache.get("page_v1_%s" % item_id)
         if cd:
             # print "get data from cache"
             # print cd
             return cd
     try:
-        p = post = Post.objects.get(id=item_id)
+        post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
         raise Http404("Post does not exist")
-
-    # post = get_object_or_404(
-    #     Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
-    #     .filter(id=item_id)[:1])
 
     # from_id = request.GET.get("from", None)
     # if from_id:
@@ -873,7 +873,8 @@ def item(request, item_id):
 
     # pl = Likes.objects.filter(post_id=post.id)[:12]
     from models_redis import LikesRedis
-    post.likes = LikesRedis(post_id=post.id).get_likes(offset=0, limit=12, as_user_object=True)
+    post.likes = LikesRedis(post_id=post.id)\
+        .get_likes(offset=0, limit=12, as_user_object=True)
 
     # s = SearchQuerySet().models(Post).more_like_this(post)
     # print "seems with:", post.id, s[:5]
@@ -894,7 +895,7 @@ def item(request, item_id):
             'comments_url': comments_url,
         }, content_type="text/html")
         if enable_cacing:
-            cache.set("page_v1_%s"%item_id, d, 300)
+            cache.set("page_v1_%s" % item_id, d, 300)
 
         return d
 
@@ -913,14 +914,14 @@ def get_comments(request, post_id):
 
 
 def tag(request, keyword):
-    ROW_PER_PAGE = 20
+    row_per_page = 20
 
     tag = get_object_or_404(Tag, slug=keyword)
     content_type = ContentType.objects.get_for_model(Post)
     tag_items = TaggedItem.objects.filter(tag_id=tag.id,
                                           content_type=content_type)
 
-    paginator = Paginator(tag_items, ROW_PER_PAGE)
+    paginator = Paginator(tag_items, row_per_page)
 
     try:
         offset = int(request.GET.get('older', 1))
