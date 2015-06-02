@@ -442,7 +442,7 @@ class Post(models.Model):
     @classmethod
     def add_to_stream(cls, post):
 
-        print "this is add to stream"
+        # print "this is add to stream"
         if not post.accept_for_stream():
             print "post not accepted for streams"
             return
@@ -545,9 +545,9 @@ class Post(models.Model):
         # print "self status: ", self.status
 
         self.text = normalize_tags(self.text)
-        print "all save"
+        # print "all save"
         super(Post, self).save(*args, **kwargs)
-        print "after save - thumbnail "
+        # print "after save - thumbnail "
 
     @models.permalink
     def get_absolute_url(self):
