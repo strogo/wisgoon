@@ -10,9 +10,7 @@ app.conf.CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 
 from django.db.models import F
 
-from pin.model_mongo import Notif
-# from pin.models import Post
-# from pin.models_graph import PostGraph, UserGraph
+from pin.model_mongo import Notif, MonthlyStats
 
 from user_profile.models import Profile
 
@@ -25,17 +23,6 @@ def notif_send(user_id, type, post, actor_id, seen=False, post_image=None):
                     set__seen=False,
                     set__post_image=post_image,
                     add_to_set__actors=actor_id, upsert=True)
-
-    # if type == 1:
-    #     try:
-    #         post = Post.objects.get(id=int(post))
-    #     except:
-    #         return "eee chera?"
-    #     post_node = PostGraph.get_or_create(post_obj=post)
-    #     # post_node = PostGraph.get_or_create(post_id=post)
-    #     user_node = UserGraph.get_or_create(user_id=actor_id)
-
-    #     PostGraph.like(user_id=user_node, post_id=post_node)
 
     return "hello notif"
 
@@ -50,7 +37,8 @@ def profile_after_like(user_id):
     Profile.objects.filter(user_id=user_id)\
         .update(cnt_like=F('cnt_like') + 1, score=F('score') + 10)
 
-    print "after like"
+    MonthlyStats.log_hit(object_type=MonthlyStats.LIKE)
+
     return "after like"
 
 
@@ -59,5 +47,4 @@ def profile_after_dislike(user_id):
     Profile.objects.filter(user_id=user_id)\
         .update(cnt_like=F('cnt_like') - 1, score=F('score') - 10)
 
-    print "after dislike"
     return "after dislike"
