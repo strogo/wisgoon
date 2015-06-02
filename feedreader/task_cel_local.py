@@ -38,6 +38,7 @@ def profile_after_like(user_id):
         .update(cnt_like=F('cnt_like') + 1, score=F('score') + 10)
 
     MonthlyStats.log_hit(object_type=MonthlyStats.LIKE)
+    print "after like"
 
     return "after like"
 
