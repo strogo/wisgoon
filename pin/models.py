@@ -826,7 +826,7 @@ class Stream(models.Model):
 
     @classmethod
     def add_post(cls, sender, instance, *args, **kwargs):
-        print "here is add post in stream"
+        # print "here is add post in stream"
         post = instance
         post.get_image_236()
         post.get_image_500()

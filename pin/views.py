@@ -815,7 +815,7 @@ def item(request, item_id):
         enable_cacing = True
         cd = cache.get("page_v1_%s"%item_id)
         if cd:
-            print "get data from cache"
+            # print "get data from cache"
             # print cd
             return cd
     try:
@@ -827,33 +827,33 @@ def item(request, item_id):
     #     Post.objects.only('id', 'user', 'text', 'category', 'image', 'cnt_like')\
     #     .filter(id=item_id)[:1])
 
-    from_id = request.GET.get("from", None)
-    if from_id:
-        print "from:", from_id
-        from_id = int(from_id)
-        try:
-            p_from = Post.objects.get(pk=from_id)
-            from models_graph import PostGraph
-            from_post = PostGraph.get_or_create(post_obj=p_from)
-            to_post = PostGraph.get_or_create(post_obj=post)
-            PostGraph.from_to(from_post=from_post, to_post=to_post)
+    # from_id = request.GET.get("from", None)
+    # if from_id:
+    #     # print "from:", from_id
+    #     from_id = int(from_id)
+    #     try:
+    #         p_from = Post.objects.get(pk=from_id)
+    #         from models_graph import PostGraph
+    #         from_post = PostGraph.get_or_create(post_obj=p_from)
+    #         to_post = PostGraph.get_or_create(post_obj=post)
+    #         PostGraph.from_to(from_post=from_post, to_post=to_post)
 
-        except:
-            pass
+    #     except:
+    #         pass
 
     # p = Post.objects.get(id=item_id)
 
-    cache_key_mlt = "mlt:%d" % int(item_id)
-    cache_data_mlt = cache.get(cache_key_mlt)
-    if cache_data_mlt:
-        post.mlt = cache_data_mlt
-        print "cached"
-    else:
-        print "not in cache"
-        mlt = SearchQuerySet()\
-            .models(Post).more_like_this(p)[:30]
-        cache.set(cache_key_mlt, mlt, 86400)
-        post.mlt = mlt
+    post.mlt = {}
+
+    # cache_key_mlt = "mlt:%d" % int(item_id)
+    # cache_data_mlt = cache.get(cache_key_mlt)
+    # if cache_data_mlt:
+    #     post.mlt = cache_data_mlt
+    # else:
+    #     mlt = SearchQuerySet()\
+    #         .models(Post).more_like_this(p)[:30]
+    #     cache.set(cache_key_mlt, mlt, 86400)
+    #     post.mlt = mlt
     # print post.related
 
     # if not request.user.is_authenticated:
@@ -887,7 +887,7 @@ def item(request, item_id):
     if request.is_ajax():
         return render(request, 'pin2/items_inner.html',
                       {'post': post, 'follow_status': follow_status})
-    else: 
+    else:
         d = render(request, 'pin2/item.html', {
             'post': post,
             'follow_status': follow_status,
