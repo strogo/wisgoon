@@ -44,7 +44,7 @@ def get_post_user_cache(post_id):
     cache_str = "post_user_%d" % int(post_id)
     cache_data = cache.get(cache_str)
     if cache_data:
-        print "get from cached data"
+        # print "get from cached data"
         return cache_data
     try:
         post = Post.objects.only('user').get(pk=post_id)

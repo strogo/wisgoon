@@ -1084,7 +1084,7 @@ class Comments(models.Model):
 
         comment_cache_name = "com_%d" % int(self.object_pk_id)
         cache.delete(comment_cache_name)
-        print "gaz"
+        # print "gaz"
 
         super(Comments, self).save(*args, **kwargs)
 
