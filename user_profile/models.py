@@ -81,6 +81,8 @@ class Profile(models.Model):
         return cnt_followers
 
     def get_credit(self):
+        return self.credit
+
         if self.credit == -1 or self.credit is None:
             from pin.tools import get_user_meta
             um = get_user_meta(user_id=self.user_id)
