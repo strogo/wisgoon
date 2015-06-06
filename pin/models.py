@@ -1072,41 +1072,34 @@ class Comments(models.Model):
                 return
 
         if not self.pk:
-            Post.objects.filter(pk=self.object_pk.id)\
+            Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
-        try:
-            ps = self.user.profile.score
-            if ((self.date_lt(self.user.date_joined, 5) and
-                 ps > 500) or ps > 500):
-                self.is_public = True
-        except:
-            pass
 
-        hcpstr = "cmnt_max_%d" % self.object_pk.id
+        hcpstr = "cmnt_max_%d" % int(self.object_pk_id)
         cp = cache.get(hcpstr)
         if cp:
-            hstr = "cmn_cache_%s%s" % (self.object_pk.id, cp)
+            hstr = "cmn_cache_%d%s" % (int(self.object_pk_id), cp)
             cache.delete(hstr)
             print "delete ", hstr, hcpstr
 
-        comment_cache_name = "com_%d" % self.object_pk.id
+        comment_cache_name = "com_%d" % int(self.object_pk_id)
         cache.delete(comment_cache_name)
+        print "gaz"
 
         super(Comments, self).save(*args, **kwargs)
 
     @classmethod
     def add_comment(cls, sender, instance, created, *args, **kwargs):
         from pin.tasks import send_notif_bar
+        from pin.tools import get_post_user_cache
         if not created:
             return None
 
         MonthlyStats.log_hit(object_type=MonthlyStats.COMMENT)
         comment = instance
-        post = comment.object_pk
+        post = get_post_user_cache(post_id=comment.object_pk_id)
 
-        Post.hot(post.id, amount=1)
-
-        if comment.user != post.user:
+        if comment.user_id != post.user_id:
             send_notif_bar(user=post.user_id, type=2, post=post.id,
                            actor=comment.user_id)
 

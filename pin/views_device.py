@@ -19,7 +19,7 @@ from pin.models import Post, Likes, Comments, Comments_score,\
 
 from pin.forms import PinDirectForm, PinDeviceUpdate
 from pin.tools import create_filename, AuthCache, check_block,\
-    log_act, post_after_delete, get_user_ip
+    log_act, post_after_delete, get_user_ip, get_post_user_cache
 from pin.context_processors import is_police
 
 MEDIA_ROOT = settings.MEDIA_ROOT
@@ -87,14 +87,18 @@ def post_comment(request):
     log_act("wisgoon.api.post.commenting.count")
     user = check_auth(request)
     if not user:
-        return HttpResponseForbidden('error in user validation', content_type="application/json")
+        return HttpResponseForbidden('error in user validation',
+                                     content_type="application/json")
 
     data = request.POST.copy()
     comment = data.get('comment')
     object_pk = data.get("object_pk")
-    if data and comment and object_pk and Post.objects.filter(pk=object_pk).exists():
+    if not data or not comment or not object_pk:
+        return HttpResponse(0, content_type="application/json")
 
-        post = Post.objects.get(id=object_pk)
+    try:
+        post = get_post_user_cache(post_id=object_pk)
+        # post = Post.objects.only('user').get(id=object_pk)
         if check_block(user_id=post.user_id, blocked_id=user.id):
             if not is_police(request, flat=True):
                 return HttpResponse(0)
@@ -104,8 +108,9 @@ def post_comment(request):
                                 user_id=user.id,
                                 ip_address=user._ip)
         return HttpResponse(1, content_type="application/json")
-
-    return HttpResponse(0, content_type="application/json")
+    except Exception, e:
+        print "d_send post_comment", str(e)
+        return HttpResponse(0, content_type="application/json")
 
 
 @csrf_exempt
