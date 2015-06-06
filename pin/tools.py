@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from tastypie.models import ApiKey
 
 from user_profile.models import Profile
-from pin.models import Category, Block, Log
+from pin.models import Category, Block, Log, Post
 from pin.model_mongo import UserMeta, FixedAds
 
 from daddy_avatar.templatetags import daddy_avatar
@@ -38,6 +38,21 @@ CARBON_PORT = 2003
 # def dec_user_cnt_like(user_id):
 #     Profile.objects.filter(user_id=user_id)\
 #         .update(cnt_like=F('cnt_like')-1, score=F('score')-10)
+
+
+def get_post_user_cache(post_id):
+    cache_str = "post_user_%d" % int(post_id)
+    cache_data = cache.get(cache_str)
+    if cache_data:
+        print "get from cached data"
+        return cache_data
+    try:
+        post = Post.objects.only('user').get(pk=post_id)
+        cache.set(cache_str, post, 86400)
+        return post
+    except Post.DoesNotExist:
+        cache.delete(cache_str)
+        raise Post.DoesNotExist
 
 
 def post_after_delete(post, user, ip_address=None):
