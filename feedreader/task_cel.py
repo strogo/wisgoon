@@ -11,6 +11,7 @@ app.conf.CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 from django.db.models import F
 
 from pin.model_mongo import Notif, MonthlyStats
+from pin.models import Post, Follow
 
 from user_profile.models import Profile
 
@@ -49,3 +50,28 @@ def profile_after_dislike(user_id):
         .update(cnt_like=F('cnt_like') - 1, score=F('score') - 10)
 
     return "after dislike"
+
+
+@app.task(name="tasks.clear_notif")
+def clear_notif(user_id):
+    Notif.objects.filter(owner=user_id).order_by('-date')[100:].delete()
+    print "clear notif"
+    return "clear botif"
+
+
+@app.task(name="tasks.post_to_followers")
+def post_to_followers(user_id, post_id):
+    # Get the users follow owner of post
+    followers = Follow.objects.filter(following_id=user_id)\
+        .values_list('follower_id', flat=True)
+    # print followers
+    for follower_id in followers:
+        # print follower
+        try:
+            Post.add_to_user_stream(post_id=post_id, user_id=follower_id)
+        except Exception, e:
+            print str(e)
+            pass
+
+    print "post to followers"
+    return "post to followers"

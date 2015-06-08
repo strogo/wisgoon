@@ -466,11 +466,11 @@ class Post(models.Model):
             r_server.rpush(user_stream, ss)
 
     @classmethod
-    def add_to_user_stream(cls, post, user_id):
+    def add_to_user_stream(cls, post_id, user_id):
         user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
 
-        r_server.lrem(user_stream, post.id)
-        r_server.lpush(user_stream, post.id)
+        r_server.lrem(user_stream, post_id)
+        r_server.lpush(user_stream, post_id)
         r_server.ltrim(user_stream, 0, 1000)
 
     @classmethod
@@ -840,19 +840,19 @@ class Stream(models.Model):
 
             user = post.user
 
-            Post.add_to_user_stream(post=post, user_id=user.id)
+            Post.add_to_user_stream(post_id=post.id, user_id=user.id)
 
-            # Get the users follow owner of post
-            followers = Follow.objects.filter(following=user)\
-                .values_list('follower_id', flat=True)
-            # print followers
-            for follower_id in followers:
-                # print follower
-                try:
-                    Post.add_to_user_stream(post=post, user_id=follower_id)
-                except Exception, e:
-                    print str(e)
-                    pass
+            from pin.tasks import send_post_to_followers
+
+            send_post_to_followers(user_id=user.id, post_id=post.id)
+            # followers = Follow.objects.filter(following=user)\
+            #     .values_list('follower_id', flat=True)
+            # for follower_id in followers:
+            #     try:
+            #         Post.add_to_user_stream(post=post, user_id=follower_id)
+            #     except Exception, e:
+            #         print str(e)
+            #         pass
 
             if post.status == Post.APPROVED and post.accept_for_stream():
                 Post.add_to_stream(post=post)
