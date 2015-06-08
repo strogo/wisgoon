@@ -5,7 +5,6 @@ import time
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import MultipleObjectsReturned
-from django.db import IntegrityError, DatabaseError
 from django.db.models import F, Sum
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
@@ -14,7 +13,7 @@ from django.http import HttpResponse, HttpResponseForbidden,\
 
 from tastypie.models import ApiKey
 
-from pin.models import Post, Likes, Comments, Comments_score,\
+from pin.models import Post, Comments, Comments_score,\
     Follow, Stream
 
 from pin.forms import PinDirectForm, PinDeviceUpdate
@@ -66,7 +65,8 @@ def like(request):
         return HttpResponseBadRequest('erro in post id',
                                       content_type="application/json")
     try:
-        post = Post.objects.only('user').get(pk=post_id)
+        post = get_post_user_cache(post_id=post_id)
+        # post = Post.objects.only('user').get(pk=post_id)
     except Post.DoesNotExist:
         return HttpResponse('0', content_type="application/json")
 
@@ -121,7 +121,6 @@ def post_report(request):
 
     data = request.POST.copy()
     post_id = data['post_id']
-    #print post_id
 
     if data and post_id and Post.objects.filter(pk=post_id).exists():
         Post.objects.filter(pk=post_id).update(report=F('report') + 1)
@@ -163,12 +162,14 @@ def comment_score(request, comment_id, score):
 
     try:
         comment = Comments.objects.get(pk=comment_id)
-        comment_score, created = Comments_score.objects.get_or_create(user=user, comment=comment)
+        comment_score, created = Comments_score.objects\
+            .get_or_create(user=user, comment=comment)
         if score != comment_score.score:
             comment_score.score = score
             comment_score.save()
 
-        sum_score = Comments_score.objects.filter(comment=comment).aggregate(Sum('score'))
+        sum_score = Comments_score.objects\
+            .filter(comment=comment).aggregate(Sum('score'))
         comment.score = sum_score['score__sum']
         comment.save()
         return HttpResponse(sum_score['score__sum'])
@@ -231,12 +232,12 @@ def follow(request, following, action):
     try:
         following = User.objects.get(pk=int(following))
         try:
-            follow, created = Follow.objects.get_or_create(follower=user,
-                                                       following=following)
+            follow, created = Follow.objects\
+                .get_or_create(follower=user, following=following)
         except MultipleObjectsReturned:
             Follow.objects.filter(follower=user, following=following).delete()
-            follow, created = Follow.objects.get_or_create(follower=user,
-                                                       following=following)
+            follow, created = Follow.objects\
+                .get_or_create(follower=user, following=following)
 
         if int(action) == 0 and follow:
             follow.delete()
@@ -252,8 +253,6 @@ def follow(request, following, action):
             #                        user=user,
             #                        date=post.timestamp,
             #                        following=following)
-
-                # print "post", post.id, s, created
 
     except User.DoesNotExist:
         return HttpResponse('User does not exists')
@@ -290,7 +289,8 @@ def post_send(request):
         upload = request.FILES.values()[0]
         filename = create_filename(upload.name)
         try:
-            with BufferedWriter(FileIO("%s/pin/images/o/%s" % (MEDIA_ROOT, filename), "wb")) as dest:
+            u = "%s/pin/images/o/%s" % (MEDIA_ROOT, filename)
+            with BufferedWriter(FileIO(u, "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
 
@@ -302,7 +302,7 @@ def post_send(request):
             model.category_id = form.cleaned_data['category']
             model.device = 2
             model.save()
-            
+
             return HttpResponse('success')
         except IOError, e:
             print str(e), MEDIA_ROOT
