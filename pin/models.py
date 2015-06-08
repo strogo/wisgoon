@@ -18,6 +18,7 @@ from django.core.validators import URLValidator
 # from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import F
+from django.db import IntegrityError
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 
@@ -298,8 +299,11 @@ class Post(models.Model):
                     return False
 
                 new_image_url = ibase + "/" + nname
-                p, created = PostMetaData.objects\
-                    .get_or_create(post_id=self.id)
+                try:
+                    p, created = PostMetaData.objects\
+                        .get_or_create(post_id=self.id)
+                except IntegrityError:
+                    p = PostMetaData.objects.get(post_id=self.id)
 
                 if not p.img_236_h:
                     p.img_236 = new_image_url
@@ -350,8 +354,11 @@ class Post(models.Model):
                     return False
 
                 new_image_url = ibase + "/" + nname
-                p, created = PostMetaData.objects\
-                    .get_or_create(post_id=self.id)
+                try:
+                    p, created = PostMetaData.objects\
+                        .get_or_create(post_id=self.id)
+                except IntegrityError:
+                    p = PostMetaData.objects.get(post_id=self.id)
                 if not p.img_500_h:
                     p.img_500 = new_image_url
                     p.img_500_h = h
