@@ -27,8 +27,9 @@ from django.db.models import Q
 from sorl.thumbnail import get_thumbnail
 from tastypie.models import ApiKey
 
-from pin.tools import AuthCache, get_user_ip, get_fixed_ads, log_act
-from pin.models import Post, Category, Likes, Follow, Comments, Block, Packages, Ad, Bills2
+from pin.tools import AuthCache, get_user_ip, log_act
+from pin.models import Post, Category, Likes, Follow, Comments, Block,\
+    Packages, Ad, Bills2
 from pin.model_mongo import Notif
 
 from haystack.query import SearchQuerySet
@@ -422,7 +423,6 @@ def post(request):
                     h.is_ad = True
                 posts = list(hot_post) + list(posts)
 
-
         # if not hot_post:
         #     fixed_post = get_fixed_ads()
         #     if fixed_post:
@@ -597,6 +597,9 @@ def notif(request):
     else:
         return HttpResponse("problem")
 
+    if not cur_user:
+        return HttpResponse("problem")
+
     notif_cache_key = "notif_v112_%d" % (int(cur_user))
     c_data = cache.get(notif_cache_key)
     if c_data:
@@ -630,7 +633,8 @@ def notif(request):
             cur_p.text = ""
             cur_p.cnt_comment = 0
             cur_p.post_image = p.post_image
-            cur_p.post_image['url'] = cur_p.post_image['url'].split("media/")[1]
+            cur_p.post_image['url'] = cur_p.post_image['url']\
+                .split("media/")[1]
             cur_p.image = p.post_image['url']
             cur_p.user_id = p.owner
             cur_p.cnt_like = 0
@@ -865,7 +869,8 @@ def search(request):
 
     data = {}
     import pysolr
-    solr = pysolr.Solr('http://79.127.125.146:8080/solr/wisgoon_user', timeout=10)
+    solr = pysolr.Solr('http://79.127.125.146:8080/solr/wisgoon_user',
+                       timeout=10)
     query = request.GET.get('q', '')
     if query:
         fq = 'username_s:*%s* name_s:*%s*' % (query, query)
@@ -1171,6 +1176,7 @@ def packages(request):
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
 
+
 @cache_page(60 * 15)
 def packages_old(request):
     # return HttpResponse("hello")
@@ -1178,7 +1184,7 @@ def packages_old(request):
     data = {
         "objects": []
     }
-    
+
     o = {
         "name": "update",
         "title": u"لطفا نسخه ی جدید را نصب کنید - 5.0.3",
@@ -1311,7 +1317,9 @@ def save_as_ads(request, post_id):
     try:
         Post.objects.get(id=int(post_id))
     except Exception, Post.DoesNotExist:
-        return HttpResponse("error in post id", status=404, content_type="text/html")
+        return HttpResponse("error in post id",
+                            status=404,
+                            content_type="text/html")
 
     user = None
     token = request.GET.get('token', '')
