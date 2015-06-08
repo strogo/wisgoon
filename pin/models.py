@@ -1173,6 +1173,19 @@ class InstaAccount(models.Model):
     lc = models.DateTimeField(auto_now_add=True, default=datetime.now())
 
 
+class PostMetaData(models.Model):
+    STATUS = (
+        (1, 'created'),
+    )
+    post = models.OneToOneField(Post)
+    original_size = models.IntegerField(default=0)
+    status = models.IntegerField(default=1, choices=STATUS, db_index=True)
+    img_236_h = models.IntegerField(default=0)
+    img_500_h = models.IntegerField(default=0)
+    img_236 = models.CharField(max_length=250)
+    img_500 = models.CharField(max_length=250)
+
+
 class Log(models.Model):
     TYPES = (
         (1, "post"),
