@@ -395,8 +395,6 @@ def user_like(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     profile = Profile.objects.get(user_id=user_id)
 
-    user.user_meta = get_user_meta(user_id=user_id)
-
     pid = get_request_pid(request)
     pl = Likes.user_likes(user_id=user_id, pid=pid)
     arp = []
@@ -429,8 +427,6 @@ def absuser_like(request, user_namel):
     user = get_object_or_404(User, username=user_namel)
     user_id = user.id
     profile = Profile.objects.get(user_id=user_id)
-
-    user.user_meta = get_user_meta(user_id=user_id)
 
     pid = get_request_pid(request)
     pl = Likes.user_likes(user_id=user_id, pid=pid)
@@ -759,8 +755,6 @@ def user(request, user_id, user_name=None):
     user = get_object_or_404(User, pk=user_id)
     profile = Profile.objects.get_or_create(user_id=user_id)
 
-    user.user_meta = get_user_meta(user_id=user_id)
-
     timestamp = get_request_timestamp(request)
     if timestamp == 0:
         latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
@@ -793,8 +787,6 @@ def absuser(request, user_name=None):
     user = get_object_or_404(User, username=user_name)
     user_id = user.id
     profile = Profile.objects.get_or_create(user_id=user_id)
-
-    user.user_meta = get_user_meta(user_id=user_id)
 
     timestamp = get_request_timestamp(request)
     if timestamp == 0:

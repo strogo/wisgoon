@@ -52,7 +52,7 @@ class Profile(models.Model):
     cnt_followers = models.IntegerField(default=-1, blank=True, null=True)
 
     credit = models.IntegerField(default=0)
-    level = models.IntegerField(default=-1, blank=True, null=True)
+    level = models.IntegerField(default=1)
 
     def get_cnt_following(self):
         if self.cnt_following == -1 or self.cnt_following is None:
@@ -83,39 +83,13 @@ class Profile(models.Model):
     def get_credit(self):
         return self.credit
 
-        if self.credit == -1 or self.credit is None:
-            from pin.tools import get_user_meta
-            um = get_user_meta(user_id=self.user_id)
-            if um:
-                Profile.objects.filter(id=self.id)\
-                    .update(credit=um.credit)
-            return um.credit
-        else:
-            return self.credit
-
     def get_level_string(self):
-        if self.level == -1 or self.level is None:
-            from pin.tools import get_user_meta
-            um = get_user_meta(user_id=self.user_id)
-            if um:
-                Profile.objects.filter(id=self.id)\
-                    .update(level=um.level)
-            self.level = um.level
-
         if self.level == 1:
             return u'عادی'
         elif self.level == 2:
             return u'پلیس'
 
     def is_police(self):
-        if self.level == -1 or self.level is None:
-            from pin.tools import get_user_meta
-            um = get_user_meta(user_id=self.user_id)
-            if um:
-                Profile.objects.filter(id=self.id)\
-                    .update(level=um.level)
-            self.level = um.level
-
         if self.level == 2:
             return True
         return False
