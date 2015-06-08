@@ -6,10 +6,10 @@ from django.conf import settings
 
 if settings.DEBUG:
     from feedreader.task_cel_local import notif_send, profile_after_like,\
-        profile_after_dislike
+        profile_after_dislike, clear_notif, post_to_followers
 else:
     from feedreader.task_cel import notif_send, profile_after_like,\
-        profile_after_dislike
+        profile_after_dislike, clear_notif, post_to_followers
 
 
 def send_notif(user, type, post, actor, seen=False):
@@ -21,9 +21,11 @@ def send_notif_bar(user, type, post, actor, seen=False, post_image=None):
     cache.delete(notif_cache_key)
     try:
         if settings.USE_CELERY:
-            notif_send.delay(user, type, post, actor, seen=False, post_image=post_image)
+            notif_send.delay(user, type, post, actor, seen=False,
+                             post_image=post_image)
         else:
-            notif_send(user, type, post, actor, seen=False, post_image=post_image)
+            notif_send(user, type, post, actor, seen=False,
+                       post_image=post_image)
     except Exception, e:
         print str(e)
     return None
@@ -41,3 +43,17 @@ def send_profile_after_dislike(user_id):
         profile_after_dislike.delay(user_id=user_id)
     else:
         profile_after_dislike(user_id=user_id)
+
+
+def send_clear_notif(user_id):
+    if settings.USE_CELERY:
+        clear_notif.delay(user_id=user_id)
+    else:
+        clear_notif(user_id=user_id)
+
+
+def send_post_to_followers(user_id, post_id):
+    if settings.USE_CELERY:
+        post_to_followers.delay(user_id=user_id, post_id=post_id)
+    else:
+        post_to_followers(user_id=user_id, post_id=post_id)

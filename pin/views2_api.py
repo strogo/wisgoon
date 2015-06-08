@@ -31,6 +31,7 @@ from pin.tools import AuthCache, get_user_ip, log_act
 from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2
 from pin.model_mongo import Notif
+from pin.tasks import send_clear_notif
 
 from haystack.query import SearchQuerySet
 
@@ -598,7 +599,7 @@ def notif(request):
         return HttpResponse("problem")
 
     if not cur_user:
-        return HttpResponse("problem")
+        return HttpResponse("problem", cur_user)
 
     notif_cache_key = "notif_v112_%d" % (int(cur_user))
     c_data = cache.get(notif_cache_key)
@@ -618,6 +619,7 @@ def notif(request):
     notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 
     Notif.objects.filter(owner=cur_user, seen=False).update(set__seen=True)
+    send_clear_notif(user_id=cur_user)
 
     # Notif.objects.filter(owner=1).order_by('-date')[100:].delete()
 
