@@ -26,7 +26,7 @@ from sorl.thumbnail import get_thumbnail
 from taggit.managers import TaggableManager
 from taggit.models import Tag
 
-from model_mongo import Notif as Notif_mongo, MonthlyStats, PostMeta,\
+from model_mongo import Notif as Notif_mongo, MonthlyStats,\
     PendingPosts
 from preprocessing import normalize_tags
 
@@ -279,15 +279,15 @@ class Post(models.Model):
         else:
 
             try:
-                imeta = PostMeta.objects.get(post=int(self.id))
-                if not imeta.img_236:
-                    raise PostMeta.DoesNotExist
+                imeta = PostMetaData.objects.get(post_id=int(self.id))
+                if not imeta.img_236_h:
+                    raise PostMetaData.DoesNotExist
                 new_image_url = imeta.img_236
                 h = imeta.img_236_h
                 a = [new_image_url, str(h)]
                 d = ":".join(a)
                 cache.set(cname, d, 86400)
-            except PostMeta.DoesNotExist:
+            except PostMetaData.DoesNotExist:
                 try:
                     ibase, nname, h = self.save_thumb(basewidth=236)
                 except IOError:
@@ -298,10 +298,13 @@ class Post(models.Model):
                     return False
 
                 new_image_url = ibase + "/" + nname
-                PostMeta.objects(post=self.id)\
-                    .update(set__img_236=new_image_url,
-                            set__img_236_h=h,
-                            upsert=True)
+                p, created = PostMetaData.objects\
+                    .get_or_create(post_id=self.id)
+
+                if not p.img_236_h:
+                    p.img_236 = new_image_url
+                    p.img_236_h = h
+                    p.save()
 
         if api:
             final_url = new_image_url
@@ -326,9 +329,9 @@ class Post(models.Model):
         else:
 
             try:
-                imeta = PostMeta.objects.get(post=int(self.id))
-                if not imeta.img_500:
-                    raise PostMeta.DoesNotExist
+                imeta = PostMetaData.objects.get(post_id=int(self.id))
+                if not imeta.img_500_h:
+                    raise PostMetaData.DoesNotExist
                 new_image_url = imeta.img_500
                 h = imeta.img_500_h
 
@@ -336,7 +339,7 @@ class Post(models.Model):
                 d = ":".join(a)
                 cache.set(cname, d, 86400)
 
-            except PostMeta.DoesNotExist:
+            except PostMetaData.DoesNotExist:
                 try:
                     ibase, nname, h = self.save_thumb(basewidth=500)
                 except IOError:
@@ -347,10 +350,12 @@ class Post(models.Model):
                     return False
 
                 new_image_url = ibase + "/" + nname
-                PostMeta.objects(post=self.id)\
-                    .update(set__img_500=new_image_url,
-                            set__img_500_h=h,
-                            upsert=True)
+                p, created = PostMetaData.objects\
+                    .get_or_create(post_id=self.id)
+                if not p.img_500_h:
+                    p.img_500 = new_image_url
+                    p.img_500_h = h
+                    p.save()
 
             except Exception:
                 pass
