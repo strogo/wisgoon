@@ -298,13 +298,16 @@ class Post(models.Model):
                     return False
 
                 new_image_url = ibase + "/" + nname
-                p, created = PostMetaData.objects\
-                    .get_or_create(post_id=self.id)
+                try:
+                    p, created = PostMetaData.objects\
+                        .get_or_create(post_id=self.id)
 
-                if not p.img_236_h:
-                    p.img_236 = new_image_url
-                    p.img_236_h = h
-                    p.save()
+                    if not p.img_236_h:
+                        p.img_236 = new_image_url
+                        p.img_236_h = h
+                        p.save()
+                except Exception, e:
+                    print str(e)
 
         if api:
             final_url = new_image_url
@@ -350,12 +353,15 @@ class Post(models.Model):
                     return False
 
                 new_image_url = ibase + "/" + nname
-                p, created = PostMetaData.objects\
-                    .get_or_create(post_id=self.id)
-                if not p.img_500_h:
-                    p.img_500 = new_image_url
-                    p.img_500_h = h
-                    p.save()
+                try:
+                    p, created = PostMetaData.objects\
+                        .get_or_create(post_id=self.id)
+                    if not p.img_500_h:
+                        p.img_500 = new_image_url
+                        p.img_500_h = h
+                        p.save()
+                except Exception, e:
+                    print str(e)
 
             except Exception:
                 pass
