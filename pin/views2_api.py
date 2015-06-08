@@ -638,7 +638,7 @@ def notif(request):
             cur_p.image = p.post_image['url']
             cur_p.user_id = p.owner
             cur_p.cnt_like = 0
-            cur_p.timestamp = 0
+            cur_p.timestamp = int(time.time())
             cur_p.category_id = 1
         else:
             try:
