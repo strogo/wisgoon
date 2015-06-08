@@ -51,7 +51,7 @@ class Profile(models.Model):
     cnt_following = models.IntegerField(default=-1, blank=True, null=True)
     cnt_followers = models.IntegerField(default=-1, blank=True, null=True)
 
-    credit = models.IntegerField(default=-1, blank=True, null=True)
+    credit = models.IntegerField(default=0)
     level = models.IntegerField(default=-1, blank=True, null=True)
 
     def get_cnt_following(self):
