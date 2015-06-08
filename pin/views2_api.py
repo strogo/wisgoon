@@ -619,7 +619,7 @@ def notif(request):
     notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 
     Notif.objects.filter(owner=cur_user, seen=False).update(set__seen=True)
-    send_clear_notif(user_id=cur_user)
+    # send_clear_notif(user_id=cur_user)
 
     # Notif.objects.filter(owner=1).order_by('-date')[100:].delete()
 
