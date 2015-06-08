@@ -653,8 +653,6 @@ def save_as_ads(request, post_id):
     # for i in range(0, 50000):
     #     Ads.objects(user=55).update(add_to_set__users=i, upsert=True)
     p = Post.objects.get(id=post_id)
-
-    # user_meta = get_user_meta(user_id=int(request.user.id))
     profile = request.user.profile
 
     if request.method == "POST":

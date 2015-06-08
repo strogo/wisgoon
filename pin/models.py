@@ -363,7 +363,6 @@ class Post(models.Model):
                 except Exception, e:
                     print str(e)
 
-
             except Exception:
                 pass
                 # print str(e)
