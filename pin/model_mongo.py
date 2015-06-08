@@ -2,7 +2,6 @@
 import datetime
 import redis
 from mongoengine import *
-from mongoengine import signals
 from django.conf import settings
 
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
@@ -55,7 +54,8 @@ class Ads(Document):
         return None
         # print "viewer id:", user_id
         try:
-            ad = Ads.objects.only('ads_type', 'id', 'post').filter(users__nin=[user_id], ended=False)[:1]
+            ad = Ads.objects.only('ads_type', 'id', 'post')\
+                .filter(users__nin=[user_id], ended=False)[:1]
             if ad:
                 ad = ad[0]
                 if ad.cnt_view >= cls.MAX_TYPES[ad.ads_type]:
@@ -151,12 +151,6 @@ class PendingPosts(Document):
         print "delete in pending"
         r_server.srem(settings.PENDINGS, int(self.post))
         return super(PendingPosts, self).delete(**write_concern)
-
-
-def unpending(sender, document):
-    print "unpending"
-
-signals.post_delete.connect(unpending)
 
 
 class UserMeta(Document):
