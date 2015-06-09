@@ -59,7 +59,7 @@ def change_level(request, user_id, level):
     if not is_admin(request.user):
         return HttpResponseForbidden('cant access')
 
-    UserMeta.objects(user=user_id).update(set__level=level, upsert=True)
+    Profile.objects.filter(user_id=user_id).update(level=level)
 
     return HttpResponseRedirect(reverse('pin-user', args=[user_id]))
 

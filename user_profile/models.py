@@ -89,6 +89,10 @@ class Profile(models.Model):
         elif self.level == 2:
             return u'پلیس'
 
+        self.level = 1
+        self.save()
+        return self.get_level_string()
+
     def is_police(self):
         if self.level == 2:
             return True
