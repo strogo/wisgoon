@@ -63,7 +63,7 @@ def is_super_user(request):
 
 def is_police(request, flat=False):
     try:
-        um = UserMeta.objects.get(user=request.user.id)
+        um = request.user.profile
         if um.is_police():
             if flat:
                 return True
