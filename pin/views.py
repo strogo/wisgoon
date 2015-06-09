@@ -14,7 +14,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 
-from pin.models import Post, Follow, Likes, Category, Comments
+from pin.models import Post, Follow, Likes, Category, Comments, Report
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
     get_user_meta, get_user_ip, log_act
 
@@ -464,6 +464,8 @@ def absuser_like(request, user_namel):
 def rp(request):
     if request.user.is_superuser:
         posts = Post.objects.all().filter(report__gt=0).order_by('-id')
+        for p in posts:
+            p.reporters = Report.objects.filter(post_id=p.id)
         return render(request, 'pin2/rp.html', {
             'rps': posts
         })
