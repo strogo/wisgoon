@@ -14,7 +14,7 @@ from django.http import HttpResponse, HttpResponseForbidden,\
 from tastypie.models import ApiKey
 
 from pin.models import Post, Comments, Comments_score,\
-    Follow, Stream
+    Follow, Stream, Report
 
 from pin.forms import PinDirectForm, PinDeviceUpdate
 from pin.tools import create_filename, AuthCache, check_block,\
@@ -119,11 +119,15 @@ def post_report(request):
     if not user:
         return HttpResponseForbidden('error in user validation')
 
-    data = request.POST.copy()
-    post_id = data['post_id']
+    post_id = request.POST.get('post_id', None)
+    if not post_id:
+        return HttpResponseForbidden('error in params')
 
-    if data and post_id and Post.objects.filter(pk=post_id).exists():
-        Post.objects.filter(pk=post_id).update(report=F('report') + 1)
+    if post_id and Post.objects.filter(pk=post_id).exists():
+        r, created = Report.objects.get_or_create(user_id=user.id, post_id=post_id)
+        if created:
+            Post.objects.filter(pk=post_id).update(report=F('report') + 1)
+
         return HttpResponse(1)
     else:
         return HttpResponseNotFound('post not found')
