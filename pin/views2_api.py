@@ -1410,3 +1410,7 @@ def promoted(request):
     return HttpResponse(json_data, content_type="application/json")
 
     # return HttpResponse(json.dumps(data))
+
+
+def get_phone_data(request):
+    return HttpResponse("accepted", content_type="text/html")

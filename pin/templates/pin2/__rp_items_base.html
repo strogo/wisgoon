@@ -28,7 +28,7 @@
 	</div>
 	<div class="reporters">
 	{% for reporter in item.reporters %}
-		<a href="{% url "pin-user" reporter.user.id%}">
+		<a href="{% url "pin-absuser" reporter.user.username %}">
 			<img src="{{reporter.user_id|get_avatar:54}}" style="display: inline;" > 
 		</a>
 	{% endfor %}
