@@ -1177,6 +1177,17 @@ class Block(models.Model):
         Block.objects.filter(user_id=user_id, blocked_id=blocked_id).delete()
 
 
+class PhoneData(models.Model):
+    user = models.ForeignKey(User, related_name="phone", null=True, blank=True)
+    imei = models.CharField(max_length=50)
+    os = models.CharField(max_length=50)
+    phone_model = models.CharField(max_length=50)
+    phone_serial = models.CharField(max_length=50)
+    android_version = models.CharField(max_length=10)
+    app_version = models.CharField(max_length=10)
+    google_token = models.CharField(max_length=500)
+
+
 class InstaAccount(models.Model):
     insta_id = models.IntegerField()
     cat = models.ForeignKey(Category)

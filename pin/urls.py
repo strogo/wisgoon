@@ -174,6 +174,8 @@ urlpatterns += patterns('',
 
     url(r'^api/save/as/ads/(?P<post_id>\d+)/$', 'pin.views2_api.save_as_ads', name="api-save-as-ads"),
 
+    url(r'^api/gcm/get/phone/data/$', 'pin.views2_api.get_phone_data', name="api-get-phone-data"),
+
     url(r'^api/password/reset_mobile/$',
                     'pin.views2_api.password_reset',
                     name='api_password_reset'),
