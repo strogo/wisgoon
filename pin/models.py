@@ -1066,6 +1066,9 @@ class Comments(models.Model):
     user = models.ForeignKey(User, related_name='comment_sender')
     score = models.IntegerField(default=0, blank=True, )
 
+    def __unicode__(self):
+        return self.comment
+
     def date_lt(self, date, how_many_days=15):
         lt_date = datetime.now() - timedelta(days=how_many_days)
         lt_timestamp = mktime(lt_date.timetuple())
