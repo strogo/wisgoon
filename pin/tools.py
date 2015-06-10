@@ -57,6 +57,8 @@ def get_post_user_cache(post_id):
 
 def post_after_delete(post, user, ip_address=None):
     Log.post_delete(post=post, actor=user, ip_address=ip_address)
+    if post.user_id == user.id:
+        return
     from tasks import send_notif_bar
 
     send_notif_bar(user=post.user.id, type=4, post=post.id,
@@ -279,7 +281,8 @@ class AuthCache(MyCache):
 
 
 def check_block(user_id, blocked_id):
-    block_cnt = Block.objects.filter(user_id=user_id, blocked_id=blocked_id).count()
+    block_cnt = Block.objects.filter(user_id=user_id,
+                                     blocked_id=blocked_id).count()
     # print "block cnt is:", block_cnt
     if block_cnt:
         return True

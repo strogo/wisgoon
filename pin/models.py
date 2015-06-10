@@ -1066,6 +1066,9 @@ class Comments(models.Model):
     user = models.ForeignKey(User, related_name='comment_sender')
     score = models.IntegerField(default=0, blank=True, )
 
+    def __unicode__(self):
+        return self.comment
+
     def date_lt(self, date, how_many_days=15):
         lt_date = datetime.now() - timedelta(days=how_many_days)
         lt_timestamp = mktime(lt_date.timetuple())
@@ -1196,12 +1199,18 @@ class InstaAccount(models.Model):
 
 
 class PostMetaData(models.Model):
+    CREATED = 1
+    FULL_IMAGE_CREATE = 2
+    ERROR_IN_ORIGINAL = 3
     STATUS = (
-        (1, 'created'),
+        (CREATED, 'created'),
+        (FULL_IMAGE_CREATE, 'full image create'),
+        (ERROR_IN_ORIGINAL, 'error in original image')
     )
+
     post = models.OneToOneField(Post)
     original_size = models.IntegerField(default=0)
-    status = models.IntegerField(default=1, choices=STATUS, db_index=True)
+    status = models.IntegerField(default=CREATED, choices=STATUS, db_index=True)
     img_236_h = models.IntegerField(default=0)
     img_500_h = models.IntegerField(default=0)
     img_236 = models.CharField(max_length=250)
