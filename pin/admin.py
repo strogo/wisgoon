@@ -30,6 +30,8 @@ class LogAdmin(admin.ModelAdmin):
 
     list_filter = ('action',)
 
+    search_fields = ['owner', 'user__username']
+
     raw_id_fields = ("user",)
 
     def _get_thumbnail(self, obj):
