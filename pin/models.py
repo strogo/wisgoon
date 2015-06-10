@@ -1198,9 +1198,11 @@ class InstaAccount(models.Model):
 class PostMetaData(models.Model):
     CREATED = 1
     FULL_IMAGE_CREATE = 2
+    ERROR_IN_ORIGINAL = 3
     STATUS = (
         (CREATED, 'created'),
-        (FULL_IMAGE_CREATE, 'full image create')
+        (FULL_IMAGE_CREATE, 'full image create'),
+        (ERROR_IN_ORIGINAL, 'error in original image')
     )
 
     post = models.OneToOneField(Post)
