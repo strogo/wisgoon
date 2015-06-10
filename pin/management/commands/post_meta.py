@@ -9,9 +9,11 @@ class Command(BaseCommand):
             .filter(status=PostMetaData.CREATED)[:30]
         for pm in q:
             if pm.img_236_h == 0:
+                print "create image 236 for ", pm.id
                 pm.post.get_image_236()
 
             if pm.img_500_h == 0:
+                print "create image 500 for", pm.id
                 pm.post.get_image_500()
 
             PostMetaData.objects.filter(pk=pm.id)\
