@@ -1196,12 +1196,16 @@ class InstaAccount(models.Model):
 
 
 class PostMetaData(models.Model):
+    CREATED = 1
+    FULL_IMAGE_CREATE = 2
     STATUS = (
-        (1, 'created'),
+        (CREATED, 'created'),
+        (FULL_IMAGE_CREATE, 'full image create')
     )
+
     post = models.OneToOneField(Post)
     original_size = models.IntegerField(default=0)
-    status = models.IntegerField(default=1, choices=STATUS, db_index=True)
+    status = models.IntegerField(default=CREATED, choices=STATUS, db_index=True)
     img_236_h = models.IntegerField(default=0)
     img_500_h = models.IntegerField(default=0)
     img_236 = models.CharField(max_length=250)
