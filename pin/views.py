@@ -418,6 +418,7 @@ def user_like(request, user_id):
         return render(request, 'pin2/user__likes.html',
                       {'latest_items': latest_items,
                        'user_id': user_id,
+                       'page': "user_like",
                        'profile': profile,
                        'cur_user': user})
 
@@ -458,6 +459,7 @@ def absuser_like(request, user_namel):
                        'user_id': user_id,
                        'follow_status': follow_status,
                        'profile': profile,
+                       'page': "user_like",
                        'cur_user': user})
 
 
@@ -519,6 +521,7 @@ def latest_redis(request):
     else:
         return render(request, 'pin2/latest_redis.html', {
             'latest_items': arp,
+            'page': 'latest',
             'next_url': next_url,
         })
 

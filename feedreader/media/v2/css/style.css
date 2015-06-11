@@ -247,6 +247,9 @@ a, a:link, a:hover, a:visited {
 	overflow: hidden;
 	max-height: 500px;
 }
+.avatar.post-avatar > a {
+	display: inline;
+}
 .feed-item .img-content .user-liked{
 	color: red;
 }
@@ -300,18 +303,29 @@ a, a:link, a:hover, a:visited {
 .feed-item .post-avatar{
 	height: 47px;
 }
-.feed-item .img-content .likes{
-	color: #fff;
-	bottom: 10px;
-	left:25px;
-	position: absolute;
+.post-action{
+	border-top: 1px solid #eee;
+	background: #fbfbfb;
+	display: block;
+	padding: 7px 0 2px;
+}
+.post-action .comment .glyphicon,
+.post-action .likes .glyphicon{
+	margin-left: 4px !important;
+}
+.post-action .comment *,
+.post-action .likes *{
+	color: #aaa !important;
+}
+.post-action .comment,
+.post-action .likes{
+	width: 50%;
+	float: right;
+}
+.post-action .likes{
 	z-index: 2;
 }
-.feed-item .img-content .comment{
-	color: #fff;
-	bottom: 10px;
-	right: 25px;
-	position: absolute;
+.post-action .comment{
 	z-index: 2;
 }
 .feed-item .tags{
@@ -1123,12 +1137,18 @@ a.img-move{
 .navbar-default-items ul li{
 	display: block;
 }
-
-
-
-
-
-
+.navbar-default-items ul li.active{
+	background: #434a54;
+}
+.navbar-default-items ul li.active a{
+	color: #fff !important;
+}
+.navbar-default-items ul li:hover{
+	background: #c1c1c1 !important;
+}
+.navbar-default-items ul li:hover a{
+	color: #434a54 !important;
+}
 
 .dropdown-large {
 	position: static !important;
@@ -1214,6 +1234,8 @@ a.img-move{
 	color: #FFF!important;
 }
 .feed-item a{
+	display: block;
+	position: relative;
 	color: #000;
 }
 .f-black{

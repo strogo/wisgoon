@@ -31,89 +31,90 @@
 			<div class="photo">
 				
 				<a href="{{media_prefix}}{{MEDIA_URL}}{{post.image}}" >
-					<img style="margin:0 auto" itemprop="image" src="{{media_prefix}}{{MEDIA_URL}}{{ post.image }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}"></a>
+					<img style="margin:0 auto" itemprop="image" src="{{media_prefix}}{{MEDIA_URL}}{{ post.image }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
+				</a>
+			</div>
+			<div class="row">
+				<div class="discription" itemprop="name">
+					<p> 
+						{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
+					</p>
 				</div>
-				<div class="row">
-					<div class="discription" itemprop="name">
-						<p> 
-							{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
-						</p>
+				<small class="time-box pull-left">{{post.create|naturaltime}}</small>
+			</div>
+			<div class="row">
+				<div class="tags ">
+					<div class="tag ">
 					</div>
-					<small class="time-box pull-left">{{post.create|naturaltime}}</small>
-				</div>
-				<div class="row">
-					<div class="tags ">
-						<div class="tag ">
-						</div>
 
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="row likes">
+				<div class="content">
+					<div class="liker col-md-10 col-sm-10 col-xs-10">
+						{% for liker in post.likes %}            
+						<a href="{% url "pin-absuser" liker.username %}">
+							<img src="{{liker|get_avatar:50}}" style="display: inline;margin: 2px;" >
+						</a>
+						{% endfor %}
 					</div>
+					<!-- like icon -->
+					<div class="col-md-2 col-sm-2 col-xs-2 like-icon">
+						<a href="{% url "pin-item-like" post.id%}" class="btn_like">
+							<i class="glyphicon glyphicon-heart {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"></i>
+							<i class="{% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}">{{post.cnt_likes}}</i>
+						</a>
+					</div>
+					<!-- end like icon -->
 					<div class="clear"></div>
 				</div>
-				<div class="row likes">
-					<div class="content">
-						<div class="liker col-md-10 col-sm-10 col-xs-10">
-							{% for liker in post.likes %}            
-							<a href="{% url "pin-absuser" liker.username %}">
-								<img src="{{liker|get_avatar:50}}" style="display: inline;margin: 2px;" >
-							</a>
-							{% endfor %}
+			</div>
+			<div class="row">
+				<div class="footer">
+					<div class="footer-icons">
+						<div class="right-icons col-md-9 col-sm-9 col-xs-9">
+							<div class="col-md-2 col-sm-2 col-xs-2 seen cat-border-left ">
+
+								<a href="/category/{{post.category_id}}">{{post.category}}</a>
+
+							</div>
+							<div class="col-md-3 col-sm-3 col-xs-3 download cat-border-left">
+								<span class="glyphicon glyphicon-download-alt"></span>
+								<a href="{{MEDIA_URL}}{{post.image}}">دانلود تصاویر</a>
+
+							</div>
+							<div class="col-md-7 col-sm-7 col-xs-7 share cat-border-right">
+
+								<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-553e6fc042430f60" async="async"></script>
+								<div class="addthis_native_toolbox"></div>
+							</div>
 						</div>
-						<!-- like icon -->
-						<div class="col-md-2 col-sm-2 col-xs-2 like-icon">
-							<a href="{% url "pin-item-like" post.id%}" class="btn_like">
-								<i class="glyphicon glyphicon-heart {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"></i>
-								<i class="{% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}">{{post.cnt_likes}}</i>
-							</a>
+						<div class="left-icons col-md-3 col-sm-3 col-xs-3">
+							{% if user.is_authenticated%}
+							<a alt="{{user.id}}/{{post.user.id}}" href="{% url "report_pin" post.id%}" style="margin-right: 5px" class="btn btn-default btn_report "> <i class="glyphicon glyphicon-camera"></i> گزارش تخلف</a>
+							{% endif %}
+
+
+
+							<!-- <span class="glyphicon glyphicon-camera"></span> -->
 						</div>
-						<!-- end like icon -->
 						<div class="clear"></div>
 					</div>
 				</div>
-				<div class="row">
-					<div class="footer">
-						<div class="footer-icons">
-							<div class="right-icons col-md-9 col-sm-9 col-xs-9">
-								<div class="col-md-2 col-sm-2 col-xs-2 seen cat-border-left ">
-
-									<a href="/category/{{post.category_id}}">{{post.category}}</a>
-
-								</div>
-								<div class="col-md-3 col-sm-3 col-xs-3 download cat-border-left">
-									<span class="glyphicon glyphicon-download-alt"></span>
-									<a href="{{MEDIA_URL}}{{post.image}}">دانلود تصاویر</a>
-
-								</div>
-								<div class="col-md-7 col-sm-7 col-xs-7 share cat-border-right">
-
-									<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-553e6fc042430f60" async="async"></script>
-									<div class="addthis_native_toolbox"></div>
-								</div>
-							</div>
-							<div class="left-icons col-md-3 col-sm-3 col-xs-3">
-								{% if user.is_authenticated%}
-								<a alt="{{user.id}}/{{post.user.id}}" href="{% url "report_pin" post.id%}" style="margin-right: 5px" class="btn btn-default btn_report "> <i class="glyphicon glyphicon-camera"></i> گزارش تخلف</a>
-								{% endif %}
-
-
-
-								<!-- <span class="glyphicon glyphicon-camera"></span> -->
-							</div>
-							<div class="clear"></div>
-						</div>
-					</div>
-				</div>
 			</div>
-			{% include "base/ad-720x92_bottom.html" %}
-			<br>
-			<div class="clear"></div>
-			<br>
-			<div class="clear"></div>
-			<div class="comment">
-				<div class="col-md-12 col-sm-12 col-xs-12">
+		</div>
+		{% include "base/ad-720x92_bottom.html" %}
+		<br>
+		<div class="clear"></div>
+		<br>
+		<div class="clear"></div>
+		<div class="comment">
+			<div class="col-md-12 col-sm-12 col-xs-12">
 
-					{% if user.is_authenticated and user.is_active %}
-					{% include "pin2/__comment_submit.html" %}	
-					{% endif %}
+				{% if user.is_authenticated and user.is_active %}
+				{% include "pin2/__comment_submit.html" %}	
+				{% endif %}
 					<!--
 					<script id="rc_spot" type="text/javascript">rc_zone="1139"; rc_sizes="728x90"; rc_height="90"; rc_width="728";  rc_title_color="000fff"; rc_background_color="ffffff"; rc_border_color="ffffff"; rc_domain_color="00cc00"; rc_description_color="666666"; </script><script type="text/javascript" src="http://cdn.rastclick.com/rc_show.js"></script>
 				-->
