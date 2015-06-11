@@ -1,4 +1,5 @@
 import redis
+import time
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import F
@@ -30,6 +31,7 @@ class ChangedPosts(object):
 
 class LikesRedis(object):
     KEY_PREFIX = "postLikersV1"
+    KEY_PREFIX2 = "postLikersV2.1/"
     keyName = ""
     postId = 0
     postOwner = 0
@@ -38,6 +40,13 @@ class LikesRedis(object):
     def __init__(self, post_id):
         self.postId = str(post_id)
         self.keyName = self.KEY_PREFIX + self.postId
+        self.keyName2 = self.KEY_PREFIX2 + self.postId
+
+        if not r_server.exists(self.keyName2):
+            # r_server.zadd(self.keyName2)
+            keys = r_server.lrange(self.keyName, 0, -1)
+            for uid in keys[::-1]:
+                r_server.zadd(self.keyName2, str(uid), time.time())
 
         # if not r_server.exists(self.keyName):
         #     self.first_store()
@@ -74,6 +83,9 @@ class LikesRedis(object):
             r_server.rpush(self.keyName, *likes)
 
     def user_liked(self, user_id):
+        if r_server.zrank(self.keyName2, str(user_id)) is None:
+            return False
+        return True
         self.likesData = r_server.lrange(self.keyName, 0, -1)
         if str(user_id) in self.likesData:
             return True
@@ -84,6 +96,7 @@ class LikesRedis(object):
 
     def dislike(self, user_id):
         r_server.lrem(self.keyName, user_id)
+        r_server.zrem(self.keyName2, str(user_id))
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') - 1)
 
@@ -99,6 +112,7 @@ class LikesRedis(object):
         r_server.ltrim(settings.LAST_LIKES, 0, 1000)
 
     def like(self, user_id, post_owner):
+        r_server.zadd(self.keyName2, str(user_id), time.time())
         r_server.lpush(self.keyName, user_id)
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') + 1)
