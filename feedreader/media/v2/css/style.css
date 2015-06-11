@@ -1050,17 +1050,17 @@ a, a:link, a:hover, a:visited {
 	padding: 2px;
 }
 
-.popover {
+.notification .popover {
 	width: 400px;
 	height: 400px;
 	text-align: right;
 }
 
-.popover-content {
+.notification .popover-content {
 	height: 350px;
 	overflow-y: scroll;
 }
-.popover-content a{
+.notification .popover-content a{
 	color: #000;
 }
 
@@ -1292,52 +1292,6 @@ a.img-move{
 	padding: 40px;
 	display: none;
 }
-.topuser-item {
-	overflow: hidden;
-	background-color: #fff;
-	border-radius: 20px;
-	box-shadow: 0 2px #e2e4e7;
-	float: right;
-	margin-bottom: 10px;
-	text-align: center;
-}
-.topuser-item .topuser-name{
-	padding: 10px;
-}
-.topuser-item .topuser-name a{
-	color: #434a54;
-	font-weight: bold;
-}
-.topuser-item .topuser-thumb{
-	position: relative;
-	display: flex;
-}
-.topuser-item:hover .follow-btn{
-	display: block;
-}
-.topuser-item .follow-btn{
-	display: none;
-	background: rgba(255, 255, 255, 0.85);
-	height: 100%;
-	line-height: 100%;
-	position: absolute;
-	width: 100%;
-}
-.topuser-item .follow-btn a{
-	display: inline-block;
-	margin-top: 35%;
-	text-align: center;
-}
-.topuser-item  .topuser-info {
-	padding: 10px;
-	text-align: right;
-	color: #777;
-}
-.topuser-item .count{
-	color: #434a54;
-	font-weight: bold;
-	margin-right: 10px;
-}
 .post-content .time-box{
 	color: #aaa;
 	padding: 10px 0;
@@ -1393,6 +1347,7 @@ div.comment div div.row:hover .del-comment{
 	background: #fff;
 	text-align: center;
 	padding-top: 5px;
+	margin-bottom: 20px;
 }
 .category-title{
 	background: rgb(67, 74, 84); 
@@ -1492,3 +1447,70 @@ div.comment div div.row:hover .del-comment{
 	border: 1px solid #74bfdd;
 	color: #4f4f4f;
 }
+
+
+.topuser-item {
+	overflow: hidden;
+	float: right;
+	margin-bottom: 10px;
+	text-align: center;
+}
+.topuser-item .topuser-name{
+	padding: 10px;
+}
+.topuser-item .topuser-name a{
+	color: #434a54;
+	display: block;
+	font-weight: bold;
+	height: 20px;
+	overflow: hidden;
+}
+.topuser-item .topuser-thumb{
+	position: relative;
+	display: flex;
+}
+.topuser-item .topuser-thumb a img,
+.topuser-item .topuser-thumb a{
+	width: 100%;
+}
+.topuser-item .topuser-thumb a img{
+	border-radius: 50% 50% 50% 0;
+}
+/*.topuser-item .topuser-thumb .popover {
+	text-align: right;
+	width: initial !important;
+	height: initial !important;
+}
+.topuser-item .topuser-thumb .popover .popover-content {
+	height: initial !important;
+	}*/
+	.topuser-item:hover .follow-btn{
+		display: block;
+	}
+	.topuser-item .follow-btn{
+		display: none;
+		background: rgba(255, 255, 255, 0.85);
+		height: 100%;
+		line-height: 100%;
+		position: absolute;
+		width: 100%;
+	}
+	.topuser-item .follow-btn a{
+		display: inline-block;
+		margin-top: 35%;
+		text-align: center;
+	}
+	.topuser-item  .topuser-info {
+		padding: 10px;
+		text-align: right;
+		color: #777;
+	}
+	.webui-popover-inner *{
+		direction: rtl !important;
+		text-align: right !important;
+	}
+	.topuser-item .count{
+		color: #434a54;
+		font-weight: bold;
+		margin-right: 10px;
+	}

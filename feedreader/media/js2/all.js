@@ -48,7 +48,7 @@ function load_posts(page) {
         .always(function(d) {
             $('.footer-loading-box').hide(0);
         });
-}
+    }
 
 
 // window scroll
@@ -113,12 +113,12 @@ $('body').on('click', '.pin-item-link', function(){
     $('#pinitem').html('<center><img src="'+media_url+'img/loader.gif" /></center>').modal();
     $('#pinitem').load(href,function(){
         $(this).modal({
-                keyboard:true,
-                
+            keyboard:true,
+
         }).css({
-        width: 'auto',
+            width: 'auto',
             'margin-left': function () {
-            return -($(this).width() / 2);
+                return -($(this).width() / 2);
             }
         });
     });
@@ -162,14 +162,14 @@ function live_content(){
 
     $('.feed-item').on({
         mouseenter:
-           function(){
+        function(){
             $(".feed-actions", this).stop().animate({top:'5px'},{queue:false,duration:160});
-           },
+        },
         mouseleave:
-           function(){
+        function(){
             $(".feed-actions", this).removeAttr('style');
             $(".feed-actions", this).stop().animate({},{queue:false,duration:160});
-           }
+        }
     });
 }
 
@@ -197,5 +197,13 @@ $('body').on('click', '.del-comment', function(event) {
     return false;
 });
 
+$('.topuser-thumb').webuiPopover('destroy').webuiPopover({
+    trigger: 'hover',
+    width: 300,
+    delay: {
+        show: 0,
+        hide: 1000
+    }
+});
 
 live_content();
