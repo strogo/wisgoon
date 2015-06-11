@@ -8,25 +8,22 @@
 
 		{% for u in user_items %}
 		
-		<div class="col-md-2 col-sm-2 col-xs-4 user-friend">
-			<div class="feed-item">
+		<div class="col-md-2 col-sm-2 col-xs-4 user-friend user-item">
+			<div class="topuser-thumb show-pop-code-delay" 
+                data-title='<a href="{% url "pin-absuser" u.username %}">{{u|get_username}}</a>'
+                data-content='<div class="topuser-info"><div class="user-post-count">تعداد مطالب: <span class="count"><strong>{{u.profile.cnt_post|pn}}</strong></span></div><div class="user-score">امتیاز: <span class="count"><strong>{{u.profile.score|pn}}</strong></span></div></div>'>
 				<div class="user-avatar">
 					<a href="{% url "pin-absuser" u.username %}">
 						<img src="{{u.id|get_avatar:165}}" style="width:" />
 					</a>
 				</div>
 				<div class="clear"></div>
-				<div class="user-username">
-					<a class="f-black" href="{% url "pin-absuser" u.username %}">{{u|get_username|truncatechars:20}}</a>
+				<div class="user-username mato10">
+					<a class="f-black" href="{% url "pin-absuser" u.username %}"><center>{{u|get_username|truncatechars:20}}</center></a>
 				</div>
-				<div class="user-friend-stat">
-					<div class="user-pincount">
-						تعداد مطالب: <strong>{{u.profile.cnt_post|pn}}</strong>
-					</div>
-					<div class="user-score">
-						امتیاز: <strong>{{u.profile.score|pn}}</strong>
-					</div>
-				</div>
+
+				{% comment %}
+					
 				<div class="follow-btn">
 					{% if cur_user.id != request.user.id %}
 					{% if follow_status == 0 %}
@@ -36,6 +33,8 @@
 					{%endif%}
 					{% endif %}
 				</div>
+
+				{% endcomment %}
 			</div>
 		</div>
 

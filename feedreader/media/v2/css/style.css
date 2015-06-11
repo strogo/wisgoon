@@ -62,6 +62,8 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 .pabo50{padding-bottom: 50px !important;}
 .pabo80{padding-bottom: 80px !important;}
 /******** margin *********/
+.mato10{margin-top: 10px !important;}
+.mato20{margin-top: 20px !important;}
 .mato50{margin-top: 50px !important;}
 .mabo50{margin-bottom: 50px !important;}
 
@@ -1392,9 +1394,6 @@ div.comment div div.row:hover .del-comment{
 	padding: 0 10px;
 	text-align: right;
 }
-.user-friend .feed-item .user-friend-stat > div:hover{
-	background: #eee;
-}
 .user-friend .feed-item .user-friend-stat strong{
 	color: #000;
 }
@@ -1473,6 +1472,7 @@ div.comment div div.row:hover .del-comment{
 .topuser-item .topuser-thumb a{
 	width: 100%;
 }
+.user-item .topuser-thumb a img,
 .topuser-item .topuser-thumb a img{
 	border-radius: 50% 50% 50% 0;
 }

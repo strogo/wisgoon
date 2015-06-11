@@ -1,8 +1,28 @@
-{% extends "pin/pure.html" %}
-{% block box-title %}
-دوستان کاربر
-{%endblock%}
-{% block box-content %}
-<p>کاربر مورد نظر دوستی ندارد</p>
+{% extends "pin2/flat.base.html"%}
+{% load humanize %}
+{% load pin_tags %}
+{% load daddy_avatar%}
 
-{% endblock %}
+{% block title%}{% endblock title%}
+
+{% block extra_js %}
+<script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
+{% endblock extra_js %}
+
+{% block content %}
+
+<div id="main">
+	<div class="container mato50">
+		<div class="profile row">
+			<div class="col-md-12 well">
+				<p>کاربر مورد نظر دوستی ندارد</p>
+				<a href="{% url 'pin-absuser' username %}" class="btn btn-warning">بازگشت</a>
+			</div>
+		</div>
+	</div>
+
+</div>
+<div class="clear"></div>
+
+{% endblock content %}
