@@ -353,9 +353,18 @@ a, a:link, a:hover, a:visited {
 
 }
 .feed-item .tags a{
+	background: #fff;
+	border: 1px solid;
+	border-radius: 3px;
 	color: #d979b2;
 	float: right;
 	font-size: 11px;
+	margin: 0 2px 4px;
+	padding: 0 4px;
+}
+.feed-item .tags a:hover{
+	background-color: #d979b2;
+	color: #fff;
 }
 .feed-item .description {
 	color: #aab2bd;
