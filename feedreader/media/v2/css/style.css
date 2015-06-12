@@ -250,9 +250,7 @@ a, a:link, a:hover, a:visited {
 .avatar.post-avatar > a {
 	display: inline;
 }
-.feed-item .img-content .user-liked{
-	color: red;
-}
+
 .feed-item .img-content .comment i{
 	margin-left: 5px;
 }
@@ -307,11 +305,28 @@ a, a:link, a:hover, a:visited {
 	border-top: 1px solid #eee;
 	background: #fbfbfb;
 	display: block;
-	padding: 7px 0 2px;
+}
+.post-action .btn-box{
+	padding: 8px 0 5px !important;
+}
+.post-action .btn-box.likes:hover{
+	background: #e80910;
+}
+.post-action .btn-box.likes.user-liked *{
+	color: #e80910 !important;
+}
+.post-action .btn-box.likes:hover *{
+	color: #fff !important;
+}
+.post-action .btn-box.comment:hover{
+	background: #fcba00;
+}
+.post-action .btn-box.comment:hover *{
+	color: #434a54 !important;
 }
 .post-action .comment .glyphicon,
 .post-action .likes .glyphicon{
-	margin-left: 4px !important;
+	margin: 0 4px !important;
 }
 .post-action .comment *,
 .post-action .likes *{
@@ -1096,11 +1111,6 @@ a.img-move{
 	color: #FFF;
 }
 .likes .btn_like{
-	border: 1px solid #ddd;
-	border-radius: 3px;
-	color: #ddd !important;
-	padding: 6px 10px 2px;
-	background: #fff;
 }
 .likes .btn_like .user-liked .glyphicon{
 	margin-left: 5px;
@@ -1108,14 +1118,6 @@ a.img-move{
 .likes .btn_like .user-liked,
 .likes .btn_like .user-liked *{
 	color: #d64b47 !important;
-}
-.likes .btn_like:hover{
-	background: #fff;
-	border: 1px solid #f26d00;
-}
-.likes .btn_like:hover,
-.likes .btn_like:hover *{
-	color: #f26d00 !important;
 }
 
 .navbar-default-items{
@@ -1498,41 +1500,37 @@ div.comment div div.row:hover .del-comment{
 .topuser-item .topuser-thumb a img{
 	border-radius: 50% 50% 50% 0;
 }
-/*.topuser-item .topuser-thumb .popover {
-	text-align: right;
-	width: initial !important;
-	height: initial !important;
+.topuser-item:hover .follow-btn{
+	display: block;
 }
-.topuser-item .topuser-thumb .popover .popover-content {
-	height: initial !important;
-	}*/
-	.topuser-item:hover .follow-btn{
-		display: block;
-	}
-	.topuser-item .follow-btn{
-		display: none;
-		background: rgba(255, 255, 255, 0.85);
-		height: 100%;
-		line-height: 100%;
-		position: absolute;
-		width: 100%;
-	}
-	.topuser-item .follow-btn a{
-		display: inline-block;
-		margin-top: 35%;
-		text-align: center;
-	}
-	.topuser-item  .topuser-info {
-		padding: 10px;
-		text-align: right;
-		color: #777;
-	}
-	.webui-popover-inner *{
-		direction: rtl !important;
-		text-align: right !important;
-	}
-	.topuser-item .count{
-		color: #434a54;
-		font-weight: bold;
-		margin-right: 10px;
-	}
+.topuser-item .follow-btn{
+	display: none;
+	background: rgba(255, 255, 255, 0.85);
+	height: 100%;
+	line-height: 100%;
+	position: absolute;
+	width: 100%;
+}
+.topuser-item .follow-btn a{
+	display: inline-block;
+	margin-top: 35%;
+	text-align: center;
+}
+.topuser-item  .topuser-info {
+	padding: 10px;
+	text-align: right;
+	color: #777;
+}
+.webui-popover-inner *{
+	direction: rtl !important;
+	text-align: right !important;
+}
+.topuser-item .count{
+	color: #434a54;
+	font-weight: bold;
+	margin-right: 10px;
+}
+
+.feed-item .img-content .user-liked *{
+	color: red !important;
+}

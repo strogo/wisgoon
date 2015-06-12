@@ -57,13 +57,15 @@
 	</div>
 	<div class="clearfix"></div>
 	<div class="post-action">
-		<div class="likes">
-			<span class="glyphicon glyphicon-comment cnt-like-icon"></span>
-			<span class="cnt-like">{{item.cnt_comments}}</span>
+		<div class="btn-box likes {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}">
+			<a href="{% url "pin-item-like" item.id%}" class="btn_like"> <span class="count">{{item.cnt_like}}</span>
+				<i class="glyphicon glyphicon-heart"></i>
+			</a>
 		</div>
-		<div class="comment">
-			<a href="{% url "pin-item-like" item.id%}" class="btn_like"> {{item.cnt_like}}
-				<i class="glyphicon glyphicon-heart {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"></i>
+		<div class="btn-box comment">
+			<a href="{% url 'pin-item' item.id%}{% if related %}?from={{post.id}}{%endif%}">
+				<span class="glyphicon glyphicon-comment cnt-like-icon"></span>
+				<span class="cnt-like">{{item.cnt_comments}}</span>
 			</a>
 		</div>
 		<div class="clearfix"></div>
@@ -72,16 +74,14 @@
 	<div class="clearfix"></div>
 	{% endif%}
 
-	{% if item.text.strip|length > 0 %}
 	<div class="description">
-		<p class="{{item.text|length}}">
-		{% if item.text %}
-		{{item.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:30}}
+		{% if item.text.strip|length > 0 %}
+		<p>{{item.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:30}}</p>
 		{% else %}
-			بدون متن
+		<p>بدون متن</p>
 		{% endif %}
-		</p>
 	</div>
+
 	{% if item.get_tags %}
 	<div class="tags">
 		{% for t in item.get_tags %}
@@ -89,6 +89,6 @@
 		{% endfor %}
 	</div>
 	{% endif %}
-	{% endif %}
+
 	<div class="clear"></div>
 </div>
