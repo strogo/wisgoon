@@ -257,7 +257,7 @@ def absuser_friends(request, user_namefg):
     friends = Follow.objects.values_list('following_id', flat=True)\
         .filter(follower_id=user_id).order_by('-id')
     if len(friends) == 0:
-        return render(request, 'pin/user_friends_empty.html')
+        return render(request, 'pin/user_friends_empty.html', {'username': user_namefg})
     paginator = Paginator(friends, row_per_page)
 
     try:
@@ -418,6 +418,7 @@ def user_like(request, user_id):
         return render(request, 'pin2/user__likes.html',
                       {'latest_items': latest_items,
                        'user_id': user_id,
+                       'page': "user_like",
                        'profile': profile,
                        'cur_user': user})
 
@@ -458,6 +459,7 @@ def absuser_like(request, user_namel):
                        'user_id': user_id,
                        'follow_status': follow_status,
                        'profile': profile,
+                       'page': "user_like",
                        'cur_user': user})
 
 
@@ -519,6 +521,7 @@ def latest_redis(request):
     else:
         return render(request, 'pin2/latest_redis.html', {
             'latest_items': arp,
+            'page': 'latest',
             'next_url': next_url,
         })
 

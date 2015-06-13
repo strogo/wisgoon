@@ -6,7 +6,7 @@ DEBUG = True
 THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
-STATIC_VERSION = '0.0.08'
+STATIC_VERSION = '0.0.21'
 SITE_ROOT = os.path.dirname(__file__)
 ADMINS = (
     ('bugs', 'bugs@wisgoon.com'),
@@ -43,6 +43,9 @@ DATABASES = {
 
 REDIS_DB = 'wisgoon.db'
 REDIS_DB_NUMBER = 11
+
+REDIS_DB_2 = 'wisgoon.db.2'
+REDIS_DB_NUMBER_2 = 10
 
 MONGO_DB = "wisgoon"
 MONGO_DB_HOST = "wisgoon.db"
@@ -299,7 +302,7 @@ LIST_LONG = 5000
 
 LIKE_WITH_CELERY = True
 
-USE_CELERY = True
+USE_CELERY = False
 
 APP_TOKEN_STR = 'app mobile-)**Z{QT'
 

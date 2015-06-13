@@ -151,13 +151,13 @@ $('body').on('click', '.btn_like',function(){
             
             var o = jQuery.parseJSON(ret);
             
-            obj.html('<i class="glyphicon glyphicon-heart "></i><i>'+o[0].likes+'</i>');
+            obj.children('span.count').text(o[0].likes);
             obj.removeClass('disabled');
             
             if (o[0].user_act == 1){
-                obj.children('i').addClass('user-liked');
+                obj.parent().addClass('user-liked');
             }else{
-                obj.children('i').removeClass('user-liked');
+                obj.parent().removeClass('user-liked');
             }
         }
     });

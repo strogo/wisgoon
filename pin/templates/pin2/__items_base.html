@@ -4,22 +4,16 @@
 <div class="feed-item masonry-brick">
 	<div class="img-content">
 		<a class="pin-item-link" href="{% url "pin-item" item.id%}{% if related %}?from={{post.id}}{%endif%}">
-			<img src="{{ item.get_image_236.url }}" width="236" height="{{ item.get_image_236.h }}" alt="{{item.text|remove_newlines|truncatewords:5}}">
+			<img src="{{ item.get_image_236.url }}" width="236" height="{{ item.get_image_236.h }}" alt="{{item.text|remove_newlines|truncatewords:35}}">
 		</a>
 
-		<div class="likes">
-			<span class="cnt-like">{{item.cnt_comments}}</span>
-			<span class="glyphicon glyphicon-comment cnt-like-icon"></span>
-		</div>
-		<div class="comment">
-			<a href="{% url "pin-item-like" item.id%}" class="btn_like"> <i class="glyphicon glyphicon-heart {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"></i> {{item.cnt_like}} </a>
-		</div>
 		<div class="img-shadow"></div>
 	</div>
 	<div class="avatar post-avatar">
 		<a href="{% url "pin-absuser" item.user.username %}">
 			<img src="{{item.user_id|get_avatar:54}}" style="display: inline;" > 
 		</a>
+
 	</div>
 	<div class="username">
 		<a href="{% url "pin-absuser" item.user.username %}">
@@ -62,13 +56,32 @@
 		{% endcomment %}
 	</div>
 	<div class="clearfix"></div>
+	<div class="post-action">
+		<div class="btn-box likes {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}">
+			<a href="{% url "pin-item-like" item.id%}" class="btn_like"> <span class="count">{{item.cnt_like}}</span>
+				<i class="glyphicon glyphicon-heart"></i>
+			</a>
+		</div>
+		<div class="btn-box comment">
+			<a href="{% url 'pin-item' item.id%}{% if related %}?from={{post.id}}{%endif%}">
+				<span class="glyphicon glyphicon-comment cnt-like-icon"></span>
+				<span class="cnt-like">{{item.cnt_comments}}</span>
+			</a>
+		</div>
+		<div class="clearfix"></div>
+
+	</div>
+	<div class="clearfix"></div>
 	{% endif%}
 
-	{% if item.text.strip|length > 0 %}
 	<div class="description">
-		<p class="{{item.text|length}}">{{item.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:30}}
-		</p>
+		{% if item.text.strip|length > 0 %}
+		<p>{{item.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:30}}</p>
+		{% else %}
+		<p>بدون متن</p>
+		{% endif %}
 	</div>
+
 	{% if item.get_tags %}
 	<div class="tags">
 		{% for t in item.get_tags %}
@@ -76,6 +89,6 @@
 		{% endfor %}
 	</div>
 	{% endif %}
-	{% endif %}
+
 	<div class="clear"></div>
 </div>

@@ -62,6 +62,8 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 .pabo50{padding-bottom: 50px !important;}
 .pabo80{padding-bottom: 80px !important;}
 /******** margin *********/
+.mato10{margin-top: 10px !important;}
+.mato20{margin-top: 20px !important;}
 .mato50{margin-top: 50px !important;}
 .mabo50{margin-bottom: 50px !important;}
 
@@ -245,9 +247,10 @@ a, a:link, a:hover, a:visited {
 	overflow: hidden;
 	max-height: 500px;
 }
-.feed-item .img-content .user-liked{
-	color: red;
+.avatar.post-avatar > a {
+	display: inline;
 }
+
 .feed-item .img-content .comment i{
 	margin-left: 5px;
 }
@@ -298,18 +301,46 @@ a, a:link, a:hover, a:visited {
 .feed-item .post-avatar{
 	height: 47px;
 }
-.feed-item .img-content .likes{
-	color: #fff;
-	bottom: 10px;
-	left:25px;
-	position: absolute;
+.post-action{
+	border-top: 1px solid #eee;
+	background: #fbfbfb;
+	display: block;
+}
+.post-action .btn-box{
+	padding: 8px 0 5px !important;
+}
+.post-action .btn-box.likes:hover{
+	background: #e80910;
+}
+.post-action .btn-box.likes.user-liked *{
+	color: #e80910 !important;
+}
+.post-action .btn-box.likes:hover *{
+	color: #fff !important;
+}
+.post-action .btn-box.comment:hover{
+	background: #fcba00;
+}
+.post-action .btn-box.comment:hover *{
+	color: #434a54 !important;
+}
+.post-action .comment .glyphicon,
+.post-action .likes .glyphicon{
+	margin: 0 4px !important;
+}
+.post-action .comment *,
+.post-action .likes *{
+	color: #aaa !important;
+}
+.post-action .comment,
+.post-action .likes{
+	width: 50%;
+	float: right;
+}
+.post-action .likes{
 	z-index: 2;
 }
-.feed-item .img-content .comment{
-	color: #fff;
-	bottom: 10px;
-	right: 25px;
-	position: absolute;
+.post-action .comment{
 	z-index: 2;
 }
 .feed-item .tags{
@@ -322,9 +353,18 @@ a, a:link, a:hover, a:visited {
 
 }
 .feed-item .tags a{
+	background: #fff;
+	border: 1px solid;
+	border-radius: 3px;
 	color: #d979b2;
 	float: right;
 	font-size: 11px;
+	margin: 0 2px 4px;
+	padding: 0 4px;
+}
+.feed-item .tags a:hover{
+	background-color: #d979b2;
+	color: #fff;
 }
 .feed-item .description {
 	color: #aab2bd;
@@ -1080,11 +1120,6 @@ a.img-move{
 	color: #FFF;
 }
 .likes .btn_like{
-	border: 1px solid #ddd;
-	border-radius: 3px;
-	color: #ddd !important;
-	padding: 6px 10px 2px;
-	background: #fff;
 }
 .likes .btn_like .user-liked .glyphicon{
 	margin-left: 5px;
@@ -1092,14 +1127,6 @@ a.img-move{
 .likes .btn_like .user-liked,
 .likes .btn_like .user-liked *{
 	color: #d64b47 !important;
-}
-.likes .btn_like:hover{
-	background: #fff;
-	border: 1px solid #f26d00;
-}
-.likes .btn_like:hover,
-.likes .btn_like:hover *{
-	color: #f26d00 !important;
 }
 
 .navbar-default-items{
@@ -1121,12 +1148,18 @@ a.img-move{
 .navbar-default-items ul li{
 	display: block;
 }
-
-
-
-
-
-
+.navbar-default-items ul li.active{
+	background: #434a54;
+}
+.navbar-default-items ul li.active a{
+	color: #fff !important;
+}
+.navbar-default-items ul li:hover{
+	background: #c1c1c1 !important;
+}
+.navbar-default-items ul li:hover a{
+	color: #434a54 !important;
+}
 
 .dropdown-large {
 	position: static !important;
@@ -1212,6 +1245,8 @@ a.img-move{
 	color: #FFF!important;
 }
 .feed-item a{
+	display: block;
+	position: relative;
 	color: #000;
 }
 .f-black{
@@ -1392,9 +1427,6 @@ div.comment div div.row:hover .del-comment{
 	padding: 0 10px;
 	text-align: right;
 }
-.user-friend .feed-item .user-friend-stat > div:hover{
-	background: #eee;
-}
 .user-friend .feed-item .user-friend-stat strong{
 	color: #000;
 }
@@ -1473,44 +1505,41 @@ div.comment div div.row:hover .del-comment{
 .topuser-item .topuser-thumb a{
 	width: 100%;
 }
+.user-item .topuser-thumb a img,
 .topuser-item .topuser-thumb a img{
 	border-radius: 50% 50% 50% 0;
 }
-/*.topuser-item .topuser-thumb .popover {
-	text-align: right;
-	width: initial !important;
-	height: initial !important;
+.topuser-item:hover .follow-btn{
+	display: block;
 }
-.topuser-item .topuser-thumb .popover .popover-content {
-	height: initial !important;
-	}*/
-	.topuser-item:hover .follow-btn{
-		display: block;
-	}
-	.topuser-item .follow-btn{
-		display: none;
-		background: rgba(255, 255, 255, 0.85);
-		height: 100%;
-		line-height: 100%;
-		position: absolute;
-		width: 100%;
-	}
-	.topuser-item .follow-btn a{
-		display: inline-block;
-		margin-top: 35%;
-		text-align: center;
-	}
-	.topuser-item  .topuser-info {
-		padding: 10px;
-		text-align: right;
-		color: #777;
-	}
-	.webui-popover-inner *{
-		direction: rtl !important;
-		text-align: right !important;
-	}
-	.topuser-item .count{
-		color: #434a54;
-		font-weight: bold;
-		margin-right: 10px;
-	}
+.topuser-item .follow-btn{
+	display: none;
+	background: rgba(255, 255, 255, 0.85);
+	height: 100%;
+	line-height: 100%;
+	position: absolute;
+	width: 100%;
+}
+.topuser-item .follow-btn a{
+	display: inline-block;
+	margin-top: 35%;
+	text-align: center;
+}
+.topuser-item  .topuser-info {
+	padding: 10px;
+	text-align: right;
+	color: #777;
+}
+.webui-popover-inner *{
+	direction: rtl !important;
+	text-align: right !important;
+}
+.topuser-item .count{
+	color: #434a54;
+	font-weight: bold;
+	margin-right: 10px;
+}
+
+.feed-item .img-content .user-liked *{
+	color: red !important;
+}

@@ -1,7 +1,6 @@
 import redis
 import time
 from django.conf import settings
-from django.core.cache import cache
 from django.db.models import F
 from django.contrib.auth.models import User
 
@@ -10,6 +9,7 @@ from models import Post, Likes
 
 # r_server = redis.Redis(settings.REDIS_DB, db=12)
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
+r_server2 = redis.Redis(settings.REDIS_DB_2, db=settings.REDIS_DB_NUMBER_2)
 
 
 class ChangedPosts(object):
@@ -42,25 +42,11 @@ class LikesRedis(object):
         self.keyName = self.KEY_PREFIX + self.postId
         self.keyName2 = self.KEY_PREFIX2 + self.postId
 
-        if not r_server.exists(self.keyName2):
+        if not r_server2.exists(self.keyName2):
             # r_server.zadd(self.keyName2)
             keys = r_server.lrange(self.keyName, 0, -1)
             for uid in keys[::-1]:
-                r_server.zadd(self.keyName2, str(uid), time.time())
-
-        # if not r_server.exists(self.keyName):
-        #     self.first_store()
-        # else:
-        #     del_cache_key = "likeDelete_" + str(post_id)
-        #     if not cache.get(del_cache_key):
-        #         cache.set(del_cache_key, 1, 86400 * 10)
-        #         from django.db import connection, transaction
-
-        #         cursor = connection.cursor()
-        #         with transaction.commit_on_success():
-        #             cursor.execute('DELETE FROM pin_likes WHERE post_id = %s', [post_id])
-        #             connection.commit()
-        # Likes.objects.filter(post_id=post_id).delete()
+                r_server2.zadd(self.keyName2, str(uid), time.time())
 
     def get_likes(self, offset, limit=20, as_user_object=False):
         data = r_server.lrange(self.keyName, offset, offset + limit - 1)
@@ -83,9 +69,10 @@ class LikesRedis(object):
             r_server.rpush(self.keyName, *likes)
 
     def user_liked(self, user_id):
-        if r_server.zrank(self.keyName2, str(user_id)) is None:
+        if r_server2.zrank(self.keyName2, str(user_id)) is None:
             return False
         return True
+
         self.likesData = r_server.lrange(self.keyName, 0, -1)
         if str(user_id) in self.likesData:
             return True
@@ -96,7 +83,7 @@ class LikesRedis(object):
 
     def dislike(self, user_id):
         r_server.lrem(self.keyName, user_id)
-        r_server.zrem(self.keyName2, str(user_id))
+        r_server2.zrem(self.keyName2, str(user_id))
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') - 1)
 
@@ -112,7 +99,7 @@ class LikesRedis(object):
         r_server.ltrim(settings.LAST_LIKES, 0, 1000)
 
     def like(self, user_id, post_owner):
-        r_server.zadd(self.keyName2, str(user_id), time.time())
+        r_server2.zadd(self.keyName2, str(user_id), time.time())
         r_server.lpush(self.keyName, user_id)
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') + 1)

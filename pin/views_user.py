@@ -106,8 +106,10 @@ def following(request):
             return HttpResponse(0)
     else:
         return render(request,
-                      'pin2/following.html',
-                      {'latest_items': sorted_objects})
+                      'pin2/following.html', {
+                          'page': 'following',
+                          'latest_items': sorted_objects
+                      })
 
 
 @login_required
