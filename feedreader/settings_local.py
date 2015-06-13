@@ -44,6 +44,9 @@ DATABASES = {
 REDIS_DB = 'wisgoon.db'
 REDIS_DB_NUMBER = 11
 
+REDIS_DB_2 = 'wisgoon.db.2'
+REDIS_DB_NUMBER_2 = 10
+
 MONGO_DB = "wisgoon"
 MONGO_DB_HOST = "wisgoon.db"
 

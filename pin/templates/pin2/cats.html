@@ -9,12 +9,14 @@
       	<li class="nav-i"><a href="/accounts/login/">ورود</a></li>
         <li class="nav-i"><a href="{% url "registration_register" %}">عضویت</a><li>
         {% endif %}
+        {% if user.is_authenticated %}
 		<li class="nav-right {% if page == 'following' %} active{% endif %}">
 			<a href="{% url "pin-following" %}">مطالب دوستان</a>
 		</li>
 		<li class="nav-right {% if page == 'user_like' %} active{% endif %}">
 			<a href="{% url 'pin-user-like' user.id %}">مطالب مورد علاقه</a>
 		</li>
+		{% endif %}
 
         <li class="nav-i {% if page == 'latest' %} active{% endif %}"><a href="{% url 'pin-latest' %}">آخرین مطالب</a></li>
         <li class="nav-i"><a href="{% url "policy"%}">قوانین</a><li>
