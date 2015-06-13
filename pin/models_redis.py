@@ -47,6 +47,8 @@ class LikesRedis(object):
             keys = r_server.lrange(self.keyName, 0, -1)
             for uid in keys[::-1]:
                 r_server2.zadd(self.keyName2, str(uid), time.time())
+        else:
+            r_server.zrem(self.keyName2)
 
     def get_likes(self, offset, limit=20, as_user_object=False):
         data = r_server.lrange(self.keyName, offset, offset + limit - 1)
