@@ -149,8 +149,11 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
     for p in posts:
         if not p:
             continue
-        if p.is_pending():
-            print p.is_pending()
+
+        try:
+            if p.is_pending():
+                continue
+        except Post.DoesNotExist:
             continue
         o = {}
         o['id'] = p.id
