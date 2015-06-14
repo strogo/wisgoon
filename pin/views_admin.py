@@ -43,14 +43,13 @@ def pending_post(request, post, status=1):
     if is_police(request, flat=True):
         post_obj = Post.objects.get(id=post)
         if status == 1:
-            if not PendingPosts.objects(post=post).count():
-                PendingPosts.objects.create(user=request.user.id, post=post)
-
-                Log.post_pending(post=post_obj,
-                                 actor=request.user,
-                                 ip_address=get_user_ip(request))
+            Post.objects.filter(id=post).update(report=100)
+            Log.post_pending(post=post_obj,
+                             actor=request.user,
+                             ip_address=get_user_ip(request))
         else:
-            PendingPosts.objects(user=request.user.id, post=post).delete()
+            Post.objects.filter(id=post).update(report=0)
+            # PendingPosts.objects(user=request.user.id, post=post).delete()
 
     return HttpResponseRedirect(reverse('pin-item', args=[int(post)]))
 

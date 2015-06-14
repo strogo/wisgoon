@@ -185,14 +185,14 @@ class Post(models.Model):
 
     NEED_KEYS = ['id', 'text', 'cnt_comment', 'timestamp',
                  'image', 'user_id', 'cnt_like', 'category_id',
-                 'status', 'url']
+                 'status', 'url', 'report']
 
     NEED_KEYS2 = ['id', 'text', 'cnt_comment', 'timestamp',
                   'image', 'user', 'cnt_like', 'category',
-                  'status', 'url']
+                  'status', 'url', 'report']
 
     NEED_KEYS_WEB = ['id', 'text', 'cnt_comment', 'cnt_like', 'user',
-                     'show_in_default', 'timestamp']
+                     'show_in_default', 'timestamp', 'report']
 
     STATUS_CHOICES = (
         (PENDING, 'منتظر تایید'),
@@ -241,7 +241,9 @@ class Post(models.Model):
         return self.text
 
     def is_pending(self):
-        return PendingPosts.is_pending(post=int(self.id))
+        if self.report >= 100:
+            return True
+        return False
 
     def get_tags(self):
         hash_tags = re.compile(ur'(?i)(?<=\#)\w+', re.UNICODE)

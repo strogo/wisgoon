@@ -871,7 +871,7 @@ def item(request, item_id):
     #     if post.category_id in [23, 22]:
     #         return render(request, 'pending.html')
 
-    if PendingPosts.is_pending(item_id):
+    if post.is_pending():
         if not is_police(request, flat=True):
             return render(request, 'pending.html')
 
