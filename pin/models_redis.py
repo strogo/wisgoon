@@ -45,8 +45,10 @@ class LikesRedis(object):
         if not r_server2.exists(self.keyName2):
             # r_server.zadd(self.keyName2)
             keys = r_server.lrange(self.keyName, 0, -1)
+            p = r_server2.pipeline()
             for uid in keys[::-1]:
-                r_server2.zadd(self.keyName2, str(uid), time.time())
+                p.zadd(self.keyName2, str(uid), time.time())
+            p.execute()
 
     def get_likes(self, offset, limit=20, as_user_object=False):
         data = r_server.lrange(self.keyName, offset, offset + limit - 1)
