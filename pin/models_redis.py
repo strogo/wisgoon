@@ -31,7 +31,7 @@ class ChangedPosts(object):
 
 class LikesRedis(object):
     KEY_PREFIX = "postLikersV1"
-    KEY_PREFIX2 = "postLikersV2.1/"
+    KEY_PREFIX2 = "p:l:"
     keyName = ""
     postId = 0
     postOwner = 0
