@@ -343,7 +343,7 @@ def user_followers(request, user_id):
 
 
 def absuser_followers(request, user_namefl):
-    row_per_page = 20
+    row_per_page = 24
 
     user = get_object_or_404(User, username=user_namefl)
     user_id = user.id
@@ -374,6 +374,8 @@ def absuser_followers(request, user_namefl):
         friends_list.append(int(l))
 
     user_items = User.objects.filter(id__in=friends_list)
+
+    print friends.next_page_number
 
     if request.is_ajax():
         if user_items.exists():
