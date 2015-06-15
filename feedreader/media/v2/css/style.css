@@ -1116,8 +1116,26 @@ a.img-move{
 	text-align: center;
 }
 
+.btn_like *,
 .btn_like{
-	color: #FFF;
+	color: #fff;
+}
+.likes .content .btn_like *,
+.likes .content .btn_like {
+	color: #454956;
+}
+.likes .content .btn_like {
+	border-radius: 3px;
+	border: 1px solid red;
+	padding: 3px 13px;
+	background: #fcd1d1;
+}
+.likes .content .btn_like:hover *{
+	color: #FFF !important;
+}
+.likes .content .btn_like:hover {
+	background: red;
+	color: #FFF !important;
 }
 .likes .btn_like{
 }

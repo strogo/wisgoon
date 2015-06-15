@@ -5,6 +5,21 @@ function alert_show(msg, status) {
     }, 3000);
 }
 
+function pn(no){
+    var n = no + '';
+    n = n.replace(/1/g, '۱');
+    n = n.replace(/2/g, '۲');
+    n = n.replace(/3/g, '۳');
+    n = n.replace(/4/g, '۴');
+    n = n.replace(/5/g, '۵');
+    n = n.replace(/6/g, '۶');
+    n = n.replace(/7/g, '۷');
+    n = n.replace(/8/g, '۸');
+    n = n.replace(/9/g, '۹');
+    n = n.replace(/0/g, '۰');
+    return n;
+}
+
 var feedobj = $('#feed');
 var loadingobj ;
 var a_url = a_url || "";
@@ -205,5 +220,15 @@ $('.topuser-thumb').webuiPopover('destroy').webuiPopover({
         hide: 1000
     }
 });
+
+$('body').on('click', '.login_required', function(event) {
+    event.preventDefault();
+    alert_show('ابتدا وارد حساب کاربری خود شوید', 'error');
+    return false;
+});
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 
 live_content();
