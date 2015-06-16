@@ -151,14 +151,20 @@ $('body').on('click', '.btn_like',function(){
             
             var o = jQuery.parseJSON(ret);
             
-            obj.children('span.count').text(o[0].likes);
+            obj.children('span.count').text(pn(o[0].likes));
             obj.removeClass('disabled');
             
             if (o[0].user_act == 1){
                 obj.parent().addClass('user-liked');
+                alert_show('با موفقیت لایک شد', 'success');
             }else{
                 obj.parent().removeClass('user-liked');
+                alert_show('لایک شما با موفقیت حذف شد', 'success');
             }
+        },
+        error: function(){
+            alert_show('مشکلی پیش آمده است. با مدیریت تماس بگیرید', 'error');
+
         }
     });
     return false;

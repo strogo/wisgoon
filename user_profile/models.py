@@ -54,6 +54,8 @@ class Profile(models.Model):
     credit = models.IntegerField(default=0)
     level = models.IntegerField(default=1)
 
+    banned = models.BooleanField(default=False)
+
     def get_cnt_following(self):
         if self.cnt_following == -1 or self.cnt_following is None:
             from pin.models import Follow

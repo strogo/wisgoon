@@ -1,5 +1,5 @@
 {% load daddy_avatar %}
-{% load pin_tags%}
+{% load pin_tags %}
 
 <div class="feed-item masonry-brick">
 	<div class="img-content">
@@ -19,60 +19,60 @@
 		<a href="{% url "pin-absuser" item.user.username %}">
 			{{item.user.username}}
 		</a>
-	</div>
-	<!-- <div class="actions">
-		<a href="{% url "pin-item-like" item.id%}" class="btn btn-primary btn_like {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{item.cnt_like}} </a>
-	</div> -->
-	
+	</div>	
 	
 
 	{% if user__id == item.user_id or is_super_user %}
 	<div class="actions" style="margin:5px 0;padding: 0 10px">
 		{% if is_super_user %}
-		{% if item.show_in_default %}
-		<a href="{% url "pin-item-goto-index" item.id 0%}" title="remove from index" class="item-to-index " style="margin-bottom:15px;margin-right: 5px;float:left;"> 
-			<i class="glyphicon glyphicon-remove-sign red"></i> 
-		</a>
-		{% else %}
-		<a href="{% url "pin-item-goto-index" item.id 1%}" title="add to index" class="item-to-index f-black" style="margin-bottom:15px;margin-right: 5px;float:left;"> 
-			<i class="glyphicon glyphicon-ok-sign green"></i> 
-		</a>
-		{% endif %}
+			{% if item.show_in_default %}
+			<a href="{% url 'pin-item-goto-index' item.id 0%}" class="item-to-index " style="margin-bottom:15px;margin-right: 5px;float:left;" data-toggle="tooltip" data-placement="bottom" title="حذف از صفحه اول">
+				<i class="glyphicon glyphicon-remove-sign red"></i> 
+			</a>
+			{% else %}
+			<a href="{% url "pin-item-goto-index" item.id 1%}" class="item-to-index f-black" style="margin-bottom:15px;margin-right: 5px;float:left;" data-toggle="tooltip" data-placement="bottom" title="ارسال به صفحه اول"> 
+				<i class="glyphicon glyphicon-ok-sign green"></i> 
+			</a>
+			{% endif %}
 		{% endif %}
 
 		<a href="{% url "pin-item-edit" item.id%}" style="margin-right: 5px;float:right;"  data-toggle="modal" data-target="#postModal"> 
-			<i class="glyphicon glyphicon-edit"></i> 
+			<i class="glyphicon glyphicon-edit" data-toggle="tooltip" data-placement="bottom" title="ویرایش"></i> 
 		</a>
-		<a href="{% url "pin-item-delete" item.id%}" class=" delpost" style="margin-right: 5px;float:right;"> 
+		<a href="{% url "pin-item-delete" item.id%}" class=" delpost" style="margin-right: 5px;float:right;" data-toggle="tooltip" data-placement="bottom" title="حذف تصویر"> 
 			<i class="glyphicon glyphicon-remove red"></i> 
 		</a>
-		{% comment %}
-		
-		{% if is_super_user %}
-		<a href="{% url "pin-item-fault" item.id%}" class=" postfault" style="margin-right: 5px"> 
-			<i class="glyphicon glyphicon-remove"></i> 
-		</a>
-		{% endif %}
-		{% endcomment %}
+
 	</div>
+	{% endif%}
 	<div class="clearfix"></div>
+
 	<div class="post-action">
-		<div class="btn-box likes {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}">
-			<a href="{% url "pin-item-like" item.id%}" class="btn_like"> <span class="count">{{item.cnt_like}}</span>
+		<div class="btn-box likes {% if user.is_authenticated%} {% user_post_like item.id %} {% endif %}">
+			{% if user.is_authenticated %}
+			
+			<a href="{% url "pin-item-like" item.id%}" class="btn_like">
+				<span class="count">{{item.cnt_like|pn}}</span>
 				<i class="glyphicon glyphicon-heart"></i>
 			</a>
+			{% else %}
+			<a href="javascript:;" class="login_required">
+				<span class="count">{{item.cnt_like|pn}}</span>
+				<i class="glyphicon glyphicon-heart"></i>
+			</a>
+
+			{% endif %}
 		</div>
 		<div class="btn-box comment">
 			<a href="{% url 'pin-item' item.id%}{% if related %}?from={{post.id}}{%endif%}">
 				<span class="glyphicon glyphicon-comment cnt-like-icon"></span>
-				<span class="cnt-like">{{item.cnt_comments}}</span>
+				<span class="cnt-like">{{item.cnt_comments|pn}}</span>
 			</a>
 		</div>
 		<div class="clearfix"></div>
 
 	</div>
 	<div class="clearfix"></div>
-	{% endif%}
 
 	<div class="description">
 		{% if item.text.strip|length > 0 %}

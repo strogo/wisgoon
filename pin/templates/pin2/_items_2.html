@@ -3,19 +3,24 @@
 {% for item in latest_items %}
 
 	{% if item.get_image_236 %}
+	{% comment %}
+		
 		{% if not request.user.is_authenticated %}
 			{% include "pin2/__items_base_not_login.html" %}
 		{% else %}
+	{% endcomment %}
 			{% include "pin2/__items_base.html" %}
+	{% comment %}
 		{% endif %}
+	{% endcomment %}
 
 	{% endif %}
 
-{% if offset %}
-	<span data-next="{{offset}}" ></span>
-{%else%}
-	<span data-next="{{item.id}}" ></span>
-{%endif%}
+	{% if offset %}
+		<span data-next="{{offset}}" ></span>
+	{%else%}
+		<span data-next="{{item.id}}" ></span>
+	{%endif%}
 
 {%endfor%}
 

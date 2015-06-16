@@ -254,10 +254,14 @@ def absuser_friends(request, user_namefg):
     user = get_object_or_404(User, username=user_namefg)
     user_id = user.id
 
+    profile = Profile.objects.get_or_create(user_id=user_id)
+
+    user.cnt_follower = Follow.objects.filter(following_id=user_id).count()
+    user.cnt_following = Follow.objects.filter(follower_id=user_id).count()
+
     friends = Follow.objects.values_list('following_id', flat=True)\
         .filter(follower_id=user_id).order_by('-id')
-    if len(friends) == 0:
-        return render(request, 'pin/user_friends_empty.html', {'username': user_namefg})
+
     paginator = Paginator(friends, row_per_page)
 
     try:
@@ -292,6 +296,10 @@ def absuser_friends(request, user_namefg):
     else:
         return render(request, 'pin/user_friends.html',
                       {'user_items': user_items,
+                       'page': 'user_following',
+                       'profile': profile,
+                       'user': user,
+                       'cur_user': user,
                        'offset': friends.next_page_number,
                        'user_id': user_id})
 
@@ -343,15 +351,19 @@ def user_followers(request, user_id):
 
 
 def absuser_followers(request, user_namefl):
-    row_per_page = 20
+    row_per_page = 24
 
     user = get_object_or_404(User, username=user_namefl)
     user_id = user.id
 
+    profile = Profile.objects.get_or_create(user_id=user_id)
+
+    user.cnt_follower = Follow.objects.filter(following_id=user.id).count()
+    user.cnt_following = Follow.objects.filter(follower_id=user.id).count()
+
     friends = Follow.objects.values_list('follower_id', flat=True)\
         .filter(following_id=user_id).order_by('-id')
-    if len(friends) == 0:
-        return render(request, 'pin/user_friends_empty.html')
+
     paginator = Paginator(friends, row_per_page)
 
     try:
@@ -375,19 +387,27 @@ def absuser_followers(request, user_namefl):
 
     user_items = User.objects.filter(id__in=friends_list)
 
+    print friends.next_page_number
+
     if request.is_ajax():
         if user_items.exists():
             return render(request,
                           'pin/_user_friends.html',
                           {'user_items': user_items,
+                           'user': user,
                            'offset': friends.next_page_number})
         else:
             return HttpResponse(0)
     else:
         return render(request, 'pin/user_friends.html',
                       {'user_items': user_items,
+                       'user_id': int(user_id),
+                       'page': 'user_follower',
+                       'profile': profile,
+                       'user': user,
+                       'cur_user': user,
                        'offset': friends.next_page_number,
-                       'user_id': user_id})
+                       })
 
 
 def user_like(request, user_id):
@@ -791,7 +811,9 @@ def user(request, user_id, user_name=None):
 def absuser(request, user_name=None):
     user = get_object_or_404(User, username=user_name)
     user_id = user.id
-    profile = Profile.objects.get_or_create(user_id=user_id)
+    profile, created = Profile.objects.get_or_create(user_id=user_id)
+    if profile.banned:
+        return render(request, 'pin2/samandehi.html')
 
     timestamp = get_request_timestamp(request)
     if timestamp == 0:
@@ -812,9 +834,7 @@ def absuser(request, user_name=None):
         else:
             return HttpResponse(0)
     else:
-
-        follow_status = Follow.objects\
-            .filter(follower=request.user.id, following=user.id).count()
+        follow_status = Follow.objects.filter(follower=request.user.id, following=user.id).count()
 
         return render(request, 'pin2/user.html',
                       {'latest_items': latest_items,
@@ -952,7 +972,7 @@ def tag(request, keyword):
 
     if tag_items.has_next() is False:
         tag_items.next_page_number = -1
-    latest_items = Post.objects.filter(id__in=s, status=1).all()
+    latest_items = Post.objects.filter(id__in=s).all()
 
     if request.is_ajax():
         if latest_items.exists():
