@@ -7,4 +7,4 @@ class ProfileForm(ModelForm):
         model = Profile
         exclude = ('user', 'cnt_post', 'cnt_like', 'score',
                    'count_flag', 'trusted', 'fault', 'fault_minus',
-                   'post_accept', 'credit', 'level')
+                   'post_accept', 'credit', 'level', 'banned')
