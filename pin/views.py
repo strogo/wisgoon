@@ -811,7 +811,9 @@ def user(request, user_id, user_name=None):
 def absuser(request, user_name=None):
     user = get_object_or_404(User, username=user_name)
     user_id = user.id
-    profile = Profile.objects.get_or_create(user_id=user_id)
+    profile, created = Profile.objects.get_or_create(user_id=user_id)
+    if profile.banned:
+        return render(request, 'pin2/samandehi.html')
 
     timestamp = get_request_timestamp(request)
     if timestamp == 0:
