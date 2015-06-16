@@ -1,5 +1,8 @@
-{% extends "pin2/flat.base.box.html"%}
+{% extends "pin2/flat.base.html"%}
+{% load humanize %}
 {% load pin_tags %}
+{% load daddy_avatar%}
+
 
 {% block extra_js %}
 <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
@@ -21,15 +24,72 @@
 	var disable_masonry=1;
 </script>
 
-<div class="row row-fluid mabo50">
-	<div class="span12">
-		<div id="">
-			{% include "pin/_user_friends.html"%}
+<div class="container">
+	<div class="profile row">
+		<div class="sidebar col-md-3 col-sm-3 col-xs-12 pull-right">
+			{% include "pin2/__user_info_top.html" %}
+
+			{% include "pin2/__user_info_stats.html" %}
+
+			<!-- <div class="clear"></div> -->
 		</div>
+		<div class="post col-md-9 col-sm-9 col-xs-12 pull-left mabo50">
+			<div class="row" style="text-align:center">
+				{% include "base/ad-720x92.html" %}
+			</div>
+
+			{% include "pin2/__user_info_profile_top.html" %}
+
+			<div id="follower-box" class="col-md-12">
+				{% if user_items %}
+				<div id="follower-box">
+					{% include "pin/_user_friends.html"%}
+				</div>
+			</div>
+			{% else %}
+			<h3>موردی پیدا نشد</h3>
+			{% endif %}
+		</div>
+
+
 	</div>
 </div>
+
+
 
 {% include "pin/feed_scripts.html" %}
 {% include "pin/pin_scripts.html" %}
 
 {% endblock content %}
+
+{% block js %}
+<script type="text/javascript">
+	$(function () {
+		$('body').on('click', '.load-follow', function(event) {
+			event.preventDefault();
+			var t = $(this);
+			t.children('img').css('display', 'inline-block');
+			$.ajax({
+				url: t.attr('href'),
+			})
+			.done(function(d) {
+				if (d == '0') {
+					t.addClass('disabled');
+					alert_show('مورد بیشتری پیدا نشد', 'error');
+				}else{
+					t.remove();
+					$('#follower-box').append(d);
+				}
+			})
+			.fail(function() {
+				alert_show('خطا. با مدیر تماس بگیرید');
+			})
+			.always(function() {
+				t.children('img').css('display', 'none');
+			});
+			return false;
+
+		});
+	});
+</script>
+{% endblock js %}

@@ -454,6 +454,9 @@ a, a:link, a:hover, a:visited {
 .post-detail{
 
 }
+a.btn.btn-primary {
+	color: #fff;
+}
 .sidebar .profile{
 	background-color: #fff;
 	border-radius: 20px;
@@ -1560,4 +1563,7 @@ div.comment div div.row:hover .del-comment{
 
 .feed-item .img-content .user-liked *{
 	color: red !important;
+}
+.load-follow img{
+	display: none;
 }
