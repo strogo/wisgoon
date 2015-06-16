@@ -1136,9 +1136,13 @@ a.img-move{
 .likes .content .btn_like:hover *{
 	color: #FFF !important;
 }
+.likes .content .user-liked .btn_like,
 .likes .content .btn_like:hover {
 	background: red;
 	color: #FFF !important;
+}
+.likes .content .user-liked .btn_like * {
+	color: #fff !important;
 }
 .likes .btn_like{
 }
@@ -1169,16 +1173,16 @@ a.img-move{
 .navbar-default-items ul li{
 	display: block;
 }
-.navbar-default-items ul li.active{
+.navbar-default-items > ul > li.active{
 	background: #434a54;
 }
-.navbar-default-items ul li.active a{
+.navbar-default-items > ul > li.active a{
 	color: #fff !important;
 }
-.navbar-default-items ul li:hover{
+.navbar-default-items > ul > li:hover{
 	background: #c1c1c1 !important;
 }
-.navbar-default-items ul li:hover a{
+.navbar-default-items > ul > li:hover a{
 	color: #434a54 !important;
 }
 

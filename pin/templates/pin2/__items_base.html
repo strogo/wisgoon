@@ -51,7 +51,7 @@
 		<div class="btn-box likes {% if user.is_authenticated%} {% user_post_like item.id %} {% endif %}">
 			{% if user.is_authenticated %}
 			
-			<a href="{% url "pin-item-like" item.id%}" class="btn_like">
+			<a href="{% url 'pin-item-like' item.id %}" class="btn_like">
 				<span class="count">{{item.cnt_like|pn}}</span>
 				<i class="glyphicon glyphicon-heart"></i>
 			</a>
