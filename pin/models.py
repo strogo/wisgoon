@@ -523,7 +523,7 @@ class Post(models.Model):
 
             if ((self.date_lt(self.user.date_joined, 30) and
                  profile.score > 5000) or profile.score > 7000):
-                self.status = 1
+                self._status = 1
 
             else:
                 print self.date_lt(self.user.date_joined, 30), profile.score
@@ -538,13 +538,13 @@ class Post(models.Model):
             self.hash = self.md5_for_file(image_file)
 
             if self.hash_exists():
-                self.status = 0
+                self._status = 0
 
             if not self.accept_for_stream():
-                self.status = 0
+                self._status = 0
 
             if Official.objects.filter(user=self.user).count():
-                self.status = 1
+                self._status = 1
                 # is_official = True
         else:
             print "path does not exists", file_path
@@ -863,7 +863,7 @@ class Stream(models.Model):
             #         print str(e)
             #         pass
 
-            if post.status == Post.APPROVED and post.accept_for_stream():
+            if post._status == 1 and post.accept_for_stream():
                 Post.add_to_stream(post=post)
 
 
