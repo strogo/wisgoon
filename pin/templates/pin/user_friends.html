@@ -73,8 +73,13 @@
 				url: t.attr('href'),
 			})
 			.done(function(d) {
-				t.remove();
-				$('#follower-box').append(d);
+				if (d == '0') {
+					$('.load-follow').remove();
+					alert_show('مورد بیشتری پیدا نشد', 'error');
+				}else{
+					t.remove();
+					$('#follower-box').append(d);
+				}
 			})
 			.fail(function() {
 				alert_show('خطا. با مدیر تماس بگیرید');
