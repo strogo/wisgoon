@@ -60,10 +60,10 @@
 						{% endfor %}
 					</div>
 					<!-- like icon -->
-					<div class="col-md-2 col-sm-2 col-xs-2 like-icon">
-						<a href="{% url "pin-item-like" post.id%}" class="btn_like">
-							<i class="glyphicon glyphicon-heart {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"></i>
-							<i class="{% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}">{{post.cnt_likes}}</i>
+					<div class="col-md-2 col-sm-2 col-xs-2 like-icon {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}">
+						<a href="{% url 'pin-item-like' post.id %}" class="btn_like">
+							<i class="glyphicon glyphicon-heart"></i>
+							<span class='count'>{{post.cnt_likes|pn}}</span>
 						</a>
 					</div>
 					<!-- end like icon -->
@@ -91,7 +91,7 @@
 						</div>
 						<div class="left-icons col-md-3 col-sm-12 col-xs-12">
 							{% if user.is_authenticated%}
-							<a alt="{{user.id}}/{{post.user.id}}" href="{% url "report_pin" post.id%}" style="margin-right: 5px" class="btn btn-danger btn_report "> <i class="glyphicon glyphicon-exclamation-sign"></i> گزارش تخلف</a>
+							<a alt="{{user.id}}/{{post.user.id}}" href="{% url "report_pin" post.id%}" style="margin-right: 5px" class="btn btn-warning btn_report "> <i class="glyphicon glyphicon-exclamation-sign"></i> گزارش تخلف</a>
 							{% endif %}
 
 
