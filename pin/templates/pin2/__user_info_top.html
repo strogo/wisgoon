@@ -11,17 +11,17 @@
 	<div class="col-md-12 col-sm-12 col-xs-12 username">
 		<h4>{{cur_user|get_username}}</h4>
 
-{% if cur_user.id == request.user.id %}
-	<a href="{% url "user-profile-change" %}" class="btn btn-xs btn-primary f-white" data-toggle="modal" data-target="#profileModal">ویرایش</a>
-{% endif %}
+		{% if cur_user.id == request.user.id %}
+		<a href="{% url "user-profile-change" %}" class="btn btn-xs btn-primary f-white" data-toggle="modal" data-target="#profileModal">ویرایش</a>
+		{% endif %}
 
-{% if cur_user.id != request.user.id %}
-	{% if follow_status == 0 %}
+		{% if cur_user.id != request.user.id %}
+		{% if follow_status == 0 %}
 		<a class="btn btn-xs btn-success" href='{% url "pin-follow" cur_user.id 1 %}'>ایجاد دوستی</a>
-	{% else %}
+		{% else %}
 		<a class="btn btn-xs btn-danger" href='{% url "pin-follow" cur_user.id 0 %}'>قطع ارتباط</a>
-	{%endif%}
-{% endif %}
+		{%endif%}
+		{% endif %}
 
 		
 	</div>
@@ -35,11 +35,11 @@
 		<a class="btn btn-default" href='{% url "pin-absuser-like" cur_user.username %}' type="link">
 			مورد علاقه‌های کاربر
 		</a>
-		<a class="btn btn-default" href='{% url "pin-absuser-following" cur_user.username %}' type="button">
+		<a class="btn {% if page == 'user_following' %} btn-primary {% else %} btn-default {% endif %}" href='{% url "pin-absuser-following" cur_user.username %}' type="button">
 			دنبال شوندگان 
 			<small>(</small><strong>{{cur_user.profile.get_cnt_following|pn}}</strong><small>)</small>
 		</a>
-		<a class="btn btn-default" href='{% url "pin-absuser-followers" cur_user.username %}' type="button">
+		<a class="btn {% if page == 'user_follower' %} btn-primary {% else %} btn-default {% endif %}" href='{% url "pin-absuser-followers" cur_user.username %}' type="button">
 			دنبال کنندگان
 			<small>(</small><strong>{{cur_user.profile.get_cnt_followers|pn}}</strong><small>)</small>
 		</a>
