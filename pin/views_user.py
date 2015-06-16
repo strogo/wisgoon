@@ -139,14 +139,14 @@ def follow(request, following, action):
         message = 'ارتباط شما با موفقیت قطع شد'
         status = 'false'
     elif created:
-        posts = Post.objects.only('timestamp').filter(user=following)\
-            .order_by('-timestamp')[:100]
+        # posts = Post.objects.only('timestamp').filter(user=following)\
+        #     .order_by('-timestamp')[:100]
 
-        for post in posts:
-            s, created = Stream.objects.get_or_create(post=post,
-                                                      user=request.user,
-                                                      date=post.timestamp,
-                                                      following=following)
+        # for post in posts:
+        #     s, created = Stream.objects.get_or_create(post=post,
+        #                                               user=request.user,
+        #                                               date=post.timestamp,
+        #                                               following=following)
             # print "post", post.id, s, created
         message = 'ارتباط شما با موفقیت برقرار شد'
         status = 'true'

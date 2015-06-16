@@ -105,7 +105,6 @@ class PinAdmin(admin.ModelAdmin):
     actions = ['make_approve',
                'really_delete_selected',
                'delete_all_user_posts',
-               'fault',
                'no_problem']
 
     def get_actions(self, request):
@@ -148,19 +147,6 @@ class PinAdmin(admin.ModelAdmin):
             Comments.objects.filter(user=obj.user).delete()
 
     delete_all_user_posts.short_description = 'حذف تمام پست های کاربر و غیر فعال کردن'
-
-    def fault(self, request, queryset):
-        for obj in queryset:
-            Post.objects.filter(pk=obj.id).update(status=Post.FAULT, report=0)
-
-            user = obj.user
-            user.profile.fault = user.profile.fault + 1
-            user.profile.save()
-
-        for obj in queryset:
-            send_notif(user=obj.user, type=Notifbar.FAULT, post=obj, actor=request.user)
-
-    fault.short_description = 'ثبت تخلف'
 
 
 # class NotifyAdmin(admin.ModelAdmin):

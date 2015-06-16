@@ -292,7 +292,7 @@ def post(request):
     category_ids = []
     filters = {}
     cur_user = None
-    filters.update(dict(status=Post.APPROVED))
+    # filters.update(dict(status=Post.APPROVED))
     before = request.GET.get('before', None)
     category_id = request.GET.get('category_id', None)
     popular = request.GET.get('popular', None)
@@ -618,7 +618,7 @@ def notif(request):
                     'previous': '',
                     'total_count': 1000}
 
-    filters.update(dict(status=Post.APPROVED))
+    # filters.update(dict(status=Post.APPROVED))
 
     notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 

@@ -16,6 +16,16 @@
         {% for ac in noti.actors|slice:":9" reversed %}
         <a target="_blank" href="{% url "pin-user" ac %}"><img src="{{ac|get_avatar:30}}"></a>
         {% endfor %}
+    {% elif noti.type == 10 %}
+        <a class="bbbb" href="{% url "pin-user" noti.po.0 %}" style="width:100px; height:100px">
+            <img src="{{noti.po.0|get_avatar:100}}" style="float:left;margin-right:5px; width:100px" />
+        </a>
+        <div class="post-like-right">
+            <i class="glyphicon glyphicon-user"></i>
+        </div>
+        
+        <a target="_blank" href="{% url "pin-user" noti.owner %}"><img src="{{noti.owner|get_avatar:30}}"></a>
+        
     {% else %}
         <a href="{% url "pin-item" noti.id %}" style="width:100px; height:100px"><img src="{{noti.po.get_image_236.url }}" style="float:left;margin-right:5px; width:100px" /></a>
 

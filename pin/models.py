@@ -158,11 +158,6 @@ class Category(models.Model):
         return cat_json
 
 
-class AcceptedManager(models.Manager):
-    def get_query_set(self):
-        return super(AcceptedManager, self).get_query_set().filter(status=1)
-
-
 class Sim(models.Model):
     post = models.OneToOneField('Post')
     features = models.TextField()
@@ -210,7 +205,8 @@ class Post(models.Model):
     like = models.IntegerField(default=0)
     url = models.CharField(blank=True, max_length=2000,
                            validators=[URLValidator()])
-    status = models.IntegerField(default=0, blank=True, verbose_name="وضعیت",
+    status = models.IntegerField(default=PENDING, blank=True,
+                                 verbose_name="وضعیت",
                                  choices=STATUS_CHOICES)
     device = models.IntegerField(default=1, blank=True)
     hash = models.CharField(max_length=32, blank=True, db_index=True)
@@ -232,7 +228,7 @@ class Post(models.Model):
 
     category = models.ForeignKey(Category, default=1, verbose_name='گروه')
     objects = models.Manager()
-    accepted = AcceptedManager()
+    # accepted = AcceptedManager()
 
     data_236 = None
     data_500 = None
@@ -806,6 +802,9 @@ class Follow(models.Model):
 
         super(Follow, self).delete(*args, **kwargs)
 
+    def save(self, *args, **kwargs):
+        super(Follow, self).save(*args, **kwargs)
+
     @classmethod
     def new_follow(cls, sender, instance, *args, **kwargs):
         if kwargs['created']:
@@ -817,15 +816,14 @@ class Follow(models.Model):
 
             Profile.objects.filter(user_id=following_id)\
                 .update(cnt_followers=F('cnt_followers') + 1)
-        pass
-        # print "new follow"
-        # print cls, sender, instance, args, kwargs
-        # print "instance follow:", instance.follower.id
-        # Notif_mongo.objects(owner=instance.following.id, type=10, post=0)\
-        #     .update_one(set__last_actor=instance.follower.id,
-        #                 set__date=datetime.now,
-        #                 set__seen=False,
-        #                 add_to_set__actors=instance.follower.id, upsert=True)
+        
+            # print "new follow"
+            # print cls, sender, instance, args, kwargs
+            # print "instance follow:", instance.follower.id
+            Notif_mongo.objects(owner=instance.following.id, type=10, last_actor=instance.follower.id)\
+                .update_one(set__date=datetime.now,
+                            set__seen=False,
+                            add_to_set__actors=instance.follower.id, upsert=True)
 
 
 class Stream(models.Model):

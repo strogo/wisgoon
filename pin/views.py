@@ -972,7 +972,7 @@ def tag(request, keyword):
 
     if tag_items.has_next() is False:
         tag_items.next_page_number = -1
-    latest_items = Post.objects.filter(id__in=s, status=1).all()
+    latest_items = Post.objects.filter(id__in=s).all()
 
     if request.is_ajax():
         if latest_items.exists():
