@@ -1189,6 +1189,7 @@ class PhoneData(models.Model):
     android_version = models.CharField(max_length=10)
     app_version = models.CharField(max_length=10)
     google_token = models.CharField(max_length=500)
+    # phone_brand = models.CharField(max_length=500)
 
 
 class InstaAccount(models.Model):

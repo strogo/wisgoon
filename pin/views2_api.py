@@ -29,7 +29,7 @@ from tastypie.models import ApiKey
 
 from pin.tools import AuthCache, get_user_ip, log_act
 from pin.models import Post, Category, Likes, Follow, Comments, Block,\
-    Packages, Ad, Bills2
+    Packages, Ad, Bills2, PhoneData
 from pin.model_mongo import Notif
 from pin.tasks import send_clear_notif
 
@@ -646,6 +646,25 @@ def notif(request):
             cur_p.cnt_like = 0
             cur_p.timestamp = int(time.time())
             cur_p.category_id = 1
+        elif p.type == 10:
+
+            class CurP:
+                def get_image_500(self, api):
+                    return self.post_image
+
+            cur_p = CurP()
+            cur_p.id = p.owner
+            cur_p.text = ""
+            cur_p.cnt_comment = 0
+            owner = p.owner
+            cur_p.image = AuthCache.avatar(user_id=p.owner)\
+                .split("media/")[1]
+            cur_p.user_id = p.owner
+            cur_p.cnt_like = 0
+            cur_p.timestamp = int(time.time())
+            cur_p.category_id = 1
+            cur_p.owner = p.owner
+            cur_p.last_actor = p.last_actor
         else:
             try:
                 cur_p = Post.objects.only(*Post.NEED_KEYS2).get(id=p.post)
@@ -676,31 +695,54 @@ def notif(request):
         o['likers'] = None
         o['like_with_user'] = False
 
-        o['resource_uri'] = "/pin/api/post/%d/" % cur_p.id
-        o['permalink'] = "/pin/%d/" % cur_p.id
+        if p.type == 10:
+            o['resource_uri'] = "/pin/api/post/%d/" % cur_p.owner
+        else:
+            o['resource_uri'] = "/pin/api/post/%d/" % cur_p.id
+
+        if p.type == 10:
+            o['permalink'] = "/profile/%d/" % cur_p.last_actor
+        else:
+            o['permalink'] = "/pin/%d/" % cur_p.id
 
         if cur_user:
             o['like_with_user'] = Likes.user_in_likers(post_id=cur_p.id,
                                                        user_id=cur_user)
 
-        imo = cur_p.get_image_500(api=True)
+        if p.type == 10:
+            imo = cur_p.image
+        else:
+            imo = cur_p.get_image_500(api=True)
 
-        if imo:
+        if p.type == 10:
+            o['thumbnail'] = imo
+            o['hw'] = "100x100"
+        elif imo:
             o['thumbnail'] = imo['url']
             o['hw'] = imo['hw']
 
         o['category'] = Category.get_json(cat_id=cur_p.category_id)
 
         ar = []
-        for ac in p.last_actors():
+        if p.type == 10:
+            # p['actors'] = [get_avatar(p.last_actor, size=100)]
             ar.append([
-                ac,
-                AuthCache.get_username(ac),
-                get_avatar(ac, size=100)
-            ])
-            break
+                    p.last_actor,
+                    AuthCache.get_username(p.last_actor),
+                    get_avatar(p.last_actor, size=100)
+                ])
+        else:
+            
+            for ac in p.last_actors():
+                ar.append([
+                    ac,
+                    AuthCache.get_username(ac),
+                    get_avatar(ac, size=100)
+                ])
+                break
 
         o['actors'] = ar
+
         from collections import OrderedDict
         o = OrderedDict(sorted(o.items(), key=lambda o: o[0]))
 
@@ -1417,4 +1459,30 @@ def promoted(request):
 
 
 def get_phone_data(request):
+    os = request.GET.get("os", "")
+    app_version = request.GET.get("app_version", "")
+    google_token = request.GET.get("google_token", "")
+    token = request.GET.get("user_wisgoon_token", None)
+    imei = request.GET.get("imei", "")
+    phone_brand = request.GET.get("phone_brand", "")
+    android_version = request.GET.get("android_version", "")
+    phone_serial = request.GET.get("phone_serial", "")
+    phone_model = request.GET.get("phone_model", "")
+
+    if not token:
+        return HttpResponse("not only :D", content_type="text/html")
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    upd, created = PhoneData.objects.get_or_create(user=user)
+    upd.imei = imei
+    upd.os = os
+    upd.phone_model = phone_model
+    upd.phone_serial = phone_serial
+    upd.android_version = android_version
+    upd.app_version = app_version
+    upd.google_token = google_token
+    upd.save()
+
     return HttpResponse("accepted", content_type="text/html")

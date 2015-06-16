@@ -515,11 +515,14 @@ def show_notify(request):
         except Post.DoesNotExist:
             if n.type == 4:
                 anl['po'] = n.post_image
+            elif n.type == 10:
+                anl['po'] = n.last_actors
             else:
                 continue
         anl['id'] = n.post
         anl['type'] = n.type
         anl['actors'] = n.actors
+        anl['owner'] = n.owner
 
         nl.append(anl)
     return render(request, 'pin2/notify.html', {'notif': nl})
