@@ -24,3 +24,9 @@
 	موردی یافت نشد
 </div>
 {% endif %}
+
+<a href="{% url 'pin-absuser-followers' user.username %}?older={{offset}}" class="col-md-3 col-md-offset-4 col-sm-12 col-xs-12 btn btn-success mabo50 mato50 load-follow">
+	بیشتر
+	<img src="{{MEDIA_URL}}img/loading.gif" alt=" بیشتر " />
+</a>
+<div class="clearfix"></div>

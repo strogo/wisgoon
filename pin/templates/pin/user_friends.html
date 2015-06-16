@@ -33,7 +33,7 @@
 
 			<!-- <div class="clear"></div> -->
 		</div>
-		<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
+		<div class="post col-md-9 col-sm-9 col-xs-12 pull-left mabo50">
 			<div class="row" style="text-align:center">
 				{% include "base/ad-720x92.html" %}
 			</div>
@@ -46,10 +46,6 @@
 					{% include "pin/_user_friends.html"%}
 				</div>
 			</div>
-			<a href="{% url 'pin-absuser-followers' user.username %}?older={{offset}}" class="col-md-3 col-md-offset-4 col-sm-12 col-xs-12 btn btn-success mabo50 mato50 load-follow">
-				بیشتر
-				<img src="{{MEDIA_URL}}img/loading.gif" alt=" بیشتر " />
-			</a>
 			{% else %}
 			<h3>موردی پیدا نشد</h3>
 			{% endif %}
@@ -77,6 +73,7 @@
 				url: t.attr('href'),
 			})
 			.done(function(d) {
+				t.remove();
 				$('#follower-box').append(d);
 			})
 			.fail(function() {
