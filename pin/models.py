@@ -172,8 +172,9 @@ class Packages(models.Model):
 
 
 class Post(models.Model):
-    FRESH = 1
-    IMAGINITY = 2
+    PENDING = 0
+    APPROVED = 1
+    FAULT = 2
 
     META_DATA = None
 
@@ -189,8 +190,9 @@ class Post(models.Model):
                      'show_in_default', 'timestamp', 'report']
 
     STATUS_CHOICES = (
-        (FRESH, 'تازه'),
-        (IMAGINITY, 'تصور شده'),
+        (PENDING, 'منتظر تایید'),
+        (APPROVED, 'تایید شده'),
+        (FAULT, 'تخلف'),
     )
 
     # title = models.CharField(max_length=250, blank=True)
@@ -203,7 +205,7 @@ class Post(models.Model):
     like = models.IntegerField(default=0)
     url = models.CharField(blank=True, max_length=2000,
                            validators=[URLValidator()])
-    status = models.IntegerField(default=FRESH, blank=True,
+    status = models.IntegerField(default=PENDING, blank=True,
                                  verbose_name="وضعیت",
                                  choices=STATUS_CHOICES)
     device = models.IntegerField(default=1, blank=True)
@@ -523,7 +525,7 @@ class Post(models.Model):
 
             if ((self.date_lt(self.user.date_joined, 30) and
                  profile.score > 5000) or profile.score > 7000):
-                self._status = 1
+                self.status = 1
 
             else:
                 print self.date_lt(self.user.date_joined, 30), profile.score
@@ -538,13 +540,13 @@ class Post(models.Model):
             self.hash = self.md5_for_file(image_file)
 
             if self.hash_exists():
-                self._status = 0
+                self.status = 0
 
             if not self.accept_for_stream():
-                self._status = 0
+                self.status = 0
 
             if Official.objects.filter(user=self.user).count():
-                self._status = 1
+                self.status = 1
                 # is_official = True
         else:
             print "path does not exists", file_path
@@ -863,7 +865,7 @@ class Stream(models.Model):
             #         print str(e)
             #         pass
 
-            if post._status == 1 and post.accept_for_stream():
+            if post.status == Post.APPROVED and post.accept_for_stream():
                 Post.add_to_stream(post=post)
 
 
