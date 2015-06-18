@@ -30,7 +30,7 @@ from tastypie.models import ApiKey
 from pin.tools import AuthCache, get_user_ip, log_act
 from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2, PhoneData
-from pin.model_mongo import Notif
+from pin.model_mongo import Notif, UserLocation
 from pin.tasks import send_clear_notif
 
 from haystack.query import SearchQuerySet
@@ -1485,4 +1485,22 @@ def get_phone_data(request):
     upd.google_token = google_token
     upd.save()
 
+    return HttpResponse("accepted", content_type="text/html")
+
+
+def get_plus_data(request):
+    token = request.GET.get("token", None)
+    lat = float(request.GET.get("lat", 0))
+    lon = float(request.GET.get('lon', 0))
+    if lat == 0 and lon == 0:
+        return HttpResponse("leave me alone", content_type="text/html")
+    if not token:
+        return HttpResponse("not only :D", content_type="text/html")
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    ul, created = UserLocation.objects.get_or_create(user=user.id)
+    ul.point = [lat, lon]
+    ul.save()
     return HttpResponse("accepted", content_type="text/html")

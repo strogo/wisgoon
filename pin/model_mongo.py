@@ -215,3 +215,8 @@ class MonthlyStats(Document):
         d = str(datetime.date.today())
         MonthlyStats.objects(date=d, object_type=object_type)\
             .update_one(inc__count=1, upsert=True)
+
+
+class UserLocation(Document):
+    user = IntField(unique=True)
+    point = GeoPointField()
