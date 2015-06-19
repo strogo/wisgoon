@@ -28,11 +28,12 @@
 	</div>
 	<div class="reporters">
 	{% for reporter in item.reporters %}
-		<a href="{% url "pin-absuser" reporter.user.username %}">
-			<img src="{{reporter.user_id|get_avatar:54}}" style="display: inline;" > 
+		<a href="{% url 'pin-absuser' reporter.user.username %}" >
+			<img src="{{reporter.user_id|get_avatar:30}}" data-toggle="tooltip" data-placement="bottom" title="{{reporter.user}}" /> 
 		</a>
 	{% endfor %}
 	</div>
+	<div class="clear"></div>
 	<!-- <div class="actions">
 		<a href="{% url "pin-item-like" item.id%}" class="btn btn-primary btn_like {% if user.is_authenticated%}{% user_post_like item.id %}{% endif %}"> <i class="glyphicon glyphicon-heart"></i> {{item.cnt_like}} </a>
 	</div> -->
