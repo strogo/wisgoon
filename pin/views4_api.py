@@ -27,22 +27,22 @@ def get_next_url(url_name, offset, token):
 def check_auth(request):
     token = request.GET.get('token', '')
     if not token:
-        return False
+        return False, token
 
     try:
         user = AuthCache.user_from_token(token)
         if not user:
-            return False
+            return False, token
         user._ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
 
         if not user.is_active:
-            return False
+            return False, token
         else:
             return user, token
     except ApiKey.DoesNotExist:
-        return False
+        return False, token
 
-    return False
+    return False, token
 
 
 def return_un_auth():
