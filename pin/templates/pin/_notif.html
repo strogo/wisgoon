@@ -7,13 +7,12 @@
 {% for item in notif %}
 
 <div class="notif-item" >
-	{% thumbnail item.po "40x40" crop="center" as im %}
 	<div class="notif-img pull-left">
 		<a class="pin-item-link" style="float:right" href="{% url "pin-item" item.id%}">
-			<img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="img img-circle">
+			<img src="{{item.po.get_image_236.url }}" class="img img-circle" style="width:40px;height:40px;" />
 		</a>
 	</div>
-	{% endthumbnail %}
+
 	<div class="notif-actors col-md-7 pull-right">
 		<div>
 			{% for actor in item.actors %}

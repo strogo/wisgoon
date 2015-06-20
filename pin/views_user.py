@@ -543,7 +543,7 @@ def notif_user(request):
     for n in notif:
         anl = {}
         try:
-            anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+            anl['po'] = Post.objects.only('image').get(pk=n.post)
         except Post.DoesNotExist:
             continue
         anl['id'] = n.post
@@ -551,15 +551,15 @@ def notif_user(request):
         anl['actors'] = n.last_actors
 
         nl.append(anl)
-        
 
-    #for n in notif:
+    # for n in notif:
     #    print 'pois', n.po
 
     if request.is_ajax():
         return render(request, 'pin/_notif.html', {'notif': nl})
     else:
         return render(request, 'pin/notif_user.html', {'notif': nl})
+
 
 @login_required
 def notif_all(request):
@@ -582,8 +582,9 @@ def notif_all(request):
         anl['actors'] = n.last_actors
 
         nl.append(anl)
-        
+
     return render(request, 'pin/notif_user.html', {'notif': nl})
+
 
 @login_required
 def inc_credit(request):
