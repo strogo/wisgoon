@@ -75,14 +75,16 @@
 		}
 	}
 
-	$(".img-move").click(function() {
+	$('body').on('click', '.img-move', function(){
+	    event.preventDefault();
 		action = $(this).attr('rel')
 		cur_id_change(action);
 		$("#ajx-img").attr('src', images[cur_id]);
 		$("#image_url").val(images[cur_id]);
 	});
 
-	$("#btn-pin-url").click(function() {
+	$('body').on('click', '#btn-pin-url', function(){
+	    event.preventDefault();
 		$(this).val('لطفا صبر کنید');
 		$(this).addClass('disabled');
 

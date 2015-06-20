@@ -116,12 +116,14 @@ var notifCache=false;
 
 // all footers
 $('.tooltips').tooltip();
-$("#ScrollToTop").click(function(){
+$('body').on('click', '#ScrollToTop', function(event) {
+    event.preventDefault();
 	$('html, body').animate({scrollTop: $("#wrapper").offset().top}, 1000);
 });
 
 
 $('body').on('click', '.pin-item-link', function(){
+    event.preventDefault();
     return true;
     var item_link = $(this);
     href=item_link.attr('href');
@@ -141,7 +143,7 @@ $('body').on('click', '.pin-item-link', function(){
     return false;
 });
 
-$(".popnotify").bind('click',function(){
+$(".popnotify").bind('click', function(){
     var el=$(this);
     el.parent().children('.loading-img').show();
 
@@ -227,8 +229,38 @@ $('body').on('click', '.login_required', function(event) {
     return false;
 });
 
+
 $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
+    $('[data-toggle="tooltip"]').tooltip();
+    $('.menu-box ul li.parent').attr('data-content', '');
+    $('body').on('click', '.menu-box ul li.parent > a', function(event) {
+        event.preventDefault();
+        p = $(this).parent();
+        if (p.attr('collapse') == 'true') {
+            p.removeAttr('collapse');
+            p.children('ul').slideUp('100');
+            p.attr('data-content', "");
+        }else{
+            p.parent().children('li').removeAttr('collapse');
+            p.parent().children('li').children('ul').slideUp('100');
+            $(this).parent().attr('collapse', 'true');
+            $(this).parent().children('ul').slideDown('100');
+            p.attr('data-content', "");
+            
+        }
+    });
+    $('body').on('click', '.menu-box .colse-menu-btn', function(event) {
+        event.preventDefault();
+        $('.menu-box').width(0);
+    });
+    $('body').on('click', '.resp-menu', function(event) {
+        event.preventDefault();
+        $('.menu-box').css('display', 'block');
+        $('.menu-box').animate({
+            width: 320},
+            100, function() {
+        });
+    });
 })
 
 live_content();

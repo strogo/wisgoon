@@ -46,7 +46,8 @@ createUploader();
 var parent_to_del = '';
 
 var comment_vote = 1;
-$(".comment-up").click(function(){
+$('body').on('click', '.comment-up', function(event) {
+    event.preventDefault();
     if (comment_vote == 0){
         return false;
     }
@@ -63,7 +64,7 @@ $(".comment-up").click(function(){
 });
 
 
-$(".comment-down").click(function(){
+$('body').on('click', '.comment-down', function(event) {
     if (comment_vote == 0){
         return false;
     }
@@ -80,7 +81,7 @@ $(".comment-down").click(function(){
 });
 
 
-$( "body" ).on('click', ".delpost", function(){
+$("body").on('click', ".delpost", function(){
     if (confirm('این مطلب حذف شود؟')){
         var obj = $(this); 
         var parent_to_del = $(obj).parents("div.feed-item");
