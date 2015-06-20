@@ -20,11 +20,13 @@ from daddy_avatar.templatetags.daddy_avatar import get_avatar
 ROW_PER_PAGE = 20
 
 
-def get_next_url(url_name, offset, token):
+def get_next_url(url_name, offset, token, **kwargs):
     n_url = reverse(url_name)
     n_url_p = n_url + "?offset=%s" % (offset)
     if token:
         n_url_p = n_url_p + "&token=%s" % (token)
+    for k, v in kwargs.iteritems():
+        n_url_p = n_url_p + "&%s=%s" % (k, v)
     return abs_url(n_url_p)
 
 
@@ -148,5 +150,6 @@ def user_near_by(request):
 
     data['objects'] = objects
     data['meta']['next'] = get_next_url(url_name='api-4-nearby',
-                                        offset=offset + 20, token=token)
+                                        offset=offset + 20, token=token,
+                                        **{"lat": lat, "lon": lon})
     return return_json_data(data)

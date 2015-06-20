@@ -6,7 +6,7 @@ DEBUG = True
 THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
-STATIC_VERSION = '0.0.26'
+STATIC_VERSION = '0.0.28'
 SITE_ROOT = os.path.dirname(__file__)
 ADMINS = (
     ('bugs', 'bugs@wisgoon.com'),

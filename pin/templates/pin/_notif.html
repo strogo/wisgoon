@@ -6,42 +6,41 @@
 {% spaceless %}
 {% for item in notif %}
 
-	<div class="notif-item" >
-		{% thumbnail item.po "100x100" crop="center" as im %}
-		<div class="notif-img" style="height: {{im.height}}px; width: {{im.width}}px">
-			<a class="pin-item-link" style="float:right" href="{% url "pin-item" item.id%}">
-			<img style="display:inline; float:right; margin-right:2px" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-			</a>
-			
-		</div>
-		{% endthumbnail %}
-		<div class="notif-type">
-			{% if item.type == 1 %}
-		        <i class="icon-heart"></i>
-		    {% elif item.type == 2 %}
-	            <i class="icon-comment"></i>
-	        {% elif item.type == 3 %}
-	            <i class="icon-ok"></i>
-	        {% elif item.type == 4 %}
-	            <i class="icon-remove"></i>
-		    {% endif %}
-		</div>
-		<div class="notif-actors">
-			<div style="float:right;padding:5px; heigth:40px;">
-				{% for actor in item.actors %}
-            	<a target="_blank" href="{% url "pin-user" actor %}">
-            		<img style="display:inline;padding:5px" src="{{actor|get_userdata_avatar:30}}">
-            	</a>
-            	{% endfor %}
-        	</div>
-    	</div>
-		{% if offset %}
-		<span data-next="{{offset}}" ></span>
-		{%else%}
-		<span data-next="{{item.date|date:"U"}}" ></span>
-		{%endif%}
-	
+<div class="notif-item" >
+	<div class="notif-img pull-left">
+		<a class="pin-item-link" style="float:right" href="{% url "pin-item" item.id%}">
+			<img src="{{item.po.get_image_236.url }}" class="img img-circle" style="width:40px;height:40px;" />
+		</a>
 	</div>
-	
+
+	<div class="notif-actors col-md-7 pull-right">
+		<div>
+			{% for actor in item.actors %}
+			<a target="_blank" href="{% url 'pin-user' actor %}" class="user-avatar" data-toggle="tooltip" data-placement="bottom" title="{{actor|get_username}}">
+				<img class="nav-avatar" src="{{actor|get_userdata_avatar:50}}">
+			</a>
+			{% endfor %}
+		</div>
+	</div>
+	<div class="notif-type col-md-3">
+		{% if item.type == 1 %}
+		<i class="glyphicon glyphicon-heart-empty red"></i> تصویر شما را پسندید
+		{% elif item.type == 2 %}
+		<i class="glyphicon glyphicon-comment"></i> برای تصویر شما نظر داده است
+		{% elif item.type == 3 %}
+		<i class="icon-ok"></i>
+		{% elif item.type == 4 %}
+		<i class="icon-remove"></i>
+		{% endif %}
+	</div>
+	{% if offset %}
+	<span data-next="{{offset}}" ></span>
+	{%else%}
+	<span data-next="{{item.date|date:"U"}}" ></span>
+	{%endif%}
+	<div class="clear"></div>
+</div>
+<div class="clear"></div>
+
 {%endfor%}
 {% endspaceless %}
