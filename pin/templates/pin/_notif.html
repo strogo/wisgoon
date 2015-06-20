@@ -14,10 +14,10 @@
 		</a>
 	</div>
 	{% endthumbnail %}
-	<div class="notif-actors col-md-5 pull-right">
+	<div class="notif-actors col-md-7 pull-right">
 		<div>
 			{% for actor in item.actors %}
-			<a target="_blank" href="{% url 'pin-user' actor %}" class="user-avatar">
+			<a target="_blank" href="{% url 'pin-user' actor %}" class="user-avatar" data-toggle="tooltip" data-placement="bottom" title="{{actor|get_username}}">
 				<img class="nav-avatar" src="{{actor|get_userdata_avatar:50}}">
 			</a>
 			{% endfor %}
