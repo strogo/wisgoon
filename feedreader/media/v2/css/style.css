@@ -1686,3 +1686,13 @@ div.comment div div.row:hover .del-comment{
 	border-radius: 3px;
 	border: 1px solid #555;
 }
+.notif-item{
+	padding: 10px;
+	border-bottom: 1px solid #bbb;
+}
+.notif-item:hover{
+	background: #ddd;
+}
+.notif-type {
+	padding: 10px 0;
+}
