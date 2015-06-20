@@ -60,6 +60,11 @@ urlpatterns += patterns('pin.views3_api',
     url(r'^api/v3/post/item/(?P<post_id>\d+)/$', 'post_item', name="api-3-item"),
 )
 
+urlpatterns += patterns('pin.views4_api',
+    url(r'^api/v4/user/blockers/$', 'user_blockers', name="api-4-blockers"),
+    url(r'^api/v4/user/near_by/$', 'user_near_by', name="api-4-nearby"),
+)
+
 if not settings.DEBUG:
     urlpatterns += patterns('pin.views',
         url(r'^(?P<user_namefl>.*)/followers/$', 'absuser_followers', name='pin-absuser-followers'),
