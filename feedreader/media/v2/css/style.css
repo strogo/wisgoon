@@ -1571,3 +1571,10 @@ div.comment div div.row:hover .del-comment{
 .load-follow img{
 	display: none;
 }
+.reporters > a {
+  display: inline;
+}
+.reporters > a img{
+	border-radius: 3px;
+	border: 1px solid #555;
+}
