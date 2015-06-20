@@ -39,12 +39,11 @@ $( "body" ).on('click', ".postfault", function(){
     return false;
 });
 
+$('body').on('click', '.del-comment', function(){
+    event.preventDefault();
 
-$('body').on("click", ".del-comment").click(function(){
     var obj = $(this);
-    console.log(this);
     var row_name = "comment_row_" + $(obj).attr("rel");
-    console.log(row_name);
     var req_url = obj.attr('href');
     $.ajax({
         url: req_url,
