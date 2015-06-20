@@ -1,3 +1,5 @@
+from math import sin, cos, sqrt, atan2, radians
+
 try:
     import simplejson as json
 except ImportError:
@@ -5,6 +7,7 @@ except ImportError:
 
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 from tastypie.models import ApiKey
 
 from pin.tools import AuthCache
@@ -44,6 +47,26 @@ def check_auth(request):
         return False, token
 
     return False, token
+
+
+R = 6373.0
+
+
+def calculat_distance(lat1, lon1, lat2, lon2):
+    lat1 = radians(float(lat1))
+    lon1 = radians(float(lon1))
+
+    lat2 = radians(float(lat2))
+    lon2 = radians(float(lon2))
+
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    distance = R * c
+    return "%.1f" % distance
 
 
 def return_bad_request():
@@ -111,10 +134,16 @@ def user_near_by(request):
 
     bq = UserLocation.objects(point__near=[lat, lon])[offset:next_off]
     for row in bq:
+        if row.user == user.id:
+            continue
+        user = User.objects.only('username').get(pk=row.user)
         o = {}
-        o['user_id'] = row.user_id
-        o['user_avatar'] = media_abs_url(get_avatar(row.user_id, 100))
-        o['user_name'] = row.user.username
+        o['user_id'] = user.id
+        o['user_avatar'] = media_abs_url(get_avatar(user.id, 100))
+        o['user_name'] = user.username
+        o['distance'] = calculat_distance(lat1=lat, lon1=lon,
+                                          lat2=row.point[0],
+                                          lon2=row.point[1])
         objects.append(o)
 
     data['objects'] = objects
