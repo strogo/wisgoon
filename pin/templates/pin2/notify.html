@@ -1,30 +1,30 @@
 {% load pin_tags %}
 
 {% load daddy_avatar %}
-<a href="{% url "pin-notif-user" %}">مشاهده همه اعلانات</a>
+<a href="{% url 'pin-notif-user' %}">مشاهده همه اعلانات</a>
 {% for noti in notif %}
 
 <div class="notif {{noti.type}}" style="">
 
     {% if noti.type == 4 %}
-        <a href="{% url "pin-item" noti.id %}" style="width:100px; height:100px">
+        <a href="{% url 'pin-item' noti.id %}" style="width:100px; height:100px">
             <img src="{{noti.po.url}}" style="float:left;margin-right:5px; width:100px" />
         </a>
         <div class="post-like-right">
             <i class="glyphicon glyphicon-remove"></i>
         </div>
         {% for ac in noti.actors|slice:":9" reversed %}
-        <a target="_blank" href="{% url "pin-user" ac %}"><img src="{{ac|get_avatar:30}}"></a>
+        <a target="_blank" href="{% url 'pin-user' ac %}"><img src="{{ac|get_avatar:30}}"></a>
         {% endfor %}
     {% elif noti.type == 10 %}
-        <a class="bbbb" href="{% url "pin-user" noti.po.0 %}" style="width:100px; height:100px">
+        <a class="bbbb" href="{% url 'pin-user' noti.po.0 %}" style="width:100px; height:100px">
             <img src="{{noti.po.0|get_avatar:100}}" style="float:left;margin-right:5px; width:100px" />
         </a>
         <div class="post-like-right">
             <i class="glyphicon glyphicon-user"></i>
         </div>
         
-        <a target="_blank" href="{% url "pin-user" noti.owner %}">
+        <a target="_blank" href="{% url 'pin-user' noti.owner %}">
         <img src="{{noti.owner|get_avatar:30}}">
         </a>
         
@@ -43,7 +43,7 @@
         {% endif %}
         </div>
         {% for ac in noti.actors|slice:":9" reversed %}
-        <a target="_blank" href="{% url "pin-absuser" ac|get_absusername %}"><img src="{{ac|get_avatar:30}}"></a>
+        <a target="_blank" href="{% url 'pin-absuser' ac|get_absusername %}"><img src="{{ac|get_avatar:30}}"></a>
         {% endfor %}
     {% endif %}
 	<div class="clear"></div>
