@@ -73,7 +73,7 @@ def user_blockers(request):
         o = {}
         o['user_id'] = row.user_id
         o['user_avatar'] = media_abs_url(get_avatar(row.user_id, 100))
-        o['user_name'] = AuthCache.get_username(user_id=row.user_id)
+        o['user_name'] = row.user.username
         objects.append(o)
 
     data['objects'] = objects
