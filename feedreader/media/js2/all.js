@@ -122,27 +122,6 @@ $('body').on('click', '#ScrollToTop', function(event) {
 });
 
 
-$('body').on('click', '.pin-item-link', function(){
-    event.preventDefault();
-    return true;
-    var item_link = $(this);
-    href=item_link.attr('href');
-    $('#pinitem').html('<center><img src="'+media_url+'img/loader.gif" /></center>').modal();
-    $('#pinitem').load(href,function(){
-        $(this).modal({
-            keyboard:true,
-
-        }).css({
-            width: 'auto',
-            'margin-left': function () {
-                return -($(this).width() / 2);
-            }
-        });
-    });
-
-    return false;
-});
-
 $(".popnotify").bind('click', function(){
     var el=$(this);
     el.parent().children('.loading-img').show();

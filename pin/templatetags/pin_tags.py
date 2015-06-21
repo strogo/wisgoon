@@ -160,6 +160,25 @@ def get_username(user):
 
 
 @register.filter
+def get_absusername(user):
+
+    if isinstance(user, (unicode, str)):
+        user = int(user)
+
+    if isinstance(user, (int, long)):
+        user_str = "user_name_%d" % (user)
+        user_cache = cache.get(user_str)
+        if user_cache:
+            user = user_cache
+        else:
+            user = User.objects.only('username').get(pk=user)
+            cache.set(user_str, user, 60 * 60 * 24)
+
+    username = user.username
+    return username
+
+
+@register.filter
 def get_cache_avatar(user, size=30):
     return AuthCache.avatar(user, size=size)
 

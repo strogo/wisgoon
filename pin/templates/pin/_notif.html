@@ -13,16 +13,16 @@
 		</a>
 	</div>
 
-	<div class="notif-actors col-md-7 pull-right">
+	<div class="notif-actors col-md-7 col-sm-7 col-xs-7 pull-right">
 		<div>
 			{% for actor in item.actors %}
-			<a target="_blank" href="{% url 'pin-user' actor %}" class="user-avatar" data-toggle="tooltip" data-placement="bottom" title="{{actor|get_username}}">
+			<a target="_blank" href="{% url 'pin-absuser' actor|get_absusername %}" class="user-avatar" data-toggle="tooltip" data-placement="bottom" title="{{actor|get_absusername}}">
 				<img class="nav-avatar" src="{{actor|get_userdata_avatar:50}}">
 			</a>
 			{% endfor %}
 		</div>
 	</div>
-	<div class="notif-type col-md-3">
+	<div class="notif-type col-md-3 col-sm-3 col-xs-4">
 		{% if item.type == 1 %}
 		<i class="glyphicon glyphicon-heart-empty red"></i> تصویر شما را پسندید
 		{% elif item.type == 2 %}
