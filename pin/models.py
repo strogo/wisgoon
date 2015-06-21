@@ -1058,6 +1058,8 @@ class Comments(models.Model):
         u"لعنت الله",
         u"ملعونین",
         u"حرومزاده",
+        u"ملعون",
+        u"اعتبار رایگان",
     ]
     comment = models.TextField()
     submit_date = models.DateTimeField(auto_now_add=True)
