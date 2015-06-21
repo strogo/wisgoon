@@ -1053,8 +1053,8 @@ class App_data(models.Model):
 
 class Comments(models.Model):
     BAD_WORDS = [
-        u"شارژ",
-        u"ایرانس",
+        u"205079",
+        u"737453",
     ]
     comment = models.TextField()
     submit_date = models.DateTimeField(auto_now_add=True)
