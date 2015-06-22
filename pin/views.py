@@ -254,10 +254,7 @@ def absuser_friends(request, user_namefg):
     user = get_object_or_404(User, username=user_namefg)
     user_id = user.id
 
-    profile = Profile.objects.get_or_create(user_id=user_id)
-
-    user.cnt_follower = Follow.objects.filter(following_id=user_id).count()
-    user.cnt_following = Follow.objects.filter(follower_id=user_id).count()
+    profile, created = Profile.objects.get_or_create(user_id=user_id)
 
     friends = Follow.objects.values_list('following_id', flat=True)\
         .filter(follower_id=user_id).order_by('-id')
@@ -287,21 +284,20 @@ def absuser_friends(request, user_namefg):
 
     if request.is_ajax():
         if user_items.exists():
-            return render(request,
-                          'pin/_user_friends.html',
-                          {'user_items': user_items,
-                           'offset': friends.next_page_number})
+            return render(request, 'pin/_user_friends.html', {
+                'user_items': user_items,
+                'offset': friends.next_page_number
+            })
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin/user_friends.html',
-                      {'user_items': user_items,
-                       'page': 'user_following',
-                       'profile': profile,
-                       'user': user,
-                       'cur_user': user,
-                       'offset': friends.next_page_number,
-                       'user_id': user_id})
+        return render(request, 'pin/user_friends.html', {
+            'user_items': user_items,
+            'page': 'user_following',
+            'profile': profile,
+            'offset': friends.next_page_number,
+            'user_id': user_id
+        })
 
 
 def user_followers(request, user_id):
@@ -356,10 +352,7 @@ def absuser_followers(request, user_namefl):
     user = get_object_or_404(User, username=user_namefl)
     user_id = user.id
 
-    profile = Profile.objects.get_or_create(user_id=user_id)
-
-    user.cnt_follower = Follow.objects.filter(following_id=user.id).count()
-    user.cnt_following = Follow.objects.filter(follower_id=user.id).count()
+    profile, created = Profile.objects.get_or_create(user_id=user_id)
 
     friends = Follow.objects.values_list('follower_id', flat=True)\
         .filter(following_id=user_id).order_by('-id')
@@ -391,23 +384,21 @@ def absuser_followers(request, user_namefl):
 
     if request.is_ajax():
         if user_items.exists():
-            return render(request,
-                          'pin/_user_friends.html',
-                          {'user_items': user_items,
-                           'user': user,
-                           'offset': friends.next_page_number})
+            return render(request, 'pin/_user_friends.html', {
+                'user_items': user_items,
+                'user': user,
+                'offset': friends.next_page_number
+            })
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin/user_friends.html',
-                      {'user_items': user_items,
-                       'user_id': int(user_id),
-                       'page': 'user_follower',
-                       'profile': profile,
-                       'user': user,
-                       'cur_user': user,
-                       'offset': friends.next_page_number,
-                       })
+        return render(request, 'pin/user_friends.html', {
+            'user_items': user_items,
+            'user_id': int(user_id),
+            'page': 'user_follower',
+            'profile': profile,
+            'offset': friends.next_page_number,
+        })
 
 
 def user_like(request, user_id):
@@ -444,7 +435,6 @@ def user_like(request, user_id):
 
 
 def absuser_like(request, user_namel):
-
     user = get_object_or_404(User, username=user_namel)
     user_id = user.id
     profile = Profile.objects.get(user_id=user_id)
@@ -461,8 +451,8 @@ def absuser_like(request, user_namel):
 
     latest_items = arp
 
-    user.cnt_follower = Follow.objects.filter(following_id=user.id).count()
-    user.cnt_following = Follow.objects.filter(follower_id=user.id).count()
+    profile.cnt_follower = Follow.objects.filter(following_id=user.id).count()
+    profile.cnt_following = Follow.objects.filter(follower_id=user.id).count()
 
     if request.is_ajax():
         if latest_items:
@@ -473,14 +463,13 @@ def absuser_like(request, user_namel):
             return HttpResponse(0)
     else:
         follow_status = Follow.objects\
-            .filter(follower=request.user.id, following=user.id).count()
-        return render(request, 'pin2/user__likes.html',
-                      {'latest_items': latest_items,
-                       'user_id': user_id,
-                       'follow_status': follow_status,
-                       'profile': profile,
-                       'page': "user_like",
-                       'cur_user': user})
+            .filter(follower=request.user.id, following=user_id).count()
+        return render(request, 'pin2/user__likes.html', {
+            'latest_items': latest_items,
+            'user_id': user_id,
+            'follow_status': follow_status,
+            'profile': profile,
+            'page': "user_like"})
 
 
 def rp(request):
@@ -824,24 +813,26 @@ def absuser(request, user_name=None):
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
 
-    user.cnt_follower = Follow.objects.filter(following_id=user.id).count()
-    user.cnt_following = Follow.objects.filter(follower_id=user.id).count()
+    profile.cnt_follower = Follow.objects.filter(following_id=user.id).count()
+    profile.cnt_following = Follow.objects.filter(follower_id=user.id).count()
 
     if request.is_ajax():
         if latest_items.exists():
-            return render(request, 'pin2/_items_2_1.html',
-                          {'latest_items': latest_items})
+            return render(request, 'pin2/_items_2_1.html', {
+                'latest_items': latest_items
+            })
         else:
             return HttpResponse(0)
     else:
-        follow_status = Follow.objects.filter(follower=request.user.id, following=user.id).count()
+        follow_status = Follow.objects.filter(follower=request.user.id,
+                                              following=user.id).count()
 
-        return render(request, 'pin2/user.html',
-                      {'latest_items': latest_items,
-                       'follow_status': follow_status,
-                       'user_id': int(user_id),
-                       'profile': profile,
-                       'cur_user': user})
+        return render(request, 'pin2/user.html', {
+            'latest_items': latest_items,
+            'follow_status': follow_status,
+            'user_id': int(user_id),
+            'profile': profile,
+        })
 
 
 def item(request, item_id):
