@@ -816,7 +816,7 @@ class Follow(models.Model):
 
             Profile.objects.filter(user_id=following_id)\
                 .update(cnt_followers=F('cnt_followers') + 1)
-        
+
             # print "new follow"
             # print cls, sender, instance, args, kwargs
             # print "instance follow:", instance.follower.id
@@ -1053,13 +1053,13 @@ class App_data(models.Model):
 
 class Comments(models.Model):
     BAD_WORDS = [
-        u"205079",
-        u"737453",
         u"لعنت الله",
         u"ملعونین",
         u"حرومزاده",
         u"ملعون",
         u"اعتبار رایگان",
+        u"پیامک کن",
+        u"شارژ رایگان",
     ]
     comment = models.TextField()
     submit_date = models.DateTimeField(auto_now_add=True)
@@ -1082,6 +1082,18 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
+        # 737453
+        hamrah = re.compile(ur'7[^:]*7[^:]*5[^:]*?3', re.UNICODE)
+        # 205079
+        irancell = re.compile(ur'2[^:]*5[^:]*7[^:]*?9', re.UNICODE)
+
+        if len(hamrah.findall(self.text)) > 0 or len(irancell.findall(self.text)) > 0:
+            Log.bad_comment(post=self.object_pk,
+                            actor=self.user,
+                            ip_address=self.ip_address,
+                            text=self.comment)
+            return
+
         for bw in self.BAD_WORDS:
             if bw in self.comment:
                 Log.bad_comment(post=self.object_pk,
