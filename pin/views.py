@@ -767,6 +767,7 @@ def topgroupuser(request):
 
 def user(request, user_id, user_name=None):
     user = get_object_or_404(User, pk=user_id)
+    return HttpResponseRedirect(reverse('pin-absuser', args=[user.username]))
     profile = Profile.objects.get_or_create(user_id=user_id)
 
     timestamp = get_request_timestamp(request)
