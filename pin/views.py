@@ -291,10 +291,13 @@ def absuser_friends(request, user_namefg):
         else:
             return HttpResponse(0)
     else:
+        follow_status = Follow.objects\
+            .filter(follower=request.user.id, following=user_id).count()
         return render(request, 'pin/user_friends.html', {
             'user_items': user_items,
             'page': 'user_following',
             'profile': profile,
+            'follow_status': follow_status,
             'offset': friends.next_page_number,
             'user_id': user_id
         })
@@ -392,11 +395,14 @@ def absuser_followers(request, user_namefl):
         else:
             return HttpResponse(0)
     else:
+        follow_status = Follow.objects\
+            .filter(follower=request.user.id, following=user_id).count()
         return render(request, 'pin/user_friends.html', {
             'user_items': user_items,
             'user_id': int(user_id),
             'page': 'user_follower',
             'profile': profile,
+            'follow_status': follow_status,
             'offset': friends.next_page_number,
         })
 
@@ -451,9 +457,6 @@ def absuser_like(request, user_namel):
 
     latest_items = arp
 
-    profile.cnt_follower = Follow.objects.filter(following_id=user.id).count()
-    profile.cnt_following = Follow.objects.filter(follower_id=user.id).count()
-
     if request.is_ajax():
         if latest_items:
             return render(request,
@@ -469,7 +472,8 @@ def absuser_like(request, user_namel):
             'user_id': user_id,
             'follow_status': follow_status,
             'profile': profile,
-            'page': "user_like"})
+            'page': "user_like"
+        })
 
 
 def rp(request):
