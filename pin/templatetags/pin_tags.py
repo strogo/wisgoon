@@ -171,7 +171,10 @@ def get_absusername(user):
         if user_cache:
             user = user_cache
         else:
-            user = User.objects.only('username').get(pk=user)
+            try:
+                user = User.objects.only('username').get(pk=user)
+            except User.DoesNotExist:
+                return 'wisgoon'
             cache.set(user_str, user, 60 * 60 * 24)
 
     username = user.username
