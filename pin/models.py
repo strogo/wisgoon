@@ -1053,8 +1053,6 @@ class App_data(models.Model):
 
 class Comments(models.Model):
     BAD_WORDS = [
-        u"737453",
-        u"205079",
         u'73711159',
         u'7108',
         u"لعنت الله",
@@ -1087,17 +1085,17 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
-        # # 737453
-        # hamrah = re.compile(ur'7[^:]*7[^:]*5[^:]*?3', re.UNICODE)
-        # # 205079
-        # irancell = re.compile(ur'2[^:]*5[^:]*7[^:]*?9', re.UNICODE)
+        # 737453
+        hamrah = re.compile(ur'7[^:]*7[^:]*5[^:]*?3', re.UNICODE)
+        # 205079
+        irancell = re.compile(ur'2[^:]*5[^:]*7[^:]*?9', re.UNICODE)
 
-        # if len(hamrah.findall(self.text)) > 0 or len(irancell.findall(self.text)) > 0:
-        #     Log.bad_comment(post=self.object_pk,
-        #                     actor=self.user,
-        #                     ip_address=self.ip_address,
-        #                     text=self.comment)
-        #     return
+        if len(hamrah.findall(self.comment)) > 0 or len(irancell.findall(self.comment)) > 0:
+            Log.bad_comment(post=self.object_pk,
+                            actor=self.user,
+                            ip_address=self.ip_address,
+                            text=self.comment)
+            return
 
         for bw in self.BAD_WORDS:
             if bw in self.comment:
