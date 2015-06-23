@@ -478,9 +478,11 @@ def absuser_like(request, user_namel):
 
 def rp(request):
     if request.user.is_superuser:
-        posts = Post.objects.all().filter(report__gt=0).order_by('-report')
+        posts = Post.objects.select_related().filter(report__gt=0)\
+            .order_by('-report')
         for p in posts:
-            p.reporters = Report.objects.filter(post_id=p.id)
+            p.reporters = Report.objects.select_related()\
+                .filter(post_id=p.id)
         return render(request, 'pin2/rp.html', {
             'rps': posts
         })
