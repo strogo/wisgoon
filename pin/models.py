@@ -1092,7 +1092,9 @@ class Comments(models.Model):
         # 205079
         irancell = re.compile(ur'2[^:]*0[^:]*5[^:]*0[^:]*7[^:]*?9', re.UNICODE)
 
-        if len(hamrah.findall(self.comment)) > 0 or len(hamrah2.findall(self.comment)) > 0 or len(irancell.findall(self.comment)) > 0:
+        if len(hamrah.findall(self.comment)) > 0\
+            or len(hamrah2.findall(self.comment)) > 0\
+                or len(irancell.findall(self.comment)) > 0:
             Log.bad_comment(post=self.object_pk,
                             actor=self.user,
                             ip_address=self.ip_address,
@@ -1106,6 +1108,9 @@ class Comments(models.Model):
                                 ip_address=self.ip_address,
                                 text=self.comment)
                 return
+
+        if (self.user.profile.score < 5000):
+            return
 
         if not self.pk:
             Post.objects.filter(pk=self.object_pk_id)\
