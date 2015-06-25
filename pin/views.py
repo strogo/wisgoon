@@ -479,7 +479,7 @@ def absuser_like(request, user_namel):
 def rp(request):
     if request.user.is_superuser:
         posts = Post.objects.select_related().filter(report__gt=0)\
-            .order_by('-report')
+            .order_by('-report')[:50]
         for p in posts:
             p.reporters = Report.objects.select_related()\
                 .filter(post_id=p.id)
