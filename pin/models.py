@@ -1153,7 +1153,7 @@ class Comments(models.Model):
                     "data": {
                         "message": {
                             "id": int("2%s" % comment.object_pk_id),
-                            "avatar_url": get_avatar(comment.user_id, size=100),
+                            "avatar_url": "http://media.wisgoon.com/%s" % get_avatar(comment.user_id, size=100),
                             "ticker": u"نظر جدید",
                             "title": u"نظر داده است",
                             "content": comment.comment,
