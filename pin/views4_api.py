@@ -1,4 +1,8 @@
+#-*- coding: utf-8 -*-
 from math import sin, cos, sqrt, atan2, radians
+
+import hashlib
+import ast
 
 try:
     import simplejson as json
@@ -7,7 +11,9 @@ except ImportError:
 
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 from tastypie.models import ApiKey
 
 from pin.tools import AuthCache
@@ -153,3 +159,71 @@ def user_near_by(request):
                                         offset=offset + 20, token=token,
                                         **{"lat": lat, "lon": lon})
     return return_json_data(data)
+
+
+@csrf_exempt
+def register(request):
+    try:
+        data = ast.literal_eval(request.body)
+    except SyntaxError:
+        return return_bad_request()
+
+    app_token = hashlib.sha1(settings.APP_TOKEN_STR).hexdigest()
+    req_token = data.get('token', '')
+
+    if req_token != app_token:
+        data = {
+            'success': False,
+            'reason': 'token problem for register'
+        }
+        return return_json_data(data)
+
+    username = data.get('username', '')
+    email = data.get('email', '')
+    password = data.get('password', '')
+
+    if not username or not email or not password:
+        data = {
+            'status': False,
+            'reason': 'error in parameters'
+        }
+        return return_json_data(data)
+
+    if User.objects.filter(username=username).exists():
+        data = {
+            'status': False,
+            'reason': u'این نام کاربری قبلا ثبت شده است.'
+        }
+
+        return return_json_data(data)
+
+    if User.objects.filter(email=email).exists():
+        data = {
+            'status': False,
+            'reason': u'این ایمیل قبلا استفاده شده است.'
+        }
+        return return_json_data(data)
+
+    try:
+        user = User.objects.create_user(username=username,
+                                        email=email,
+                                        password=password)
+    except:
+        data = {
+            'status': False,
+            'reason': 'error in user creation'
+        }
+        return return_json_data(data)
+
+    if user:
+        data = {
+            'status': True,
+            'reason': 'user createdsuccessfully'
+        }
+        return return_json_data(data)
+    else:
+        data = {
+            'status': False,
+            'reason': 'problem in create user'
+        }
+        return return_json_data(data)
