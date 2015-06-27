@@ -176,6 +176,7 @@ urlpatterns += patterns('',
 
     url(r'^api/gcm/get/phone/data/$', 'pin.views2_api.get_phone_data', name="api-get-phone-data"),
     url(r'^api/plus/get/data/$', 'pin.views2_api.get_plus_data', name="api-get-phone-data"),
+    url(r'^api/logout/$', 'pin.views2_api.logout', name="api-logout"),
 
     url(r'^api/password/reset_mobile/$',
                     'pin.views2_api.password_reset',

@@ -1216,6 +1216,8 @@ class PhoneData(models.Model):
     android_version = models.CharField(max_length=10)
     app_version = models.CharField(max_length=10)
     google_token = models.CharField(max_length=500)
+
+    logged_out = models.BooleanField(default=False)
     # phone_brand = models.CharField(max_length=500)
 
 

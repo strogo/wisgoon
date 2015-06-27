@@ -27,7 +27,7 @@ class UserResource(ModelResource):
             url(r'^(?P<resource_name>%s)/logout%s$' %
                 (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('logout'), name='api_logout'),
-            url(r'^(?P<resource_name>%s)/register%s$' %
+            url(r'^(?P<resource_name>%s)/v4/register%s$' %
                 (self._meta.resource_name, trailing_slash()),
                 self.wrap_view('register'), name='api_register'),
         ]
