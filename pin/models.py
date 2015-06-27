@@ -1208,7 +1208,7 @@ class Block(models.Model):
 
 
 class PhoneData(models.Model):
-    user = models.ForeignKey(User, related_name="phone", null=True, blank=True)
+    user = models.OneToOneField(User, related_name="phone", null=True, blank=True)
     imei = models.CharField(max_length=50)
     os = models.CharField(max_length=50)
     phone_model = models.CharField(max_length=50)
