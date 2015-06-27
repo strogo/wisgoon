@@ -63,6 +63,7 @@ urlpatterns += patterns('pin.views3_api',
 urlpatterns += patterns('pin.views4_api',
     url(r'^api/v4/user/blockers/$', 'user_blockers', name="api-4-blockers"),
     url(r'^api/v4/user/near_by/$', 'user_near_by', name="api-4-nearby"),
+    url(r'^api/v4/user/register/$', 'register', name="api-4-register"),
 )
 
 if not settings.DEBUG:
