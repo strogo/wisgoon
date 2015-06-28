@@ -1,5 +1,4 @@
 import redis
-import time
 from django.conf import settings
 from django.db.models import F
 from django.contrib.auth.models import User
@@ -9,7 +8,8 @@ from models import Post, Likes
 
 # r_server = redis.Redis(settings.REDIS_DB, db=12)
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
-r_server2 = redis.Redis(settings.REDIS_DB_2, db=settings.REDIS_DB_NUMBER_2)
+# r_server2 = redis.Redis(settings.REDIS_DB_2, db=settings.REDIS_DB_NUMBER_2)
+r_server3 = redis.Redis(settings.REDIS_DB_2, db=9)
 
 
 class ChangedPosts(object):
@@ -31,7 +31,8 @@ class ChangedPosts(object):
 
 class LikesRedis(object):
     KEY_PREFIX = "postLikersV1"
-    KEY_PREFIX2 = "p:l:"
+    KEY_PREFIX3 = "p:l:"
+
     keyName = ""
     postId = 0
     postOwner = 0
@@ -40,14 +41,13 @@ class LikesRedis(object):
     def __init__(self, post_id):
         self.postId = str(post_id)
         self.keyName = self.KEY_PREFIX + self.postId
-        self.keyName2 = self.KEY_PREFIX2 + self.postId
+        self.keyName3 = self.KEY_PREFIX3 + self.postId
 
-        if not r_server2.exists(self.keyName2):
-            # r_server.zadd(self.keyName2)
+        if not r_server3.exists(self.keyName3):
             keys = r_server.lrange(self.keyName, 0, -1)
-            p = r_server2.pipeline()
+            p = r_server3.pipeline()
             for uid in keys[::-1]:
-                p.zadd(self.keyName2, str(uid), time.time())
+                p.sadd(self.keyName3, str(uid))
             p.execute()
 
     def get_likes(self, offset, limit=20, as_user_object=False):
@@ -71,21 +71,21 @@ class LikesRedis(object):
             r_server.rpush(self.keyName, *likes)
 
     def user_liked(self, user_id):
-        if r_server2.zrank(self.keyName2, str(user_id)) is None:
-            return False
-        return True
-
-        self.likesData = r_server.lrange(self.keyName, 0, -1)
-        if str(user_id) in self.likesData:
+        if r_server3.sismember(self.keyName3, str(user_id)):
             return True
         return False
+
+        # self.likesData = r_server.lrange(self.keyName, 0, -1)
+        # if str(user_id) in self.likesData:
+        #     return True
+        # return False
 
     def cntlike(self):
         return r_server.llen(self.keyName)
 
     def dislike(self, user_id):
         r_server.lrem(self.keyName, user_id)
-        r_server2.zrem(self.keyName2, str(user_id))
+        r_server3.srem(self.keyName3, str(user_id))
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') - 1)
 
@@ -95,26 +95,33 @@ class LikesRedis(object):
         Profile.after_dislike(user_id=user_id)
 
     def store_last_likes(self):
+        p = r_server.pipeline()
         # Stroe last likes
-        r_server.lrem(settings.LAST_LIKES, self.postId)
-        r_server.lpush(settings.LAST_LIKES, self.postId)
-        r_server.ltrim(settings.LAST_LIKES, 0, 1000)
+        p.lrem(settings.LAST_LIKES, self.postId)
+        p.lpush(settings.LAST_LIKES, self.postId)
+        p.ltrim(settings.LAST_LIKES, 0, 1000)
+        p.execute()
 
     def like(self, user_id, post_owner):
-        r_server2.zadd(self.keyName2, str(user_id), time.time())
-        r_server.lpush(self.keyName, user_id)
+        r_server3.sadd(self.keyName3, str(user_id))
+
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') + 1)
 
         ChangedPosts.store_change(post_id=self.postId)
 
-        self.store_last_likes()
-
+        # self.store_last_likes()
+        p = r_server.pipeline()
+        p.lpush(self.keyName, user_id)
+        p.lrem(settings.LAST_LIKES, self.postId)
+        p.lpush(settings.LAST_LIKES, self.postId)
+        p.ltrim(settings.LAST_LIKES, 0, 1000)
         # Store user_last_likes
         user_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(user_id))
-        r_server.lrem(user_last_likes, self.postId)
-        r_server.lpush(user_last_likes, self.postId)
-        r_server.ltrim(user_last_likes, 0, 1000)
+        p.lrem(user_last_likes, self.postId)
+        p.lpush(user_last_likes, self.postId)
+        p.ltrim(user_last_likes, 0, 1000)
+        p.execute()
 
         Profile.after_like(user_id=post_owner)
 
