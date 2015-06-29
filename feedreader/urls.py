@@ -65,6 +65,8 @@ urlpatterns += patterns('pin.views4_api',
     url(r'^api/v4/user/blocked/$', 'user_blocked', name="api-4-blocked"),
     url(r'^api/v4/user/near_by/$', 'user_near_by', name="api-4-nearby"),
     url(r'^api/v4/user/register/$', 'register', name="api-4-register"),
+    url(r'^api/v4/user/block/', 'block_user', name="api-4-block"),
+    url(r'^api/v4/user/unblock/', 'unblock_user', name="api-4-unblock"),
 )
 
 if not settings.DEBUG:

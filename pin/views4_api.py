@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from math import sin, cos, sqrt, atan2, radians
 
 import hashlib
@@ -81,6 +81,12 @@ def return_bad_request():
     return HttpResponse('{"reason":"bad request", "status":"400"}',
                         content_type="application/json",
                         status=400)
+
+
+def return_not_found():
+    return HttpResponse('{"reason":"Not found", "status":"404"}',
+                        content_type="application/json",
+                        status=404)
 
 
 def return_un_auth():
@@ -186,6 +192,40 @@ def user_near_by(request):
     data['meta']['next'] = get_next_url(url_name='api-4-nearby',
                                         offset=offset + 20, token=token,
                                         **{"lat": lat, "lon": lon})
+    return return_json_data(data)
+
+
+def block_user(request):
+    user = None
+    token = request.GET.get('token', '')
+    user_id = request.GET.get('user_id', None)
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token or not user_id:
+        return return_not_found()
+
+    Block.block_user(user_id=user.id, blocked_id=user_id)
+    data = {
+        "status": "success",
+    }
+    return return_json_data(data)
+
+
+def unblock_user(request):
+    user = None
+    token = request.GET.get('token', '')
+    user_id = request.GET.get('user_id', None)
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token or not user_id:
+        raise return_not_found()
+
+    Block.unblock_user(user_id=user.id, blocked_id=user_id)
+    data = {
+        "status": "success",
+    }
     return return_json_data(data)
 
 
