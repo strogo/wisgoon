@@ -120,6 +120,34 @@ def user_blockers(request):
     return return_json_data(data)
 
 
+def user_blocked(request):
+    print "blocked"
+    user, token = check_auth(request)
+    if not user:
+        return return_un_auth()
+
+    data = {}
+    data['meta'] = {'limit': ROW_PER_PAGE,
+                    'next': ''}
+    objects = []
+
+    offset = int(request.GET.get('offset', 0))
+    next_off = offset + 1 * ROW_PER_PAGE
+
+    bq = Block.objects.filter(user_id=user.id)[offset:next_off]
+    for row in bq:
+        o = {}
+        o['user_id'] = row.blocked_id
+        o['user_avatar'] = media_abs_url(get_avatar(row.blocked_id, 100))
+        o['user_name'] = row.blocked.username
+        objects.append(o)
+
+    data['objects'] = objects
+    data['meta']['next'] = get_next_url(url_name='api-4-blocked',
+                                        offset=offset + 20, token=token)
+    return return_json_data(data)
+
+
 def user_near_by(request):
     user, token = check_auth(request)
     if not user:
