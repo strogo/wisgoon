@@ -220,7 +220,7 @@ def unblock_user(request):
         user = AuthCache.user_from_token(token=token)
 
     if not user or not token or not user_id:
-        raise return_not_found()
+        return return_not_found()
 
     Block.unblock_user(user_id=user.id, blocked_id=user_id)
     data = {
