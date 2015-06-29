@@ -1053,7 +1053,6 @@ class App_data(models.Model):
 
 class Comments(models.Model):
     BAD_WORDS = [
-        u'73711159',
         u'7108',
         u"لعنت الله",
         u"ملعونین",
@@ -1090,7 +1089,7 @@ class Comments(models.Model):
         # 73711159
         hamrah2 = re.compile(ur'7[^:]*3[^:]*7[^:]*1[^:]*5[^:]*?9', re.UNICODE)
         # 205079
-        irancell = re.compile(ur'2[^:]*0[^:]*5[^:]*0[^:]*7[^:]*?9', re.UNICODE)
+        irancell = re.compile(ur'2[^:]*0[^:]*5[^:]*0[^:]*7', re.UNICODE)
 
         if len(hamrah.findall(self.comment)) > 0 or len(hamrah2.findall(self.comment)) > 0 or len(irancell.findall(self.comment)) > 0:
             Log.bad_comment(post=self.object_pk,
