@@ -9,21 +9,23 @@ try:
 except ImportError:
     import json
 
-from django.http import HttpResponse
-from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+
 from tastypie.models import ApiKey
 
 from pin.tools import AuthCache
-from pin.models import Block
+from pin.models import Block, Follow
 from pin.model_mongo import UserLocation
 from pin.api_tools import media_abs_url, abs_url
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
 ROW_PER_PAGE = 20
+SUCCESS = 'success'
 
 
 def get_next_url(url_name, offset, token, **kwargs):
@@ -207,7 +209,7 @@ def block_user(request):
 
     Block.block_user(user_id=user.id, blocked_id=user_id)
     data = {
-        "status": "success",
+        "status": SUCCESS,
     }
     return return_json_data(data)
 
@@ -224,7 +226,65 @@ def unblock_user(request):
 
     Block.unblock_user(user_id=user.id, blocked_id=user_id)
     data = {
-        "status": "success",
+        "status": SUCCESS,
+    }
+    return return_json_data(data)
+
+
+def follow(request):
+    token = request.GET.get('token', '')
+    user_id = request.GET.get('user_id', None)
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not user_id:
+        return return_un_auth()
+
+    user_id = int(user_id)
+
+    if user_id == user.id:
+        return return_bad_request()
+
+    try:
+        following = User.objects.get(pk=user_id)
+        if not Follow.objects.filter(follower=user,
+                                     following=following).exists():
+            Follow.objects.create(follower=user, following=following)
+
+    except User.DoesNotExist:
+        return return_bad_request()
+
+    data = {
+        'status': SUCCESS,
+    }
+    return return_json_data(data)
+
+
+def unfollow(request):
+    token = request.GET.get('token', '')
+    user_id = request.GET.get('user_id', None)
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not user_id:
+        return return_un_auth()
+    user_id = int(user_id)
+
+    if user_id == user.id:
+        return return_bad_request()
+
+    try:
+        following = User.objects.get(pk=user_id)
+        if Follow.objects.filter(follower=user, following=following).exists():
+            Follow.objects.filter(follower=user, following=following).delete()
+
+    except User.DoesNotExist:
+        return return_bad_request()
+
+    data = {
+        'status': SUCCESS,
     }
     return return_json_data(data)
 
