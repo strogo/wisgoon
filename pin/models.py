@@ -1091,7 +1091,9 @@ class Comments(models.Model):
         # 205079
         irancell = re.compile(ur'2[^:]*0[^:]*5[^:]*0[^:]*7', re.UNICODE)
 
-        if len(hamrah.findall(self.comment)) > 0 or len(hamrah2.findall(self.comment)) > 0 or len(irancell.findall(self.comment)) > 0:
+        if len(hamrah.findall(self.comment)) > 0\
+            or len(hamrah2.findall(self.comment)) > 0\
+                or len(irancell.findall(self.comment)) > 0:
             Log.bad_comment(post=self.object_pk,
                             actor=self.user,
                             ip_address=self.ip_address,
@@ -1105,6 +1107,9 @@ class Comments(models.Model):
                                 ip_address=self.ip_address,
                                 text=self.comment)
                 return
+
+        if (self.user.profile.score < 5000):
+            return
 
         if not self.pk:
             Post.objects.filter(pk=self.object_pk_id)\
@@ -1135,6 +1140,34 @@ class Comments(models.Model):
         post = get_post_user_cache(post_id=comment.object_pk_id)
 
         if comment.user_id != post.user_id:
+            if post.user_id == 1:
+                import requests
+                import json
+                from daddy_avatar.templatetags.daddy_avatar import get_avatar
+                pd = PhoneData.objects.only('google_token')\
+                    .get(user_id=post.user_id)
+
+                data = {
+                    "to": pd.google_token,
+                    "data": {
+                        "message": {
+                            "id": int("2%s" % comment.object_pk_id),
+                            "avatar_url": "http://wisgoon.com%s" % get_avatar(comment.user_id, size=100),
+                            "ticker": u"نظر جدید",
+                            "title": u"نظر داده است",
+                            "content": comment.comment,
+                            "last_actor_name": comment.user.username,
+                            "url": "wisgoon://wisgoon.com/pin/%s" % comment.object_pk_id,
+                            "is_ad": False
+                        }
+                    }
+                }
+
+                res = requests.post(url='https://android.googleapis.com/gcm/send',
+                                    data=json.dumps(data),
+                                    headers={'Content-Type': 'application/json',
+                                             'Authorization': 'key=AIzaSyAZ28bCEeqRa216NDPDRjHfF2IPC7fwkd4'})
+
             send_notif_bar(user=post.user_id, type=2, post=post.id,
                            actor=comment.user_id)
 
@@ -1202,7 +1235,7 @@ class Block(models.Model):
 
 
 class PhoneData(models.Model):
-    user = models.ForeignKey(User, related_name="phone", null=True, blank=True)
+    user = models.OneToOneField(User, related_name="phone", null=True, blank=True)
     imei = models.CharField(max_length=50)
     os = models.CharField(max_length=50)
     phone_model = models.CharField(max_length=50)
@@ -1210,6 +1243,8 @@ class PhoneData(models.Model):
     android_version = models.CharField(max_length=10)
     app_version = models.CharField(max_length=10)
     google_token = models.CharField(max_length=500)
+
+    logged_out = models.BooleanField(default=False)
     # phone_brand = models.CharField(max_length=500)
 
 

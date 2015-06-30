@@ -1483,6 +1483,7 @@ def get_phone_data(request):
     upd.android_version = android_version
     upd.app_version = app_version
     upd.google_token = google_token
+    upd.logged_out = False
     upd.save()
 
     return HttpResponse("accepted", content_type="text/html")
@@ -1504,3 +1505,14 @@ def get_plus_data(request):
     ul.point = [lat, lon]
     ul.save()
     return HttpResponse("accepted", content_type="text/html")
+
+
+def logout(request):
+    token = request.GET.get("token", None)
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+        PhoneData.objects.filter(user=user)\
+            .update(logged_out=True)
+
+    return HttpResponse("logged out", content_type="text/html")

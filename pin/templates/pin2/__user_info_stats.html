@@ -6,46 +6,46 @@
 			<table class="table table-hover">
 				<tr>
 					<td><small>امتیاز :</small></td>
-					<td><strong>{{cur_user.profile.score|intcomma|pn}}</strong></td>
+					<td><strong>{{profile.score|intcomma|pn}}</strong></td>
 				</tr>
 				<tr>
 					<td>تعداد مطالب :</td>
-					<td><strong>{{cur_user.profile.cnt_post|pn}}</strong></td>
+					<td><strong>{{profile.cnt_post|pn}}</strong></td>
 				</tr>
 				<tr>
 					<td>تعداد لایک :</td>
-					<td><strong>{{cur_user.profile.cnt_like|pn}}</strong></td>
+					<td><strong>{{profile.cnt_like|pn}}</strong></td>
 				</tr>
 				<tr>
 					<td>ارسال مطلب :</td>
-					<td>{% if cur_user.is_active %}
+					<td>{% if profile.user.is_active %}
 						<strong>فعال</strong>
 						{% if user.is_superuser %}
-						<a class="btn btn-xs btn-danger" href="{% url "activate-user" cur_user.id 0%}">غیر فعال کردن</a>
+						<a class="btn btn-xs btn-danger" href="{% url "activate-user" profile.user.id 0%}">غیر فعال کردن</a>
 						{% endif %}
 						{% else%}
 						<strong>غیرفعال</strong>
 						{% if user.is_superuser %}
-						<a class="btn btn-xs btn-success" href="{% url "activate-user" cur_user.id 1%}">فعال کردن</a>
+						<a class="btn btn-xs btn-success" href="{% url "activate-user" profile.user.id 1%}">فعال کردن</a>
 						{% endif %}
 						{%endif%}</td>
 					</tr>
 					<tr>
 						<td>تاریخ عضویت :</td>
-						<td><strong>{{cur_user.date_joined|date:"d-m-Y"}}</strong></td>
+						<td><strong>{{profile.user.date_joined|date:"d-m-Y"}}</strong></td>
 					</tr>
-					{% if cur_user.profile.website.strip|length > 0 %}
+					{% if profile.website.strip|length > 0 %}
 					<tr>
 						<td>وب سایت :</td>
-						<td><a target="_blank" href="{{cur_user.profile.website}}"><i class="glyphicon glyphicon-globe"> </i></a></td>
+						<td><a target="_blank" href="{{profile.website}}"><i class="glyphicon glyphicon-globe"> </i></a></td>
 					</tr>
 					{% endif %}
 					{% comment %}
-					{% if cur_user.id == request.user.id %}
+					{% if profile.user.id == request.user.id %}
 					{% endcomment %}
 					<tr>
 						<td>موجودی حساب :</td>
-						<td><strong>{{cur_user.profile.get_credit|pn}} ویس</strong>  
+						<td><strong>{{profile.get_credit|pn}} ویس</strong>  
 							{% if request.user.id == user_id %}
 							<a href="{% url "pin-inc-credit"%}" class="btn btn-xs btn-success f-white">افزایش اعتبار</a>
 							{% endif %}
@@ -57,15 +57,15 @@
 
 					<tr>
 						<td>سطح کاربری :</td>
-						<td>{{cur_user.profile.get_level_string}}
+						<td>{{profile.get_level_string}}
 							{% if request.user.is_superuser %}
 							<div class="btn-group">
 								<button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
 									تغییر وضعیت <span class="caret"></span>
 								</button>
 								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-									<li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "change-level" cur_user.id 2 %}">پلیس</a></li>
-									<li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "change-level" cur_user.id 1 %}">عادی</a></li>
+									<li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "change-level" profile.user.id 2 %}">پلیس</a></li>
+									<li role="presentation"><a role="menuitem" tabindex="-1" href="{% url "change-level" profile.user.id 1 %}">عادی</a></li>
 								</ul>
 							</div>
 

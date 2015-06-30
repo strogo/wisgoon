@@ -1,23 +1,31 @@
+# -*- coding: utf-8 -*-
 from math import sin, cos, sqrt, atan2, radians
+
+import hashlib
+import ast
 
 try:
     import simplejson as json
 except ImportError:
     import json
 
-from django.http import HttpResponse
-from django.core.urlresolvers import reverse
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 from tastypie.models import ApiKey
 
 from pin.tools import AuthCache
-from pin.models import Block
+from pin.models import Block, Follow
 from pin.model_mongo import UserLocation
 from pin.api_tools import media_abs_url, abs_url
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
 ROW_PER_PAGE = 20
+SUCCESS = 'success'
 
 
 def get_next_url(url_name, offset, token, **kwargs):
@@ -77,6 +85,12 @@ def return_bad_request():
                         status=400)
 
 
+def return_not_found():
+    return HttpResponse('{"reason":"Not found", "status":"404"}',
+                        content_type="application/json",
+                        status=404)
+
+
 def return_un_auth():
     return HttpResponse('{"reason":"authentication faild", "status":"403"}',
                         content_type="application/json",
@@ -110,6 +124,34 @@ def user_blockers(request):
 
     data['objects'] = objects
     data['meta']['next'] = get_next_url(url_name='api-4-blockers',
+                                        offset=offset + 20, token=token)
+    return return_json_data(data)
+
+
+def user_blocked(request):
+    print "blocked"
+    user, token = check_auth(request)
+    if not user:
+        return return_un_auth()
+
+    data = {}
+    data['meta'] = {'limit': ROW_PER_PAGE,
+                    'next': ''}
+    objects = []
+
+    offset = int(request.GET.get('offset', 0))
+    next_off = offset + 1 * ROW_PER_PAGE
+
+    bq = Block.objects.filter(user_id=user.id)[offset:next_off]
+    for row in bq:
+        o = {}
+        o['user_id'] = row.blocked_id
+        o['user_avatar'] = media_abs_url(get_avatar(row.blocked_id, 100))
+        o['user_name'] = row.blocked.username
+        objects.append(o)
+
+    data['objects'] = objects
+    data['meta']['next'] = get_next_url(url_name='api-4-blocked',
                                         offset=offset + 20, token=token)
     return return_json_data(data)
 
@@ -153,3 +195,163 @@ def user_near_by(request):
                                         offset=offset + 20, token=token,
                                         **{"lat": lat, "lon": lon})
     return return_json_data(data)
+
+
+def block_user(request):
+    user = None
+    token = request.GET.get('token', '')
+    user_id = request.GET.get('user_id', None)
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token or not user_id:
+        return return_not_found()
+
+    Block.block_user(user_id=user.id, blocked_id=user_id)
+    data = {
+        "status": SUCCESS,
+    }
+    return return_json_data(data)
+
+
+def unblock_user(request):
+    user = None
+    token = request.GET.get('token', '')
+    user_id = request.GET.get('user_id', None)
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token or not user_id:
+        return return_not_found()
+
+    Block.unblock_user(user_id=user.id, blocked_id=user_id)
+    data = {
+        "status": SUCCESS,
+    }
+    return return_json_data(data)
+
+
+def follow(request):
+    token = request.GET.get('token', '')
+    user_id = request.GET.get('user_id', None)
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not user_id:
+        return return_un_auth()
+
+    user_id = int(user_id)
+
+    if user_id == user.id:
+        return return_bad_request()
+
+    try:
+        following = User.objects.get(pk=user_id)
+        if not Follow.objects.filter(follower=user,
+                                     following=following).exists():
+            Follow.objects.create(follower=user, following=following)
+
+    except User.DoesNotExist:
+        return return_bad_request()
+
+    data = {
+        'status': SUCCESS,
+    }
+    return return_json_data(data)
+
+
+def unfollow(request):
+    token = request.GET.get('token', '')
+    user_id = request.GET.get('user_id', None)
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not user_id:
+        return return_un_auth()
+    user_id = int(user_id)
+
+    if user_id == user.id:
+        return return_bad_request()
+
+    try:
+        following = User.objects.get(pk=user_id)
+        if Follow.objects.filter(follower=user, following=following).exists():
+            Follow.objects.filter(follower=user, following=following).delete()
+
+    except User.DoesNotExist:
+        return return_bad_request()
+
+    data = {
+        'status': SUCCESS,
+    }
+    return return_json_data(data)
+
+
+@csrf_exempt
+def register(request):
+    try:
+        data = ast.literal_eval(request.body)
+    except SyntaxError:
+        return return_bad_request()
+
+    app_token = hashlib.sha1(settings.APP_TOKEN_STR).hexdigest()
+    req_token = data.get('token', '')
+
+    if req_token != app_token:
+        data = {
+            'success': False,
+            'reason': 'token problem for register'
+        }
+        return return_json_data(data)
+
+    username = data.get('username', '')
+    email = data.get('email', '')
+    password = data.get('password', '')
+
+    if not username or not email or not password:
+        data = {
+            'status': False,
+            'reason': 'error in parameters'
+        }
+        return return_json_data(data)
+
+    if User.objects.filter(username=username).exists():
+        data = {
+            'status': False,
+            'reason': u'این نام کاربری قبلا ثبت شده است.'
+        }
+
+        return return_json_data(data)
+
+    if User.objects.filter(email=email).exists():
+        data = {
+            'status': False,
+            'reason': u'این ایمیل قبلا استفاده شده است.'
+        }
+        return return_json_data(data)
+
+    try:
+        user = User.objects.create_user(username=username,
+                                        email=email,
+                                        password=password)
+    except:
+        data = {
+            'status': False,
+            'reason': 'error in user creation'
+        }
+        return return_json_data(data)
+
+    if user:
+        data = {
+            'status': True,
+            'reason': 'user createdsuccessfully'
+        }
+        return return_json_data(data)
+    else:
+        data = {
+            'status': False,
+            'reason': 'problem in create user'
+        }
+        return return_json_data(data)
