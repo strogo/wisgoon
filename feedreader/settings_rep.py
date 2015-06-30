@@ -76,6 +76,7 @@ COMPRESS_CSS_FILTERS = [
     'compressor.filters.cssmin.CSSMinFilter']
 
 SITE_URL = 'http://www.wisgoon.com'
+API_URL = "http://api.wisgoon.com"
 
 MEDIA_PREFIX = 'http://media.wisgoon.com'
 
