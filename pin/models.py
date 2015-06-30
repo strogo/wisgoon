@@ -1271,6 +1271,7 @@ class Log(models.Model):
                            owner=post.user.id,
                            post_image=post.get_image_236()["url"],
                            ip_address=ip_address,
+                           text=post.text,
                            )
 
     @classmethod
