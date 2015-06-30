@@ -21,6 +21,7 @@ from pin.tools import AuthCache
 from pin.models import Block, Follow
 from pin.model_mongo import UserLocation
 from pin.api_tools import media_abs_url, abs_url
+from user_profile.models import Profile
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
@@ -286,6 +287,24 @@ def unfollow(request):
     data = {
         'status': SUCCESS,
     }
+    return return_json_data(data)
+
+
+def user_credit(request):
+    user = None
+    token = request.GET.get('token', '')
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token:
+        return return_not_found()
+
+    profile = Profile.objects.only('credit').get(user_id=user.id)
+
+    data = {
+        "credit": profile.credit,
+    }
+
     return return_json_data(data)
 
 
