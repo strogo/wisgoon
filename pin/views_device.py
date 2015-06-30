@@ -35,7 +35,7 @@ def check_auth(request):
         user = AuthCache.user_from_token(token)
         if not user:
             return False
-        user._ip = request.META.get("REMOTE_ADDR", '127.0.0.1')
+        user._ip = get_user_ip(request)
 
         if not user.is_active:
             return False
