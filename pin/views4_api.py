@@ -178,6 +178,7 @@ def user_near_by(request):
     next_off = offset + 1 * ROW_PER_PAGE
 
     bq = UserLocation.objects(point__near=[lat, lon])[offset:next_off]
+
     for row in bq:
         if row.user == user.id:
             continue
@@ -190,6 +191,10 @@ def user_near_by(request):
                                           lat2=row.point[0],
                                           lon2=row.point[1])
         objects.append(o)
+
+    # objects = sorted(A, key = lambda user: (user['name'], user['age']))
+    import operator
+    objects.sort(key=operator.itemgetter('user_avatar','user_name','distance'))
 
     data['objects'] = objects
     data['meta']['next'] = get_next_url(url_name='api-4-nearby',
