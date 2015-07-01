@@ -194,7 +194,7 @@ def user_near_by(request):
 
     # objects = sorted(A, key = lambda user: (user['name'], user['age']))
     import operator
-    objects.sort(key=operator.itemgetter('user_avatar','user_name','distance'))
+    objects.sort(key=operator.itemgetter('distance'))
 
     data['objects'] = objects
     data['meta']['next'] = get_next_url(url_name='api-4-nearby',
