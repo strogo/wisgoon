@@ -187,9 +187,9 @@ def user_near_by(request):
         o['user_id'] = user.id
         o['user_avatar'] = media_abs_url(get_avatar(user.id, 100))
         o['user_name'] = user.username
-        o['distance'] = calculat_distance(lat1=lat, lon1=lon,
-                                          lat2=row.point[0],
-                                          lon2=row.point[1])
+        o['distance'] = float(calculat_distance(lat1=lat, lon1=lon,
+                                                lat2=row.point[0],
+                                                lon2=row.point[1]))
         objects.append(o)
 
     # objects = sorted(A, key = lambda user: (user['name'], user['age']))
