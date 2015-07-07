@@ -173,6 +173,10 @@ def hashtag(request, tag_name):
     row_per_page = 20
     results = []
     query = tag_name
+
+    if query in [u'عروس', u'عاشقانه']:
+        return render(request, 'pin2/samandehi.html')
+
     offset = int(request.GET.get('offset', 0))
     posts = SearchQuerySet().models(Post)\
         .filter(tags=tag_name)\
