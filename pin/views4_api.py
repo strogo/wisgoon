@@ -39,6 +39,23 @@ def get_next_url(url_name, offset, token, **kwargs):
     return abs_url(n_url_p)
 
 
+def register_ejabberd(username, token):
+    import requests
+    from requests.auth import HTTPBasicAuth
+
+    server = "localhost"
+    virtualhost = "chat.wisgoon.com"
+    url = "http://%s:5280/admin/server/%s/users/" % (server, virtualhost)
+    auth = HTTPBasicAuth("admin@localhost", "-)**Z{QT")
+    data = {
+        'newusername': username,
+        'newuserpassword': token,
+        'addnewuser': "Add User"
+    }
+
+    requests.post(url, data=data, auth=auth)
+
+
 def check_auth(request):
     token = request.GET.get('token', '')
     if not token:
@@ -53,6 +70,7 @@ def check_auth(request):
         if not user.is_active:
             return False, token
         else:
+            register_ejabberd(user.username, token)
             return user, token
     except ApiKey.DoesNotExist:
         return False, token
