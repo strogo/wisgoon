@@ -21,6 +21,7 @@ from pin.tools import AuthCache
 from pin.models import Block, Follow
 from pin.model_mongo import UserLocation
 from pin.api_tools import media_abs_url, abs_url
+from user_profile.models import Profile
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
@@ -38,6 +39,23 @@ def get_next_url(url_name, offset, token, **kwargs):
     return abs_url(n_url_p)
 
 
+def register_ejabberd(username, token):
+    import requests
+    from requests.auth import HTTPBasicAuth
+
+    server = "localhost"
+    virtualhost = "chat.wisgoon.com"
+    url = "http://%s:5280/admin/server/%s/users/" % (server, virtualhost)
+    auth = HTTPBasicAuth("admin@localhost", "-)**Z{QT")
+    data = {
+        'newusername': username,
+        'newuserpassword': token,
+        'addnewuser': "Add User"
+    }
+
+    requests.post(url, data=data, auth=auth)
+
+
 def check_auth(request):
     token = request.GET.get('token', '')
     if not token:
@@ -52,6 +70,7 @@ def check_auth(request):
         if not user.is_active:
             return False, token
         else:
+            register_ejabberd(user.username, token)
             return user, token
     except ApiKey.DoesNotExist:
         return False, token
@@ -177,6 +196,7 @@ def user_near_by(request):
     next_off = offset + 1 * ROW_PER_PAGE
 
     bq = UserLocation.objects(point__near=[lat, lon])[offset:next_off]
+
     for row in bq:
         if row.user == user.id:
             continue
@@ -185,10 +205,14 @@ def user_near_by(request):
         o['user_id'] = user.id
         o['user_avatar'] = media_abs_url(get_avatar(user.id, 100))
         o['user_name'] = user.username
-        o['distance'] = calculat_distance(lat1=lat, lon1=lon,
-                                          lat2=row.point[0],
-                                          lon2=row.point[1])
+        o['distance'] = float(calculat_distance(lat1=lat, lon1=lon,
+                                                lat2=row.point[0],
+                                                lon2=row.point[1]))
         objects.append(o)
+
+    # objects = sorted(A, key = lambda user: (user['name'], user['age']))
+    import operator
+    objects.sort(key=operator.itemgetter('distance'))
 
     data['objects'] = objects
     data['meta']['next'] = get_next_url(url_name='api-4-nearby',
@@ -286,6 +310,24 @@ def unfollow(request):
     data = {
         'status': SUCCESS,
     }
+    return return_json_data(data)
+
+
+def user_credit(request):
+    user = None
+    token = request.GET.get('token', '')
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token:
+        return return_not_found()
+
+    profile = Profile.objects.only('credit').get(user_id=user.id)
+
+    data = {
+        "credit": profile.credit,
+    }
+
     return return_json_data(data)
 
 

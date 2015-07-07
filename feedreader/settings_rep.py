@@ -41,7 +41,7 @@ DATABASES = {
 CACHES = {
     'default': dict(
         BACKEND='johnny.backends.memcached.MemcachedCache',
-        #LOCATION=['127.0.0.1:11211'],
+        # LOCATION=['127.0.0.1:11211'],
         LOCATION=['79.127.125.104:11211'],
         JOHNNY_CACHE=True,
     )
@@ -49,7 +49,10 @@ CACHES = {
 
 # DATABASE_ROUTERS = ['pin.MasterSlaveRouter']
 
-ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com', 'wisgoon.com', "Sib-DL2", "127.0.0.1:3060", "127.0.0.1:3061", "127.0.0.1:3062", "127.0.0.1"]
+ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com',
+                 'api.wisgoon.com',
+                 'wisgoon.com', "Sib-DL2", "127.0.0.1:3060",
+                 "127.0.0.1:3061", "127.0.0.1:3062", "127.0.0.1"]
 EMAIL_HOST = "wisgoon.com"
 DEFAULT_FROM_EMAIL = "info@wisgoon.com"
 
@@ -73,6 +76,7 @@ COMPRESS_CSS_FILTERS = [
     'compressor.filters.cssmin.CSSMinFilter']
 
 SITE_URL = 'http://www.wisgoon.com'
+API_URL = "http://api.wisgoon.com"
 
 MEDIA_PREFIX = 'http://media.wisgoon.com'
 

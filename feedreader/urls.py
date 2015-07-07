@@ -69,6 +69,7 @@ urlpatterns += patterns('pin.views4_api',
     url(r'^api/v4/user/unblock/$', 'unblock_user', name="api-4-unblock"),
     url(r'^api/v4/user/follow/$', 'follow', name="api-4-follow"),
     url(r'^api/v4/user/unfollow/$', 'unfollow', name="api-4-unfollow"),
+    url(r'^api/v4/user/credit/$', 'user_credit', name="api-4-user-credit"),
 )
 
 if not settings.DEBUG:

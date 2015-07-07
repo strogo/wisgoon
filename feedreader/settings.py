@@ -83,6 +83,8 @@ COMPRESS_CSS_FILTERS = [
 
 SITE_URL = 'http://www.wisgoon.com'
 
+API_URL = "http://api.wisgoon.com"
+
 MEDIA_PREFIX = 'http://media.wisgoon.com'
 
 ENABLE_CACHING = True

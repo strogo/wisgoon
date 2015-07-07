@@ -171,9 +171,9 @@ def get_request_pid(request):
 
 
 def get_user_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR', None)
     if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
+        ip = x_forwarded_for
     else:
         ip = request.META.get('REMOTE_ADDR', None)
     return ip
