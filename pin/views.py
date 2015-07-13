@@ -207,6 +207,7 @@ def hashtag(request, tag_name):
 
 
 def user_friends(request, user_id):
+    raise Http404
     user_id = int(user_id)
     row_per_page = 20
 
@@ -308,6 +309,7 @@ def absuser_friends(request, user_namefg):
 
 
 def user_followers(request, user_id):
+    raise Http404
     user_id = int(user_id)
     row_per_page = 20
 
