@@ -447,7 +447,9 @@ def user_like(request, user_id):
 def absuser_like(request, user_namel):
     user = get_object_or_404(User, username=user_namel)
     user_id = user.id
-    profile = Profile.objects.get(user_id=user_id)
+    profile, created = Profile.objects.get_or_create(user_id=user_id)
+    if profile.banned:
+        return render(request, 'pin2/samandehi.html')
 
     pid = get_request_pid(request)
     pl = Likes.user_likes(user_id=user_id, pid=pid)
