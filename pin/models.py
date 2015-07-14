@@ -523,8 +523,7 @@ class Post(models.Model):
         try:
             profile = Profile.objects.get(user=self.user)
 
-            if ((self.date_lt(self.user.date_joined, 30) and
-                 profile.score > 5000) or profile.score > 7000):
+            if profile.score > settings.SCORE_FOR_STREAMS:
                 self.status = 1
 
             else:
@@ -1108,7 +1107,7 @@ class Comments(models.Model):
                                 text=self.comment)
                 return
 
-        if (self.user.profile.score < 5000):
+        if (self.user.profile.score < settings.SCORE_FOR_COMMENING):
             return
 
         if not self.pk:
