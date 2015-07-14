@@ -1,4 +1,4 @@
-
+# coding: utf-8
 from io import FileIO, BufferedWriter
 import time
 
