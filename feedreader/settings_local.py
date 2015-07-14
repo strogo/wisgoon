@@ -335,3 +335,7 @@ SITE_URL_NAME = 'wisgoon.com'
 SITE_DESC = 'what is going on, social image sharing'
 
 STREAM_CASSANDRA_HOSTS = 'localhost'
+
+
+SCORE_FOR_COMMENING = 5000
+SCORE_FOR_STREAMS = 7000

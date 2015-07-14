@@ -96,6 +96,10 @@ def post_comment(request):
     if not data or not comment or not object_pk:
         return HttpResponse(0, content_type="application/json")
 
+    if user.profile.score < settings.SCORE_FOR_COMMENING:
+        return HttpResponse(u"امتباز شما باید بالای 5000 باشد.",
+                            content_type="application/json")
+
     try:
         post = get_post_user_cache(post_id=object_pk)
         # post = Post.objects.only('user').get(id=object_pk)
