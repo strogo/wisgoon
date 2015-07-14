@@ -113,7 +113,6 @@ def post_comment(request):
                                 ip_address=user._ip)
         return HttpResponse(1, content_type="application/json")
     except Exception, e:
-        print "d_send post_comment", str(e)
         return HttpResponse(0, content_type="application/json")
 
 

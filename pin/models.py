@@ -277,7 +277,8 @@ class Post(models.Model):
         else:
 
             try:
-                imeta = PostMetaData.objects.get(post_id=int(self.id))
+                imeta = PostMetaData.objects.only('img_236_h', 'img_236')\
+                    .get(post_id=int(self.id))
                 if not imeta.img_236_h:
                     raise PostMetaData.DoesNotExist
                 new_image_url = imeta.img_236
@@ -330,7 +331,8 @@ class Post(models.Model):
         else:
 
             try:
-                imeta = PostMetaData.objects.get(post_id=int(self.id))
+                imeta = PostMetaData.objects.only('img_500_h', 'img_500')\
+                    .get(post_id=int(self.id))
                 if not imeta.img_500_h:
                     raise PostMetaData.DoesNotExist
                 new_image_url = imeta.img_500
@@ -1113,13 +1115,6 @@ class Comments(models.Model):
         if not self.pk:
             Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
-
-        hcpstr = "cmnt_max_%d" % int(self.object_pk_id)
-        cp = cache.get(hcpstr)
-        if cp:
-            hstr = "cmn_cache_%d%s" % (int(self.object_pk_id), cp)
-            cache.delete(hstr)
-            print "delete ", hstr, hcpstr
 
         comment_cache_name = "com_%d" % int(self.object_pk_id)
         cache.delete(comment_cache_name)
