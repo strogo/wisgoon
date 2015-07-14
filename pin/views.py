@@ -525,7 +525,7 @@ def latest_redis(request):
 
     for pll in pl:
         try:
-            arp.append(Post.objects.get(id=pll))
+            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
             last_id = pll
         except:
             pass
