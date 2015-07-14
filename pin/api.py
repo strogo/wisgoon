@@ -110,12 +110,14 @@ class ProfileResource(ModelResource):
     class Meta:
         allowed_methods = ['get']
         ordering = ['score']
-        queryset = Profile.objects.all()
+        excludes = ['activation_key', 'banned', 'email_active', 'fault',
+                    'fault_minus', 'post_accept', 'post_accept_admin',
+                    'trusted', 'count_flag']
+        queryset = Profile.objects.defer('activation_key', 'banned', 'email_active', 'fault',
+                    'fault_minus', 'post_accept', 'post_accept_admin',
+                    'trusted', 'count_flag').all()
         resource_name = "profile"
         paginator_class = Paginator
-        #cache = SimpleCache()
-        #authentication = ApiKeyAuthentication()
-        #authorization = ProfileObjectsOnlyAuthorization()
         filtering = {
             "user": ('exact'),
         }
