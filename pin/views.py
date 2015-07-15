@@ -525,7 +525,7 @@ def latest_redis(request):
 
     for pll in pl:
         try:
-            arp.append(Post.objects.get(id=pll))
+            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
             last_id = pll
         except:
             pass
@@ -813,9 +813,18 @@ def user(request, user_id, user_name=None):
 
 
 def absuser(request, user_name=None):
-    user = get_object_or_404(User, username=user_name)
+    try:
+        user = User.objects.only('id').get(username=user_name)
+    except User.DoesNotExist:
+        raise Http404
+
     user_id = user.id
-    profile, created = Profile.objects.get_or_create(user_id=user_id)
+
+    try:
+        profile = Profile.objects.only('banned', 'user', 'score', 'cnt_post', 'cnt_like', 'website', 'credit', 'level', 'bio').get(user_id=user_id)
+    except Profile.DoesNotExist:
+        profile = Profile.objects.create(user_id=user_id)
+
     if profile.banned:
         return render(request, 'pin2/samandehi.html')
 

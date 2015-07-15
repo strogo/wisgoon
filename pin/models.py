@@ -277,7 +277,8 @@ class Post(models.Model):
         else:
 
             try:
-                imeta = PostMetaData.objects.get(post_id=int(self.id))
+                imeta = PostMetaData.objects.only('img_236_h', 'img_236')\
+                    .get(post_id=int(self.id))
                 if not imeta.img_236_h:
                     raise PostMetaData.DoesNotExist
                 new_image_url = imeta.img_236
@@ -330,7 +331,8 @@ class Post(models.Model):
         else:
 
             try:
-                imeta = PostMetaData.objects.get(post_id=int(self.id))
+                imeta = PostMetaData.objects.only('img_500_h', 'img_500')\
+                    .get(post_id=int(self.id))
                 if not imeta.img_500_h:
                     raise PostMetaData.DoesNotExist
                 new_image_url = imeta.img_500
@@ -523,8 +525,7 @@ class Post(models.Model):
         try:
             profile = Profile.objects.get(user=self.user)
 
-            if ((self.date_lt(self.user.date_joined, 30) and
-                 profile.score > 5000) or profile.score > 7000):
+            if profile.score > settings.SCORE_FOR_STREAMS:
                 self.status = 1
 
             else:
@@ -1111,19 +1112,12 @@ class Comments(models.Model):
                                 text=self.comment)
                 return
 
-        if (self.user.profile.score < 5000):
+        if (self.user.profile.score < settings.SCORE_FOR_COMMENING):
             return
 
         if not self.pk:
             Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
-
-        hcpstr = "cmnt_max_%d" % int(self.object_pk_id)
-        cp = cache.get(hcpstr)
-        if cp:
-            hstr = "cmn_cache_%d%s" % (int(self.object_pk_id), cp)
-            cache.delete(hstr)
-            print "delete ", hstr, hcpstr
 
         comment_cache_name = "com_%d" % int(self.object_pk_id)
         cache.delete(comment_cache_name)
@@ -1143,33 +1137,33 @@ class Comments(models.Model):
         post = get_post_user_cache(post_id=comment.object_pk_id)
 
         if comment.user_id != post.user_id:
-            if post.user_id == 1:
-                import requests
-                import json
-                from daddy_avatar.templatetags.daddy_avatar import get_avatar
-                pd = PhoneData.objects.only('google_token')\
-                    .get(user_id=post.user_id)
+            # if post.user_id == 1:
+            #     import requests
+            #     import json
+            #     from daddy_avatar.templatetags.daddy_avatar import get_avatar
+            #     pd = PhoneData.objects.only('google_token')\
+            #         .get(user_id=post.user_id)
 
-                data = {
-                    "to": pd.google_token,
-                    "data": {
-                        "message": {
-                            "id": int("2%s" % comment.object_pk_id),
-                            "avatar_url": "http://wisgoon.com%s" % get_avatar(comment.user_id, size=100),
-                            "ticker": u"نظر جدید",
-                            "title": u"نظر داده است",
-                            "content": comment.comment,
-                            "last_actor_name": comment.user.username,
-                            "url": "wisgoon://wisgoon.com/pin/%s" % comment.object_pk_id,
-                            "is_ad": False
-                        }
-                    }
-                }
+            #     data = {
+            #         "to": pd.google_token,
+            #         "data": {
+            #             "message": {
+            #                 "id": int("2%s" % comment.object_pk_id),
+            #                 "avatar_url": "http://wisgoon.com%s" % get_avatar(comment.user_id, size=100),
+            #                 "ticker": u"نظر جدید",
+            #                 "title": u"نظر داده است",
+            #                 "content": comment.comment,
+            #                 "last_actor_name": comment.user.username,
+            #                 "url": "wisgoon://wisgoon.com/pin/%s" % comment.object_pk_id,
+            #                 "is_ad": False
+            #             }
+            #         }
+            #     }
 
-                res = requests.post(url='https://android.googleapis.com/gcm/send',
-                                    data=json.dumps(data),
-                                    headers={'Content-Type': 'application/json',
-                                             'Authorization': 'key=AIzaSyAZ28bCEeqRa216NDPDRjHfF2IPC7fwkd4'})
+            #     res = requests.post(url='https://android.googleapis.com/gcm/send',
+            #                         data=json.dumps(data),
+            #                         headers={'Content-Type': 'application/json',
+            #                                  'Authorization': 'key=AIzaSyAZ28bCEeqRa216NDPDRjHfF2IPC7fwkd4'})
 
             send_notif_bar(user=post.user_id, type=2, post=post.id,
                            actor=comment.user_id)
