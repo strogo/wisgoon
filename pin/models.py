@@ -520,6 +520,13 @@ class Post(models.Model):
         return True
 
     def save(self, *args, **kwargs):
+        from tools import check_spam
+        if check_spam(self.text):
+            Log.bad_post(actor=self.user,
+                         text=self.text)
+
+            return
+
         # is_official = False
         from user_profile.models import Profile
         try:
@@ -1085,32 +1092,13 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
-        # 737453
-        hamrah = re.compile(ur'7[^:]*3[^:]*7[^:]*4[^:]*5[^:]*?3', re.UNICODE)
-        # 73711159
-        hamrah2 = re.compile(ur'7[^:]*3[^:]*7[^:]*1[^:]*5[^:]*?9', re.UNICODE)
-        # 205079
-        irancell = re.compile(ur'2[^:]*0[^:]*5[^:]*0[^:]*7[^:]*9', re.UNICODE)
-        # 203045
-        irancell2 = re.compile(ur'2[^:]*0[^:]*3[^:]*0[^:]*4[^:]*5', re.UNICODE)
-
-        if len(hamrah.findall(self.comment)) > 0\
-            or len(hamrah2.findall(self.comment)) > 0\
-            or len(irancell.findall(self.comment)) > 0\
-                or len(irancell2.findall(self.comment)) > 0:
+        from tools import check_spam
+        if check_spam(self.comment):
             Log.bad_comment(post=self.object_pk,
                             actor=self.user,
                             ip_address=self.ip_address,
                             text=self.comment)
             return
-
-        for bw in self.BAD_WORDS:
-            if bw in self.comment:
-                Log.bad_comment(post=self.object_pk,
-                                actor=self.user,
-                                ip_address=self.ip_address,
-                                text=self.comment)
-                return
 
         if (self.user.profile.score < settings.SCORE_FOR_COMMENING):
             return
@@ -1279,7 +1267,9 @@ class Log(models.Model):
     ACTIONS = (
         (1, "delete"),
         (2, "pending"),
-        (3, "bad comment")
+        (3, "bad comment"),
+        (4, "bad post"),
+
     )
 
     user = models.ForeignKey(User)
@@ -1314,6 +1304,14 @@ class Log(models.Model):
                            content_type=2,
                            owner=post.user.id,
                            ip_address=ip_address,
+                           text=text,
+                           )
+
+    @classmethod
+    def bad_post(cls, actor, text=""):
+        Log.objects.create(user_id=actor.id,
+                           action=4,
+                           content_type=1,
                            text=text,
                            )
 

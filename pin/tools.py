@@ -1,5 +1,6 @@
 import os
 import time
+import re
 
 from datetime import datetime
 from django.core.cache import cache
@@ -307,3 +308,38 @@ def is_mobile(request):
         return True
     else:
         return False
+
+
+def check_spam(value):
+    BAD_WORDS = [
+        u'7108',
+        u"لعنت الله",
+        u"ملعونین",
+        u"حرومزاده",
+        u"اعتبار رایگان",
+        u"پیامک کن",
+        u"شارژ رایگان",
+        u"شارژ مجانی",
+        u"اعتبار مجانی",
+    ]
+
+    # 737453
+    hamrah = re.compile(ur'7[^:]*3[^:]*7[^:]*4[^:]*5[^:]*?3', re.UNICODE)
+    # 73711159
+    hamrah2 = re.compile(ur'7[^:]*3[^:]*7[^:]*1[^:]*5[^:]*?9', re.UNICODE)
+    # 205079
+    irancell = re.compile(ur'2[^:]*0[^:]*5[^:]*0[^:]*7[^:]*9', re.UNICODE)
+    # 203045
+    irancell2 = re.compile(ur'2[^:]*0[^:]*3[^:]*0[^:]*4[^:]*5', re.UNICODE)
+
+    if len(hamrah.findall(value)) > 0\
+        or len(hamrah2.findall(value)) > 0\
+        or len(irancell.findall(value)) > 0\
+            or len(irancell2.findall(value)) > 0:
+        return True
+
+    for bw in BAD_WORDS:
+        if bw in value:
+            return True
+
+    return False
