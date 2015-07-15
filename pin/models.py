@@ -1089,11 +1089,14 @@ class Comments(models.Model):
         # 73711159
         hamrah2 = re.compile(ur'7[^:]*3[^:]*7[^:]*1[^:]*5[^:]*?9', re.UNICODE)
         # 205079
-        irancell = re.compile(ur'2[^:]*0[^:]*5[^:]*0[^:]*7', re.UNICODE)
+        irancell = re.compile(ur'2[^:]*0[^:]*5[^:]*0[^:]*7[^:]*9', re.UNICODE)
+        # 203045
+        irancell2 = re.compile(ur'2[^:]*0[^:]*3[^:]*0[^:]*4[^:]*5', re.UNICODE)
 
         if len(hamrah.findall(self.comment)) > 0\
             or len(hamrah2.findall(self.comment)) > 0\
-                or len(irancell.findall(self.comment)) > 0:
+            or len(irancell.findall(self.comment)) > 0\
+                or len(irancell2.findall(self.comment)) > 0:
             Log.bad_comment(post=self.object_pk,
                             actor=self.user,
                             ip_address=self.ip_address,
