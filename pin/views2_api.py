@@ -1318,7 +1318,7 @@ def inc_credit(request):
             b.save()
             return HttpResponse("bazzar token error", status=404)
         else:
-            url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=4L7bCSraE5iarXb2j5umbI5b9Ku0vJ" % (package_name, baz_token)
+            url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=gtp8TnDCJjqc2ZVBIiat3KpvpmxDsc" % (package_name, baz_token)
             try:
                 u = urllib2.urlopen(url).read()
                 j = json.loads(u)
