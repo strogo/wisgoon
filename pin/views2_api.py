@@ -1322,7 +1322,11 @@ def inc_credit(request):
             try:
                 u = urllib2.urlopen(url).read()
                 j = json.loads(u)
-                if j['purchaseState'] == 0:
+                purchase_state = j.get('purchaseState', None)
+                if purchase_state is None:
+                    raise
+
+                if purchase_state == 0:
 
                     b = Bills2()
                     b.trans_id = str(baz_token)
