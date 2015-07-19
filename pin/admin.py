@@ -60,7 +60,7 @@ class AdAdmin(admin.ModelAdmin):
     def get_owner(self, instance):
         if instance.owner:
             return instance.owner
-        
+
         instance.owner = instance.post.user
         instance.save()
         return instance.owner
@@ -79,6 +79,23 @@ class BillAdmin(admin.ModelAdmin):
     search_fields = ['user__id', 'user__username']
 
     date_hierarchy = 'create_date'
+
+    actions = ['is_fake',
+               'is_compeleted']
+
+    def is_fake(self, request, queryset):
+        for obj in queryset:
+            obj.status = Bill.FAKERY
+            obj.save()
+
+    is_fake.short_description = "فیک هستند"
+
+    def is_compeleted(self, request, queryset):
+        for obj in queryset:
+            obj.status = Bill.COMPLETED
+            obj.save()
+
+    is_compeleted.short_description = "درست هستند"
 
 
 class OfficialAdmin(admin.ModelAdmin):
