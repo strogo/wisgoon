@@ -334,6 +334,8 @@ def check_spam(value):
     hamrah = re.compile(ur'7[^:]*3[^:]*7[^:]*4[^:]*5[^:]*?3', re.UNICODE)
     # 73711159
     hamrah2 = re.compile(ur'7[^:]*3[^:]*7[^:]*1[^:]*5[^:]*?9', re.UNICODE)
+    # 737451
+    hamrah3 = re.compile(ur'7[^:]*3[^:]*7[^:]*4[^:]*5[^:]*?1', re.UNICODE)
     # 205079
     irancell = re.compile(ur'2[^:]*0[^:]*5[^:]*0[^:]*7[^:]*9', re.UNICODE)
     # 203045
@@ -341,6 +343,7 @@ def check_spam(value):
 
     if len(hamrah.findall(value)) > 0\
         or len(hamrah2.findall(value)) > 0\
+        or len(hamrah3.findall(value)) > 0\
         or len(irancell.findall(value)) > 0\
             or len(irancell2.findall(value)) > 0:
         return True
