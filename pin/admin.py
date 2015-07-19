@@ -8,6 +8,7 @@ from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log
 from pin.tasks import send_notif
 from user_profile.models import Profile, CreditLog
+from pin.tools import revalidate_bazaar
 
 
 class CreditLogAdmin(admin.ModelAdmin):
@@ -81,7 +82,8 @@ class BillAdmin(admin.ModelAdmin):
     date_hierarchy = 'create_date'
 
     actions = ['is_fake',
-               'is_compeleted']
+               'is_compeleted',
+               'revalidate']
 
     def is_fake(self, request, queryset):
         for obj in queryset:
@@ -89,6 +91,12 @@ class BillAdmin(admin.ModelAdmin):
             obj.save()
 
     is_fake.short_description = "فیک هستند"
+
+    def revalidate(self, request, queryset):
+        for obj in queryset:
+            revalidate_bazaar(obj)
+
+    revalidate.short_description = "بررسی مجدد"
 
     def is_compeleted(self, request, queryset):
         for obj in queryset:

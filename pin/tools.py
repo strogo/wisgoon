@@ -2,6 +2,12 @@
 import os
 import time
 import re
+import urllib2
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 from datetime import datetime
 from django.core.cache import cache
@@ -12,7 +18,7 @@ from django.contrib.auth.models import User
 from tastypie.models import ApiKey
 
 from user_profile.models import Profile
-from pin.models import Category, Block, Log, Post
+from pin.models import Category, Block, Log, Post, Bills2
 from pin.model_mongo import UserMeta, FixedAds
 
 from daddy_avatar.templatetags import daddy_avatar
@@ -344,3 +350,72 @@ def check_spam(value):
             return True
 
     return False
+
+
+PACKS = {
+    "wisgoon_pack_1": {
+        "price": 650,
+        "wis": 500
+    },
+    "wisgoon_pack_2": {
+        "price": 1300,
+        "wis": 1000
+    },
+    "wisgoon_pack_3": {
+        "price": 2600,
+        "wis": 2000
+    },
+    "wisgoon_pack_4": {
+        "price": 6500,
+        "wis": 5000
+    },
+}
+
+
+PACKS_WITH_AMOUNT = {
+    650: {
+        "pack": "wisgoon_pack_1",
+    },
+    1300: {
+        "pack": "wisgoon_pack_2",
+    },
+    2600: {
+        "pack": "wisgoon_pack_3",
+    },
+    6500: {
+        "pack": "wisgoon_pack_4",
+    },
+}
+
+
+def revalidate_bazaar(bill):
+    if Bills2.objects.filter(trans_id=bill.trans_id, status=Bills2.COMPLETED).count() > 0:
+        bill.status = Bills2.FAKERY
+        bill.save()
+        print 'nist'
+        return False
+
+    package_name = PACKS_WITH_AMOUNT[int(bill.amount)]['pack']
+    url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=gtp8TnDCJjqc2ZVBIiat3KpvpmxDsc" % (package_name, bill.trans_id)
+    try:
+        u = urllib2.urlopen(url).read()
+        j = json.loads(u)
+        if j['purchaseState'] == 0:
+
+            bill.status = Bills2.COMPLETED
+            bill.save()
+
+            # p = user.profile
+            # p.credit = p.credit + PACKS[package_name]['wis']
+            # p.save()
+            p = bill.user.profile
+            p.inc_credit(amount=PACKS[package_name]['wis'])
+            return True
+        else:
+            bill.status = Bills2.NOT_VALID
+            bill.save()
+            return False
+    except Exception, e:
+        print e
+        print 'error'
+        return None
