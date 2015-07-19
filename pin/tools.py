@@ -399,11 +399,18 @@ def revalidate_bazaar(bill):
     url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=gtp8TnDCJjqc2ZVBIiat3KpvpmxDsc" % (package_name, bill.trans_id)
     try:
         u = urllib2.urlopen(url).read()
-        print u
         j = json.loads(u)
+
+        if len(j) == 0:
+            bill.status = Bills2.NOT_VALID
+            bill.save()
+            return False
+
         purchase_state = j.get('purchaseState', None)
+
         if purchase_state is None:
             raise
+
         if purchase_state == 0:
 
             bill.status = Bills2.COMPLETED
@@ -416,6 +423,7 @@ def revalidate_bazaar(bill):
             bill.status = Bills2.NOT_VALID
             bill.save()
             return False
+
     except Exception, e:
         print e
         print 'error'
