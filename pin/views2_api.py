@@ -1322,6 +1322,16 @@ def inc_credit(request):
             try:
                 u = urllib2.urlopen(url).read()
                 j = json.loads(u)
+
+                if len(j) == 0:
+                    b = Bills2()
+                    b.trans_id = str(baz_token)
+                    b.user = user
+                    b.amount = PACKS[package_name]['price']
+                    b.status = Bills2.NOT_VALID
+                    b.save()
+                    return HttpResponse("ex price error")
+
                 purchase_state = j.get('purchaseState', None)
                 if purchase_state is None:
                     raise
