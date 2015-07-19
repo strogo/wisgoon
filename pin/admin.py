@@ -76,7 +76,7 @@ class BillAdmin(admin.ModelAdmin):
     list_filter = ('status',)
     raw_id_fields = ("user",)
 
-    search_fields = ['user__id', 'user__username']
+    search_fields = ['user__id', 'user__username', 'trans_id']
 
     date_hierarchy = 'create_date'
 
