@@ -32,6 +32,7 @@ class ChangedPosts(object):
 class LikesRedis(object):
     KEY_PREFIX = "postLikersV1"
     KEY_PREFIX3 = "p:l:"
+    KEY_PREFIX4 = "l:l:"
 
     keyName = ""
     postId = 0
@@ -42,6 +43,7 @@ class LikesRedis(object):
         self.postId = str(post_id)
         self.keyName = self.KEY_PREFIX + self.postId
         self.keyName3 = self.KEY_PREFIX3 + self.postId
+        self.keyName4 = self.KEY_PREFIX4 + self.postId
 
         if not r_server3.exists(self.keyName3):
             keys = r_server.lrange(self.keyName, 0, -1)
@@ -49,6 +51,10 @@ class LikesRedis(object):
             for uid in keys[::-1]:
                 p.sadd(self.keyName3, str(uid))
             p.execute()
+
+        if not r_server3.exists(self.keyName4):
+            keys = r_server.lrange(self.keyName, 0, -1)
+            r_server3.lpush(self.keyName4, *keys)
 
     def get_likes(self, offset, limit=20, as_user_object=False):
         data = r_server.lrange(self.keyName, offset, offset + limit - 1)
