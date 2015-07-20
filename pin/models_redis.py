@@ -10,7 +10,7 @@ from models import Post, Likes
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 # r_server2 = redis.Redis(settings.REDIS_DB_2, db=settings.REDIS_DB_NUMBER_2)
 r_server3 = redis.Redis(settings.REDIS_DB_2, db=9)
-r_server4 = redis.Redis(settings.REDIS_DB_2, db=5)
+r_server4 = redis.Redis(settings.REDIS_DB_2, db=4)
 
 
 class ChangedPosts(object):
@@ -58,7 +58,7 @@ class LikesRedis(object):
             r_server4.lpush(self.keyName4, *keys)
 
     def get_likes(self, offset, limit=20, as_user_object=False):
-        data = r_server.lrange(self.keyName, offset, offset + limit - 1)
+        data = r_server4.lrange(self.keyName4, offset, offset + limit - 1)
         if not as_user_object:
             return data
 
@@ -92,6 +92,7 @@ class LikesRedis(object):
 
     def dislike(self, user_id):
         r_server.lrem(self.keyName, user_id)
+        r_server4.lrem(self.keyName4, user_id)
         r_server3.srem(self.keyName3, str(user_id))
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') - 1)
@@ -111,6 +112,7 @@ class LikesRedis(object):
 
     def like(self, user_id, post_owner):
         r_server3.sadd(self.keyName3, str(user_id))
+        r_server4.lpush(self.keyName4, user_id)
 
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') + 1)
