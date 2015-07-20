@@ -1064,6 +1064,42 @@ def hashtag(request):
     return HttpResponse(json_data, content_type="application/json")
 
 
+def search_posts(request):
+    log_act("wisgoon.api.post.search_posts.count")
+    row_per_page = 20
+    cur_user = None
+
+    query = request.GET.get('q', '')
+    offset = int(request.GET.get('offset', 0))
+
+    data = {}
+
+    if query:
+        results = SearchQuerySet().models(Post)\
+            .filter(content__contains=query)[offset:offset + 1 * row_per_page]
+        token = request.GET.get('token', '')
+        if token:
+            cur_user = AuthCache.id_from_token(token=token)
+        posts = []
+        for p in results:
+            try:
+                pp = Post.objects\
+                    .only(*Post.NEED_KEYS2)\
+                    .get(id=p.object.id)
+
+                posts.append(pp)
+            except:
+                pass
+
+        thumb_size = request.GET.get('thumb_size', "100x100")
+
+        data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
+                                           thumb_size=thumb_size, r=request)
+
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data, content_type="application/json")
+
+
 @csrf_exempt
 def password_reset(request, is_admin_site=False,
                    template_name='registration/password_reset_form.html',
