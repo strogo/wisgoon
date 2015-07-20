@@ -46,16 +46,18 @@ class LikesRedis(object):
         self.keyName3 = self.KEY_PREFIX3 + self.postId
         self.keyName4 = self.KEY_PREFIX4 + self.postId
 
-        if not r_server3.exists(self.keyName3):
+        if not r_server4.exists(self.keyName4):
             keys = r_server.lrange(self.keyName, 0, -1)
+            if keys:
+                r_server4.lpush(self.keyName4, *keys)
+            r_server.delete(self.keyName)
+
+        if not r_server3.exists(self.keyName3):
+            keys = r_server4.lrange(self.keyName4, 0, -1)
             p = r_server3.pipeline()
             for uid in keys[::-1]:
                 p.sadd(self.keyName3, str(uid))
             p.execute()
-
-        if not r_server4.exists(self.keyName4):
-            keys = r_server.lrange(self.keyName, 0, -1)
-            r_server4.lpush(self.keyName4, *keys)
 
     def get_likes(self, offset, limit=20, as_user_object=False):
         data = r_server4.lrange(self.keyName4, offset, offset + limit - 1)
