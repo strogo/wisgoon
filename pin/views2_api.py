@@ -1528,8 +1528,11 @@ def get_phone_data(request):
     if imei:
         for pdq in PhoneData.objects.filter(imei=imei):
             if not pdq.user.is_active:
-                Log.ban_by_imei(actor=user, text=pdq.user.username)
-                User.objects.filter(pk=user.id).update(is_active=False)
+                u = User.objects.get(pk=user.id)
+                if u.is_active:
+                    u.is_active = False
+                    u.save()
+                    Log.ban_by_imei(actor=user, text=pdq.user.username)
 
     upd, created = PhoneData.objects.get_or_create(user=user)
     upd.imei = imei
