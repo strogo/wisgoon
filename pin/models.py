@@ -1269,7 +1269,7 @@ class Log(models.Model):
         (2, "pending"),
         (3, "bad comment"),
         (4, "bad post"),
-
+        (5, "ban imei"),
     )
 
     user = models.ForeignKey(User)
@@ -1314,6 +1314,13 @@ class Log(models.Model):
                            content_type=1,
                            text=text,
                            )
+
+    @classmethod
+    def ban_by_imei(cls, actor, text=""):
+        Log.objects.create(user_id=actor.id,
+                           action=5,
+                           content_type=1,
+                           text=text)
 
     @classmethod
     def post_pending(cls, post, actor, ip_address="127.0.0.1"):
