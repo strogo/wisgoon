@@ -1532,7 +1532,8 @@ def get_phone_data(request):
                 if u.is_active:
                     u.is_active = False
                     u.save()
-                    Log.ban_by_imei(actor=user, text=pdq.user.username)
+                    Log.ban_by_imei(actor=user, text=pdq.user.username,
+                                    ip_address=get_user_ip(request))
 
     upd, created = PhoneData.objects.get_or_create(user=user)
     upd.imei = imei
