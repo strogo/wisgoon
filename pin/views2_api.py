@@ -13,16 +13,16 @@ import redis
 from hashlib import md5
 from pytz import timezone
 
-from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.tokens import default_token_generator
-
-from django.template.response import TemplateResponse
-from django.http import HttpResponse, HttpResponseForbidden, Http404
-from django.core.cache import cache
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.cache import cache_page
 from django.conf import settings
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.core.cache import cache
 from django.db.models import Q
+from django.http import HttpResponse, HttpResponseForbidden, Http404
+from django.template.response import TemplateResponse
+from django.views.decorators.cache import cache_page
+from django.views.decorators.csrf import csrf_exempt
 
 from sorl.thumbnail import get_thumbnail
 from tastypie.models import ApiKey
@@ -1524,6 +1524,10 @@ def get_phone_data(request):
 
     if token:
         user = AuthCache.user_from_token(token=token)
+
+    for pdq in PhoneData.objects.filter(imei=imei):
+        if not pdq.user.is_active:
+            User.objects.filter(pk=user.id).update(is_active=False)
 
     upd, created = PhoneData.objects.get_or_create(user=user)
     upd.imei = imei
