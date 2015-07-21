@@ -1316,11 +1316,12 @@ class Log(models.Model):
                            )
 
     @classmethod
-    def ban_by_imei(cls, actor, text=""):
+    def ban_by_imei(cls, actor, text="", ip_address="127.0.0.1"):
         Log.objects.create(user_id=actor.id,
                            action=5,
                            content_type=1,
-                           text=text)
+                           text=text,
+                           ip_address=ip_address)
 
     @classmethod
     def post_pending(cls, post, actor, ip_address="127.0.0.1"):
