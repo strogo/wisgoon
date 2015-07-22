@@ -70,6 +70,7 @@ urlpatterns += patterns('pin.views4_api',
     url(r'^api/v4/user/follow/$', 'follow', name="api-4-follow"),
     url(r'^api/v4/user/unfollow/$', 'unfollow', name="api-4-unfollow"),
     url(r'^api/v4/user/credit/$', 'user_credit', name="api-4-user-credit"),
+    url(r'^api/v4/user/check/username/$', 'user_check_username', name="api-4-user-check-username"),
 )
 
 if not settings.DEBUG:
