@@ -103,6 +103,12 @@ def activate_user(request, user_id, status):
     user = User.objects.get(pk=user_id)
     user.is_active = status
     user.save()
+    if not status:
+        q = request.GET.get("q", "")
+        Log.ban_by_admin(actor=request.user,
+                         user_id=user_id,
+                         text="%s %s" % (user.username, q),
+                         ip_address=get_user_ip(request))
     return HttpResponseRedirect(reverse('pin-user', args=[user_id]))
 
 

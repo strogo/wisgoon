@@ -44,14 +44,16 @@ class LogAdmin(admin.ModelAdmin):
                     'content_type', '_get_thumbnail', 'create_time',
                     'ip_address', 'text')
 
-    list_filter = ('action',)
+    list_filter = ('action', 'content_type')
 
-    search_fields = ['owner', 'user__username']
+    search_fields = ['owner', 'user__username', 'object_id']
 
     raw_id_fields = ("user",)
 
     def _get_thumbnail(self, obj):
-        return u'<a href="%s" target="_blank"><img style="max-height:100px;" src="%s" /></a>' % (obj.post_image, obj.post_image)
+        if obj.post_image:
+            return u'<a href="%s" target="_blank"><img style="max-height:100px;" src="%s" /></a>' % (obj.post_image, obj.post_image)
+        return u''
     _get_thumbnail.allow_tags = True
 
     def user_id(self, instance):

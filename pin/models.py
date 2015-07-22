@@ -1260,16 +1260,29 @@ class PostMetaData(models.Model):
 
 
 class Log(models.Model):
+    POST = 1
+    COMMENT = 2
+    USER = 3
+
     TYPES = (
-        (1, "post"),
-        (2, "comment"),
+        (POST, "post"),
+        (COMMENT, "comment"),
+        (USER, "user")
     )
+
+    DELETE = 1
+    PENDING = 2
+    BAD_COMMENT = 3
+    BAD_POST = 4
+    BAN_IMEI = 5
+    BAN_ADMIN = 6
     ACTIONS = (
-        (1, "delete"),
-        (2, "pending"),
-        (3, "bad comment"),
-        (4, "bad post"),
-        (5, "ban imei"),
+        (DELETE, "delete"),
+        (PENDING, "pending"),
+        (BAD_COMMENT, "bad comment"),
+        (BAD_POST, "bad post"),
+        (BAN_IMEI, "ban imei"),
+        (BAN_ADMIN, "ban by admin"),
     )
 
     user = models.ForeignKey(User)
@@ -1316,10 +1329,19 @@ class Log(models.Model):
                            )
 
     @classmethod
+    def ban_by_admin(cls, actor, user_id, text="", ip_address="127.0.0.1"):
+        Log.objects.create(user_id=actor.id,
+                           action=Log.BAN_ADMIN,
+                           content_type=Log.USER,
+                           object_id=user_id,
+                           text=text,
+                           ip_address=ip_address)
+
+    @classmethod
     def ban_by_imei(cls, actor, text="", ip_address="127.0.0.1"):
         Log.objects.create(user_id=actor.id,
                            action=5,
-                           content_type=1,
+                           content_type=3,
                            text=text,
                            ip_address=ip_address)
 
