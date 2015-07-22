@@ -5,10 +5,25 @@ from django.contrib import admin
 from haystack.admin import SearchModelAdmin
 
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
-    Official, SubCategory, Packages, Bills2 as Bill, Ad, Log
+    Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData
 from pin.tasks import send_notif
 from user_profile.models import Profile, CreditLog
 from pin.tools import revalidate_bazaar
+
+
+class PhoneDataAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'user',
+        'imei',
+        'os',
+        'phone_model',
+        'phone_serial',
+        'android_version',
+        'app_version'
+    )
+    raw_id_fields = ("user",)
+    search_fields = ["imei", "user__username"]
 
 
 class CreditLogAdmin(admin.ModelAdmin):
@@ -299,3 +314,4 @@ admin.site.register(Bill, BillAdmin)
 admin.site.register(Ad, AdAdmin)
 admin.site.register(Log, LogAdmin)
 admin.site.register(CreditLog, CreditLogAdmin)
+admin.site.register(PhoneData, PhoneDataAdmin)
