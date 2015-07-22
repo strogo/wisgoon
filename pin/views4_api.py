@@ -397,3 +397,26 @@ def register(request):
             'reason': 'problem in create user'
         }
         return return_json_data(data)
+
+
+@csrf_exempt
+def user_check_username(request):
+    username = request.POST.get('username', None)
+    if not username:
+        data = {
+            'status': False,
+            'reason': 'error in parameters',
+        }
+        return return_json_data(data)
+
+    if User.objects.filter(username=username).exists():
+        data = {
+            'status': False,
+            'reason': 'user exists'
+        }
+    else:
+        data = {
+            'status': True,
+            'reason': 'user does not exists'
+        }
+    return return_json_data(data)
