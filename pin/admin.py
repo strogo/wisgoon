@@ -5,10 +5,25 @@ from django.contrib import admin
 from haystack.admin import SearchModelAdmin
 
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
-    Official, SubCategory, Packages, Bills2 as Bill, Ad, Log
+    Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData
 from pin.tasks import send_notif
 from user_profile.models import Profile, CreditLog
 from pin.tools import revalidate_bazaar
+
+
+class PhoneDataAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'user',
+        'imei',
+        'os',
+        'phone_model',
+        'phone_serial',
+        'android_version',
+        'app_version'
+    )
+    raw_id_fields = ("user",)
+    search_fields = ["imei", "user__username"]
 
 
 class CreditLogAdmin(admin.ModelAdmin):
@@ -29,14 +44,16 @@ class LogAdmin(admin.ModelAdmin):
                     'content_type', '_get_thumbnail', 'create_time',
                     'ip_address', 'text')
 
-    list_filter = ('action',)
+    list_filter = ('action', 'content_type')
 
-    search_fields = ['owner', 'user__username']
+    search_fields = ['owner', 'user__username', 'object_id']
 
     raw_id_fields = ("user",)
 
     def _get_thumbnail(self, obj):
-        return u'<a href="%s" target="_blank"><img style="max-height:100px;" src="%s" /></a>' % (obj.post_image, obj.post_image)
+        if obj.post_image:
+            return u'<a href="%s" target="_blank"><img style="max-height:100px;" src="%s" /></a>' % (obj.post_image, obj.post_image)
+        return u''
     _get_thumbnail.allow_tags = True
 
     def user_id(self, instance):
@@ -299,3 +316,4 @@ admin.site.register(Bill, BillAdmin)
 admin.site.register(Ad, AdAdmin)
 admin.site.register(Log, LogAdmin)
 admin.site.register(CreditLog, CreditLogAdmin)
+admin.site.register(PhoneData, PhoneDataAdmin)
