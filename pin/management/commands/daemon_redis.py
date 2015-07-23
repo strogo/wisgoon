@@ -14,7 +14,6 @@ class Command(BaseCommand):
                 loop = False
             print q
             for post_id in q:
-                print "post:", post_id
                 LikesRedis(post_id=post_id)
 
             l = [int(ll) for ll in q]
