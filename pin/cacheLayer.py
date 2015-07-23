@@ -12,6 +12,10 @@ class UserNameCache(object):
         if ce:
             return ce
         from django.contrib.auth.models import User
-        u = User.objects.only('username').get(id=user_id)
-        cache.set(keyname, u.username, cls.ttl)
+        try:
+            u = User.objects.only('username').get(id=user_id)
+            username = u.username
+        except User.DoesNotExist:
+            username = "Unknown"
+        cache.set(keyname, username, cls.ttl)
         return u.username
