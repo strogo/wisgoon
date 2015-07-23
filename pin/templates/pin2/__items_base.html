@@ -10,14 +10,14 @@
 		<div class="img-shadow"></div>
 	</div>
 	<div class="avatar post-avatar">
-		<a href="{% url "pin-absuser" item.user.username %}">
+		<a href="{% url "pin-absuser" item.get_username %}">
 			<img src="{{item.user_id|get_avatar:54}}" style="display: inline;" > 
 		</a>
 
 	</div>
 	<div class="username">
-		<a href="{% url "pin-absuser" item.user.username %}">
-			{{item.user.username}}
+		<a href="{% url "pin-absuser" item.get_username %}">
+			{{item.get_username}}
 		</a>
 	</div>	
 	
