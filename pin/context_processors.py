@@ -62,16 +62,17 @@ def is_super_user(request):
 
 
 def is_police(request, flat=False):
-    from user_profile.models import Profile
-    try:
-        um = Profile.objects.only('level').get(user_id=request.user.id)
-        if um.is_police():
-            if flat:
-                return True
-            return {'is_police': True}
-    except Exception, e:
-        print str(e)
-        pass
+    if request.user.is_authenticated():
+        from user_profile.models import Profile
+        try:
+            um = Profile.objects.only('level').get(user_id=request.user.id)
+            if um.is_police():
+                if flat:
+                    return True
+                return {'is_police': True}
+        except Exception, e:
+            print str(e)
+            pass
 
     if flat:
         return False
