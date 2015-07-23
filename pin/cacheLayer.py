@@ -18,4 +18,4 @@ class UserNameCache(object):
         except User.DoesNotExist:
             username = "Unknown"
         cache.set(keyname, username, cls.ttl)
-        return u.username
+        return username
