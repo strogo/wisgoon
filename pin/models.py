@@ -1244,10 +1244,13 @@ class PostMetaData(models.Model):
     CREATED = 1
     FULL_IMAGE_CREATE = 2
     ERROR_IN_ORIGINAL = 3
+    REDIS_CHANGE_SERVER = 4
+
     STATUS = (
         (CREATED, 'created'),
         (FULL_IMAGE_CREATE, 'full image create'),
-        (ERROR_IN_ORIGINAL, 'error in original image')
+        (ERROR_IN_ORIGINAL, 'error in original image'),
+        (REDIS_CHANGE_SERVER, 'redis server change'),
     )
 
     post = models.OneToOneField(Post)
