@@ -32,6 +32,7 @@ from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2, PhoneData, Log
 from pin.model_mongo import Notif, UserLocation
 from pin.tasks import send_clear_notif
+from pin.cacheLayer import UserNameCache
 
 from haystack.query import SearchQuerySet
 
@@ -162,7 +163,8 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
         o['image'] = p.image
 
         o['user_avatar'] = get_avatar(p.user_id, size=100)
-        o['user_name'] = AuthCache.get_username(user_id=p.user_id)
+        # o['user_name'] = AuthCache.get_username(user_id=p.user_id)
+        o['user_name'] = UserNameCache.get_user_name(user_id=p.user_id)
 
         o['timestamp'] = p.timestamp
 
@@ -574,7 +576,8 @@ def likes(request):
         o['post_id'] = int(post_id)
 
         o['user_avatar'] = get_avatar(p, size=100)
-        o['user_name'] = AuthCache.get_username(user_id=p)
+        # o['user_name'] = AuthCache.get_username(user_id=p)
+        o['user_name'] = UserNameCache.get_user_name(user_id=p)
 
         o['user_url'] = int(p)
         o['resource_uri'] = "/pin/api/like/likes/%d/" % p
@@ -684,7 +687,10 @@ def notif(request):
         o['post_id'] = cur_p.id
         o['post_owner_avatar'] = AuthCache.avatar(user_id=cur_p.user_id)[1:]
         o['post_owner_id'] = cur_p.user_id
-        o['post_owner_user_name'] = AuthCache.get_username(
+        # o['post_owner_user_name'] = AuthCache.get_username(
+        #     user_id=cur_p.user_id)
+
+        o['post_owner_user_name'] = UserNameCache.get_user_name(
             user_id=cur_p.user_id)
 
         o['user'] = cur_p.user_id
@@ -784,7 +790,7 @@ def following(request, user_id=1):
         o = {}
         o['user_id'] = fol.following_id
         o['user_avatar'] = get_avatar(fol.following_id, size=100)
-        o['user_name'] = AuthCache.get_username(fol.following_id)
+        o['user_name'] = UserNameCache.get_user_name(fol.following_id)
 
         if cur_user:
             o['follow_by_user'] = Follow.objects\
@@ -847,7 +853,8 @@ def comments(request):
         o['comment'] = com.comment
         o['user_url'] = com.user_id
         o['user_avatar'] = get_avatar(com.user_id, size=100)
-        o['user_name'] = AuthCache.get_username(com.user_id)
+        # o['user_name'] = AuthCache.get_username(com.user_id)
+        o['user_name'] = com.get_username()
         o['resource_uri'] = "/pin/api/com/comments/%d/" % com.id
 
         objects_list.append(o)
@@ -892,7 +899,7 @@ def follower(request, user_id=1):
         o = {}
         o['user_id'] = fol.follower_id
         o['user_avatar'] = get_avatar(fol.follower_id, size=100)
-        o['user_name'] = AuthCache.get_username(fol.follower_id)
+        o['user_name'] = UserNameCache.get_user_name(fol.follower_id)
 
         if cur_user:
             o['follow_by_user'] = Follow.objects\

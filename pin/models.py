@@ -236,6 +236,10 @@ class Post(models.Model):
     def __unicode__(self):
         return self.text
 
+    def get_username(self):
+        from cacheLayer import UserNameCache
+        return UserNameCache.get_user_name(user_id=self.user_id)
+
     def is_pending(self):
         if self.report >= 100:
             return True
@@ -1083,6 +1087,10 @@ class Comments(models.Model):
 
     def __unicode__(self):
         return self.comment
+
+    def get_username(self):
+        from cacheLayer import UserNameCache
+        return UserNameCache.get_user_name(user_id=self.user_id)
 
     def date_lt(self, date, how_many_days=15):
         lt_date = datetime.now() - timedelta(days=how_many_days)
