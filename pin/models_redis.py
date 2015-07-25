@@ -123,7 +123,7 @@ class LikesRedis(object):
 
         # self.store_last_likes()
         p = r_server.pipeline()
-        p.lpush(self.keyName, user_id)
+        # p.lpush(self.keyName, user_id)
         p.lrem(settings.LAST_LIKES, self.postId)
         p.lpush(settings.LAST_LIKES, self.postId)
         p.ltrim(settings.LAST_LIKES, 0, 1000)
