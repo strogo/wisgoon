@@ -94,7 +94,7 @@ class LikesRedis(object):
         return r_server4.llen(self.keyName4)
 
     def dislike(self, user_id):
-        r_server.lrem(self.keyName, user_id)
+        # r_server.lrem(self.keyName, user_id)
         r_server4.lrem(self.keyName4, user_id)
         r_server3.srem(self.keyName3, str(user_id))
         Post.objects.filter(pk=int(self.postId))\
