@@ -47,10 +47,11 @@ class LikesRedis(object):
         self.keyName4 = self.KEY_PREFIX4 + self.postId
 
         if not r_server4.exists(self.keyName4):
-            keys = r_server.lrange(self.keyName, 0, -1)
-            if keys:
-                r_server4.lpush(self.keyName4, *keys)
-            r_server.delete(self.keyName)
+            if r_server.exists(self.keyName):
+                keys = r_server.lrange(self.keyName, 0, -1)
+                if keys:
+                    r_server4.lpush(self.keyName4, *keys)
+                r_server.delete(self.keyName)
 
         if not r_server3.exists(self.keyName3):
             keys = r_server4.lrange(self.keyName4, 0, -1)
