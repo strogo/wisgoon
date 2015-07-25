@@ -77,7 +77,7 @@ COMPRESS_CSS_FILTERS = [
 
 SITE_URL = 'http://www.social.rabtcdn.com'
 
-MEDIA_PREFIX = 'http://media.social.rabtcdn.com'
+MEDIA_PREFIX = 'http://social.rabtcdn.com'
 
 ENABLE_CACHING = True
 
