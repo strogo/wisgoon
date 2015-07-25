@@ -23,8 +23,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'salam_db',
-        'USER': 'root',
-        'PASSWORD': '-)**Z{QT',
+        'USER': 'salam_usr',
+        'PASSWORD': "nwpfZn4lzxgTQ",
         'HOST': 'localhost',
         'PORT': '',
     }
