@@ -114,7 +114,7 @@ class LikesRedis(object):
 
     def like(self, user_id, post_owner):
         r_server3.sadd(self.keyName3, str(user_id))
-        r_server4.lpush(self.keyName4, user_id)
+        # r_server4.lpush(self.keyName4, user_id)
 
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') + 1)
@@ -122,8 +122,8 @@ class LikesRedis(object):
         ChangedPosts.store_change(post_id=self.postId)
 
         # self.store_last_likes()
-        p = r_server.pipeline()
-        p.lpush(self.keyName, user_id)
+        p = r_server4.pipeline()
+        p.lpush(self.keyName4, user_id)
         p.lrem(settings.LAST_LIKES, self.postId)
         p.lpush(settings.LAST_LIKES, self.postId)
         p.ltrim(settings.LAST_LIKES, 0, 1000)
