@@ -47,10 +47,11 @@ class LikesRedis(object):
         self.keyName4 = self.KEY_PREFIX4 + self.postId
 
         if not r_server4.exists(self.keyName4):
-            keys = r_server.lrange(self.keyName, 0, -1)
-            if keys:
-                r_server4.lpush(self.keyName4, *keys)
-            r_server.delete(self.keyName)
+            if r_server.exists(self.keyName):
+                keys = r_server.lrange(self.keyName, 0, -1)
+                if keys:
+                    r_server4.lpush(self.keyName4, *keys)
+                r_server.delete(self.keyName)
 
         if not r_server3.exists(self.keyName3):
             keys = r_server4.lrange(self.keyName4, 0, -1)
@@ -93,7 +94,7 @@ class LikesRedis(object):
         return r_server4.llen(self.keyName4)
 
     def dislike(self, user_id):
-        r_server.lrem(self.keyName, user_id)
+        # r_server.lrem(self.keyName, user_id)
         r_server4.lrem(self.keyName4, user_id)
         r_server3.srem(self.keyName3, str(user_id))
         Post.objects.filter(pk=int(self.postId))\
