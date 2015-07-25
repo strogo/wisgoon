@@ -85,7 +85,7 @@ HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
         # 'URL': 'http://127.0.0.1:8080/solr/emsham'
-        'URL': 'http://79.127.125.146:8080/solr'
+        'URL': 'http://127.0.0.1:8080/solr'
         # ...or for multicore...
         # 'URL': 'http://127.0.0.1:8983/solr/mysite',
     },
