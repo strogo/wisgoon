@@ -70,7 +70,7 @@ class LikesRedis(object):
             try:
                 ul.append(User.objects.only('id', 'username').get(pk=int(uid)))
             except User.DoesNotExist:
-                r_server.lrem(self.keyName, uid)
+                r_server4.lrem(self.keyName4, uid)
         return ul
 
     def first_store(self):
