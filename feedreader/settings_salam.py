@@ -94,3 +94,7 @@ SITE_NAME_FA = 'سلام'
 SITE_NAME_EN = 'salam'
 SITE_URL_NAME = 'social.rabtcdn.com'
 SITE_DESC = 'what is going on, social image sharing'
+
+
+SCORE_FOR_COMMENING = 0
+SCORE_FOR_STREAMS = 0
