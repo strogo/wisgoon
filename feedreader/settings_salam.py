@@ -39,9 +39,9 @@ MONGO_DB_HOST = "127.0.0.1"
 CACHES = {
     'default': dict(
         BACKEND='johnny.backends.memcached.MemcachedCache',
-        LOCATION=['79.127.125.104:11211'],
+        LOCATION=['localhost:11211'],
         JOHNNY_CACHE=True,
-        KEY_PREFIX='emsham',
+        KEY_PREFIX='sp',
     )
 }
 
@@ -87,7 +87,7 @@ HAYSTACK_CONNECTIONS = {
         # 'URL': 'http://127.0.0.1:8983/solr/mysite',
     },
 }
-SITE_NAME_FA = 'امشام'
-SITE_NAME_EN = 'emsham'
+SITE_NAME_FA = 'سلام'
+SITE_NAME_EN = 'salam'
 SITE_URL_NAME = 'social.rabtcdn.com'
 SITE_DESC = 'what is going on, social image sharing'
