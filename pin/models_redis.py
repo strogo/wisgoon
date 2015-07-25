@@ -90,7 +90,7 @@ class LikesRedis(object):
         # return False
 
     def cntlike(self):
-        return r_server.llen(self.keyName)
+        return r_server4.llen(self.keyName4)
 
     def dislike(self, user_id):
         r_server.lrem(self.keyName, user_id)
