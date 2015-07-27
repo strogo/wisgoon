@@ -12,6 +12,7 @@ except ImportError:
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.core.exceptions import MultipleObjectsReturned
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -420,3 +421,64 @@ def user_check_username(request):
             'reason': 'user does not exists'
         }
     return return_json_data(data)
+
+
+# @csrf_exempt
+# def salam_is_user_registered(request):
+#     email = request.POST.get("email")
+#     if not email:
+#         return return_bad_request()
+
+#     try:
+#         u = User.objects.get(email=email)
+#         data = {
+#             'status': True,
+#             'username': u.username
+#         }
+#     except MultipleObjectsReturned:
+#         u = User.objects.filter(email=email)[0]
+#         data = {
+#             'status': True,
+#             'username': u.username
+#         }
+#     except User.DoesNotExist:
+#         data = {
+#             'status': False,
+#             'reason': "user does not exists"
+#         }
+
+#     return return_json_data(data)
+
+
+# @csrf_exempt
+# def salam_change_password(request):
+#     phone_number = request.POST.get("phone_number", None)
+#     password = request.POST.get("password", None)
+#     if not phone_number or not password:
+#         return return_bad_request()
+
+#     email = "%s@%s.com" % (phone_number, phone_number)
+
+#     try:
+#         u = User.objects.get(email=email)
+#         u.set_password(password)
+#         u.save()
+#         data = {
+#             'status': True,
+#             'reason': 'password changed successfully'
+#         }
+#     except MultipleObjectsReturned:
+#         u = User.objects.filter(email=email)[0]
+#         u.set_password(password)
+#         u.save()
+#         data = {
+#             'status': True,
+#             'reason': 'password changed successfully'
+#         }
+#     except User.DoesNotExist:
+#         data = {
+#             'status': False,
+#             'reason': 'user does not exists'
+#         }
+
+#     return return_json_data(data)
