@@ -3,7 +3,10 @@ from cqlengine.models import Model
 from cqlengine import connection
 from cqlengine.management import sync_table
 
-connection.setup(['79.127.125.104'], "wisgoon")
+try:
+    connection.setup(['79.127.125.104'], "wisgoon")
+except Exception, e:
+    print str(e)
 
 
 class NotifCas(Model):
@@ -27,4 +30,7 @@ class NotifCas(Model):
         return '%s %d' % (self.firstname, self.age)
 
 # drop_table(NotifCas)
-sync_table(NotifCas)
+try:
+    sync_table(NotifCas)
+except Exception, e:
+    print str(e)
