@@ -12,6 +12,7 @@ from django.db.models import F
 
 from pin.model_mongo import Notif, MonthlyStats
 from pin.models import Post, Follow
+from pin.my_notif import NotifCas
 
 from user_profile.models import Profile
 
@@ -24,6 +25,17 @@ def notif_send(user_id, type, post, actor_id, seen=False, post_image=None):
                          seen=False,
                          post_image=post_image,
                          actors=[actor_id])
+
+    n = NotifCas.objects.filter(owner=user_id, type=type, post=post)\
+        .update(seen=False, actors__prepend=[actor_id], date=datetime.now(),
+                post_image=post_image, last_actor=actor_id)
+    print "type of notif:", n
+    # NotifCas.create(owner=user_id, type=type, post=post,
+    #                 last_actor=actor_id,
+    #                 date=datetime.now(),
+    #                 seen=False,
+    #                 post_image=post_image,
+    #                 actors=[actor_id])
 
     # Notif.objects(owner=user_id, type=type, post=post)\
     #     .update_one(set__last_actor=actor_id,

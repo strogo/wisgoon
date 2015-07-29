@@ -599,11 +599,15 @@ def notif(request):
     filters = {}
     cur_user = None
 
+    # from my_notif import NotifCas
+    # for n in NotifCas.objects.all():
+    #     print n[0]
+
     token = request.GET.get('api_key', '')
     if token:
         cur_user = AuthCache.id_from_token(token=token)
     else:
-        return HttpResponse("problem")
+        return HttpResponse("token problem")
 
     if not cur_user:
         return HttpResponse("problem", cur_user)
