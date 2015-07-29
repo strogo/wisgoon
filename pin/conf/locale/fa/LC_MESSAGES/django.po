@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-14 18:34+0430\n"
+"POT-Creation-Date: 2015-07-28 13:35+0430\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,4 +19,28 @@ msgstr ""
 
 #: models.py:199
 msgid "Text"
+msgstr ""
+
+#: api5/auth.py:25
+msgid "Application token problem"
+msgstr ""
+
+#: api5/auth.py:36
+msgid "Error in parameters"
+msgstr ""
+
+#: api5/auth.py:43
+msgid "Username already exists"
+msgstr ""
+
+#: api5/auth.py:51
+msgid "Email already exists"
+msgstr ""
+
+#: api5/auth.py:62 api5/auth.py:75
+msgid "Error in user creation"
+msgstr ""
+
+#: api5/auth.py:69
+msgid "User created successfully"
 msgstr ""

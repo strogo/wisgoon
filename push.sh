@@ -10,8 +10,8 @@ send(){
 	git push emsham devel
 	ssh emsham@79.127.125.104 "cd /home/emsham/www && git merge devel && touch reload"
 
-	git push salam devel
-	ssh salam@46.209.152.53 "cd /home/salam/www && git merge devel && touch reload"
+	#git push salam devel
+	#ssh salam@46.209.152.53 "cd /home/salam/www && git merge devel && touch reload"
 }
 
 jsend(){
