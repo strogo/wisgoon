@@ -6,7 +6,7 @@ from cqlengine.management import sync_table
 try:
     connection.setup(['79.127.125.104'], "wisgoon")
 except Exception, e:
-    print str(e)
+    print "my notif line 10", str(e)
 
 
 class NotifCas(Model):
@@ -33,4 +33,4 @@ class NotifCas(Model):
 try:
     sync_table(NotifCas)
 except Exception, e:
-    print str(e)
+    print "my notif line 36", str(e)
