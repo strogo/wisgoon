@@ -19,6 +19,8 @@ ADMINS = (
     ('bugs', 'bugs@wisgoon.com'),
 )
 
+CASSANDRA_DB = '79.127.125.104'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
