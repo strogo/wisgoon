@@ -14,7 +14,7 @@ from pin.model_mongo import Notif, MonthlyStats
 from pin.models import Post, Follow
 
 from user_profile.models import Profile
-from pin.my_notif import NotifCas
+# from pin.my_notif import NotifCas
 
 
 @app.task(name="tasks.notif_test")
@@ -33,11 +33,11 @@ def notif_send(user_id, type, post, actor_id, seen=False, post_image=None):
                     set__post_image=post_image,
                     add_to_set__actors=actor_id, upsert=True)
 
-    n = NotifCas.objects.filter(owner=user_id, type=type, post=post)\
-        .update(seen=False, actors__prepend=[actor_id], date=datetime.now(),
-                post_image=post_image, last_actor=actor_id)
+    # n = NotifCas.objects.filter(owner=user_id, type=type, post=post)\
+    #     .update(seen=False, actors__prepend=[actor_id], date=datetime.now(),
+    #             post_image=post_image, last_actor=actor_id)
 
-    print "notif type:", n
+    # print "notif type:", n
 
     return "hello notif"
 

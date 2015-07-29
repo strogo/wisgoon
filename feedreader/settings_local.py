@@ -12,6 +12,8 @@ ADMINS = (
     ('bugs', 'bugs@wisgoon.com'),
 )
 
+CASSANDRA_DB = '127.0.0.1'
+
 # THUMBNAIL_PROCESSORS = (
 #     'image_cropping.thumbnail_processors.crop_corners',
 # ) + thumbnail_settings.THUMBNAIL_PROCESSORS
@@ -99,8 +101,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'johnny.middleware.LocalStoreClearMiddleware',
-    'johnny.middleware.QueryCacheMiddleware',
+    # 'johnny.middleware.LocalStoreClearMiddleware',
+    # 'johnny.middleware.QueryCacheMiddleware',
     'pin.middleware.UrlRedirectMiddleware',
     'pin.middleware.XsSharing',
     # 'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
@@ -119,10 +121,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
-    'social_auth.context_processors.social_auth_by_name_backends',
-    'social_auth.context_processors.social_auth_backends',
-    'social_auth.context_processors.social_auth_by_type_backends',
-    'social_auth.context_processors.social_auth_login_redirect',
+    # 'social_auth.context_processors.social_auth_by_name_backends',
+    # 'social_auth.context_processors.social_auth_backends',
+    # 'social_auth.context_processors.social_auth_by_type_backends',
+    # 'social_auth.context_processors.social_auth_login_redirect',
     # 'rss.context_processors.c_url',
     # 'rss.context_processors.node_url',
     'pin.context_processors.pin_form',
@@ -155,12 +157,12 @@ INSTALLED_APPS = (
     'registration',
     'south',
     'sorl.thumbnail',
-    'social_auth',
+    # 'social_auth',
     'django.contrib.comments',
     'daddy_avatar',
     'contactus',
     'compressor',
-    'taggit',
+    # 'taggit',
     'user_profile',
     'captcha',
     'tastypie',
@@ -180,13 +182,13 @@ HAYSTACK_CONNECTIONS = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.twitter.TwitterBackend',
-    'social_auth.backends.facebook.FacebookBackend',
-    'social_auth.backends.google.GoogleOAuthBackend',
-    'social_auth.backends.google.GoogleOAuth2Backend',
-    'social_auth.backends.google.GoogleBackend',
-    'social_auth.backends.yahoo.YahooBackend',
-    'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
+    # 'social_auth.backends.twitter.TwitterBackend',
+    # 'social_auth.backends.facebook.FacebookBackend',
+    # 'social_auth.backends.google.GoogleOAuthBackend',
+    # 'social_auth.backends.google.GoogleOAuth2Backend',
+    # 'social_auth.backends.google.GoogleBackend',
+    # 'social_auth.backends.yahoo.YahooBackend',
+    # 'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -222,10 +224,11 @@ DEBUG_TOOLBAR_PANELS = (
 
 CACHES = {
     'default': dict(
-        BACKEND='johnny.backends.memcached.MemcachedCache',
+        # BACKEND='johnny.backends.memcached.MemcachedCache',
+        BACKEND='django.core.cache.backends.memcached.MemcachedCache',
         LOCATION=['127.0.0.1:11211'],
         # LOCATION=['79.127.125.104:11211'],
-        JOHNNY_CACHE=True,
+        # JOHNNY_CACHE=False,
     )
 }
 
@@ -305,6 +308,7 @@ LIKE_WITH_CELERY = True
 USE_CELERY = False
 
 APP_TOKEN_STR = 'app mobile-)**Z{QT'
+APP_TOKEN_KEY = 'e622c330c77a17c8426e638d7a85da6c2ec9f455'
 
 # USE_THOUSAND_SEPARATOR = True
 # THOUSAND_SEPARATOR = ','
@@ -337,7 +341,7 @@ SITE_DESC = 'what is going on, social image sharing'
 STREAM_CASSANDRA_HOSTS = 'localhost'
 
 
-SCORE_FOR_COMMENING = 5000
-SCORE_FOR_STREAMS = 7000
+SCORE_FOR_COMMENING = 0
+SCORE_FOR_STREAMS = 0
 
 CELERY_ALWAYS_EAGER = True
