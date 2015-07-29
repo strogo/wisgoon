@@ -18,12 +18,19 @@ from user_profile.models import Profile
 
 @app.task(name="tasks.notif_test")
 def notif_send(user_id, type, post, actor_id, seen=False, post_image=None):
-    Notif.objects(owner=user_id, type=type, post=post)\
-        .update_one(set__last_actor=actor_id,
-                    set__date=datetime.now,
-                    set__seen=False,
-                    set__post_image=post_image,
-                    add_to_set__actors=actor_id, upsert=True)
+    Notif.objects.create(owner=user_id, type=type, post=post,
+                         last_actor=actor_id,
+                         date=datetime.now,
+                         seen=False,
+                         post_image=post_image,
+                         actors=[actor_id])
+
+    # Notif.objects(owner=user_id, type=type, post=post)\
+    #     .update_one(set__last_actor=actor_id,
+    #                 set__date=datetime.now,
+    #                 set__seen=False,
+    #                 set__post_image=post_image,
+    #                 add_to_set__actors=actor_id, upsert=True)
 
     return "hello notif"
 
