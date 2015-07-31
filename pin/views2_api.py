@@ -972,7 +972,7 @@ def search(request):
 
             if cur_user:
                 o['follow_by_user'] = Follow\
-                    .get_follow_status(follower=cur_user, following=r['id'])
+                    .get_follow_status(follower=cur_user, following=r.user_id)
             else:
                 o['follow_by_user'] = False
 
