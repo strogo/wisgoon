@@ -923,21 +923,36 @@ def follower(request, user_id=1):
 def search(request):
     log_act("wisgoon.api.search.count")
     cur_user = None
-    limit = request.GET.get('limit', 20)
-    start = request.GET.get('start', 0)
+    row_per_page = 10
+
+    offset = int(request.GET.get('offset', 0))
 
     data = {}
-    import pysolr
-    solr = pysolr.Solr('http://79.127.125.146:8080/solr/wisgoon_user',
-                       timeout=10)
-    query = request.GET.get('q', '')
+
+    query = request.GET.get('q', None)
+
+    if not query:
+        json_data = json.dumps(data, cls=MyEncoder)
+        return HttpResponse(json_data, content_type="application/json")
+
     if query:
-        fq = 'username_s:*%s* name_s:*%s*' % (query, query)
-        try:
-            results = solr.search("*:*", fq=fq, rows=limit, start=start,
-                                  sort="score_i desc")
-        except:
-            results = []
+        from user_profile.models import Profile
+        from haystack.query import SQ
+        from haystack.query import Raw
+
+        words = query.split()
+
+        sq = SQ()
+        for w in words:
+            sq.add(SQ(text__contains=Raw("%s*" % w)), SQ.OR)
+            sq.add(SQ(text__contains=Raw(w)), SQ.OR)
+        # sqs = SearchQuerySet().filter(sqs)
+
+        # results = SearchQuerySet().models(Profile)\
+        #     .filter(SQ(text__contains=Raw(query2)))[offset:offset + 1 * row_per_page]
+
+        results = SearchQuerySet().models(Profile)\
+            .filter(sq)[offset:offset + 1 * row_per_page]
 
         token = request.GET.get('token', '')
         if token:
@@ -946,11 +961,12 @@ def search(request):
         data['objects'] = []
         for r in results:
             o = {}
-            o['id'] = r['id']
-            o['avatar'] = get_avatar(r['id'], 100)
-            o['username'] = r['username_s']
+            r = r.object
+            o['id'] = r.id
+            o['avatar'] = get_avatar(r.user_id, 100)
+            o['username'] = r.user.username
             try:
-                o['name'] = r['name_s']
+                o['name'] = r.name
             except:
                 o['name'] = ""
 
