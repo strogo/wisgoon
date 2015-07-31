@@ -3,6 +3,7 @@ import re
 from haystack import indexes
 from pin.models import Post, Comments
 from user_profile.models import Profile
+from django.contrib.auth.models import User
 
 from pin.preprocessing import normalize_tags
 
@@ -45,6 +46,15 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
             nt.append(normalize_tags(tag))
         # print nt
         return nt
+
+
+class UserIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.CharField(document=True, use_template=True)
+    username_s = indexes.CharField(model_attr="username")
+    usernamt_t = indexes.CharField(model_attr="username")
+
+    def get_model(self):
+        return User
 
 
 class ProfileIndex(indexes.SearchIndex, indexes.Indexable):
