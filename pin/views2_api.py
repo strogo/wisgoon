@@ -962,7 +962,7 @@ def search(request):
         for r in results:
             o = {}
             r = r.object
-            o['id'] = r.id
+            o['id'] = r.user_id
             o['avatar'] = get_avatar(r.user_id, 100)
             o['username'] = r.user.username
             try:
