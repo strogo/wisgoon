@@ -2,7 +2,7 @@ from pin.tools import AuthCache
 from pin.models import Post, Category
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from pin.api_tools import abs_url
+from pin.api_tools import abs_url, media_abs_url
 
 from pin.cacheLayer import UserNameCache
 from pin.models_redis import LikesRedis
@@ -43,11 +43,11 @@ def get_objects_list(posts, cur_user_id, r=None):
         o['id'] = p.id
         o['text'] = p.text
         o['cnt_comment'] = 0 if p.cnt_comment == -1 else p.cnt_comment
-        o['image'] = p.image
+        o['image'] = media_abs_url(p.image)
         o['timestamp'] = p.timestamp
 
         u['id'] = p.user_id
-        u['avatar'] = get_avatar(p.user_id, size=100)
+        u['avatar'] = media_abs_url(get_avatar(p.user_id, size=100))
         u['username'] = UserNameCache.get_user_name(p.user_id)
 
         o['user'] = u
@@ -91,7 +91,7 @@ def get_objects_list(posts, cur_user_id, r=None):
             continue
 
         if imo:
-            o['thumbnail'] = imo['url']
+            o['thumbnail'] = media_abs_url(imo['url'])
             o['hw'] = imo['hw']
         else:
             continue
@@ -106,7 +106,7 @@ def latest(request):
     cur_user = None
     last_item = None
     data = {}
-    data['meta'] = {'limit': 10,
+    data['meta'] = {'limit': 20,
                     'next': '',
                     'total_count': 1000}
 
@@ -137,7 +137,7 @@ def latest(request):
 def friends(request):
     cur_user = None
     data = {}
-    data['meta'] = {'limit': 10,
+    data['meta'] = {'limit': 20,
                     'next': "",
                     'total_count': 1000}
 
@@ -173,7 +173,7 @@ def friends(request):
 def category(request, category_id):
     cur_user = None
     data = {}
-    data['meta'] = {'limit': 10,
+    data['meta'] = {'limit': 20,
                     'next': "",
                     'total_count': 1000}
 
@@ -214,7 +214,7 @@ def item(request, item_id):
 
     posts = get_list_post([item_id])
 
-    data['object'] = get_objects_list(posts, cur_user_id=cur_user,
-                                      r=request)[0]
+    data = get_objects_list(posts, cur_user_id=cur_user,
+                            r=request)[0]
 
     return return_json_data(data)
