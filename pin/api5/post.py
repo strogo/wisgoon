@@ -68,7 +68,6 @@ def get_objects_list(posts, cur_user_id, r=None):
             # print str(e)
             o['is_ad'] = False
 
-        o['permalink'] = "/pin/%d/" % p.id
         o['permalink'] = abs_url(reverse("api-5-post-item",
                                          kwargs={"item_id": p.id}))
 
@@ -76,24 +75,15 @@ def get_objects_list(posts, cur_user_id, r=None):
             o['like_with_user'] = LikesRedis(post_id=p.id)\
                 .user_liked(user_id=cur_user_id)
 
-        net_quality = "normal"
-        if r:
-            net_quality = str(r.GET.get('net_quality', "normal"))
-
+        o['images'] = {}
         try:
-            if net_quality == "normal":
-                imo = p.get_image_500(api=True)
-            elif net_quality == "fast":
-                imo = p.get_image_500(api=True)
-            else:
-                imo = p.get_image_236(api=True)
+            p_500 = p.get_image_500(api=True)
+            o['images']['low_resolution'] = p_500
+            p_236 = p.get_image_236(api=True)
+            o['images']['thumbnail'] = p_236
+            p_original = p.get_image_sizes()
+            o['images']['original'] = p_original
         except Exception, e:
-            continue
-
-        if imo:
-            o['thumbnail'] = media_abs_url(imo['url'])
-            o['hw'] = imo['hw']
-        else:
             continue
 
         o['category'] = category_get_json(cat_id=p.category_id)

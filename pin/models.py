@@ -271,6 +271,23 @@ class Post(models.Model):
 
         return ibase, nname, h
 
+    def get_image_sizes(self):
+        if self.height != -1 and self.width != -1:
+            return {
+                "width": self.width,
+                "height": self.height
+            }
+
+        ipath = "%s/%s" % (settings.MEDIA_ROOT, self.image)
+        img = Image.open(ipath)
+        self.height = img.size[1]
+        self.width = img.size[0]
+        self.save()
+        return {
+            "width": self.width,
+            "height": self.height
+        }
+
     def get_image_236(self, api=False):
         if self.data_236:
             return self.data_236
