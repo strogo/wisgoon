@@ -11,6 +11,7 @@ urlpatterns = patterns('pin.api5.auth',
 
 urlpatterns += patterns('pin.api5.post',
                        url(r'post/latest/$', 'latest', name='api-5-post-latest'),
+                       url(r'post/choices/$', 'choices', name='api-5-post-choices'),
                        url(r'post/friends/$', 'friends', name='api-5-post-friends'),
                        url(r'post/category/(?P<category_id>\d+)/$', 'category', name='api-5-post-category'),
                        url(r'post/item/(?P<item_id>\d+)/$', 'item', name='api-5-post-item'),
