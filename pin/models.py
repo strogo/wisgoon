@@ -219,7 +219,7 @@ class Post(models.Model):
                                           verbose_name='نمایش در خانه')
 
     report = models.IntegerField(default=0, db_index=True)
-    cnt_comment = models.IntegerField(default=-1, blank=True)
+    cnt_comment = models.IntegerField(default=0, blank=True)
     cnt_like = models.IntegerField(default=0, blank=True)
     # tags = TaggableManager(blank=True)
 
@@ -985,6 +985,7 @@ class Likes(models.Model):
         # print "come on"
         from models_redis import LikesRedis
         return LikesRedis(post_id=post_id).user_liked(user_id=user_id)
+
         key_str = "%s_%d" % (settings.POST_LIKERS, post_id)
 
         if r_server.sismember(key_str, str(user_id)):
