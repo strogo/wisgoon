@@ -43,7 +43,6 @@ def get_objects_list(posts, cur_user_id, r=None):
         o['id'] = p.id
         o['text'] = p.text
         o['cnt_comment'] = 0 if p.cnt_comment == -1 else p.cnt_comment
-        o['image'] = media_abs_url(p.image)
         o['timestamp'] = p.timestamp
 
         u['id'] = p.user_id
@@ -79,10 +78,21 @@ def get_objects_list(posts, cur_user_id, r=None):
         try:
             p_500 = p.get_image_500(api=True)
             o['images']['low_resolution'] = p_500
+            o['images']['low_resolution']['url'] = media_abs_url(p_500['url'])
+            o['images']['low_resolution']['height'] = int(p_500['hw'].split("x")[0])
+            o['images']['low_resolution']['width'] = int(p_500['hw'].split("x")[1])
+            del(o['images']['low_resolution']['hw'])
+            del(o['images']['low_resolution']['h'])
             p_236 = p.get_image_236(api=True)
             o['images']['thumbnail'] = p_236
+            o['images']['thumbnail']['url'] = media_abs_url(p_236['url'])
+            o['images']['thumbnail']['height'] = int(p_236['hw'].split("x")[0])
+            o['images']['thumbnail']['width'] = int(p_236['hw'].split("x")[1])
+            del(o['images']['thumbnail']['hw'])
+            del(o['images']['thumbnail']['h'])
             p_original = p.get_image_sizes()
             o['images']['original'] = p_original
+            o['images']['original']['url'] = media_abs_url(p.image)
         except Exception, e:
             continue
 
