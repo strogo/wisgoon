@@ -94,3 +94,6 @@ SITE_NAME_FA = 'ویسگون'
 SITE_NAME_EN = 'wisgoon'
 SITE_URL_NAME = 'wisgoon.com'
 SITE_DESC = 'what is going on, social image sharing'
+
+SCORE_FOR_COMMENING = 5000
+SCORE_FOR_STREAMS = 10000
