@@ -6,7 +6,7 @@ from pin.api_tools import abs_url, media_abs_url
 
 from pin.cacheLayer import UserNameCache
 from pin.models_redis import LikesRedis
-from pin.api5.tools import get_next_url
+from pin.api5.tools import get_next_url, category_get_json
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from pin.api5.http import return_json_data, return_bad_request
@@ -96,7 +96,7 @@ def get_objects_list(posts, cur_user_id, r=None):
         else:
             continue
 
-        o['category'] = Category.get_json(cat_id=p.category_id)
+        o['category'] = category_get_json(cat_id=p.category_id)
         objects_list.append(o)
 
     return objects_list
@@ -200,6 +200,36 @@ def category(request, category_id):
                                             url_args={
                                                 "category_id": category_id
                                             })
+
+    return return_json_data(data)
+
+
+def choices(request):
+    cur_user = None
+    data = {}
+    data['meta'] = {'limit': 20,
+                    'next': "",
+                    'total_count': 1000}
+
+    before = request.GET.get('before', None)
+    token = request.GET.get('token', None)
+
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+
+    if not before:
+        before = 0
+
+    pl = Post.home_latest(pid=before)
+    posts = get_list_post(pl)
+
+    data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
+                                       r=request)
+
+    if data['objects']:
+        last_item = data['objects'][-1]['id']
+        data['meta']['next'] = get_next_url(url_name='api-5-post-choices',
+                                            token=token, before=last_item)
 
     return return_json_data(data)
 
