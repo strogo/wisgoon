@@ -33,6 +33,7 @@ from preprocessing import normalize_tags
 LIKE_TO_DEFAULT_PAGE = 10
 
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
+r_server4 = redis.Redis(settings.REDIS_DB_2, db=4)
 
 
 class SubCategory(models.Model):
@@ -983,15 +984,7 @@ class Likes(models.Model):
     def user_likes(cls, user_id, pid=0):
         user_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(user_id))
 
-        if not r_server.exists(user_last_likes):
-            likes = Likes.objects.values_list('post_id', flat=True)\
-                .filter(user_id=user_id).order_by('-id')[:1000]
-            if likes:
-                r_server.rpush(user_last_likes, *likes)
-            else:
-                r_server.rpush(user_last_likes, [])
-
-        pl = r_server.lrange(user_last_likes, 0, 1000)
+        pl = r_server4.lrange(user_last_likes, 0, 1000)
         if pid:
             try:
                 pid_index = pl.index(str(pid))
