@@ -14,6 +14,7 @@ class Command(BaseCommand):
 
         for cp in s:
             try:
+                print "post:", cp
                 pi = PostIndex()
                 pi.update_object(Post.objects.get(id=cp))
                 r_server.srem("ChangedPostsV1", cp)
