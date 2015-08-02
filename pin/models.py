@@ -280,9 +280,11 @@ class Post(models.Model):
 
         ipath = "%s/%s" % (settings.MEDIA_ROOT, self.image)
         img = Image.open(ipath)
-        self.height = img.size[1]
-        self.width = img.size[0]
-        self.save()
+        Post.objects.filter(id=self.id)\
+            .update(height=img.size[1], width=img.size[0])
+        # self.height = img.size[1]
+        # self.width = img.size[0]
+        # self.save()
         return {
             "width": self.width,
             "height": self.height
@@ -541,6 +543,7 @@ class Post(models.Model):
         return True
 
     def save(self, *args, **kwargs):
+        print "*******************this is save"
         from tools import check_spam
         if check_spam(self.text):
             Log.bad_post(actor=self.user,
@@ -870,7 +873,8 @@ class Stream(models.Model):
         post = instance
         post.get_image_236()
         post.get_image_500()
-        # post.get_image_sizes()
+        print "this is get image sizes ***********************************************"
+        post.get_image_sizes()
         if kwargs['created']:
 
             MonthlyStats.log_hit(object_type="post")
