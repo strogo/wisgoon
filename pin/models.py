@@ -870,7 +870,7 @@ class Stream(models.Model):
         post = instance
         post.get_image_236()
         post.get_image_500()
-        post.get_image_sizes()
+        # post.get_image_sizes()
         if kwargs['created']:
 
             MonthlyStats.log_hit(object_type="post")
