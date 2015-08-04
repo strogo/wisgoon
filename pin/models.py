@@ -853,10 +853,10 @@ class Follow(models.Model):
             # print "new follow"
             # print cls, sender, instance, args, kwargs
             # print "instance follow:", instance.follower.id
-            Notif_mongo.objects(owner=instance.following.id, type=10, last_actor=instance.follower.id)\
-                .update_one(set__date=datetime.now,
-                            set__seen=False,
-                            add_to_set__actors=instance.follower.id, upsert=True)
+            Notif_mongo.objects.create(owner=instance.following.id, type=10,
+                                       last_actor=instance.follower.id,
+                                       date=datetime.now,
+                                       seen=False)
 
 
 class Stream(models.Model):
