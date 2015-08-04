@@ -24,7 +24,7 @@ from pin.context_processors import is_police
 from pin.models import Post, Stream, Follow, Ad, Log,\
     Report, Comments, Comments_score, Category, Bills2 as Bills
 
-from pin.model_mongo import Notif, UserMeta
+from pin.model_mongo import Notif, UserMeta, NotifCount
 
 import pin_image
 from pin.tools import get_request_timestamp, create_filename,\
@@ -505,7 +505,7 @@ def upload(request):
 
 @login_required
 def show_notify(request):
-    Notif.objects.filter(owner=request.user.id, seen=False).update(set__seen=True)
+    NotifCount.objects.filter(owner=request.user.id).update(set__unread=0)
     notif = Notif.objects.all().filter(owner=request.user.id).order_by('-date')[:20]
     nl = []
     for n in notif:
@@ -521,7 +521,7 @@ def show_notify(request):
                 continue
         anl['id'] = n.post
         anl['type'] = n.type
-        anl['actors'] = n.actors
+        anl['actor'] = n.last_actor
         anl['owner'] = n.owner
 
         nl.append(anl)
@@ -548,7 +548,7 @@ def notif_user(request):
             continue
         anl['id'] = n.post
         anl['type'] = n.type
-        anl['actors'] = n.last_actors
+        anl['actor'] = n.last_actor
 
         nl.append(anl)
 
