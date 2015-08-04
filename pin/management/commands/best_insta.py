@@ -1,3 +1,4 @@
+import socket
 import urllib
 import time
 from datetime import datetime
@@ -10,6 +11,8 @@ from pin.model_mongo import InstaMeta
 from pin.tools import create_filename
 
 MEDIA_ROOT = settings.MEDIA_ROOT
+
+socket.setdefaulttimeout(30)
 
 
 def get_from_insta(insta_user_id, cat, user_id, cnt=5):
@@ -36,6 +39,8 @@ def get_from_insta(insta_user_id, cat, user_id, cnt=5):
                 filename = image_url.split('/')[-1]
                 filename = create_filename(filename)
                 image_on = "%s/pin/images/o/%s" % (MEDIA_ROOT, filename)
+
+                image_url = image_url.replace("https://", "http://")
 
                 urllib.urlretrieve(image_url, image_on)
 
