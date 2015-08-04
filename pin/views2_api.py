@@ -30,7 +30,7 @@ from tastypie.models import ApiKey
 from pin.tools import AuthCache, get_user_ip, log_act
 from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2, PhoneData, Log
-from pin.model_mongo import Notif, UserLocation
+from pin.model_mongo import Notif, UserLocation, NotifCount
 from pin.tasks import send_clear_notif
 from pin.cacheLayer import UserNameCache
 
@@ -84,7 +84,12 @@ def notif_count(request):
     if not cur_user_id:
         return HttpResponseForbidden('Token problem')
 
-    notify = Notif.objects.filter(owner=cur_user_id, seen=False).count()
+    try:
+        notify = NotifCount.objects.filter(owner=cur_user_id).first().unread
+    except Exception, e:
+        print str(e)
+        notify = 0
+
     return HttpResponse(notify, content_type="application/json")
 
 
@@ -629,7 +634,7 @@ def notif(request):
 
     notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
 
-    Notif.objects.filter(owner=cur_user, seen=False).update(set__seen=True)
+    NotifCount.objects.filter(owner=cur_user).update(set__unread=0)
     # send_clear_notif(user_id=cur_user)
 
     # Notif.objects.filter(owner=1).order_by('-date')[100:].delete()
@@ -743,7 +748,7 @@ def notif(request):
                 ])
         else:
             
-            for ac in p.last_actors():
+            for ac in [p.last_actor]:
                 ar.append([
                     ac,
                     AuthCache.get_username(ac),

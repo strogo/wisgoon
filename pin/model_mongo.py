@@ -177,6 +177,15 @@ class UserMeta(Document):
         return False
 
 
+class NotifCount(Document):
+    owner = IntField()
+    unread = IntField(default=0)
+
+    meta = {
+        'indexes': ['owner', ]
+    }
+
+
 class Notif(Document):
     last_actor = IntField()
     date = DateTimeField()
@@ -187,8 +196,12 @@ class Notif(Document):
     type = IntField()
     seen = BooleanField(default=False)
 
+    # meta = {
+    #     'indexes': ['owner', 'post', ('owner', '-date'), ('owner', 'type', 'post'), ('seen', 'owner')]
+    # }
+
     meta = {
-        'indexes': ['owner', 'post', ('owner', '-date'), ('owner', 'type', 'post'), ('seen', 'owner')]
+        'indexes': [('owner', '-date')]
     }
 
     def last_actors(self, num=12):
