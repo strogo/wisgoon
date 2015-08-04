@@ -608,6 +608,8 @@ def notif(request):
     # for n in NotifCas.objects.all():
     #     print n[0]
 
+    offset = int(request.GET.get('offset', 0))
+    limit = 40
     token = request.GET.get('api_key', '')
     if token:
         cur_user = AuthCache.id_from_token(token=token)
@@ -632,7 +634,7 @@ def notif(request):
 
     # filters.update(dict(status=Post.APPROVED))
 
-    notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[:50]
+    notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[offset:offset + limit]
 
     NotifCount.objects.filter(owner=cur_user).update(set__unread=0)
     # send_clear_notif(user_id=cur_user)

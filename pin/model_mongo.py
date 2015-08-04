@@ -192,9 +192,7 @@ class Notif(Document):
     post = IntField()
     post_image = StringField()
     owner = IntField()
-    actors = ListField()
     type = IntField()
-    seen = BooleanField(default=False)
 
     # meta = {
     #     'indexes': ['owner', 'post', ('owner', '-date'), ('owner', 'type', 'post'), ('seen', 'owner')]
