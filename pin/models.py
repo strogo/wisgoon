@@ -1182,7 +1182,7 @@ class Comments(models.Model):
 
         users = Comments.objects.filter(object_pk=post.id).values_list('user_id', flat=True)
         # for notif in Notif_mongo.objects.filter(type=2, post=post.id):
-        for notif in users:
+        for act in users:
             if act != comment.user_id:
                 send_notif_bar(user=act, type=2, post=post.id,
                                actor=comment.user_id)

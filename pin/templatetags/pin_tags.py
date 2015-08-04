@@ -15,7 +15,7 @@ from django.utils.text import normalize_newlines
 from django.utils.safestring import mark_safe
 
 from pin.models import Likes as pinLikes
-from pin.model_mongo import Notif, NotifCount
+from pin.model_mongo import NotifCount
 from user_profile.models import Profile
 
 from pin.tools import userdata_cache
@@ -118,8 +118,7 @@ register.tag('user_post_like', user_post_like)
 def get_user_notify(userid):
     try:
         notify = NotifCount.objects.filter(owner=userid).first().unread
-    except Exception, e:
-        print str(e)
+    except Exception:
         notify = 0
     return notify
 

@@ -86,8 +86,8 @@ def notif_count(request):
 
     try:
         notify = NotifCount.objects.filter(owner=cur_user_id).first().unread
-    except Exception, e:
-        print str(e)
+    except Exception:
+        # print str(e)
         notify = 0
 
     return HttpResponse(notify, content_type="application/json")
