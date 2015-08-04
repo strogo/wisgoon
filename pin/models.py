@@ -1148,6 +1148,8 @@ class Comments(models.Model):
         comment = instance
         post = get_post_user_cache(post_id=comment.object_pk_id)
 
+	    actors_list = []
+
         if comment.user_id != post.user_id:
             # if post.user_id == 1:
             #     import requests
@@ -1179,6 +1181,8 @@ class Comments(models.Model):
 
             send_notif_bar(user=post.user_id, type=2, post=post.id,
                            actor=comment.user_id)
+
+            actors_list.append(post.user_id)
 
         users = Comments.objects.filter(object_pk=post.id).values_list('user_id', flat=True)
         # for notif in Notif_mongo.objects.filter(type=2, post=post.id):
