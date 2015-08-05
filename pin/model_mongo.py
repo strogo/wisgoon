@@ -203,7 +203,7 @@ class Notif(Document):
     }
 
     def last_actors(self, num=12):
-        la = self.actors[::-1][:num]
+        la = [self.last_actor]
         return la
 
 
