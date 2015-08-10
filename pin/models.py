@@ -1148,7 +1148,7 @@ class Comments(models.Model):
         comment = instance
         post = get_post_user_cache(post_id=comment.object_pk_id)
 
-	    actors_list = []
+	actors_list = []
 
         if comment.user_id != post.user_id:
             # if post.user_id == 1:
