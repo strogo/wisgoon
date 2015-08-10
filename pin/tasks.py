@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from django.core.cache import cache
 
 from django.conf import settings
 
@@ -17,8 +16,6 @@ def send_notif(user, type, post, actor, seen=False):
 
 
 def send_notif_bar(user, type, post, actor, seen=False, post_image=None):
-    notif_cache_key = "notif_v112_%d" % (int(user))
-    cache.delete(notif_cache_key)
     try:
         if settings.USE_CELERY:
             notif_send.delay(user, type, post, actor, seen=False,
