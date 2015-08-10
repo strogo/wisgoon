@@ -767,7 +767,7 @@ def notif(request):
 
     data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
-    cache.set(notif_cache_key, json_data, 86400)
+    # cache.set(notif_cache_key, json_data, 86400)
     return HttpResponse(json_data, content_type="application/json")
 
 
