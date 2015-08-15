@@ -891,21 +891,21 @@ def item(request, item_id):
 
     mlts = []
 
-    cache_key_mlt = "mlt2.4:%d" % int(item_id)
-    cache_data_mlt = cache.get(cache_key_mlt)
-    if cache_data_mlt:
-        mlts = cache_data_mlt
-    else:
-        mlt = SearchQuerySet()\
-            .models(Post).more_like_this(p)[:30]
+    # cache_key_mlt = "mlt2.4:%d" % int(item_id)
+    # cache_data_mlt = cache.get(cache_key_mlt)
+    # if cache_data_mlt:
+    #     mlts = cache_data_mlt
+    # else:
+    #     mlt = SearchQuerySet()\
+    #         .models(Post).more_like_this(p)[:30]
 
-        for pmlt in mlt:
-            try:
-                mlts.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pmlt.pk))
-            except:
-                pass
+    #     for pmlt in mlt:
+    #         try:
+    #             mlts.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pmlt.pk))
+    #         except:
+    #             pass
 
-        cache.set(cache_key_mlt, mlts, 86400)
+    #     cache.set(cache_key_mlt, mlts, 86400)
 
     post.mlt = mlts
 
