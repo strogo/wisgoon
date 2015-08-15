@@ -18,7 +18,8 @@ class ChangedPosts(object):
 
     @classmethod
     def store_change(cls, post_id):
-        r_server.sadd(cls.KEY_PREFIX, post_id)
+        pass
+        # r_server.sadd(cls.KEY_PREFIX, post_id)
 
     @classmethod
     def get_changed(cls):
