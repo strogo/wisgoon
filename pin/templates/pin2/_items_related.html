@@ -1,7 +1,6 @@
 {% spaceless %}
 
 {% for item in post.mlt %}
-{% with item.object as item %}
 	{% if item.get_image_236 %}
 		{% with 1 as related %}
 		{% if not request.user.is_authenticated %}
@@ -19,7 +18,6 @@
 	<span data-next="{{item.id}}" ></span>
 {%endif%}
 
-{% endwith %}
 {%endfor%}
 
 {% endspaceless %}
