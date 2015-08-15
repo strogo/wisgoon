@@ -887,20 +887,19 @@ def item(request, item_id):
     #     except:
     #         pass
 
-    # p = Post.objects.get(id=item_id)
+    p = Post.objects.get(id=item_id)
 
     post.mlt = {}
 
-    # cache_key_mlt = "mlt:%d" % int(item_id)
-    # cache_data_mlt = cache.get(cache_key_mlt)
-    # if cache_data_mlt:
-    #     post.mlt = cache_data_mlt
-    # else:
-    #     mlt = SearchQuerySet()\
-    #         .models(Post).more_like_this(p)[:30]
-    #     cache.set(cache_key_mlt, mlt, 86400)
-    #     post.mlt = mlt
-    # print post.related
+    cache_key_mlt = "mlt2.2:%d" % int(item_id)
+    cache_data_mlt = cache.get(cache_key_mlt)
+    if cache_data_mlt:
+        post.mlt = cache_data_mlt
+    else:
+        mlt = SearchQuerySet()\
+            .models(Post).more_like_this(p)[:30]
+        cache.set(cache_key_mlt, mlt, 86400)
+        post.mlt = mlt
 
     # if not request.user.is_authenticated:
     #     if post.category_id in [23, 22]:
