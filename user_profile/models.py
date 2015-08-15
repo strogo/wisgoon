@@ -173,6 +173,6 @@ class CreditLog(models.Model):
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        profile, created = Profile.objects.get_or_create(user=instance)
+        profile, created = Profile.objects.get_or_create(user=instance, name=instance.username)
 
 post_save.connect(create_user_profile, sender=User)
