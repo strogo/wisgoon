@@ -887,7 +887,7 @@ def item(request, item_id):
     #     except:
     #         pass
 
-    p = Post.objects.get(id=item_id)
+    # p = Post.objects.get(id=item_id)
 
     mlts = []
 
@@ -905,7 +905,7 @@ def item(request, item_id):
     #         except:
     #             pass
 
-    #     cache.set(cache_key_mlt, mlts, 86400)
+    #     cache.set(cache_key_mlt, mlts, 1)
 
     post.mlt = mlts
 
@@ -937,6 +937,7 @@ def item(request, item_id):
                                               following=post.user.id).count()
 
     comments_url = reverse('pin-get-comments', args=[post.id])
+    related_url = reverse('pin-item-related', args=[post.id])
 
     if request.is_ajax():
         return render(request, 'pin2/items_inner.html',
@@ -946,11 +947,54 @@ def item(request, item_id):
             'post': post,
             'follow_status': follow_status,
             'comments_url': comments_url,
+            'related_url': related_url,
         }, content_type="text/html")
         if enable_cacing:
             cache.set("page_v1_%s" % item_id, d, 300)
 
         return d
+
+
+def item_related(request, item_id):
+    print "this is related"
+    try:
+        post = Post.objects.get(id=item_id)
+    except Post.DoesNotExist:
+        raise Http404("Post does not exist")
+
+    # p = Post.objects.get(id=item_id)
+
+    mlts = []
+
+    mlt = SearchQuerySet()\
+        .models(Post).more_like_this(post)[:30]
+
+    print mlt
+
+    for pmlt in mlt:
+        try:
+            mlts.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pmlt.pk))
+        except:
+            pass
+
+    post.mlt = mlts
+
+    # if post.is_pending():
+    #     if not is_police(request, flat=True):
+    #         return render(request, 'pending.html')
+
+    # if request.user.is_authenticated():
+    #     if check_block(user_id=post.user_id, blocked_id=request.user.id):
+    #         if not is_police(request, flat=True):
+    #             return HttpResponseRedirect('/')
+
+    if request.is_ajax():
+        return render(request, 'pin2/_items_related.html',
+                      {'post': post})
+
+    return render(request, 'pin2/item_related.html', {
+        'post': post,
+    }, content_type="text/html")
 
 
 def get_comments(request, post_id):

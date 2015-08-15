@@ -38,3 +38,21 @@ load_comments();
 $("#comment_load_more").click(function(){
     load_comments();
 });
+
+$.ajax({
+    url: related_url
+}).
+done(function(d){
+    var feedobj = $('#feed');
+    $(feedobj).html(d);
+
+    feedobj.masonry({
+        itemSelector : '.feed-item',
+        isRTL: true,
+        isAnimated: false,
+        isFitWidth: true,
+    });
+
+    feedobj.masonry('reload');
+    
+});
