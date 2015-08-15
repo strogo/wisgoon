@@ -889,17 +889,27 @@ def item(request, item_id):
 
     p = Post.objects.get(id=item_id)
 
-    post.mlt = {}
+    mlts = []
 
-    cache_key_mlt = "mlt2.2:%d" % int(item_id)
+    cache_key_mlt = "mlt2.4:%d" % int(item_id)
     cache_data_mlt = cache.get(cache_key_mlt)
     if cache_data_mlt:
-        post.mlt = cache_data_mlt
+        mlts = cache_data_mlt
     else:
         mlt = SearchQuerySet()\
             .models(Post).more_like_this(p)[:30]
-        cache.set(cache_key_mlt, mlt, 86400)
-        post.mlt = mlt
+
+        for pmlt in mlt:
+            try:
+                mlts.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pmlt.pk))
+            except:
+                pass
+
+        cache.set(cache_key_mlt, mlts, 86400)
+
+    print mlts
+
+    post.mlt = mlts
 
     # if not request.user.is_authenticated:
     #     if post.category_id in [23, 22]:
