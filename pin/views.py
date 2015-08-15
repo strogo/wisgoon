@@ -907,8 +907,6 @@ def item(request, item_id):
 
         cache.set(cache_key_mlt, mlts, 86400)
 
-    print mlts
-
     post.mlt = mlts
 
     # if not request.user.is_authenticated:
