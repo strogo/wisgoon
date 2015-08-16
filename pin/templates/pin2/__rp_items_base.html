@@ -29,7 +29,7 @@
 	<div class="reporters">
 	{% for reporter in item.reporters %}
 		<a href="{% url 'pin-absuser' reporter.user.username %}" >
-			<img src="{{reporter.user_id|get_avatar:30}}" data-toggle="tooltip" data-placement="bottom" title="{{reporter.user}}" /> 
+			<img src="{{reporter.user_id|get_avatar:30}}" style="width:30px" data-toggle="tooltip" data-placement="bottom" title="{{reporter.user}}" /> 
 		</a>
 	{% endfor %}
 	</div>
