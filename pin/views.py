@@ -937,8 +937,6 @@ def item(request, item_id):
 
 
 def item_related(request, item_id):
-    if not request.is_ajax():
-        raise Http404("Post does not exist")
     try:
         post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
