@@ -936,7 +936,6 @@ def item(request, item_id):
 
 
 def item_related(request, item_id):
-    print request.META['HTTP_USER_AGENT']
     try:
         post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
