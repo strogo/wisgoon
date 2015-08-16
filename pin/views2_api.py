@@ -527,7 +527,14 @@ def friends_post(request):
 
     posts = Post.objects\
         .only(*Post.NEED_KEYS2)\
-        .filter(id__in=idis).order_by('-id')[:limit]
+        .filter(id__in=idis)[:limit]
+
+    objects = dict([(int(obj.id), obj) for obj in posts])
+    posts = []
+    for id in idis:
+        id = int(id)
+        if id in objects:
+            posts.append(objects[id])
 
     thumb_size = request.GET.get('thumb_size', "100x100")
 
