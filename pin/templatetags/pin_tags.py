@@ -124,6 +124,13 @@ def get_user_notify(userid):
 
 
 @register.filter
+def get_user_name(user_id):
+    user_id = int(user_id)
+    from pin.cacheLayer import UserDataCache
+    return UserDataCache.get_user_name(user_id=user_id)
+
+
+@register.filter
 def get_username(user):
 
     if isinstance(user, (unicode, str)):

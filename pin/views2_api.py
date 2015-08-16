@@ -32,7 +32,7 @@ from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2, PhoneData, Log
 from pin.model_mongo import Notif, UserLocation, NotifCount
 from pin.tasks import send_clear_notif
-from pin.cacheLayer import UserNameCache
+from pin.cacheLayer import UserDataCache
 
 from haystack.query import SearchQuerySet
 
@@ -169,7 +169,7 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
 
         o['user_avatar'] = get_avatar(p.user_id, size=100)
         # o['user_name'] = AuthCache.get_username(user_id=p.user_id)
-        o['user_name'] = UserNameCache.get_user_name(user_id=p.user_id)
+        o['user_name'] = UserDataCache.get_user_name(user_id=p.user_id)
 
         o['timestamp'] = p.timestamp
 
@@ -589,7 +589,7 @@ def likes(request):
 
         o['user_avatar'] = get_avatar(p, size=100)
         # o['user_name'] = AuthCache.get_username(user_id=p)
-        o['user_name'] = UserNameCache.get_user_name(user_id=p)
+        o['user_name'] = UserDataCache.get_user_name(user_id=p)
 
         o['user_url'] = int(p)
         o['resource_uri'] = "/pin/api/like/likes/%d/" % p
@@ -708,7 +708,7 @@ def notif(request):
         # o['post_owner_user_name'] = AuthCache.get_username(
         #     user_id=cur_p.user_id)
 
-        o['post_owner_user_name'] = UserNameCache.get_user_name(
+        o['post_owner_user_name'] = UserDataCache.get_user_name(
             user_id=cur_p.user_id)
 
         o['user'] = cur_p.user_id
@@ -808,7 +808,7 @@ def following(request, user_id=1):
         o = {}
         o['user_id'] = fol.following_id
         o['user_avatar'] = get_avatar(fol.following_id, size=100)
-        o['user_name'] = UserNameCache.get_user_name(fol.following_id)
+        o['user_name'] = UserDataCache.get_user_name(fol.following_id)
 
         if cur_user:
             o['follow_by_user'] = Follow.objects\
@@ -917,7 +917,7 @@ def follower(request, user_id=1):
         o = {}
         o['user_id'] = fol.follower_id
         o['user_avatar'] = get_avatar(fol.follower_id, size=100)
-        o['user_name'] = UserNameCache.get_user_name(fol.follower_id)
+        o['user_name'] = UserDataCache.get_user_name(fol.follower_id)
 
         if cur_user:
             o['follow_by_user'] = Follow.objects\

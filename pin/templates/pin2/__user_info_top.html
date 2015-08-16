@@ -2,14 +2,14 @@
 {% load pin_tags %}
 
 <div class="avatar">
-	<a href='{% url "pin-absuser" profile.user.username %}'>
-		<img src="{{profile.user|get_avatar:210}}">
+	<a href='{% url "pin-absuser" profile.user_id|get_user_name %}'>
+		<img src="{{profile.user_id|get_avatar:210}}">
 	</a>
 </div>
 
 <div class="user-info">
 	<div class="col-md-12 col-sm-12 col-xs-12 username">
-		<h4>{{profile.user|get_username}}</h4>
+		<h4>{{profile.user_id|get_user_name}}</h4>
 
 		{% if profile.user_id == request.user.id %}
 		<a href="{% url "user-profile-change" %}" class="btn btn-xs btn-primary f-white" data-toggle="modal" data-target="#profileModal">ویرایش</a>

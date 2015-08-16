@@ -237,8 +237,14 @@ class Post(models.Model):
         return self.text
 
     def get_username(self):
-        from cacheLayer import UserNameCache
-        return UserNameCache.get_user_name(user_id=self.user_id)
+        from cacheLayer import UserDataCache
+        return UserDataCache.get_user_name(user_id=self.user_id)
+
+    def get_profile_score(self):
+        from user_profile.models import Profile
+        score = Profile.objects.only('score').get(user_id=self.user_id)\
+            .score
+        return score
 
     def is_pending(self):
         if self.report >= 100:
@@ -1096,8 +1102,8 @@ class Comments(models.Model):
         return self.comment
 
     def get_username(self):
-        from cacheLayer import UserNameCache
-        return UserNameCache.get_user_name(user_id=self.user_id)
+        from cacheLayer import UserDataCache
+        return UserDataCache.get_user_name(user_id=self.user_id)
 
     def date_lt(self, date, how_many_days=15):
         lt_date = datetime.now() - timedelta(days=how_many_days)
