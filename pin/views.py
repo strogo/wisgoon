@@ -389,8 +389,6 @@ def absuser_followers(request, user_namefl):
 
     user_items = User.objects.filter(id__in=friends_list)
 
-    print friends.next_page_number
-
     if request.is_ajax():
         if user_items.exists():
             return render(request, 'pin/_user_friends.html', {
@@ -941,18 +939,14 @@ def item_related(request, item_id):
     except Post.DoesNotExist:
         raise Http404("Post does not exist")
 
-    mlts = []
-
     mlt = SearchQuerySet()\
         .models(Post).more_like_this(post)[:30]
 
+    idis = []
     for pmlt in mlt:
-        try:
-            mlts.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pmlt.pk))
-        except:
-            pass
+        idis.append(pmlt.pk)
 
-    post.mlt = mlts
+    post.mlt = Post.objects.filter(id__in=idis).only(*Post.NEED_KEYS_WEB)
 
     if request.is_ajax():
         return render(request, 'pin2/_items_related.html',
