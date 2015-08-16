@@ -1,8 +1,6 @@
 import os
-import urllib
 
 from django.template import Library
-from django.utils.hashcompat import md5_constructor
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -15,22 +13,7 @@ register = Library()
 
 @register.filter
 def daddy_avatar(user_email, size=200):
-    try:
-        ahash = md5_constructor(user_email.decode('utf-8')).hexdigest()
-    except UnicodeEncodeError:
-        ahash = md5_constructor('a').hexdigest()
-
-    hash_dir = os.path.join(settings.MEDIA_ROOT, 'daddy_avatar/%d' % size)
-    ospath = '%s/%s_%d.jpg' % (hash_dir, ahash, size)
-    gravatar_url = "http://www.gravatar.com/avatar/%s.jpg/?s=%d" % (ahash, size)
-    media_avatar = os.path.join(settings.MEDIA_URL, 'daddy_avatar/%d/%s_%d.jpg' % (size, ahash, size))
-    if not os.path.exists(hash_dir):
-        os.makedirs(hash_dir)
-    if not os.path.exists(ospath):
-        try:
-            urllib.urlretrieve(gravatar_url, ospath)
-        except Exception, e:
-            print str(e)
+    media_avatar = os.path.join(settings.MEDIA_URL, 'default_avatar.jpg')
     return media_avatar
 
 
@@ -43,7 +26,6 @@ def get_avatar(user, size=200):
         user = int(user)
 
     if isinstance(user, (int, long)):
-        #user = User.objects.only('email').get(pk=user)
         user_str = "user_%d" % (user)
         user_cache = cache.get(user_str)
         if user_cache:
@@ -64,8 +46,6 @@ def get_avatar(user, size=200):
         # print "step 1"
 
         if size in ava_dict:
-            # print "step 1.1"
-            #print "get avatar from cache", ava_dict
             return ava_dict[size]
         else:
             # print "step 1.2"
@@ -73,13 +53,13 @@ def get_avatar(user, size=200):
                 profile = Profile.objects.only('avatar').get(user=user)
             except Profile.DoesNotExist:
                 profile = None
-            
             if profile:
                 if profile.avatar:
                     # print "step 1.2.1"
                     t_size = '%sx%s' % (size, size)
                     try:
-                        im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
+                        im = get_thumbnail(profile.avatar, t_size,
+                                           crop='center', quality=99)
                         ava_dict[size] = im.url
                         cache.set(ava_str, ava_dict, 60 * 60 * 1)
                         return im.url
@@ -95,12 +75,13 @@ def get_avatar(user, size=200):
             profile = Profile.objects.only('avatar').get(user=user)
         except Profile.DoesNotExist:
             profile = None
-        
+
         if profile:
             # print "step 2.2.1"
             t_size = '%sx%s' % (size, size)
             try:
-                im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
+                im = get_thumbnail(profile.avatar, t_size,
+                                   crop='center', quality=99)
                 ava_dict[size] = im.url
                 cache.set(ava_str, ava_dict, 60 * 60 * 1)
                 return im.url
