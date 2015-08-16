@@ -1566,15 +1566,15 @@ def get_phone_data(request):
     if token:
         user = AuthCache.user_from_token(token=token)
 
-    if imei:
-        for pdq in PhoneData.objects.filter(imei=imei):
-            if not pdq.user.is_active:
-                u = User.objects.get(pk=user.id)
-                if u.is_active:
-                    u.is_active = False
-                    u.save()
-                    Log.ban_by_imei(actor=user, text=pdq.user.username,
-                                    ip_address=get_user_ip(request))
+    # if imei:
+    #     for pdq in PhoneData.objects.filter(imei=imei):
+    #         if not pdq.user.is_active:
+    #             u = User.objects.get(pk=user.id)
+    #             if u.is_active:
+    #                 u.is_active = False
+    #                 u.save()
+    #                 Log.ban_by_imei(actor=user, text=pdq.user.username,
+    #                                 ip_address=get_user_ip(request))
 
     upd, created = PhoneData.objects.get_or_create(user=user)
     upd.imei = imei
