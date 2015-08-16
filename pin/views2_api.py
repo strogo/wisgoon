@@ -618,7 +618,7 @@ def notif(request):
     #     print n[0]
 
     offset = int(request.GET.get('offset', 0))
-    limit = 40
+    limit = 20
     token = request.GET.get('api_key', '')
     if token:
         cur_user = AuthCache.id_from_token(token=token)
@@ -643,7 +643,8 @@ def notif(request):
 
     # filters.update(dict(status=Post.APPROVED))
 
-    notifs = Notif.objects.filter(owner=cur_user).order_by('-date')[offset:offset + limit]
+    notifs = Notif.objects.filter(owner=cur_user)\
+        .order_by('-date')[offset:offset + limit]
 
     NotifCount.objects.filter(owner=cur_user).update(set__unread=0)
     # send_clear_notif(user_id=cur_user)
@@ -747,22 +748,21 @@ def notif(request):
             o['thumbnail'] = imo['url']
             o['hw'] = imo['hw']
 
-        o['category'] = Category.get_json(cat_id=cur_p.category_id)
+        # o['category'] = Category.get_json(cat_id=cur_p.category_id)
+        o['category'] = CategoryDataCache\
+            .get_cat_json(category_id=cur_p.category_id)
 
         ar = []
         if p.type == 10:
             # p['actors'] = [get_avatar(p.last_actor, size=100)]
-            ar.append([
-                    p.last_actor,
-                    AuthCache.get_username(p.last_actor),
-                    get_avatar(p.last_actor, size=100)
-                ])
+            ar.append([p.last_actor,
+                       UserDataCache.get_user_name(user_id=p.last_actor),
+                       get_avatar(p.last_actor, size=100)])
         else:
-            
             for ac in [p.last_actor]:
                 ar.append([
                     ac,
-                    AuthCache.get_username(ac),
+                    UserDataCache.get_user_name(user_id=ac),
                     get_avatar(ac, size=100)
                 ])
                 break
@@ -980,7 +980,8 @@ def search(request):
             r = r.object
             o['id'] = r.user_id
             o['avatar'] = get_avatar(r.user_id, 100)
-            o['username'] = r.user.username
+            # o['username'] = r.user.username
+            o['username'] = UserDataCache.get_user_name(r.user_id)
             try:
                 o['name'] = r.name
             except:
