@@ -23,11 +23,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from sorl.thumbnail import get_thumbnail
 
-from taggit.managers import TaggableManager
 from taggit.models import Tag
 
-from model_mongo import Notif as Notif_mongo, MonthlyStats,\
-    PendingPosts
+from model_mongo import Notif as Notif_mongo, MonthlyStats
 from preprocessing import normalize_tags
 
 LIKE_TO_DEFAULT_PAGE = 10
@@ -64,7 +62,8 @@ class Ad(models.Model):
     }
 
     user = models.ForeignKey(User)
-    owner = models.ForeignKey(User, related_name='owner', blank=True, null=True)
+    owner = models.ForeignKey(User, related_name='owner',
+                              blank=True, null=True)
     ended = models.BooleanField(default=False, db_index=True)
     cnt_view = models.IntegerField(default=0)
     post = models.ForeignKey("Post")
@@ -786,7 +785,8 @@ class Bills2(models.Model):
     status = models.IntegerField(blank=True, null=True, default=0,
                                  choices=STATUS_CHOICES)
     amount = models.IntegerField(blank=True, null=True)
-    trans_id = models.CharField(max_length=250, blank=True, null=True, db_index=True)
+    trans_id = models.CharField(max_length=250, blank=True,
+                                null=True, db_index=True)
 
     create_date = models.DateField(auto_now_add=True, default=datetime.now)
     create_time = models.DateTimeField(auto_now_add=True, default=datetime.now)
@@ -866,7 +866,6 @@ class Stream(models.Model):
         post = instance
         post.get_image_236()
         post.get_image_500()
-        print "this is get image sizes ***********************************************"
         post.get_image_sizes()
         if kwargs['created']:
 
@@ -1140,7 +1139,7 @@ class Comments(models.Model):
         comment = instance
         post = get_post_user_cache(post_id=comment.object_pk_id)
 
-	actors_list = []
+        actors_list = []
 
         if comment.user_id != post.user_id:
             # if post.user_id == 1:
@@ -1244,7 +1243,8 @@ class Block(models.Model):
 
 
 class PhoneData(models.Model):
-    user = models.OneToOneField(User, related_name="phone", null=True, blank=True)
+    user = models.OneToOneField(User, related_name="phone",
+                                null=True, blank=True)
     imei = models.CharField(max_length=50)
     os = models.CharField(max_length=50)
     phone_model = models.CharField(max_length=50)
