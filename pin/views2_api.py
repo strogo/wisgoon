@@ -32,7 +32,7 @@ from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2, PhoneData, Log
 from pin.model_mongo import Notif, UserLocation, NotifCount
 from pin.tasks import send_clear_notif
-from pin.cacheLayer import UserDataCache
+from pin.cacheLayer import UserDataCache, CategoryDataCache
 
 from haystack.query import SearchQuerySet
 
@@ -226,7 +226,9 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
             # print "we dont have imo", p.id, o_image, imo
             continue
 
-        o['category'] = Category.get_json(cat_id=p.category_id)
+        # o['category'] = Category.get_json(cat_id=p.category_id)
+        o['category'] = CategoryDataCache\
+            .get_cat_json(category_id=p.category_id)
         objects_list.append(o)
 
     # cache.set(list_cache_str, objects_list, 600)
