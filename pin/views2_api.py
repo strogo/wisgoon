@@ -335,7 +335,7 @@ def post(request):
                     .count():
                 return HttpResponse('Blocked')
 
-        sort_by = ['-timestamp']
+        sort_by = ['-id']
         filters.update(dict(user_id=user_id))
         if cur_user:
             # if int(cur_user) == int(user_id):
