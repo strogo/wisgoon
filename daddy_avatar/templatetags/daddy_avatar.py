@@ -19,6 +19,9 @@ def daddy_avatar(user_email, size=200):
 
 @register.filter
 def get_avatar(user, size=200):
+    class UserGeneric(object):
+        pass
+
     if not user:
         return daddy_avatar('', size)
 
@@ -26,18 +29,25 @@ def get_avatar(user, size=200):
         user = int(user)
 
     if isinstance(user, (int, long)):
-        user_str = "user_%d" % (user)
-        user_cache = cache.get(user_str)
-        if user_cache:
-            user = user_cache
-        else:
-            try:
-                user = User.objects.only('email').get(pk=user)
-                cache.set(user_str, user, 60 * 60 * 24)
-            except:
-                return 'None'
+        u = UserGeneric()
+        u.id = int(user)
+        # # user = User.objects.only('email').get(pk=user)
+        # user_str = "user_%d" % (user)
+        # user_cache = cache.get(user_str)
+        # if user_cache:
+        #     user = user_cache
+        # else:
+        #     try:
+        #         user = User.objects.only('email').get(pk=user)
+        #         cache.set(user_str, user, 60 * 60 * 24)
+        #     except:
+        #         return 'None'
+    if isinstance(user, User):
+        u = user
 
-    ava_str = "avatar3210u_%d" % (user.id)
+    user_id = u.id
+
+    ava_str = "avatar3210u_%d" % (user_id)
     # ava_dict = {}
     # try:
     ava_dict = cache.get(ava_str)
@@ -46,20 +56,22 @@ def get_avatar(user, size=200):
         # print "step 1"
 
         if size in ava_dict:
+            # print "step 1.1"
+            # print "get avatar from cache", ava_dict
             return ava_dict[size]
         else:
             # print "step 1.2"
             try:
-                profile = Profile.objects.only('avatar').get(user=user)
+                profile = Profile.objects.only('avatar').get(user_id=user_id)
             except Profile.DoesNotExist:
                 profile = None
+
             if profile:
                 if profile.avatar:
                     # print "step 1.2.1"
                     t_size = '%sx%s' % (size, size)
                     try:
-                        im = get_thumbnail(profile.avatar, t_size,
-                                           crop='center', quality=99)
+                        im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
                         ava_dict[size] = im.url
                         cache.set(ava_str, ava_dict, 60 * 60 * 1)
                         return im.url
@@ -72,7 +84,7 @@ def get_avatar(user, size=200):
         ava_dict = {}
         # print "step 2.1"
         try:
-            profile = Profile.objects.only('avatar').get(user=user)
+            profile = Profile.objects.only('avatar').get(user_id=user_id)
         except Profile.DoesNotExist:
             profile = None
 
@@ -80,8 +92,7 @@ def get_avatar(user, size=200):
             # print "step 2.2.1"
             t_size = '%sx%s' % (size, size)
             try:
-                im = get_thumbnail(profile.avatar, t_size,
-                                   crop='center', quality=99)
+                im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
                 ava_dict[size] = im.url
                 cache.set(ava_str, ava_dict, 60 * 60 * 1)
                 return im.url
@@ -89,7 +100,7 @@ def get_avatar(user, size=200):
                 pass
                 # print "daddy_avatar line 94: ", str(e)
 
-    glob_avatar = daddy_avatar(user.email, size)
+    glob_avatar = daddy_avatar("", size)
     ava_dict[size] = glob_avatar
     cache.set(ava_str, ava_dict, 60 * 60 * 1)
     return glob_avatar
