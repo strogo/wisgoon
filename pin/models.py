@@ -544,14 +544,6 @@ class Post(models.Model):
         return True
 
     def save(self, *args, **kwargs):
-        print "*******************this is save"
-        from tools import check_spam
-        if check_spam(self.text):
-            Log.bad_post(actor=self.user,
-                         text=self.text)
-
-            return
-
         # is_official = False
         from user_profile.models import Profile
         try:
