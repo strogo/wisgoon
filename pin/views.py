@@ -891,27 +891,7 @@ def item(request, item_id):
 
     mlts = []
 
-    # cache_key_mlt = "mlt2.4:%d" % int(item_id)
-    # cache_data_mlt = cache.get(cache_key_mlt)
-    # if cache_data_mlt:
-    #     mlts = cache_data_mlt
-    # else:
-    #     mlt = SearchQuerySet()\
-    #         .models(Post).more_like_this(p)[:30]
-
-    #     for pmlt in mlt:
-    #         try:
-    #             mlts.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pmlt.pk))
-    #         except:
-    #             pass
-
-    #     cache.set(cache_key_mlt, mlts, 1)
-
     post.mlt = mlts
-
-    # if not request.user.is_authenticated:
-    #     if post.category_id in [23, 22]:
-    #         return render(request, 'pending.html')
 
     if post.is_pending():
         if not is_police(request, flat=True):
@@ -956,20 +936,15 @@ def item(request, item_id):
 
 
 def item_related(request, item_id):
-    print "this is related"
     try:
         post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
         raise Http404("Post does not exist")
 
-    # p = Post.objects.get(id=item_id)
-
     mlts = []
 
     mlt = SearchQuerySet()\
         .models(Post).more_like_this(post)[:30]
-
-    print mlt
 
     for pmlt in mlt:
         try:
@@ -978,15 +953,6 @@ def item_related(request, item_id):
             pass
 
     post.mlt = mlts
-
-    # if post.is_pending():
-    #     if not is_police(request, flat=True):
-    #         return render(request, 'pending.html')
-
-    # if request.user.is_authenticated():
-    #     if check_block(user_id=post.user_id, blocked_id=request.user.id):
-    #         if not is_police(request, flat=True):
-    #             return HttpResponseRedirect('/')
 
     if request.is_ajax():
         return render(request, 'pin2/_items_related.html',
