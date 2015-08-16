@@ -846,8 +846,11 @@ def absuser(request, user_name=None):
         else:
             return HttpResponse(0)
     else:
-        follow_status = Follow.objects.filter(follower=request.user.id,
-                                              following=user.id).count()
+        if request.user.id:
+            follow_status = Follow.objects.filter(follower=request.user.id,
+                                                  following=user.id).count()
+        else:
+            follow_status = 0
 
         return render(request, 'pin2/user.html', {
             'latest_items': latest_items,

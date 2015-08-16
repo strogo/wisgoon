@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from pin.api_tools import abs_url, media_abs_url
 
-from pin.cacheLayer import UserNameCache
+from pin.cacheLayer import UserDataCache
 from pin.models_redis import LikesRedis
 from pin.api5.tools import get_next_url, category_get_json
 
@@ -47,7 +47,7 @@ def get_objects_list(posts, cur_user_id, r=None):
 
         u['id'] = p.user_id
         u['avatar'] = media_abs_url(get_avatar(p.user_id, size=100))
-        u['username'] = UserNameCache.get_user_name(p.user_id)
+        u['username'] = UserDataCache.get_user_name(p.user_id)
 
         o['user'] = u
         try:

@@ -13,7 +13,7 @@ from pin.api5.http import return_bad_request, return_json_data, return_un_auth
 from pin.api5.tools import get_next_url
 from pin.tools import AuthCache
 from pin.models import Follow
-from pin.cacheLayer import UserNameCache
+from pin.cacheLayer import UserDataCache
 
 # from daddy_avatar.templatetags import daddy_avatar
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
@@ -48,7 +48,7 @@ def followers(request, user_id):
         u = {}
         u['id'] = fol.follower_id
         u['avatar'] = get_avatar(fol.follower_id, size=100)
-        u['username'] = UserNameCache.get_user_name(fol.follower_id)
+        u['username'] = UserDataCache.get_user_name(fol.follower_id)
         o['user'] = u
         if cur_user:
             o['follow_by_user'] = Follow.objects\
@@ -93,7 +93,7 @@ def following(request, user_id=1):
         u = {}
         u['id'] = fol.following_id
         u['avatar'] = get_avatar(fol.following_id, size=100)
-        u['username'] = UserNameCache.get_user_name(fol.following_id)
+        u['username'] = UserDataCache.get_user_name(fol.following_id)
 
         o['user'] = u
 
