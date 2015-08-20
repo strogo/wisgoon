@@ -1091,6 +1091,7 @@ a.btn.btn-primary {
 }
 
 .notif a img{
+	width: 24px;
 	padding: 2px;
 }
 
