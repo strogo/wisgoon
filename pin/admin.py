@@ -136,7 +136,7 @@ class InstaAccountAdmin(admin.ModelAdmin):
 class PinAdmin(admin.ModelAdmin):
     list_filter = ('status', 'report', 'is_ads', 'show_in_default',
                    'category__title')
-    search_fields = ['id', 'user__id']
+    search_fields = ['=id', '=user__id']
 
     raw_id_fields = ("user",)
 
