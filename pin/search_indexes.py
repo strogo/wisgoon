@@ -39,9 +39,14 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
         return self.get_model().objects.all()
 
     def prepare_tags(self, obj):
+        nt = []
+
+        if obj.status == 0:
+            return nt
+
         hash_tags = re.compile(ur'(?i)(?<=\#)\w+', re.UNICODE)
         tags = hash_tags.findall(obj.text)
-        nt = []
+
         for tag in tags:
             nt.append(normalize_tags(tag))
         # print nt
