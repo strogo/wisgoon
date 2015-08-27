@@ -437,6 +437,9 @@ class Post(models.Model):
         Profile.objects.filter(user_id=self.user_id)\
             .update(cnt_post=F('cnt_post') - 1, score=F('score') - n_score)
 
+        from models_redis import LikesRedis
+        LikesRedis(post_id=self.id).delete_likes()
+
         # from tasks import send_notif_bar
 
         # send_notif_bar(user=self.user.id, type=4, post=self.id,
