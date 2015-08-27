@@ -182,15 +182,12 @@ class PinAdmin(admin.ModelAdmin):
 
     def delete_all_user_posts(self, request, queryset):
         for obj in queryset:
-            user = obj.user
-            user.is_active = False
-            user.save()
-            for o in Post.objects.only('id').filter(user=obj.user):
+            for o in Post.objects.only('id').filter(user_id=obj.user_id):
                 o.delete()
-            for o in Comments.objects.filter(user=obj.user):
+            for o in Comments.objects.filter(user_id=obj.user_id):
                 o.delete()
 
-    delete_all_user_posts.short_description = 'حذف تمام پست های کاربر و غیر فعال کردن'
+    delete_all_user_posts.short_description = 'حذف تمام پست های کاربر'
 
 
 # class NotifyAdmin(admin.ModelAdmin):
