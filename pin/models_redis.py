@@ -62,6 +62,11 @@ class LikesRedis(object):
                 p.sadd(self.keyName3, str(uid))
             p.execute()
 
+    def delete_likes(self):
+        r_server4.delete(self.keyName4)
+        r_server3.delete(self.keyName3)
+        r_server.delete(self.keyName)
+
     def get_likes(self, offset, limit=20, as_user_object=False):
         data = r_server4.lrange(self.keyName4, offset, offset + limit - 1)
         if not as_user_object:
