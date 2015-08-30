@@ -1048,10 +1048,10 @@ def search2(request):
 
 def hashtag_top(request):
     tags = []
-    sqs = SearchQuerySet().models(Post).facet('tags', mincount=10, limit=100)
+    # sqs = SearchQuerySet().models(Post).facet('tags', mincount=10, limit=100)
     # print sqs.facet_counts()
-    if sqs:
-        tags = [t for t in sqs.facet_counts()['fields']['tags']]
+    # if sqs:
+        # tags = [t for t in sqs.facet_counts()['fields']['tags']]
 
     # print tags
 
