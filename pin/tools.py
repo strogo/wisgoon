@@ -394,6 +394,7 @@ PACKS_WITH_AMOUNT = {
 def get_new_access_token():
     new_access_token = cache.get("new_access_token")
     if new_access_token:
+        print "get access token from cache"
         return new_access_token
     import requests
     import ast
