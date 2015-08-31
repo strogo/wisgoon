@@ -391,6 +391,26 @@ PACKS_WITH_AMOUNT = {
 }
 
 
+def get_new_access_token():
+    new_access_token = cache.get("new_access_token")
+    if new_access_token:
+        return new_access_token
+    import requests
+    import ast
+    d = {'grant_type': 'refresh_token',
+         'client_secret': 'WxGrwBJUEG5nZQASZzc0Y0C3G1FAtdtB6ZCMrzLpWBVu1hdG4PE1i6pnZ3TN',
+         'client_id': 'yiV49s0y9TqSFF7NEsorfytBTyeBdvEaHGnyn8xC',
+         'refresh_token': 'z8F0OyByBlgLK6pHKG4j6YxMbyoJLi'}
+
+    r = requests.post("https://pardakht.cafebazaar.ir/devapi/v2/auth/token/", data=d)
+    if r:
+        new_access_token = ast.literal_eval(r.text)['access_token']
+        cache.set("new_access_token", new_access_token, 3600)
+        return new_access_token
+
+    return None
+
+
 def revalidate_bazaar(bill):
     if Bills2.objects.filter(trans_id=bill.trans_id, status=Bills2.COMPLETED).count() > 0:
         bill.status = Bills2.FAKERY
@@ -398,8 +418,21 @@ def revalidate_bazaar(bill):
         print 'nist'
         return False
 
+    """
+    https://pardakht.cafebazaar.ir/devapi/v2/auth/token/
+    {
+    "access_token": "4LVXzqt8Z9TCMqKsOVxQlGg6WYEBXi",
+    "token_type": "Bearer",
+    "expires_in": 3600,
+    "refresh_token": "z8F0OyByBlgLK6pHKG4j6YxMbyoJLi",
+    "scope": "androidpublisher"
+    }
+    """
+
+    access_token = get_new_access_token()
+
     package_name = PACKS_WITH_AMOUNT[int(bill.amount)]['pack']
-    url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=gtp8TnDCJjqc2ZVBIiat3KpvpmxDsc" % (package_name, bill.trans_id)
+    url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=%s" % (package_name, bill.trans_id, access_token)
     print "goto validate: ", url
     try:
         u = urllib2.urlopen(url).read()
