@@ -400,6 +400,7 @@ def revalidate_bazaar(bill):
 
     package_name = PACKS_WITH_AMOUNT[int(bill.amount)]['pack']
     url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=gtp8TnDCJjqc2ZVBIiat3KpvpmxDsc" % (package_name, bill.trans_id)
+    print "goto validate: ", url
     try:
         u = urllib2.urlopen(url).read()
         j = json.loads(u)
