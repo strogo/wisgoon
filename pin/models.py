@@ -113,7 +113,10 @@ class Ad(models.Model):
                             end=datetime.now(),
                             ended=True)
             else:
-                cache.incr(cache_key)
+                try:
+                    cache.incr(cache_key)
+                except Exception, e:
+                    print str(e), "get add"
 
             return ad
 
