@@ -27,7 +27,7 @@ from django.views.decorators.csrf import csrf_exempt
 from sorl.thumbnail import get_thumbnail
 from tastypie.models import ApiKey
 
-from pin.tools import AuthCache, get_user_ip, log_act
+from pin.tools import AuthCache, get_user_ip, log_act, get_new_access_token
 from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2, PhoneData, Log
 from pin.model_mongo import Notif, UserLocation, NotifCount
@@ -1398,7 +1398,8 @@ def inc_credit(request):
             b.save()
             return HttpResponse("bazzar token error", status=404)
         else:
-            url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=gtp8TnDCJjqc2ZVBIiat3KpvpmxDsc" % (package_name, baz_token)
+            access_token = get_new_access_token()
+            url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=%s" % (package_name, baz_token, access_token)
             try:
                 u = urllib2.urlopen(url).read()
                 j = json.loads(u)

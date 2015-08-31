@@ -405,7 +405,8 @@ def get_new_access_token():
 
     r = requests.post("https://pardakht.cafebazaar.ir/devapi/v2/auth/token/", data=d)
     if r:
-        new_access_token = ast.literal_eval(r.text)['access_token']
+        new_data = ast.literal_eval(r.text)
+        new_access_token = new_data['access_token']
         cache.set("new_access_token", new_access_token, 3600)
         return new_access_token
 
