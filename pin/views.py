@@ -34,6 +34,15 @@ REPORT_TYPE = settings.REPORT_TYPE
 def home(request):
     log_act("wisgoon.home.view.count")
     pid = get_request_pid(request)
+    cache_str = "page:home:%s" % str(pid)
+    print "cache str:", cache_str
+    enable_cacing = False
+    if not request.user.is_authenticated():
+        enable_cacing = True
+        cd = cache.get(cache_str)
+        if cd:
+            print "get gome page from cache"
+            return cd
     pl = Post.home_latest(pid=pid)
     arp = []
 
@@ -52,19 +61,26 @@ def home(request):
         next_url = reverse('home') + "?older=" + last_id
         # print next_url
 
+    response_data = HttpResponse(0)
+
     if request.is_ajax():
         if arp:
-            return render(request, 'pin2/_items_2.html', {
+            response_data = render(request, 'pin2/_items_2.html', {
                 'latest_items': arp,
                 'next_url': next_url,
             })
         else:
-            return HttpResponse(0)
+            response_data = HttpResponse(0)
     else:
-        return render(request, 'pin2/home.html', {
+        response_data = render(request, 'pin2/home.html', {
             'latest_items': arp,
             'next_url': next_url
         })
+
+    if enable_cacing:
+        cache.set(cache_str, response_data, 300)
+
+    return response_data
 
 
 def search(request):
@@ -504,14 +520,13 @@ def rp(request):
 def latest_redis(request):
     pid = get_request_pid(request)
     cache_str = "page:latest:%s" % str(pid)
-    print cache_str
+    print "cache str:", cache_str
     enable_cacing = False
     if not request.user.is_authenticated():
         enable_cacing = True
         cd = cache.get(cache_str)
         if cd:
-            # print "get data from cache"
-            # print cd
+            print "showing data from cache"
             return cd
 
     pl = Post.latest(pid=pid)
@@ -542,24 +557,26 @@ def latest_redis(request):
     if arp and last_id:
         next_url = reverse('pin-latest') + "?pid=" + last_id
 
+    response_data = HttpResponse(0)
+
     if request.is_ajax():
         if arp:
-            return render(request, 'pin2/_items_2.html', {
+            response_data = render(request, 'pin2/_items_2.html', {
                 'latest_items': arp,
                 'next_url': next_url,
             })
         else:
-            return HttpResponse(0)
+            response_data = HttpResponse(0)
     else:
-        d = render(request, 'pin2/latest_redis.html', {
+        response_data = render(request, 'pin2/latest_redis.html', {
             'latest_items': arp,
             'page': 'latest',
             'next_url': next_url,
         })
-        if enable_cacing:
-            cache.set(cache_str, d, 300)
+    if enable_cacing:
+        cache.set(cache_str, response_data, 300)
 
-        return d
+    return response_data
 
 
 def last_likes(request):
