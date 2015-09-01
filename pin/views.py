@@ -503,6 +503,17 @@ def rp(request):
 
 def latest_redis(request):
     pid = get_request_pid(request)
+    cache_str = "page:latest:%s" % str(pid)
+    print cache_str
+    enable_cacing = False
+    if not request.user.is_authenticated():
+        enable_cacing = True
+        cd = cache.get(cache_str)
+        if cd:
+            # print "get data from cache"
+            # print cd
+            return cd
+
     pl = Post.latest(pid=pid)
     arp = []
     last_id = None
@@ -540,11 +551,15 @@ def latest_redis(request):
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin2/latest_redis.html', {
+        d = render(request, 'pin2/latest_redis.html', {
             'latest_items': arp,
             'page': 'latest',
             'next_url': next_url,
         })
+        if enable_cacing:
+            cache.set(cache_str, d, 300)
+
+        return d
 
 
 def last_likes(request):
