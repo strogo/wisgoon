@@ -29,7 +29,7 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('pin.views',
-    url(r'^latest/$', 'latest_redis', name='pin-latest'),
+    url(r'^recent/$', 'latest_redis', name='pin-latest'),
     
     url(r'^rp/$', 'rp', name='rp'),
 
