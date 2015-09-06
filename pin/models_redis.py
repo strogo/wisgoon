@@ -55,12 +55,12 @@ class LikesRedis(object):
 
         # r_server.delete(self.keyName)
 
-        if not r_server3.exists(self.keyName3):
-            keys = r_server4.lrange(self.keyName4, 0, -1)
-            p = r_server3.pipeline()
-            for uid in keys[::-1]:
-                p.sadd(self.keyName3, str(uid))
-            p.execute()
+        # if not r_server3.exists(self.keyName3):
+        #     keys = r_server4.lrange(self.keyName4, 0, -1)
+        #     p = r_server3.pipeline()
+        #     for uid in keys[::-1]:
+        #         p.sadd(self.keyName3, str(uid))
+        #     p.execute()
 
     def delete_likes(self):
         r_server4.delete(self.keyName4)

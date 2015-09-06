@@ -396,6 +396,7 @@ def get_new_access_token():
     if new_access_token:
         print "get access token from cache"
         return new_access_token
+    print "refresh_token"
     import requests
     import ast
     d = {'grant_type': 'refresh_token',
