@@ -11,6 +11,8 @@ from pin.api5.tools import get_next_url, category_get_json
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from pin.api5.http import return_json_data, return_bad_request
 
+from haystack.query import SearchQuerySet
+
 
 def get_list_post(pl, from_model='latest'):
     arp = []
@@ -83,6 +85,7 @@ def get_objects_list(posts, cur_user_id, r=None):
             o['images']['low_resolution']['width'] = int(p_500['hw'].split("x")[1])
             del(o['images']['low_resolution']['hw'])
             del(o['images']['low_resolution']['h'])
+
             p_236 = p.get_image_236(api=True)
             o['images']['thumbnail'] = p_236
             o['images']['thumbnail']['url'] = media_abs_url(p_236['url'])
@@ -90,6 +93,7 @@ def get_objects_list(posts, cur_user_id, r=None):
             o['images']['thumbnail']['width'] = int(p_236['hw'].split("x")[1])
             del(o['images']['thumbnail']['hw'])
             del(o['images']['thumbnail']['h'])
+
             p_original = p.get_image_sizes()
             o['images']['original'] = p_original
             o['images']['original']['url'] = media_abs_url(p.image)
@@ -230,6 +234,46 @@ def choices(request):
         last_item = data['objects'][-1]['id']
         data['meta']['next'] = get_next_url(url_name='api-5-post-choices',
                                             token=token, before=last_item)
+
+    return return_json_data(data)
+
+
+def search(request):
+    row_per_page = 20
+    query = request.GET.get('q', '')
+    offset = int(request.GET.get('offset', 0))
+    next_offset = offset + 1 * row_per_page
+
+    cur_user = None
+    data = {}
+    data['meta'] = {'limit': 20,
+                    'next': "",
+                    'total_count': 1000}
+
+    before = request.GET.get('before', None)
+    token = request.GET.get('token', None)
+
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+
+    if not before:
+        before = 0
+
+    posts = SearchQuerySet().models(Post)\
+        .filter(content__contains=query)[offset:next_offset]
+
+    idis = []
+    for pmlt in posts:
+        idis.append(pmlt.pk)
+
+    posts = Post.objects.filter(id__in=idis).only(*Post.NEED_KEYS_WEB)
+
+    data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
+                                       r=request)
+
+    if data['objects']:
+        data['meta']['next'] = get_next_url(url_name='api-5-post-search',
+                                            token=token, offset=next_offset)
 
     return return_json_data(data)
 
