@@ -50,7 +50,7 @@ REDIS_DB_2 = 'wisgoon.db.2'
 REDIS_DB_NUMBER_2 = 10
 
 MONGO_DB = "wisgoon"
-MONGO_DB_HOST = "wisgoon.db"
+MONGO_DB_HOST = "wisgoon.mongo.db"
 
 GOOGLE_COOKIE_CONSENT = 'google_token_consent'
 GOOGLE_REDIRECT_SESSION_VAR = 'google_contacts_redirect'
