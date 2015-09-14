@@ -1,6 +1,5 @@
 # coding: utf-8
 from time import mktime
-import zlib
 import datetime
 import operator
 import itertools
@@ -981,7 +980,7 @@ def item_related(request, item_id):
         enable_caching = True
         cd = cache.get(cache_key)
         if cd:
-            return zlib.decompress(cd)
+            return cd
     try:
         post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
@@ -1006,7 +1005,7 @@ def item_related(request, item_id):
         }, content_type="text/html")
 
     if enable_caching:
-        cache.set(cache_key, zlib.compress(d), 3600)
+        cache.set(cache_key, d, 3600)
 
     return d
 
