@@ -1301,6 +1301,11 @@ class PostMetaData(models.Model):
     img_500 = models.CharField(max_length=250)
 
 
+class BannedImei(models.Model):
+    imei = models.CharField(max_length=50, db_index=True)
+    create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
+
+
 class Log(models.Model):
     POST = 1
     COMMENT = 2
