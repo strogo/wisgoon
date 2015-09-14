@@ -5,10 +5,17 @@ from django.contrib import admin
 from haystack.admin import SearchModelAdmin
 
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
-    Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData
+    Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
+    BannedImei
 from pin.tasks import send_notif
 from user_profile.models import Profile, CreditLog
 from pin.tools import revalidate_bazaar
+
+
+class BannedImeiAdmin(admin.ModelAdmin):
+    list_display = ('id', 'imei', 'create_time')
+
+    search_fields = ["=imei", ]
 
 
 class PhoneDataAdmin(admin.ModelAdmin):
@@ -23,7 +30,7 @@ class PhoneDataAdmin(admin.ModelAdmin):
         'app_version'
     )
     raw_id_fields = ("user",)
-    search_fields = ["imei", "user__username"]
+    search_fields = ["=imei", "=user__username"]
 
 
 class CreditLogAdmin(admin.ModelAdmin):
@@ -316,3 +323,4 @@ admin.site.register(Ad, AdAdmin)
 admin.site.register(Log, LogAdmin)
 admin.site.register(CreditLog, CreditLogAdmin)
 admin.site.register(PhoneData, PhoneDataAdmin)
+admin.site.register(BannedImei, BannedImeiAdmin)

@@ -29,7 +29,7 @@ from tastypie.models import ApiKey
 
 from pin.tools import AuthCache, get_user_ip, log_act, get_new_access_token
 from pin.models import Post, Category, Likes, Follow, Comments, Block,\
-    Packages, Ad, Bills2, PhoneData, Log
+    Packages, Ad, Bills2, PhoneData, Log, BannedImei
 from pin.model_mongo import Notif, UserLocation, NotifCount
 from pin.tasks import send_clear_notif
 from pin.cacheLayer import UserDataCache, CategoryDataCache
@@ -1559,15 +1559,15 @@ def get_phone_data(request):
     if token:
         user = AuthCache.user_from_token(token=token)
 
-    # if imei:
-    #     for pdq in PhoneData.objects.filter(imei=imei):
-    #         if not pdq.user.is_active:
-    #             u = User.objects.get(pk=user.id)
-    #             if u.is_active:
-    #                 u.is_active = False
-    #                 u.save()
-    #                 Log.ban_by_imei(actor=user, text=pdq.user.username,
-    #                                 ip_address=get_user_ip(request))
+    if imei:
+        if BannedImei.objects.filter(imei=imei).exists():
+            u = User.objects.get(pk=user.id)
+            if u.is_active:
+                u.is_active = False
+                u.save()
+
+                Log.ban_by_imei(actor=user, text=u.username,
+                                ip_address=get_user_ip(request))
 
     upd, created = PhoneData.objects.get_or_create(user=user)
     upd.imei = imei
