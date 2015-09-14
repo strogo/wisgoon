@@ -1,5 +1,6 @@
 # coding: utf-8
 from time import mktime
+import zlib
 import datetime
 import operator
 import itertools
@@ -970,13 +971,17 @@ def item(request, item_id):
 
 def item_related(request, item_id):
     enable_caching = False
-    cache_key = "rel:%s" % item_id
+
+    if request.is_ajax():
+        cache_key = "rel:v1:ajax:%s" % item_id
+    else:
+        cache_key = "rel:v1:%s" % item_id
+
     if not request.user.is_authenticated():
         enable_caching = True
         cd = cache.get(cache_key)
         if cd:
-            print "from cache"
-            return cd
+            return zlib.decompress(cd)
     try:
         post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
@@ -1001,7 +1006,7 @@ def item_related(request, item_id):
         }, content_type="text/html")
 
     if enable_caching:
-        cache.set(cache_key, d, 3600)
+        cache.set(cache_key, zlib.compress(d), 3600)
 
     return d
 
