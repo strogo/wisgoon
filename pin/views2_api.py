@@ -260,32 +260,22 @@ def get_list_post(pl, from_model='latest'):
 
 
 def post_item(request, item_id):
-    thumb_size = "500"
-
-    cache_pi_str = "cpost_item_%s_%s" % (item_id, thumb_size)
-    p = cache.get(cache_pi_str)
-    if p:
-        return HttpResponse(p)
-
     try:
-        p = Post.objects.values('id', 'image').get(id=item_id)
+        p = Post.objects.only('id').get(id=item_id)
     except Exception, e:
         print str(e)
         return HttpResponse('{}')
 
+    imo = p.get_image_500(api=True)
+
     data = {}
 
-    o_image = p['image']
-
-    imo = get_thumb(o_image, thumb_size, settings.API_THUMB_QUALITY)
-
     if imo:
-        data['id'] = p['id']
-        data['thumbnail'] = imo['thumbnail'].replace('/media/', '')
+        data['id'] = p.id
+        data['thumbnail'] = imo['url']
         data['hw'] = imo['hw']
 
     json_data = json.dumps(data, cls=MyEncoder)
-    cache.set(cache_pi_str, json_data, 86400)
     return HttpResponse(json_data, content_type="application/json")
 
 
