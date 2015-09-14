@@ -969,6 +969,14 @@ def item(request, item_id):
 
 
 def item_related(request, item_id):
+    enable_caching = False
+    cache_key = "rel:%s" % item_id
+    if not request.user.is_authenticated():
+        enable_caching = True
+        cd = cache.get(cache_key)
+        if cd:
+            print "from cache"
+            return cd
     try:
         post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
@@ -984,12 +992,18 @@ def item_related(request, item_id):
     post.mlt = Post.objects.filter(id__in=idis).only(*Post.NEED_KEYS_WEB)
 
     if request.is_ajax():
-        return render(request, 'pin2/_items_related.html',
-                      {'post': post})
+        d = render(request, 'pin2/_items_related.html', {
+            'post': post
+        })
+    else:
+        d = render(request, 'pin2/item_related.html', {
+            'post': post,
+        }, content_type="text/html")
 
-    return render(request, 'pin2/item_related.html', {
-        'post': post,
-    }, content_type="text/html")
+    if enable_caching:
+        cache.set(cache_key, d, 3600)
+
+    return d
 
 
 def get_comments(request, post_id):
