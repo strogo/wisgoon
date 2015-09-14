@@ -1094,6 +1094,9 @@ class Comments(models.Model):
         u"شارژ مجانی",
         u"اعتبار مجانی",
     ]
+
+    NEED_KEYS_API = ['object_pk', 'submit_date', 'comment', 'user', 'score']
+
     comment = models.TextField()
     submit_date = models.DateTimeField(auto_now_add=True)
     ip_address = models.IPAddressField(default='127.0.0.1', db_index=True)

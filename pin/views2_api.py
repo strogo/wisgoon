@@ -828,9 +828,6 @@ def following(request, user_id=1):
 
 
 def comments(request):
-    log_act("wisgoon.api.comments.count")
-    data = {}
-
     offset = int(request.GET.get('offset', 0))
     limit = int(request.GET.get('limit', 20))
     object_pk = int(request.GET.get('object_pk', 0))
@@ -838,6 +835,7 @@ def comments(request):
     comment_cache_name = "com_%d" % object_pk
     cc = cache.get(comment_cache_name)
     pc = "%d-%d" % (offset, limit)
+    # print comment_cache_name, pc
     if not cc:
         # print "empty cache"
         cc = {}
@@ -849,6 +847,7 @@ def comments(request):
         'url': "/pin/api/com/comments/?limit=%s&offset=%s&object_pk=%s" % (
             limit, offset + limit, object_pk)
     }
+    data = {}
 
     data['meta'] = {'limit': limit,
                     'next': next['url'],
@@ -858,7 +857,7 @@ def comments(request):
 
     objects_list = []
 
-    cq = Comments.objects.filter(object_pk_id=object_pk)\
+    cq = Comments.objects.only(*Comments.NEED_KEYS_API).filter(object_pk_id=object_pk)\
         .order_by('-id')[offset:offset + limit]
     for com in cq:
         o = {}
@@ -885,7 +884,7 @@ def comments(request):
 
     pc = "%d-%d" % (offset, limit)
     cc[pc] = json_data
-    cache.set(comment_cache_name, cc, 86400)
+    cache.set(comment_cache_name, cc, 3600)
     return HttpResponse(json_data, content_type="application/json")
 
 
