@@ -27,7 +27,7 @@ DATABASES = {
         'NAME': 'feedreader',
         'USER': 'root',
         'PASSWORD': '-)**Z{QT',
-        'HOST': '79.127.125.104',
+        'HOST': 'localhost',
         'PORT': '',
     },
     'slave': {
