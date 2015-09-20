@@ -555,6 +555,8 @@ class Post(models.Model):
         return True
 
     def save(self, *args, **kwargs):
+        debug_str = ""
+        debug_str += "\n step 8-1" + str(time.time())
         # is_official = False
         from user_profile.models import Profile
         try:
@@ -570,28 +572,42 @@ class Post(models.Model):
         except Profile.DoesNotExist:
             pass
 
+        debug_str += "\n step 8-2" + str(time.time())
+
         file_path = os.path.join(settings.MEDIA_ROOT, self.image)
         if os.path.exists(file_path):
+            debug_str += "\n step 8-3" + str(time.time())
             image_file = open(file_path)
             self.hash = self.md5_for_file(image_file)
+            debug_str += "\n step 8-4" + str(time.time())
 
             if self.hash_exists():
                 self.status = 0
 
+            debug_str += "\n step 8-5" + str(time.time())
+
             if not self.accept_for_stream():
                 self.status = 0
+
+            debug_str += "\n step 8-6" + str(time.time())
 
             if Official.objects.filter(user=self.user).count():
                 self.status = 1
                 # is_official = True
+            debug_str += "\n step 8-7" + str(time.time())
         else:
             print "path does not exists", file_path
+
+        debug_str += "\n step 8-8" + str(time.time())
 
         # print "self status: ", self.status
 
         self.text = normalize_tags(self.text)
+        debug_str += "\n step 8-9" + str(time.time())
         # print "all save"
         super(Post, self).save(*args, **kwargs)
+        debug_str += "\n step 8-10" + str(time.time())
+        print debug_str
         # print "after save - thumbnail "
 
     @models.permalink
