@@ -890,26 +890,38 @@ class Stream(models.Model):
 
     @classmethod
     def add_post(cls, sender, instance, *args, **kwargs):
+        debug_str = ""
+        debug_str += "\n step 8-9-1" + str(time.time())
         # print "here is add post in stream"
         post = instance
+        debug_str += "\n step 8-9-2" + str(time.time())
         post.get_image_236()
+        debug_str += "\n step 8-9-3" + str(time.time())
         post.get_image_500()
+        debug_str += "\n step 8-9-4" + str(time.time())
         post.get_image_sizes()
+        debug_str += "\n step 8-9-5" + str(time.time())
         if kwargs['created']:
+            debug_str += "\n step 8-9-6" + str(time.time())
 
             MonthlyStats.log_hit(object_type="post")
+            debug_str += "\n step 8-9-7" + str(time.time())
 
             from user_profile.models import Profile
             Profile.objects.filter(user_id=post.user_id)\
                 .update(cnt_post=F('cnt_post') + 1)
 
+            debug_str += "\n step 8-9-8" + str(time.time())
+
             user = post.user
 
             Post.add_to_user_stream(post_id=post.id, user_id=user.id)
+            debug_str += "\n step 8-9-9" + str(time.time())
 
             from pin.tasks import send_post_to_followers
 
             send_post_to_followers(user_id=user.id, post_id=post.id)
+            debug_str += "\n step 8-9-10" + str(time.time())
             # followers = Follow.objects.filter(following=user)\
             #     .values_list('follower_id', flat=True)
             # for follower_id in followers:
@@ -921,6 +933,11 @@ class Stream(models.Model):
 
             if post.status == Post.APPROVED and post.accept_for_stream():
                 Post.add_to_stream(post=post)
+                debug_str += "\n step 8-9-11" + str(time.time())
+
+            debug_str += "\n step 8-9-12" + str(time.time())
+
+        print debug_str
 
 
 class Likes(models.Model):
