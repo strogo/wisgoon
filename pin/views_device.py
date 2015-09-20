@@ -272,18 +272,18 @@ def post_send(request):
     debug_str = "********************"
     start_time = str(time.time())
     debug_str += "\n " + str(start_time)
-    debug_str += "\n step 1" + str(time.time())
+    debug_str += "\n step 1 " + str(time.time())
     user = check_auth(request)
-    debug_str += "\n step 2" + str(time.time())
+    debug_str += "\n step 2 " + str(time.time())
     if not user:
         print 'error in user validation'
         return HttpResponseForbidden('error in user validation')
-    debug_str += "\n step 3" + str(time.time())
+    debug_str += "\n step 3 " + str(time.time())
 
     if request.method != 'POST':
         print "not post"
         return HttpResponseBadRequest('bad request post')
-    debug_str += "\n step 4" + str(time.time())
+    debug_str += "\n step 4 " + str(time.time())
 
     try:
         form = PinDirectForm(request.POST, request.FILES)
@@ -291,20 +291,20 @@ def post_send(request):
         print "ioerror"
         return HttpResponseBadRequest('bad request')
 
-    debug_str += "\n step 5" + str(time.time())
+    debug_str += "\n step 5 " + str(time.time())
 
     if form.is_valid():
-        debug_str += "\n step 6" + str(time.time())
+        debug_str += "\n step 6 " + str(time.time())
         upload = request.FILES.values()[0]
         filename = create_filename(upload.name)
-        debug_str += "\n step 7" + str(time.time())
+        debug_str += "\n step 7 " + str(time.time())
         try:
             u = "%s/pin/images/o/%s" % (MEDIA_ROOT, filename)
             with BufferedWriter(FileIO(u, "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
 
-            debug_str += "\n step 8" + str(time.time())
+            debug_str += "\n step 8 " + str(time.time())
 
             model = Post()
             model.image = "pin/images/o/%s" % (filename)
@@ -314,7 +314,7 @@ def post_send(request):
             model.category_id = form.cleaned_data['category']
             model.device = 2
             model.save()
-            debug_str += "\n step 9" + str(time.time())
+            debug_str += "\n step 9 " + str(time.time())
             debug_str += "\n\n" + start_time
             print debug_str
 
