@@ -35,13 +35,11 @@ def home(request):
     log_act("wisgoon.home.view.count")
     pid = get_request_pid(request)
     cache_str = "page:home:%s" % str(pid)
-    print "cache str:", cache_str
     enable_cacing = False
     if not request.user.is_authenticated():
         enable_cacing = True
         cd = cache.get(cache_str)
         if cd:
-            print "get gome page from cache"
             return cd
     pl = Post.home_latest(pid=pid)
     arp = []
@@ -520,13 +518,13 @@ def rp(request):
 def latest_redis(request):
     pid = get_request_pid(request)
     cache_str = "page:latest:%s" % str(pid)
-    print "cache str:", cache_str
+    # print "cache str:", cache_str
     enable_cacing = False
     if not request.user.is_authenticated():
         enable_cacing = True
         cd = cache.get(cache_str)
         if cd:
-            print "showing data from cache"
+            # print "showing data from cache"
             return cd
 
     pl = Post.latest(pid=pid)
@@ -898,29 +896,11 @@ def item(request, item_id):
         enable_cacing = True
         cd = cache.get("page_v1_%s" % item_id)
         if cd:
-            # print "get data from cache"
-            # print cd
             return cd
     try:
         post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
         raise Http404("Post does not exist")
-
-    # from_id = request.GET.get("from", None)
-    # if from_id:
-    #     # print "from:", from_id
-    #     from_id = int(from_id)
-    #     try:
-    #         p_from = Post.objects.get(pk=from_id)
-    #         from models_graph import PostGraph
-    #         from_post = PostGraph.get_or_create(post_obj=p_from)
-    #         to_post = PostGraph.get_or_create(post_obj=post)
-    #         PostGraph.from_to(from_post=from_post, to_post=to_post)
-
-    #     except:
-    #         pass
-
-    # p = Post.objects.get(id=item_id)
 
     mlts = []
 

@@ -269,22 +269,18 @@ def follow(request, following, action):
 
 @csrf_exempt
 def post_send(request):
+    print "step 1", time.time()
     user = check_auth(request)
+    print "step 2", time.time()
     if not user:
         print 'error in user validation'
         return HttpResponseForbidden('error in user validation')
-
-    upload_cache_str = "upload_cache_%s" % user.id
-    upload_cache = cache.get(upload_cache_str)
-    if upload_cache:
-        print 'error in user validation upload_cache'
-        return HttpResponseForbidden('error in user validation')
-
-    cache.set(upload_cache_str, upload_cache, 300)
+    print "step 3", time.time()
 
     if request.method != 'POST':
         print "not post"
         return HttpResponseBadRequest('bad request post')
+    print "step 4", time.time()
 
     try:
         form = PinDirectForm(request.POST, request.FILES)
@@ -292,14 +288,20 @@ def post_send(request):
         print "ioerror"
         return HttpResponseBadRequest('bad request')
 
+    print "step 5", time.time()
+
     if form.is_valid():
+        print "step 6", time.time()
         upload = request.FILES.values()[0]
         filename = create_filename(upload.name)
+        print "step 7", time.time()
         try:
             u = "%s/pin/images/o/%s" % (MEDIA_ROOT, filename)
             with BufferedWriter(FileIO(u, "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
+
+            print "step 8", time.time()
 
             model = Post()
             model.image = "pin/images/o/%s" % (filename)
@@ -309,6 +311,7 @@ def post_send(request):
             model.category_id = form.cleaned_data['category']
             model.device = 2
             model.save()
+            print "step 9", time.time()
 
             return HttpResponse('success')
         except IOError, e:
