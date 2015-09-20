@@ -269,18 +269,21 @@ def follow(request, following, action):
 
 @csrf_exempt
 def post_send(request):
-    print "step 1", time.time()
+    debug_str = "********************"
+    start_time = str(time.time())
+    debug_str += "\n " + str(start_time)
+    debug_str += "\n step 1" + str(time.time())
     user = check_auth(request)
-    print "step 2", time.time()
+    debug_str += "\n step 2" + str(time.time())
     if not user:
         print 'error in user validation'
         return HttpResponseForbidden('error in user validation')
-    print "step 3", time.time()
+    debug_str += "\n step 3" + str(time.time())
 
     if request.method != 'POST':
         print "not post"
         return HttpResponseBadRequest('bad request post')
-    print "step 4", time.time()
+    debug_str += "\n step 4" + str(time.time())
 
     try:
         form = PinDirectForm(request.POST, request.FILES)
@@ -288,20 +291,20 @@ def post_send(request):
         print "ioerror"
         return HttpResponseBadRequest('bad request')
 
-    print "step 5", time.time()
+    debug_str += "\n step 5" + str(time.time())
 
     if form.is_valid():
-        print "step 6", time.time()
+        debug_str += "\n step 6" + str(time.time())
         upload = request.FILES.values()[0]
         filename = create_filename(upload.name)
-        print "step 7", time.time()
+        debug_str += "\n step 7" + str(time.time())
         try:
             u = "%s/pin/images/o/%s" % (MEDIA_ROOT, filename)
             with BufferedWriter(FileIO(u, "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
 
-            print "step 8", time.time()
+            debug_str += "\n step 8" + str(time.time())
 
             model = Post()
             model.image = "pin/images/o/%s" % (filename)
@@ -311,7 +314,9 @@ def post_send(request):
             model.category_id = form.cleaned_data['category']
             model.device = 2
             model.save()
-            print "step 9", time.time()
+            debug_str += "\n step 9" + str(time.time())
+            debug_str += "\n\n" + start_time
+            print debug_str
 
             return HttpResponse('success')
         except IOError, e:
