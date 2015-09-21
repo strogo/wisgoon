@@ -119,7 +119,7 @@ class Profile(models.Model):
     @classmethod
     def after_like(cls, user_id):
         if settings.LIKE_WITH_CELERY:
-            from pin.tasks import send_profile_after_like
+            from pin.actions import send_profile_after_like
             send_profile_after_like(user_id=user_id)
 
             return
@@ -130,7 +130,7 @@ class Profile(models.Model):
     @classmethod
     def after_dislike(cls, user_id):
         if settings.LIKE_WITH_CELERY:
-            from pin.tasks import send_profile_after_dislike
+            from pin.actions import send_profile_after_dislike
             send_profile_after_dislike(user_id=user_id)
 
             return

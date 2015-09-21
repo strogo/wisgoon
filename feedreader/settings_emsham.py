@@ -72,6 +72,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 JOHNNY_MIDDLEWARE_KEY_PREFIX = 'sham_cac2'
 
 USE_CELERY = False
+USE_CELERY_V2 = False
 
 SESSION_COOKIE_DOMAIN = '.emsham.com'
 import warnings

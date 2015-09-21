@@ -145,7 +145,7 @@ class LikesRedis(object):
         Profile.after_like(user_id=post_owner)
 
         # Post.hot(post.id, amount=0.5)
-        from pin.tasks import send_notif_bar
+        from pin.actions import send_notif_bar
 
         send_notif_bar(user=post_owner, type=1, post=self.postId,
                        actor=user_id)
