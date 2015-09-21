@@ -1,18 +1,13 @@
 from __future__ import absolute_import
-
 import os
-
 from celery import Celery
+from django.conf import settings
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'feedreader.settings_local')
 
-from django.conf import settings
 
-app = Celery('feedreader',
-             broker='amqp://',
-             backend='amqp://',
-             include=['feedreader.tasks'])
+app = Celery('feedreader')
 
 
 # Using a string here means the worker will not have to
@@ -21,7 +16,3 @@ app.conf.CELERY_TASK_SERIALIZER = 'json'
 app.conf.CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
-
-
-if __name__ == '__main__':
-    app.start()

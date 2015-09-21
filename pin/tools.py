@@ -318,7 +318,7 @@ def is_mobile(request):
 
 
 def check_spam(value):
-    BAD_WORDS = [
+    bad_words = [
         u'7108',
         u"لعنت الله",
         u"ملعونین",
@@ -348,7 +348,7 @@ def check_spam(value):
             or len(irancell2.findall(value)) > 0:
         return True
 
-    for bw in BAD_WORDS:
+    for bw in bad_words:
         if bw in value:
             return True
 
@@ -399,10 +399,12 @@ def get_new_access_token():
     print "refresh_token"
     import requests
     import ast
-    d = {'grant_type': 'refresh_token',
-         'client_secret': 'WxGrwBJUEG5nZQASZzc0Y0C3G1FAtdtB6ZCMrzLpWBVu1hdG4PE1i6pnZ3TN',
-         'client_id': 'yiV49s0y9TqSFF7NEsorfytBTyeBdvEaHGnyn8xC',
-         'refresh_token': 'z8F0OyByBlgLK6pHKG4j6YxMbyoJLi'}
+    d = {
+        'grant_type': 'refresh_token',
+        'client_secret': 'WxGrwBJUEG5nZQASZzc0Y0C3G1FAtdtB6ZCMrzLpWBVu1hdG4PE1i6pnZ3TN',
+        'client_id': 'yiV49s0y9TqSFF7NEsorfytBTyeBdvEaHGnyn8xC',
+        'refresh_token': 'z8F0OyByBlgLK6pHKG4j6YxMbyoJLi'
+    }
 
     r = requests.post("https://pardakht.cafebazaar.ir/devapi/v2/auth/token/",
                       data=d)

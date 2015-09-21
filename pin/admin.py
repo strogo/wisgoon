@@ -7,7 +7,7 @@ from haystack.admin import SearchModelAdmin
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei
-from pin.tasks import send_notif
+from pin.actions import send_notif
 from user_profile.models import Profile, CreditLog
 from pin.tools import revalidate_bazaar
 
