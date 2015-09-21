@@ -1551,7 +1551,7 @@ def get_phone_data(request):
     imei = request.GET.get("imei", "")
     android_version = request.GET.get("android_version", "")
     phone_serial = request.GET.get("phone_serial", "")
-    phone_model = request.GET.get("phone_model", "")
+    phone_model = request.GET.get("phone_model", "").encode('ascii', 'ignore').decode('ascii')
 
     if not token:
         return HttpResponse("not only :D", content_type="text/html")
