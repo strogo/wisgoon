@@ -404,7 +404,8 @@ def get_new_access_token():
          'client_id': 'yiV49s0y9TqSFF7NEsorfytBTyeBdvEaHGnyn8xC',
          'refresh_token': 'z8F0OyByBlgLK6pHKG4j6YxMbyoJLi'}
 
-    r = requests.post("https://pardakht.cafebazaar.ir/devapi/v2/auth/token/", data=d)
+    r = requests.post("https://pardakht.cafebazaar.ir/devapi/v2/auth/token/",
+                      data=d)
     if r:
         new_data = ast.literal_eval(r.text)
         new_access_token = new_data['access_token']
@@ -415,10 +416,10 @@ def get_new_access_token():
 
 
 def revalidate_bazaar(bill):
-    if Bills2.objects.filter(trans_id=bill.trans_id, status=Bills2.COMPLETED).count() > 0:
+    if Bills2.objects.filter(trans_id=bill.trans_id,
+                             status=Bills2.COMPLETED).count() > 0:
         bill.status = Bills2.FAKERY
         bill.save()
-        print 'nist'
         return False
 
     """
@@ -436,7 +437,6 @@ def revalidate_bazaar(bill):
 
     package_name = PACKS_WITH_AMOUNT[int(bill.amount)]['pack']
     url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=%s" % (package_name, bill.trans_id, access_token)
-    print "goto validate: ", url
     try:
         u = urllib2.urlopen(url).read()
         j = json.loads(u)
@@ -449,10 +449,9 @@ def revalidate_bazaar(bill):
         purchase_state = j.get('purchaseState', None)
 
         if purchase_state is None:
-            raise
+            return False
 
         if purchase_state == 0:
-
             bill.status = Bills2.COMPLETED
             bill.save()
 
@@ -465,6 +464,6 @@ def revalidate_bazaar(bill):
             return False
 
     except Exception, e:
-        print e
-        print 'error'
+        print "hello vahid"
+        print str(e)
         return None
