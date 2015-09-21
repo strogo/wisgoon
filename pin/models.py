@@ -1297,7 +1297,7 @@ class PhoneData(models.Model):
     os = models.CharField(max_length=50)
     phone_model = models.CharField(max_length=50)
     phone_serial = models.CharField(max_length=50)
-    android_version = models.CharField(max_length=10)
+    android_version = models.CharField(max_length=20)
     app_version = models.CharField(max_length=10)
     google_token = models.CharField(max_length=500)
 
