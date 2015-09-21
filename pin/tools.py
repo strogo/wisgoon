@@ -67,7 +67,7 @@ def post_after_delete(post, user, ip_address=None):
     Log.post_delete(post=post, actor=user, ip_address=ip_address)
     if post.user_id == user.id:
         return
-    from tasks import send_notif_bar
+    from actions import send_notif_bar
 
     send_notif_bar(user=post.user.id, type=4, post=post.id,
                    actor=11253, post_image=post.get_image_236())
