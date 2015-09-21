@@ -601,7 +601,6 @@ def notif(request):
 
     data = {}
     objects_list = []
-    filters = {}
     cur_user = None
 
     # from my_notif import NotifCas
@@ -955,7 +954,8 @@ def search(request):
         # sqs = SearchQuerySet().filter(sqs)
 
         # results = SearchQuerySet().models(Profile)\
-        #     .filter(SQ(text__contains=Raw(query2)))[offset:offset + 1 * row_per_page]
+        #     .filter(SQ(text__contains=Raw(query2)))\
+        #     [offset:offset + 1 * row_per_page]
 
         results = SearchQuerySet().models(Profile)\
             .filter(sq)[offset:offset + 1 * row_per_page]
@@ -1038,13 +1038,6 @@ def search2(request):
 
 def hashtag_top(request):
     tags = []
-    # sqs = SearchQuerySet().models(Post).facet('tags', mincount=10, limit=100)
-    # print sqs.facet_counts()
-    # if sqs:
-        # tags = [t for t in sqs.facet_counts()['fields']['tags']]
-
-    # print tags
-
     data = {}
     o = []
     for t in tags:
@@ -1359,7 +1352,6 @@ def user_credit(request):
 
 
 def inc_credit(request):
-
     user = None
     token = request.GET.get('token', '')
     price = int(request.GET.get('price', 0))
@@ -1368,7 +1360,7 @@ def inc_credit(request):
     if token:
         user = check_auth(request)
 
-    print user, token, baz_token, package_name
+    # print user, token, baz_token, package_name
 
     if not user or not token or not baz_token or not package_name:
         return HttpResponse("default values erros", status=404)
@@ -1378,69 +1370,67 @@ def inc_credit(request):
 
     print PACKS[package_name]['price'], price
 
-    if PACKS[package_name]['price'] == price:
-        if Bills2.objects.filter(trans_id=str(baz_token), status=Bills2.COMPLETED).count() > 0:
-            b = Bills2()
-            b.trans_id = str(baz_token)
-            b.user = user
-            b.amount = PACKS[package_name]['price']
-            b.status = Bills2.FAKERY
-            b.save()
-            return HttpResponse("bazzar token error", status=404)
-        else:
-            access_token = get_new_access_token()
-            url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=%s" % (package_name, baz_token, access_token)
-            try:
-                u = urllib2.urlopen(url).read()
-                j = json.loads(u)
+    if PACKS[package_name]['price'] != price:
+        return HttpResponse("price error")
 
-                if len(j) == 0:
-                    b = Bills2()
-                    b.trans_id = str(baz_token)
-                    b.user = user
-                    b.amount = PACKS[package_name]['price']
-                    b.status = Bills2.NOT_VALID
-                    b.save()
-                    return HttpResponse("ex price error")
+    # if PACKS[package_name]['price'] == price:
+    if Bills2.objects.filter(trans_id=str(baz_token),
+                             status=Bills2.COMPLETED).count() > 0:
+        b = Bills2()
+        b.trans_id = str(baz_token)
+        b.user = user
+        b.amount = PACKS[package_name]['price']
+        b.status = Bills2.FAKERY
+        b.save()
+        return HttpResponse("bazzar token error", status=404)
+    else:
+        access_token = get_new_access_token()
+        url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=%s" % (package_name, baz_token, access_token)
+        try:
+            u = urllib2.urlopen(url).read()
+            j = json.loads(u)
 
-                purchase_state = j.get('purchaseState', None)
-                if purchase_state is None:
-                    raise
-
-                if purchase_state == 0:
-
-                    b = Bills2()
-                    b.trans_id = str(baz_token)
-                    b.user = user
-                    b.amount = PACKS[package_name]['price']
-                    b.status = Bills2.COMPLETED
-                    b.save()
-
-                    # p = user.profile
-                    # p.credit = p.credit + PACKS[package_name]['wis']
-                    # p.save()
-                    p = user.profile
-                    p.inc_credit(amount=PACKS[package_name]['wis'])
-                else:
-                    b = Bills2()
-                    b.trans_id = str(baz_token)
-                    b.user = user
-                    b.amount = PACKS[package_name]['price']
-                    b.status = Bills2.NOT_VALID
-                    b.save()
-                    return HttpResponse("ex price error")
-            except Exception, e:
+            if len(j) == 0:
                 b = Bills2()
                 b.trans_id = str(baz_token)
                 b.user = user
                 b.amount = PACKS[package_name]['price']
-                b.status = Bills2.VALIDATE_ERROR
+                b.status = Bills2.NOT_VALID
                 b.save()
                 return HttpResponse("ex price error")
 
-            return HttpResponse("success full", content_type="text/html")
-    else:
-        return HttpResponse("price error")
+            purchase_state = j.get('purchaseState', None)
+            if purchase_state is None:
+                return HttpResponse("ex price error")
+
+            if purchase_state == 0:
+                b = Bills2()
+                b.trans_id = str(baz_token)
+                b.user = user
+                b.amount = PACKS[package_name]['price']
+                b.status = Bills2.COMPLETED
+                b.save()
+
+                p = user.profile
+                p.inc_credit(amount=PACKS[package_name]['wis'])
+            else:
+                b = Bills2()
+                b.trans_id = str(baz_token)
+                b.user = user
+                b.amount = PACKS[package_name]['price']
+                b.status = Bills2.NOT_VALID
+                b.save()
+                return HttpResponse("ex price error")
+        except Exception:
+            b = Bills2()
+            b.trans_id = str(baz_token)
+            b.user = user
+            b.amount = PACKS[package_name]['price']
+            b.status = Bills2.VALIDATE_ERROR
+            b.save()
+            return HttpResponse("ex price error")
+
+        return HttpResponse("success full", content_type="text/html")
 
     return HttpResponse("failed", content_type="text/html")
 
