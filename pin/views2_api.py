@@ -6,6 +6,7 @@ except ImportError:
     import json
 
 import urllib2
+import hashlib
 
 import datetime
 import time
@@ -1548,7 +1549,6 @@ def get_phone_data(request):
     google_token = request.GET.get("google_token", "")
     token = request.GET.get("user_wisgoon_token", None)
     imei = request.GET.get("imei", "")
-    phone_brand = request.GET.get("phone_brand", "")
     android_version = request.GET.get("android_version", "")
     phone_serial = request.GET.get("phone_serial", "")
     phone_model = request.GET.get("phone_model", "")
@@ -1556,8 +1556,10 @@ def get_phone_data(request):
     if not token:
         return HttpResponse("not only :D", content_type="text/html")
 
-    if token:
-        user = AuthCache.user_from_token(token=token)
+    user = AuthCache.user_from_token(token=token)
+
+    if not user:
+        return HttpResponse("user problem", content_type="text/html")
 
     if imei:
         if BannedImei.objects.filter(imei=imei).exists():
@@ -1568,6 +1570,20 @@ def get_phone_data(request):
 
                 Log.ban_by_imei(actor=user, text=u.username,
                                 ip_address=get_user_ip(request))
+
+    try:
+        upd = PhoneData.objects.only("hash_data").get(user=user)
+        pfields = upd.get_need_fields()
+
+        h_str = '%'.join([str(locals()[f]) for f in pfields])
+
+        hash_str = hashlib.md5(h_str).hexdigest()
+
+        if hash_str == upd.hash_data:
+            return HttpResponse("allready updated", content_type="text/html")
+
+    except PhoneData.DoesNotExist:
+        print "not exists"
 
     upd, created = PhoneData.objects.get_or_create(user=user)
     upd.imei = imei

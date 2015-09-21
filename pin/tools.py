@@ -279,8 +279,8 @@ class AuthCache(MyCache):
             # return c_token
         # else:
         try:
-            api = ApiKey.objects.get(key=token)
-            u = api.user
+            api = ApiKey.objects.only("user").get(key=token)
+            u = User.objects.only("id", "is_active").get(id=api.user_id)
             return u
         except ApiKey.DoesNotExist:
             return None

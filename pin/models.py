@@ -1302,7 +1302,28 @@ class PhoneData(models.Model):
     google_token = models.CharField(max_length=500)
 
     logged_out = models.BooleanField(default=False)
+    hash_data = models.CharField(max_length=32, default="")
     # phone_brand = models.CharField(max_length=500)
+
+    def get_need_fields(self):
+        fields = self._meta.get_all_field_names()
+        fields.remove(u'id')
+        fields.remove('hash_data')
+        fields.remove('logged_out')
+        return fields
+
+    def get_hash_data(self):
+        h_str = ""
+        fields = self.get_need_fields()
+
+        h_str = '%'.join([str(getattr(self, f)) for f in fields])
+
+        self.hash_data = hashlib.md5(h_str).hexdigest()
+        return self.hash_data
+
+    def save(self, *args, **kwargs):
+        self.get_hash_data()
+        super(PhoneData, self).save(*args, **kwargs)
 
 
 class InstaAccount(models.Model):
