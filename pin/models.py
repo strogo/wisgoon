@@ -27,6 +27,7 @@ from taggit.models import Tag
 
 from model_mongo import Notif as Notif_mongo, MonthlyStats
 from preprocessing import normalize_tags
+from pin.tasks import delete_image
 
 LIKE_TO_DEFAULT_PAGE = 10
 
@@ -424,7 +425,7 @@ class Post(models.Model):
     def delete(self, *args, **kwargs):
         try:
             file_path = os.path.join(settings.MEDIA_ROOT, self.image)
-            os.remove(file_path)
+            delete_image.delay(file_path)
         except Exception, e:
             print str(e)
 

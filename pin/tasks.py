@@ -1,13 +1,11 @@
 import os
 
 from feedreader.celery import app
-from django.conf import settings
 
 
 @app.task(name="wisgoon.pin.say_salam")
 def say_salam():
     """sends an email when feedback form is filled successfully"""
-    print settings.DATABASES
     print "salam"
     return "salam"
 
