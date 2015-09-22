@@ -17,7 +17,6 @@ def delete_image(file_path):
     return "delete post"
 
 
-
 @app.task(name="wisgoon.pin.post_to_followers")
 def post_to_followers(user_id, post_id):
     from pin.models import Follow, Post
