@@ -28,7 +28,8 @@ from django.views.decorators.csrf import csrf_exempt
 from sorl.thumbnail import get_thumbnail
 from tastypie.models import ApiKey
 
-from pin.tools import AuthCache, get_user_ip, log_act, get_new_access_token
+from pin.tools import AuthCache, get_user_ip, log_act, get_new_access_token,\
+    get_post_user_cache
 from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2, PhoneData, Log, BannedImei
 from pin.model_mongo import Notif, UserLocation, NotifCount
@@ -1199,25 +1200,25 @@ def comment_delete(request, id):
         raise Http404
 
     try:
-        comment = Comments.objects.get(pk=id)
+        comment = Comments.objects.only('object_pk', 'user').get(pk=id)
     except Comments.DoesNotExist:
         return HttpResponse('Comment Does Not Exist', status=404)
 
-    post_owner = int(comment.object_pk.user_id)
+    post = get_post_user_cache(post_id=comment.object_pk_id)
     comment_owner = int(comment.user_id)
     user_id = int(user.id)
 
-    if post_owner == user_id:
+    if post.user_id == user_id:
         # post owner like to remove a comment
         comment.delete()
-        return HttpResponse(1)
+        return HttpResponse(1, content_type="text/html")
 
     if comment_owner == user_id:
         # comment owner like to remove a comment
         comment.delete()
-        return HttpResponse(1)
+        return HttpResponse(1, content_type="text/html")
 
-    return HttpResponse(0)
+    return HttpResponse(0, content_type="text/html")
 
 
 def block_user(request, user_id):
