@@ -29,7 +29,7 @@ from pin.model_mongo import Notif, UserMeta, NotifCount
 import pin_image
 from pin.tools import get_request_timestamp, create_filename,\
     get_user_ip, get_request_pid, check_block, get_user_meta,\
-    post_after_delete
+    post_after_delete, get_post_user_cache
 
 from suds.client import Client
 
@@ -160,34 +160,18 @@ def follow(request, following, action):
 @login_required
 def like(request, item_id):
     try:
-        post = Post.objects.get(pk=item_id)
+        post = get_post_user_cache(post_id=item_id)
     except Post.DoesNotExist:
         return HttpResponseRedirect('/')
 
     from models_redis import LikesRedis
     like, dislike, current_like = LikesRedis(post_id=item_id)\
         .like_or_dislike(user_id=request.user.id, post_owner=post.user_id)
-    # current_like = post.cnt_likes()
 
     if like:
         user_act = 1
     elif dislike:
         user_act = -1
-
-    # try:
-    #     liked = Likes.objects.get(user=request.user, post=post)
-    #     created = False
-    # except Likes.DoesNotExist:
-    #     liked = Likes.objects.create(user=request.user, post=post)
-    #     created = True
-
-    # if created:
-    #     current_like = current_like + 1
-    #     user_act = 1
-    # elif liked:
-    #     current_like = current_like - 1
-    #     Likes.objects.get(user=request.user, post=post).delete()
-    #     user_act = -1
 
     if request.is_ajax():
         data = [{'likes': current_like, 'user_act': user_act}]
