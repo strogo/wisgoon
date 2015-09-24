@@ -194,8 +194,8 @@ def post_delete(request, item_id):
         return HttpResponseForbidden('error in user validation')
 
     try:
-        post = Post.objects.get(pk=item_id)
-        if request.user.is_superuser or post.user == user:
+        post = get_post_user_cache(post_id=item_id)
+        if post.user_id == user.id:
             post_after_delete(post=post, user=user,
                               ip_address=get_user_ip(request))
             post.delete()
