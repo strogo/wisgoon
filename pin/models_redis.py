@@ -47,21 +47,6 @@ class LikesRedis(object):
         self.keyName3 = self.KEY_PREFIX3 + self.postId
         self.keyName4 = self.KEY_PREFIX4 + self.postId
 
-        # if not r_server4.exists(self.keyName4):
-        #     if r_server.exists(self.keyName):
-        #         keys = r_server.lrange(self.keyName, 0, -1)
-        #         if keys:
-        #             r_server4.lpush(self.keyName4, *keys)
-
-        # r_server.delete(self.keyName)
-
-        # if not r_server3.exists(self.keyName3):
-        #     keys = r_server4.lrange(self.keyName4, 0, -1)
-        #     p = r_server3.pipeline()
-        #     for uid in keys[::-1]:
-        #         p.sadd(self.keyName3, str(uid))
-        #     p.execute()
-
     def delete_likes(self):
         r_server4.delete(self.keyName4)
         r_server3.delete(self.keyName3)
@@ -143,6 +128,9 @@ class LikesRedis(object):
         p.execute()
 
         Profile.after_like(user_id=post_owner)
+
+        from pin.model_mongo import MonthlyStats
+        MonthlyStats.log_hit(object_type=MonthlyStats.LIKE)
 
         # Post.hot(post.id, amount=0.5)
         from pin.actions import send_notif_bar

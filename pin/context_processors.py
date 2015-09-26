@@ -41,13 +41,9 @@ def today_stats(request):
     ma = {}
     for mm in m:
         ma[mm.object_type] = mm.count
-    # print ma
-    current = int(time.time()) // 60
-    minutes = xrange(5)
+    print ma
 
-    ma['onlines'] = len(r_server.sunion(['online-users/%d' % (current - x) for x in minutes]))
-
-    cache.set("today_stats", ma, 300)
+    cache.set("today_stats", ma, 60)
 
     return {'stats': ma}
 
