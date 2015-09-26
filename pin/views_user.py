@@ -175,7 +175,7 @@ def like(request, item_id):
 
     if request.is_ajax():
         data = [{'likes': current_like, 'user_act': user_act}]
-        return HttpResponse(json.dumps(data))
+        return HttpResponse(json.dumps(data), content_type="text/html")
     else:
         return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
 
