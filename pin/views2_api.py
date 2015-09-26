@@ -417,7 +417,7 @@ def post(request):
         if hot_post:
             exists_posts = False
             for ppp in posts:
-                if not ppp.id:
+                if not ppp:
                     continue
                 if ppp.id == hot_post:
                     exists_posts = True
