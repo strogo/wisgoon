@@ -1624,8 +1624,8 @@ def logout(request):
 def system(request):
     data = {
         "advertisement": {
-            "adad": True,
-            "agahist": False,
+            "adad": False,
+            "agahist": True,
         }
     }
 
