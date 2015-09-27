@@ -1619,3 +1619,14 @@ def logout(request):
             .update(logged_out=True)
 
     return HttpResponse("logged out", content_type="text/html")
+
+
+def system(request):
+    data = {
+        "advertisement": {
+            "adad": True,
+            "agahist": False,
+        }
+    }
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
