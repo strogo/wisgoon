@@ -1625,7 +1625,7 @@ def system(request):
     data = {
         "advertisement": {
             "adad": False,
-            "agahist": True,
+            "agahist": False,
         }
     }
 
