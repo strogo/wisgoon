@@ -75,6 +75,8 @@ JOHNNY_MIDDLEWARE_KEY_PREFIX = 'wis_cac2'
 USE_CELERY = False
 USE_CELERY_V2 = False
 
+CELERY_IGNORE_RESULT = True
+
 SESSION_COOKIE_DOMAIN = '.wisgoon.com'
 import warnings
 import exceptions
