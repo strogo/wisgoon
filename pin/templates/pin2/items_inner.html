@@ -5,7 +5,20 @@
 <div class="post-detail row" itemscope itemtype="http://schema.org/CreativeWork">
 	<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
 
-		{% include "base/ad-720x92.html" %}
+		{# {% include "base/ad-720x92.html" %} #}
+		<div class="tabliq col-sm-12 hidden-xs hidden-sm">
+	<div class="row">
+		<script type="text/javascript">
+		var agahist_pram = agahist_pram || [];
+		agahist_pram["aduser"] = "6";
+		agahist_pram["category"] = "{{post.category_id}}"; 
+		agahist_pram["adheight"] = "90";
+		agahist_pram["adwidth"] = "728";			
+		</script> 
+		<script type="text/javascript" src="http://agahist.com/media/js/pubBanner.js"></script>
+	</div>
+</div>
+<div class="clear"></div>
 		<div class="clear"></div>
 
 		{% if user.is_superuser %}
