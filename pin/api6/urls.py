@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 
-urlpatterns = patterns('pin.api5.auth',
+urlpatterns = patterns('pin.api6.auth',
                        url(r'auth/register/$', 'register', name='api-5-auth-register'),
                        url(r'auth/login/$', 'login', name='api-5-auth-login'),
                        url(r'auth/follow/$', 'follow', name='api-5-auth-follow'),
@@ -9,7 +9,7 @@ urlpatterns = patterns('pin.api5.auth',
                        url(r'auth/following/(?P<user_id>\d+)/$', 'following', name='api-5-auth-following'),
 )
 
-urlpatterns += patterns('pin.api5.post',
+urlpatterns += patterns('pin.api6.post',
                         url(r'post/latest/$', 'latest', name='api-5-post-latest'),
                         url(r'post/choices/$', 'choices', name='api-5-post-choices'),
                         url(r'post/friends/$', 'friends', name='api-5-post-friends'),
