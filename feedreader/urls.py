@@ -25,7 +25,7 @@ urlpatterns = patterns('',
     url(r'^blog/', include('blog.urls')),
     url(r'^ckeditor/', include('ckeditor.urls')),
     url(r'^buggy/', 'pin.views_test.buggy', name='buggy'),
-    url(r'^api/v5/', include('pin.api5.urls')),
+    url(r'^api/v6/', include('pin.api6.urls')),
 )
 
 urlpatterns += patterns('pin.views',

@@ -9,8 +9,8 @@ from django.utils.translation import ugettext as _
 
 from tastypie.models import ApiKey
 
-from pin.api5.http import return_bad_request, return_json_data, return_un_auth
-from pin.api5.tools import get_next_url
+from pin.api6.http import return_bad_request, return_json_data, return_un_auth
+from pin.api6.tools import get_next_url
 from pin.tools import AuthCache
 from pin.models import Follow
 from pin.cacheLayer import UserDataCache

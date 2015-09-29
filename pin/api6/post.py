@@ -6,10 +6,10 @@ from pin.api_tools import abs_url, media_abs_url
 
 from pin.cacheLayer import UserDataCache
 from pin.models_redis import LikesRedis
-from pin.api5.tools import get_next_url, category_get_json
+from pin.api6.tools import get_next_url, category_get_json
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
-from pin.api5.http import return_json_data, return_bad_request
+from pin.api6.http import return_json_data, return_bad_request
 
 from haystack.query import SearchQuerySet
 
