@@ -19,4 +19,9 @@ if not cl:
 def get_comment_category(sentence):
     sentence = normalize(sentence)
     blob = TextBlob(sentence, classifier=cl)
-    return blob.classify()
+    try:
+        cname = blob.classify()
+    except Exception, e:
+        print str(e)
+        cname = 0
+    return cname
