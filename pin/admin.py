@@ -6,10 +6,18 @@ from haystack.admin import SearchModelAdmin
 
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
-    BannedImei
+    BannedImei, CommentClassification, CommentClassificationTags
 from pin.actions import send_notif
 from user_profile.models import Profile, CreditLog
 from pin.tools import revalidate_bazaar
+
+
+class CommentClassificationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'text', 'tag')
+
+
+class CommentClassificationTagsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
 
 
 class BannedImeiAdmin(admin.ModelAdmin):
@@ -324,3 +332,5 @@ admin.site.register(Log, LogAdmin)
 admin.site.register(CreditLog, CreditLogAdmin)
 admin.site.register(PhoneData, PhoneDataAdmin)
 admin.site.register(BannedImei, BannedImeiAdmin)
+admin.site.register(CommentClassification, CommentClassificationAdmin)
+admin.site.register(CommentClassificationTags, CommentClassificationTagsAdmin)
