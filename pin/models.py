@@ -7,6 +7,7 @@ import redis
 import PIL
 
 from PIL import Image
+from textblob.classifiers import NaiveBayesClassifier
 
 from datetime import datetime, timedelta
 from time import mktime
@@ -28,6 +29,7 @@ from taggit.models import Tag
 from model_mongo import Notif as Notif_mongo, MonthlyStats
 from preprocessing import normalize_tags
 from pin.tasks import delete_image
+from pin.classification_tools import normalize
 
 LIKE_TO_DEFAULT_PAGE = 10
 
@@ -43,11 +45,27 @@ class CommentClassificationTags(models.Model):
 
 
 class CommentClassification(models.Model):
+    CACHE_NAME = 'com:cl'
+    CACHE_TTL = 86400
+
     text = models.TextField()
     tag = models.ForeignKey(CommentClassificationTags)
 
     def __unicode__(self):
-        return self. text
+        return self.text
+
+    def get_text(self):
+        return normalize(self.text)
+
+    def save(self, *args, **kwargs):
+        super(CommentClassification, self).save(*args, **kwargs)
+        train = []
+        for cc in CommentClassification.objects.all():
+            txt = u"%s" % cc.get_text()
+            train.append((txt, cc.tag_id))
+
+        cl = NaiveBayesClassifier(train)
+        cache.set(self.CACHE_NAME, cl, self.CACHE_TTL)
 
 
 class SubCategory(models.Model):
@@ -1146,13 +1164,19 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
-        from tools import check_spam
-        if check_spam(self.comment):
-            Log.bad_comment(post=self.object_pk,
-                            actor=self.user,
-                            ip_address=self.ip_address,
-                            text=self.comment)
-            return
+        # from tools import check_spam
+        from pin.classification import get_comment_category
+        com_cat = str(get_comment_category(self.comment))
+        # if check_spam(self.comment):
+        #     Log.bad_comment(post=self.object_pk,
+        #                     actor=self.user,
+        #                     ip_address=self.ip_address,
+        #                     text=self.comment)
+        #     return
+        Log.bad_comment_test(post=self.object_pk,
+                             actor=self.user,
+                             ip_address=self.ip_address,
+                             text=com_cat + " --- " + self.comment)
 
         if (self.user.profile.score < settings.SCORE_FOR_COMMENING):
             return
@@ -1355,11 +1379,13 @@ class Log(models.Model):
     POST = 1
     COMMENT = 2
     USER = 3
+    COMMENT_TEST = 4
 
     TYPES = (
         (POST, "post"),
         (COMMENT, "comment"),
-        (USER, "user")
+        (USER, "user"),
+        (COMMENT_TEST, 'comment test'),
     )
 
     DELETE = 1
@@ -1407,6 +1433,17 @@ class Log(models.Model):
                            action=3,
                            object_id=post.id,
                            content_type=2,
+                           owner=post.user.id,
+                           ip_address=ip_address,
+                           text=text,
+                           )
+
+    @classmethod
+    def bad_comment_test(cls, post, actor, ip_address="127.0.0.1", text=""):
+        Log.objects.create(user_id=actor.id,
+                           action=3,
+                           object_id=post.id,
+                           content_type=Log.COMMENT_TEST,
                            owner=post.user.id,
                            ip_address=ip_address,
                            text=text,
