@@ -13,7 +13,8 @@ if not cl:
         train.append((txt, cc.tag_id))
 
     cl = NaiveBayesClassifier(train)
-    cache.set(CommentClassification.CACHE_NAME, cl, 30)
+    cache.set(CommentClassification.CACHE_NAME, cl,
+              CommentClassification.CACHE_TTL)
 
 
 def get_comment_category(sentence):
