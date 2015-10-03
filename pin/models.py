@@ -1168,10 +1168,10 @@ class Comments(models.Model):
         from pin.classification import get_comment_category
         com_cat = str(get_comment_category(self.comment))
         if int(com_cat) in [2]:
-            Log.bad_comment_test(post=self.object_pk,
-                                 actor=self.user,
-                                 ip_address=self.ip_address,
-                                 text=com_cat + " --- " + self.comment)
+            Log.bad_comment(post=self.object_pk,
+                            actor=self.user,
+                            ip_address=self.ip_address,
+                            text=com_cat + " --- " + self.comment)
 
         if (self.user.profile.score < settings.SCORE_FOR_COMMENING):
             return
