@@ -38,10 +38,16 @@ r_server4 = redis.Redis(settings.REDIS_DB_2, db=4)
 class CommentClassificationTags(models.Model):
     name = models.CharField(max_length=50)
 
+    def __unicode__(self):
+        return self.name
+
 
 class CommentClassification(models.Model):
     text = models.TextField()
     tag = models.ForeignKey(CommentClassificationTags)
+
+    def __unicode__(self):
+        return self. text
 
 
 class SubCategory(models.Model):
