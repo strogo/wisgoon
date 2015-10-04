@@ -46,7 +46,7 @@ class CommentClassificationTags(models.Model):
 
 class CommentClassification(models.Model):
     CACHE_NAME = 'com:cl'
-    CACHE_TTL = 60
+    CACHE_TTL = 86400
 
     text = models.TextField()
     tag = models.ForeignKey(CommentClassificationTags)
