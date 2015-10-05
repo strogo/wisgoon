@@ -1,6 +1,8 @@
 import socket
-import urllib
+import requests
 import time
+import shutil
+
 from datetime import datetime
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -20,7 +22,8 @@ def get_from_insta(insta_user_id, cat, user_id, cnt=5):
     client_secret = "74e85dfb6b904ac68139a93a9b047247"
     api = client.InstagramAPI(client_id=client_id, client_secret=client_secret)
 
-    recent_media, next_ = api.user_recent_media(user_id=insta_user_id, count=cnt)
+    recent_media, next_ = api.user_recent_media(user_id=insta_user_id,
+                                                count=cnt)
 
     for media in recent_media:
         if media.type == "image":
@@ -41,8 +44,18 @@ def get_from_insta(insta_user_id, cat, user_id, cnt=5):
                 image_on = "%s/pin/images/o/%s" % (MEDIA_ROOT, filename)
 
                 image_url = image_url.replace("https://", "http://")
+                print image_url
 
-                urllib.urlretrieve(image_url, image_on)
+                response = requests.get(image_url, stream=True)
+                print response.status_code
+                if response.status_code != 200:
+                    continue
+
+                with open(image_on, 'wb') as out_file:
+                    shutil.copyfileobj(response.raw, out_file)
+                del response
+
+                # urllib.urlretrieve(image_url, image_on)
 
                 model.image = "pin/images/o/%s" % (filename)
                 model.timestamp = time.time()
