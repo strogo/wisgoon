@@ -19,6 +19,7 @@ CASSANDRA_DB = '127.0.0.1'
 # ) + thumbnail_settings.THUMBNAIL_PROCESSORS
 
 ALLOWED_HOSTS = ["127.0.0.1:8000",
+                 "192.168.0.110:8080"
                  "127.0.0.1",
                  "127.0.0.1:3060",
                  "127.0.0.1:3061",

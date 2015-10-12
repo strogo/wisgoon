@@ -1482,6 +1482,11 @@ class Log(models.Model):
                            )
 
 
+class Results(models.Model):
+    label = models.CharField(max_length=250)
+    text = models.TextField()
+
+
 class Official(models.Model):
     user = models.ForeignKey(User)
     mode = models.IntegerField(choices=((1, 'sp1'), (2, 'sp2')), default='1')
