@@ -1486,6 +1486,13 @@ class Results(models.Model):
     label = models.CharField(max_length=250)
     text = models.TextField()
 
+    def get_label_text(self):
+        return self.label.replace('_', ' ')
+
+    def save(self, *args, **kwargs):
+        self.label = self.label.replace(' ', '_')
+        super(Results, self).save(*args, **kwargs)
+
 
 class Official(models.Model):
     user = models.ForeignKey(User)

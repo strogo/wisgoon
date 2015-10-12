@@ -30,6 +30,7 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('pin.views',
     url(r'^latest/$', 'latest_redis', name='pin-latest'),
+    url(r'^result/(?P<label>.*)/$', 'result', name='pin-result'),
     # url(r'^recent/$', 'latest_redis', name='pin-latest'),
     
     url(r'^rp/$', 'rp', name='rp'),
