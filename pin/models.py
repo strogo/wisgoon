@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.validators import URLValidator
-# from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import F
 from django.db.models.signals import post_save
@@ -272,6 +272,18 @@ class Post(models.Model):
 
     def __unicode__(self):
         return self.text
+
+    def get_pages(self):
+        o = []
+        text = self.text
+        for r in Results.objects.all():
+            if r.get_label_text() in text:
+                new_url = reverse('pin-result', args=[r.label])
+                href = '<a href="%s">%s</a>' % (new_url, r.get_label_text())
+                o.append(href)
+            # text = text.replace(r.get_label_text(), href)
+        # print text
+        return o
 
     def get_username(self):
         from cacheLayer import UserDataCache
