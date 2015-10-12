@@ -14,7 +14,8 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 
-from pin.models import Post, Follow, Likes, Category, Comments, Report
+from pin.models import Post, Follow, Likes, Category, Comments, Report,\
+    Results
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
     get_user_meta, get_user_ip, log_act
 
@@ -118,6 +119,36 @@ def search(request):
         })
 
     return render(request, 'pin2/search.html', {
+        'results': results,
+        'posts': posts,
+        'query': query,
+        'offset': offset + row_per_page,
+    })
+
+
+def result(request, label):
+    try:
+        r = Results.objects.get(label=label)
+    except Results.DoesNotExist:
+        raise Http404
+
+    row_per_page = 20
+    results = []
+    query = request.GET.get('q', '')
+    offset = int(request.GET.get('older', 0))
+
+    posts = SearchQuerySet().models(Post)\
+        .filter(content__contains=r.get_label_text())[offset:offset + 1 * row_per_page]
+
+    if request.is_ajax():
+        return render(request, 'pin2/__search.html', {
+            'results': results,
+            'posts': posts,
+            'query': query,
+            'offset': offset + row_per_page,
+        })
+
+    return render(request, 'pin2/result.html', {
         'results': results,
         'posts': posts,
         'query': query,
