@@ -52,6 +52,10 @@
 					<p> 
 						{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
 					</p>
+
+					{% for page in post.get_pages %}
+						<span class="badge badge-success">{{page|safe}}</span>
+					{% endfor %}
 				</div>
 				<small class="time-box pull-left">{{post.create|naturaltime}}</small>
 			</div>
