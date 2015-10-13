@@ -1425,12 +1425,16 @@ class Log(models.Model):
 
     @classmethod
     def post_delete(cls, post, actor, ip_address="127.0.0.1"):
+        try:
+            img_url = post.get_image_236()["url"]
+        except:
+            img_url = ""
         Log.objects.create(user_id=actor.id,
                            action=1,
                            object_id=post.id,
                            content_type=1,
                            owner=post.user.id,
-                           post_image=post.get_image_236()["url"],
+                           post_image=img_url,
                            ip_address=ip_address,
                            text=post.text,
                            )
