@@ -66,7 +66,7 @@ class LogAdmin(admin.ModelAdmin):
 
     list_filter = ('action', 'content_type')
 
-    search_fields = ['owner', 'user__username', 'object_id']
+    search_fields = ['=owner', '=user__username', '=object_id']
 
     raw_id_fields = ("user",)
 
