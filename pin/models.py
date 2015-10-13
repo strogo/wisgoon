@@ -277,7 +277,7 @@ class Post(models.Model):
         o = []
         text = self.text
         for r in Results.objects.all():
-            print r.id
+            # print r.id
             # print "check", r.get_label_text(), text
             # b = r.get_label_text() in text
             # print b
