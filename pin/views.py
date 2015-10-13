@@ -138,7 +138,8 @@ def result(request, label):
     offset = int(request.GET.get('older', 0))
 
     posts = SearchQuerySet().models(Post)\
-        .filter(content__contains=r.get_label_text())[offset:offset + 1 * row_per_page]
+        .filter(content__contains=r.get_label_text())\
+        .order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
