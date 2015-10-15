@@ -146,6 +146,7 @@ def result(request, label):
             'results': results,
             'posts': posts,
             'query': query,
+            'r': r,
             'offset': offset + row_per_page,
         })
 
@@ -153,6 +154,7 @@ def result(request, label):
         'results': results,
         'posts': posts,
         'query': query,
+        'r': r,
         'offset': offset + row_per_page,
     })
 
