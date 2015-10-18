@@ -2,7 +2,12 @@
 {% load pin_tags %}
 <div class="nav">
 	<div class="navbar navbar-default" role="navigation">
-		<div class="container">
+   <!-- <div class="container"> -->
+		<div class="container" style="position:relative;">
+			<span class="mohrama-eleman" style="float: left; position: absolute; left: 0px; margin-top: 32px;">
+				<img src="{{MEDIA_URL}}v2/images/moharam.png" alt="">
+			</span>
+
 			<a href="javascript:;" class="resp-menu">
 				<span class="glyphicon glyphicon-chevron-right"></span>
 			</a>
@@ -20,8 +25,10 @@
 				</button>
 				{% endcomment %}
 				<a href="{% url "home" %}" class="header-brand">
-					<img src="{{MEDIA_URL}}v2/images/logo.png" alt="{{SITE_NAME_FA}} {{SITE_NAME_EN}}">
+			   <!-- <img src="{{MEDIA_URL}}v2/images/logo.png" alt="{{SITE_NAME_FA}} {{SITE_NAME_EN}}"> -->
+					<img src="{{MEDIA_URL}}v2/images/logo_moharam.png" alt="{{SITE_NAME_FA}} {{SITE_NAME_EN}}">
 				</a>
+				
 			</div>
 			<div class="col-md-9 col-sm-8 navbar-collapse collapse">
 				<div class="col-md-6 col-sm-5 top-search">
