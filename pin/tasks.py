@@ -1,6 +1,65 @@
 import os
+import paramiko
 
 from feedreader.celery import app
+from django.conf import settings
+
+
+@app.task(name="wisgoon.pin.add_to_storage")
+def add_to_storage(post_id):
+    from pin.models import Storages, Post
+    post = Post.objects.get(id=post_id)
+    storage = Storages.objects.order_by('num_files')[:1][0]
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(storage.host, username=storage.user)
+    sftp = ssh.open_sftp()
+    postmeta = post.postmetadata
+
+    local_path = os.path.join(settings.MEDIA_ROOT, post.image)
+    image_new_path = post.image
+    image_new_path = image_new_path.replace('blackhole', storage.name)
+    remote_path = os.path.join(storage.path, image_new_path)
+    remote_dir = os.path.dirname(remote_path)
+
+    ssh.exec_command('mkdir -p ' + remote_dir)
+    print local_path, remote_path, image_new_path
+
+    post.image = image_new_path
+    post.save()
+    sftp.put(local_path, remote_path)
+
+    local_path_236 = os.path.join(settings.MEDIA_ROOT, postmeta.img_236)
+    image_new_path_236 = postmeta.img_236
+    image_new_path_236 = image_new_path_236.replace('blackhole', storage.name)
+    remote_path_236 = os.path.join(storage.path, image_new_path_236)
+    remote_dir = os.path.dirname(remote_path_236)
+
+    postmeta.img_236 = image_new_path_236
+    postmeta.save()
+
+    sftp.put(local_path_236, remote_path_236)
+
+    local_path_500 = os.path.join(settings.MEDIA_ROOT, postmeta.img_500)
+    image_new_path_500 = postmeta.img_500
+    image_new_path_500 = image_new_path_500.replace('blackhole', storage.name)
+    remote_path_500 = os.path.join(storage.path, image_new_path_500)
+    remote_dir = os.path.dirname(remote_path_500)
+
+    postmeta.img_500 = image_new_path_500
+    postmeta.save()
+
+    sftp.put(local_path_500, remote_path_500)
+
+    sftp.close()
+    ssh.close()
+    post.clear_cache()
+    storage.num_files = storage.num_files + 3
+    storage.save()
+
+    print "salam"
+    return "salam"
 
 
 @app.task(name="wisgoon.pin.say_salam")
