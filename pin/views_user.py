@@ -372,11 +372,11 @@ def send(request):
             model = form.save(commit=False)
             filename = model.image
             image_o = "%s/pin/temp/o/%s" % (MEDIA_ROOT, filename)
-            image_on = "%s/pin/images/o/%s" % (MEDIA_ROOT, filename)
+            image_on = "%s/pin/blackhole/images/o/%s" % (MEDIA_ROOT, filename)
 
             copyfile(image_o, image_on)
 
-            model.image = "pin/images/o/%s" % (filename)
+            model.image = "pin/blackhole/images/o/%s" % (filename)
             model.timestamp = time()
             model.user = request.user
             model.save()
