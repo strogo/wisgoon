@@ -13,6 +13,7 @@ def add_to_storage(post_id):
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    print "connect to ", storage.host, storage.user
     ssh.connect(storage.host, username=storage.user)
     sftp = ssh.open_sftp()
     postmeta = post.postmetadata
