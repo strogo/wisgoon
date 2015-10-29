@@ -961,6 +961,8 @@ class Stream(models.Model):
         post.get_image_500()
         post.get_image_sizes()
         if kwargs['created']:
+            from pin.tasks import add_to_storage
+            add_to_storage.delay(post_id=post.id)
 
             MonthlyStats.log_hit(object_type="post")
 
