@@ -37,6 +37,15 @@ r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 r_server4 = redis.Redis(settings.REDIS_DB_2, db=4)
 
 
+class Storages(models.Model):
+    name = models.CharField(max_length=100)
+    used = models.BigIntegerField(default=0)
+    num_files = models.IntegerField(default=0)
+    path = models.CharField(max_length=250)
+    host = models.CharField(max_length=100)
+    user = models.CharField(max_length=30)
+
+
 class CommentClassificationTags(models.Model):
     name = models.CharField(max_length=50)
 
@@ -348,6 +357,12 @@ class Post(models.Model):
             "width": self.width,
             "height": self.height
         }
+
+    def clear_cache(self):
+        cname = "pmeta_%d_236" % int(self.id)
+        cache.delete(cname)
+        cname = "pmeta_%d_500" % int(self.id)
+        cache.delete(cname)
 
     def get_image_236(self, api=False):
         if self.data_236:

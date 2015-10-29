@@ -7,10 +7,14 @@ from haystack.admin import SearchModelAdmin
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
-    Results
+    Results, Storages
 from pin.actions import send_notif
 from user_profile.models import Profile, CreditLog
 from pin.tools import revalidate_bazaar
+
+
+class StoragesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'used', 'num_files', 'path', 'host', 'user',)
 
 
 class ResultsAdmin(admin.ModelAdmin):
@@ -340,3 +344,4 @@ admin.site.register(BannedImei, BannedImeiAdmin)
 admin.site.register(CommentClassification, CommentClassificationAdmin)
 admin.site.register(CommentClassificationTags, CommentClassificationTagsAdmin)
 admin.site.register(Results, ResultsAdmin)
+admin.site.register(Storages, StoragesAdmin)
