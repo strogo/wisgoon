@@ -369,6 +369,7 @@ class Post(models.Model):
             return self.data_236
         cname = "pmeta_%d_236" % int(self.id)
         ccache = cache.get(cname)
+        ccache = None
         if ccache:
             new_image_url, h = ccache.split(":")
         else:
@@ -423,6 +424,7 @@ class Post(models.Model):
             return self.data_500
         cname = "pmeta_%d_500" % int(self.id)
         ccache = cache.get(cname)
+        ccache = None
         if ccache:
             new_image_url, h = ccache.split(":")
         else:
