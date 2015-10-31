@@ -299,7 +299,7 @@ def post_send(request):
         filename = create_filename(upload.name)
         debug_str += "\n step 7 " + str(time.time())
         try:
-            u = "%s/pin/images/o/%s" % (MEDIA_ROOT, filename)
+            u = "%s/pin/blackhole/images/o/%s" % (MEDIA_ROOT, filename)
             with BufferedWriter(FileIO(u, "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
@@ -307,7 +307,7 @@ def post_send(request):
             debug_str += "\n step 8 " + str(time.time())
 
             model = Post()
-            model.image = "pin/images/o/%s" % (filename)
+            model.image = "pin/blackhole/images/o/%s" % (filename)
             model.user = user
             model.timestamp = time.time()
             model.text = form.cleaned_data['description']

@@ -1,6 +1,8 @@
 {% extends "pin2/flat.base.html"%}
 {% load pin_tags %}
 
+{% block title%} - {{r.get_label_text}}{% endblock title%}
+
 {% block extra_js %}
 <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
 <!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
@@ -16,6 +18,9 @@
 <!-- {% include "base/app.html" %} -->
 
 <div id="main">
+	<div class="container">
+		<h1>{{r.get_label_text}}</h1>
+	</div>
 	<div class="container-fluid">
 		<div id="feed" class="masonry">
 			{% include "pin2/__search.html" %}

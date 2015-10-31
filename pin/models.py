@@ -37,6 +37,15 @@ r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 r_server4 = redis.Redis(settings.REDIS_DB_2, db=4)
 
 
+class Storages(models.Model):
+    name = models.CharField(max_length=100)
+    used = models.BigIntegerField(default=0)
+    num_files = models.IntegerField(default=0)
+    path = models.CharField(max_length=250)
+    host = models.CharField(max_length=100)
+    user = models.CharField(max_length=30)
+
+
 class CommentClassificationTags(models.Model):
     name = models.CharField(max_length=50)
 
@@ -349,11 +358,18 @@ class Post(models.Model):
             "height": self.height
         }
 
+    def clear_cache(self):
+        cname = "pmeta_%d_236" % int(self.id)
+        cache.delete(cname)
+        cname = "pmeta_%d_500" % int(self.id)
+        cache.delete(cname)
+
     def get_image_236(self, api=False):
         if self.data_236:
             return self.data_236
         cname = "pmeta_%d_236" % int(self.id)
         ccache = cache.get(cname)
+        ccache = None
         if ccache:
             new_image_url, h = ccache.split(":")
         else:
@@ -408,6 +424,7 @@ class Post(models.Model):
             return self.data_500
         cname = "pmeta_%d_500" % int(self.id)
         ccache = cache.get(cname)
+        ccache = None
         if ccache:
             new_image_url, h = ccache.split(":")
         else:
@@ -605,9 +622,6 @@ class Post(models.Model):
         return True
 
     def save(self, *args, **kwargs):
-        debug_str = ""
-        debug_str += "\n step 8-1 " + str(time.time())
-        # is_official = False
         from user_profile.models import Profile
         try:
             profile = Profile.objects.get(user=self.user)
@@ -622,42 +636,30 @@ class Post(models.Model):
         except Profile.DoesNotExist:
             pass
 
-        debug_str += "\n step 8-2 " + str(time.time())
-
         file_path = os.path.join(settings.MEDIA_ROOT, self.image)
         if os.path.exists(file_path):
-            debug_str += "\n step 8-3 " + str(time.time())
+
             image_file = open(file_path)
             self.hash = self.md5_for_file(image_file)
-            debug_str += "\n step 8-4 " + str(time.time())
 
             if self.hash_exists():
                 self.status = 0
 
-            debug_str += "\n step 8-5 " + str(time.time())
-
             if not self.accept_for_stream():
                 self.status = 0
-
-            debug_str += "\n step 8-6 " + str(time.time())
 
             if Official.objects.filter(user=self.user).count():
                 self.status = 1
                 # is_official = True
-            debug_str += "\n step 8-7 " + str(time.time())
+
         else:
             print "path does not exists", file_path
-
-        debug_str += "\n step 8-8 " + str(time.time())
 
         # print "self status: ", self.status
 
         self.text = normalize_tags(self.text)
-        debug_str += "\n step 8-9 " + str(time.time())
         # print "all save"
         super(Post, self).save(*args, **kwargs)
-        debug_str += "\n step 8-10 " + str(time.time())
-        print debug_str
         # print "after save - thumbnail "
 
     @models.permalink
@@ -946,6 +948,8 @@ class Stream(models.Model):
         post.get_image_500()
         post.get_image_sizes()
         if kwargs['created']:
+            from pin.tasks import add_to_storage
+            add_to_storage.delay(post_id=post.id)
 
             MonthlyStats.log_hit(object_type="post")
 

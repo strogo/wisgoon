@@ -7,10 +7,14 @@ from haystack.admin import SearchModelAdmin
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
-    Results
+    Results, Storages
 from pin.actions import send_notif
 from user_profile.models import Profile, CreditLog
 from pin.tools import revalidate_bazaar
+
+
+class StoragesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'used', 'num_files', 'path', 'host', 'user',)
 
 
 class ResultsAdmin(admin.ModelAdmin):
@@ -156,7 +160,8 @@ class InstaAccountAdmin(admin.ModelAdmin):
 class PinAdmin(admin.ModelAdmin):
     list_filter = ('status', 'report', 'is_ads', 'show_in_default',
                    'category__title')
-    search_fields = ['=id', '=user__id', 'hash']
+
+    search_fields = ['=id', '=user__id', '=hash']
 
     raw_id_fields = ("user",)
 
@@ -222,7 +227,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'website', 'cnt_post', 'cnt_like', 'score',
                     'user', 'trusted')
-    search_fields = ['user__id', 'user__username', 'name']
+    search_fields = ['=user__id', '=user__username', '=name']
     list_filter = ('trusted',)
 
     raw_id_fields = ("user", "trusted_by")
@@ -340,3 +345,4 @@ admin.site.register(BannedImei, BannedImeiAdmin)
 admin.site.register(CommentClassification, CommentClassificationAdmin)
 admin.site.register(CommentClassificationTags, CommentClassificationTagsAdmin)
 admin.site.register(Results, ResultsAdmin)
+admin.site.register(Storages, StoragesAdmin)
