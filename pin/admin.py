@@ -160,13 +160,14 @@ class InstaAccountAdmin(admin.ModelAdmin):
 class PinAdmin(admin.ModelAdmin):
     list_filter = ('status', 'report', 'is_ads', 'show_in_default',
                    'category__title')
+
     search_fields = ['=id', '=user__id', '=hash']
 
     raw_id_fields = ("user",)
 
     list_display = ('id', 'text', 'get_user_url', 'admin_image',
                     'status', 'like', 'device', 'is_ads',
-                    'show_in_default', 'report')
+                    'show_in_default', 'report', 'hash')
 
     actions = ['make_approve',
                'really_delete_selected',
