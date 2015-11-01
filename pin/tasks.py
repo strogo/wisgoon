@@ -81,9 +81,9 @@ def delete_image(file_path):
             ssh.connect(storage.host, username=storage.user)
             sftp = ssh.open_sftp()
 
-            file_path = file_path.replace('./feedreader/media/', storage.path)
+            file_path = file_path.replace('./feedreader/media', storage.path)
             # file_path = file_path.replace('/feedreader/media/', storage.path)
-            print "file oath to delete is:", file_path
+            print "file path to delete is:", file_path
             sftp.remove(file_path)
             sftp.close()
             ssh.close()
