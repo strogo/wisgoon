@@ -13,7 +13,6 @@ def add_to_storage(post_id):
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    print "connect to ", storage.host, storage.user, post_id
     ssh.connect(storage.host, username=storage.user)
     sftp = ssh.open_sftp()
     postmeta = post.postmetadata
@@ -25,7 +24,6 @@ def add_to_storage(post_id):
     remote_dir = os.path.dirname(remote_path)
 
     ssh.exec_command('mkdir -p ' + remote_dir)
-    print local_path, remote_path, image_new_path
 
     post.image = image_new_path
     post.save()
@@ -83,7 +81,6 @@ def delete_image(file_path):
 
             file_path = file_path.replace('./feedreader/media', storage.path)
             # file_path = file_path.replace('/feedreader/media/', storage.path)
-            print "file path to delete is:", file_path
             sftp.remove(file_path)
             sftp.close()
             ssh.close()
@@ -92,8 +89,7 @@ def delete_image(file_path):
 
     if not exec_on_remote:
         os.remove(file_path)
-    print "delete post", file_path
-    return "delete post"
+    return "delete post", file_path
 
 
 @app.task(name="wisgoon.pin.post_to_followers")
