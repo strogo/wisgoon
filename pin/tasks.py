@@ -72,7 +72,26 @@ def say_salam():
 
 @app.task(name="wisgoon.pin.delete_image")
 def delete_image(file_path):
-    os.remove(file_path)
+    from pin.models import Storages
+    exec_on_remote = False
+    for storage in Storages.objects.all():
+        if storage.name in file_path:
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(storage.host, username=storage.user)
+            sftp = ssh.open_sftp()
+
+            file_path = file_path.replace('./feedreader/media/', storage.path)
+            # file_path = file_path.replace('/feedreader/media/', storage.path)
+            print "file oath to delete is:", file_path
+            sftp.remove(file_path)
+            sftp.close()
+            ssh.close()
+            exec_on_remote = True
+            break
+
+    if not exec_on_remote:
+        os.remove(file_path)
     print "delete post", file_path
     return "delete post"
 
