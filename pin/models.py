@@ -143,7 +143,7 @@ class Ad(models.Model):
             cache_key = "ad_%d" % ad.id
 
             if not cache.get(cache_key):
-                cache.set(cache_key, 0, 86400 * 2)
+                cache.set(cache_key, 0, 86400 * 30)
 
             if r_server.sismember("ad_%d" % ad.id, user_id):
                 continue
