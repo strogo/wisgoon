@@ -125,6 +125,7 @@ class Ad(models.Model):
 
     @classmethod
     def get_ad(cls, user_id, high_level=False):
+        print "userid:", user_id
 
         if cache.get("no_ad"):
             return None
