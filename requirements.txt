@@ -89,3 +89,4 @@ textblob==0.9.1
 tldextract==1.2
 urllib3==1.11
 wsgiref==0.1.2
+Khayyam==1.0.6
