@@ -60,7 +60,7 @@
 					</tr>
 					<tr>
 						<td>تاریخ عضویت :</td>
-						<td><strong>{{profile.user.date_joined|date:"d-m-Y"}}</strong></td>
+						<td><strong>{{profile.user.date_joined|date_filter}}</strong></td>
 					</tr>
 					{% if profile.website.strip|length > 0 %}
 					<tr>
