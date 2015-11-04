@@ -9,7 +9,7 @@ from pin.models_redis import LikesRedis
 from pin.api6.tools import get_next_url, category_get_json
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
-from pin.api6.http import return_json_data, return_bad_request
+from pin.api6.http import return_json_data, return_bad_request, return_not_found
 
 from haystack.query import SearchQuerySet
 
@@ -292,6 +292,6 @@ def item(request, item_id):
         data = get_objects_list(posts, cur_user_id=cur_user,
                                 r=request)[0]
     except IndexError:
-        return_json_data({})
+        return return_not_found()
 
     return return_json_data(data)
