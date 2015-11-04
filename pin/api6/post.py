@@ -288,7 +288,10 @@ def item(request, item_id):
 
     posts = get_list_post([item_id])
 
-    data = get_objects_list(posts, cur_user_id=cur_user,
-                            r=request)[0]
+    try:
+        data = get_objects_list(posts, cur_user_id=cur_user,
+                                r=request)[0]
+    except IndexError:
+        return_json_data({})
 
     return return_json_data(data)
