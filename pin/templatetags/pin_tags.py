@@ -4,7 +4,7 @@ import re
 
 from calverter import Calverter
 from urlparse import urlparse
-
+import khayyam
 from django import template
 from django.contrib.auth.models import User
 from django.core.cache import cache
@@ -235,6 +235,14 @@ def jalali_mysql_date(value):
 @register.filter
 def check_official(user_id):
     pass
+
+
+@register.filter
+def date_filter(index):
+
+    if not isinstance(index, datetime.datetime):
+        return ''
+    return khayyam.JalaliDatetime.from_datetime(index).strftime("%d %B %Y- %H:%M")
 
 
 @register.filter

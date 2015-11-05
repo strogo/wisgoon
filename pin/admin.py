@@ -93,6 +93,13 @@ class AdAdmin(admin.ModelAdmin):
 
     date_hierarchy = 'start'
 
+    actions = ['ended', ]
+
+    def ended(self, request, queryset):
+        for obj in queryset:
+            obj.ended = True
+            obj.save()
+
     def post_id(self, instance):
         return instance.post_id
 

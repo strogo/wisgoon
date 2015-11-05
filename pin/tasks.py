@@ -13,7 +13,6 @@ def add_to_storage(post_id):
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    print "connect to ", storage.host, storage.user, post_id
     ssh.connect(storage.host, username=storage.user)
     sftp = ssh.open_sftp()
     postmeta = post.postmetadata
@@ -25,7 +24,6 @@ def add_to_storage(post_id):
     remote_dir = os.path.dirname(remote_path)
 
     ssh.exec_command('mkdir -p ' + remote_dir)
-    print local_path, remote_path, image_new_path
 
     post.image = image_new_path
     post.save()
@@ -72,9 +70,26 @@ def say_salam():
 
 @app.task(name="wisgoon.pin.delete_image")
 def delete_image(file_path):
-    os.remove(file_path)
-    print "delete post", file_path
-    return "delete post"
+    from pin.models import Storages
+    exec_on_remote = False
+    for storage in Storages.objects.all():
+        if storage.name in file_path:
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(storage.host, username=storage.user)
+            sftp = ssh.open_sftp()
+
+            file_path = file_path.replace('./feedreader/media', storage.path)
+            # file_path = file_path.replace('/feedreader/media/', storage.path)
+            sftp.remove(file_path)
+            sftp.close()
+            ssh.close()
+            exec_on_remote = True
+            break
+
+    if not exec_on_remote:
+        os.remove(file_path)
+    return "delete post", file_path
 
 
 @app.task(name="wisgoon.pin.post_to_followers")
