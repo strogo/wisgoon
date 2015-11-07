@@ -316,9 +316,9 @@ class Post(models.Model):
         hash_tags = re.compile(ur'(?i)(?<=\#)\w+', re.UNICODE)
         tags = hash_tags.findall(self.text)
         all_tags = []
-        for t in tags:
-            if t not in all_tags:
-                all_tags.append(t)
+        for tag in tags:
+            if tag not in all_tags and len(all_tags) != 4:
+                all_tags.append(tag)
         return all_tags
 
     def save_thumb(self, basewidth):
