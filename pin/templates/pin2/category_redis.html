@@ -19,21 +19,22 @@ var next_pref = '?pid=';
 
 <div id="main">
 	<div class="container">
+	{% comment %}
+		{% include "base/ad-720x92.html"%}
 
-	{# {% include "base/ad-720x92.html"%} #}
-
-<div class="tabliq col-sm-12 hidden-xs hidden-sm">
-	<div class="row">
-		<script type="text/javascript">
-		var agahist_pram = agahist_pram || [];
-		agahist_pram["aduser"] = "6";
-		agahist_pram["category"] = "{{cur_cat.id}}"; 
-		agahist_pram["adheight"] = "90";
-		agahist_pram["adwidth"] = "728";			
-		</script> 
-		<script type="text/javascript" src="http://agahist.com/media/js/pubBanner.js"></script>
-	</div>
-</div>
+		<div class="tabliq col-sm-12 hidden-xs hidden-sm">
+			<div class="row">
+				<script type="text/javascript">
+				var agahist_pram = agahist_pram || [];
+				agahist_pram["aduser"] = "6";
+				agahist_pram["category"] = "{{cur_cat.id}}"; 
+				agahist_pram["adheight"] = "90";
+				agahist_pram["adwidth"] = "728";			
+				</script> 
+				<script type="text/javascript" src="http://agahist.com/media/js/pubBanner.js"></script>
+			</div>
+		</div>
+	{% endcomment %}
 <div class="clear"></div>
 
 		<div class="category-title alert col-md-12">
