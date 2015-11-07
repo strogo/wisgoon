@@ -6,8 +6,10 @@
 {% block title%} - {{profile.user_id|get_user_name}}{% endblock title%}
 
 {% block extra_js %}
+
 <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
 <!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
+
 {% endblock extra_js %}
 
 {% block content %}
@@ -21,7 +23,7 @@
 <div id="main">
 	<div class="container">
 		<div class="profile row">
-			<div class="sidebar col-md-3 col-sm-3 col-xs-12 pull-right">
+			<div class="sidebar col-md-3 col-sm-3 col-xs-12 pull-right">	
 				{% include "pin2/__user_info_top.html" %}
 				
 				{% include "pin2/__user_info_stats.html" %}
@@ -51,5 +53,43 @@
 
 {% include "pin/feed_scripts.html" %}
 {% include "pin/pin_scripts.html" %}
-
 {% endblock content %}
+
+{% block footer_script %}
+	
+<script type="text/javascript">
+$(document).ready(function() {
+	$('body').on('click', '.ajax-follow', function(event) {
+		event.preventDefault();
+        var t = $(this);
+        var href = t.attr('href');
+
+        $.ajax({
+        	url: href,
+        })
+        .done(function(d) {
+        	if (d.status) {
+        		t.attr('href', '{% url "pin-follow" profile.user_id 0 %}');
+        		t.text('قطع ارتباط');
+        		t.removeClass('btn-success');
+        		t.addClass('btn-danger');
+        	}else{
+        		t.attr('href', '{% url "pin-follow" profile.user_id 1 %}');
+        		t.text('ایجاد دوستی');
+        		t.removeClass('btn-danger');
+        		t.addClass('btn-success');
+        	}
+        })
+        .fail(function(d) {
+        	console.log("error");
+        })
+        .always(function() {
+        	console.log("complete");
+        });
+
+        return false;
+    }); 
+});
+</script>
+
+{% endblock footer_script %}

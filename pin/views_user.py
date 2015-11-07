@@ -25,7 +25,7 @@ from pin.models import Post, Stream, Follow, Ad, Log,\
     Report, Comments, Comments_score, Category, Bills2 as Bills
 
 from pin.model_mongo import Notif, UserMeta, NotifCount
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import pin_image
 from pin.tools import get_request_timestamp, create_filename,\
     get_user_ip, get_request_pid, check_block, get_user_meta,\
@@ -137,7 +137,7 @@ def follow(request, following, action):
         follow.delete()
         Stream.objects.filter(following=following, user=request.user).delete()
         message = 'ارتباط شما با موفقیت قطع شد'
-        status = 'false'
+        status = False
     elif created:
         # posts = Post.objects.only('timestamp').filter(user=following)\
         #     .order_by('-timestamp')[:100]
@@ -147,13 +147,13 @@ def follow(request, following, action):
         #                                               user=request.user,
         #                                               date=post.timestamp,
         #                                               following=following)
-            # print "post", post.id, s, created
+        # print "post", post.id, s, created
         message = 'ارتباط شما با موفقیت برقرار شد'
-        status = 'true'
+        status = True
 
     if request.is_ajax():
-        data = [{'status': status, 'message': message}]
-        return HttpResponse(json.dumps(data))
+        data = {'status': status, 'message': message}
+        return HttpResponse(json.dumps(data), content_type='application/json')
     return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
 
 
@@ -182,6 +182,7 @@ def like(request, item_id):
 
 @login_required
 def report(request, pin_id):
+
     try:
         post = Post.objects.get(id=pin_id)
     except Post.DoesNotExist:
@@ -200,10 +201,10 @@ def report(request, pin_id):
         post.report = post.report + 1
         post.save()
         status = True
-        msg = 'گزارش شما ثبت شد.'
+        msg = u'گزارش شما ثبت شد.'
     else:
         status = False
-        msg = 'شما قبلا این مطلب را گزارش داده اید.'
+        msg = u'شما قبلا این مطلب را گزارش داده اید.'
 
     if request.is_ajax():
         data = [{'status': status, 'msg': msg}]
@@ -517,11 +518,20 @@ def notif_user(request):
     timestamp = get_request_timestamp(request)
     if timestamp:
         date = datetime.datetime.fromtimestamp(timestamp)
-        notif = Notif.objects.filter(owner=request.user.id, date__lt=date)\
-            .order_by('-date')[:20]
+        notifications = Notif.objects.filter(owner=request.user.id, date__lt=date)\
+            .order_by('-date')
     else:
-        notif = Notif.objects.filter(owner=request.user.id)\
-            .order_by('-date')[:20]
+        notifications = Notif.objects.filter(owner=request.user.id)\
+            .order_by('-date')
+
+    paginator = Paginator(notifications, 10)
+    page = request.GET.get('page')
+    try:
+        notif = paginator.page(page)
+    except PageNotAnInteger:
+        notif = paginator.page(1)
+    except EmptyPage:
+        notif = paginator.page(paginator.num_pages)
 
     nl = []
     for n in notif:
@@ -542,7 +552,7 @@ def notif_user(request):
     if request.is_ajax():
         return render(request, 'pin/_notif.html', {'notif': nl})
     else:
-        return render(request, 'pin/notif_user.html', {'notif': nl})
+        return render(request, 'pin/notif_user.html', {'notif': nl, 'paginator': notif})
 
 
 @login_required
