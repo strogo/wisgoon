@@ -242,7 +242,7 @@ def date_filter(index):
 
     if not isinstance(index, datetime.datetime):
         return ''
-    return khayyam.JalaliDatetime.from_datetime(index).strftime("%d %B %Y- %H:%M")
+    return khayyam.JalaliDatetime.from_datetime(index).strftime("%d %B %Y")
 
 
 @register.filter
