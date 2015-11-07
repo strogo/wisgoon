@@ -5,7 +5,6 @@
 
 {% spaceless %}
 {% for item in notif %}
-
 <div class="notif-item" >
 	<div class="notif-img pull-left">
 		<a class="pin-item-link" style="float:right" href="{% url "pin-item" item.id%}">
@@ -34,7 +33,7 @@
 	{% if offset %}
 	<span data-next="{{offset}}" ></span>
 	{%else%}
-	<span data-next="{{item.date|date:"U"}}" ></span>
+	<span data-next="{{item.pid}}" ></span>
 	{%endif%}
 	<div class="clear"></div>
 </div>

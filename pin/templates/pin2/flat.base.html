@@ -16,6 +16,7 @@
 		var upload_url = "{% url "pin-upload" %}";
 	</script>
 
+
 	{% include "base/analytics.html"%}
 </head>
 <body>
@@ -54,7 +55,47 @@
 	{% block footer_ex_js %}
 	{% endblock footer_ex_js %}
 	
-	{% block js %}{% endblock js %}
+	{% block js %}
+	<script>
+		$(document).ready(function() {
+	        var feedobj = $('#feed-ul');
+	        var loadingobj ;
+	        var a_url = a_url || "";
+	        var start_loading = 0;
+	            
+	        $(window).scroll(function() {
+	            loadingobj = $(".loading");
+	            var break_point = $(document).height() - ($(window).height() * 2.02);
+	            if ($(window).scrollTop() >= break_point) {
+	                var next_page = $('#feed-ul span:last').attr('data-next');
+	                if (next_page && start_loading==0) {
+	                    start_loading=1;
+	                    loadingobj.show();
+	                    load_notif(next_page);
+	                }
+	            }
+	        });
+		    function load_notif(page) {
+		        $.get(
+		            a_url+'?pid=' + page,
+		            function(response) {
+		                if(response==0){
+		                    loadingobj.hide();
+		                }else{
+		                    var boxes = response;
+		                    feedobj.append(boxes);
+		                    loadingobj.hide();
+		                    start_loading=0;
+		                    ana_ajax(a_url+'?pid=' + page);
+		                }
+		            }
+		        );
+		    }
+	    });
+
+	</script>
+
+	{% endblock js %}
 
 </body>
 </html>
