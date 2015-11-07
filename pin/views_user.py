@@ -152,7 +152,7 @@ def follow(request, following, action):
         status = True
 
     if request.is_ajax():
-        data = [{'status': status, 'message': message}]
+        data = {'status': status, 'message': message}
         return HttpResponse(json.dumps(data), content_type='application/json')
     return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
 

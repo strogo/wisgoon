@@ -61,13 +61,11 @@ $(document).ready(function() {
 		event.preventDefault();
         var t = $(this);
         var href = t.attr('href');
-        console.log(href);
 
         $.ajax({
         	url: href,
         })
         .done(function(d) {
-        	console.log(d);
         	if (d.status) {
         		t.attr('href', '{% url "pin-follow" profile.user_id 0 %}');
         		t.text('قطع ارتباط');
@@ -81,7 +79,6 @@ $(document).ready(function() {
         	}
         })
         .fail(function(d) {
-        	console.log(d);
         	console.log("error");
         })
         .always(function() {
