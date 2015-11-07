@@ -306,7 +306,7 @@ LIST_LONG = 5000
 
 LIKE_WITH_CELERY = False
 
-USE_CELERY = True
+USE_CELERY = False
 USE_CELERY_V2 = True
 
 APP_TOKEN_STR = 'app mobile-)**Z{QT'

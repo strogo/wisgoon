@@ -28,7 +28,9 @@
 	{% if next_url %}
 	<div class="footer-loading-box">
 		<center>
+			{% comment %}
 			{% include "base/ad-125x125.html" %}
+			{% endcomment %}
 			<a id="next_url" href="{{next_url}}" title="کلیک کنید">
 				<img src="{{MEDIA_URL}}v2/images/big-loader.gif" alt="Loading..." class="footer-loading-img" />
 			</a>
@@ -37,7 +39,9 @@
 	{% else %}
 	<div class="footer-loading-box">
 		<center>
+			{% comment %}
 			{% include "base/ad-125x125.html" %}
+			{% endcomment %}
 			<img src="{{MEDIA_URL}}v2/images/big-loader.gif" alt="Loading..." class="footer-loading-img" />
 		</center>
 	</div>
