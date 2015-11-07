@@ -21,14 +21,13 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
 from pin.context_processors import is_police
-from pin.models import Post, Stream, Follow, Ad, Log,\
+from pin.models import Post, Stream, Follow, Ad,\
     Report, Comments, Comments_score, Category, Bills2 as Bills
 
 from pin.model_mongo import Notif, UserMeta, NotifCount
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import pin_image
 from pin.tools import get_request_timestamp, create_filename,\
-    get_user_ip, get_request_pid, check_block, get_user_meta,\
+    get_user_ip, get_request_pid, check_block,\
     post_after_delete, get_post_user_cache
 
 from suds.client import Client
@@ -515,34 +514,28 @@ def show_notify(request):
 
 @login_required
 def notif_user(request):
-    timestamp = get_request_timestamp(request)
-    if timestamp:
-        date = datetime.datetime.fromtimestamp(timestamp)
-        notifications = Notif.objects.filter(owner=request.user.id, date__lt=date)\
-            .order_by('-date')
+    pid = request.GET.get('pid', 0)
+    if pid:
+        # date = datetime.datetime.fromtimestamp(timestamp)
+        notifications = Notif.objects.filter(owner=request.user.id, id__lt=pid)\
+            .order_by('-date')[:20]
+
     else:
         notifications = Notif.objects.filter(owner=request.user.id)\
-            .order_by('-date')
+            .order_by('-date')[:20]
 
-    paginator = Paginator(notifications, 10)
-    page = request.GET.get('page')
-    try:
-        notif = paginator.page(page)
-    except PageNotAnInteger:
-        notif = paginator.page(1)
-    except EmptyPage:
-        notif = paginator.page(paginator.num_pages)
-
+    print notifications
     nl = []
-    for n in notif:
+    for notif in notifications:
         anl = {}
         try:
-            anl['po'] = Post.objects.only('image').get(pk=n.post)
+            anl['po'] = Post.objects.only('image').get(pk=notif.post)
         except Post.DoesNotExist:
             continue
-        anl['id'] = n.post
-        anl['type'] = n.type
-        anl['actor'] = n.last_actor
+        anl['id'] = notif.post
+        anl['type'] = notif.type
+        anl['actor'] = notif.last_actor
+        anl['pid'] = notif.id
 
         nl.append(anl)
 
@@ -552,7 +545,7 @@ def notif_user(request):
     if request.is_ajax():
         return render(request, 'pin/_notif.html', {'notif': nl})
     else:
-        return render(request, 'pin/notif_user.html', {'notif': nl, 'paginator': notif})
+        return render(request, 'pin/notif_user.html', {'notif': nl})
 
 
 @login_required
@@ -618,16 +611,16 @@ def inc_credit(request):
 def verify_payment(request, bill_id):
     bill = Bills.objects.get(id=bill_id)
 
-    Authority = request.GET.get('Authority', False)
+    authority = request.GET.get('Authority', False)
     status = request.GET.get('Status', False)
 
-    if Authority and status == 'OK':
+    if authority and status == 'OK':
 
         url = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'
         client = Client(url)
         data = {'MerchantID': MERCHANT_ID,
                 'Amount': bill.amount,
-                'Authority': Authority}
+                'Authority': authority}
 
         result = client.service.PaymentVerification(**data)
 
