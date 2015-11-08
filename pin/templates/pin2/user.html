@@ -67,8 +67,8 @@ $(document).ready(function() {
         $.ajax({
         	url: href,
         })
-        .done(function(d) {
-        	if (d.status) {
+        .done(function(response) {
+        	if (response.status) {
         		t.attr('href', '{% url "pin-follow" profile.user_id 0 %}');
         		t.text('قطع ارتباط');
         		t.removeClass('btn-success');
@@ -80,7 +80,7 @@ $(document).ready(function() {
         		t.addClass('btn-success');
         	}
         })
-        .fail(function(d) {
+        .fail(function(response) {
         	console.log("error");
         })
         .always(function() {

@@ -28,6 +28,7 @@ def add_to_storage(post_id):
     post.image = image_new_path
     post.save()
     sftp.put(local_path, remote_path)
+    os.remove(local_path)
 
     local_path_236 = os.path.join(settings.MEDIA_ROOT, postmeta.img_236)
     image_new_path_236 = postmeta.img_236
@@ -39,6 +40,7 @@ def add_to_storage(post_id):
     # postmeta.save()
 
     sftp.put(local_path_236, remote_path_236)
+    os.remove(local_path_236)
 
     local_path_500 = os.path.join(settings.MEDIA_ROOT, postmeta.img_500)
     image_new_path_500 = postmeta.img_500
@@ -50,6 +52,7 @@ def add_to_storage(post_id):
     postmeta.save()
 
     sftp.put(local_path_500, remote_path_500)
+    os.remove(local_path_500)
 
     sftp.close()
     ssh.close()

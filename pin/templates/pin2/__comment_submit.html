@@ -7,7 +7,8 @@
 		</div>
 		<div class="text-box col-md-10 col-sm-8 col-xs-8">
 
-			<form action="{% url "pin-comment" %}" method="post" class="form">
+			<form action="{% url "pin-comment" %}" method="post" class="form" id="add-comment-form">
+				{% csrf_token %}
 				<div class="row">
 					<div class="form-group col-md-12">
 						<textarea class="form-control" id="id_comment"  name="text" placeholder="نظر خود را وارد کنید" ></textarea>

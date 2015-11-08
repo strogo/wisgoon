@@ -167,7 +167,7 @@ INSTALLED_APPS = (
     'user_profile',
     'captcha',
     'tastypie',
-    'devserver',
+    # 'devserver',
     'debug_toolbar',
     'widget_tweaks',
     'ckeditor',
@@ -343,8 +343,8 @@ SITE_DESC = 'what is going on, social image sharing'
 STREAM_CASSANDRA_HOSTS = 'localhost'
 
 
-SCORE_FOR_COMMENING = 0
-SCORE_FOR_STREAMS = 0
+SCORE_FOR_COMMENING = -100
+SCORE_FOR_STREAMS = -100
 
 # CELERY_ALWAYS_EAGER = True
 
@@ -355,3 +355,4 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Tehran'
 CELERY_IGNORE_RESULT = True
+SITE_ID = 1
