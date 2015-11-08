@@ -133,10 +133,11 @@ class LikesRedis(object):
         MonthlyStats.log_hit(object_type=MonthlyStats.LIKE)
 
         # Post.hot(post.id, amount=0.5)
-        from pin.actions import send_notif_bar
 
-        send_notif_bar(user=post_owner, type=1, post=self.postId,
-                       actor=user_id)
+        if user_id != post_owner:
+            from pin.actions import send_notif_bar
+            send_notif_bar(user=post_owner, type=1, post=self.postId,
+                           actor=user_id)
 
     def like_or_dislike(self, user_id, post_owner):
         if self.user_liked(user_id=user_id):

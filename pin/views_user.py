@@ -26,8 +26,7 @@ from pin.models import Post, Stream, Follow, Ad,\
 
 from pin.model_mongo import Notif, UserMeta, NotifCount
 import pin_image
-from pin.tools import get_request_timestamp, create_filename,\
-    get_user_ip, get_request_pid, check_block,\
+from pin.tools import create_filename, get_user_ip, get_request_pid, check_block,\
     post_after_delete, get_post_user_cache
 
 from suds.client import Client
@@ -520,12 +519,9 @@ def notif_user(request):
         # date = datetime.datetime.fromtimestamp(timestamp)
         notifications = Notif.objects.filter(owner=request.user.id, id__lt=pid)\
             .order_by('-date')[:20]
-
     else:
-        notifications = Notif.objects.filter(owner=request.user.id)\
-            .order_by('-date')[:20]
+        notifications = Notif.objects.filter(owner=request.user.id).order_by('-date')[:20]
 
-    print notifications
     nl = []
     for notif in notifications:
         anl = {}
