@@ -173,7 +173,6 @@ def comment_delete(request, id):
     if request.is_ajax():
         data = {'status': True, 'message': 'دیدگاه حذف شد'}
         return HttpResponse(json.dumps(data))
-
     return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
 
 

@@ -40,20 +40,20 @@ $( "body" ).on('click', ".postfault", function(){
 });
 
 
-$('body').on('click', '.del-comment', function(){
-    event.preventDefault();
-    var obj = $(this);
-    var row_name = "comment_row_" + $(obj).attr("rel");
-    var req_url = obj.attr('href');
-    $.ajax({
-        url: req_url,
-        success: function(html) {
-            ret = html;
-            if (ret==1){
-                $("#"+row_name).remove();
-            }
-        }
-    });
+// $('body').on('click', '.del-comment', function(){
+//     event.preventDefault();
+//     var obj = $(this);
+//     var row_name = "comment_row_" + $(obj).attr("rel");
+//     var req_url = obj.attr('href');
+//     $.ajax({
+//         url: req_url,
+//         success: function(html) {
+//             ret = html;
+//             if (ret==1){
+//                 $("#"+row_name).remove();
+//             }
+//         }
+//     });
     
-    return false;
-});
+//     return false;
+// });
