@@ -58,6 +58,7 @@
 	{% block js %}
 	<script>
 		$(document).ready(function() {
+			// Load Infinit Scroll Notification 
 	        var feedobj = $('#feed-ul');
 	        var loadingobj ;
 	        var a_url = a_url || "";
@@ -91,10 +92,34 @@
 		            }
 		        );
 		    }
+		    // Add Comment
+		    var frm = $("#add-comment-form");
+			frm.submit(function(e) {
+
+			    e.preventDefault();
+			    $.ajax({
+			    	type: frm.attr('method'),
+			        url: frm.attr('action'),
+			        data: frm.serialize(),
+			    })
+			    .done(function(response) {
+			    	if (response == 'error'){
+			    		console.log('Method Not Allowed');
+			    	}else{
+			    		$('#comments_box').append(response);
+			    	}
+			    })
+			    .fail(function() {
+			    	console.log("error");
+			    })
+			    .always(function() {
+			    	console.log("complete");
+			    });
+			    return false;
+			});	
 	    });
 
 	</script>
-
 	{% endblock js %}
 
 </body>

@@ -282,6 +282,7 @@ def nop(request, item_id):
 @login_required
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 def send_comment(request):
+
     if request.method == 'POST':
         text = request.POST.get('text', None)
         post = request.POST.get('post', None)
@@ -290,12 +291,12 @@ def send_comment(request):
             if check_block(user_id=post.user_id, blocked_id=request.user.id):
                 if not is_police(request, flat=True):
                     return HttpResponseRedirect('/')
-            Comments.objects.create(object_pk=post,
-                                    comment=text,
-                                    user=request.user,
-                                    ip_address=get_user_ip(request))
+            comment = Comments.objects.create(object_pk=post,
+                                              comment=text,
+                                              user=request.user,
+                                              ip_address=get_user_ip(request))
 
-            return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
+            return render(request, 'pin2/show_comment.html', {'comment': comment})
 
     return HttpResponse('error')
 
