@@ -12,17 +12,6 @@ rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
 rListServer = redis.Redis(settings.REDIS_DB_2, db=4)
 
 
-class ChangedPosts(object):
-
-    @classmethod
-    def store_change(cls, post_id):
-        pass
-
-    @classmethod
-    def get_changed(cls):
-        return []
-
-
 class LikesRedis(object):
     KEY_PREFIX_SET = "p:l:"
     KEY_PREFIX_LIST = "l:l:"
@@ -74,8 +63,6 @@ class LikesRedis(object):
 
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') + 1)
-
-        ChangedPosts.store_change(post_id=self.postId)
 
         p = rListServer.pipeline()
         p.lpush(self.keyNameList, user_id)
