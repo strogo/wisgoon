@@ -17,7 +17,7 @@ def do_stuff(q):
         q.task_done()
 
 q = Queue(maxsize=0)
-num_threads = 300
+num_threads = 10
 
 for i in range(num_threads):
     worker = Thread(target=do_stuff, args=(q,))
