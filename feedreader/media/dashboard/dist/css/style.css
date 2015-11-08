@@ -1,0 +1,26 @@
+.sidebar-menu li > a > .fa-angle-left {
+  margin-top: -16px !important;
+}
+.skin-black .sidebar-menu > li > a {
+	border-right: 3px solid transparent !important;
+}
+.skin-black .sidebar-menu > li:hover > a, .skin-black .sidebar-menu > li.active > a {
+	border-right-color: #fff !important;
+	border-left-color: transparent !important;
+}
+.sidebar-menu > li .label, .sidebar-menu > li .badge {
+	margin-top: -16px;
+}
+.box-header > .fa, .box-header > .glyphicon, .box-header > .ion, .box-header .box-title{
+	float: right !important;
+}
+.info-box-content {
+  margin-left: 90px;
+  padding: 10px 16px;
+}
+.logo-mini img {
+	width: 40px;
+}
+.logo-lg img {
+	width: 200px;
+}
