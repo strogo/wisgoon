@@ -26,8 +26,7 @@ from pin.models import Post, Stream, Follow, Ad,\
 
 from pin.model_mongo import Notif, UserMeta, NotifCount
 import pin_image
-from pin.tools import get_request_timestamp, create_filename,\
-    get_user_ip, get_request_pid, check_block,\
+from pin.tools import create_filename, get_user_ip, get_request_pid, check_block,\
     post_after_delete, get_post_user_cache
 
 from suds.client import Client
@@ -282,6 +281,7 @@ def nop(request, item_id):
 @login_required
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 def send_comment(request):
+
     if request.method == 'POST':
         text = request.POST.get('text', None)
         post = request.POST.get('post', None)
@@ -290,12 +290,12 @@ def send_comment(request):
             if check_block(user_id=post.user_id, blocked_id=request.user.id):
                 if not is_police(request, flat=True):
                     return HttpResponseRedirect('/')
-            Comments.objects.create(object_pk=post,
-                                    comment=text,
-                                    user=request.user,
-                                    ip_address=get_user_ip(request))
+            comment = Comments.objects.create(object_pk=post,
+                                              comment=text,
+                                              user=request.user,
+                                              ip_address=get_user_ip(request))
 
-            return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
+            return render(request, 'pin2/show_comment.html', {'comment': comment})
 
     return HttpResponse('error')
 
@@ -514,17 +514,14 @@ def show_notify(request):
 
 @login_required
 def notif_user(request):
-    pid = request.GET.get('pid', 0)
+    pid = request.GET.get('older', 0)
     if pid:
         # date = datetime.datetime.fromtimestamp(timestamp)
         notifications = Notif.objects.filter(owner=request.user.id, id__lt=pid)\
             .order_by('-date')[:20]
-
     else:
-        notifications = Notif.objects.filter(owner=request.user.id)\
-            .order_by('-date')[:20]
+        notifications = Notif.objects.filter(owner=request.user.id).order_by('-date')[:20]
 
-    print notifications
     nl = []
     for notif in notifications:
         anl = {}

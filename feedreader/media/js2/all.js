@@ -25,7 +25,7 @@ var loadingobj ;
 var a_url = a_url || "";
 var extend_query = extend_query || "";
 var disable_masonry = disable_masonry || 0 ;
-
+var start_loading = 0;
 if (disable_masonry==0){
     feedobj.masonry({
         itemSelector : '.feed-item',
@@ -38,15 +38,16 @@ if (disable_masonry==0){
 var next_pref = next_pref || '?older='
 
 function load_posts(page) {
-    $('.footer-loading-box').show(0);
+    // $('.footer-loading-box').show(0);
+    $(".loading").show(0);
     $.get(
         a_url + next_pref + page + '&'+extend_query,
         function(response) {
             if(response==0){
                 loadingobj.hide();
             }else{
-                var $boxes = $(response);
-                feedobj.append( $boxes ).masonry( 'appended', $boxes );
+                var boxes = response;
+                feedobj.append( boxes ).masonry( 'appended', boxes );
                 feedobj.masonry('reload');
                 loadingobj.hide();
                 start_loading=0;
