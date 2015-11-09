@@ -12,13 +12,13 @@ register = Library()
 
 
 @register.filter
-def daddy_avatar(user_email, size=200):
-    media_avatar = os.path.join(settings.MEDIA_URL, 'default_avatar.jpg')
+def daddy_avatar(user_email, size=165):
+    media_avatar = os.path.join(settings.MEDIA_URL, 'default_avatar1.jpg')
     return media_avatar
 
 
 @register.filter
-def get_avatar(user, size=200):
+def get_avatar(user, size=165):
     class UserGeneric(object):
         pass
 

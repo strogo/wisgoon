@@ -58,40 +58,6 @@
 	{% block js %}
 	<script>
 		$(document).ready(function() {
-			// Load Infinit Scroll Notification 
-	        var feedobj = $('#feed-ul');
-	        var loadingobj ;
-	        var a_url = a_url || "";
-	        var start_loading = 0;
-	            
-	        $(window).scroll(function() {
-	            loadingobj = $(".loading");
-	            var break_point = $(document).height() - ($(window).height() * 2.02);
-	            if ($(window).scrollTop() >= break_point) {
-	                var next_page = $('#feed-ul span:last').attr('data-next');
-	                if (next_page && start_loading==0) {
-	                    start_loading=1;
-	                    loadingobj.show();
-	                    load_notif(next_page);
-	                }
-	            }
-	        });
-		    function load_notif(page) {
-		        $.get(
-		            a_url+'?pid=' + page,
-		            function(response) {
-		                if(response==0){
-		                    loadingobj.hide();
-		                }else{
-		                    var boxes = response;
-		                    feedobj.append(boxes);
-		                    loadingobj.hide();
-		                    start_loading=0;
-		                    ana_ajax(a_url+'?pid=' + page);
-		                }
-		            }
-		        );
-		    }
 		    // Add Comment
 		    var frm = $("#add-comment-form");
 			frm.submit(function(e) {

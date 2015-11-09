@@ -514,7 +514,7 @@ def show_notify(request):
 
 @login_required
 def notif_user(request):
-    pid = request.GET.get('pid', 0)
+    pid = request.GET.get('older', 0)
     if pid:
         # date = datetime.datetime.fromtimestamp(timestamp)
         notifications = Notif.objects.filter(owner=request.user.id, id__lt=pid)\
