@@ -8,7 +8,6 @@
 					</div>
 					<div class="pull-left info">
 						<p>محمد شریفی</p>
-						<a href="#"><i class="fa fa-circle text-success"></i> آنلاین</a>
 					</div>
 				</div>
 				<!-- search form -->
@@ -30,7 +29,12 @@
 						</a>
 					</li>
 					<li>
-						<a href="">
+						<a href="{% url  "dashboard-user-activity" %}">
+							<i class="fa fa-briefcase"></i> <span>فعالیت های کاربران </span>
+						</a>
+					</li>
+					<li>
+						<a href="{% url  "dashboard-logs" %}">
 							<i class="fa fa-briefcase"></i> <span>لاگ های برنامه </span>
 						</a>
 					</li>
@@ -41,7 +45,7 @@
 							<i class="fa fa-angle-left pull-left"></i>
 						</a>
 						<ul class="treeview-menu">
-							<li><a href="pages/charts/chartjs.html"><i class="fa fa-circle-o"></i> آگهی های فعال</a></li>
+							<li><a href="{% url "dashboard-ads" %}"><i class="fa fa-circle-o"></i> آگهی های فعال</a></li>
 						</ul>
 					</li>
 					<li class="treeview">
@@ -51,7 +55,7 @@
 							<i class="fa fa-angle-left pull-left"></i>
 						</a>
 						<ul class="treeview-menu">
-							<li><a href="pages/UI/general.html"><i class="fa fa-circle-o"></i> آمار محتوای ورودی</a></li>
+							<li><a href="{% url "dashboard-catregory" %}"><i class="fa fa-circle-o"></i> آمار محتوای ورودی</a></li>
 						</ul>
 					</li>
 				</section>

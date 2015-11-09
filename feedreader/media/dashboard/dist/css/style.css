@@ -1,5 +1,5 @@
 .sidebar-menu li > a > .fa-angle-left {
-  margin-top: -16px !important;
+	margin-top: -16px !important;
 }
 .skin-black .sidebar-menu > li > a {
 	border-right: 3px solid transparent !important;
@@ -15,12 +15,156 @@
 	float: right !important;
 }
 .info-box-content {
-  margin-left: 90px;
-  padding: 10px 16px;
+	margin-left: 90px;
+	padding: 10px 16px;
 }
 .logo-mini img {
 	width: 40px;
 }
 .logo-lg img {
 	width: 200px;
+}
+.content .photo {
+	padding-bottom: 50px;
+	width: 236px;
+	margin: 10px 10px 40px ;
+}
+.content .photo img {
+	width: 100%;
+}
+.content .photo .box-tools {
+	position: absolute;
+	left: 10px;
+	bottom: -18px;
+}
+.content .photo .box-tools button{
+	background-color: transparent;
+	border: none;
+	margin-top: 2px;
+}
+.photo .delete {
+	color: #fff;
+	border-radius: 50%;
+	padding: 3px 10px;
+	font-size: 20px;
+	background-color: #F24F5E !important;
+	border: 2px solid #DA3847 !important;
+	box-shadow: -1px 2px 5px #999;
+}
+.photo .undo {
+	background-color: #3cb878 !important;
+	border: 2px solid #2ca165 !important;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 20px;
+	padding: 3px 8px;
+	margin-left: 5px;
+	box-shadow: -1px 2px 5px #999;
+}
+.content .user {
+	left: 14px;
+	position: absolute;
+	top: 130px;
+}
+.content .user img {
+	border: 3px solid #fff;
+	border-radius: 50%;
+	float: left;
+	width: 60px;
+}
+.content .report-count h5 {
+	padding: 10px 15px;
+}
+.content .report-count a {
+	color: #333;
+}
+.fa-square-o {
+	color: #fff;
+	float: left;
+	font-size: 30px;
+	left: 8px;
+	position: absolute;
+	top: 5px;
+}
+.fa-check-square-o {
+	color: #fff;
+	float: left;
+	font-size: 30px;
+	left: 8px;
+	position: absolute;
+	top: 5px;
+}
+.content .reporters ul li{
+	display: inline;
+}
+.content .reporters ul {
+	padding-right: 10px;
+	padding-bottom: 10px;
+}
+.content .reporters img {
+	width: 25px;
+	padding-left: 3px;
+	border-radius: 50%;
+
+}
+.content  .photo .score label{
+	font-size: 12px;
+	font-weight: normal;
+	padding-right: 10px;
+}
+.content .photo .user-info {
+	padding: 20px 10px 5px;
+}
+.content .photo .user-info .btn-default {
+	background-color: #fff;
+}
+.content .photo .user-info .btn .caret {
+	margin-right: 100px;
+}
+.dropdown-menu > li > a {
+	color: #333 !important;
+	font-weight: normal;
+	font-size: 10px;
+	padding-right: 5px;
+}
+.dropdown-menu {
+	right: 10px !important;
+	min-width: 205px;
+}
+.content-header > .breadcrumb {
+	right: 10px;
+	float: right;
+}
+.content-header > h1 {
+	float: left;
+}
+.clear{
+	clear:both !important;
+}
+#reporter-modal .modal-body img {
+	width: 100%;
+	border-radius: 50%;
+}
+
+#reporter-modal .modal-body .reporter-item {
+	margin:10px 5px;
+	padding: 5px;
+	border-bottom: 1px solid #ddd;
+
+}
+#reporter-modal .modal-body .reporter-item:last-child {
+	border-bottom: none;
+}
+#reporter-modal .modal-body .reporters h2{
+	color: #ccc;
+}
+#reporter-modal .modal-body .reporters .user-score {
+	text-align: left;
+}
+table.table-bordered thead th, table.table-bordered thead td {
+	border-left-width:1px !important;
+}
+table.table-bordered tbody th, table.table-bordered tbody td {
+	border-bottom-width: 1px !important;
+	border-left-width: 1px !important;
 }
