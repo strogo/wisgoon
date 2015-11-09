@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^buggy/', 'pin.views_test.buggy', name='buggy'),
     url(r'^api/v6/', include('pin.api6.urls')),
     url(r'^dashboard/', include('pin.views2.dashboard.urls')),
+    url(r'^angular/', include('pin.views2.angular.urls')),
 )
 
 urlpatterns += patterns('pin.views',
