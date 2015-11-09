@@ -46,7 +46,7 @@ function load_posts(page) {
             if(response==0){
                 loadingobj.hide();
             }else{
-                var boxes = response;
+                var boxes = $(response);
                 feedobj.append( boxes ).masonry( 'appended', boxes );
                 feedobj.masonry('reload');
                 loadingobj.hide();
