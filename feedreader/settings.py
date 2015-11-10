@@ -103,3 +103,9 @@ SCORE_FOR_STREAMS = 10000
 
 BROKER_URL = 'amqp://guest@79.127.125.98//'
 CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.98//'
+
+CELERY_ROUTES = {
+    'wisgoon.pin.add_to_storage': {
+        'queue': 'add_storage_1'
+    }
+}
