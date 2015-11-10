@@ -25,7 +25,7 @@ var loadingobj ;
 var a_url = a_url || "";
 var extend_query = extend_query || "";
 var disable_masonry = disable_masonry || 0 ;
-var start_loading = 0;
+// var start_loading = 0;
 if (disable_masonry==0){
     feedobj.masonry({
         itemSelector : '.feed-item',
