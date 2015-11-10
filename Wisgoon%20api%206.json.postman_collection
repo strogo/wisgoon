@@ -49,7 +49,7 @@
 		{
 			"id": "166162c1-3b16-829f-aa93-a1193dab6dcc",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v5/post/search/?q=test",
+			"url": "http://127.0.0.1:8000/api/v6/post/search/?q=test",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "GET",
@@ -70,7 +70,7 @@
 		{
 			"id": "2053cc10-17c4-065c-ea12-817b853f9eb1",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v5/post/choices/",
+			"url": "http://127.0.0.1:8000/api/v6/post/choices/",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "GET",
@@ -125,7 +125,7 @@
 		{
 			"id": "2c07ee7a-e088-ec0b-ac7f-1982b1515dd2",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v5/auth/followers/1/?token=1234",
+			"url": "http://127.0.0.1:8000/api/v6/auth/followers/1/?token=1234",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "GET",
@@ -144,7 +144,7 @@
 		{
 			"id": "37afeb9c-f459-950f-69ab-527c765a8d5d",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v5/post/friends/?token=1234",
+			"url": "http://127.0.0.1:8000/api/v6/post/friends/?token=1234",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "GET",
@@ -185,7 +185,7 @@
 		{
 			"id": "782211c8-74fd-779a-a05b-ea01fe8ba21a",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v5/auth/register/",
+			"url": "http://127.0.0.1:8000/api/v6/auth/register/",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
@@ -262,7 +262,7 @@
 					"request": {
 						"name": "Registeration",
 						"description": "",
-						"url": "http://127.0.0.1:8000/api/v5/auth/register/",
+						"url": "http://127.0.0.1:8000/api/v6/auth/register/",
 						"pathVariables": {},
 						"data": "{\"token\":\"e622c330c77a17c8426e638d7a85da6c2ec9f455\",\n \"username\":\"apitest22\",\n \"password\":\"apipassword22\",\n \"email\":\"vchakoshy@gmail.com\"}",
 						"headers": "",
@@ -279,7 +279,7 @@
 		{
 			"id": "90b62435-3496-a66a-8c03-2912b841fd3a",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v5/auth/follow/?token=1234&user_id=3",
+			"url": "http://127.0.0.1:8000/api/v6/auth/follow/?token=1234&user_id=3",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "GET",
@@ -300,7 +300,7 @@
 		{
 			"id": "921f7439-aeb1-9607-9111-24945781e97e",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v5/post/category/1/?token=1234",
+			"url": "http://127.0.0.1:8000/api/v6/post/category/1/?token=1234",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "GET",
@@ -321,7 +321,7 @@
 		{
 			"id": "9b737e09-c8a2-a448-7e22-abce4937aee6",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v5/post/item/26/?token=1234",
+			"url": "http://127.0.0.1:8000/api/v6/post/item/26/?token=1234",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "GET",
@@ -342,7 +342,7 @@
 		{
 			"id": "bf6cf318-38f9-d3df-137e-0e6e4ca1f726",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v5/post/latest/",
+			"url": "http://127.0.0.1:8000/api/v6/post/latest/",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "GET",
@@ -363,7 +363,7 @@
 		{
 			"id": "d3a3a236-b16d-3776-4984-bdfa11a5e72a",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v5/auth/following/1/?token=1234",
+			"url": "http://127.0.0.1:8000/api/v6/auth/following/1/?token=1234",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "GET",
@@ -384,7 +384,7 @@
 		{
 			"id": "e579b653-48cb-fb63-2a90-ef09379354ed",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v5/auth/unfollow/?token=1234&user_id=3",
+			"url": "http://127.0.0.1:8000/api/v6/auth/unfollow/?token=1234&user_id=3",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "GET",
