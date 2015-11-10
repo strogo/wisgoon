@@ -66,14 +66,17 @@ $(document).ready(function() {
 
         $.ajax({
         	url: href,
+        	async: false
         })
         .done(function(response) {
         	if (response.status) {
+        		alert_show(response.message, 'success');
         		t.attr('href', '{% url "pin-follow" profile.user_id 0 %}');
         		t.text('قطع ارتباط');
         		t.removeClass('btn-success');
         		t.addClass('btn-danger');
         	}else{
+        		alert_show(response.message, 'success');
         		t.attr('href', '{% url "pin-follow" profile.user_id 1 %}');
         		t.text('ایجاد دوستی');
         		t.removeClass('btn-danger');
