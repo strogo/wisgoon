@@ -308,7 +308,7 @@ def absuser_friends(request, user_namefg):
     user_id = int(user.id)
     profile, created = Profile.objects.get_or_create(user_id=user_id)
     older = request.POST.get('older', False)
-    print older, "older"
+
     if older:
         friends = Follow.objects\
             .filter(follower_id=user_id, id__lt=older).order_by('-id')[:16]
@@ -331,7 +331,9 @@ def absuser_friends(request, user_namefg):
             'page': 'user_following',
             'profile': profile,
             'follow_status': follow_status,
-            'user_id': user_id
+            'user_id': user_id,
+            'user': user
+
         })
 
 
@@ -387,14 +389,12 @@ def absuser_followers(request, user_namefl):
 
     user = get_object_or_404(User, username=user_namefl)
     user_id = user.id
-
     profile, created = Profile.objects.get_or_create(user_id=user_id)
     older = request.POST.get('older', False)
     if older:
         friends = Follow.objects.filter(following_id=user_id, id__lt=older).order_by('-id')[:16]
     else:
         friends = Follow.objects.filter(following_id=user_id).order_by('-id')[:16]
-
     if request.is_ajax():
         if friends.exists():
             return render(request, 'pin/_user_following.html', {
@@ -411,7 +411,8 @@ def absuser_followers(request, user_namefl):
             'user_id': int(user_id),
             'page': 'user_follower',
             'profile': profile,
-            'follow_status': follow_status
+            'follow_status': follow_status,
+            'user': user
         })
 
 

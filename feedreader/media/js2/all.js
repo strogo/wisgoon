@@ -38,8 +38,8 @@ if (disable_masonry==0){
 var next_pref = next_pref || '?older='
 
 function load_posts(page) {
-    // $('.footer-loading-box').show(0);
-    $(".loading").show(0);
+    $('.footer-loading-box').show(0);
+    // $(".loading").show(0);
     $.get(
         a_url + next_pref + page + '&'+extend_query,
         function(response) {

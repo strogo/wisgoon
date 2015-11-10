@@ -59,16 +59,19 @@
 	<script>
 		$(document).ready(function() {
 		    // Add Comment
+
 		    var frm = $("#add-comment-form");
 			frm.submit(function(e) {
-
+		    	$('.footer-loading-img').show();
 			    e.preventDefault();
 			    $.ajax({
 			    	type: frm.attr('method'),
 			        url: frm.attr('action'),
 			        data: frm.serialize(),
+			        async: false
 			    })
 			    .done(function(response) {
+		    		
 			    	if (response == 'error'){
 			    		console.log('Method Not Allowed');
 			    	}else{
@@ -79,6 +82,7 @@
 			    	console.log("error");
 			    })
 			    .always(function() {
+			    	$('.footer-loading-img').hide();
 			    	console.log("complete");
 			    });
 			    return false;
