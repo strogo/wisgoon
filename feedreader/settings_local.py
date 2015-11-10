@@ -356,3 +356,9 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Tehran'
 CELERY_IGNORE_RESULT = True
 SITE_ID = 1
+
+CELERY_ROUTES = {
+    'wisgoon.pin.say_salam': {
+        'queue': 'feeds'
+    }
+}
