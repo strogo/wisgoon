@@ -244,3 +244,34 @@ $(function () {
 })
 
 live_content();
+
+// comment
+
+var frm = $("#add-comment-form");
+frm.submit(function(e) {
+    $('.comment-loading-img').show();
+    $("#comment-submit-btn").addClass("disabled");
+    e.preventDefault();
+    $.ajax({
+        type: frm.attr('method'),
+        url: frm.attr('action'),
+        data: frm.serialize(),
+    })
+    .done(function(response) {
+        if (response == 'error'){
+            console.log('Method Not Allowed');
+        }else{
+            $('#comments_box').prepend(response);
+        }
+    })
+    .fail(function() {
+        console.log("error");
+    })
+    .always(function() {
+        $('.comment-loading-img').hide();
+        $("#comment-submit-btn").removeClass("disabled");
+        $(frm).find("input[type=text], textarea").val("");
+        console.log("complete");
+    });
+    return false;
+});

@@ -281,7 +281,6 @@ def nop(request, item_id):
 @login_required
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 def send_comment(request):
-
     if request.method == 'POST':
         text = request.POST.get('text', None)
         post = request.POST.get('post', None)
