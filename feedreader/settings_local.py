@@ -348,8 +348,8 @@ SCORE_FOR_STREAMS = -100
 
 # CELERY_ALWAYS_EAGER = True
 
-BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+BROKER_URL = 'amqp://guest@79.127.125.98//'
+CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.98//'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
