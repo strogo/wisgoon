@@ -140,20 +140,22 @@ class Ad(models.Model):
 
         for ad in query_set:
             cache_key = "ad_%d" % ad.id
+            redis_ad_key = "ad_%d" % ad.id
 
             if not cache.get(cache_key):
                 cache.set(cache_key, 0, 86400 * 30)
 
-            if r_server.sismember("ad_%d" % ad.id, user_id):
+            if r_server.sismember(redis_ad_key, user_id):
                 continue
             else:
-                r_server.sadd("ad_%d" % ad.id, user_id)
+                r_server.sadd(redis_ad_key, user_id)
 
             if ad.get_cnt_view() >= cls.MAX_TYPES[ad.ads_type]:
                 Ad.objects.filter(id=ad.id)\
                     .update(cnt_view=ad.get_cnt_view(),
                             end=datetime.now(),
                             ended=True)
+                r_server.srem(redis_ad_key)
             else:
                 try:
                     cache.incr(cache_key)
