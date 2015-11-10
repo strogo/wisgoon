@@ -7,21 +7,21 @@
 			</div>
 			<div class="text-box col-md-10 col-sm-8 col-xs-8">
 
-				<form action="{% url "pin-comment" %}" method="post" class="form" id="add-comment-form">
-					{% csrf_token %}
-					<div class="row">
-						<div class="form-group col-md-12">
-							<textarea class="form-control" id="id_comment"  name="text" placeholder="نظر خود را وارد کنید" ></textarea>
-						</div>
-						<div class="form-group col-md-3">
-							<input type="submit" class=" form-control btn btn-primary" name="submit" value="ارسال">
-						</div>
-						<div class="col-md-1">
-							<img src="{{MEDIA_URL}}v2/images/loading-img.gif" alt="Loading..." class="footer-loading-img" />
-						</div>
-					</div>
-					<input type="hidden" name="post" value="{{post.id}}">
-				</form>
+<form action="{% url "pin-comment" %}" method="post" class="form" id="add-comment-form">
+	{% csrf_token %}
+	<div class="row">
+		<div class="form-group col-md-12">
+			<textarea class="form-control" id="id_comment"  name="text" placeholder="نظر خود را وارد کنید" ></textarea>
+		</div>
+		<div class="form-group col-md-3">
+			<input type="submit" id="comment-submit-btn" class="form-control btn btn-primary" name="submit" value="ارسال">
+		</div>
+		<div class="col-md-1">
+			<img src="{{MEDIA_URL}}v2/images/loading-img.gif" alt="Loading..." class="comment-loading-img" />
+		</div>
+	</div>
+	<input type="hidden" name="post" value="{{post.id}}">
+</form>
 			</div>
 
 			<div class="clear"></div>

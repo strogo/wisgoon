@@ -1840,6 +1840,6 @@ div.comment div div.row:hover .del-comment{
 	display: inline-block;
 	margin: 0 3px 6px;
 }
-.footer-loading-img{
+.footer-loading-img, .comment-loading-img{
 	display: none;
 }
