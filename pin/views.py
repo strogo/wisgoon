@@ -13,7 +13,7 @@ from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
-
+from django.views.decorators.csrf import csrf_exempt
 from pin.models import Post, Follow, Likes, Category, Comments, Report,\
     Results
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
@@ -301,45 +301,25 @@ def user_friends(request, user_id):
                        'user_id': user_id})
 
 
+@csrf_exempt
 def absuser_friends(request, user_namefg):
-    row_per_page = 20
-
+    # row_per_page = 20
     user = get_object_or_404(User, username=user_namefg)
-    user_id = user.id
-
+    user_id = int(user.id)
     profile, created = Profile.objects.get_or_create(user_id=user_id)
-
-    friends = Follow.objects.values_list('following_id', flat=True)\
-        .filter(follower_id=user_id).order_by('-id')
-
-    paginator = Paginator(friends, row_per_page)
-
-    try:
-        offset = int(request.GET.get('older', 1))
-    except ValueError:
-        offset = 1
-
-    try:
-        friends = paginator.page(offset)
-    except PageNotAnInteger:
-        friends = paginator.page(1)
-    except EmptyPage:
-        return HttpResponse(0)
-
-    if friends.has_next() is False:
-        friends.next_page_number = -1
-
-    friends_list = []
-    for l in friends:
-        friends_list.append(int(l))
-
-    user_items = User.objects.filter(id__in=friends_list)
+    older = request.POST.get('older', False)
+    print older, "older"
+    if older:
+        friends = Follow.objects\
+            .filter(follower_id=user_id, id__lt=older).order_by('-id')[:16]
+    else:
+        friends = Follow.objects.filter(follower_id=user_id).order_by('-id')[:16]
 
     if request.is_ajax():
-        if user_items.exists():
+        if friends.exists():
             return render(request, 'pin/_user_friends.html', {
-                'user_items': user_items,
-                'offset': friends.next_page_number
+                'user_items': friends,
+                'user': user
             })
         else:
             return HttpResponse(0)
@@ -347,11 +327,10 @@ def absuser_friends(request, user_namefg):
         follow_status = Follow.objects\
             .filter(follower=request.user.id, following=user_id).count()
         return render(request, 'pin/user_friends.html', {
-            'user_items': user_items,
+            'user_items': friends,
             'page': 'user_following',
             'profile': profile,
             'follow_status': follow_status,
-            'offset': friends.next_page_number,
             'user_id': user_id
         })
 
@@ -403,59 +382,36 @@ def user_followers(request, user_id):
                        'user_id': user_id})
 
 
+@csrf_exempt
 def absuser_followers(request, user_namefl):
-    row_per_page = 24
 
     user = get_object_or_404(User, username=user_namefl)
     user_id = user.id
 
     profile, created = Profile.objects.get_or_create(user_id=user_id)
-
-    friends = Follow.objects.values_list('follower_id', flat=True)\
-        .filter(following_id=user_id).order_by('-id')
-
-    paginator = Paginator(friends, row_per_page)
-
-    try:
-        offset = int(request.GET.get('older', 1))
-    except ValueError:
-        offset = 1
-
-    try:
-        friends = paginator.page(offset)
-    except PageNotAnInteger:
-        friends = paginator.page(1)
-    except EmptyPage:
-        return HttpResponse(0)
-
-    if friends.has_next() is False:
-        friends.next_page_number = -1
-
-    friends_list = []
-    for l in friends:
-        friends_list.append(int(l))
-
-    user_items = User.objects.filter(id__in=friends_list)
+    older = request.POST.get('older', False)
+    if older:
+        friends = Follow.objects.filter(following_id=user_id, id__lt=older).order_by('-id')[:16]
+    else:
+        friends = Follow.objects.filter(following_id=user_id).order_by('-id')[:16]
 
     if request.is_ajax():
-        if user_items.exists():
-            return render(request, 'pin/_user_friends.html', {
-                'user_items': user_items,
-                'user': user,
-                'offset': friends.next_page_number
+        if friends.exists():
+            return render(request, 'pin/_user_following.html', {
+                'user_items': friends,
+                'user': user
             })
         else:
             return HttpResponse(0)
     else:
         follow_status = Follow.objects\
             .filter(follower=request.user.id, following=user_id).count()
-        return render(request, 'pin/user_friends.html', {
-            'user_items': user_items,
+        return render(request, 'pin/user_following.html', {
+            'user_items': friends,
             'user_id': int(user_id),
             'page': 'user_follower',
             'profile': profile,
-            'follow_status': follow_status,
-            'offset': friends.next_page_number,
+            'follow_status': follow_status
         })
 
 
