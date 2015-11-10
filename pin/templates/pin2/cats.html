@@ -1,83 +1,69 @@
 {% load pin_tags %}
-<nav class="navbar navbar-default-items">
-  <div class="container-fluid">
-
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="wis-navbar">
-      <ul class="nav navbar-nav">
-      	{% if not request.user.is_authenticated %}
-      	<li class="nav-i"><a href="/accounts/login/">ورود</a></li>
-        <li class="nav-i"><a href="{% url "registration_register" %}">عضویت</a><li>
-        {% endif %}
-        {% if user.is_authenticated %}
-		<li class="nav-right {% if page == 'following' %} active{% endif %}">
-			<a href="{% url "pin-following" %}">مطالب دوستان</a>
-		</li>
-		<li class="nav-right {% if page == 'user_like' %} active{% endif %}">
-			<a href="{% url 'pin-user-like' user.id %}">مطالب مورد علاقه</a>
-		</li>
-		{% endif %}
-
-        <li class="nav-i {% if page == 'latest' %} active{% endif %}"><a href="{% url 'pin-latest' %}">آخرین مطالب</a></li>
-        <li class="nav-i"><a href="{% url "policy"%}">قوانین</a></li>
-
-        <li class="nav-i"><a href="{% url "stats"%}">آمار</a></li>
-        <li class="nav-i"><a href="/search/">جستجو</a></li>
-        <li class="nav-right dropdown ">
-			<a  class="dropdown-toggle" data-toggle="dropdown"  href="#"
-			class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><!-- <img src="{{MEDIA_URL}}img/new/bartarin.png"> --> برترینها</a>
-		    <ul class="dropdown-menu" role="menu">
-		        <li><a href="{% url "pin-popular" %}">همه زمانها</a></li>
-		        <li><a href="{% url "pin-popular-offset" "month" %}">یک ماه گذشته</a></li>
-		        <li><a href="{% url "pin-popular-offset" "lastweek" %}">هفته گذشته</a></li>
-		        <li><a href="{% url "pin-popular-offset" "lastday" %} ">24 ساعت گذشته</a></li>
-		        <li><a href="{% url "pin-popular-offset" "lasteigth" %} ">8 ساعت گذشته</a></li>
-		      <!-- links -->
-		    </ul>
-		</li>
-		<li class="nav-right dropdown dropdown-large ">
-		    <a class="dropdown-toggle" data-toggle="dropdown"  href="#"><!-- <img src="{{MEDIA_URL}}img/new/category.png"> -->  گروه ها</a>
-		    <ul class="dropdown-menu dropdown-menu-large">
-		    
-		    	{% for c in subs %}
-	    		<li class="col-sm-4">
-					<ul>
-						<li class="dropdown-header">{{c.title}}</li>
-						{% for cc in c.sub_category.all %}
-						<li><a href="/category/{{cc.id}}">{{cc.title}}</a></li>
-						{% endfor %}
-						<li class="divider"></li>
-					</ul>
-				</li>
-		    	{% endfor %}
-		      
-		    </ul>
-		</li>
-
-		<li class="nav-right dropdown ">
-			<a class="dropdown-toggle" data-toggle="dropdown"  href="#">برترین کاربران</a>
-		    <ul class="dropdown-menu">
-		        <li><a href="{% url "pin-topuser" %}">کل سایت</a></li>
-		        <li><a href="{% url "pin-topgroupuser" %}">گروه ها</a></li>
-		    </ul>
-		</li>
-					  
-		{%block pin-ex-nav%}{%endblock pin-ex-nav%}
-
-      </ul>
-      
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
-
-
+<div class="container">
+    <nav class="navbar navbar-default-items row">
+        <div class="collapse navbar-collapse row" id="wis-navbar">
+            <ul class="nav navbar-nav">
+                {% if not request.user.is_authenticated %}
+                <li class="nav-i"><a href="/accounts/login/">ورود</a></li>
+                <li class="nav-i"><a href="{% url 'registration_register' %}">عضویت</a></li>
+                {% endif %} {% if user.is_authenticated %}
+                <li class="nav-right {% if page == 'following' %} active{% endif %}">
+                    <a href="{% url 'pin-following' %}">مطالب دوستان</a>
+                </li>
+                <li class="nav-right {% if page == 'user_like' %} active{% endif %}">
+                    <a href="{% url 'pin-user-like' user.id %}">مطالب مورد علاقه</a>
+                </li>
+                {% endif %}
+                <li class="nav-i {% if page == 'latest' %} active{% endif %}"><a href="{% url 'pin-latest' %}">آخرین مطالب</a></li>
+                <li class="nav-i"><a href="{% url 'policy' %}">قوانین</a></li>
+                <li class="nav-i"><a href="{% url 'stats' %}">آمار</a></li>
+                <li class="nav-i"><a href="/search/">جستجو</a></li>
+                <li class="nav-right dropdown dropdown-large cats">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">برترینها</a>
+                    <ul class="dropdown-menu cat-menu" role="menu">
+                        <li><a href="{% url 'pin-popular' %}">همه زمانها</a></li>
+                        <li><a href="{% url 'pin-popular-offset' 'month' %}">یک ماه گذشته</a></li>
+                        <li><a href="{% url 'pin-popular-offset' 'lastweek' %}">هفته گذشته</a></li>
+                        <li><a href="{% url 'pin-popular-offset' 'lastday' %} ">24ساعت گذشته</a></li>
+                        <li><a href="{% url 'pin-popular-offset' 'lasteigth' %} ">8ساعت گذشته</a></li>
+                    </ul>
+                </li>
+                <li class="nav-right dropdown dropdown-large cats">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"> گروه ها</a>
+                    <ul class="dropdown-menu cat-menu">
+                        {% for c in subs %}
+                        <li {% if c.sub_category %}class="parent"{% endif %}>
+                            <a>{{c.title}}</a>
+                            {% if c.sub_category %}
+                            <ul class="sub-cats">
+                                {% for cc in c.sub_category.all %}
+                                <li><a href="/category/{{cc.id}}">{{cc.title}}</a></li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="nav-right dropdown dropdown-large cats">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">برترین کاربران</a>
+                    <ul class="dropdown-menu cat-menu">
+                        <li><a href="{% url 'pin-topuser' %}">کل سایت</a></li>
+                        <li><a href="{% url 'pin-topgroupuser' %}">گروه ها</a></li>
+                    </ul>
+                </li>
+                {% block pin-ex-nav %}{% endblock pin-ex-nav %}
+            </ul>
+        </div>
+    </nav>
+</div>
 {% if messages %}
 <div class="container">
-{% for message in messages %}
-<div class="span6 alert alert-{{ message.tags }}" style="float: none; margin: 5px auto;">
-	<button type="button" class="close" data-dismiss="alert">&times;</button>
-{{ message|safe}}
-</div>
-{% endfor %}
+    {% for message in messages %}
+    <div class="span6 alert alert-{{message.tags}}" style="float: none; margin: 5px auto;">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message|safe}}
+    </div>
+    {% endfor %}
 </div>
 {% endif %}
