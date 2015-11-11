@@ -7,7 +7,7 @@ urlpatterns = patterns('pin.api6.auth',
                        url(r'auth/unfollow/$', 'unfollow', name='api-5-auth-unfollow'),
                        url(r'auth/followers/(?P<user_id>\d+)/$', 'followers', name='api-5-auth-followers'),
                        url(r'auth/following/(?P<user_id>\d+)/$', 'following', name='api-5-auth-following'),
-)
+                       )
 
 urlpatterns += patterns('pin.api6.post',
                         url(r'post/latest/$', 'latest', name='api-5-post-latest'),
@@ -16,8 +16,10 @@ urlpatterns += patterns('pin.api6.post',
                         url(r'post/category/(?P<category_id>\d+)/$', 'category', name='api-5-post-category'),
                         url(r'post/item/(?P<item_id>\d+)/$', 'item', name='api-5-post-item'),
                         url(r'post/search/$', 'search', name='api-5-post-search'),
-)
+                        )
 
 urlpatterns += patterns('pin.api6.comment',
                         url(r'comments/post/(?P<item_id>\d+)/$', 'comment_post', name='api-5-comment-post'),
-)
+                        url(r'comment/add/item/(?P<item_id>\d+)/$', 'add_comment', name='api-6-comment-add'),
+                        url(r'comment/delete/(?P<comment_id>\d+)/$', 'delete_comment', name='api-6-comment-delete'),
+                        )
