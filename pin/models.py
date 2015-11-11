@@ -161,7 +161,7 @@ class Ad(models.Model):
                     .update(cnt_view=ad.get_cnt_view(),
                             end=datetime.now(),
                             ended=True)
-                r_server.srem(redis_ad_key)
+                r_server.delete(redis_ad_key)
             else:
                 try:
                     cache.incr(cache_key)
