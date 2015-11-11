@@ -56,38 +56,6 @@
 	{% endblock footer_ex_js %}
 	
 	{% block js %}
-	<script>
-		$(document).ready(function() {
-		    // Add Comment
-		    var frm = $("#add-comment-form");
-			frm.submit(function(e) {
-		    	$('.footer-loading-img').show();
-			    e.preventDefault();
-			    $.ajax({
-			    	type: frm.attr('method'),
-			        url: frm.attr('action'),
-			        data: frm.serialize(),
-			    })
-			    .done(function(response) {
-			    	if (response == 'error'){
-			    		console.log('Method Not Allowed');
-			    	}else{
-			    		$('#comments_box').append(response);
-			    		document.getElementById("add-comment-form").reset();
-			    	}
-			    })
-			    .fail(function() {
-			    	console.log("error");
-			    })
-			    .always(function() {
-			    	$('.footer-loading-img').hide();
-			    	console.log("complete");
-			    });
-			    return false;
-			});
-	    });
-
-	</script>
 	{% endblock js %}
 
 </body>
