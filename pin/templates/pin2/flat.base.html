@@ -68,14 +68,13 @@
 			    	type: frm.attr('method'),
 			        url: frm.attr('action'),
 			        data: frm.serialize(),
-			        async: false
 			    })
 			    .done(function(response) {
-		    		
 			    	if (response == 'error'){
 			    		console.log('Method Not Allowed');
 			    	}else{
 			    		$('#comments_box').append(response);
+			    		document.getElementById("add-comment-form").reset();
 			    	}
 			    })
 			    .fail(function() {
