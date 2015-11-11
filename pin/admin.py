@@ -60,7 +60,7 @@ class CreditLogAdmin(admin.ModelAdmin):
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
+    list_display = ('id', 'title', 'admin_image')
 
 
 class LogAdmin(admin.ModelAdmin):
