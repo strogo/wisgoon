@@ -239,10 +239,13 @@ def check_official(user_id):
 
 @register.filter
 def date_filter(index):
-
     if not isinstance(index, datetime.datetime):
         return ''
-    return khayyam.JalaliDatetime.from_datetime(index).strftime("%d %B %Y")
+    try:
+        d = khayyam.JalaliDatetime.from_datetime(index).strftime("%d %B %Y")
+    except:
+        d = index
+    return d
 
 
 @register.filter
