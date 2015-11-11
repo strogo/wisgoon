@@ -84,6 +84,11 @@ class SubCategory(models.Model):
     def __unicode__(self):
         return self.title
 
+    def admin_image(self):
+        return '<img src="/media/%s" />' % self.image
+
+    admin_image.allow_tags = True
+
 
 class Ad(models.Model):
     TYPE_1000_USER = 1
