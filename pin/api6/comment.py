@@ -15,7 +15,7 @@ def comment_post(request, item_id):
 
     # if token:
     #     current_user = AuthCache.id_from_token(token=token)
-
+    ''' ye kocholo kar dare hanoz :) '''
     if before:
         comments = Comments.objects.filter(object_pk_id__lt=get_int(before)).order_by('-id')[:20]
     else:
