@@ -1,5 +1,5 @@
+import ast
 from django.core.urlresolvers import reverse
-
 from pin.api_tools import abs_url, media_abs_url
 
 
@@ -23,3 +23,19 @@ def category_get_json(cat_id):
         'title': cat.title,
     }
     return cat_json
+
+
+def get_int(number):
+    try:
+        post_id = int(number)
+    except ValueError:
+        post_id = 0
+    return post_id
+
+
+def get_json(data):
+    try:
+        to_json = ast.literal_eval(data)
+    except ValueError:
+        to_json = False
+    return to_json
