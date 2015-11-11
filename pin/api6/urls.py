@@ -17,3 +17,7 @@ urlpatterns += patterns('pin.api6.post',
                         url(r'post/item/(?P<item_id>\d+)/$', 'item', name='api-5-post-item'),
                         url(r'post/search/$', 'search', name='api-5-post-search'),
 )
+
+urlpatterns += patterns('pin.api6.comment',
+                        url(r'comments/post/(?P<item_id>\d+)/$', 'comment_post', name='api-5-comment-post'),
+)
