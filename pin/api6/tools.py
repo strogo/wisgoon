@@ -1,6 +1,7 @@
 import ast
 from django.core.urlresolvers import reverse
 from pin.api_tools import abs_url, media_abs_url
+from django.contrib.auth.models import User
 
 
 def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
@@ -39,3 +40,18 @@ def get_json(data):
     except ValueError:
         to_json = False
     return to_json
+
+
+def get_user_data(user_id):
+    user_data = {}
+    avatar = ''
+    try:
+        user = User.objects.get(id=user_id)
+        user_data['id'] = user.id
+        user_data['username'] = user.username
+        if user.profile.avatar:
+            avatar = str(user.profile.avatar)
+        user_data['avatar'] = avatar
+    except Exception as e:
+        print e
+    return user_data
