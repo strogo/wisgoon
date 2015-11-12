@@ -19,7 +19,7 @@ urlpatterns += patterns('pin.api6.post',
                         )
 
 urlpatterns += patterns('pin.api6.comment',
-                        url(r'comments/post/(?P<item_id>\d+)/$', 'comment_post', name='api-5-comment-post'),
+                        url(r'comments/post/(?P<item_id>\d+)/', 'comment_post', name='api-6-comment-post'),
                         url(r'comment/add/item/(?P<item_id>\d+)/$', 'add_comment', name='api-6-comment-add'),
                         url(r'comment/delete/(?P<comment_id>\d+)/$', 'delete_comment', name='api-6-comment-delete'),
                         )

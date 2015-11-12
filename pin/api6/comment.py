@@ -10,17 +10,15 @@ def comment_post(request, item_id):
     comments_list = []
     data['objects'] = {}
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
-    before = request.GET.get('before', 0)
+    before = request.GET.get('before', False)
     token = request.GET.get('token', '')
-
     # if token:
     #     current_user = AuthCache.id_from_token(token=token)
-    ''' ye kocholo kar dare hanoz :) '''
     if before:
-        comments = Comments.objects.filter(object_pk_id__lt=get_int(before)).order_by('-id')[:20]
+        comments = Comments.objects.filter(id__lt=get_int(before)).order_by('-id')[:20]
     else:
         comments = Comments.objects.filter(object_pk_id=get_int(item_id)).order_by('-id')[:20]
-    print get_int(item_id)
+
     for comment in comments:
         comment_dict = {}
         comment_dict['id'] = comment.id
@@ -32,7 +30,9 @@ def comment_post(request, item_id):
     if data['objects']:
         last_item = data['objects'][-1]['id']
         data['meta']['next'] = get_next_url(url_name='api-6-comment-post',
-                                            token=token, before=last_item)
+                                            token=token, before=last_item,
+                                            url_args={"item_id": item_id}
+                                            )
 
     return return_json_data(data)
 
