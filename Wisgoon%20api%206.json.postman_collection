@@ -91,7 +91,7 @@
 		{
 			"id": "2a3decdf-cd70-274a-5651-479dcb35e279",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v1/auth/login/",
+			"url": "http://127.0.0.1:8000/api/v6/auth/login/",
 			"pathVariables": {},
 			"preRequestScript": "",
 			"method": "POST",
