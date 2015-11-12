@@ -25,7 +25,7 @@ def comment_post(request, item_id):
             comment_dict = {}
             comment_dict['id'] = comment.id
             comment_dict['comment'] = comment.comment
-            comment_dict['user'] = get_user_data(current_user)
+            comment_dict['user'] = get_user_data(comment.user.id)
             comments_list.append(comment_dict)
     except Exception as e:
         print e
