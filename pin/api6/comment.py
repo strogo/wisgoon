@@ -63,7 +63,7 @@ def add_comment(request, item_id):
         comment = Comments.objects.create(object_pk=post, comment=comment_form['comment'], user_id=get_int(current_user))
         print comment.id
         comment_data = {'id': comment.id,
-                        'user': get_user_data(current_user),
+                        'user': get_user_data(comment.user.id),
                         'comment': comment.comment, 'status': True,
                         'message': 'Successfully Create Comment.'}
         return return_json_data(comment_data)
