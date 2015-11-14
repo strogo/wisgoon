@@ -9,6 +9,8 @@ def like_post(request, item_id):
     token = request.GET.get('token', False)
     if token:
         current_user = AuthCache.id_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
     else:
         return return_un_auth()
 
@@ -23,10 +25,12 @@ def like_post(request, item_id):
 
     if like:
         user_act = 1
+        user = get_user_data(current_user)
     elif dislike:
         user_act = -1
+        user = {}
 
-    data = {'likes': current_like, 'user_act': user_act}
+    data = {'likes': current_like, 'user_act': user_act, 'user': user}
     return return_json_data(data)
 
 
@@ -39,9 +43,9 @@ def post_likers(request, item_id):
         return return_not_found()
 
     from pin.models_redis import LikesRedis
-    post.likes = LikesRedis(post=post).get_likes(offset=0, limit=12, as_user_object=True)
+    likers = LikesRedis(post_id=post.id).get_likes(offset=0, limit=12, as_user_object=True)
     try:
-        for user in post.likes:
+        for user in likers:
             likers_list.append(get_user_data(user.id))
     except Exception as e:
         print e

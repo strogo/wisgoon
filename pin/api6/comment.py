@@ -43,6 +43,8 @@ def add_comment(request, item_id):
     token = request.GET.get('token', '')
     if token:
         current_user = AuthCache.id_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
     else:
         return return_un_auth()
 
@@ -71,6 +73,8 @@ def delete_comment(request, comment_id):
     token = request.GET.get('token', '')
     if token:
         current_user = AuthCache.id_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
     else:
         return return_un_auth()
 
