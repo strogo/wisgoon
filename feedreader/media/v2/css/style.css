@@ -1885,7 +1885,7 @@ div.comment div div.row:hover .del-comment{
 	background: #fff;
 }
 #wis_navbar > ul > li:hover > a{
-	color: #C4661C;
+	color: #ff6a00;
 }
 #wis_navbar > ul > li.cats > ul{
 	left: 0;
@@ -1934,9 +1934,6 @@ div.comment div div.row:hover .del-comment{
 	margin-left: -6px;
 }
 
-
-
-
 #wis_navbar > ul > li > ul > li{
 	list-style: none;
 	width: 200px;
@@ -1951,10 +1948,41 @@ div.comment div div.row:hover .del-comment{
 #wis_navbar .cats .parent a{
 	text-align: center;
 }
-#wis_navbar .cats .parent img {
-	width: 50%;
-	opacity: .5;
+#wis_navbar .cats .parent:hover > a{
+	color: #ff6a00;
 }
-#wis_navbar .cats .parent:hover img {
-	opacity: 1;
+#wis_navbar .cats .parent:hover .cat-logo {
+	background-position: center bottom !important;
+}
+#wis_navbar .cats .parent .cat-logo {
+	background-position: center top !important;
+	background-size: 64px auto !important;
+	display: block;
+	height: 64px;
+	margin: 0 auto;
+	width: 64px;
+}
+
+#wis_navbar .cats .sub-cats {
+	left: 0;
+	position: absolute;
+	right: 0;
+	background: #fefefe none repeat scroll 0 0;
+	border: 1px solid #ccc;
+	box-shadow: 0 0 1px #fff;
+	margin: 0 10px;
+}
+#wis_navbar .cats .sub-cats li{
+	list-style: none;
+	width: 25%;
+	float: right;
+	margin: 5px 0;
+}
+#wis_navbar .cats .sub-cats li:hover a {
+	background: #fff;
+	color: #ff6a00;
+}
+/*#wis_navbar .cats li.cat-6 .sub-cats,*/
+#wis_navbar .cats li.parent:hover .sub-cats {
+	display: block;
 }

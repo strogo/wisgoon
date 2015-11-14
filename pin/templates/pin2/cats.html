@@ -35,13 +35,12 @@
                     <a href="#"> گروه ها</a>
                     <ul>
                         {% for c in subs %}
-                        <li {% if c.sub_category %}class="parent"{% endif %}>
+                        <li class="cat-{{c.id}}{% if c.sub_category %} parent{% endif %}">
                             <a href="javascript:;">
-                                <img src="{{MEDIA_URL}}{{c.image}}" alt="">
-                                <br>
+                                <span class="cat-logo" style='background: url("{{MEDIA_URL}}{{c.image}}")'></span>
                                 {{c.title}}
                             </a>
-                            {% if c.sub_category %}
+                            {% if c.sub_category.all %}
                             <ul class="sub-cats">
                                 {% for cc in c.sub_category.all %}
                                 <li><a href="/category/{{cc.id}}">{{cc.title}}</a></li>
