@@ -1852,6 +1852,7 @@ div.comment div div.row:hover .del-comment{
 	opacity: .5;
 }
 #wis_navbar{
+	z-index: 10;
 	direction: rtl;
 	position: relative;
 }

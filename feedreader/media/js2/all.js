@@ -264,7 +264,7 @@ $(function () {
         $('#wis_navbar li').removeClass('flw');
     });
 
-    $('.cats').children('ul').show();
+    // $('.cats').children('ul').show();
     var l = $('.cats > ul > li');
     l.width(100/l.length+'%');
 
