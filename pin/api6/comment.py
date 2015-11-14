@@ -11,10 +11,6 @@ def comment_post(request, item_id):
     data['objects'] = {}
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
     before = request.GET.get('before', False)
-    token = request.GET.get('token', '')
-
-    if token:
-        current_user = AuthCache.id_from_token(token=token)
 
     if before:
         comments = Comments.objects.filter(id__lt=get_int(before)).order_by('-id')[:20]
@@ -35,7 +31,7 @@ def comment_post(request, item_id):
     if data['objects']:
         last_item = data['objects'][-1]['id']
         data['meta']['next'] = get_next_url(url_name='api-6-comment-post',
-                                            token=token, before=last_item,
+                                            before=last_item,
                                             url_args={"item_id": item_id}
                                             )
 
@@ -47,6 +43,8 @@ def add_comment(request, item_id):
     token = request.GET.get('token', '')
     if token:
         current_user = AuthCache.id_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
     else:
         return return_un_auth()
 
@@ -75,12 +73,13 @@ def delete_comment(request, comment_id):
     token = request.GET.get('token', '')
     if token:
         current_user = AuthCache.id_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
     else:
         return return_un_auth()
 
-    converted_comment_id = get_int(comment_id)
     try:
-        comment = Comments.objects.get(id=converted_comment_id)
+        comment = Comments.objects.get(id=get_int(comment_id))
     except Comments.DoesNotExist:
         return return_not_found()
 
