@@ -1,15 +1,15 @@
 from pin.tools import AuthCache
-from pin.models import Post, Category
+from pin.models import Post, Category, Report
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from pin.api_tools import abs_url, media_abs_url
 
 from pin.cacheLayer import UserDataCache
 from pin.models_redis import LikesRedis
-from pin.api6.tools import get_next_url, category_get_json
+from pin.api6.tools import get_next_url, category_get_json, get_int
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
-from pin.api6.http import return_json_data, return_bad_request, return_not_found
+from pin.api6.http import return_json_data, return_bad_request, return_not_found, return_un_auth
 
 from haystack.query import SearchQuerySet
 
@@ -294,4 +294,38 @@ def item(request, item_id):
     except IndexError:
         return return_not_found()
 
+    return return_json_data(data)
+
+
+def report(request, item_id):
+    token = request.GET.get('token', False)
+    if token:
+        current_user = AuthCache.id_from_token(token=token)
+        if current_user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
+
+    try:
+        post = Post.objects.get(id=get_int(item_id))
+    except Post.DoesNotExist:
+        return return_not_found()
+
+    try:
+        Report.objects.get(user_id=current_user, post=post)
+        created = False
+    except Report.DoesNotExist:
+        Report.objects.create(user_id=current_user, post=post)
+        created = True
+
+    if created:
+        post.report = post.report + 1
+        post.save()
+        status = True
+        msg = u'Successfully Add Report.'
+    else:
+        status = False
+        msg = u'Your Report Already Exists.'
+
+    data = {'status': status, 'msg': msg}
     return return_json_data(data)

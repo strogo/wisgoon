@@ -1,5 +1,5 @@
 from pin.tools import AuthCache
-from pin.api6.http import return_json_data, return_not_found, return_un_auth
+from pin.api6.http import return_json_data, return_not_found, return_un_auth, return_bad_request
 from pin.models import Comments, Post
 from django.views.decorators.csrf import csrf_exempt
 from pin.api6.tools import get_int, get_json, get_next_url, get_user_data
@@ -46,7 +46,7 @@ def add_comment(request, item_id):
         if not current_user:
             return return_un_auth()
     else:
-        return return_un_auth()
+        return return_bad_request()
 
     try:
         post = Post.objects.get(id=get_int(item_id))
@@ -76,7 +76,7 @@ def delete_comment(request, comment_id):
         if not current_user:
             return return_un_auth()
     else:
-        return return_un_auth()
+        return return_bad_request()
 
     try:
         comment = Comments.objects.get(id=get_int(comment_id))

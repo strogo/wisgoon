@@ -1,5 +1,5 @@
 from pin.tools import AuthCache
-from pin.api6.http import return_json_data, return_not_found, return_un_auth
+from pin.api6.http import return_json_data, return_not_found, return_un_auth, return_bad_request
 from pin.models import Post
 from pin.api6.tools import get_int, get_user_data
 from pin.tools import get_post_user_cache
@@ -12,7 +12,7 @@ def like_post(request, item_id):
         if not current_user:
             return return_un_auth()
     else:
-        return return_un_auth()
+        return return_bad_request()
 
     try:
         post = get_post_user_cache(post_id=get_int(item_id))
