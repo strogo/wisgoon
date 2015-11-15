@@ -384,12 +384,10 @@ def send(request):
     else:
         return return_bad_request()
 
-    post = save_post(request, request.POST.copy(), request.FILES, current_user)
-    if not post:
-        return return_bad_request()
+    status, msg, post = save_post(request, current_user)
 
     # if post.status == 1:
     #     msg = 'مطلب شما با موفقیت ارسال شد.'
     # elif post.status == 0:
     #     msg = 'مطلب شما با موفقیت ارسال شد و بعد از تایید در سایت نمایش داده می شود '
-    return return_json_data({'status': True, 'message': 'asas', 'post': post})
+    return return_json_data({'status': status, 'msg': msg, 'post': post})

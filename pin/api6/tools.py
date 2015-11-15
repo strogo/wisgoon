@@ -57,7 +57,7 @@ def get_user_data(user_id):
         user_data['id'] = user.id
         user_data['username'] = user.username
         if user.profile.avatar:
-            avatar = str(user.profile.avatar)
+            avatar = media_abs_url(str(user.profile.avatar))
         user_data['avatar'] = avatar
     except Exception as e:
         print e
@@ -73,41 +73,41 @@ def get_category(cat_id):
     return cat
 
 
-def save_post(request, data, files, user):
+def save_post(request, user):
     from django.conf import settings
     from time import time
     from pin.forms import PinDirectForm
-    # from io import FileIO, BufferedWriter
+    from io import FileIO, BufferedWriter
     from pin.tools import create_filename
     from pin.models import Post
 
     media_url = settings.MEDIA_ROOT
 
-    form = PinDirectForm(data, files)
+    model = None
+    form = PinDirectForm(request.POST, request.FILES)
     if form.is_valid():
         upload = request.FILES.values()[0]
         filename = create_filename(upload.name)
-        # image_o = "%s/pin/temp/o/%s" % (media_url, filename)
-        image_on = "%s/pin/blackhole/images/o/%s" % (media_url, filename)
-        status = True
-        with open(image_on, 'wb+') as destination:
-            for chunk in request.FILES['image'].chunks():
-                destination.write(chunk)
-        destination.close()
+        try:
+            u = "%s/pin/blackhole/images/o/%s" % (media_url, filename)
+            with BufferedWriter(FileIO(u, "wb")) as dest:
+                for c in upload.chunks():
+                    dest.write(c)
 
-        model = Post()
-        # model.image = image_on
-        model.user = user
-        model.timestamp = time()
-        model.text = form.cleaned_data['description']
-        model.category_id = form.cleaned_data['category']
-        model.device = 2
-        model.save()
-        # try:
-        #     status = True
-        # except IOError, e:
-        #     status = False
-        #     print str(e), "//////////////////////////", media_url
+            model = Post()
+            model.image = "pin/blackhole/images/o/%s" % (filename)
+            model.user = user
+            model.timestamp = time()
+            model.text = form.cleaned_data['description']
+            model.category_id = form.cleaned_data['category']
+            model.device = 2
+            model.save()
+            status = True
+            msg = 'ok'
+        except IOError, e:
+            status = False
+            msg = str(e)
     else:
+        msg = form.errors
         status = False
-    return status
+    return status, msg, model
