@@ -2,20 +2,24 @@
 
 {% load daddy_avatar %}
 <a href="{% url 'pin-notif-user' %}">مشاهده همه اعلانات</a>
+
+<a aria-label="Close" href="javascript:;" data-dismiss="popover" class="popover-close" type="button">
+    <span aria-hidden="true">×</span>
+</a>
 {% for noti in notif %}
 
 <div class="notif {{noti.type}}" style="">
 
     {% if noti.type == 4 %}
-        <a href="{% url 'pin-item' noti.id %}" style="width:100px; height:100px">
-            <img src="{{noti.po.url}}" style="float:left;margin-right:5px; width:100px" />
-        </a>
-        <div class="post-like-right">
-            <i class="glyphicon glyphicon-remove"></i>
-        </div>
-        <a target="_blank" href="{% url 'pin-user' noti.actor %}">
-            <img src="{{noti.actor|get_avatar:30}}"></a>
-    {% elif noti.type == 10 %}
+    <a href="{% url 'pin-item' noti.id %}" style="width:100px; height:100px">
+        <img src="{{noti.po.url}}" style="float:left;margin-right:5px; width:100px" />
+    </a>
+    <div class="post-like-right">
+        <i class="glyphicon glyphicon-remove"></i>
+    </div>
+    <a target="_blank" href="{% url 'pin-user' noti.actor %}">
+        <img src="{{noti.actor|get_avatar:30}}"></a>
+        {% elif noti.type == 10 %}
         <a class="bbbb" href="{% url 'pin-user' noti.po.0 %}" style="width:100px; height:100px">
             <img src="{{noti.po.0|get_avatar:100}}" style="float:left;margin-right:5px; width:100px" />
         </a>
@@ -24,26 +28,26 @@
         </div>
         
         <a target="_blank" href="{% url 'pin-user' noti.owner %}">
-        <img src="{{noti.owner|get_avatar:30}}">
+            <img src="{{noti.owner|get_avatar:30}}">
         </a>
         
-    {% else %}
+        {% else %}
         <a href="{% url 'pin-item' noti.id %}" style="width:100px; height:100px"><img src="{{noti.po.get_image_236.url }}" style="float:left;margin-right:5px; width:100px" /></a>
 
         <div class="post-like-right">
-        {% if noti.type == 1 %}
+            {% if noti.type == 1 %}
             <i class="glyphicon glyphicon-heart"></i>
-        {% elif noti.type == 2 %}
+            {% elif noti.type == 2 %}
             <i class="glyphicon glyphicon-comment"></i>
-        {% elif noti.type == 3 %}
+            {% elif noti.type == 3 %}
             <i class="glyphicon glyphicon-ok"></i>
-        {% elif noti.type == 4 %}
+            {% elif noti.type == 4 %}
             <i class="glyphicon glyphicon-remove"></i>
-        {% endif %}
+            {% endif %}
         </div>
         <a target="_blank" href="{% url 'pin-absuser' noti.actor|get_absusername %}"><img src="{{noti.actor|get_avatar:30}}"></a>
-    {% endif %}
-	<div class="clear"></div>
-</div>
-{% endfor %}
+        {% endif %}
+        <div class="clear"></div>
+    </div>
+    {% endfor %}
 
