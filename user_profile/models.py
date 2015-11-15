@@ -15,6 +15,8 @@ from django.db.models.signals import post_save
 def avatar_file_name(instance, filename):
     new_filename = str(time.time()).replace('.', '')
     fileext = os.path.splitext(filename)[1]
+    if not fileext:
+        fileext = '.jpg'
 
     filestr = new_filename + fileext
     d = datetime.now()
@@ -158,6 +160,7 @@ class Profile(models.Model):
         ipath = "%s/%s" % (settings.MEDIA_ROOT, self.avatar)
         idir = os.path.dirname(ipath)
         iname = os.path.basename(ipath)
+
         nname_64 = "64_%s" % (iname)
         npath_64 = "%s/%s" % (idir, nname_64)
 
@@ -169,14 +172,14 @@ class Profile(models.Model):
             (210, 210),
             Image.ANTIALIAS
         )
-        thumbnail_210.save(npath)
+        thumbnail_210.save(npath, format='JPEG')
 
         thumbnail_64 = ImageOps.fit(
             im,
             (64, 64),
             Image.ANTIALIAS
         )
-        thumbnail_64.save(npath_64)
+        thumbnail_64.save(npath_64, format='JPEG')
         if update_model:
             self.version = Profile.AVATAR_NEW_STYLE
             self.save()
