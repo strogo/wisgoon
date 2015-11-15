@@ -51,27 +51,28 @@ def get_avatar(user, size=165):
     except Profile.DoesNotExist:
         profile = None
 
-    if profile.version == Profile.AVATAT_MIGRATED and settings.DEBUG:
-        url_prefix = "http://wisgoon.com/media/"
-    else:
-        url_prefix = "/media/"
+    if profile:
+        if profile.version == Profile.AVATAT_MIGRATED and settings.DEBUG:
+            url_prefix = "http://wisgoon.com/media/"
+        else:
+            url_prefix = "/media/"
 
-    try:
-        if profile and profile.avatar:
-            url = None
-            if profile.version == Profile.AVATAR_OLD_STYLE:
-                profile.store_avatars(update_model=True)
-                from pin.tasks import migrate_avatar_storage
-                migrate_avatar_storage.delay(profile_id=profile.id)
+        try:
+            if profile and profile.avatar:
+                url = None
+                if profile.version == Profile.AVATAR_OLD_STYLE:
+                    profile.store_avatars(update_model=True)
+                    from pin.tasks import migrate_avatar_storage
+                    migrate_avatar_storage.delay(profile_id=profile.id)
 
-            if fit_size == 64:
-                url = '%s%s' % (url_prefix, profile.get_avatar_64_str())
-            else:
-                url = '%s%s' % (url_prefix, profile.avatar)
-            if url:
-                return url
-    except Exception, e:
-        print str(e)
+                if fit_size == 64:
+                    url = '%s%s' % (url_prefix, profile.get_avatar_64_str())
+                else:
+                    url = '%s%s' % (url_prefix, profile.avatar)
+                if url:
+                    return url
+        except Exception, e:
+            print str(e)
 
     glob_avatar = daddy_avatar("", size)
     ava_dict[size] = glob_avatar
