@@ -53,7 +53,8 @@
 				"8649d99c-4df9-d2dc-d7fb-a9dc5ff3db25",
 				"36c04420-14d0-e41e-3e9d-1438114aaf5c",
 				"2b235a32-795a-d97c-7caa-48e1f8fa6b78",
-				"396c66df-3d9e-ca31-5801-4e0e763abe65"
+				"396c66df-3d9e-ca31-5801-4e0e763abe65",
+				"dd5f45e6-29bb-2395-1381-b1387b6d0797"
 			],
 			"owner": 0
 		}
@@ -565,6 +566,52 @@
 			"helperAttributes": {},
 			"folder": "0faa7a94-27e7-70fb-38d4-822d4cf80660",
 			"rawModeData": ""
+		},
+		{
+			"id": "dd5f45e6-29bb-2395-1381-b1387b6d0797",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/send/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
+			"data": [
+				{
+					"key": "image",
+					"value": "images.jpg",
+					"type": "file",
+					"enabled": true
+				},
+				{
+					"key": "description",
+					"value": "kjljkljjk",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "url",
+					"value": "http://www.google.com",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "category",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Send Post",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447574705857,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "9715ba0b-1c4a-96fb-89a2-992511c31dec"
 		},
 		{
 			"id": "dd82cd5f-75c2-dddc-9ced-78df14fe9a65",

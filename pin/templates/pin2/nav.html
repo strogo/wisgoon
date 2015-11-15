@@ -26,7 +26,7 @@
 				{% endcomment %}
 				<a href="{% url "home" %}" class="header-brand">
 			   <!-- <img src="{{MEDIA_URL}}v2/images/logo.png" alt="{{SITE_NAME_FA}} {{SITE_NAME_EN}}"> -->
-					<img src="{{MEDIA_URL}}v2/images/logo_moharam.png" alt="{{SITE_NAME_FA}} {{SITE_NAME_EN}}">
+					<img src="{{MEDIA_URL}}v2/images/logo.png" alt="{{SITE_NAME_FA}} {{SITE_NAME_EN}}">
 				</a>
 				
 			</div>
@@ -93,7 +93,7 @@
 
 					<li>
 						<div class="hidden-xs">
-							<a href="{% url 'pin-absuser' user.username %}">
+							<a href="{% url 'pin-absuser' user.username %}" class="topnav-user-avatar">
 								<img class="nav-avatar" src="{{request.user|get_avatar:41}}">
 							</a>
 						</div>
