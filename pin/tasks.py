@@ -187,15 +187,24 @@ def delete_image(file_path):
 
 @app.task(name="wisgoon.pin.post_to_followers")
 def post_to_followers(user_id, post_id):
-    from pin.models import Follow, Post
+    from pin.models import Follow
     followers = Follow.objects.filter(following_id=user_id)\
         .values_list('follower_id', flat=True)
 
     for follower_id in followers:
-        try:
-            Post.add_to_user_stream(post_id=post_id, user_id=follower_id)
-        except Exception, e:
-            print str(e)
-            pass
+        post_to_follower_single.delay(post_id=post_id, follower_id=follower_id)
+        # try:
+        #     Post.add_to_user_stream(post_id=post_id, user_id=follower_id)
+        # except Exception, e:
+        #     print str(e)
+        #     pass
+
+    return "this is post_to_followers"
+
+
+@app.task(name="wisgoon.pin.post_to_follower_single")
+def post_to_follower_single(post_id, follower_id):
+    from pin.models import Post
+    Post.add_to_user_stream(post_id=post_id, user_id=follower_id)
 
     return "this is post_to_followers"
