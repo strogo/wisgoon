@@ -119,4 +119,7 @@ CELERY_ROUTES = {
     'wisgoon.pin.post_to_followers': {
         'queue': 'post_to_followers'
     },
+    'wisgoon.pin.post_to_follower_single': {
+        'queue': 'post_to_follower_single'
+    }
 }
