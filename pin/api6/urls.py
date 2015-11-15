@@ -28,6 +28,11 @@ urlpatterns += patterns('pin.api6.comment',
                         )
 
 urlpatterns += patterns('pin.api6.like',
-                        url(r'like/post/(?P<item_id>\d+)/', 'like_post', name='api-6-like-post'),
-                        url(r'likers/post/(?P<item_id>\d+)/', 'post_likers', name='api-6-likers-post'),
+                        url(r'like/post/(?P<item_id>\d+)/$', 'like_post', name='api-6-like-post'),
+                        url(r'likers/post/(?P<item_id>\d+)/$', 'post_likers', name='api-6-likers-post'),
+                        )
+
+urlpatterns += patterns('pin.api6.notification',
+                        url(r'notif/count/$', 'notif_count', name='api-6-notif-count'),
+                        url(r'notif/$', 'notif', name='api-6-notif-notif'),
                         )
