@@ -2,6 +2,8 @@
 import os
 # from easy_thumbnails.conf import Settings as thumbnail_settings
 
+INSTANCE_NAME = 'moon'
+
 DEBUG = True
 THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
