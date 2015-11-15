@@ -17,6 +17,8 @@ urlpatterns += patterns('pin.api6.post',
                         url(r'post/item/(?P<item_id>\d+)/$', 'item', name='api-6-post-item'),
                         url(r'post/search/$', 'search', name='api-6-post-search'),
                         url(r'post/report/(?P<item_id>\d+)/$', 'report', name='api-6-post-report'),
+                        url(r'post/edit/(?P<item_id>\d+)/$', 'edit', name='api-6-post-edit'),
+                        url(r'post/send/$', 'send', name='api-6-post-send'),
                         )
 
 urlpatterns += patterns('pin.api6.comment',
