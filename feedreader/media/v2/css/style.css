@@ -69,7 +69,7 @@ a:hover {color:#5a3003;}
 
 /***************navbar*****/
 #top-userinfo {
-	z-index: 3;
+	z-index: 12;
 }
 .navbar{
 	margin-bottom: 0px;
@@ -1918,32 +1918,6 @@ div.comment div div.row:hover .del-comment{
 	background: #f9f9f9;
 	border: 1px solid #ccc;
 }
-#wis_navbar > ul > li > ul:after, #wis_navbar > ul > li > ul:before {
-	bottom: 100%;
-	left: 80%;
-	border: solid transparent;
-	content: " ";
-	height: 0;
-	width: 0;
-	position: absolute;
-	pointer-events: none;
-}
-#wis_navbar > ul > li.cats > ul:after, #wis_navbar > ul > li.cats > ul:before {
-	left: 39.5%;
-}
-
-#wis_navbar > ul > li > ul:after {
-	border-color: rgba(249, 249, 249, 0);
-	border-bottom-color: #f9f9f9;
-	border-width: 5px;
-	margin-left: -5px;
-}
-#wis_navbar > ul > li > ul:before {
-	border-color: rgba(204, 204, 204, 0);
-	border-bottom-color: #ccc;
-	border-width: 6px;
-	margin-left: -6px;
-}
 
 #wis_navbar > ul > li > ul > li{
 	list-style: none;
@@ -1959,6 +1933,20 @@ div.comment div div.row:hover .del-comment{
 #wis_navbar .cats .parent a{
 	text-align: center;
 }
+/*#wis_navbar > ul > li::before{
+	color: #ff6a00;
+	content: "";
+	position: absolute;
+	top: 31px;
+	font-size: 0;
+	display: none;
+	left: attr(data-m)px;
+}
+#wis_navbar > ul > li:hover::before{
+	display: inline-block;
+	font-size: 10px;
+}*/
+#wis_navbar li:hover > a,
 #wis_navbar .cats .parent:hover > a{
 	color: #ff6a00;
 }
@@ -1994,6 +1982,6 @@ div.comment div div.row:hover .del-comment{
 	color: #ff6a00;
 }
 /*#wis_navbar .cats li.cat-6 .sub-cats,*/
-#wis_navbar .cats li.parent:hover .sub-cats {
+/*#wis_navbar .cats li.parent:hover .sub-cats {
 	display: block;
-}
+}*/
