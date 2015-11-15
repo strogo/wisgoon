@@ -360,6 +360,8 @@ CELERY_TIMEZONE = 'Asia/Tehran'
 CELERY_IGNORE_RESULT = True
 SITE_ID = 1
 
+CELERY_ENABLE_UTC = True
+
 CELERY_ROUTES = {
     'wisgoon.pin.say_salam': {
         'queue': 'feeds'
