@@ -135,7 +135,12 @@ $(".popnotify").bind('click', function(){
                 notifCache=d;
             })
             .done(function(d) {
-                el.unbind('click').popover({content: d, placement:'bottom',html:true}).popover('show');
+                el.unbind('click').popover({
+                    content: d,
+                    title: "test",
+                    placement:'bottom',
+                    html:true
+                }).popover('show');
                 el.parent().children('.loading-img').hide(0);
             })
             .fail(function(d) {
@@ -144,10 +149,21 @@ $(".popnotify").bind('click', function(){
             .always(function(d) {
             });
         }else{
-            el.unbind('click').popover({content: notifCache, placement:'bottom',html:true}).popover('show');    
+            el.unbind('click').popover({
+                content: notifCache, 
+                title: "test",
+                placement:'bottom',
+                html:true
+            }).popover('show');    
             el.parent().children('.loading-img').hide(0);
         }
     }
+});
+
+$('body').on('click', '.popover-close', function(event) {
+    event.preventDefault();
+    var id = $(this).parents('.popover').attr('id');
+    $('#'+id).popover('hide');
 });
 
 function live_content(){

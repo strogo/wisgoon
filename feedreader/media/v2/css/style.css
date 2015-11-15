@@ -69,10 +69,13 @@ a:hover {color:#5a3003;}
 
 /***************navbar*****/
 #top-userinfo {
-	
+	z-index: 3;
 }
 .navbar{
 	margin-bottom: 0px;
+}
+.topnav-user-avatar{
+	display: block;
 }
 .navbar-header{
 	margin-top: 9px;
@@ -1492,6 +1495,8 @@ a.img-move{
 	.dropdown-menu-large .dropdown-header {
 		padding: 3px 15px !important;
 	}
+	.mohrama-eleman,
+	#wis_navbar,
 	.navbar-toggle{
 		display: none;
 	}
@@ -1843,6 +1848,12 @@ div.comment div div.row:hover .del-comment{
 }
 .footer-loading-img, .comment-loading-img{
 	display: none;
+}
+.popover-close{
+	left: 3px;
+	position: absolute;
+	top: 3px;
+	padding: 5px 10px;
 }
 
 /* new menu */
