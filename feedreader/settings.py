@@ -114,5 +114,8 @@ CELERY_ROUTES = {
     },
     'wisgoon.pin.migrate_avatar_storage': {
         'queue': 'migrate_avatar_storage_%s' % INSTANCE_NAME,
-    }
+    },
+    'wisgoon.pin.post_to_followers': {
+        'queue': 'post_to_followers'
+    },
 }

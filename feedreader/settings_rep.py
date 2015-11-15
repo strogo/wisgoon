@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from settings_local import *
-# from django.db import connections
+
+INSTANCE_NAME = 'saturn'
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
