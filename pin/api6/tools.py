@@ -103,11 +103,10 @@ def save_post(request, user):
             model.device = 2
             model.save()
             status = True
-            msg = 'ok'
         except IOError, e:
             status = False
-            msg = str(e)
+            print str(e)
     else:
-        msg = form.errors
+        print form.errors
         status = False
-    return status, msg, model
+    return status, model

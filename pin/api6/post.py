@@ -384,10 +384,15 @@ def send(request):
     else:
         return return_bad_request()
 
-    status, msg, post = save_post(request, current_user)
+    status, post = save_post(request, current_user)
+    try:
+        posts = get_list_post([post.id])
+        data = get_objects_list(posts, cur_user_id=current_user.id, r=request)[0]
+    except IndexError:
+        return return_json_data({'status': False, 'message': 'Post Not Found'})
 
-    # if post.status == 1:
-    #     msg = 'مطلب شما با موفقیت ارسال شد.'
-    # elif post.status == 0:
-    #     msg = 'مطلب شما با موفقیت ارسال شد و بعد از تایید در سایت نمایش داده می شود '
-    return return_json_data({'status': status, 'msg': msg, 'post': post})
+    if post.status == 1:
+        msg = 'مطلب شما با موفقیت ارسال شد.'
+    elif post.status == 0:
+        msg = 'مطلب شما با موفقیت ارسال شد و بعد از تایید در سایت نمایش داده می شود '
+    return return_json_data({'status': status, 'message': msg, 'post': data})
