@@ -1,15 +1,17 @@
+# -*- coding: utf-8 -*-
 from pin.tools import AuthCache
-from pin.models import Post, Category
+from pin.models import Post, Report
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from pin.api_tools import abs_url, media_abs_url
+from django.views.decorators.csrf import csrf_exempt
 
 from pin.cacheLayer import UserDataCache
 from pin.models_redis import LikesRedis
-from pin.api6.tools import get_next_url, category_get_json
+from pin.api6.tools import get_next_url, category_get_json, get_int, save_post
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
-from pin.api6.http import return_json_data, return_bad_request, return_not_found
+from pin.api6.http import return_json_data, return_bad_request, return_not_found, return_un_auth
 
 from haystack.query import SearchQuerySet
 
@@ -69,7 +71,7 @@ def get_objects_list(posts, cur_user_id, r=None):
             # print str(e)
             o['is_ad'] = False
 
-        o['permalink'] = abs_url(reverse("api-5-post-item",
+        o['permalink'] = abs_url(reverse("api-6-post-item",
                                          kwargs={"item_id": p.id}))
 
         if cur_user_id:
@@ -132,7 +134,7 @@ def latest(request):
 
     if data['objects']:
         last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-5-post-latest',
+        data['meta']['next'] = get_next_url(url_name='api-6-post-latest',
                                             token=token, before=last_item)
 
     return return_json_data(data)
@@ -168,7 +170,7 @@ def friends(request):
 
     if data['objects']:
         last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-5-post-friends',
+        data['meta']['next'] = get_next_url(url_name='api-6-post-friends',
                                             token=token, before=last_item)
 
     return return_json_data(data)
@@ -199,7 +201,7 @@ def category(request, category_id):
 
     if data['objects']:
         last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-5-post-category',
+        data['meta']['next'] = get_next_url(url_name='api-6-post-category',
                                             token=token, before=last_item,
                                             url_args={
                                                 "category_id": category_id
@@ -232,7 +234,7 @@ def choices(request):
 
     if data['objects']:
         last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-5-post-choices',
+        data['meta']['next'] = get_next_url(url_name='api-6-post-choices',
                                             token=token, before=last_item)
 
     return return_json_data(data)
@@ -272,7 +274,7 @@ def search(request):
                                        r=request)
 
     if data['objects']:
-        data['meta']['next'] = get_next_url(url_name='api-5-post-search',
+        data['meta']['next'] = get_next_url(url_name='api-6-post-search',
                                             token=token, offset=next_offset)
 
     return return_json_data(data)
@@ -295,3 +297,102 @@ def item(request, item_id):
         return return_not_found()
 
     return return_json_data(data)
+
+
+def report(request, item_id):
+    token = request.GET.get('token', False)
+    if token:
+        current_user = AuthCache.id_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
+
+    try:
+        post = Post.objects.get(id=get_int(item_id))
+    except Post.DoesNotExist:
+        return return_not_found()
+
+    try:
+        Report.objects.get(user_id=current_user, post=post)
+        created = False
+    except Report.DoesNotExist:
+        Report.objects.create(user_id=current_user, post=post)
+        created = True
+
+    if created:
+        post.report = post.report + 1
+        post.save()
+        status = True
+        msg = u'Successfully Add Report.'
+    else:
+        status = False
+        msg = u'Your Report Already Exists.'
+
+    data = {'status': status, 'msg': msg}
+    return return_json_data(data)
+
+
+@csrf_exempt
+def edit(request, item_id):
+    from pin.forms import PinUpdateForm
+
+    # Get User From Token
+    token = request.GET.get('token', False)
+    if token:
+        current_user = AuthCache.user_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
+
+    # Get Post
+    try:
+        post = Post.objects.get(id=get_int(item_id))
+    except Post.DoesNotExist:
+        return return_not_found()
+
+    # Check User and Update Post
+    if current_user.is_superuser or post.user.id == current_user.id:
+
+        form = PinUpdateForm(request.POST.copy(), instance=post)
+        if form.is_valid():
+            form.save()
+        else:
+            return return_json_data({'status': False, 'errors': form.errors})
+
+        # Get Post Object
+        try:
+            posts = get_list_post([item_id])
+            data = get_objects_list(posts, cur_user_id=current_user.id, r=request)[0]
+        except IndexError:
+            return return_not_found()
+        return return_json_data({'status': True, 'message': 'Successfully Updated', 'data': data})
+
+    else:
+        return return_json_data({'status': False, 'message': 'Access Denied'})
+
+
+@csrf_exempt
+def send(request):
+    # Get User From Token
+    token = request.GET.get('token', False)
+    if token:
+        current_user = AuthCache.user_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
+
+    status, post = save_post(request, current_user)
+    try:
+        posts = get_list_post([post.id])
+        data = get_objects_list(posts, cur_user_id=current_user.id, r=request)[0]
+    except IndexError:
+        return return_json_data({'status': False, 'message': 'Post Not Found'})
+
+    if post.status == 1:
+        msg = 'مطلب شما با موفقیت ارسال شد.'
+    elif post.status == 0:
+        msg = 'مطلب شما با موفقیت ارسال شد و بعد از تایید در سایت نمایش داده می شود '
+    return return_json_data({'status': status, 'message': msg, 'post': data})

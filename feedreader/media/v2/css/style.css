@@ -11,7 +11,7 @@ body {
 }
 a, a:link, a:hover, a:visited {text-decoration:none;color:#835e37}
 a:hover {color:#5a3003;}
-a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease-out;-moz-transition: all 0.3s ease-out;-ms-transition: all 0.3s ease-out;-o-transition: all 0.3s ease-out;transition: all 0.3s ease-out;}
+/*a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease-out;-moz-transition: all 0.3s ease-out;-ms-transition: all 0.3s ease-out;-o-transition: all 0.3s ease-out;transition: all 0.3s ease-out;}*/
 
 *{
 	font-family: 'irfont';
@@ -69,10 +69,13 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 
 /***************navbar*****/
 #top-userinfo {
-	
+	z-index: 12;
 }
 .navbar{
 	margin-bottom: 0px;
+}
+.topnav-user-avatar{
+	display: block;
 }
 .navbar-header{
 	margin-top: 9px;
@@ -109,8 +112,9 @@ a, a:link, a:hover, a:visited, :hover, :focus {-webkit-transition: all 0.3s ease
 }
 .navbar-collapse ul li {
 	display: table-cell;
-
-
+}
+#fromImageModal{
+	z-index: 9999999;
 }
 .send-photo{
 	background-color: #282e38;
@@ -1491,6 +1495,8 @@ a.img-move{
 	.dropdown-menu-large .dropdown-header {
 		padding: 3px 15px !important;
 	}
+	.mohrama-eleman,
+	#wis_navbar,
 	.navbar-toggle{
 		display: none;
 	}
@@ -1843,3 +1849,139 @@ div.comment div div.row:hover .del-comment{
 .footer-loading-img, .comment-loading-img{
 	display: none;
 }
+.popover-close{
+	left: 3px;
+	position: absolute;
+	top: 3px;
+	padding: 5px 10px;
+}
+
+/* new menu */
+.flw{
+	color: rgba(67, 74, 84, 0.3);
+	text-shadow: 0 0 2px #434a54;
+	opacity: .5;
+}
+#wis_navbar{
+	z-index: 10;
+	direction: rtl;
+	position: relative;
+}
+#wis_navbar a{
+	color: #434A54;
+}
+#wis_navbar ul{
+	padding: 0;
+	margin: 0;
+}
+#wis_navbar > ul > li:first-child{
+	border-right: 0;
+}
+#wis_navbar > ul > li:last-child{
+	border-left: 0;
+}
+#wis_navbar > ul > li{
+	float: right;
+	list-style: none;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #fff;
+}
+#wis_navbar > ul > li > a{
+	display: block;
+	padding: 10px 15px;
+}
+#wis_navbar > ul > li:hover{
+	/*box-shadow: 0 0 0 0 #434a54, 0 0 0 0 #434a54, 1px 0 10px -2px #999, -2px 0 10px -4px #999;*/
+	/*border-left: 1px solid transparent;*/
+	background: #fff;
+}
+#wis_navbar > ul > li:hover > a{
+	color: #ff6a00;
+}
+#wis_navbar > ul > li.cats > ul{
+	left: 0;
+	right: 0;
+}
+#wis_navbar > ul > li > ul{
+	display: none;
+	position: absolute;
+	background: #F9F9F9;
+	box-shadow: 0 0 1px #fff;
+	border: 1px solid #ccc;
+}
+#wis_navbar > ul > li.cats > ul > li{
+	float: right;
+}
+
+#wis_navbar > ul > li > ul {
+	/*position: relative;*/
+	background: #f9f9f9;
+	border: 1px solid #ccc;
+}
+
+#wis_navbar > ul > li > ul > li{
+	list-style: none;
+	width: 200px;
+}
+#wis_navbar > ul > li > ul > li a{
+	display: block;
+	padding: 10px;
+}
+#wis_navbar > ul > li > ul ul{
+	display: none;
+}
+#wis_navbar .cats .parent a{
+	text-align: center;
+}
+/*#wis_navbar > ul > li::before{
+	color: #ff6a00;
+	content: "";
+	position: absolute;
+	top: 31px;
+	font-size: 0;
+	display: none;
+	left: attr(data-m)px;
+}
+#wis_navbar > ul > li:hover::before{
+	display: inline-block;
+	font-size: 10px;
+}*/
+#wis_navbar li:hover > a,
+#wis_navbar .cats .parent:hover > a{
+	color: #ff6a00;
+}
+#wis_navbar .cats .parent:hover .cat-logo {
+	background-position: center bottom !important;
+}
+#wis_navbar .cats .parent .cat-logo {
+	background-position: center top !important;
+	background-size: 64px auto !important;
+	display: block;
+	height: 64px;
+	margin: 0 auto;
+	width: 64px;
+}
+
+#wis_navbar .cats .sub-cats {
+	left: 0;
+	position: absolute;
+	right: 0;
+	background: #fefefe none repeat scroll 0 0;
+	border: 1px solid #ccc;
+	box-shadow: 0 0 1px #fff;
+	margin: 0 10px;
+}
+#wis_navbar .cats .sub-cats li{
+	list-style: none;
+	width: 25%;
+	float: right;
+	margin: 5px 0;
+}
+#wis_navbar .cats .sub-cats li:hover a {
+	background: #fff;
+	color: #ff6a00;
+}
+/*#wis_navbar .cats li.cat-6 .sub-cats,*/
+/*#wis_navbar .cats li.parent:hover .sub-cats {
+	display: block;
+}*/

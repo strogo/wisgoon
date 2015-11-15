@@ -20,7 +20,7 @@
          url('../fonts/isl.svg#irfont') format('svg');
     font-weight: normal;
     font-style: normal;
-}*/
+}
 @font-face {
     font-family: 'irfont';
     src: url('../fonts/ism.eot');
@@ -28,6 +28,17 @@
          url('../fonts/ism.woff') format('woff'),
          url('../fonts/ism.ttf') format('truetype'),
          url('../fonts/ism.svg#irfont') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+*/
+@font-face {
+    font-family: 'irfont';
+    src: url('../fonts/isl.eot');
+    src: url('../fonts/isl.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/isl.woff') format('woff'),
+         url('../fonts/isl.ttf') format('truetype'),
+         url('../fonts/isl.svg#irfont') format('svg');
     font-weight: normal;
     font-style: normal;
 }
