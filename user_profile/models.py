@@ -56,6 +56,8 @@ class Profile(models.Model):
 
     banned = models.BooleanField(default=False)
 
+    version = models.IntegerField(default=0, blank=False, null=True)
+
     def get_cnt_following(self):
         if self.cnt_following == -1 or self.cnt_following is None:
             from pin.models import Follow
