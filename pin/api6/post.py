@@ -341,7 +341,7 @@ def related_post(request, item_id):
     except Post.DoesNotExist:
         return return_not_found()
 
-    mlt = SearchQuerySet().models(Post).more_like_this(post)[:10]
+    mlt = SearchQuerySet().models(Post).more_like_this(post)[:11]
 
     idis = []
     for pmlt in mlt:
