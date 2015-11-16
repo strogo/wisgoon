@@ -302,7 +302,7 @@ def user_friends(request, user_id):
 
 
 @csrf_exempt
-def absuser_friends(request, user_namefg):
+def absuser_following(request, user_namefg):
     # row_per_page = 20
     user = get_object_or_404(User, username=user_namefg)
     user_id = int(user.id)
@@ -310,15 +310,15 @@ def absuser_friends(request, user_namefg):
     older = request.POST.get('older', False)
 
     if older:
-        friends = Follow.objects\
+        following = Follow.objects\
             .filter(follower_id=user_id, id__lt=older).order_by('-id')[:16]
     else:
-        friends = Follow.objects.filter(follower_id=user_id).order_by('-id')[:16]
+        following = Follow.objects.filter(follower_id=user_id).order_by('-id')[:16]
 
     if request.is_ajax():
-        if friends.exists():
-            return render(request, 'pin/_user_friends.html', {
-                'user_items': friends,
+        if following.exists():
+            return render(request, 'pin/_user_following.html', {
+                'user_items': following,
                 'user': user
             })
         else:
@@ -326,8 +326,8 @@ def absuser_friends(request, user_namefg):
     else:
         follow_status = Follow.objects\
             .filter(follower=request.user.id, following=user_id).count()
-        return render(request, 'pin/user_friends.html', {
-            'user_items': friends,
+        return render(request, 'pin/user_following.html', {
+            'user_items': following,
             'page': 'user_following',
             'profile': profile,
             'follow_status': follow_status,
@@ -397,7 +397,7 @@ def absuser_followers(request, user_namefl):
         friends = Follow.objects.filter(following_id=user_id).order_by('-id')[:16]
     if request.is_ajax():
         if friends.exists():
-            return render(request, 'pin/_user_following.html', {
+            return render(request, 'pin/_user_followers.html', {
                 'user_items': friends,
                 'user': user
             })
@@ -406,7 +406,7 @@ def absuser_followers(request, user_namefl):
     else:
         follow_status = Follow.objects\
             .filter(follower=request.user.id, following=user_id).count()
-        return render(request, 'pin/user_following.html', {
+        return render(request, 'pin/user_followers.html', {
             'user_items': friends,
             'user_id': int(user_id),
             'page': 'user_follower',

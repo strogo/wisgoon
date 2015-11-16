@@ -114,7 +114,7 @@ a:hover {color:#5a3003;}
 	display: table-cell;
 }
 #fromImageModal{
-	z-index: 9999999;
+	z-index: 1100;
 }
 .send-photo{
 	background-color: #282e38;
@@ -1372,7 +1372,10 @@ a.img-move{
 	font-size: 18px;
 }
 .modal-dialog {
-	z-index: 2000 !important;
+	z-index: 1111 !important;
+}
+.select2-container {
+	z-index: 1200;
 }
 .guest > a {
 	display: block;
@@ -1787,6 +1790,7 @@ div.comment div div.row:hover .del-comment{
 .user-item .topuser-thumb a img,
 .topuser-item .topuser-thumb a img{
 	border-radius: 50% 50% 50% 0;
+	width: 100%;
 }
 .topuser-item:hover .follow-btn{
 	display: block;
@@ -1854,6 +1858,9 @@ div.comment div div.row:hover .del-comment{
 	position: absolute;
 	top: 3px;
 	padding: 5px 10px;
+}
+.webui-popover.bottom > .arrow, .webui-popover.bottom-right > .arrow, .webui-popover.bottom-left > .arrow {
+	direction: ltr;
 }
 
 /* new menu */
@@ -1933,19 +1940,6 @@ div.comment div div.row:hover .del-comment{
 #wis_navbar .cats .parent a{
 	text-align: center;
 }
-/*#wis_navbar > ul > li::before{
-	color: #ff6a00;
-	content: "";
-	position: absolute;
-	top: 31px;
-	font-size: 0;
-	display: none;
-	left: attr(data-m)px;
-}
-#wis_navbar > ul > li:hover::before{
-	display: inline-block;
-	font-size: 10px;
-}*/
 #wis_navbar li:hover > a,
 #wis_navbar .cats .parent:hover > a{
 	color: #ff6a00;
