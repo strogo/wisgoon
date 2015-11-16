@@ -72,6 +72,18 @@ h1,h2,h3,h4,h5,h6{font-weight: 800;}
 #top-userinfo {
 	z-index: 12;
 }
+.gotop{
+	background: #434a54;
+	border-radius: 50px 50px 50px 0;
+	bottom: 10px;
+	color: #fff !important;
+	/*display: block;*/
+	left: 10px;
+	opacity: 0.6;
+	padding: 10px 15px;
+	position: fixed;
+	display: none;
+}
 .navbar{
 	margin-bottom: 0px;
 }
