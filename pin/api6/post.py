@@ -6,7 +6,6 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.api6.tools import get_next_url, get_int, save_post, get_list_post, get_objects_list
 from pin.api6.http import return_json_data, return_bad_request, return_not_found, return_un_auth
 from haystack.query import SearchQuerySet
-from django.core.cache import cache
 
 
 def latest(request):
@@ -328,6 +327,10 @@ def user_post(request, user_id):
 
 def related_post(request, item_id):
     data = {}
+    data['meta'] = {'limit': 10,
+                    'next': "",
+                    'total_count': 1000}
+
     token = request.GET.get('token', False)
     current_user = None
     if token:
@@ -338,7 +341,7 @@ def related_post(request, item_id):
     except Post.DoesNotExist:
         return return_not_found()
 
-    mlt = SearchQuerySet().models(Post).more_like_this(post)[:30]
+    mlt = SearchQuerySet().models(Post).more_like_this(post)[:10]
 
     idis = []
     for pmlt in mlt:
@@ -347,4 +350,10 @@ def related_post(request, item_id):
     post.mlt = Post.objects.filter(id__in=idis).only(*Post.NEED_KEYS_WEB)
 
     data['objects'] = get_objects_list(post.mlt, current_user)
+    if data['objects']:
+        last_item = data['objects'][-1]['id']
+        data['meta']['next'] = get_next_url(url_name='api-6-post-related',
+                                            before=last_item,
+                                            url_args={"item_id": item_id}
+                                            )
     return return_json_data(data)
