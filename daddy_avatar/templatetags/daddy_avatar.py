@@ -60,7 +60,8 @@ def get_avatar(user, size=165):
         try:
             if profile and profile.avatar:
                 url = None
-                if profile.version == Profile.AVATAR_OLD_STYLE:
+                if profile.version == Profile.AVATAR_OLD_STYLE or\
+                        profile.version == Profile.AVATAR_NEW_STYLE:
                     profile.store_avatars(update_model=True)
                     from pin.tasks import migrate_avatar_storage
                     migrate_avatar_storage.delay(profile_id=profile.id)
