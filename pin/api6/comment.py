@@ -2,7 +2,7 @@ from pin.tools import AuthCache
 from pin.api6.http import return_json_data, return_not_found, return_un_auth, return_bad_request
 from pin.models import Comments, Post
 from django.views.decorators.csrf import csrf_exempt
-from pin.api6.tools import get_int, get_json, get_next_url, get_user_data
+from pin.api6.tools import get_int, get_next_url, get_user_data
 
 
 def comment_post(request, item_id):
@@ -53,13 +53,13 @@ def add_comment(request, item_id):
     except Post.DoesNotExist:
         return return_not_found()
 
-    comment_form = get_json(request.body)
-    if not comment_form['comment']:
+    text = request.POST.get('comment', False)
+    if not text:
         return return_json_data({'status': False, 'message': 'Please Enter Your Comment'})
 
     try:
-        comment = Comments.objects.create(object_pk=post, comment=comment_form['comment'], user_id=get_int(current_user))
-        print comment.id
+        comment = Comments.objects.create(object_pk=post, comment=text,
+                                          user_id=get_int(current_user))
         comment_data = {'id': comment.id,
                         'user': get_user_data(comment.user.id),
                         'comment': comment.comment, 'status': True,

@@ -19,6 +19,11 @@ def daddy_avatar(user_email, size=165):
 
 @register.filter
 def get_avatar(user, size=165):
+    if size <= 120:
+        fit_size = 64
+    else:
+        fit_size = 210
+
     class UserGeneric(object):
         pass
 
@@ -31,74 +36,43 @@ def get_avatar(user, size=165):
     if isinstance(user, (int, long)):
         u = UserGeneric()
         u.id = int(user)
-        # # user = User.objects.only('email').get(pk=user)
-        # user_str = "user_%d" % (user)
-        # user_cache = cache.get(user_str)
-        # if user_cache:
-        #     user = user_cache
-        # else:
-        #     try:
-        #         user = User.objects.only('email').get(pk=user)
-        #         cache.set(user_str, user, 60 * 60 * 24)
-        #     except:
-        #         return 'None'
+
     if isinstance(user, User):
         u = user
 
     user_id = u.id
 
     ava_str = "avatar3210u_%d" % (user_id)
-    # ava_dict = {}
-    # try:
-    ava_dict = cache.get(ava_str)
-    # print "ava cache is:", ava_dict, ava_str, size
-    if ava_dict:
-        # print "step 1"
+    ava_dict = {}
 
-        if size in ava_dict:
-            # print "step 1.1"
-            # print "get avatar from cache", ava_dict
-            return ava_dict[size]
+    try:
+        profile = Profile.objects.only('avatar', 'version')\
+            .get(user_id=user_id)
+    except Profile.DoesNotExist:
+        profile = None
+
+    if profile:
+        if profile.version == Profile.AVATAT_MIGRATED and settings.DEBUG:
+            url_prefix = "http://wisgoon.com/media/"
         else:
-            # print "step 1.2"
-            try:
-                profile = Profile.objects.only('avatar').get(user_id=user_id)
-            except Profile.DoesNotExist:
-                profile = None
+            url_prefix = "/media/"
 
-            if profile:
-                if profile.avatar:
-                    # print "step 1.2.1"
-                    t_size = '%sx%s' % (size, size)
-                    try:
-                        im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
-                        ava_dict[size] = im.url
-                        cache.set(ava_str, ava_dict, 60 * 60 * 1)
-                        return im.url
-                    except Exception, e:
-                        print "daddy_avatar line 96: ", str(e)
-    # except Exception, e:
-    #     print str(e)
-    else:
-        # print "step 2"
-        ava_dict = {}
-        # print "step 2.1"
         try:
-            profile = Profile.objects.only('avatar').get(user_id=user_id)
-        except Profile.DoesNotExist:
-            profile = None
+            if profile and profile.avatar:
+                url = None
+                if profile.version == Profile.AVATAR_OLD_STYLE:
+                    profile.store_avatars(update_model=True)
+                    from pin.tasks import migrate_avatar_storage
+                    migrate_avatar_storage.delay(profile_id=profile.id)
 
-        if profile:
-            # print "step 2.2.1"
-            t_size = '%sx%s' % (size, size)
-            try:
-                im = get_thumbnail(profile.avatar, t_size, crop='center', quality=99)
-                ava_dict[size] = im.url
-                cache.set(ava_str, ava_dict, 60 * 60 * 1)
-                return im.url
-            except Exception, e:
-                pass
-                # print "daddy_avatar line 94: ", str(e)
+                if fit_size == 64:
+                    url = '%s%s' % (url_prefix, profile.get_avatar_64_str())
+                else:
+                    url = '%s%s' % (url_prefix, profile.avatar)
+                if url:
+                    return url
+        except Exception, e:
+            print str(e)
 
     glob_avatar = daddy_avatar("", size)
     ava_dict[size] = glob_avatar

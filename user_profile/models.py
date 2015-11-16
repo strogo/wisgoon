@@ -1,6 +1,7 @@
 # coding: utf-8
 import os
 import time
+from PIL import Image, ImageOps
 from datetime import datetime
 
 from django.conf import settings
@@ -14,13 +15,20 @@ from django.db.models.signals import post_save
 def avatar_file_name(instance, filename):
     new_filename = str(time.time()).replace('.', '')
     fileext = os.path.splitext(filename)[1]
+    if not fileext:
+        fileext = '.jpg'
 
     filestr = new_filename + fileext
     d = datetime.now()
-    return '/'.join(['avatars', str(d.year), str(d.month), str(filestr)])
+    return '/'.join(['avatars/blackhole', str(d.year), str(d.month), str(d.day), str(filestr)])
 
 
 class Profile(models.Model):
+
+    AVATAR_OLD_STYLE = 0
+    AVATAR_NEW_STYLE = 1
+    AVATAT_MIGRATED = 2
+
     name = models.CharField(max_length=250, verbose_name='نام')
     location = models.CharField(max_length=250, verbose_name='موقعیت',
                                 blank=True)
@@ -55,6 +63,8 @@ class Profile(models.Model):
     level = models.IntegerField(default=1)
 
     banned = models.BooleanField(default=False)
+
+    version = models.IntegerField(default=0, blank=False, null=True)
 
     def get_cnt_following(self):
         if self.cnt_following == -1 or self.cnt_following is None:
@@ -138,8 +148,67 @@ class Profile(models.Model):
         Profile.objects.filter(user_id=user_id)\
             .update(cnt_like=F('cnt_like') - 1, score=F('score') - 10)
 
+    def get_avatar_64_str(self):
+        s = str(self.avatar)
+        l = s.split('/')
+        l[-1] = "%s_%s" % (64, l[-1])
+        return '/'.join(l)
+
+    def store_avatars(self, update_model=False):
+        im = Image.open(self.avatar)
+
+        ipath = "%s/%s" % (settings.MEDIA_ROOT, self.avatar)
+        idir = os.path.dirname(ipath)
+        iname = os.path.basename(ipath)
+
+        nname_64 = "64_%s" % (iname)
+        npath_64 = "%s/%s" % (idir, nname_64)
+
+        nname = "%s" % (iname)
+        npath = "%s/%s" % (idir, nname)
+
+        thumbnail_210 = ImageOps.fit(
+            im,
+            (210, 210),
+            Image.ANTIALIAS
+        )
+        thumbnail_210.save(npath, format='JPEG')
+
+        thumbnail_64 = ImageOps.fit(
+            im,
+            (64, 64),
+            Image.ANTIALIAS
+        )
+        thumbnail_64.save(npath_64, format='JPEG')
+        if update_model:
+            self.version = Profile.AVATAR_NEW_STYLE
+            self.save()
+
     def save(self, *args, **kwargs):
+        have_new_avatar = False
+        try:
+            this = Profile.objects.get(id=self.id)
+            if this.avatar != self.avatar and '/' not in self.avatar:
+                have_new_avatar = True
+                self.version = self.AVATAR_NEW_STYLE
+                ipath = "%s/%s" % (settings.MEDIA_ROOT, this.avatar)
+                idir = os.path.dirname(ipath)
+                iname = os.path.basename(ipath)
+                nname_64 = "64_%s" % (iname)
+                npath_64 = "%s/%s" % (idir, nname_64)
+                os.remove(npath_64)
+                this.avatar.delete(save=False)
+
+        except Exception, e:
+            print str(e)
+
         super(Profile, self).save(*args, **kwargs)
+
+        if have_new_avatar:
+            from pin.tasks import add_avatar_to_storage
+            self.store_avatars(update_model=False)
+            add_avatar_to_storage.delay(self.id)
+
         user_id = int(self.user_id)
         user_str = "user_name_%d" % (user_id)
         cache.delete(user_str)

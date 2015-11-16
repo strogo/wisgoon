@@ -60,15 +60,105 @@ def add_to_storage(post_id):
     storage.num_files = storage.num_files + 3
     storage.save()
 
-    print "salam"
-    return "salam"
+    return "add_to_storage"
+
+
+@app.task(name="wisgoon.pin.add_avatar_to_storage")
+def add_avatar_to_storage(profile_id):
+    from pin.models import Storages
+    from user_profile.models import Profile
+    profile = Profile.objects.get(id=profile_id)
+    storage = Storages.objects.order_by('num_files')[:1][0]
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(storage.host, username=storage.user)
+    sftp = ssh.open_sftp()
+
+    local_path = os.path.join(settings.MEDIA_ROOT, str(profile.avatar))
+    image_new_path = str(profile.avatar)
+    image_new_path = image_new_path.replace('blackhole', storage.name)
+    remote_path = os.path.join(storage.path, image_new_path)
+    remote_dir = os.path.dirname(remote_path)
+
+    ssh.exec_command('mkdir -p ' + remote_dir)
+
+    sftp.put(local_path, remote_path)
+    os.remove(local_path)
+
+    local_path = os.path.join(settings.MEDIA_ROOT, profile.get_avatar_64_str())
+    image_new_path_64 = profile.get_avatar_64_str()
+    image_new_path_64 = image_new_path_64.replace('blackhole', storage.name)
+    remote_path = os.path.join(storage.path, image_new_path_64)
+    remote_dir = os.path.dirname(remote_path)
+
+    ssh.exec_command('mkdir -p ' + remote_dir)
+
+    profile.avatar = image_new_path
+    profile.version = Profile.AVATAT_MIGRATED
+    profile.save()
+    sftp.put(local_path, remote_path)
+
+    os.remove(local_path)
+
+    sftp.close()
+    ssh.close()
+    storage.num_files = storage.num_files + 3
+    storage.save()
+
+    return "add_avatar_to_storage"
+
+
+@app.task(name="wisgoon.pin.migrate_avatar_storage")
+def migrate_avatar_storage(profile_id):
+    from pin.models import Storages
+    from user_profile.models import Profile
+    profile = Profile.objects.get(id=profile_id)
+    storage = Storages.objects.order_by('num_files')[:1][0]
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(storage.host, username=storage.user)
+    sftp = ssh.open_sftp()
+
+    local_path = os.path.join(settings.MEDIA_ROOT, str(profile.avatar))
+    image_new_path = str(profile.avatar)
+    image_new_path = image_new_path.replace('avatars', "avatars/%s" % storage.name)
+    remote_path = os.path.join(storage.path, image_new_path)
+    remote_dir = os.path.dirname(remote_path)
+
+    ssh.exec_command('mkdir -p ' + remote_dir)
+
+    sftp.put(local_path, remote_path)
+    # os.remove(local_path)
+
+    local_path = os.path.join(settings.MEDIA_ROOT, profile.get_avatar_64_str())
+    image_new_path_64 = profile.get_avatar_64_str()
+    image_new_path_64 = image_new_path_64.replace('avatars', "avatars/%s" % storage.name)
+    remote_path = os.path.join(storage.path, image_new_path_64)
+    remote_dir = os.path.dirname(remote_path)
+
+    ssh.exec_command('mkdir -p ' + remote_dir)
+
+    profile.avatar = image_new_path
+    profile.version = Profile.AVATAT_MIGRATED
+    profile.save()
+    sftp.put(local_path, remote_path)
+
+    # os.remove(local_path)
+
+    sftp.close()
+    ssh.close()
+    storage.num_files = storage.num_files + 3
+    storage.save()
+
+    return "migrate_avatar_storage"
 
 
 @app.task(name="wisgoon.pin.say_salam")
 def say_salam():
     """sends an email when feedback form is filled successfully"""
-    print "salam"
-    return "salam"
+    return "say salam"
 
 
 @app.task(name="wisgoon.pin.delete_image")
@@ -97,16 +187,24 @@ def delete_image(file_path):
 
 @app.task(name="wisgoon.pin.post_to_followers")
 def post_to_followers(user_id, post_id):
-    from pin.models import Follow, Post
-    print "this is post_to_followers"
+    from pin.models import Follow
     followers = Follow.objects.filter(following_id=user_id)\
         .values_list('follower_id', flat=True)
 
     for follower_id in followers:
-        try:
-            Post.add_to_user_stream(post_id=post_id, user_id=follower_id)
-        except Exception, e:
-            print str(e)
-            pass
+        post_to_follower_single.delay(post_id=post_id, follower_id=follower_id)
+        # try:
+        #     Post.add_to_user_stream(post_id=post_id, user_id=follower_id)
+        # except Exception, e:
+        #     print str(e)
+        #     pass
+
+    return "this is post_to_followers"
+
+
+@app.task(name="wisgoon.pin.post_to_follower_single")
+def post_to_follower_single(post_id, follower_id):
+    from pin.models import Post
+    Post.add_to_user_stream(post_id=post_id, user_id=follower_id)
 
     return "this is post_to_followers"

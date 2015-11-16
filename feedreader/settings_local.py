@@ -2,6 +2,8 @@
 import os
 # from easy_thumbnails.conf import Settings as thumbnail_settings
 
+INSTANCE_NAME = 'moon'
+
 DEBUG = True
 THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -357,6 +359,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Tehran'
 CELERY_IGNORE_RESULT = True
 SITE_ID = 1
+
+CELERY_ENABLE_UTC = True
 
 CELERY_ROUTES = {
     'wisgoon.pin.say_salam': {

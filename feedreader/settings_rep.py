@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from settings_local import *
-# from django.db import connections
+
+INSTANCE_NAME = 'saturn'
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -103,3 +104,22 @@ SCORE_FOR_STREAMS = 10000
 
 BROKER_URL = 'amqp://guest@79.127.125.98//'
 CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.98//'
+
+
+CELERY_ROUTES = {
+    'wisgoon.pin.add_to_storage': {
+        'queue': 'add_storage_%s' % INSTANCE_NAME,
+    },
+    'wisgoon.pin.add_avatar_to_storage': {
+        'queue': 'add_avatar_to_storage_%s' % INSTANCE_NAME,
+    },
+    'wisgoon.pin.migrate_avatar_storage': {
+        'queue': 'migrate_avatar_storage_%s' % INSTANCE_NAME,
+    },
+    'wisgoon.pin.post_to_followers': {
+        'queue': 'post_to_followers'
+    },
+    'wisgoon.pin.post_to_follower_single': {
+        'queue': 'post_to_follower_single'
+    }
+}
