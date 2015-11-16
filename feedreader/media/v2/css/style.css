@@ -20,6 +20,7 @@ a:hover {color:#5a3003;}
 .clear{
 	clear:both !important;
 }
+h1,h2,h3,h4,h5,h6{font-weight: 800;}
 
 .w100{width: 100% !important;}
 .flle{float: left !important;}
@@ -66,7 +67,7 @@ a:hover {color:#5a3003;}
 .mato20{margin-top: 20px !important;}
 .mato50{margin-top: 50px !important;}
 .mabo50{margin-bottom: 50px !important;}
-
+.color1{color: #ff6e02 !important;}
 /***************navbar*****/
 #top-userinfo {
 	z-index: 12;
@@ -114,7 +115,7 @@ a:hover {color:#5a3003;}
 	display: table-cell;
 }
 #fromImageModal{
-	z-index: 9999999;
+	z-index: 1100;
 }
 .send-photo{
 	background-color: #282e38;
@@ -903,18 +904,22 @@ a.btn.btn-primary {
 .footer-detail{
 	margin-top: 20px;
 }
-.footer-detail .footer-box {
+.footer-detail .footer-box a{
 	background-color: #fff;
 	border-radius: 30px 30px 30px 0;
-	text-align: left;
+	box-shadow: 0 2px #e2e4e7;
+	color: #a3a4a8;
+	display: block;
+	font-size: 13px;
 	margin: 10px 0;
 	padding: 15px;
-	font-size: 13px;
-	box-shadow: 0 2px #e2e4e7;
-}
-.footer-detail .footer-box a{
 	padding-left: 20px !important;
-	color: #a3a4a8;
+	text-align: center;
+}
+.footer-detail .footer-box.active a,
+.footer-detail .footer-box a:hover{
+	background-color: #ff6e02;
+	color: #fff;
 }
 .container {
 	color: #000;
@@ -934,11 +939,25 @@ a.btn.btn-primary {
 	text-align: right;
 	padding: 10px 0;
 }
-.footer-box:hover{
-	background-color: #ff6e02;
+.policy h3{
+	color: #ff6e02;
+	font-weight: 800;
+}
+.policy li{
+	margin-bottom: 10px;
 }
 /***********end footer detail ******/
 
+/* alert */
+.wis-alert {
+	border-radius: 25px 25px 25px 0;
+	padding: 15px 20px 10px;
+	text-align: justify;
+}
+.wis-alert.info{
+	background: #E1E9F4;
+	color: #555;
+}
 
 /***********send photo ******/
 .upload-photo{
@@ -1372,7 +1391,10 @@ a.img-move{
 	font-size: 18px;
 }
 .modal-dialog {
-	z-index: 2000 !important;
+	z-index: 1111 !important;
+}
+.select2-container {
+	z-index: 1200;
 }
 .guest > a {
 	display: block;
@@ -1787,6 +1809,7 @@ div.comment div div.row:hover .del-comment{
 .user-item .topuser-thumb a img,
 .topuser-item .topuser-thumb a img{
 	border-radius: 50% 50% 50% 0;
+	width: 100%;
 }
 .topuser-item:hover .follow-btn{
 	display: block;
@@ -1854,6 +1877,9 @@ div.comment div div.row:hover .del-comment{
 	position: absolute;
 	top: 3px;
 	padding: 5px 10px;
+}
+.webui-popover.bottom > .arrow, .webui-popover.bottom-right > .arrow, .webui-popover.bottom-left > .arrow {
+	direction: ltr;
 }
 
 /* new menu */
@@ -1933,19 +1959,6 @@ div.comment div div.row:hover .del-comment{
 #wis_navbar .cats .parent a{
 	text-align: center;
 }
-/*#wis_navbar > ul > li::before{
-	color: #ff6a00;
-	content: "";
-	position: absolute;
-	top: 31px;
-	font-size: 0;
-	display: none;
-	left: attr(data-m)px;
-}
-#wis_navbar > ul > li:hover::before{
-	display: inline-block;
-	font-size: 10px;
-}*/
 #wis_navbar li:hover > a,
 #wis_navbar .cats .parent:hover > a{
 	color: #ff6a00;

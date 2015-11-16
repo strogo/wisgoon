@@ -47,7 +47,9 @@ def abs_url(url):
 
 
 def media_abs_url(url):
-    if not url.startswith('/media/'):
+    if url.startswith('http://'):
+        return url
+    elif not url.startswith('/media/'):
         return settings.SITE_URL + '/media/' + url
     elif url.startswith('/media/'):
         return settings.SITE_URL + url

@@ -129,6 +129,28 @@ def get_list_post(pl, from_model='latest'):
     return posts
 
 
+def get_simple_user_object(user_id):
+    u = {}
+    u['id'] = user_id
+    u['avatar'] = media_abs_url(get_avatar(user_id, size=64))
+    u['username'] = UserDataCache.get_user_name(user_id)
+
+    return u
+
+
+def get_last_likers(post_id, limit=3):
+    from pin.models_redis import LikesRedis
+    l = LikesRedis(post_id=post_id)\
+        .get_likes(offset=0, limit=limit, as_user_object=False)
+
+    likers_list = []
+    for ll in l:
+        ll = int(ll)
+        likers_list.append(get_simple_user_object(user_id=ll))
+
+    return likers_list
+
+
 def get_objects_list(posts, cur_user_id, r=None):
 
     objects_list = []
@@ -142,18 +164,17 @@ def get_objects_list(posts, cur_user_id, r=None):
         except Post.DoesNotExist:
             continue
 
-        o, u = {}, {}
+        o = {}
 
         o['id'] = p.id
         o['text'] = p.text
         o['cnt_comment'] = 0 if p.cnt_comment == -1 else p.cnt_comment
         o['timestamp'] = p.timestamp
 
-        u['id'] = p.user_id
-        u['avatar'] = media_abs_url(get_avatar(p.user_id, size=100))
-        u['username'] = UserDataCache.get_user_name(p.user_id)
+        o['user'] = get_simple_user_object(p.user_id)
 
-        o['user'] = u
+        o['last_likers'] = get_last_likers(post_id=p.id)
+
         try:
             o['url'] = p.url
         except Exception, e:

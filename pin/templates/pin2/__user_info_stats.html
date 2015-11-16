@@ -19,44 +19,44 @@
 				<tr>
 					<td>ارسال مطلب :</td>
 					<td>
-					{% if profile.user.is_active %}
+						{% if profile.user.is_active %}
 						<strong>فعال</strong>
-{% if user.is_superuser %}
-<div class="btn-group">
-	<button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-		غیر فعال کردن <span class="caret"></span>
-	</button>
-	<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-		<li role="presentation">
-			<a role="menuitem" tabindex="-1" href="{% url "activate-user" profile.user.id 0%}?q=محتوای غیر اخلاقی">محتوای غیر اخلاقی</a>
-		</li>
-		<li role="presentation">
-			<a role="menuitem" tabindex="-1" href="{% url "activate-user" profile.user.id 0%}?q=نقض حریم خصوصی">نقض حریم خصوصی</a>
-		</li>
-		<li role="presentation">
-			<a role="menuitem" tabindex="-1" href="{% url "activate-user" profile.user.id 0%}?q=توهین به مقدسات">توهین به مقدسات</a>
-		</li>
-		<li role="presentation">
-			<a role="menuitem" tabindex="-1" href="{% url "activate-user" profile.user.id 0%}?q=توهین به مقامات کشوری">توهین به مقامات کشوری</a>
-		</li>
-		<li role="presentation">
-			<a role="menuitem" tabindex="-1" href="{% url "activate-user" profile.user.id 0%}?q=توهین به کاربران">توهین به کاربران</a>
-		</li>
-		<li role="presentation">
-			<a role="menuitem" tabindex="-1" href="{% url "activate-user" profile.user.id 0%}?q=تکرار تخلف">تکرار تخلف</a>
-		</li>
-		<li role="presentation">
-			<a role="menuitem" tabindex="-1" href="{% url "activate-user" profile.user.id 0%}?q=ارسال هرزنامه">ارسال هرزنامه</a>
-		</li>
-	</ul>
-</div>
-{% endif %}
-					{% else%}
+						{% if user.is_superuser %}
+						<div class="btn-group">
+							<button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+								غیر فعال کردن <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+								<li role="presentation">
+									<a role="menuitem" tabindex="-1" href="{% url "activate-user" profile.user.id 0 %}?q=محتوای غیر اخلاقی">محتوای غیر اخلاقی</a>
+								</li>
+								<li role="presentation">
+								<a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0%}?q=نقض حریم خصوصی">نقض حریم خصوصی</a>
+								</li>
+								<li role="presentation">
+									<a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=توهین به مقدسات">توهین به مقدسات</a>
+								</li>
+								<li role="presentation">
+									<a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=توهین به مقامات کشوری">توهین به مقامات کشوری</a>
+								</li>
+								<li role="presentation">
+									<a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=توهین به کاربران">توهین به کاربران</a>
+								</li>
+								<li role="presentation">
+									<a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=تکرار تخلف">تکرار تخلف</a>
+								</li>
+								<li role="presentation">
+									<a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=ارسال هرزنامه">ارسال هرزنامه</a>
+								</li>
+							</ul>
+						</div>
+						{% endif %}
+						{% else%}
 						<strong>غیرفعال</strong>
 						{% if user.is_superuser %}
 						<a class="btn btn-xs btn-success" href="{% url "activate-user" profile.user.id 1%}">فعال کردن</a>
 						{% endif %}
-					{%endif%}</td>
+						{%endif%}</td>
 					</tr>
 					<tr>
 						<td>تاریخ عضویت :</td>

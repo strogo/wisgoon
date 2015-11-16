@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.api6.tools import get_next_url, get_int, save_post, get_list_post, get_objects_list
 from pin.api6.http import return_json_data, return_bad_request, return_not_found, return_un_auth
 from haystack.query import SearchQuerySet
+from django.core.cache import cache
 
 
 def latest(request):
@@ -326,7 +327,6 @@ def user_post(request, user_id):
 
 
 def related_post(request, item_id):
-    from django.core.cache import cache
     data = {}
     enable_caching = False
     cache_key = "rel:v1:%s" % item_id
