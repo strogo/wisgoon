@@ -29,16 +29,16 @@ if (disable_masonry==0){
     feedobj.masonry({
         itemSelector : '.feed-item',
         isRTL: true,
+        isResizeBound: false,
         isAnimated: false,
         isFitWidth: true,
     });
 }
 
-var next_pref = next_pref || '?older='
+var next_pref = next_pref || '?older=';
 
 function load_posts(page) {
     $('.footer-loading-box').show(0);
-    // $(".loading").show(0);
     $.get(
         a_url + next_pref + page + '&'+extend_query,
         function(response) {
@@ -51,13 +51,11 @@ function load_posts(page) {
                 loadingobj.hide();
                 start_loading=0;
                 ana_ajax(a_url + next_pref + page + '&'+extend_query);
-                // AnetworkAdMatcher("anetwork-xc-banner",_AWFP_user);
             }
         }).done(function(d) {
             $('.footer-loading-box').hide(0);
         })
         .fail(function(d) {
-            // alert( "error" );
             $("#next_url").addClass("btn btn-success").html('کلیک کنید');
         })
         .always(function(d) {
@@ -66,28 +64,38 @@ function load_posts(page) {
     }
 
 
-// window scroll
-$(window).scroll(function() {
-    loadingobj = $(".loading");
-    var break_point = $(document).height() - ($(window).height() * 2.02);
-    if ($(window).scrollTop() >= break_point) {
-        var next_page = $('#feed span:last').attr('data-next');
-        console.log(next_page);
-        if (next_page && start_loading==0) {
-            start_loading=1;
-            loadingobj.show();
-            load_posts(next_page);
-            live_content();
-            if (typeof live_content_user == 'function'){
-                live_content_user();
+    $(window).scroll(function() {
+        var sc = $(window).scrollTop();
+        if (sc > 300) {
+            $('.gotop').css('display', 'block');
+        }else{
+            $('.gotop').css('display', 'none');
+        }
+
+        loadingobj = $(".loading");
+        var break_point = $(document).height() - ($(window).height() * 2.02);
+        if ($(window).scrollTop() >= break_point) {
+            var next_page = $('#feed span:last').attr('data-next');
+            if (next_page && start_loading==0) {
+                start_loading=1;
+                loadingobj.show();
+                load_posts(next_page);
+                live_content();
+                if (typeof live_content_user == 'function'){
+                    live_content_user();
+                }
             }
         }
-    }
-});
+    });
 
 
 //second
 jQuery(function($) {
+    $('body').on('click', '.gotop', function(event) {
+        event.preventDefault();
+        $('html, body').animate({ scrollTop: 0 }, 'normal');
+    });
+
     $('form[data-async]').on('submit', function(event) {
         var $form = $(this);
         var $target = $($form.attr('data-target'));
