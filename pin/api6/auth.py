@@ -8,11 +8,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
 from tastypie.models import ApiKey
-
+from user_profile.forms import ProfileForm
 from pin.api6.http import return_bad_request, return_json_data, return_un_auth
-from pin.api6.tools import get_next_url
+from pin.api6.tools import get_next_url, get_user_data, get_profile_data, update_follower_following
 from pin.tools import AuthCache
-from pin.models import Follow
+from pin.models import Follow, Block
+from user_profile.models import Profile
 from pin.cacheLayer import UserDataCache
 
 # from daddy_avatar.templatetags import daddy_avatar
@@ -290,3 +291,60 @@ def register(request):
             'message': _("Error in user creation")
         }
         return return_json_data(data)
+
+
+def profile(request, user_id):
+    token = request.GET.get('token', False)
+    current_user = None
+
+    if token:
+        current_user = AuthCache.id_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
+
+    if current_user:
+        if Block.objects.filter(user_id=current_user, blocked_id=user_id).count():
+            return return_json_data({})
+
+        follow_status = Follow.objects.filter(follower=current_user,
+                                              following=user_id).count()
+    else:
+        follow_status = None
+
+    try:
+        profile = Profile.objects.only('banned', 'user', 'score', 'cnt_post', 'cnt_like', 'website', 'credit', 'level', 'bio').get(user_id=user_id)
+    except Profile.DoesNotExist:
+        profile = Profile.objects.create(user_id=user_id)
+
+    data = {'user': get_user_data(user_id),
+            'profile': get_profile_data(profile, user_id),
+            'follow_status': follow_status}
+    return return_json_data(data)
+
+
+@csrf_exempt
+def update_profile(request):
+    token = request.GET.get('token', False)
+    status = False
+
+    if token:
+        current_user = AuthCache.id_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
+    else:
+        return return_un_auth()
+
+    profile, create = Profile.objects.get_or_create(user=current_user)
+
+    form = ProfileForm(request.POST, request.FILES, instance=profile)
+    if form.is_valid():
+        form.save()
+        update_follower_following(profile, current_user)
+        msg = 'Your Profile Was Updated'
+        status = True
+    else:
+        msg = form.errors
+        msg = 'Error'
+    return return_json_data({'status': status, 'message': msg,
+                             'profile': get_profile_data(profile, current_user),
+                             'user': get_user_data(current_user)})

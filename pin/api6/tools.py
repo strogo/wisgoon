@@ -7,7 +7,7 @@ from time import time
 from pin.forms import PinDirectForm
 from io import FileIO, BufferedWriter
 from pin.tools import create_filename
-from pin.models import Post
+from pin.models import Post, Follow
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from pin.cacheLayer import UserDataCache
 from pin.models_redis import LikesRedis
@@ -206,3 +206,26 @@ def get_objects_list(posts, cur_user_id, r=None):
         objects_list.append(o)
 
     return objects_list
+
+
+def get_profile_data(profile, user_id):
+    update_follower_following(profile, user_id)
+    data = {}
+    data['name'] = profile.name
+    data['score'] = profile.score
+    data['cnt_post'] = profile.cnt_post
+    data['cnt_like'] = profile.cnt_like
+    data['is_active'] = profile.user.is_active
+    data['credit'] = profile.credit
+    data['cnt_follower'] = profile.cnt_follower
+    data['cnt_following'] = profile.cnt_following
+    return data
+
+
+def update_follower_following(profile, user_id):
+    from pin.api6.http import return_bad_request
+    try:
+        profile.cnt_follower = Follow.objects.filter(following_id=user_id).count()
+        profile.cnt_following = Follow.objects.filter(follower_id=user_id).count()
+    except:
+        return return_bad_request()

@@ -7,6 +7,8 @@ urlpatterns = patterns('pin.api6.auth',
                        url(r'auth/unfollow/$', 'unfollow', name='api-6-auth-unfollow'),
                        url(r'auth/followers/(?P<user_id>\d+)/$', 'followers', name='api-6-auth-followers'),
                        url(r'auth/following/(?P<user_id>\d+)/$', 'following', name='api-6-auth-following'),
+                       url(r'auth/user/(?P<user_id>\d+)/$', 'profile', name='api-6-auth-profile'),
+                       url(r'auth/user/update/$', 'update_profile', name='api-6-auth-profile-update'),
                        )
 
 urlpatterns += patterns('pin.api6.post',
@@ -19,6 +21,8 @@ urlpatterns += patterns('pin.api6.post',
                         url(r'post/report/(?P<item_id>\d+)/$', 'report', name='api-6-post-report'),
                         url(r'post/edit/(?P<item_id>\d+)/$', 'edit', name='api-6-post-edit'),
                         url(r'post/send/$', 'send', name='api-6-post-send'),
+                        url(r'post/user/(?P<user_id>\d+)/$', 'user_post', name='api-6-post-user'),
+                        url(r'post/related/(?P<item_id>\d+)/$', 'related_post', name='api-6-post-related'),
                         )
 
 urlpatterns += patterns('pin.api6.comment',

@@ -15,7 +15,7 @@
 		<a href="{% url "user-profile-change" %}" class="btn btn-xs btn-primary f-white" data-toggle="modal" data-target="#profileModal">ویرایش</a>
 		{% endif %}
 
-		{% if profile.user_id != request.user.id %}
+		{% if profile.user_id != request.user.id and user.is_authenticated%}
 			{% if follow_status == 0 %}
 				<a class="btn btn-xs btn-success ajax-follow" href='{% url "pin-follow" profile.user_id 1 %}'>ایجاد دوستی</a>
 			{% else %}

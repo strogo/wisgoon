@@ -299,3 +299,61 @@ def send(request):
     elif post.status == 0:
         msg = 'مطلب شما با موفقیت ارسال شد و بعد از تایید در سایت نمایش داده می شود '
     return return_json_data({'status': status, 'message': msg, 'post': data})
+
+
+def user_post(request, user_id):
+    before = request.GET.get('before', False)
+    data = {}
+    data['meta'] = {'limit': 20,
+                    'next': "",
+                    'total_count': 1000}
+    if before:
+        user_posts = Post.objects.only(*Post.NEED_KEYS_WEB)\
+            .filter(user=user_id, id__lt=before).order_by('-id')[:20]
+    else:
+        user_posts = Post.objects.only(*Post.NEED_KEYS_WEB)\
+            .filter(user=user_id).order_by('-id')[:20]
+
+    data['objects'] = get_objects_list(user_posts, user_id)
+
+    if data['objects']:
+        last_item = data['objects'][-1]['id']
+        data['meta']['next'] = get_next_url(url_name='api-6-post-user',
+                                            before=last_item,
+                                            url_args={"user_id": user_id}
+                                            )
+    return return_json_data(data)
+
+
+def related_post(request, item_id):
+    from django.core.cache import cache
+    data = {}
+    enable_caching = False
+    cache_key = "rel:v1:%s" % item_id
+    token = request.GET.get('token', False)
+    current_user = None
+    if token:
+        current_user = AuthCache.user_from_token(token=token)
+
+    if not current_user:
+        enable_caching = True
+        cd = cache.get(cache_key)
+        if cd:
+            return cd
+    try:
+        post = Post.objects.get(id=item_id)
+    except Post.DoesNotExist:
+        return return_not_found()
+
+    mlt = SearchQuerySet().models(Post).more_like_this(post)[:30]
+
+    idis = []
+    for pmlt in mlt:
+        idis.append(pmlt.pk)
+
+    post.mlt = Post.objects.filter(id__in=idis).only(*Post.NEED_KEYS_WEB)
+
+    if enable_caching:
+        cache.set(cache_key, post, 3600)
+    data['objects'] = get_objects_list(post.mlt, current_user)
+    return return_json_data(data)
