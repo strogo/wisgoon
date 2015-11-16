@@ -350,10 +350,4 @@ def related_post(request, item_id):
     post.mlt = Post.objects.filter(id__in=idis).only(*Post.NEED_KEYS_WEB)
 
     data['objects'] = get_objects_list(post.mlt, current_user)
-    if data['objects']:
-        last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-6-post-related',
-                                            before=last_item,
-                                            url_args={"item_id": item_id}
-                                            )
     return return_json_data(data)
