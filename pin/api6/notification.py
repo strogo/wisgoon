@@ -24,6 +24,11 @@ def notif(request):
     data = {}
     token = request.GET.get('token', False)
     before = request.GET.get('before', False)
+    notifs_list = []
+    data['meta'] = {'limit': 20,
+                    'next': '',
+                    'total_count': 1000}
+
     if token:
         current_user = AuthCache.id_from_token(token=token)
         if not current_user:
@@ -31,14 +36,15 @@ def notif(request):
     else:
         return return_bad_request()
 
-    data['meta'] = {'limit': 20,
-                    'next': '',
-                    'total_count': 1000}
-    if before:
-        notifs = Notif.objects.filter(owner=current_user, id__lt=before).order_by('-date')[:20]
-    else:
-        notifs = Notif.objects.filter(owner=current_user).order_by('-date')[:20]
-    notifs_list = []
+    try:
+        NotifCount.objects.filter(owner=current_user).update(set__unread=0)
+        if before:
+            notifs = Notif.objects.filter(owner=current_user, id__lt=before).order_by('-date')[:20]
+        else:
+            notifs = Notif.objects.filter(owner=current_user).order_by('-date')[:20]
+    except:
+        notifs = []
+
     for notif in notifs:
         data_extra = {}
         if notif.type == Notif.LIKE:
