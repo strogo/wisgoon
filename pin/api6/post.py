@@ -328,18 +328,11 @@ def user_post(request, user_id):
 
 def related_post(request, item_id):
     data = {}
-    enable_caching = False
-    cache_key = "rel:v1:%s" % item_id
     token = request.GET.get('token', False)
     current_user = None
     if token:
         current_user = AuthCache.user_from_token(token=token)
 
-    if not current_user:
-        enable_caching = True
-        cd = cache.get(cache_key)
-        if cd:
-            return cd
     try:
         post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
@@ -353,7 +346,5 @@ def related_post(request, item_id):
 
     post.mlt = Post.objects.filter(id__in=idis).only(*Post.NEED_KEYS_WEB)
 
-    if enable_caching:
-        cache.set(cache_key, post, 3600)
     data['objects'] = get_objects_list(post.mlt, current_user)
     return return_json_data(data)
