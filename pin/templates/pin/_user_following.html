@@ -2,19 +2,22 @@
 {% load humanize %}
 {% load daddy_avatar %}
 {% if user_items %}
+
 	{% for u in user_items %}
+	
 	<div class="col-md-3 col-sm-3 col-xs-6 user-friend user-item">
-		<div class="topuser-thumb show-pop-code-delay" data-title='<a href="{% url "pin-absuser" u.follower %}">{{u.follower}}</a>' data-content='<div class="topuser-info"><div class="user-post-count">تعداد مطالب: <span class="count"><strong>{{u.follower.profile.cnt_post|pn}}</strong></span></div><div class="user-score">امتیاز: <span class="count"><strong>{{u.follower.profile.score|pn}}</strong></span></div></div>'>
+		<div class="topuser-thumb show-pop-code-delay" data-title='<a href="{% url "pin-absuser" u.following %}">{{u.following}}</a>' data-content='<div class="topuser-info"><div class="user-post-count">تعداد مطالب: <span class="count"><strong>{{u.following.profile.cnt_post|pn}}</strong></span></div><div class="user-score">امتیاز: <span class="count"><strong>{{u.following.profile.score|pn}}</strong></span></div></div>'>
 			<div class="user-avatar">
-				<a href="{% url "pin-absuser" u.follower %}">
-					<img src="{{u.follower.id|get_avatar:165}}" style="width:" />
+				<a href="{% url "pin-absuser" u.following %}">
+					<img src="{{u.following.id|get_avatar:165}}" style="width:" />
 				</a>
 			</div>
 			<div class="clear"></div>
 			<div class="user-username mato10">
-				<a class="f-black" href="{% url 'pin-absuser' u.follower %}" data-next="{{u.id}}">
-					<center>{{u.follower|get_username|truncatechars:20}}</center>
+				<a class="f-black" href="{% url 'pin-absuser' u.following %}" data-next="{{u.id}}">
+					<center>{{u.following|get_username|truncatechars:20}}</center>
 				</a>
+				<br>
 			</div>
 		</div>
 	</div>
@@ -24,8 +27,9 @@
 	موردی یافت نشد
 </div>
 {% endif %}
+
 <div class="clearfix"></div>
-<a href="{% url 'pin-absuser-followers' user.username %}" class="col-md-3 col-md-offset-4 col-sm-12 col-xs-12 btn btn-success mabo50 mato50 load-follow">
+<a href="{% url 'pin-absuser-following' user.username %}" class="col-md-3 col-md-offset-4 col-sm-12 col-xs-12 btn btn-success mabo50 mato50 load-follow">
 	بیشتر
 	<img src="{{MEDIA_URL}}img/loading.gif" alt=" بیشتر " />
 </a>
