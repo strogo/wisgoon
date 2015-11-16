@@ -1039,7 +1039,7 @@ def tag(request, keyword):
 
 
 def policy(request):
-    return render(request, 'pin2/policy.html')
+    return render(request, 'pin2/policy.html', {'page': 'policy'})
 
 
 def stats(request):
@@ -1059,4 +1059,4 @@ def stats(request):
 
 
 def feedback(request):
-    return render(request, 'pin2/feedback.html')
+    return render(request, 'pin2/feedback.html', {'page': 'feedback'})

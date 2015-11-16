@@ -1,33 +1,44 @@
-{% extends "pin2/flat.base.box.html"%}
+{% extends "pin2/flat.base.html" %}
+
+{%block title%} - تماس با ما {%endblock title%}
 
 {% block content %}
 
-<div class="panel panel-default">
-	<div class="panel-heading">ارتباط با ما
-	</div>
-	<div class="panel-body">
-		<table class="table">
-			<thead>
-				<tr>
-					<th>بخش</th>
-					<th>آدرس</th>
-				</tr>
-			</thead>
-			<tr>
-				<td>ارتباط با ما:</td>
-				<td>info@{{SITE_URL_NAME}}</td>
-			</tr>
-			<tr>
-				<td>پشتیبانی: </td>
-				<td>support@{{SITE_URL_NAME}}</td>
-			</tr>
-			<tr>
-				<td>سازمان آگهی ها: </td>
-				<td>ad@{{SITE_URL_NAME}}</td>
-			</tr>
-		</table>
+<div id="main">
+	<div class="container">
+		<div class="footer-detail col-md-12">
+			<div class="col-md-3 col-sm-3 col-xs-12">	
+				{% include "pin2/_staticpages_sidebar.html" %}
+			</div>
+			<div class="col-md-9 col-sm-9 col-md-12">
+				<div class=" content">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>بخش</th>
+								<th>آدرس</th>
+							</tr>
+						</thead>
+						<tr>
+							<td>ارتباط با ما:</td>
+							<td>info@{{SITE_URL_NAME}}</td>
+						</tr>
+						<tr>
+							<td>پشتیبانی: </td>
+							<td>support@{{SITE_URL_NAME}}</td>
+						</tr>
+						<tr>
+							<td>سازمان آگهی ها: </td>
+							<td>ad@{{SITE_URL_NAME}}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
 	</div>
 
+	<br />
+	<br />
 </div>
-
-{% endblock content %}
+<div class="clear"></div>
+{% endblock content%}

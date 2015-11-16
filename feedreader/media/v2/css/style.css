@@ -66,7 +66,7 @@ a:hover {color:#5a3003;}
 .mato20{margin-top: 20px !important;}
 .mato50{margin-top: 50px !important;}
 .mabo50{margin-bottom: 50px !important;}
-
+.color1{color: #ff6e02 !important;}
 /***************navbar*****/
 #top-userinfo {
 	z-index: 12;
@@ -903,18 +903,22 @@ a.btn.btn-primary {
 .footer-detail{
 	margin-top: 20px;
 }
-.footer-detail .footer-box {
+.footer-detail .footer-box a{
 	background-color: #fff;
 	border-radius: 30px 30px 30px 0;
-	text-align: left;
+	box-shadow: 0 2px #e2e4e7;
+	color: #a3a4a8;
+	display: block;
+	font-size: 13px;
 	margin: 10px 0;
 	padding: 15px;
-	font-size: 13px;
-	box-shadow: 0 2px #e2e4e7;
-}
-.footer-detail .footer-box a{
 	padding-left: 20px !important;
-	color: #a3a4a8;
+	text-align: center;
+}
+.footer-detail .footer-box.active a,
+.footer-detail .footer-box a:hover{
+	background-color: #ff6e02;
+	color: #fff;
 }
 .container {
 	color: #000;
@@ -934,11 +938,25 @@ a.btn.btn-primary {
 	text-align: right;
 	padding: 10px 0;
 }
-.footer-box:hover{
-	background-color: #ff6e02;
+.policy h3{
+	color: #ff6e02;
+	font-weight: 800;
+}
+.policy li{
+	margin-bottom: 10px;
 }
 /***********end footer detail ******/
 
+/* alert */
+.wis-alert {
+	border-radius: 25px 25px 25px 0;
+	padding: 15px 20px 10px;
+	text-align: justify;
+}
+.wis-alert.info{
+	background: #E1E9F4;
+	color: #555;
+}
 
 /***********send photo ******/
 .upload-photo{
