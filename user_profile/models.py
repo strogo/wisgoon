@@ -20,7 +20,8 @@ def avatar_file_name(instance, filename):
 
     filestr = new_filename + fileext
     d = datetime.now()
-    return '/'.join(['avatars/blackhole', str(d.year), str(d.month), str(d.day), str(filestr)])
+    avatars_prefix = "avatars/%s" % settings.INSTANCE_NAME
+    return '/'.join([avatars_prefix, str(d.year), str(d.month), str(d.day), str(filestr)])
 
 
 class Profile(models.Model):

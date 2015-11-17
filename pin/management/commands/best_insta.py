@@ -41,7 +41,7 @@ def get_from_insta(insta_user_id, cat, user_id, cnt=5):
                 image_url = model.image
                 filename = image_url.split('/')[-1]
                 filename = create_filename(filename)
-                image_on = "%s/pin/blackhole/images/o/%s" % (MEDIA_ROOT, filename)
+                image_on = "%s/pin/%s/images/o/%s" % (MEDIA_ROOT, settings.INSTANCE_NAME, filename)
 
                 image_url = image_url.replace("https://", "http://")
                 print image_url
@@ -57,7 +57,7 @@ def get_from_insta(insta_user_id, cat, user_id, cnt=5):
 
                 # urllib.urlretrieve(image_url, image_on)
 
-                model.image = "pin/blackhole/images/o/%s" % (filename)
+                model.image = "pin/%s/images/o/%s" % (settings.INSTANCE_NAME, filename)
                 model.timestamp = time.time()
                 model.user_id = user_id
                 model.status = Post.APPROVED
