@@ -3,6 +3,7 @@ from pin.api6.http import return_json_data, return_not_found, return_un_auth, re
 from pin.models import Comments, Post
 from django.views.decorators.csrf import csrf_exempt
 from pin.api6.tools import get_int, get_next_url, get_user_data
+from django.utils.translation import ugettext as _
 
 
 def comment_post(request, item_id):
@@ -55,7 +56,7 @@ def add_comment(request, item_id):
 
     text = request.POST.get('comment', False)
     if not text:
-        return return_json_data({'status': False, 'message': 'Please Enter Your Comment'})
+        return return_json_data({'status': False, 'message': _('Please Enter Your Comment')})
 
     try:
         comment = Comments.objects.create(object_pk=post, comment=text,
@@ -66,7 +67,7 @@ def add_comment(request, item_id):
                         'message': 'Successfully Create Comment.'}
         return return_json_data(comment_data)
     except:
-        return return_json_data({'status': False, 'message': 'Unsuccessfully Create Comment.'})
+        return return_json_data({'status': False, 'message': _('Unsuccessfully Create Comment.')})
 
 
 def delete_comment(request, comment_id):
@@ -87,9 +88,9 @@ def delete_comment(request, comment_id):
         comment_id = comment.id
         comment.delete()
         data = {'status': True,
-                'message': 'Successfully Delete Comment',
+                'message': _('Successfully Delete Comment'),
                 'comment_id': comment_id}
     else:
         data = {'status': False,
-                'message': 'Access Denied Comment'}
+                'message': _('Access Denied Comment')}
     return return_json_data(data)
