@@ -123,7 +123,7 @@ def migrate_avatar_storage(profile_id):
 
     local_path = os.path.join(settings.MEDIA_ROOT, str(profile.avatar))
     image_new_path = str(profile.avatar)
-    image_new_path = image_new_path.replace('avatars', "avatars/%s" % storage.name)
+    image_new_path = image_new_path.replace('avatars/%s' % settings.INSTANCE_NAME, "avatars/%s" % storage.name)
     remote_path = os.path.join(storage.path, image_new_path)
     remote_dir = os.path.dirname(remote_path)
 
@@ -134,7 +134,7 @@ def migrate_avatar_storage(profile_id):
 
     local_path = os.path.join(settings.MEDIA_ROOT, profile.get_avatar_64_str())
     image_new_path_64 = profile.get_avatar_64_str()
-    image_new_path_64 = image_new_path_64.replace('avatars', "avatars/%s" % storage.name)
+    image_new_path_64 = image_new_path_64.replace('avatars/%s' % settings.INSTANCE_NAME, "avatars/%s" % storage.name)
     remote_path = os.path.join(storage.path, image_new_path_64)
     remote_dir = os.path.dirname(remote_path)
 

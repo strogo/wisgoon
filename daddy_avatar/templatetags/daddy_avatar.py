@@ -5,7 +5,6 @@ from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
 
-from sorl.thumbnail import get_thumbnail
 from user_profile.models import Profile
 
 register = Library()
@@ -63,8 +62,11 @@ def get_avatar(user, size=165):
                 if profile.version == Profile.AVATAR_OLD_STYLE or\
                         profile.version == Profile.AVATAR_NEW_STYLE:
                     profile.store_avatars(update_model=True)
-                    from pin.tasks import migrate_avatar_storage
-                    migrate_avatar_storage.delay(profile_id=profile.id)
+                    cache_key = "migrate_avatar_%s" % str(profile.id)
+                    if not cache.get(cache_key):
+                        from pin.tasks import migrate_avatar_storage
+                        migrate_avatar_storage.delay(profile_id=profile.id)
+                        cache.set(cache_key, 1, 60 * 5)
 
                 if fit_size == 64:
                     url = '%s%s' % (url_prefix, profile.get_avatar_64_str())
