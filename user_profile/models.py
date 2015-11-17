@@ -155,7 +155,11 @@ class Profile(models.Model):
         return '/'.join(l)
 
     def store_avatars(self, update_model=False):
-        im = Image.open(self.avatar)
+        try:
+            im = Image.open(self.avatar)
+        except IOError, e:
+            print str(e)
+            return
 
         ipath = "%s/%s" % (settings.MEDIA_ROOT, self.avatar)
         idir = os.path.dirname(ipath)
