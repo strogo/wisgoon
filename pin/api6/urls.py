@@ -9,6 +9,7 @@ urlpatterns = patterns('pin.api6.auth',
                        url(r'auth/following/(?P<user_id>\d+)/$', 'following', name='api-6-auth-following'),
                        url(r'auth/user/(?P<user_id>\d+)/$', 'profile', name='api-6-auth-profile'),
                        url(r'auth/user/update/$', 'update_profile', name='api-6-auth-profile-update'),
+                       url(r'auth/user/search/$', 'user_search', name='api-6-auth-user-search'),
                        )
 
 urlpatterns += patterns('pin.api6.post',
@@ -23,20 +24,28 @@ urlpatterns += patterns('pin.api6.post',
                         url(r'post/send/$', 'send', name='api-6-post-send'),
                         url(r'post/user/(?P<user_id>\d+)/$', 'user_post', name='api-6-post-user'),
                         url(r'post/related/(?P<item_id>\d+)/$', 'related_post', name='api-6-post-related'),
+                        url(r'post/promoted/$', 'promoted', name='api-6-post-promoted'),
                         )
 
 urlpatterns += patterns('pin.api6.comment',
-                        url(r'comments/post/(?P<item_id>\d+)/', 'comment_post', name='api-6-comment-post'),
+                        url(r'comment/showComments/post/(?P<item_id>\d+)/', 'comment_post', name='api-6-comment-post'),
                         url(r'comment/add/post/(?P<item_id>\d+)/$', 'add_comment', name='api-6-comment-add'),
                         url(r'comment/delete/(?P<comment_id>\d+)/$', 'delete_comment', name='api-6-comment-delete'),
                         )
 
 urlpatterns += patterns('pin.api6.like',
                         url(r'like/post/(?P<item_id>\d+)/$', 'like_post', name='api-6-like-post'),
-                        url(r'likers/post/(?P<item_id>\d+)/$', 'post_likers', name='api-6-likers-post'),
+                        url(r'like/likers/post/(?P<item_id>\d+)/$', 'post_likers', name='api-6-likers-post'),
                         )
 
 urlpatterns += patterns('pin.api6.notification',
                         url(r'notif/count/$', 'notif_count', name='api-6-notif-count'),
                         url(r'notif/$', 'notif', name='api-6-notif-notif'),
+                        )
+
+urlpatterns += patterns('pin.api6.urlsMap',
+                        url(r'urls/$', 'show_map', name='api-6-urls-map'),
+                        )
+urlpatterns += patterns('pin.api6.hashtag',
+                        url(r'hashtag/$', 'hashtag', name='api-6-hashtag'),
                         )

@@ -11,6 +11,7 @@ from pin.models import Post, Follow
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from pin.cacheLayer import UserDataCache
 from pin.models_redis import LikesRedis
+from django.utils.translation import ugettext as _
 
 
 def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
@@ -106,7 +107,7 @@ def save_post(request, user):
             model.device = 2
             model.save()
             status = True
-            msg = "Successfully Send Post"
+            msg = _("Successfully Send Post")
         except IOError, e:
             status = False
             msg = str(e)

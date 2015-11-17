@@ -10,14 +10,15 @@ from django.utils.translation import ugettext as _
 from tastypie.models import ApiKey
 from user_profile.forms import ProfileForm
 from pin.api6.http import return_bad_request, return_json_data, return_un_auth
-from pin.api6.tools import get_next_url, get_user_data, get_profile_data, update_follower_following
+from pin.api6.tools import get_next_url, get_user_data, get_int, get_profile_data,\
+    update_follower_following
 from pin.tools import AuthCache
 from pin.models import Follow, Block
 from user_profile.models import Profile
 from pin.cacheLayer import UserDataCache
-
 # from daddy_avatar.templatetags import daddy_avatar
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
+from haystack.query import SearchQuerySet
 
 
 def followers(request, user_id):
@@ -116,13 +117,13 @@ def follow(request):
     token = request.GET.get('token', '')
     user_id = request.GET.get('user_id', None)
 
-    if token:
+    if token and user_id:
+        user_id = get_int(user_id)
         user = AuthCache.user_from_token(token=token)
-
-    if not user or not user_id:
-        return return_un_auth()
-
-    user_id = int(user_id)
+        if not user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
 
     if user_id == user.id:
         return return_bad_request()
@@ -147,12 +148,13 @@ def unfollow(request):
     token = request.GET.get('token', '')
     user_id = request.GET.get('user_id', None)
 
-    if token:
+    if token and user_id:
+        user_id = get_int(user_id)
         user = AuthCache.user_from_token(token=token)
-
-    if not user or not user_id:
-        return return_un_auth()
-    user_id = int(user_id)
+        if not user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
 
     if user_id == user.id:
         return return_bad_request()
@@ -332,7 +334,7 @@ def update_profile(request):
         if not current_user:
             return return_un_auth()
     else:
-        return return_un_auth()
+        return return_bad_request()
 
     profile, create = Profile.objects.get_or_create(user=current_user)
 
@@ -348,3 +350,48 @@ def update_profile(request):
     return return_json_data({'status': status, 'message': msg,
                              'profile': get_profile_data(profile, current_user),
                              'user': get_user_data(current_user)})
+
+
+def user_search(request):
+    row_per_page = 20
+    current_user = None
+    query = request.GET.get('q', '')
+    offset = get_int(request.GET.get('offset', 0))
+    token = request.GET.get('token', '')
+    data = {}
+    data['meta'] = {'limit': 20,
+                    'next': "",
+                    'total_count': 1000}
+    results = SearchQuerySet().models(Profile)\
+        .filter(content__contains=query)[offset:offset + 1 * row_per_page]
+
+    if query and token:
+        current_user = AuthCache.id_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
+
+        data['objects'] = []
+        for result in results:
+            print result
+            result = result.object
+            print result
+
+            o = {}
+            o['id'] = result.id
+            o['avatar'] = get_avatar(result.id, 100)
+            o['username'] = result.user.username
+            try:
+                o['name'] = result.name
+            except:
+                o['name'] = ""
+
+            if current_user:
+                o['follow_by_user'] = Follow\
+                    .get_follow_status(follower=current_user, following=result.id)
+            else:
+                o['follow_by_user'] = False
+
+            data['objects'].append(o)
+        return return_json_data(data)
+    else:
+        return return_bad_request()
