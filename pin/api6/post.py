@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from pin.tools import AuthCache
-from pin.models import Post, Report
+from pin.models import Post, Report, Ad
 from django.conf import settings
+from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from pin.api6.tools import get_next_url, get_int, save_post, get_list_post, get_objects_list
 from pin.api6.http import return_json_data, return_bad_request, return_not_found, return_un_auth
 from haystack.query import SearchQuerySet
+from django.utils.translation import ugettext as _
 
 
 def latest(request):
@@ -224,10 +226,10 @@ def report(request, item_id):
         post.report = post.report + 1
         post.save()
         status = True
-        msg = u'Successfully Add Report.'
+        msg = _('Successfully Add Report.')
     else:
         status = False
-        msg = u'Your Report Already Exists.'
+        msg = _('Your Report Already Exists.')
 
     data = {'status': status, 'msg': msg}
     return return_json_data(data)
@@ -267,10 +269,10 @@ def edit(request, item_id):
             data = get_objects_list(posts, cur_user_id=current_user.id, r=request)[0]
         except IndexError:
             return return_not_found()
-        return return_json_data({'status': True, 'message': 'Successfully Updated', 'data': data})
+        return return_json_data({'status': True, 'message': _('Successfully Updated'), 'data': data})
 
     else:
-        return return_json_data({'status': False, 'message': 'Access Denied'})
+        return return_json_data({'status': False, 'message': _('Access Denied')})
 
 
 @csrf_exempt
@@ -292,12 +294,12 @@ def send(request):
         posts = get_list_post([post.id])
         data = get_objects_list(posts, cur_user_id=current_user.id, r=request)[0]
     except IndexError:
-        return return_json_data({'status': False, 'message': 'Post Not Found'})
+        return return_json_data({'status': False, 'message': _('Post Not Found')})
 
     if post.status == 1:
-        msg = 'مطلب شما با موفقیت ارسال شد.'
+        msg = _('مطلب شما با موفقیت ارسال شد.')
     elif post.status == 0:
-        msg = 'مطلب شما با موفقیت ارسال شد و بعد از تایید در سایت نمایش داده می شود '
+        msg = _('مطلب شما با موفقیت ارسال شد و بعد از تایید در سایت نمایش داده می شود ')
     return return_json_data({'status': status, 'message': msg, 'post': data})
 
 
@@ -341,7 +343,7 @@ def related_post(request, item_id):
     except Post.DoesNotExist:
         return return_not_found()
 
-    mlt = SearchQuerySet().models(Post).more_like_this(post)[:11]
+    mlt = SearchQuerySet().models(Post).more_like_this(post)[:10]
 
     idis = []
     for pmlt in mlt:
@@ -350,4 +352,50 @@ def related_post(request, item_id):
     post.mlt = Post.objects.filter(id__in=idis).only(*Post.NEED_KEYS_WEB)
 
     data['objects'] = get_objects_list(post.mlt, current_user)
+    return return_json_data(data)
+
+
+def promoted(request):
+    data = {}
+    objects = []
+    data['meta'] = {'limit': 20,
+                    'next': "",
+                    'total_count': 1000}
+
+    before = get_int(request.GET.get('before', 0))
+    token = request.GET.get('token', '')
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+        if not user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
+
+    if before:
+        ads = Ad.objects.filter(Q(owner=user) | Q(user=user), id__lt=before).order_by("-id")[:20]
+    else:
+        ads = Ad.objects.filter(Q(owner=user) | Q(user=user)).order_by("-id")[:20]
+
+    for ad in ads:
+        o = {}
+        o['post'] = get_objects_list([ad.post], cur_user_id=user.id, thumb_size=250)
+        o['cnt_view'] = ad.get_cnt_view()
+        o['user'] = ad.user.id
+        o['ended'] = ad.ended
+        o['owner'] = ad.owner.id
+        # o['cnt_view'] = ad.cnt_view
+        o['ads_type'] = ad.ads_type
+        o['start'] = str(ad.start)
+        o['end'] = str(ad.end)
+        o['id'] = ad.id
+        objects.append(o)
+
+    data['objects'] = objects
+
+    if data['objects']:
+        last_item = data['objects'][-1]['id']
+        data['meta']['next'] = get_next_url(url_name='api-6-post-user',
+                                            before=last_item
+                                            )
     return return_json_data(data)
