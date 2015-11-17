@@ -28,7 +28,7 @@ DATABASES = {
         'NAME': 'feedreader',
         'USER': 'wisgoon_mars',
         'PASSWORD': 'mjewyDbvLjtpCyAX',
-        'HOST': '79.127.125.98',
+        'HOST': '79.127.125.104',
         'PORT': '',
     },
 }
