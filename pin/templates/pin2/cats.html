@@ -2,7 +2,11 @@
 <div class="container">
     <nav class="row">
         <div class="" id="wis_navbar">
+            <span class="marker"></span>
             <ul class="">
+                <li class="{% if page == 'home' %}active{% endif %}">
+                    <a href="{% url 'home' %}">برگه نخست</a>
+                </li>
                 {% if not request.user.is_authenticated %}
                 <li class=""><a href="/accounts/login/">ورود</a></li>
                 <li class=""><a href="{% url 'registration_register' %}">عضویت</a></li>
@@ -18,11 +22,9 @@
                 {% endif %}
 
                 <li class="{% if page == 'latest' %} active{% endif %}"><a href="{% url 'pin-latest' %}">آخرین مطالب</a></li>
-                <li class=""><a href="{% url 'policy' %}">قوانین</a></li>
-                <li class=""><a href="{% url 'stats' %}">آمار</a></li>
                 <li class=""><a href="/search/">جستجو</a></li>
                 <li class="">
-                    <a href="#">برترینها</a>
+                    <a href="javascript:;">برترینها</a>
                     <ul>
                         <li><a href="{% url 'pin-popular' %}">همه زمانها</a></li>
                         <li><a href="{% url 'pin-popular-offset' 'month' %}">یک ماه گذشته</a></li>
@@ -32,7 +34,7 @@
                     </ul>
                 </li>
                 <li class="cats">
-                    <a href="#"> گروه ها</a>
+                    <a href="javascript:;"> گروه ها</a>
                     <ul>
                         {% for c in subs %}
                         <li class="cat-{{c.id}}{% if c.sub_category %} parent{% endif %}">
@@ -52,20 +54,20 @@
                     </ul>
                 </li>
                 <li class="">
-                    <a href="#">برترین کاربران</a>
+                    <a href="javascript:;">برترین کاربران</a>
                     <ul>
                         <li><a href="{% url 'pin-topuser' %}">کل سایت</a></li>
                         <li><a href="{% url 'pin-topgroupuser' %}">گروه ها</a></li>
                     </ul>
                 </li>
-                <li class="">
-                    <a href="#">۰۰۰</a>
+                <li class="{% if page == 'policy' or page == 'feedback' %}active{% endif %}">
+                    <a href="javascript:;">۰۰۰</a>
                     <ul>
-                        <li class="">
+                        <li class="{% if page == 'policy' %} active{% endif %}">
                             <a href="{% url 'policy' %}">قوانین</a>
                         </li>
-                        <li class="" >
-                        <a href="{% url 'pin-feedback' %}" style="border-left:none">تماس با ما</a>
+                        <li class="{% if page == 'feedback' %} active{% endif %}" >
+                            <a href="{% url 'pin-feedback' %}" style="border-left:none">تماس با ما</a>
                         </li>
 
                     </ul>
