@@ -26,7 +26,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'feedreader',
-        'USER': 'root',
+        'USER': 'wisgoon_mars',
         'PASSWORD': 'mjewyDbvLjtpCyAX',
         'HOST': '79.127.125.98',
         'PORT': '',
