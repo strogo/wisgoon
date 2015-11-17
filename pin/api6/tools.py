@@ -93,13 +93,13 @@ def save_post(request, user):
         upload = request.FILES.values()[0]
         filename = create_filename(upload.name)
         try:
-            u = "%s/pin/blackhole/images/o/%s" % (media_url, filename)
+            u = "%s/pin/%s/images/o/%s" % (media_url, settings.INSTANCE_NAME, filename)
             with BufferedWriter(FileIO(u, "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
 
             model = Post()
-            model.image = "pin/blackhole/images/o/%s" % (filename)
+            model.image = "pin/%s/images/o/%s" % (settings.INSTANCE_NAME, filename)
             model.user = user
             model.timestamp = time()
             model.text = form.cleaned_data['description']

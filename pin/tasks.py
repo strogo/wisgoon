@@ -19,7 +19,7 @@ def add_to_storage(post_id):
 
     local_path = os.path.join(settings.MEDIA_ROOT, post.image)
     image_new_path = post.image
-    image_new_path = image_new_path.replace('blackhole', storage.name)
+    image_new_path = image_new_path.replace(settings.INSTANCE_NAME, storage.name)
     remote_path = os.path.join(storage.path, image_new_path)
     remote_dir = os.path.dirname(remote_path)
 
@@ -32,7 +32,7 @@ def add_to_storage(post_id):
 
     local_path_236 = os.path.join(settings.MEDIA_ROOT, postmeta.img_236)
     image_new_path_236 = postmeta.img_236
-    image_new_path_236 = image_new_path_236.replace('blackhole', storage.name)
+    image_new_path_236 = image_new_path_236.replace(settings.INSTANCE_NAME, storage.name)
     remote_path_236 = os.path.join(storage.path, image_new_path_236)
     remote_dir = os.path.dirname(remote_path_236)
 
@@ -44,7 +44,7 @@ def add_to_storage(post_id):
 
     local_path_500 = os.path.join(settings.MEDIA_ROOT, postmeta.img_500)
     image_new_path_500 = postmeta.img_500
-    image_new_path_500 = image_new_path_500.replace('blackhole', storage.name)
+    image_new_path_500 = image_new_path_500.replace(settings.INSTANCE_NAME, storage.name)
     remote_path_500 = os.path.join(storage.path, image_new_path_500)
     remote_dir = os.path.dirname(remote_path_500)
 
@@ -77,7 +77,7 @@ def add_avatar_to_storage(profile_id):
 
     local_path = os.path.join(settings.MEDIA_ROOT, str(profile.avatar))
     image_new_path = str(profile.avatar)
-    image_new_path = image_new_path.replace('blackhole', storage.name)
+    image_new_path = image_new_path.replace(settings.INSTANCE_NAME, storage.name)
     remote_path = os.path.join(storage.path, image_new_path)
     remote_dir = os.path.dirname(remote_path)
 
@@ -88,7 +88,7 @@ def add_avatar_to_storage(profile_id):
 
     local_path = os.path.join(settings.MEDIA_ROOT, profile.get_avatar_64_str())
     image_new_path_64 = profile.get_avatar_64_str()
-    image_new_path_64 = image_new_path_64.replace('blackhole', storage.name)
+    image_new_path_64 = image_new_path_64.replace(settings.INSTANCE_NAME, storage.name)
     remote_path = os.path.join(storage.path, image_new_path_64)
     remote_dir = os.path.dirname(remote_path)
 
@@ -123,7 +123,7 @@ def migrate_avatar_storage(profile_id):
 
     local_path = os.path.join(settings.MEDIA_ROOT, str(profile.avatar))
     image_new_path = str(profile.avatar)
-    image_new_path = image_new_path.replace('avatars', "avatars/%s" % storage.name)
+    image_new_path = image_new_path.replace('avatars/%s' % settings.INSTANCE_NAME, "avatars/%s" % storage.name)
     remote_path = os.path.join(storage.path, image_new_path)
     remote_dir = os.path.dirname(remote_path)
 
@@ -134,7 +134,7 @@ def migrate_avatar_storage(profile_id):
 
     local_path = os.path.join(settings.MEDIA_ROOT, profile.get_avatar_64_str())
     image_new_path_64 = profile.get_avatar_64_str()
-    image_new_path_64 = image_new_path_64.replace('avatars', "avatars/%s" % storage.name)
+    image_new_path_64 = image_new_path_64.replace('avatars/%s' % settings.INSTANCE_NAME, "avatars/%s" % storage.name)
     remote_path = os.path.join(storage.path, image_new_path_64)
     remote_dir = os.path.dirname(remote_path)
 

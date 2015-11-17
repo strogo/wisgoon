@@ -9,15 +9,15 @@
 					<td><strong>{{profile.score|intcomma|pn}}</strong></td>
 				</tr>
 				<tr>
-					<td>تعداد مطالب :</td>
+					<td>تعداد مطالب</td>
 					<td><strong>{{profile.cnt_post|pn}}</strong></td>
 				</tr>
 				<tr>
-					<td>تعداد لایک :</td>
+					<td>تعداد لایک</td>
 					<td><strong>{{profile.cnt_like|pn}}</strong></td>
 				</tr>
 				<tr>
-					<td>ارسال مطلب :</td>
+					<td>وضعیت</td>
 					<td>
 						{% if profile.user.is_active %}
 						<strong>فعال</strong>
@@ -58,6 +58,9 @@
 						{% endif %}
 						{%endif%}</td>
 					</tr>
+
+					{% if user.id == profile.user.id and user.is_authenticated %}
+						
 					<tr>
 						<td>تاریخ عضویت :</td>
 						<td><strong>{{profile.user.date_joined|date_filter}}</strong></td>
@@ -85,7 +88,7 @@
 
 					{% if request.user.is_superuser %}
 					<tr>
-						<td>سطح کاربری :</td>
+						<td>سطح کاربری</td>
 						<td>{{profile.get_level_string}}
 							<div class="btn-group">
 								<button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
@@ -100,6 +103,8 @@
 						</td>
 					</tr>
 					{% endif %}
+					{% endif %}
+					
 				</table>
 			</div>
 

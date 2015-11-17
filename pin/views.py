@@ -73,7 +73,8 @@ def home(request):
     else:
         response_data = render(request, 'pin2/home.html', {
             'latest_items': arp,
-            'next_url': next_url
+            'next_url': next_url,
+            'page': 'home'
         })
 
     if enable_cacing:

@@ -370,12 +370,14 @@ def send(request):
         if form.is_valid():
             model = form.save(commit=False)
             filename = model.image
+
+            # create_filename(filename)
             image_o = "%s/pin/temp/o/%s" % (MEDIA_ROOT, filename)
-            image_on = "%s/pin/blackhole/images/o/%s" % (MEDIA_ROOT, filename)
+            image_on = "%s/pin/%s/images/o/%s" % (MEDIA_ROOT, settings.INSTANCE_NAME, filename)
 
             copyfile(image_o, image_on)
 
-            model.image = "pin/blackhole/images/o/%s" % (filename)
+            model.image = "pin/%s/images/o/%s" % (settings.INSTANCE_NAME, filename)
             model.timestamp = time()
             model.user = request.user
             model.save()
