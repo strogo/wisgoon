@@ -49,3 +49,8 @@ urlpatterns += patterns('pin.api6.urlsMap',
 urlpatterns += patterns('pin.api6.hashtag',
                         url(r'hashtag/$', 'hashtag', name='api-6-hashtag'),
                         )
+
+urlpatterns += patterns('pin.api6.category',
+                        url(r'category/(?P<cat_id>\d+)/$', 'show_category', name='api-6-category'),
+                        url(r'category/all/$', 'all_category', name='api-6-categoreis'),
+                        )
