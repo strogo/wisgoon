@@ -21,6 +21,16 @@
 			"owner": 0
 		},
 		{
+			"id": "a54e7b10-6e5a-2887-725e-e38aa0c25df5",
+			"name": "Category",
+			"description": "",
+			"order": [
+				"48c975fd-f4bc-b13d-198a-e60ffb781cda",
+				"671668a8-048c-58f3-abaa-5784e1f25a0f"
+			],
+			"owner": 0
+		},
+		{
 			"id": "0faa7a94-27e7-70fb-38d4-822d4cf80660",
 			"name": "Comments",
 			"description": "",
@@ -31,15 +41,6 @@
 			],
 			"owner": 0,
 			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff"
-		},
-		{
-			"id": "240bbf64-9ee2-45c3-7780-6c3103eee208",
-			"name": "Hashtag",
-			"description": "",
-			"order": [
-				"eee7e768-2069-e2c8-2ada-4410aaaae3c5"
-			],
-			"owner": 0
 		},
 		{
 			"id": "2e962602-edad-78ca-642f-076d1a663ddf",
@@ -77,7 +78,8 @@
 				"dd5f45e6-29bb-2395-1381-b1387b6d0797",
 				"e7aa4958-d38c-4255-f8b9-87bd45a3a362",
 				"fc5faee1-f01c-0424-e187-d32515f18da5",
-				"34bd7317-cc64-4aa1-4f69-e9a6df2c2d2f"
+				"34bd7317-cc64-4aa1-4f69-e9a6df2c2d2f",
+				"eee7e768-2069-e2c8-2ada-4410aaaae3c5"
 			],
 			"owner": 0
 		},
@@ -408,6 +410,27 @@
 			"folder": "9715ba0b-1c4a-96fb-89a2-992511c31dec"
 		},
 		{
+			"id": "48c975fd-f4bc-b13d-198a-e60ffb781cda",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/category/1/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
+			"data": [],
+			"dataMode": "params",
+			"name": "Show category",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447831232243,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "a54e7b10-6e5a-2887-725e-e38aa0c25df5"
+		},
+		{
 			"id": "52fdf688-3544-bf0b-2761-a63d270bf676",
 			"headers": "",
 			"url": "http://127.0.0.1:8000/api/v6/urls",
@@ -508,6 +531,27 @@
 			"description": "",
 			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
 			"responses": []
+		},
+		{
+			"id": "671668a8-048c-58f3-abaa-5784e1f25a0f",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/category/all/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
+			"data": [],
+			"dataMode": "params",
+			"name": "All category",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447831252425,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "a54e7b10-6e5a-2887-725e-e38aa0c25df5"
 		},
 		{
 			"id": "8649d99c-4df9-d2dc-d7fb-a9dc5ff3db25",
@@ -868,7 +912,9 @@
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"folder": "240bbf64-9ee2-45c3-7780-6c3103eee208"
+			"folder": "9715ba0b-1c4a-96fb-89a2-992511c31dec",
+			"isFromCollection": true,
+			"collectionRequestId": "eee7e768-2069-e2c8-2ada-4410aaaae3c5"
 		},
 		{
 			"id": "f883a6b2-90da-0788-944a-f5de822f0dd6",

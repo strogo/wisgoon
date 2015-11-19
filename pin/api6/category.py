@@ -1,6 +1,6 @@
 from pin.tools import AuthCache
 from pin.api6.http import return_json_data, return_un_auth, return_bad_request
-from pin.api6.tools import get_int, get_next_url, category_get_json
+from pin.api6.tools import get_int, category_get_json
 from pin.models import Category
 
 
@@ -23,7 +23,6 @@ def all_category(request):
     data = {}
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
     token = request.GET.get('token', '')
-    before = request.GET.get('before', '')
     category_list = []
 
     if token:
@@ -32,18 +31,10 @@ def all_category(request):
             return return_un_auth()
     else:
         return return_bad_request()
-    if before:
-        categories = Category.objects.filter(id__lt=before).order_by('-id')[:10]
-    else:
-        categories = Category.objects.order_by('-id')[:10]
 
+    categories = Category.objects.order_by('-id')
     for category in categories:
         category_list.append(category_get_json(category.id))
 
     data['objects'] = category_list
-    if data['objects']:
-        last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-6-categoreis',
-                                            before=last_item,
-                                            )
     return return_json_data(data)
