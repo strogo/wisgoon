@@ -3,7 +3,6 @@ from io import FileIO, BufferedWriter
 import time
 
 from django.conf import settings
-from django.core.cache import cache
 from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import F, Sum
 from django.contrib.auth.models import User
@@ -112,7 +111,7 @@ def post_comment(request):
                                 user_id=user.id,
                                 ip_address=user._ip)
         return HttpResponse(1, content_type="application/json")
-    except Exception, e:
+    except Exception:
         return HttpResponse(0, content_type="application/json")
 
 
@@ -127,7 +126,8 @@ def post_report(request):
         return HttpResponseForbidden('error in params')
 
     if post_id and Post.objects.filter(pk=post_id).exists():
-        r, created = Report.objects.get_or_create(user_id=user.id, post_id=post_id)
+        r, created = Report.objects.get_or_create(user_id=user.id,
+                                                  post_id=post_id)
         if created:
             Post.objects.filter(pk=post_id).update(report=F('report') + 1)
 
@@ -269,21 +269,14 @@ def follow(request, following, action):
 
 @csrf_exempt
 def post_send(request):
-    debug_str = "********************"
-    start_time = str(time.time())
-    debug_str += "\n " + str(start_time)
-    debug_str += "\n step 1 " + str(time.time())
     user = check_auth(request)
-    debug_str += "\n step 2 " + str(time.time())
+
     if not user:
         print 'error in user validation'
         return HttpResponseForbidden('error in user validation')
-    debug_str += "\n step 3 " + str(time.time())
 
     if request.method != 'POST':
-        print "not post"
         return HttpResponseBadRequest('bad request post')
-    debug_str += "\n step 4 " + str(time.time())
 
     try:
         form = PinDirectForm(request.POST, request.FILES)
@@ -291,20 +284,14 @@ def post_send(request):
         print "ioerror"
         return HttpResponseBadRequest('bad request')
 
-    debug_str += "\n step 5 " + str(time.time())
-
     if form.is_valid():
-        debug_str += "\n step 6 " + str(time.time())
         upload = request.FILES.values()[0]
         filename = create_filename(upload.name)
-        debug_str += "\n step 7 " + str(time.time())
         try:
             u = "%s/pin/%s/images/o/%s" % (MEDIA_ROOT, settings.INSTANCE_NAME, filename)
             with BufferedWriter(FileIO(u, "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
-
-            debug_str += "\n step 8 " + str(time.time())
 
             model = Post()
             model.image = "pin/%s/images/o/%s" % (settings.INSTANCE_NAME, filename)
@@ -314,22 +301,15 @@ def post_send(request):
             model.category_id = form.cleaned_data['category']
             model.device = 2
             model.save()
-            debug_str += "\n step 9 " + str(time.time())
-            debug_str += "\n\n" + start_time
-            print debug_str
 
             return HttpResponse('success')
         except IOError, e:
             print str(e), MEDIA_ROOT
-            print "294"
             return HttpResponseBadRequest('error')
 
-        print "297"
         return HttpResponseBadRequest('bad request in form')
     else:
         print form.errors
-        print 301
         HttpResponseBadRequest('error in form validation')
 
-    print "305"
     return HttpResponseBadRequest('bad request')
