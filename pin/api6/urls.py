@@ -25,6 +25,7 @@ urlpatterns += patterns('pin.api6.post',
                         url(r'post/user/(?P<user_id>\d+)/$', 'user_post', name='api-6-post-user'),
                         url(r'post/related/(?P<item_id>\d+)/$', 'related_post', name='api-6-post-related'),
                         url(r'post/promoted/$', 'promoted', name='api-6-post-promoted'),
+                        url(r'post/hashtag/$', 'hashtag', name='api-6-post-hashtag'),
                         )
 
 urlpatterns += patterns('pin.api6.comment',
@@ -46,6 +47,8 @@ urlpatterns += patterns('pin.api6.notification',
 urlpatterns += patterns('pin.api6.urlsMap',
                         url(r'urls/$', 'show_map', name='api-6-urls-map'),
                         )
-urlpatterns += patterns('pin.api6.hashtag',
-                        url(r'hashtag/$', 'hashtag', name='api-6-hashtag'),
+
+urlpatterns += patterns('pin.api6.category',
+                        url(r'category/(?P<cat_id>\d+)/$', 'show_category', name='api-6-category'),
+                        url(r'category/all/$', 'all_category', name='api-6-categoreis'),
                         )
