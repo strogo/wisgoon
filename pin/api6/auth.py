@@ -1,6 +1,4 @@
 # -*- coding:utf-8 -*-
-import ast
-
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login
@@ -176,13 +174,11 @@ def unfollow(request):
 
 @csrf_exempt
 def login(request):
-    try:
-        data = ast.literal_eval(request.body)
-    except SyntaxError:
-        return return_bad_request()
 
+    username = request.POST.get("username", '')
+    password = request.POST.get("password", 'False')
+    req_token = request.POST.get("token", '')
     app_token = settings.APP_TOKEN_KEY
-    req_token = data.get('token', '')
 
     if req_token != app_token:
         data = {
@@ -190,9 +186,6 @@ def login(request):
             'message': _('Application token problem')
         }
         return return_json_data(data)
-
-    username = data.get('username', '')
-    password = data.get('password', '')
 
     user = authenticate(username=username, password=password)
 
@@ -229,13 +222,12 @@ def login(request):
 
 @csrf_exempt
 def register(request):
-    try:
-        data = ast.literal_eval(request.body)
-    except SyntaxError:
-        return return_bad_request()
 
+    username = request.POST.get("username", '')
+    password = request.POST.get("password", 'False')
+    req_token = request.POST.get("token", '')
+    email = request.POST.get("email", '')
     app_token = settings.APP_TOKEN_KEY
-    req_token = data.get('token', '')
 
     if req_token != app_token:
         data = {
@@ -243,10 +235,6 @@ def register(request):
             'message': _('Application token problem')
         }
         return return_json_data(data)
-
-    username = data.get('username', '')
-    email = data.get('email', '')
-    password = data.get('password', '')
 
     if not username or not email or not password:
         data = {
@@ -306,7 +294,7 @@ def profile(request, user_id):
 
     if current_user:
         if Block.objects.filter(user_id=current_user, blocked_id=user_id).count():
-            return return_json_data({})
+            return return_json_data({"status": False, 'message': 'This User Has Blocked You'})
 
         follow_status = Follow.objects.filter(follower=current_user,
                                               following=user_id).count()
