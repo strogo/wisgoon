@@ -135,6 +135,7 @@ def get_simple_user_object(user_id):
     u['id'] = user_id
     u['avatar'] = media_abs_url(get_avatar(user_id, size=64))
     u['username'] = UserDataCache.get_user_name(user_id)
+    u['posts_url'] = abs_url(reverse('api-6-post-user', kwargs={'user_id': user_id}))
 
     return u
 
