@@ -177,7 +177,7 @@ def search(request):
 
     if data['objects']:
         data['meta']['next'] = get_next_url(url_name='api-6-post-search',
-                                            token=token, offset=next_offset)
+                                            token=token, offset=next_offset, q=query)
 
     return return_json_data(data)
 
