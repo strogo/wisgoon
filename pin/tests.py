@@ -7,12 +7,14 @@ Replace this with more appropriate tests for your application.
 """
 
 # from django.test import TestCase
+import urllib
+import random
 from django.test import Client
 from models import Category, Post, Comments
 from django.contrib.auth.models import User
 import unittest
 from tastypie.models import ApiKey
-
+from django.conf import settings
 
 # class Test(TestCase):
 #     def setup(self):
@@ -150,11 +152,24 @@ class CategoryTestCase(unittest.TestCase):
 
 class CommentTestCase(unittest.TestCase):
 
+    # def file_generator(self):
+    #     media_url = settings.MEDIA_ROOT
+    #     url = 'http://lorempixel.com/' + str(random.randint(300, 400)) + '/' + str(random.randint(70, 120)) + '/'
+    #     uopen = urllib.urlopen(url)
+    #     stream = uopen.read()
+    #     full_path = "%s/pin/%s/images/o/%s" % (media_url, settings.INSTANCE_NAME, 'unittest_image.jpg')
+    #     f = open(full_path, 'w')
+    #     f.write(stream)
+    #     f.close()
+    #     return full_path
+
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
         self.cat = Category.objects.create(title='sport', image='/home/amir/Pictures/images.jpg')
-        self.post = Post.objects.create(image='/home/amir/Pictures/images.jpg', category=self.cat, user=self.user)
+        self.post = Post.objects.create(image='/home/amir/Pictures/images.jpg',
+                                        category=self.cat,
+                                        user=self.user)
         self.comment = Comments.objects.create(comment='very nicee', post=self.post, user=self.user)
 
     def tearDown(self):
