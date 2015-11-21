@@ -3,6 +3,7 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns('pin.api6.auth',
                        url(r'auth/register/$', 'register', name='api-6-auth-register'),
                        url(r'auth/login/$', 'login', name='api-6-auth-login'),
+                       url(r'auth/logout/$', 'logout', name='api-6-auth-logout'),
                        url(r'auth/follow/$', 'follow', name='api-6-auth-follow'),
                        url(r'auth/unfollow/$', 'unfollow', name='api-6-auth-unfollow'),
                        url(r'auth/followers/(?P<user_id>\d+)/$', 'followers', name='api-6-auth-followers'),

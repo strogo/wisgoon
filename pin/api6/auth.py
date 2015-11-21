@@ -2,6 +2,7 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import logout as auth_logout
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
@@ -383,3 +384,8 @@ def user_search(request):
         return return_json_data(data)
     else:
         return return_bad_request()
+
+
+def logout(request):
+    auth_logout(request)
+    return return_json_data({'status': True, 'message': 'Successfully Logout'})
