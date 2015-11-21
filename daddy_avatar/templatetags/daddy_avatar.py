@@ -41,8 +41,11 @@ def get_avatar(user, size=165):
 
     user_id = u.id
 
-    ava_str = "avatar3210u_%d" % (user_id)
-    ava_dict = {}
+    ava_str = settings.AVATAR_CACHE_KEY.format(user_id)
+    ava_dict = cache.get(ava_str, {})
+
+    if fit_size in ava_dict:
+        return ava_dict[fit_size]
 
     try:
         profile = Profile.objects.only('avatar', 'version')\
@@ -73,6 +76,8 @@ def get_avatar(user, size=165):
                 else:
                     url = '%s%s' % (url_prefix, profile.avatar)
                 if url:
+                    ava_dict[fit_size] = url
+                    cache.set(ava_str, ava_dict, 86400)
                     return url
         except Exception, e:
             print str(e)
