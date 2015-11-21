@@ -37,7 +37,7 @@ def followers(request, user_id):
                     'previous': '',
                     'total_count': follow_cnt}
 
-    data['meta']['next'] = get_next_url(url_name='api-5-auth-followers',
+    data['meta']['next'] = get_next_url(url_name='api-6-auth-followers',
                                         offset=offset + 20, token=token,
                                         url_args={'user_id': user_id})
 
@@ -84,7 +84,7 @@ def following(request, user_id=1):
 
     objects_list = []
 
-    data['meta']['next'] = get_next_url(url_name='api-5-auth-following',
+    data['meta']['next'] = get_next_url(url_name='api-6-auth-following',
                                         offset=offset + 20, token=token,
                                         url_args={'user_id': user_id})
 
@@ -335,7 +335,6 @@ def update_profile(request):
         status = True
     else:
         msg = form.errors
-        msg = 'Error'
     return return_json_data({'status': status, 'message': msg,
                              'profile': get_profile_data(profile, current_user),
                              'user': get_user_data(current_user)})

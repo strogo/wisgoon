@@ -31,7 +31,7 @@ def like_post(request, item_id):
         user_act = -1
         user = {}
 
-    data = {'likes': current_like, 'user_act': user_act, 'user': user}
+    data = {'cnt_like': current_like, 'user_act': user_act, 'user': user}
     return return_json_data(data)
 
 

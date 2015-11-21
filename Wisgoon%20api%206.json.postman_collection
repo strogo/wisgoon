@@ -11,6 +11,7 @@
 			"order": [
 				"07410ae6-94d3-a7a9-698f-a39251c67414",
 				"a219b8b5-085e-7f35-2913-fb292cea8da5",
+				"b142573d-5afa-8b6c-896f-8e0dbd65267a",
 				"14df0739-b63c-b7c4-c05a-753a6fd7f8a2",
 				"beb6c8a2-b613-a55c-679f-2dd0abe2b3b6",
 				"34c18bcb-a1bd-53ab-e1f9-4602df07d244",
@@ -618,6 +619,64 @@
 			"description": "",
 			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
 			"responses": []
+		},
+		{
+			"id": "b142573d-5afa-8b6c-896f-8e0dbd65267a",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/user/update/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
+			"data": [
+				{
+					"key": "avatar",
+					"value": "roundflower.jpg",
+					"type": "file",
+					"enabled": true
+				},
+				{
+					"key": "name",
+					"value": "sdsds",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "jens",
+					"value": "M",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "location",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "website",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "bio",
+					"value": "sdsdsd",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Update Profile",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1448094199188,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "2b7d0f27-38b9-f9a9-8c38-d4bfcaa56b6d"
 		},
 		{
 			"id": "b15b1e50-172b-bed1-2a2d-a1d5d320a445",
