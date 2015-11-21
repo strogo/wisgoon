@@ -7,14 +7,11 @@ Replace this with more appropriate tests for your application.
 """
 
 # from django.test import TestCase
-import urllib
-import random
 from django.test import Client
 from models import Category, Post, Comments
 from django.contrib.auth.models import User
 import unittest
 from tastypie.models import ApiKey
-from django.conf import settings
 
 # class Test(TestCase):
 #     def setup(self):
@@ -29,10 +26,8 @@ class AuthTestCase(unittest.TestCase):
 
     def setUp(self):
         self.client = Client()
-        User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
-        User.objects.create(username='vahid', email='a.abc@yahoo.com', password='1')
-        User.objects.create(username='saeed', email='a.abd@yahoo.com', password='1')
-        User.objects.create(username='unit_test', email='a.abds@yahoo.com', password='1')
+        self.amir = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.vahid = User.objects.create(username='vahid', email='a.abc@yahoo.com', password='1')
         # self.create_category()
 
     def tearDown(self):
@@ -57,56 +52,47 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_follow(self):
-        user1 = User.objects.get(username='unit_test')
-        user2 = User.objects.get(username='amir')
-        api_key, created = ApiKey.objects.get_or_create(user=user1)
+
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
 
         response = self.client.get('http://127.0.0.1:8000/api/v6/auth/follow/',
                                    {"token": api_key.key,
-                                    "user_id": user2.id})
+                                    "user_id": self.vahid.id})
         self.assertEqual(response.status_code, 200)
 
     def test_unfollow(self):
-        user1 = User.objects.get(username='unit_test')
-        user2 = User.objects.get(username='amir')
-        api_key, created = ApiKey.objects.get_or_create(user=user1)
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
 
         response = self.client.get('http://127.0.0.1:8000/api/v6/auth/unfollow/',
                                    {"token": api_key.key,
-                                    "user_id": user2.id})
+                                    "user_id": self.vahid.id})
         self.assertEqual(response.status_code, 200)
 
     def test_followers(self):
-        user1 = User.objects.get(username='unit_test')
-        user2 = User.objects.get(username='amir')
-        api_key, created = ApiKey.objects.get_or_create(user=user2)
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
 
-        url = 'http://127.0.0.1:8000/api/v6/auth/followers/%s/' % str(user1.id)
+        url = 'http://127.0.0.1:8000/api/v6/auth/followers/%s/' % str(self.vahid.id)
 
         response = self.client.get(url, {'token': api_key.key})
         self.assertEqual(response.status_code, 200)
 
     def test_following(self):
-        user1 = User.objects.get(username='unit_test')
-        user2 = User.objects.get(username='amir')
-        api_key, created = ApiKey.objects.get_or_create(user=user2)
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
 
-        url = 'http://127.0.0.1:8000/api/v6/auth/followers/%s/' % str(user1.id)
+        url = 'http://127.0.0.1:8000/api/v6/auth/followers/%s/' % str(self.vahid.id)
 
         response = self.client.get(url, {'token': api_key.key})
         self.assertEqual(response.status_code, 200)
 
     def test_profile(self):
-        user = User.objects.get(username='amir')
-        api_key, created = ApiKey.objects.get_or_create(user=user)
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
 
-        response = self.client.get('http://127.0.0.1:8000/api/v6/auth/user/%s/' % str(user.id),
+        response = self.client.get('http://127.0.0.1:8000/api/v6/auth/user/%s/' % str(self.amir.id),
                                    {"token": api_key.key})
         self.assertEqual(response.status_code, 200)
 
     def test_update_profile(self):
-        user = User.objects.get(username='amir')
-        api_key, created = ApiKey.objects.get_or_create(user=user)
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
         url = 'http://127.0.0.1:8000/api/v6/auth/user/update/?token=%s' % str(api_key.key)
         response = self.client.post(url, {'name': 'amir_ali',
                                           'jens': 'M',
@@ -114,8 +100,7 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_search_user(self):
-        user = User.objects.get(username='amir')
-        api_key, created = ApiKey.objects.get_or_create(user=user)
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
 
         response = self.client.get('http://127.0.0.1:8000/api/v6/auth/user/search/',
                                    {"token": api_key.key,
@@ -127,8 +112,8 @@ class CategoryTestCase(unittest.TestCase):
 
     def setUp(self):
         self.client = Client()
-        User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
-        Category.objects.create(title='sport', image='/home/amir/Pictures/images.jpg')
+        self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.cat = Category.objects.create(title='sport', image='/home/amir/Pictures/images.jpg')
         # self.create_category()
 
     def tearDown(self):
@@ -137,47 +122,36 @@ class CategoryTestCase(unittest.TestCase):
         Category.objects.all().delete()
 
     def test_show_category(self):
-        user = User.objects.get(username='amir')
-        api_key, created = ApiKey.objects.get_or_create(user=user)
-        cat = Category.objects.get(title='sport')
-        response = self.client.get('http://127.0.0.1:8000/api/v6/category/%s/?token=%s' % (str(cat.id), str(api_key.key)))
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        response = self.client.get('http://127.0.0.1:8000/api/v6/category/%s/?token=%s' % (str(self.cat.id), str(api_key.key)))
         self.assertEqual(response.status_code, 200)
 
     def test_all_category(self):
-        user = User.objects.get(username='amir')
-        api_key, created = ApiKey.objects.get_or_create(user=user)
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
         response = self.client.get('http://127.0.0.1:8000/api/v6/category/all/?token=%s' % str(api_key.key))
         self.assertEqual(response.status_code, 200)
 
 
 class CommentTestCase(unittest.TestCase):
 
-    # def file_generator(self):
-    #     media_url = settings.MEDIA_ROOT
-    #     url = 'http://lorempixel.com/' + str(random.randint(300, 400)) + '/' + str(random.randint(70, 120)) + '/'
-    #     uopen = urllib.urlopen(url)
-    #     stream = uopen.read()
-    #     full_path = "%s/pin/%s/images/o/%s" % (media_url, settings.INSTANCE_NAME, 'unittest_image.jpg')
-    #     f = open(full_path, 'w')
-    #     f.write(stream)
-    #     f.close()
-    #     return full_path
-
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
-        self.cat = Category.objects.create(title='sport', image='/home/amir/Pictures/images.jpg')
-        self.post = Post.objects.create(image='/home/amir/Pictures/images.jpg',
+        self.cat = Category.objects.create(title='sport',
+                                           image='pin/blackhole/images/o/unittest_image.jpg')
+        self.post = Post.objects.create(image="pin/blackhole/images/o/unittest_image.jpg",
                                         category=self.cat,
                                         user=self.user)
-        self.comment = Comments.objects.create(comment='very nicee', post=self.post, user=self.user)
+        self.comment = Comments.objects.create(comment='very nicee',
+                                               object_pk=self.post,
+                                               user=self.user)
 
     def tearDown(self):
         User.objects.all().delete()
-        Post.objects.all().delete()
-        Category.objects.all().delete()
-        Comments.objects.all().delete()
         ApiKey.objects.all().delete()
+        Category.objects.all().delete()
+        Post.objects.all().delete()
+        Comments.objects.all().delete()
 
     def test_post_comments(self):
         url = 'http://127.0.0.1:8000/api/v6/comment/showComments/post/%s/' % str(self.post.id)
