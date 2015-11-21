@@ -44,8 +44,7 @@ DATABASES = {
 CACHES = {
     'default': dict(
         BACKEND='johnny.backends.memcached.MemcachedCache',
-        #LOCATION=['127.0.0.1:11211'],
-        LOCATION=['79.127.125.104:11211'],
+        LOCATION=['79.127.125.99:11211'],
         JOHNNY_CACHE=True,
     )
 }

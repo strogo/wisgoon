@@ -782,9 +782,6 @@ class Post(models.Model):
 
     @classmethod
     def latest(cls, pid=0, cat_id=0):
-        # print "this is latest", pid, cat_id
-        # print pid
-
         if cat_id:
             cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, cat_id)
         else:
