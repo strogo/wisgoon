@@ -1,34 +1,20 @@
 # -*- coding: utf-8 -*-
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
-# from django.test import TestCase
 from django.test import Client
-from models import Category, Post, Comments
+from pin.models import Category, Post, Comments
 from django.contrib.auth.models import User
 import unittest
 from tastypie.models import ApiKey
-
-# class Test(TestCase):
-#     def setup(self):
-#         Post.objects.create(title="test")
-
-#     def test_basic_addition(self):
-#         post = Post.objects.get(title="test")
-#         self.assertEqual(post.id, 1)
+import os
+from django.conf import settings
+from user_profile.models import Profile
 
 
 class AuthTestCase(unittest.TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.amir = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
-        self.vahid = User.objects.create(username='vahid', email='a.abc@yahoo.com', password='1')
-        # self.create_category()
+        self.amir, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.vahid, created = User.objects.get_or_create(username='vahid', email='a.abc@yahoo.com', password='1')
 
     def tearDown(self):
         User.objects.all().delete()
@@ -52,9 +38,7 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_follow(self):
-
         api_key, created = ApiKey.objects.get_or_create(user=self.amir)
-
         response = self.client.get('http://127.0.0.1:8000/api/v6/auth/follow/',
                                    {"token": api_key.key,
                                     "user_id": self.vahid.id})
@@ -62,7 +46,6 @@ class AuthTestCase(unittest.TestCase):
 
     def test_unfollow(self):
         api_key, created = ApiKey.objects.get_or_create(user=self.amir)
-
         response = self.client.get('http://127.0.0.1:8000/api/v6/auth/unfollow/',
                                    {"token": api_key.key,
                                     "user_id": self.vahid.id})
@@ -70,7 +53,6 @@ class AuthTestCase(unittest.TestCase):
 
     def test_followers(self):
         api_key, created = ApiKey.objects.get_or_create(user=self.amir)
-
         url = 'http://127.0.0.1:8000/api/v6/auth/followers/%s/' % str(self.vahid.id)
 
         response = self.client.get(url, {'token': api_key.key})
@@ -78,7 +60,6 @@ class AuthTestCase(unittest.TestCase):
 
     def test_following(self):
         api_key, created = ApiKey.objects.get_or_create(user=self.amir)
-
         url = 'http://127.0.0.1:8000/api/v6/auth/followers/%s/' % str(self.vahid.id)
 
         response = self.client.get(url, {'token': api_key.key})
@@ -86,7 +67,6 @@ class AuthTestCase(unittest.TestCase):
 
     def test_profile(self):
         api_key, created = ApiKey.objects.get_or_create(user=self.amir)
-
         response = self.client.get('http://127.0.0.1:8000/api/v6/auth/user/%s/' % str(self.amir.id),
                                    {"token": api_key.key})
         self.assertEqual(response.status_code, 200)
@@ -101,7 +81,6 @@ class AuthTestCase(unittest.TestCase):
 
     def test_search_user(self):
         api_key, created = ApiKey.objects.get_or_create(user=self.amir)
-
         response = self.client.get('http://127.0.0.1:8000/api/v6/auth/user/search/',
                                    {"token": api_key.key,
                                     "q": 'vahid'})
@@ -169,6 +148,147 @@ class CommentTestCase(unittest.TestCase):
         url = "http://127.0.0.1:8000/api/v6/comment/delete/%s/?token=%s" % (str(self.comment.id), str(api_key.key))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+
+class LikeTestcase(unittest.TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.cat = Category.objects.create(title='sport',
+                                           image='pin/blackhole/images/o/unittest_image.jpg')
+        self.post = Post.objects.create(image="pin/blackhole/images/o/unittest_image.jpg",
+                                        category=self.cat,
+                                        user=self.user)
+
+    def tearDown(self):
+        User.objects.all().delete()
+        ApiKey.objects.all().delete()
+        Category.objects.all().delete()
+        Post.objects.all().delete()
+
+    def test_like_post(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        url = "http://127.0.0.1:8000/api/v6/like/post/%s/?token=%s" % (str(self.post.id), str(api_key.key))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_likers(self):
+        url = "http://127.0.0.1:8000/api/v6/like/likers/post/%s/" % str(self.post.id)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+
+class NotifTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
+
+    def tearDown(self):
+        User.objects.all().delete()
+        ApiKey.objects.all().delete()
+
+    def test_show_notif(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        url = 'http://127.0.0.1:8000/api/v6/notif/?token=%s' % str(api_key.key)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_cotif_count(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        url = 'http://127.0.0.1:8000/api/v6/notif/count/?token=%s' % str(api_key.key)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+
+class PostTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.cat = Category.objects.create(title='sport',
+                                           image='pin/blackhole/images/o/unittest_image.jpg')
+        self.post = Post.objects.create(image="pin/blackhole/images/o/unittest_image.jpg",
+                                        category=self.cat,
+                                        user=self.user)
+
+    def tearDown(self):
+        User.objects.all().delete()
+        ApiKey.objects.all().delete()
+        Category.objects.all().delete()
+        Post.objects.all().delete()
+
+    def test_latest(self):
+        url = 'http://127.0.0.1:8000/api/v6/post/latest/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_friends_post(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        url = 'http://127.0.0.1:8000/api/v6/post/friends/?token=%s' % str(api_key.key)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_item(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        url = 'http://127.0.0.1:8000/api/v6/post/item/%s/?token=%s' % (str(self.post.id), str(api_key.key))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_choice(self):
+        response = self.client.get('http://127.0.0.1:8000/api/v6/post/choices/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_search_post(self):
+        response = self.client.get('http://127.0.0.1:8000/api/v6/post/search/?q=test')
+        self.assertEqual(response.status_code, 200)
+
+    def test_report_post(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        url = 'http://127.0.0.1:8000/api/v6/post/report/%s/?token=%s' % (str(self.post.id), str(api_key.key))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_post(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        url = 'http://127.0.0.1:8000/api/v6/post/edit/%s/?token=%s' % (str(self.post.id), str(api_key.key))
+        response = self.client.post(url, {'text': 'salam', 'url': 'http://www.google.com',
+                                          'category': self.cat})
+        self.assertEqual(response.status_code, 200)
+
+    def test_send_post(self):
+
+        file_path = os.path.join(settings.MEDIA_ROOT, 'pin/blackhole/images/o/unittest_image.jpg')
+        myfile = open(file_path, 'r')
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        url = 'http://127.0.0.1:8000/api/v6/post/send/?token=%s' % str(api_key.key)
+        response = self.client.post(url, {'image': myfile, 'description': 'salam',
+                                          'url': 'http://www.google.com', 'category': self.cat})
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_post(self):
+        url = 'http://127.0.0.1:8000/api/v6/post/user/%s/' % str(self.user.id)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_related(self):
+        url = 'http://wisgoon.com/api/v6/post/related/%s/' % str(self.post.id)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_promoted(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        url = 'http://127.0.0.1:8000/api/v6/post/promoted/?token=%s' % str(api_key.key)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_hashtag(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        url = 'http://127.0.0.1:8000/api/v6/post/hashtag/?token=%s&q=sport' % str(api_key.key)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()
