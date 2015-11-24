@@ -1555,6 +1555,9 @@ a.img-move{
 		display: block;
 		text-align: center;
 	}
+	iframe{
+		width: 100% !important;
+	}
 }
 
 .feed-item .actions{
