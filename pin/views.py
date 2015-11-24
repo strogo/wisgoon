@@ -785,7 +785,7 @@ def topgroupuser(request):
     else:
         cats = tc
 
-    return render(request, 'pin/topgroupuser.html', {'cats': cats})
+    return render(request, 'pin2/topgroupuser.html', {'cats': cats})
 
 
 def user(request, user_id, user_name=None):
