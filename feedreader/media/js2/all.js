@@ -260,7 +260,6 @@ $(function () {
                 t.addClass('disabled');
                 alert_show('مورد بیشتری پیدا نشد', 'error');
             }else{
-                t.remove();
                 $('#follower-box').append(response);
             }
         })
