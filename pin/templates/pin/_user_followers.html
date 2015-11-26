@@ -52,7 +52,7 @@
 </div>
 {% endif %}
 <div class="clear"></div>
-{% if user_items.length > 16 %}
+{% if user_items|length > 16 %}
 <a href="{% url 'pin-absuser-followers' user.username %}" class="wis_btn mabo50 mato50 load-follow">
 	بیشتر
 	<img src="{{MEDIA_URL}}img/loading.gif" alt=" بیشتر " />

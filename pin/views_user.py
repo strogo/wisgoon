@@ -184,7 +184,6 @@ def like(request, item_id):
 
 @login_required
 def report(request, pin_id):
-
     try:
         post = Post.objects.get(id=pin_id)
     except Post.DoesNotExist:

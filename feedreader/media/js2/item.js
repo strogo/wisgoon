@@ -44,6 +44,25 @@ $("#comment_load_more").click(function(){
 });
 
 $(function () {
+    $('body').on('click', '.report-btn', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        t.append('<span class="loading-img"></span>');
+        $.ajax({
+            url: t.attr('href'),
+        })
+        .done(function(d) {
+            if (d.status) {
+                alert_show(d.msg, 'success');
+            }else{
+                alert_show(d.msg, 'error');
+            }
+        })
+        .fail(function(d) {
+            alert_show('خطا! با مدیریت تماس بگیرید', 'error');
+        });
+        return false;
+    });
 
     $.ajax({
         url: related_url

@@ -267,7 +267,7 @@ def get_user_posts(user_id):
                 cl = 'p'
             else:
                 cl = 'l'
-            html += '<a class="%s" href="%s"><img src="%s" alt="%s" /></a>' % (cl, user_posts[x].get_absolute_url(), p['url'], user_posts[x].id)
+            html += '<a class="%s" href="%s"><img src="%s" alt="%s" /></a>' % (cl, user_posts[x].get_absolute_url(), p['url'], user_posts[x].text)
         except:
             html += '<a class="empty"></a>'
 
