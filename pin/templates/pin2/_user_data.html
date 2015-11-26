@@ -1,0 +1,87 @@
+{% load daddy_avatar %}
+{% load pin_tags %}
+
+<div class="container">
+    <div class="box profile_header pa10 mato20">
+        <div class="profile_avatar col-md-2">
+            <a href='{% url "pin-absuser" profile.user_id|get_user_name %}'>
+                <img src="{{profile.user_id|get_avatar:210}}">
+            </a>
+        </div>
+        <div class="profile_data col-sm-10">
+            <div class="user_status row">
+                <div class="col-sm-9">
+                    <div class="user_stats col-sm-9">
+                        <h2>
+                            <a href='{% url "pin-absuser" profile.user_id|get_user_name %}'>{{profile.user_id|get_user_name}}</a>
+                        </h2>
+                        <small>{{profile.user.username}}</small>
+                        <p>{{profile.bio}}</p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="user_stat_config col-sm-3">
+
+                    {% if profile.user_id == request.user.id %}
+                        <a href="" class="wis_btn credit_btn">افزایش اعتبار <i class="fa fa-plus"></i> </a>
+                        <a href="" class="wis_btn profile_config"><i class="fa fa-cog"></i></a>
+                    {% else %}
+                        {% if profile.user_id != request.user.id and request.user.is_authenticated%}
+                            {% if follow_status == 0 %}
+                                <a data-user-id="{{profile.user_id}}" class="wis_btn green mabo10 ajax-follow" href='{% url "pin-follow" profile.user_id 1 %}'>ایجاد دوستی <i class="fa fa-plus"></i></a>
+                            {% else %}
+                                <a data-user-id="{{profile.user_id}}" class="wis_btn mabo10 red ajax-follow" href='{% url "pin-follow" profile.user_id 0 %}'>قطع ارتباط  <i class="fa fa-times"></i></a>
+                            {%endif%}
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+            </div>
+            <div class="user_avtivity">
+                <div class="col-sm-2">
+                    <a href='{% url "pin-absuser" profile.user_id|get_user_name %}'>
+                        <div class="icon"><i class="fa fa-camera"></i></div>
+                        <div><span>تعداد مطالب</span></div>
+                        <div class="count">{{profile.cnt_post|pn}}</div>
+                    </a>
+                </div>
+                {% if profile.user_id == request.user.id %}
+                <div class="col-sm-2">
+                    <div class="icon"><i class="fa fa-flash"></i></div>
+                    <div><span>اعتبار ویس</span></div>
+                    <div class="count">{{profile.get_credit|pn}}</div>
+                </div>
+                {% endif %}
+                <div class="col-sm-2">
+                    <div class="icon"><i class="fa fa-star"></i></div>
+                    <div><span>امتیاز</span></div>
+                    <div class="count">{{profile.score|pn}}</div>
+                </div>
+                <div class="col-sm-2">
+                    <a href="{% url "pin-absuser-followers" profile.user.username %}">
+                        <div class="icon"><i class="fa fa-users"></i></div>
+                        <div><span>دنبال‌کنندگان</span></div>
+                        <div class="count">{{profile.get_cnt_followers|pn}}</div>
+                    </a>
+                </div>
+                <div class="col-sm-2">
+                    <a href="{% url "pin-absuser-following" profile.user.username %}">
+                        <div class="icon"><i class="fa fa-user"></i></div>
+                        <div><span>دنبال‌شوندگان</span></div>
+                        <div class="count">{{profile.get_cnt_following|pn}}</div>
+                    </a>
+                </div>
+                <div class="col-sm-2">
+                    <a href="{% url "pin-absuser-like" profile.user.username %}">
+                        <div class="icon"><i class="fa fa-heart"></i></div>
+                        <div><span>مورد‌ علاقه</span></div>
+                        <div class="count">{{profile.cnt_like|pn}}</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    
+    <div class="clear"></div>
+</div>

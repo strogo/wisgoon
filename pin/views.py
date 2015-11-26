@@ -407,7 +407,7 @@ def absuser_followers(request, user_namefl):
     else:
         follow_status = Follow.objects\
             .filter(follower=request.user.id, following=user_id).count()
-        return render(request, 'pin/user_followers.html', {
+        return render(request, 'pin2/user_followers.html', {
             'user_items': friends,
             'user_id': int(user_id),
             'page': 'user_follower',

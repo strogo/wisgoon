@@ -15,17 +15,17 @@
 
 {% block content %}
 <script>
-var comments_url = "{{comments_url}}";
-var related_url = "{{related_url}}";
+    var comments_url = "{{comments_url}}";
+    var related_url = "{{related_url}}";
 </script>
 <!--
 mlt: {{mlt.0.object.id}}
-	-->
+-->
 <div id="main">
 	<div class="container">
 		{% include "pin2/items_inner.html" %}
 	</div>
-	<div class="container-fluid">
+	<div class="pa20">
 		<div id="feed" class="masonry">
 			<a href="{{related_url}}"> مطالب مرتبط </a>
 		</div>
@@ -36,5 +36,50 @@ mlt: {{mlt.0.object.id}}
 {% endblock content%}
 
 {% block footer_ex_js %}
-<script type="text/javascript" src="{{MEDIA_URL}}js2/item.js?ver=1.0.2"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}js2/item.js?ver={{STATIC_VERSION}}"></script>
+<script type="text/javascript">
+    $(function () {
+        $.ajax({
+            url: '{{SITE_URL}}/api/v6/post/user/{{post.user.id}}/',
+        })
+        .done(function(d) {
+            var html = '';
+            var $container = $('.user-post-items');
+            $container.masonry({
+                isFitWidth: true,
+                gutterWidth: 3,
+                columnWidth: 130,
+                itemSelector: '.user-post-item'
+            });
+            if (d.objects.length < 12) {
+                var t = d.objects.length;
+            }else{
+                var t = 12;
+            }
+            for (var i = t - 1; i >= 0; i--) {
+
+                var href = "{{SITE_URL}}/pin/"+d.objects[i].id+"/";
+                var title = d.objects[i].text;
+                var path = d.objects[i].images.thumbnail.url;
+                html += '<div class="user-post-item"><a href="'+href+'"><img src="'+ path +'" title="'+title+'"></a></div>';
+            };
+            $("div.user-post-items").append(html).each(function(){
+                $('.user-post-items').masonry('reloadItems');
+            });
+            $('.user-posts').css('display', 'block');
+
+            $container.masonry();
+
+            console.log("success");
+        })
+        .fail(function(d) {
+            alert_show('خطا در نمایش تصاویر کاربر', 'error');
+        }).always(function() {
+            $('.post-loading').hide('fast');
+        });
+
+        
+        
+    });
+</script>
 {% endblock footer_ex_js %}

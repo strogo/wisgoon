@@ -1,37 +1,27 @@
 {% load daddy_avatar %}
 {% load humanize %}
+<div class="cmnt_item" id="comment_row_{{comment.id}}">
 
-<div class="row comment-item" id="comment_row_{{comment.id}}">
-	<div class="col-md-12 col-sm-12 col-xs-12">
-		<div class="others-comment">
-
-			<div class="col-md-1 col-sm-12 col-xs-12 avatar">
-				<a href="{% url "pin-absuser" comment.user.username %}">
-					<img src="{{comment.user_id|get_avatar:80}}" alt="">
-				</a>
-			</div>
-
-			<div class="col-md-9 col-sm-12 col-xs-12" style="color:#555;">
-				<div class="">
-					<a href="{% url "pin-absuser" comment.user.username %}">
-						{{comment.user.username}}
-					</a> : 
-				</div>
-				<div style="padding:10px;">{{comment.comment|urlizetrunc:100}}</div>
-				{% if request.user.is_superuser or request.user.id == comment.object_pk.user.id or request.user.id == comment.user.id %}
-				<a class="del-comment" rel="{{comment.id}}" href="{% url 'pin-comment-delete' comment.id %}">
-					<i class="glyphicon glyphicon-remove"></i>
-				</a>
-				{% endif %}
-			</div>
-
-			<div class="col-md-2 col-sm-12 col-xs-12" style="color:#aaa;text-align:left;">
-				{{comment.submit_date|naturaltime}}
-			</div>
-
-			<div class="clear"></div>
-		</div>
+	<div class="cmnt_avatar">
+		<a href="{% url "pin-absuser" comment.user.username %}">
+			<img src="{{comment.user_id|get_avatar:80}}" alt="">
+		</a>
 	</div>
-	<div class="clear"></div>
-	<hr>
+
+	<div class="cmnt_text">
+		<div class="cmnt_header">
+			<h5 class="pull-right username">
+				<a href="{% url "pin-absuser" comment.user.username %}">{{comment.user.username}}</a> 
+			</h5>
+			<span class="cmnt_time pull-left">{% if request.user.is_superuser or request.user.id == comment.object_pk.user.id or request.user.id == comment.user.id %}
+				<a class="del-comment" rel="{{comment.id}}" href="{% url "pin-comment-delete" comment.id %}">حذف</a>
+				{% endif %} - {{comment.submit_date|naturaltime}} <i class="time_icon"></i>
+			</span>
+		</div>
+		<div class="clear"></div>
+		<div class="txt">{{comment.comment|urlizetrunc:100}}</div>
+
+		<div class="clear"></div>
+	</div>
+
 </div>

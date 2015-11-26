@@ -24,18 +24,13 @@
 	var disable_masonry=1;
 </script>
 
-
 {% if user_items %}
 <div id="follower-box">
-	{% include "pin/_user_following.html"%}
+	{% include "pin/_user_followers.html"%}
 </div>
 {% else %}
 <h3>موردی پیدا نشد</h3>
 {% endif %}
-
-
-</div>
-
 
 
 {% include "pin/feed_scripts.html" %}
@@ -43,4 +38,4 @@
 
 {% endblock content %}
 
-{% block js %} {% endblock js %}
+{% block js %}{% endblock js %}

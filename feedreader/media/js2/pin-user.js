@@ -17,7 +17,7 @@ function createUploader(){
         action: upload_url,
         debug: true,
         multiple: false,
-        allowedExtensions : ['png','jpg'],
+        allowedExtensions : ['png','jpg','jpe', 'jpeg', 'gif'],
         sizeLimit : 1024*1024*10,
         messages : {
     		'typeError':'{file} برای بارگذاری مناسب نیست. تنها {extensions} فرمت ها مجاز هستند.',

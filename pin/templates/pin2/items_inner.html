@@ -2,175 +2,139 @@
 {% load daddy_avatar %}
 {% load humanize %}
 
-<div class="post-detail row" itemscope itemtype="http://schema.org/CreativeWork">
-	<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
-		{% comment %}
-			
-		{% include "base/ad-720x92.html" %}
-		<div class="tabliq col-sm-12 hidden-xs hidden-sm">
-			<div class="row">
-				<script type="text/javascript">
-				var agahist_pram = agahist_pram || [];
-				agahist_pram["aduser"] = "6";
-				agahist_pram["category"] = "{{post.category_id}}"; 
-				agahist_pram["adheight"] = "90";
-				agahist_pram["adwidth"] = "728";			
-				</script> 
-				<script type="text/javascript" src="http://agahist.com/media/js/pubBanner.js"></script>
-			</div>
-		</div>
-		{% endcomment %}
-<div class="clear"></div>
-		<div class="clear"></div>
-
-		{% if user.is_superuser %}
-		<a class="btn btn-danger" href="{% url "pin-item-delete" post.id %}">حذف پست</a>
-		{% endif %}
-
-		{% if request.user.is_authenticated %}
-		<a class="btn btn-success" href="{% url "pin-save-as-ads" post.id %}">این تصویر را ویژه کنید</a>
-		{% endif %}
-
-		{% if is_police %}
-		<br><br><br>
-		{% if post.is_pending %}
-		این پست تنها برای شما قابل مشاهده است.
-		<a class="btn btn-success" href="{% url "unpending_post" post.id 0 %}">پست مشکلی ندارد</a>
-		{% else %}
-		<a class="btn btn-danger" href="{% url "pending_post" post.id %}">حذف موقت پست</a>
-		{% endif %}
-		{% endif %}
-
-
-		<div class="post-content">
-			<div class="photo">
-				
-				<a href="{{media_prefix}}{{MEDIA_URL}}{{post.image}}" >
-					<img style="margin:0 auto" itemprop="image" src="{{media_prefix}}{{MEDIA_URL}}{{ post.image }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
+<div class="post-page mato20" itemscope itemtype="http://schema.org/CreativeWork">
+	<div class="post-sidebar">
+		{% include "pin2/_pin_sidebar.html" %}
+	</div>
+	<div class="post-content">
+		<div class="box post_item_inner">
+			<!--  buttons-->
+			<div class="post-top-nav {% if user.is_authenticated%} {% user_post_like post.id %}{% endif %}">
+				{% if user.is_authenticated %}
+				<a href="{% url "pin-item-like" post.id %}" class="wis_btn red_o pull-right{% user_post_like item.id %} btn_like">
+					<span class="count">{{post.cnt_like|pn}}</span>
+					<span class="like_icon"></span>
 				</a>
-			</div>
-			<div class="row">
-				<div class="discription" itemprop="name">
-					<p> 
-						{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
-					</p>
+				{% else %}
+				<a href="javascript:;" class="wis_btn red_o login_required pull-right">
+					<span class="count">{{post.cnt_like|pn}}</span>
+					<span class="like_icon"></span>
+				</a>
+				{% endif %}
 
-					{% for page in post.get_pages %}
-						<span class="badge badge-success">{{page|safe}}</span>
-					{% endfor %}
-				</div>
-				<small class="time-box pull-left">{{post.create|naturaltime}}</small>
-			</div>
-			<div class="row">
-				<div class="tags ">
-					<div class="tag ">
-					</div>
+				<a href="{% url "pin-save-as-ads" post.id %}" class="wis_btn orange_o pull-right">
+					ویژه کنید <span class="promote_icon"></span>
+				</a>
 
-				</div>
+				<a class="wis_btn orange_o pull-left report-btn" title="گزارش تخلف" href="{% url "report_pin" post.id%}" data-toggle="tooltip" data-placement="bottom">
+					<span class="report_icon"></span>
+				</a>
+				<a href="{{MEDIA_URL}}{{post.image}}" class="wis_btn green_o pull-left">
+					دانلود <span class="download_icon"></span>
+				</a>
+				{% if user.is_superuser %}
+				<!-- delete -->
+				<a href="{% url "pin-item-delete" post.id%}" class="wis_btn pull-left red_o delpost user-action-btn" title="حذف" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-trash-o"></i></a>
+
+				<!-- edit -->
+				<a href="{% url "pin-item-edit" post.id %}" class="wis_btn pull-left red_o user-action-btn" title="ویرایش" data-toggle="modal" data-target="#postModal"><i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="bottom"></i></a>
+
+				{% endif %}
 				<div class="clear"></div>
 			</div>
-			<div class="row likes">
-				<div class="content">
-					<div class="liker col-md-10 col-sm-10 col-xs-10">
-						{% for liker in post.likes %}            
-						<a href="{% url "pin-absuser" liker.username %}">
-							<img src="{{liker|get_avatar:50}}" style="display: inline;margin: 2px;" >
+			
+
+			<!-- img -->
+			<div class="post-img">
+				<a href="{{media_prefix}}{{MEDIA_URL}}{{post.image}}" >
+					<img itemprop="image" src="{{ post.get_image_500.url }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
+				</a>
+			</div>
+			<!-- text -->
+			<div class="post-text">
+				{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
+			</div>
+			<!-- tags -->
+			{% if post.get_tags %}
+			<div class="post-tags">
+				{% for t in post.get_tags %}
+				<a href="/hashtag/{{t}}/">#{{t}}</a>
+				{% endfor %}
+				<div class="clear"></div>
+			</div>
+			{% endif %}
+
+			<div class="post_activity">
+				<div class="activity_btn">
+					<div class="btn-box comment">
+						<a href="#comments-box">
+							<span class="cnt-like">{{post.cnt_comments|pn}}</span>
+							<span class="cmnt_icon"></span>
 						</a>
-						{% endfor %}
 					</div>
-					<!-- like icon -->
-					<div class="col-md-2 col-sm-2 col-xs-2 like-icon {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}">
-						<a href="{% url 'pin-item-like' post.id %}" class="btn_like">
-							<i class="glyphicon glyphicon-heart"></i>
-							<span class='count'>{{post.cnt_likes|pn}}</span>
+					<div class="btn-box likes{% if user.is_authenticated%} {% user_post_like post.id %}{% endif %}">
+						{% if user.is_authenticated %}
+						<a href="{% url "pin-item-like" post.id %}" class="btn_like">
+							<span class="count">{{post.cnt_like|pn}}</span>
+							<span class="like_icon"></span>
 						</a>
+						{% else %}
+						<a href="javascript:;" class="login_required">
+							<span class="count">{{post.cnt_like|pn}}</span>
+							<span class="like_icon"></span>
+						</a>
+						{% endif %}
+
 					</div>
-					<!-- end like icon -->
 					<div class="clear"></div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="footer">
-					<div class="footer-icons">
-						<div class="right-icons col-md-9 col-sm-12 col-xs-12">
-							<div class="col-md-2 col-sm-6 col-xs-6 seen cat-border-left ">
 
-								<a href="/category/{{post.category_id}}">{{post.category}}</a>
-
-							</div>
-							<div class="col-md-3 col-sm-6 col-xs-6 download cat-border-left">
-								<span class="glyphicon glyphicon-download-alt"></span>
-								<a href="{{MEDIA_URL}}{{post.image}}">دانلود تصاویر</a>
-
-							</div>
-							<div class="col-md-7 col-sm-12 col-xs-12 share cat-border-right">
-								
-							</div>
-						</div>
-						<div class="left-icons col-md-3 col-sm-12 col-xs-12">
-							{% if user.is_authenticated%}
-							<a alt="{{user.id}}/{{post.user.id}}" href="{% url "report_pin" post.id%}" style="margin-right: 5px" class="btn btn-warning btn_report "> <i class="glyphicon glyphicon-exclamation-sign"></i> گزارش تخلف</a>
-							{% endif %}
-
-
-
-							<!-- <span class="glyphicon glyphicon-camera"></span> -->
-						</div>
-						<div class="clear"></div>
-					</div>
+				<div class="liker_avatars">
+					{% for liker in post.likes %}
+					<a href="{% url "pin-absuser" liker.username %}">
+						<img src="{{liker|get_avatar:50}}">
+					</a>
+					{% endfor %}
 				</div>
+				<div class="clear"></div>
+
 			</div>
 		</div>
-{% comment %}
-{% include "base/ad-720x92_bottom.html" %}
-<div class="tabliq col-sm-12 hidden-xs hidden-sm">
-	<div class="row">
-		<script type="text/javascript">
-		var agahist_pram = agahist_pram || [];
-		agahist_pram["aduser"] = "6";
-		agahist_pram["category"] = "{{post.category_id}}"; 
-		agahist_pram["adheight"] = "90";
-		agahist_pram["adwidth"] = "728";			
-		</script> 
-		<script type="text/javascript" src="http://agahist.com/media/js/pubBanner.js"></script>
-	</div>
-</div>
-{% endcomment %}
-<div class="clear"></div>
-		<br>
-		<div class="clear"></div>
-		<br>
-		<div class="clear"></div>
-		<div class="comment">
-			<div class="col-md-12 col-sm-12 col-xs-12">
 
-				{% if user.is_authenticated and user.is_active %}
-				{% include "pin2/__comment_submit.html" %}	
-				{% endif %}
-					<!--
-					<script id="rc_spot" type="text/javascript">rc_zone="1139"; rc_sizes="728x90"; rc_height="90"; rc_width="728";  rc_title_color="000fff"; rc_background_color="ffffff"; rc_border_color="ffffff"; rc_domain_color="00cc00"; rc_description_color="666666"; </script><script type="text/javascript" src="http://cdn.rastclick.com/rc_show.js"></script>
-				-->
+		<div id="submit_comment" class="box">
+			{% if user.is_authenticated and user.is_active %}
+			{% include "pin2/__comment_submit.html" %}	
+			{% endif %}
+			<div class="clear"></div>
+		</div>
 
-				<div id="comments_box">
+		<div id="comments" class="box">
+			<div class="col-md-12 col-sm-12 col-xs-12 pa0">
 
+				<div id="comments_box" class="pa10">
+					{% if post.cnt_comment < 1 %}
+					<div class="no-comment">هنوز دیدگاهی ثبت نشده است</div>
+					{% endif %}
 				</div>
-				<div id="load-more" class="row">
-					<div class="" id="comment_load_more">
-						<div class="txt">ادامه‌ی دیدگاه ها</div> 
-						<div class="loader" style="display:none;">
-							<img width="30" class="footer-loading-img" alt="Loading..." src="/media/v2/images/big-loader.gif">
+
+				<div id="load-more" class="">
+					{% if post.cnt_comment > 10 %}
+					<span class="fa fa-angle-down"></span>
+					{% endif %}
+					<div class="{% if post.cnt_comment < 10 %}nob{% endif %}" id="comment_load_more">
+						{% if post.cnt_comment > 10 %}
+						<div class="txt">ادامه‌ی دیدگاه ها</div>
+						{% endif %}
+						<div class="loader" style="">
+							<img width="30" class="loading-img" alt="Loading..." src="/media/v2/images/big-loader.gif">
 						</div>
 					</div>
 				</div>
-
+				
 			</div>
 
 			<div class="clear"></div>
 		</div>
-		<br />
-		<br />
-	</div>
-	<div class="sidebar col-md-3 col-sm-3 col-xs-12">
-		{% include "pin2/_pin_sidebar.html" %}
+
 	</div>
 </div>
