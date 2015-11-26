@@ -76,7 +76,7 @@
 					{% endcomment %}
 					<tr>
 						<td>موجودی حساب :</td>
-						<td><strong>{{profile.get_credit|pn}} ویس</strong>  
+						<td><strong>{{profile.get_credit|pn}} ویس</strong>
 							{% if request.user.id == user_id %}
 							<a href="{% url "pin-inc-credit"%}" class="btn btn-xs btn-success f-white">افزایش اعتبار</a>
 							{% endif %}
@@ -86,7 +86,8 @@
 					{%endif%}
 					{% endcomment %}
 
-					{% if request.user.is_superuser %}
+					{% endif %}
+					{% if user.is_superuser %}
 					<tr>
 						<td>سطح کاربری</td>
 						<td>{{profile.get_level_string}}
@@ -102,7 +103,6 @@
 
 						</td>
 					</tr>
-					{% endif %}
 					{% endif %}
 					
 				</table>

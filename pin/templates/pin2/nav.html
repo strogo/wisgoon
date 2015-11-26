@@ -65,7 +65,7 @@
 					<li>
 						<div class="notification" data-toggle="tooltip" data-placement="bottom" title="اعلانات">
 							<a href="javascript:;" data-load="{% url 'show_notify' %}" title="اعلانات" class="popnotify" >
-								<span class="glyphicon glyphicon-bell"></span> {{user.id|get_user_notify}} 
+								<span class="glyphicon glyphicon-bell"></span> {{request.user.id|get_user_notify}} 
 							</a>
 							<img src="{{MEDIA_URL}}v2/images/top-loading.gif" alt="..." class="loading-img" />
 						</div>
