@@ -8,10 +8,10 @@ Replace this with more appropriate tests for your application.
 
 # from django.test import TestCase
 from django.test import Client
-from models import Category
+from models import Category, Post, Comments
 from django.contrib.auth.models import User
 import unittest
-
+from tastypie.models import ApiKey
 
 # class Test(TestCase):
 #     def setup(self):
@@ -22,15 +22,19 @@ import unittest
 #         self.assertEqual(post.id, 1)
 
 
-class Auth(unittest.TestCase):
+class AuthTestCase(unittest.TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.create_users()
+        self.amir = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.vahid = User.objects.create(username='vahid', email='a.abc@yahoo.com', password='1')
         # self.create_category()
 
+    def tearDown(self):
+        User.objects.all().delete()
+        ApiKey.objects.all().delete()
+
     def test_register(self):
-        # Issue a GET request.
         response = self.client.post('http://127.0.0.1:8000/api/v6/auth/register/',
                                     {"token": "e622c330c77a17c8426e638d7a85da6c2ec9f455",
                                      "username": "unit_test",
@@ -48,91 +52,137 @@ class Auth(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_follow(self):
-        user1 = self.get_user_by_username("unit_test")
-        user2 = self.get_user_by_username("amir")
+
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
 
         response = self.client.get('http://127.0.0.1:8000/api/v6/auth/follow/',
-                                   {"token": user1.api_key.key,
-                                    "user_id": user2.id})
+                                   {"token": api_key.key,
+                                    "user_id": self.vahid.id})
         self.assertEqual(response.status_code, 200)
 
     def test_unfollow(self):
-        user1 = self.get_user_by_username("unit_test")
-        user2 = self.get_user_by_username("amir")
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
 
         response = self.client.get('http://127.0.0.1:8000/api/v6/auth/unfollow/',
-                                   {"token": user1.api_key.key,
-                                    "user_id": user2.id})
+                                   {"token": api_key.key,
+                                    "user_id": self.vahid.id})
         self.assertEqual(response.status_code, 200)
 
     def test_followers(self):
-        user1 = self.get_user_by_username("amir")
-        user2 = self.get_user_by_username("unit_test")
-        url = 'http://127.0.0.1:8000/api/v6/auth/followers/%s' % str(user1.id)
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
 
-        response = self.client.get(url, {'token': user2.api_key.key})
+        url = 'http://127.0.0.1:8000/api/v6/auth/followers/%s/' % str(self.vahid.id)
+
+        response = self.client.get(url, {'token': api_key.key})
         self.assertEqual(response.status_code, 200)
 
     def test_following(self):
-        user1 = self.get_user_by_username("amir")
-        user2 = self.get_user_by_username("unit_test")
-        url = 'http://127.0.0.1:8000/api/v6/auth/followers/%s' % str(user1.id)
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
 
-        response = self.client.get(url, {'token': user2.api_key.key})
+        url = 'http://127.0.0.1:8000/api/v6/auth/followers/%s/' % str(self.vahid.id)
+
+        response = self.client.get(url, {'token': api_key.key})
         self.assertEqual(response.status_code, 200)
 
     def test_profile(self):
-        user = self.get_user_by_username("amir")
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
 
-        response = self.client.get('http://127.0.0.1:8000/api/v6/auth/user/%s' % str(user.id),
-                                   {"token": user.api_key.key})
+        response = self.client.get('http://127.0.0.1:8000/api/v6/auth/user/%s/' % str(self.amir.id),
+                                   {"token": api_key.key})
         self.assertEqual(response.status_code, 200)
 
     def test_update_profile(self):
-        user = self.get_user_by_username("amir")
-
-        response = self.client.get('http://127.0.0.1:8000/api/v6/auth/user/update/',
-                                   {"token": user.api_key.key})
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
+        url = 'http://127.0.0.1:8000/api/v6/auth/user/update/?token=%s' % str(api_key.key)
+        response = self.client.post(url, {'name': 'amir_ali',
+                                          'jens': 'M',
+                                          'bio': 'salam'})
         self.assertEqual(response.status_code, 200)
 
     def test_search_user(self):
-        user = self.get_user_by_username("amir")
+        api_key, created = ApiKey.objects.get_or_create(user=self.amir)
 
         response = self.client.get('http://127.0.0.1:8000/api/v6/auth/user/search/',
-                                   {"token": user.api_key.key,
+                                   {"token": api_key.key,
                                     "q": 'vahid'})
         self.assertEqual(response.status_code, 200)
 
-    # Tools
-    def get_user_by_username(self, username):
-        user = User.objects.get(username=username)
-        return user
 
-    def get_users(self):
-        users = User.objects.order_by('-id')[:3]
-        return users
+class CategoryTestCase(unittest.TestCase):
 
-    def create_users(self):
-        username = ['amir1', 'vahid1', 'saeed1']
-        email = ['a.ab@yahoo.com', 'a.abc@yahoo.com', 'a.abd@gmail.com']
-        for index, value in enumerate(username):
-            try:
-                User.objects.create(username=value, email=email[index], password='1')
-            except Exception as e:
-                print str(e)
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.cat = Category.objects.create(title='sport', image='/home/amir/Pictures/images.jpg')
+        # self.create_category()
 
-    def create_category(self):
-        name_list = ['ورزشی', 'سیاسی', 'علمی', 'سرگرمی']
-        for name in name_list:
-            try:
-                Category.objects.create(title=name)
-            except Exception as e:
-                print str(e)
+    def tearDown(self):
+        User.objects.all().delete()
+        ApiKey.objects.all().delete()
+        Category.objects.all().delete()
 
-    def get_category(self):
-        category = Category.objects.order_by('-id')[:1]
-        return category
+    def test_show_category(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        response = self.client.get('http://127.0.0.1:8000/api/v6/category/%s/?token=%s' % (str(self.cat.id), str(api_key.key)))
+        self.assertEqual(response.status_code, 200)
 
+    def test_all_category(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        response = self.client.get('http://127.0.0.1:8000/api/v6/category/all/?token=%s' % str(api_key.key))
+        self.assertEqual(response.status_code, 200)
+
+
+class CommentTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.cat = Category.objects.create(title='sport',
+                                           image='pin/blackhole/images/o/unittest_image.jpg')
+        self.post = Post.objects.create(image="pin/blackhole/images/o/unittest_image.jpg",
+                                        category=self.cat,
+                                        user=self.user)
+        self.comment = Comments.objects.create(comment='very nicee',
+                                               object_pk=self.post,
+                                               user=self.user)
+
+    def tearDown(self):
+        User.objects.all().delete()
+        ApiKey.objects.all().delete()
+        Category.objects.all().delete()
+        Post.objects.all().delete()
+        Comments.objects.all().delete()
+
+    def test_post_comments(self):
+        url = 'http://127.0.0.1:8000/api/v6/comment/showComments/post/%s/' % str(self.post.id)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_add_comment(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        url = 'http://127.0.0.1:8000/api/v6/comment/add/post/%s/?token=%s' % (str(self.post.id), str(api_key.key))
+        response = self.client.post(url, {'comment': 'niceeee post'})
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_comment(self):
+        api_key, created = ApiKey.objects.get_or_create(user=self.user)
+        url = "http://127.0.0.1:8000/api/v6/comment/delete/%s/?token=%s" % (str(self.comment.id), str(api_key.key))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
 if __name__ == '__main__':
     unittest.main()
+
+
+# def create_category(self):
+#         name_list = ['ورزشی', 'سیاسی', 'علمی', 'سرگرمی']
+#         for name in name_list:
+#             try:
+#                 Category.objects.create(title=name)
+#             except Exception as e:
+#                 print str(e)
+
+
+# def get_category(self):
+#     category = Category.objects.order_by('-id')[:1]
+#     return category

@@ -184,7 +184,7 @@ def get_objects_list(posts, cur_user_id, r=None):
             if r:
                 print r.get_full_path()
             o['url'] = None
-        o['like'] = p.cnt_like
+        o['cnt_like'] = p.cnt_like
         o['like_with_user'] = False
         o['status'] = p.status
 

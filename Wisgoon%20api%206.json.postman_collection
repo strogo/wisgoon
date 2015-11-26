@@ -11,12 +11,14 @@
 			"order": [
 				"07410ae6-94d3-a7a9-698f-a39251c67414",
 				"a219b8b5-085e-7f35-2913-fb292cea8da5",
+				"b142573d-5afa-8b6c-896f-8e0dbd65267a",
 				"14df0739-b63c-b7c4-c05a-753a6fd7f8a2",
 				"beb6c8a2-b613-a55c-679f-2dd0abe2b3b6",
 				"34c18bcb-a1bd-53ab-e1f9-4602df07d244",
 				"fb2c1f61-46c8-2292-da35-4a48d6f842ff",
 				"624bfa84-d7c2-0647-57de-771e7b1061a5",
-				"3ad1a6c9-b08c-520a-2cde-11f6080cc219"
+				"3ad1a6c9-b08c-520a-2cde-11f6080cc219",
+				"5d5d948e-c2b3-c3c8-0580-92dd8a79be65"
 			],
 			"owner": 0
 		},
@@ -84,15 +86,6 @@
 			"owner": 0
 		},
 		{
-			"id": "e350a4f5-1dcf-9654-984b-1b95c1ece2fe",
-			"name": "Profile",
-			"description": "",
-			"order": [
-				"5d5d948e-c2b3-c3c8-0580-92dd8a79be65"
-			],
-			"owner": 0
-		},
-		{
 			"id": "a34bc110-81cc-c2c5-b25b-baaf4243fe26",
 			"name": "Urls Map",
 			"description": "",
@@ -114,13 +107,32 @@
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
-			"data": [],
-			"dataMode": "raw",
+			"data": [
+				{
+					"key": "username",
+					"value": "vahid",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "111",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "token",
+					"value": "e622c330c77a17c8426e638d7a85da6c2ec9f455",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
 			"version": 2,
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1438428097705,
+			"time": 1448091940356,
 			"name": "Registeration",
 			"description": "",
 			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
@@ -198,9 +210,7 @@
 						"version": 2
 					}
 				}
-			],
-			"rawModeData": "{\"token\":\"e622c330c77a17c8426e638d7a85da6c2ec9f455\",\n \"username\":\"apitest\",\n \"password\":\"apipassword\",\n \"email\":\"vchakoshy@gmail.com\"}",
-			"folder": "2b7d0f27-38b9-f9a9-8c38-d4bfcaa56b6d"
+			]
 		},
 		{
 			"id": "14df0739-b63c-b7c4-c05a-753a6fd7f8a2",
@@ -477,16 +487,15 @@
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"folder": "e350a4f5-1dcf-9654-984b-1b95c1ece2fe"
+			"folder": "2b7d0f27-38b9-f9a9-8c38-d4bfcaa56b6d"
 		},
 		{
 			"id": "624bfa84-d7c2-0647-57de-771e7b1061a5",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v1/auth/login/",
-			"pathVariables": {},
+			"url": "http://127.0.0.1:8000/api/v6/auth/logout/",
 			"preRequestScript": "",
-			"method": "POST",
-			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
+			"pathVariables": {},
+			"method": "GET",
 			"data": [
 				{
 					"key": "username",
@@ -502,16 +511,15 @@
 				}
 			],
 			"dataMode": "params",
-			"name": "Login",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1444558883390,
 			"version": 2,
-			"responses": [],
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"folder": "2b7d0f27-38b9-f9a9-8c38-d4bfcaa56b6d"
+			"time": 1448092129930,
+			"name": "Logout",
+			"description": "",
+			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
+			"responses": []
 		},
 		{
 			"id": "66cc3542-0aa4-791f-883f-e6647c732acc",
@@ -581,18 +589,94 @@
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "POST",
-			"data": [],
-			"dataMode": "raw",
+			"data": [
+				{
+					"key": "username",
+					"value": "vahid",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "111",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "token",
+					"value": "e622c330c77a17c8426e638d7a85da6c2ec9f455",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
 			"version": 2,
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1447240091811,
+			"time": 1448091950765,
 			"name": "Login",
 			"description": "",
 			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
+			"responses": []
+		},
+		{
+			"id": "b142573d-5afa-8b6c-896f-8e0dbd65267a",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/user/update/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
+			"data": [
+				{
+					"key": "avatar",
+					"value": "roundflower.jpg",
+					"type": "file",
+					"enabled": true
+				},
+				{
+					"key": "name",
+					"value": "sdsds",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "jens",
+					"value": "M",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "location",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "website",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "bio",
+					"value": "sdsdsd",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Update Profile",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1448094199188,
+			"version": 2,
 			"responses": [],
-			"rawModeData": "{\"token\":\"e622c330c77a17c8426e638d7a85da6c2ec9f455\",\n \"username\":\"apitest\",\n \"password\":\"1\",\n \"email\":\"a@gmail.com\"}"
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "2b7d0f27-38b9-f9a9-8c38-d4bfcaa56b6d"
 		},
 		{
 			"id": "b15b1e50-172b-bed1-2a2d-a1d5d320a445",

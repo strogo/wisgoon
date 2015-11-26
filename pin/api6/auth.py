@@ -2,6 +2,7 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import logout as auth_logout
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
@@ -36,7 +37,7 @@ def followers(request, user_id):
                     'previous': '',
                     'total_count': follow_cnt}
 
-    data['meta']['next'] = get_next_url(url_name='api-5-auth-followers',
+    data['meta']['next'] = get_next_url(url_name='api-6-auth-followers',
                                         offset=offset + 20, token=token,
                                         url_args={'user_id': user_id})
 
@@ -83,7 +84,7 @@ def following(request, user_id=1):
 
     objects_list = []
 
-    data['meta']['next'] = get_next_url(url_name='api-5-auth-following',
+    data['meta']['next'] = get_next_url(url_name='api-6-auth-following',
                                         offset=offset + 20, token=token,
                                         url_args={'user_id': user_id})
 
@@ -334,7 +335,6 @@ def update_profile(request):
         status = True
     else:
         msg = form.errors
-        msg = 'Error'
     return return_json_data({'status': status, 'message': msg,
                              'profile': get_profile_data(profile, current_user),
                              'user': get_user_data(current_user)})
@@ -383,3 +383,8 @@ def user_search(request):
         return return_json_data(data)
     else:
         return return_bad_request()
+
+
+def logout(request):
+    auth_logout(request)
+    return return_json_data({'status': True, 'message': 'Successfully Logout'})

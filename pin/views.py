@@ -14,14 +14,15 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
+
 from pin.models import Post, Follow, Likes, Category, Comments, Report,\
     Results
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
-    get_user_meta, get_user_ip, log_act
+    get_user_ip
 
 from pin.context_processors import is_police
 
-from pin.model_mongo import Ads, PendingPosts
+from pin.model_mongo import Ads
 
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
@@ -33,51 +34,39 @@ REPORT_TYPE = settings.REPORT_TYPE
 
 
 def home(request):
-    log_act("wisgoon.home.view.count")
+    last_id, arp = None, []
     pid = get_request_pid(request)
-    cache_str = "page:home:%s" % str(pid)
-    enable_cacing = False
+    cache_str = "page:home:{}".format(pid)
+    enable_caching = False
     if not request.user.is_authenticated():
-        enable_cacing = True
-        cd = cache.get(cache_str)
-        if cd:
-            return cd
-    pl = Post.home_latest(pid=pid)
-    arp = []
+        enable_caching = True
+        cache_data = cache.get(cache_str)
+        if cache_data:
+            return cache_data
 
-    last_id = None
-    next_url = None
-
-    for pll in pl:
+    for post_id in Post.home_latest(pid=pid):
         try:
-            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
-            last_id = pll
-        except Exception, e:
-            print str(e)
+            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=post_id))
+            last_id = post_id
+        except Exception:
             pass
 
-    if arp:
-        next_url = reverse('home') + "?older=" + last_id
-        # print next_url
+    next_url = "{}?older={}".format(reverse('home'), last_id) if arp else None
 
     response_data = HttpResponse(0)
+    data_dict = {
+        'latest_items': arp,
+        'next_url': next_url,
+        'page': 'home'
+    }
 
     if request.is_ajax():
         if arp:
-            response_data = render(request, 'pin2/_items_2.html', {
-                'latest_items': arp,
-                'next_url': next_url,
-            })
-        else:
-            response_data = HttpResponse(0)
+            response_data = render(request, 'pin2/_items_2.html', data_dict)
     else:
-        response_data = render(request, 'pin2/home.html', {
-            'latest_items': arp,
-            'next_url': next_url,
-            'page': 'home'
-        })
+        response_data = render(request, 'pin2/home.html', data_dict)
 
-    if enable_cacing:
+    if enable_caching:
         cache.set(cache_str, response_data, 300)
 
     return response_data
@@ -796,7 +785,7 @@ def topgroupuser(request):
     else:
         cats = tc
 
-    return render(request, 'pin/topgroupuser.html', {'cats': cats})
+    return render(request, 'pin2/topgroupuser.html', {'cats': cats})
 
 
 def user(request, user_id, user_name=None):

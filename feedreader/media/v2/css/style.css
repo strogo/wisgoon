@@ -254,6 +254,10 @@ a, a:link, a:hover, a:visited {
 .red{color: red;}
 .green{color: green;}
 #main {
+<<<<<<< HEAD
+=======
+	/*border-top: 1px solid #d4d8e1;*/
+>>>>>>> 4257c88aa6dd739d1291a11e33a76ba2393c6171
 	margin-bottom: 15px;
 }
 .container-fluid{
@@ -1860,6 +1864,9 @@ a.img-move{
 		display: block;
 		text-align: center;
 	}
+	iframe{
+		width: 100% !important;
+	}
 }
 
 .feed-item .actions{
@@ -2511,4 +2518,12 @@ div.comment div div.row:hover .del-comment{
 }
 .follow_box .follow_stats div:last-child{
 	border-left: 0;
+}
+.tabliq-block {
+	margin-bottom: 10px;
+	background: #434a54;
+	border-top: 1px solid #ddd;
+	box-shadow: 0 0 2px #000 inset;
+	padding-top: 5px;
+	text-align: center;
 }

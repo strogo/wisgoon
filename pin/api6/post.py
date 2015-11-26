@@ -297,9 +297,9 @@ def send(request):
         return return_json_data({'status': False, 'message': _('Post Not Found')})
 
     if post.status == 1:
-        msg = _('مطلب شما با موفقیت ارسال شد.')
+        msg = _('Your article has been sent.')
     elif post.status == 0:
-        msg = _('مطلب شما با موفقیت ارسال شد و بعد از تایید در سایت نمایش داده می شود ')
+        msg = _('Your article has been sent and displayed on the site after confirmation ')
     return return_json_data({'status': status, 'message': msg, 'post': data})
 
 

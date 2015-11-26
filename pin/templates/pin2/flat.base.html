@@ -23,7 +23,9 @@
 	<div id="pagetop"></div>
 	{% include "pin2/nav.html" %}
 	{% include "pin2/cats.html" %}
-
+	<div class="tabliq-block" style="text-align:center">
+		{% include "base/clickyab.html" %}
+	</div>
 	{% block content %}{% endblock content%}
 
 	{% if next_url %}

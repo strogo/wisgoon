@@ -189,6 +189,10 @@ class Profile(models.Model):
             self.version = Profile.AVATAR_NEW_STYLE
             self.save()
 
+    def delete_avatar_cache(self):
+        cache_key = settings.AVATAR_CACHE_KEY.format(self.user_id)
+        cache.delete(cache_key)
+
     def save(self, *args, **kwargs):
         have_new_avatar = False
         try:
@@ -210,6 +214,8 @@ class Profile(models.Model):
         super(Profile, self).save(*args, **kwargs)
 
         if have_new_avatar:
+            self.delete_avatar_cache()
+
             from pin.tasks import add_avatar_to_storage
             self.store_avatars(update_model=False)
             add_avatar_to_storage.delay(self.id)
@@ -223,9 +229,6 @@ class Profile(models.Model):
 
         new_avatar = "new_avatar_%d" % (user_id)
         cache.set(new_avatar, 1, 160000)
-
-        ava_str = "avatar3210u_%d" % (user_id)
-        cache.delete(ava_str)
 
 
 class CreditLog(models.Model):
