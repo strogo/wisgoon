@@ -1,0 +1,52 @@
+{% load pin_tags %}
+{% load humanize %}
+{% load daddy_avatar %}
+{% if user_items %}
+	{% for u in user_items %}
+	<div class="follow_box box">		
+		{{u.following.id|get_user_posts|safe}}
+
+		<div class="follow_avatar">
+			<a href="{% url "pin-absuser" u.following %}">
+				<img class="img-circle" src="{{u.following.id|get_avatar}}" />
+			</a>
+		</div>
+
+		<div class="user_name user-username">
+			<a class="f-black" href="{% url 'pin-absuser' u.following %}" data-next="{{u.id}}">
+				{{u.following|get_username|truncatechars:30}}
+				<br><small>{{u.following.username}}</small>
+			</a>
+		</div>
+
+		<div class="action">
+			{% if u.following.id != request.user.id and request.user.is_authenticated%}
+                {% if request.user.id|get_follow_status:u.following.id == False %}
+                    <a data-user-id="{{u.following.id}}" class="wis_btn green mabo10 ajax-follow" href='{% url "pin-follow" u.following.id 1 %}'>ایجاد دوستی <i class="fa fa-plus"></i></a>
+                {% else %}
+                    <a data-user-id="{{u.following.id}}" class="wis_btn mabo10 red ajax-follow" href='{% url "pin-follow" u.following.id 0 %}'>قطع ارتباط  <i class="fa fa-times"></i></a>
+                {%endif%}
+            {% else %}
+            	<a class="wis_btn mabo10" href='{% url "pin-absuser" u.following %}'>نمایش پروفایل <i class="fa fa-user"></i></a>
+            {% endif %}
+		</div>
+
+		<div class="follow_stats">
+			<div class="col-sm-4">
+				مطالب <br> <span class="count"><strong>{{u.following.profile.cnt_post|pn}}</strong></span>
+			</div>
+			<div class="col-sm-4">
+				دنبال‌کننده <br> <span class="follower_count"><strong>{{u.following.profile.cnt_followers|pn}}</strong></span>
+			</div>
+			<div class="col-sm-4">
+				دنبالشونده <br> <span class="following_count"><strong>{{u.following.profile.cnt_following|pn}}</strong></span>
+			</div>
+		</div>
+	</div>
+
+	{%endfor%}
+{% else %}
+<div>
+	موردی یافت نشد
+</div>
+{% endif %}
