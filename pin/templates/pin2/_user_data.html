@@ -23,7 +23,7 @@
                 <div class="user_stat_config col-sm-3">
 
                     {% if profile.user_id == request.user.id %}
-                        <a href="" class="wis_btn credit_btn">افزایش اعتبار <i class="fa fa-plus"></i> </a>
+                        <a href="{% url "pin-inc-credit" %}" class="wis_btn credit_btn">افزایش اعتبار <i class="fa fa-plus"></i> </a>
                         <a href="" class="wis_btn profile_config"><i class="fa fa-cog"></i></a>
                     {% else %}
                         {% if profile.user_id != request.user.id and request.user.is_authenticated%}

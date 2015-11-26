@@ -345,7 +345,6 @@ $(function () {
                 alert_show('خطا! با مدیریت تماس بگیرید', 'error');
             });
             return false;
-
         });
         $('body').on('click', '.resp-menu', function(event) {
             event.preventDefault();
