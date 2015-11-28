@@ -2331,13 +2331,11 @@ div.comment div div.row:hover .del-comment{
 }
 
 #wis_navbar .cats .sub-cats {
-	left: 0;
-	position: absolute;
-	right: 0;
 	background: #fefefe none repeat scroll 0 0;
 	border: 1px solid #ccc;
-	box-shadow: 0 0 1px #fff;
-	margin: 0 10px;
+	left: -1px;
+	position: absolute;
+	right: -1px;
 }
 #wis_navbar .cats .sub-cats li{
 	list-style: none;
