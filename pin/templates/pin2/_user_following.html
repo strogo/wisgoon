@@ -12,7 +12,7 @@
 			</a>
 		</div>
 
-		<div class="user_name">
+		<div class="user_name user-username">
 			<a class="f-black" href="{% url 'pin-absuser' u.following %}" data-next="{{u.id}}">
 				{{u.following|get_username|truncatechars:30}}
 				<br><small>{{u.following.username}}</small>
@@ -50,11 +50,3 @@
 	موردی یافت نشد
 </div>
 {% endif %}
-<div class="clear"></div>
-{% if user_items|length > 16 %}
-<a href="{% url 'pin-absuser-following' user.username %}" class="wis_btn mabo50 mato50 load-follow">
-	بیشتر
-	<img src="{{MEDIA_URL}}img/loading.gif" alt=" بیشتر " />
-</a>
-{% endif %}
-<div class="clear"></div>

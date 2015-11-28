@@ -1,8 +1,12 @@
 function alert_show(msg, status) {
+    $('.alert_show').remove();
     $('body').append('<div class="alert alert_show ' + status + '">' + msg + '</div>');
     setTimeout(function() {
         $('.alert_show').slideUp();
     }, 3000);
+    setTimeout(function() {
+        $('.alert_show').remove();
+    }, 4000);
 }
 function pn(no){
     var n = no + '';
@@ -114,6 +118,8 @@ jQuery(function($) {
 
         event.preventDefault();
     });
+
+    
 });
 
 // for notification popover
@@ -200,19 +206,16 @@ $('body').on('click', '.del-comment', function(event) {
     $.ajax({
         url: href,
     })
-    .done(function(d) {
-        var res = $.parseJSON(d);
-        if (res.status == true) {
+    .done(function(res) {
+        if (res.status === true) {
             alert_show(res.message, 'success');
-            t.parents('.comment-item').slideUp('fast');
+            t.parents('.cmnt_item').slideUp('fast');
         }else{
             alert_show('خطا در حذف دیدگاه', 'error');
         }
     })
     .fail(function() {
         alert_show('خطا در حذف دیدگاه', 'error');
-    })
-    .always(function(d) {
     });
     return false;
 });
@@ -242,107 +245,157 @@ function marker(t){
 
 
 $(function () {
-    $('[data-toggle="tooltip"]').tooltip();
-    $('.menu-box ul li.parent').attr('data-content', '');
-    $('body').on('click', '.menu-box ul li.parent > a', function(event) {
+    $('body').on('click', '.load-follow', function(event) {
         event.preventDefault();
-        p = $(this).parent();
-        if (p.attr('collapse') == 'true') {
-            p.removeAttr('collapse');
-            p.children('ul').slideUp('100');
-            p.attr('data-content', "");
-        }else{
-            p.parent().children('li').removeAttr('collapse');
-            p.parent().children('li').children('ul').slideUp('100');
-            $(this).parent().attr('collapse', 'true');
-            $(this).parent().children('ul').slideDown('100');
-            p.attr('data-content', "");
-            
-        }
+        var t = $(this);
+        t.children('img').css('display', 'inline-block');
+        var next_page = $('.user-username a:last').attr('data-next');
+        $.ajax({
+            url: t.attr('href'),
+            type: 'POST',
+            data: {'older': next_page}
+        })
+        .done(function(response) {
+            if (response == '0') {
+                t.addClass('disabled');
+                alert_show('مورد بیشتری پیدا نشد', 'error');
+            }else{
+                $('#follower-box').append(response);
+            }
+        })
+        .fail(function() {
+            alert_show('خطا. با مدیر تماس بگیرید');
+        })
+        .always(function() {
+            t.children('img').css('display', 'none');
+        });
+        return false;
     });
-    $('body').on('click', '.menu-box .colse-menu-btn', function(event) {
+
+
+    $('body').on('click', '.ajax-follow', function(event) {
         event.preventDefault();
-        $('.menu-box').width(0);
-    });
-    $('body').on('click', '.resp-menu', function(event) {
-        event.preventDefault();
-        $('.menu-box').css('display', 'block');
-        $('.menu-box').animate({
-            width: 320},
-            100, function() {
+        var t = $(this);
+        var href = t.attr('href');
+
+        $.ajax({
+            url: href,
+            async: false
+        })
+        .done(function(response) {
+            if (response.status) {
+                alert_show(response.message, 'success');
+                t.attr('href', '/pin/follow/'+t.data('user-id')+'/0/');
+                t.html('قطع ارتباط <i class="fa fa-times"></i>').removeClass('green').addClass('red');
+            }else{
+                alert_show(response.message, 'success');
+                t.attr('href', '/pin/follow/'+t.data('user-id')+'/1/');
+                t.html('ایجاد دوستی  <i class="fa fa-plus"></i>').removeClass('red').addClass('green');
+            }
+            if (t.parents('.follow_box')) {
+                t.parents('.follow_box').find('.follower_count strong').text(pn(response.count));
+            };
+        })
+        .fail(function(response) {
+            console.log("error");
+        })
+        .always(function() {
+            console.log("complete");
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+        $('.menu-box ul li.parent').attr('data-content', '');
+        $('body').on('click', '.menu-box ul li.parent > a', function(event) {
+            event.preventDefault();
+            p = $(this).parent();
+            if (p.attr('collapse') == 'true') {
+                p.removeAttr('collapse');
+                p.children('ul').slideUp('100');
+                p.attr('data-content', "");
+            }else{
+                p.parent().children('li').removeAttr('collapse');
+                p.parent().children('li').children('ul').slideUp('100');
+                $(this).parent().attr('collapse', 'true');
+                $(this).parent().children('ul').slideDown('100');
+                p.attr('data-content', "");
+
+            }
+        });
+        $('body').on('click', '.menu-box .colse-menu-btn', function(event) {
+            event.preventDefault();
+            $('.menu-box').width(0);
+        });
+
+        $('body').on('click', '.report-btn', function(event) {
+            event.preventDefault();
+            var t = $(this);
+            t.append('<span class="loading-img"></span>');
+            $.ajax({
+                url: t.attr('href'),
+            })
+            .done(function(d) {
+                if (d.status) {
+                    alert_show(d.msg, 'success');
+                }else{
+                    alert_show(d.msg, 'error');
+                }
+            })
+            .fail(function(d) {
+                alert_show('خطا! با مدیریت تماس بگیرید', 'error');
             });
-    });
+            return false;
+        });
+        $('body').on('click', '.resp-menu', function(event) {
+            event.preventDefault();
+            $('.menu-box').css('display', 'block');
+            $('.menu-box').animate({
+                width: 320},
+                100, function() {
+                });
+        });
 
-    $('body').on('mouseenter', '#wis_navbar > ul > li', function(event) {
-        event.preventDefault();
-        var t = $(this);
-        marker(t);
-        var ul = $(this).parent('ul');
-        if(t.children('ul').length != 0){
-            t.children('ul').stop(true, false).slideDown('fast');
-        }
-    });
-    $('body').on('mouseleave', '#wis_navbar', function(event) {
-        $('.marker').css('display', 'none');
-    });
-    $('body').on('mouseleave', '#wis_navbar > ul > li', function(event) {
-        event.preventDefault();
-        var t = $(this);
-        if(t.children('ul').length != 0){
-            t.children('ul').stop(true, false).slideUp(400);
-        }
-    });
+        $('body').on('mouseenter', '#wis_navbar > ul > li', function(event) {
+            event.preventDefault();
+            var t = $(this);
+            marker(t);
+            var ul = $(this).parent('ul');
+            if(t.children('ul').length != 0){
+                t.children('ul').stop(true, false).slideDown('fast');
+            }
+        });
+        $('body').on('mouseleave', '#wis_navbar', function(event) {
+            $('.marker').css('display', 'none');
+        });
+        $('body').on('mouseleave', '#wis_navbar > ul > li', function(event) {
+            event.preventDefault();
+            var t = $(this);
+            if(t.children('ul').length != 0){
+                t.children('ul').stop(true, false).slideUp(400);
+            }
+        });
 
-    $('body').on('mouseenter', '.cats > ul > li', function(event) {
-        event.preventDefault();
-        var t = $(this);
-        var ch = t.children('ul.sub-cats');
-        $('.sub-cats').slideUp(300);
-        if (ch.length > 0) {
-            ch.stop(true, true).slideDown(300);
-        }
-    });
-    $('body').on('mouseleave', '.cats > ul > li', function(event) {
-        event.preventDefault();
-        var t = $(this);
-        var ch = t.children('ul.sub-cats');
-        if (ch.length > 0) {
-            ch.stop(true, true).slideUp(300);
-        }
-    });
+        $('body').on('mouseenter', '.cats > ul > li', function(event) {
+            event.preventDefault();
+            var t = $(this);
+            var ch = t.children('ul.sub-cats');
+            $('.sub-cats').slideUp(300);
+            if (ch.length > 0) {
+                ch.stop(true, true).slideDown(300);
+            }
+        });
+        $('body').on('mouseleave', '.cats > ul > li', function(event) {
+            event.preventDefault();
+            var t = $(this);
+            var ch = t.children('ul.sub-cats');
+            if (ch.length > 0) {
+                ch.stop(true, true).slideUp(300);
+            }
+        });
 
-    var l = $('.cats > ul > li');
-    l.width(100/l.length+'%');
+        var l = $('.cats > ul > li');
+        l.width(100/l.length+'%');
 
-})
+    });
 
 live_content();
-
-var frm = $("#add-comment-form");
-frm.submit(function(e) {
-    $('.comment-loading-img').show();
-    $("#comment-submit-btn").addClass("disabled");
-    e.preventDefault();
-    $.ajax({
-        type: frm.attr('method'),
-        url: frm.attr('action'),
-        data: frm.serialize(),
-    })
-    .done(function(response) {
-        if (response == 'error'){
-            console.log('Method Not Allowed');
-        }else{
-            $('#comments_box').prepend(response);
-        }
-    })
-    .fail(function() {
-        console.log("error");
-    })
-    .always(function() {
-        $('.comment-loading-img').hide();
-        $("#comment-submit-btn").removeClass("disabled");
-        $(frm).find("input[type=text], textarea").val("");
-        console.log("complete");
-    });
-    return false;
 });

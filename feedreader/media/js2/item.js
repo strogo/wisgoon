@@ -2,24 +2,28 @@ var com_offset = 0;
 var com_in_act = false;
 
 function load_comments(){
+    var l = $('#comment_load_more');
     if (com_in_act == true){
         return;
     }
     com_in_act = true;
 
-    $('#comment_load_more').children('.txt').css('display', 'none');
-    $('#comment_load_more').children('.loader').css('display', 'block');
+    l.find('.txt').css('display', 'none');
+    l.parent().find('span').hide();
+    l.find('.loader').css('display', 'block');
+
     $.ajax({
         url: comments_url + "?offset=" + com_offset,
     })
     .done(function(d) {
-        $('#comment_load_more').children('.txt').css('display', 'block');
-        $('#comment_load_more').children('.loader').css('display', 'none');
         if(d == '0'){
-            $('#comment_load_more').children('.txt').text('دیدگاه دیگری وجود ندارد');
+            l.find('.txt').css('display', 'block');
+            l.parent().find('span').css('display', 'none');
+            l.find('.txt').text('دیدگاه دیگری وجود ندارد');
         }
         else
         {
+            l.parent().find('span').show();
             $("#comments_box").append(d);
             com_offset += 10;
             com_in_act = false;
@@ -29,8 +33,8 @@ function load_comments(){
         console.log("error");
     })
     .always(function(d) {
-        $('#comment_load_more').children('.txt').css('display', 'block');
-        $('#comment_load_more').children('.loader').css('display', 'none');
+        l.find('.loader').css('display', 'none');
+        l.find('.txt').css('display', 'block');
     });
 }
 
@@ -39,20 +43,72 @@ $("#comment_load_more").click(function(){
     load_comments();
 });
 
-$.ajax({
-    url: related_url
-}).
-done(function(d){
-    var feedobj = $('#feed');
-    $(feedobj).html(d);
-
-    feedobj.masonry({
-        itemSelector : '.feed-item',
-        isRTL: true,
-        isAnimated: false,
-        isFitWidth: true,
+$(function () {
+    $('body').on('click', '.report-btn', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        t.append('<span class="loading-img"></span>');
+        $.ajax({
+            url: t.attr('href'),
+        })
+        .done(function(d) {
+            if (d.status) {
+                alert_show(d.msg, 'success');
+            }else{
+                alert_show(d.msg, 'error');
+            }
+        })
+        .fail(function(d) {
+            alert_show('خطا! با مدیریت تماس بگیرید', 'error');
+        });
+        return false;
     });
 
-    feedobj.masonry('reload');
-    
+    $.ajax({
+        url: related_url
+    }).
+    done(function(d){
+        var feedobj = $('#feed');
+        $(feedobj).html(d);
+
+        feedobj.masonry({
+            itemSelector : '.feed-item',
+            isRTL: true,
+            isAnimated: false,
+            isFitWidth: true,
+        });
+
+        feedobj.masonry('reload');
+        
+    });
+
+    var frm = $("#add-comment-form");
+    frm.submit(function(e) {
+        $('.comment-loading-img').show();
+        $("#comment-submit-btn").addClass("disabled");
+        e.preventDefault();
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+        })
+        .done(function(response) {
+            if (response == 'error'){
+                console.log('Method Not Allowed');
+            }else{
+                $('#comments_box').prepend(response);
+                $('#comments_box').find('.no-comment').hide('fast');
+                alert_show('دیدگاه شما با موفقیت ثبت شد', 'success');
+            }
+        })
+        .fail(function() {
+            alert_show('خطا! با مدیریت سایت تماس بگیرید', 'error');
+        })
+        .always(function() {
+            $('.comment-loading-img').hide();
+            $("#comment-submit-btn").removeClass("disabled");
+            $(frm).find("input[type=text], textarea").val("");
+        });
+        return false;
+    });
 });

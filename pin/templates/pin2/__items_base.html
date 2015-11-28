@@ -7,90 +7,118 @@
 			<img src="{{ item.get_image_236.url }}" width="236" height="{{ item.get_image_236.h }}" alt="{{item.text|remove_newlines|truncatewords:35}}">
 		</a>
 
-		{% if user__id == item.user_id or is_super_user %}
-		<div class="actions">
-			{% if is_super_user %}
-
-			{% if item.show_in_default %}
-
-			<a href="{% url 'pin-item-goto-index' item.id 0%}" class="item-to-index user-action-btn" data-toggle="tooltip" data-placement="bottom" title="حذف از صفحه اول">
-				<i class="glyphicon glyphicon-remove-sign red"></i> 
-			</a>
-			{% else %}
-			<a href="{% url 'pin-item-goto-index' item.id 1%}" class="item-to-index f-black user-action-btn" data-toggle="tooltip" data-placement="bottom" title="ارسال به صفحه اول"> 
-				<i class="glyphicon glyphicon-ok-sign green"></i> 
-			</a>
-			{% endif %}
-
-			{% endif %}
-
-			<a href="{% url 'pin-item-edit' item.id%}" class="user-action-btn" data-toggle="modal" data-target="#postModal"> 
-				<i class="glyphicon glyphicon-edit" data-toggle="tooltip" data-placement="bottom" title="ویرایش"></i> ویرایش
-			</a>
-			<a href="{% url 'pin-item-delete' item.id%}" class=" delpost user-action-btn" data-toggle="tooltip" data-placement="bottom" title="حذف تصویر"> 
-				<i class="glyphicon glyphicon-remove red"></i> حذف
-			</a>
-
-			<div class="clear"></div>
-
-		</div>
-		{% endif%}
+		<div class="img-shadow"></div>
 	</div>
+
 	
 	<div class="clearfix"></div>
 
 	<div class="post-action">
-		<div class="btn-box likes {% if user.is_authenticated%} {% user_post_like item.id %} {% endif %}">
+		<div class="btn-box likes{% if user.is_authenticated%} {% user_post_like item.id %}{% endif %} {% if user.is_superuser %}col-sm-4{% else %}col-sm-6{% endif %}">
 			{% if user.is_authenticated %}
 			<a href="{% url 'pin-item-like' item.id %}" class="btn_like">
-				{% else %}
-				<a href="javascript:;" class="login_required">
-					{% endif %}
-					<span class="count">{{item.cnt_like|pn}}</span>
-					<span class="like_icon"></span>
-				</a>
-
-			</div>
-			<div class="btn-box comment">
-				<a href="{% url 'pin-item' item.id%}{% if related %}?from={{post.id}}{%endif%}">
-					<span class="cnt-like">{{item.cnt_comments|pn}}</span>
-					<span class="cmnt_icon"></span>
-				</a>
-			</div>
-			<div class="clearfix"></div>
+				<span class="count">{{item.cnt_like|pn}}</span>
+				<span class="like_icon"></span>
+			</a>
+			{% else %}
+			<a href="javascript:;" class="login_required">
+				<span class="count">{{item.cnt_like|pn}}</span>
+				<span class="like_icon"></span>
+			</a>
+			{% endif %}
 
 		</div>
-		<div class="clearfix"></div>
+		<div class="btn-box {% if user.is_superuser %}col-sm-4{% else %}col-sm-6{% endif %} comment">
+			<a href="{% url 'pin-item' item.id%}{% if related %}?from={{post.id}}{%endif%}">
+				<span class="cnt-like">{{item.cnt_comments|pn}}</span>
+				<span class="cmnt_icon"></span>
+			</a>
+		</div>
 
-		<div class="description">
-			{% if item.text.strip|length > 0 %}
-			<p>{{item.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:30}}</p>
+		{% if user.is_superuser %}
+		<div class="col-sm-2">
+			{% if item.show_in_default %}
+
+			<a href="{% url 'pin-item-goto-index' item.id 0%}" class="item-to-index pa10 user-action-btn" data-toggle="tooltip" data-placement="bottom" title="حذف از صفحه اول">
+				<i class="fa fa-times red"></i>
+			</a>
 			{% else %}
-			<p>بدون متن</p>
+			<a href="{% url 'pin-item-goto-index' item.id 1%}" class="item-to-index pa10 f-black user-action-btn" data-toggle="tooltip" data-placement="bottom" title="ارسال به صفحه اول"> 
+				<i class="fa fa-check green"></i>
+			</a>
 			{% endif %}
 		</div>
+		<div class="col-sm-2">
+			<a href="{% url 'pin-item-delete' item.id%}" class="delpost user-action-btn" data-toggle="tooltip" data-placement="bottom" title="حذف تصویر">
+				<i class="fa fa-trash red"></i>
+			</a>
+		</div>
+		{% endif %}
+		<div class="clearfix"></div>
 
-		{% if item.get_tags %}
-		<div class="tags">
-			{% for t in item.get_tags %}
-			<a href="/hashtag/{{t}}/">#{{t}}</a>
-			{% endfor %}
+	</div>
+
+	<div class="clearfix"></div>
+	{% if item.text.strip|length > 0 %}
+	<div class="description">
+		<p>{{item.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:30}}</p>
+	</div>
+	{% endif %}
+
+	{% if item.get_tags %}
+	<div class="tags">
+		{% for t in item.get_tags %}
+		<a href="/hashtag/{{t}}/">#{{t}}</a>
+		{% endfor %}
+	</div>
+	{% endif %}
+
+	<div class="clear"></div>
+	<div class="avatar-box">
+		<div class="avatar post-avatar">
+			<a href="{% url 'pin-absuser' item.get_username %}">
+				<img src="{{item.user_id|get_avatar:54}}" style="display: inline;" > 
+			</a>
+
+
+		</div>
+		<span class=''>
+			
+		</span>
+
+		{% if user.is_authenticated %}
+		<div class="dropdown three-dot">
+			<a class="dropdown-toggle dl" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<img src="{{MEDIA_URL}}v2/images/3dot.png" alt="">
+			</a>
+			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+				<li>
+					<a href="{% url "pin-save-as-ads" item.id %}">ویژه کردن عکس <i class="fa fa-bullhorn"></i></a>
+				</li>
+
+				{% if user == item.user or user.is_superuser %}
+				<li>
+					<a href="{% url 'pin-item-edit' item.id %}" class="" data-toggle="modal" data-target="#postModal"> 
+						ویرایش <i class="fa fa-pencil"></i>
+					</a>
+				</li>
+
+				<li><a href="{% url 'pin-item-delete' item.id%}" class=" delpost user-action-btn" title="حذف تصویر">حذف <i class="fa fa-trash-o"></i></a></li>
+				{% endif %}
+
+				<li>
+					<a class="report-btn" alt="{{user.id}}/{{item.user.id}}" href="{% url "report_pin" item.id%}"> گزارش تخلف <i class="fa fa-exclamation-triangle"></i> </a>
+				</li>
+			</ul>
 		</div>
 		{% endif %}
 
-		<div class="clear"></div>
-		<div class="avatar-box">
-			<div class="avatar post-avatar">
-				<a href="{% url "pin-absuser" item.get_username %}">
-					<img src="{{item.user_id|get_avatar:54}}" style="display: inline;" > 
-				</a>
 
-			</div>
-			<div class="username">
-				<a href="{% url "pin-absuser" item.get_username %}">
-					{{item.get_username}}
-				</a>
-			</div>	
+		<div class="username">
+			<a href="{% url 'pin-absuser' item.get_username %}">
+				{{item.get_username}}
+			</a>
+		</div>	
 
-		</div>
 	</div>
+</div>

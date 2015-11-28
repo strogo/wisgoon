@@ -249,6 +249,33 @@ def date_filter(index):
 
 
 @register.filter
+def get_follow_status(user_id, following_id):
+    from pin.models import Follow
+    fstatus = Follow.objects.filter(follower_id=user_id, following_id=following_id).exists()
+    return fstatus
+
+
+@register.filter
+def get_user_posts(user_id):
+    from pin.models import Post
+    user_posts = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id).order_by('-id')[:4]
+    html = '<div class="flw_posts">'
+    for x in xrange(4):
+        try:
+            p = user_posts[x].get_image_236()
+            if p['h'] > 236:
+                cl = 'p'
+            else:
+                cl = 'l'
+            html += '<a class="%s" href="%s"><img src="%s" alt="%s" /></a>' % (cl, user_posts[x].get_absolute_url(), p['url'], user_posts[x].text)
+        except:
+            html += '<a class="empty"></a>'
+
+    html += '</div>'
+    return html
+
+
+@register.filter
 def pn(value):
     value = str(value)
     value = value.replace('1', '۱')

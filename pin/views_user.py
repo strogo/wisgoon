@@ -150,7 +150,11 @@ def follow(request, following, action):
         status = True
 
     if request.is_ajax():
-        data = {'status': status, 'message': message}
+        data = {
+            'status': status,
+            'message': message,
+            'count': following.profile.cnt_followers
+        }
         return HttpResponse(json.dumps(data), content_type='application/json')
     return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
 
@@ -180,7 +184,6 @@ def like(request, item_id):
 
 @login_required
 def report(request, pin_id):
-
     try:
         post = Post.objects.get(id=pin_id)
     except Post.DoesNotExist:
@@ -205,8 +208,8 @@ def report(request, pin_id):
         msg = u'شما قبلا این مطلب را گزارش داده اید.'
 
     if request.is_ajax():
-        data = [{'status': status, 'msg': msg}]
-        return HttpResponse(json.dumps(data))
+        data = {'status': status, 'msg': msg}
+        return HttpResponse(json.dumps(data), content_type='application/json')
     else:
         return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
 
@@ -289,11 +292,10 @@ def send_comment(request):
             if check_block(user_id=post.user_id, blocked_id=request.user.id):
                 if not is_police(request, flat=True):
                     return HttpResponseRedirect('/')
-            comment = Comments.objects.create(object_pk=post,
+            comment = Comments.objects.create(object_pk_id=post.id,
                                               comment=text,
                                               user=request.user,
                                               ip_address=get_user_ip(request))
-
             return render(request, 'pin2/show_comment.html', {'comment': comment})
 
     return HttpResponse('error')

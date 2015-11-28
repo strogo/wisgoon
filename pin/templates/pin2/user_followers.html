@@ -24,17 +24,22 @@
 	var disable_masonry=1;
 </script>
 
-
 {% if user_items %}
 <div id="follower-box">
-	{% include "pin/_user_following.html"%}
+	{% include "pin2/_user_followers.html"%}
 </div>
 {% else %}
 <h3>موردی پیدا نشد</h3>
 {% endif %}
 
-
-</div>
+{% if user_items|length > 16 %}
+<center>
+    <a href="{% url 'pin-absuser-followers' user.username %}" class="wis_btn mabo50 mato50 load-follow">
+        بیشتر
+        <img src="{{MEDIA_URL}}v2/images/loading-img.gif" alt=" بیشتر " />
+    </a>
+</center>
+{% endif %}
 
 
 
@@ -43,4 +48,4 @@
 
 {% endblock content %}
 
-{% block js %} {% endblock js %}
+{% block js %}{% endblock js %}
