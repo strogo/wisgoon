@@ -92,9 +92,40 @@ function load_posts(page) {
         }
     });
 
+    function readURL(input, img_id='avatar_img') {
+        var d = '';
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#'+img_id).attr('src', e.target.result);
+                // var mc = $('.new_avatar');
+
+                // mc.croppie({
+                //     viewport: {
+                //         width: 150,
+                //         height: 150,
+                //         type: 'circle'
+                //     },
+                // });
+                // mc.croppie('bind', e.target.result);
+                // $('.save_crop').on('click', function (ev) {
+                //     mc.croppie('result', 'canvas').then(function (resp) {
+                //         console.log(resp);
+                //     });
+                // });
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 
 //second
 jQuery(function($) {
+    $('body').on('click', '.upload_img_btn', function(event) {
+        event.preventDefault();
+        $('#id_avatar').click();
+    });
+
     $('body').on('click', '.gotop', function(event) {
         event.preventDefault();
         $('html, body').animate({ scrollTop: 0 }, 'normal');
@@ -119,9 +150,13 @@ jQuery(function($) {
         event.preventDefault();
     });
 
+    $('body').on('change', '#id_avatar', function(event) {
+        event.preventDefault();
+        readURL(this, 'avatar_img');
+    });
+
     
 });
-
 // for notification popover
 var isVisible = false;
 var clickedAway = false;

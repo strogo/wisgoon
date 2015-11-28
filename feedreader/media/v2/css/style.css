@@ -35,6 +35,8 @@ hr{border-color: #d0d9e2 !important;}
 	padding: 0 !important;
 }
 /*height*/
+.dr{direction: rtl !important;}
+.dl{direction: ltr !important;}
 .he0{height:0px !important;display:block;}
 .he5{height:5px !important;display:block;}
 .he10{height:10px !important;display:block;}
@@ -254,10 +256,6 @@ a, a:link, a:hover, a:visited {
 .red{color: red;}
 .green{color: green;}
 #main {
-<<<<<<< HEAD
-=======
-	/*border-top: 1px solid #d4d8e1;*/
->>>>>>> 4257c88aa6dd739d1291a11e33a76ba2393c6171
 	margin-bottom: 15px;
 }
 .container-fluid{
@@ -2416,8 +2414,8 @@ div.comment div div.row:hover .del-comment{
 	width: 100%;
 }
 .profile_data .user_status{
-	height: 105px;
-	overflow: hidden;
+	min-height: 105px;
+	position: relative;
 }
 .profile_data .user_avtivity{
 	border-top: 1px solid #d0d9e2;
@@ -2427,10 +2425,11 @@ div.comment div div.row:hover .del-comment{
 .user_stat_config{
 	left: 0;
 	position: absolute;
-	top: 65px;
+	bottom: 8px;
 }
-.user_stat_config a{
-	float: left;
+.user_stat_config .wis_btn{
+	/*float: left;*/
+	margin-right: 5px !important;
 }
 .user_avtivity > div{
 	text-align: center;
@@ -2450,9 +2449,34 @@ div.comment div div.row:hover .del-comment{
 .user_stat_config .profile_config{
 	padding: 1px;
 }
-.user_stat_config .profile_config i{
+.user_stat_config i{
 	font-size: 20px;
 	padding: 4px 8px;
+}
+.dropdown-header {
+	color: #f26b05;
+	font-size: 14px;
+	font-weight: bold;
+}
+.profile_change .avatar_box{}
+.profile_change .avatar_box #id_avatar{
+	display: none;
+}
+.profile_change .avatar_box > div > a {
+	clear: both !important;
+	display: block;
+	font-size: 0;
+}
+.profile_change .current_avatar img{
+	width: 128px;
+	height: 128px;
+}
+.profile_change .upload_img_btn,
+.profile_change label{
+	cursor: pointer;
+}
+.hide{
+	display: none;
 }
 
 /* follow box */
