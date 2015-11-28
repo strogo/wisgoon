@@ -6,7 +6,6 @@ import unittest
 from tastypie.models import ApiKey
 import os
 from django.conf import settings
-from user_profile.models import Profile
 
 
 class AuthTestCase(unittest.TestCase):
@@ -17,8 +16,7 @@ class AuthTestCase(unittest.TestCase):
         self.vahid, created = User.objects.get_or_create(username='vahid', email='a.abc@yahoo.com', password='1')
 
     def tearDown(self):
-        User.objects.all().delete()
-        ApiKey.objects.all().delete()
+        super(AuthTestCase, self).tearDown()
 
     def test_register(self):
         response = self.client.post('http://127.0.0.1:8000/api/v6/auth/register/',
@@ -91,14 +89,12 @@ class CategoryTestCase(unittest.TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
-        self.cat = Category.objects.create(title='sport', image='/home/amir/Pictures/images.jpg')
+        self.user, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.cat, created = Category.objects.get_or_create(title='sport', image='/home/amir/Pictures/images.jpg')
         # self.create_category()
 
     def tearDown(self):
-        User.objects.all().delete()
-        ApiKey.objects.all().delete()
-        Category.objects.all().delete()
+        super(CategoryTestCase, self).tearDown()
 
     def test_show_category(self):
         api_key, created = ApiKey.objects.get_or_create(user=self.user)
@@ -115,22 +111,18 @@ class CommentTestCase(unittest.TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
-        self.cat = Category.objects.create(title='sport',
-                                           image='pin/blackhole/images/o/unittest_image.jpg')
-        self.post = Post.objects.create(image="pin/blackhole/images/o/unittest_image.jpg",
-                                        category=self.cat,
-                                        user=self.user)
-        self.comment = Comments.objects.create(comment='very nicee',
-                                               object_pk=self.post,
-                                               user=self.user)
+        self.user, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.cat, created = Category.objects.get_or_create(title='sport',
+                                                           image='pin/blackhole/images/o/unittest_image.jpg')
+        self.post, created = Post.objects.get_or_create(image="pin/blackhole/images/o/unittest_image.jpg",
+                                                        category=self.cat,
+                                                        user=self.user)
+        self.comment, created = Comments.objects.get_or_create(comment='very nicee',
+                                                               object_pk=self.post,
+                                                               user=self.user)
 
     def tearDown(self):
-        User.objects.all().delete()
-        ApiKey.objects.all().delete()
-        Category.objects.all().delete()
-        Post.objects.all().delete()
-        Comments.objects.all().delete()
+        super(CommentTestCase, self).tearDown()
 
     def test_post_comments(self):
         url = 'http://127.0.0.1:8000/api/v6/comment/showComments/post/%s/' % str(self.post.id)
@@ -154,18 +146,15 @@ class LikeTestcase(unittest.TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
-        self.cat = Category.objects.create(title='sport',
-                                           image='pin/blackhole/images/o/unittest_image.jpg')
-        self.post = Post.objects.create(image="pin/blackhole/images/o/unittest_image.jpg",
-                                        category=self.cat,
-                                        user=self.user)
+        self.user, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.cat, created = Category.objects.get_or_create(title='sport',
+                                                           image='pin/blackhole/images/o/unittest_image.jpg')
+        self.post, created = Post.objects.get_or_create(image="pin/blackhole/images/o/unittest_image.jpg",
+                                                        category=self.cat,
+                                                        user=self.user)
 
     def tearDown(self):
-        User.objects.all().delete()
-        ApiKey.objects.all().delete()
-        Category.objects.all().delete()
-        Post.objects.all().delete()
+        super(LikeTestcase, self).tearDown()
 
     def test_like_post(self):
         api_key, created = ApiKey.objects.get_or_create(user=self.user)
@@ -183,11 +172,10 @@ class NotifTestCase(unittest.TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.user, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
 
     def tearDown(self):
-        User.objects.all().delete()
-        ApiKey.objects.all().delete()
+        super(NotifTestCase, self).tearDown()
 
     def test_show_notif(self):
         api_key, created = ApiKey.objects.get_or_create(user=self.user)
@@ -206,18 +194,15 @@ class PostTestCase(unittest.TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.user = User.objects.create(username='amir', email='a.ab@yahoo.com', password='1')
-        self.cat = Category.objects.create(title='sport',
-                                           image='pin/blackhole/images/o/unittest_image.jpg')
-        self.post = Post.objects.create(image="pin/blackhole/images/o/unittest_image.jpg",
-                                        category=self.cat,
-                                        user=self.user)
+        self.user, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
+        self.cat, created = Category.objects.get_or_create(title='sport',
+                                                           image='pin/blackhole/images/o/unittest_image.jpg')
+        self.post, created = Post.objects.get_or_create(image="pin/blackhole/images/o/unittest_image.jpg",
+                                                        category=self.cat,
+                                                        user=self.user)
 
     def tearDown(self):
-        User.objects.all().delete()
-        ApiKey.objects.all().delete()
-        Category.objects.all().delete()
-        Post.objects.all().delete()
+        super(PostTestCase, self).tearDown()
 
     def test_latest(self):
         url = 'http://127.0.0.1:8000/api/v6/post/latest/'
@@ -289,20 +274,5 @@ class PostTestCase(unittest.TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-
 if __name__ == '__main__':
     unittest.main()
-
-
-# def create_category(self):
-#         name_list = ['ورزشی', 'سیاسی', 'علمی', 'سرگرمی']
-#         for name in name_list:
-#             try:
-#                 Category.objects.create(title=name)
-#             except Exception as e:
-#                 print str(e)
-
-
-# def get_category(self):
-#     category = Category.objects.order_by('-id')[:1]
-#     return category
