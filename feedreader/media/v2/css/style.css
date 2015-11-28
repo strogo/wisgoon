@@ -2256,6 +2256,7 @@ div.comment div div.row:hover .del-comment{
 #wis_navbar > ul > li:hover{
 }
 
+#wis_navbar  ul li.open > a,
 #wis_navbar  ul li.active > a,
 #wis_navbar > ul > li:hover > a{
 	color: #ff6a00;
