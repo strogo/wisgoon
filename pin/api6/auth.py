@@ -8,7 +8,7 @@ from django.utils.translation import ugettext as _
 
 from tastypie.models import ApiKey
 from user_profile.forms import ProfileForm
-from pin.api6.http import return_bad_request, return_json_data, return_un_auth
+from pin.api6.http import return_bad_request, return_json_data, return_un_auth, return_not_found
 from pin.api6.tools import get_next_url, get_user_data, get_int, get_profile_data,\
     update_follower_following
 from pin.tools import AuthCache
@@ -288,6 +288,12 @@ def profile(request, user_id):
     token = request.GET.get('token', False)
     current_user = None
 
+    if user_id:
+        try:
+            User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return return_not_found()
+
     if token:
         current_user = AuthCache.id_from_token(token=token)
         if not current_user:
@@ -350,23 +356,20 @@ def user_search(request):
     data['meta'] = {'limit': 20,
                     'next': "",
                     'total_count': 1000}
-    results = SearchQuerySet().models(Profile)\
-        .filter(content__contains=query)[offset:offset + 1 * row_per_page]
+    data['objects'] = []
 
     if query and token:
         current_user = AuthCache.id_from_token(token=token)
         if not current_user:
             return return_un_auth()
 
-        data['objects'] = []
+        results = SearchQuerySet().models(Profile).filter(content__contains=query)
         for result in results:
-            print result
             result = result.object
             print result
-
             o = {}
             o['id'] = result.id
-            o['avatar'] = get_avatar(result.id, 100)
+            o['avatar'] = get_avatar(result.user, 100)
             o['username'] = result.user.username
             try:
                 o['name'] = result.name
