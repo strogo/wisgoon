@@ -216,7 +216,6 @@ $('body').on('click', '.login_required', function(event) {
 function marker(t){
     var p = t.position();
     var w = t.width();
-    console.log(p.left + (w / 2) + 4);
     $('.marker').show(0).css('left', p.left + (w / 2) - 4 +'px');
 }
 
@@ -390,6 +389,8 @@ $('body').on('click', '#wis_navbar > ul > li', function(event) {
             t.addClass('open');
             t.children('ul').stop(true, false).slideDown('fast');
         }
+    }else{
+        window.location.href = $(this).children('a').attr('href');
     }
 })
 $('body').on('click', '#wis_navbar > ul > li.cats ul li', function(event) {

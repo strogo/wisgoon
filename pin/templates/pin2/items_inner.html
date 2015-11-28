@@ -53,6 +53,16 @@
 			<!-- text -->
 			<div class="post-text">
 				{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
+
+				<div class="post_footer mato20">
+					<div class="time pull-left">
+						<a href="{{post.get_absolute_url}}">{{post.create|date_filter}} <i class="time_icon"></i></a>
+					</div>
+					<div class="cat pull-left">
+						<a href="/category/{{post.category.id}}/">{{post.category}} <i class="cat_icon"></i></a>
+					</div>
+					<div class="clear"></div>
+				</div>
 			</div>
 			<!-- tags -->
 			{% if post.get_tags %}

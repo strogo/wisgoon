@@ -861,7 +861,7 @@ a.btn.btn-primary {
 }
 .post-content .post-text {
 	font-size: 13px;
-	padding: 20px 10px;
+	padding: 20px 10px 10px;
 	text-align: right;
 }
 .post-content .post-tags{
@@ -882,6 +882,21 @@ a.btn.btn-primary {
 .post-content .liker_avatars {
 	float: right;
 	padding: 15px;
+}
+.post-content .post_footer a{
+	color: #777 !important;
+}
+.post-content .post_footer a:hover{
+	color: #257399 !important;
+}
+.post-content .post_footer a i{
+	opacity: .6;
+}
+.post-content .post_footer a:hover i{
+	opacity: 1;
+}
+.post-content .post_footer .cat{
+	margin-left: 10px;
 }
 .post-content .liker_avatars img{
 	border-radius: 50px;
@@ -946,6 +961,15 @@ a.btn.btn-primary {
 .post-content #comments .cmnt_item .cmnt_time{
 	font-size: 12px;
 }
+i.cat_icon{
+	background: url("../images/category.png") no-repeat scroll 0 0;
+	height: 15px;
+	width: 15px;
+	display: inline-block;
+	margin-bottom: -4px;
+	margin-right: 5px;
+}
+i.time_icon,
 .post-content #comments .cmnt_item .time_icon {
 	background: url("../images/time.png") no-repeat scroll 0 0;
 	display: inline-block;
