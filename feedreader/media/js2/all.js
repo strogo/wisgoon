@@ -35,7 +35,7 @@ if (disable_masonry==0){
         isRTL: true,
         isResizeBound: false,
         isAnimated: false,
-        isFitWidth: true,
+        isFitWidth: true
     });
 }
 
@@ -365,10 +365,12 @@ $('body').on('click', '.resp-menu', function(event) {
     $('.menu-box').css('display', 'block');
     $('.menu-box').animate({
         width: 320},
-        100, function() {
-        });
+        100, function() {});
 });
 
+$('body').on('mouseleave', '#wis_navbar', function(event) {
+    $(".marker").hide();
+});
 $('body').on('mouseenter', '#wis_navbar > ul > li', function(event) {
     event.preventDefault();
     var t = $(this);

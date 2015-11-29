@@ -1,7 +1,6 @@
 {% load daddy_avatar %}
 {% load pin_tags %}
 <div class="profile box">
-
 	<div class="user-detail">
 		<div class="avatar">
 			<a href="{% url "pin-absuser" post.user_id|get_user_name %}">
@@ -18,13 +17,13 @@
 			</div>
 
 			<div class="user_name">
-				<p>{{post.user.username}}</p>
+				<p>{{post.user.username}} برای این خیلی خوب نمایش داده میشه</p>
 			</div>
 		</div>
 		<div class="clear"></div>
 	</div>
 	<div class="clear"></div>
-	{% if profile.user_id != request.user.id and user.is_authenticated%}
+	{% if profile.user_id != request.user.id and user.is_authenticated %}
 		{% if follow_status == 0 %}
 		<a class="wis_btn green w100 mabo10 ajax-follow" href='{% url "pin-follow" post.user_id 1 %}'>ایجاد دوستی</a>
 		{% else %}
