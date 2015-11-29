@@ -1,5 +1,6 @@
 *.pyc
 *~
+/.idea/*
 /munin/
 /.project
 /.pydevproject
