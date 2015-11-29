@@ -2453,6 +2453,12 @@ div.comment div div.row:hover .del-comment{
 	/*float: left;*/
 	margin-right: 5px !important;
 }
+.user_stat_config .ajax-follow{
+	padding: 3px 10px;
+}
+.user_stat_config .ajax-follow i{
+	padding: 0;
+}
 .user_avtivity > div{
 	text-align: center;
 	color: #424A55;
