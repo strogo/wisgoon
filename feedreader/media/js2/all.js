@@ -90,7 +90,7 @@ $(window).scroll(function() {
     }
 });
 
-function readURL(input, img_id='avatar_img') {
+function readURL(input, img_id) {
     var d = '';
     if (input.files && input.files[0]) {
         var reader = new FileReader();
