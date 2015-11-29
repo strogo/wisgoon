@@ -848,6 +848,13 @@ def absuser(request, user_name=None):
     if profile.banned:
         return render(request, 'pin2/samandehi.html')
 
+    ban_by_admin = False
+    if request.user.is_superuser and not user.is_active:
+        from pin.models import Log
+        ban_by_admin = Log.objects.filter(object_id=user_id, action=Log.BAN_ADMIN, content_type=Log.USER).order_by('-id')
+        if ban_by_admin:
+            ban_by_admin = ban_by_admin[0].text
+
     timestamp = get_request_timestamp(request)
     if timestamp == 0:
         latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
@@ -877,6 +884,7 @@ def absuser(request, user_name=None):
         return render(request, 'pin2/user.html', {
             'latest_items': latest_items,
             'follow_status': follow_status,
+            'ban_by_admin': ban_by_admin,
             'user_id': int(user_id),
             'profile': profile,
         })

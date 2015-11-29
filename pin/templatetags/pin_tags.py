@@ -291,6 +291,18 @@ def pn(value):
     return value
 
 
+@register.filter
+def get_ban(txt):
+    t = txt.split("||")
+
+    try:
+        result = t[1]
+    except:
+        result = txt
+
+    return result
+
+
 def remove_newlines(text):
     """
     Removes all newline characters from a block of text.
