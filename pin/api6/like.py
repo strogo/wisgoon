@@ -1,7 +1,7 @@
 from pin.tools import AuthCache
 from pin.api6.http import return_json_data, return_not_found, return_un_auth, return_bad_request
 from pin.models import Post
-from pin.api6.tools import get_int, get_user_data, get_next_url
+from pin.api6.tools import get_int, get_simple_user_object, get_next_url
 from pin.tools import get_post_user_cache
 from pin.models_redis import LikesRedis
 
@@ -26,7 +26,7 @@ def like_post(request, item_id):
 
     if like:
         user_act = 1
-        user = get_user_data(current_user)
+        user = get_simple_user_object(current_user, post.user_id)
     elif dislike:
         user_act = -1
         user = {}
@@ -57,7 +57,7 @@ def post_likers(request, item_id):
 
     try:
         for user in likers:
-            likers_list.append(get_user_data(user.id))
+            likers_list.append(get_simple_user_object(user.id, post.user_id))
     except Exception as e:
         print e
 

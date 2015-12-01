@@ -59,19 +59,19 @@ def get_json(data):
     return to_json
 
 
-def get_user_data(user_id):
-    user_data = {}
-    avatar = ''
-    try:
-        user = User.objects.get(id=user_id)
-        user_data['id'] = user.id
-        user_data['username'] = user.username
-        if user.profile.avatar:
-            avatar = media_abs_url(str(user.profile.avatar))
-        user_data['avatar'] = avatar
-    except Exception as e:
-        print e
-    return user_data
+# def get_user_data(user_id):
+#     user_data = {}
+#     avatar = ''
+#     try:
+#         user = User.objects.get(id=user_id)
+#         user_data['id'] = user.id
+#         user_data['username'] = user.username
+#         if user.profile.avatar:
+#             avatar = media_abs_url(str(user.profile.avatar))
+#         user_data['avatar'] = avatar
+#     except Exception as e:
+#         print e
+#     return user_data
 
 
 def get_category(cat_id):
@@ -130,14 +130,20 @@ def get_list_post(pl, from_model='latest'):
     return posts
 
 
-def get_simple_user_object(user_id):
-    u = {}
-    u['id'] = user_id
-    u['avatar'] = media_abs_url(get_avatar(user_id, size=64))
-    u['username'] = UserDataCache.get_user_name(user_id)
-    u['posts_url'] = abs_url(reverse('api-6-post-user', kwargs={'user_id': user_id}))
+def get_simple_user_object(current_user, user_id_from_token=None):
+    user_info = {}
+    user_info['id'] = current_user
+    user_info['avatar'] = media_abs_url(get_avatar(current_user, size=64))
+    user_info['username'] = UserDataCache.get_user_name(current_user)
+    user_info['posts_url'] = abs_url(reverse('api-6-post-user', kwargs={'user_id': current_user}))
+    if user_id_from_token:
+        user_info['follow_by_user'] = Follow.objects\
+            .filter(follower_id=current_user, following_id=user_id_from_token)\
+            .exists()
+    else:
+        user_info['follow_by_user'] = False
 
-    return u
+    return user_info
 
 
 def get_last_likers(post_id, limit=3):
@@ -148,12 +154,12 @@ def get_last_likers(post_id, limit=3):
     likers_list = []
     for ll in l:
         ll = int(ll)
-        likers_list.append(get_simple_user_object(user_id=ll))
+        likers_list.append(get_simple_user_object(ll))
 
     return likers_list
 
 
-def get_objects_list(posts, cur_user_id, r=None):
+def get_objects_list(posts, cur_user_id=None, r=None):
 
     objects_list = []
     for p in posts:

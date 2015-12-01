@@ -343,7 +343,6 @@ class Post(models.Model):
         npath = "%s/%s" % (idir, nname)
         if not os.path.exists(npath):
             img.save(npath)
-
         return ibase, nname, h
 
     def get_image_sizes(self):
@@ -395,12 +394,11 @@ class Post(models.Model):
                 try:
                     ibase, nname, h = self.save_thumb(basewidth=236)
                 except IOError:
-                    # print str(e), "get_image_236"
+                    # print "get_image_236"
                     return False
                 except Exception:
                     # print str(e), "get_image_236"
                     return False
-
                 new_image_url = ibase + "/" + nname
                 try:
                     p, created = PostMetaData.objects\
@@ -736,7 +734,6 @@ class Post(models.Model):
 
     def approve(self):
         from tasks import send_notif_bar
-        print "current approve:", self.status
 
         Post.objects.filter(pk=self.id)\
             .update(status=self.APPROVED, timestamp=time.time())
@@ -1192,6 +1189,7 @@ class Comments(models.Model):
         from pin.classification import get_comment_category
         com_cat = str(get_comment_category(self.comment))
         if int(com_cat) in [2]:
+            print "ass"
             Log.bad_comment(post=self.object_pk,
                             actor=self.user,
                             ip_address=self.ip_address,
@@ -1199,15 +1197,17 @@ class Comments(models.Model):
             return
 
         if (self.user.profile.score < settings.SCORE_FOR_COMMENING):
+            print "asas"
             return
 
         if not self.pk:
+            print "dsds"
             Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
 
         comment_cache_name = "com_%d" % int(self.object_pk_id)
         cache.delete(comment_cache_name)
-        # print "gaz"
+        print "gaz"
 
         super(Comments, self).save(*args, **kwargs)
 

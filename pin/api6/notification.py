@@ -1,7 +1,7 @@
 from pin.tools import AuthCache
 from pin.api6.http import return_json_data, return_un_auth, return_bad_request
 from pin.model_mongo import NotifCount, Notif
-from pin.api6.tools import get_list_post, get_objects_list, get_user_data, get_next_url
+from pin.api6.tools import get_list_post, get_objects_list, get_simple_user_object, get_next_url
 
 
 def notif_count(request):
@@ -48,8 +48,8 @@ def notif(request):
     for notif in notifs:
         data_extra = {}
         if notif.type == Notif.LIKE:
-            data_extra['actor'] = get_user_data(notif.last_actor)
-            data_extra['owner'] = get_user_data(notif.owner)
+            data_extra['actor'] = get_simple_user_object(notif.last_actor, notif.owner)
+            data_extra['owner'] = get_simple_user_object(notif.owner, notif.last_actor)
             try:
                 posts = get_list_post([notif.post])
                 post_object = get_objects_list(posts, cur_user_id=current_user, r=request)[0]
@@ -61,15 +61,15 @@ def notif(request):
             notifs_list.append(data_extra)
 
         elif notif.type == Notif.FOLLOW:
-            data_extra['actor'] = get_user_data(notif.last_actor)
-            data_extra['owner'] = get_user_data(notif.owner)
+            data_extra['actor'] = get_simple_user_object(notif.last_actor, notif.owner)
+            data_extra['owner'] = get_simple_user_object(notif.owner, notif.last_actor)
             data_extra['type'] = Notif.FOLLOW
             data_extra['id'] = str(notif.id)
             notifs_list.append(data_extra)
 
         elif notif.type == Notif.COMMENT:
-            data_extra['actor'] = get_user_data(notif.last_actor)
-            data_extra['owner'] = get_user_data(notif.owner)
+            data_extra['actor'] = get_simple_user_object(notif.last_actor, notif.owner)
+            data_extra['owner'] = get_simple_user_object(notif.owner, notif.last_actor)
             data_extra['id'] = str(notif.id)
             data_extra['type'] = Notif.COMMENT
             try:
@@ -81,8 +81,8 @@ def notif(request):
             notifs_list.append(data_extra)
 
         else:
-            data_extra['actor'] = get_user_data(notif.last_actor)
-            data_extra['owner'] = get_user_data(notif.owner)
+            data_extra['actor'] = get_simple_user_object(notif.last_actor, notif.owner)
+            data_extra['owner'] = get_simple_user_object(notif.owner, notif.last_actor)
             data_extra['type'] = Notif.DELETE_POST
             data_extra['id'] = str(notif.id)
             notifs_list.append(data_extra)

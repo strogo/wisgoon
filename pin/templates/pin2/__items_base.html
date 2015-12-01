@@ -1,6 +1,5 @@
 {% load daddy_avatar %}
 {% load pin_tags %}
-
 <div class="feed-item masonry-brick">
 	<div class="img-content">
 		<a class="pin-item-link" href="{% url 'pin-item' item.id%}{% if related %}?from={{post.id}}{%endif%}">
