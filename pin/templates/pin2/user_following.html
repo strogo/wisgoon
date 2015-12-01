@@ -33,7 +33,7 @@
 <h3>موردی پیدا نشد</h3>
 {% endif %}
 
-{% if user_items|length > 16 %}
+{% if user_items|length > 15 %}
 <center>
     <a href="{% url 'pin-absuser-following' user.username %}" class="wis_btn mabo50 mato50 load-follow">
         بیشتر
@@ -45,7 +45,6 @@
 
 
 
-{% include "pin/feed_scripts.html" %}
 {% include "pin/pin_scripts.html" %}
 
 {% endblock content %}

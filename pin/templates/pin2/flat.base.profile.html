@@ -10,6 +10,7 @@
 	
 	{% block opengraph %} {% endblock %}
 	{% include "pin2/all_header.html" %}
+	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/croppie.css" />
 
 	<script type="text/javascript">
 		var media_url = "{{MEDIA_URL}}";
@@ -55,8 +56,8 @@
 		
 		{% block footer_script %}{% endblock %}
 		
-		{% block footer_ex_js %}
-		{% endblock footer_ex_js %}
+		{% block footer_ex_js %}{% endblock footer_ex_js %}
+		<script src="{{MEDIA_URL}}v2/js/croppie.min.js"></script>
 		
 		{% block js %}
 		{% endblock js %}

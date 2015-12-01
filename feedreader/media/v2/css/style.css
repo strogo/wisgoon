@@ -1,4 +1,3 @@
-
 /* basic */
 ::selection {background: #333333;color: #fff;}
 ::-moz-selection {background: #333333;color: #fff;}
@@ -34,7 +33,11 @@ hr{border-color: #d0d9e2 !important;}
 	margin-left: 10px;
 	padding: 0 !important;
 }
+.tale{text-align: left !important;}
+.tari{text-align: right !important;}
 /*height*/
+.dr{direction: rtl !important;}
+.dl{direction: ltr !important;}
 .he0{height:0px !important;display:block;}
 .he5{height:5px !important;display:block;}
 .he10{height:10px !important;display:block;}
@@ -254,10 +257,6 @@ a, a:link, a:hover, a:visited {
 .red{color: red;}
 .green{color: green;}
 #main {
-<<<<<<< HEAD
-=======
-	/*border-top: 1px solid #d4d8e1;*/
->>>>>>> 4257c88aa6dd739d1291a11e33a76ba2393c6171
 	margin-bottom: 15px;
 }
 .container-fluid{
@@ -863,7 +862,7 @@ a.btn.btn-primary {
 }
 .post-content .post-text {
 	font-size: 13px;
-	padding: 20px 10px;
+	padding: 20px 10px 10px;
 	text-align: right;
 }
 .post-content .post-tags{
@@ -884,6 +883,21 @@ a.btn.btn-primary {
 .post-content .liker_avatars {
 	float: right;
 	padding: 15px;
+}
+.post-content .post_footer a{
+	color: #777 !important;
+}
+.post-content .post_footer a:hover{
+	color: #257399 !important;
+}
+.post-content .post_footer a i{
+	opacity: .6;
+}
+.post-content .post_footer a:hover i{
+	opacity: 1;
+}
+.post-content .post_footer .cat{
+	margin-left: 10px;
 }
 .post-content .liker_avatars img{
 	border-radius: 50px;
@@ -948,6 +962,15 @@ a.btn.btn-primary {
 .post-content #comments .cmnt_item .cmnt_time{
 	font-size: 12px;
 }
+i.cat_icon{
+	background: url("../images/category.png") no-repeat scroll 0 0;
+	height: 15px;
+	width: 15px;
+	display: inline-block;
+	margin-bottom: -4px;
+	margin-right: 5px;
+}
+i.time_icon,
 .post-content #comments .cmnt_item .time_icon {
 	background: url("../images/time.png") no-repeat scroll 0 0;
 	display: inline-block;
@@ -2258,6 +2281,7 @@ div.comment div div.row:hover .del-comment{
 #wis_navbar > ul > li:hover{
 }
 
+#wis_navbar  ul li.open > a,
 #wis_navbar  ul li.active > a,
 #wis_navbar > ul > li:hover > a{
 	color: #ff6a00;
@@ -2332,13 +2356,11 @@ div.comment div div.row:hover .del-comment{
 }
 
 #wis_navbar .cats .sub-cats {
-	left: 0;
-	position: absolute;
-	right: 0;
 	background: #fefefe none repeat scroll 0 0;
 	border: 1px solid #ccc;
-	box-shadow: 0 0 1px #fff;
-	margin: 0 10px;
+	left: -1px;
+	position: absolute;
+	right: -1px;
 }
 #wis_navbar .cats .sub-cats li{
 	list-style: none;
@@ -2416,8 +2438,8 @@ div.comment div div.row:hover .del-comment{
 	width: 100%;
 }
 .profile_data .user_status{
-	height: 105px;
-	overflow: hidden;
+	min-height: 105px;
+	position: relative;
 }
 .profile_data .user_avtivity{
 	border-top: 1px solid #d0d9e2;
@@ -2427,10 +2449,17 @@ div.comment div div.row:hover .del-comment{
 .user_stat_config{
 	left: 0;
 	position: absolute;
-	top: 65px;
+	bottom: 8px;
 }
-.user_stat_config a{
-	float: left;
+.user_stat_config .wis_btn{
+	/*float: left;*/
+	margin-right: 5px !important;
+}
+.user_stat_config .ajax-follow{
+	padding: 3px 10px;
+}
+.user_stat_config .ajax-follow i{
+	padding: 0;
 }
 .user_avtivity > div{
 	text-align: center;
@@ -2450,9 +2479,34 @@ div.comment div div.row:hover .del-comment{
 .user_stat_config .profile_config{
 	padding: 1px;
 }
-.user_stat_config .profile_config i{
+.user_stat_config i{
 	font-size: 20px;
 	padding: 4px 8px;
+}
+.dropdown-header {
+	color: #f26b05;
+	font-size: 14px;
+	font-weight: bold;
+}
+.profile_change .avatar_box{}
+.profile_change .avatar_box #id_avatar{
+	display: none;
+}
+.profile_change .avatar_box > div > a {
+	clear: both !important;
+	display: block;
+	font-size: 0;
+}
+.profile_change .current_avatar img{
+	width: 128px;
+	height: 128px;
+}
+.profile_change .upload_img_btn,
+.profile_change label{
+	cursor: pointer;
+}
+.hide{
+	display: none;
 }
 
 /* follow box */

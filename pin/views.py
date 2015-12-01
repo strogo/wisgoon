@@ -848,6 +848,13 @@ def absuser(request, user_name=None):
     if profile.banned:
         return render(request, 'pin2/samandehi.html')
 
+    ban_by_admin = False
+    if request.user.is_superuser and not user.is_active:
+        from pin.models import Log
+        ban_by_admin = Log.objects.filter(object_id=user_id, action=Log.BAN_ADMIN, content_type=Log.USER).order_by('-id')
+        if ban_by_admin:
+            ban_by_admin = ban_by_admin[0].text
+
     timestamp = get_request_timestamp(request)
     if timestamp == 0:
         latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
@@ -877,6 +884,7 @@ def absuser(request, user_name=None):
         return render(request, 'pin2/user.html', {
             'latest_items': latest_items,
             'follow_status': follow_status,
+            'ban_by_admin': ban_by_admin,
             'user_id': int(user_id),
             'profile': profile,
         })
@@ -912,7 +920,7 @@ def item(request, item_id):
     # pl = Likes.objects.filter(post_id=post.id)[:12]
     from models_redis import LikesRedis
     post.likes = LikesRedis(post_id=post.id)\
-        .get_likes(offset=0, limit=12, as_user_object=True)
+        .get_likes(offset=0, limit=7, as_user_object=True)
 
     # s = SearchQuerySet().models(Post).more_like_this(post)
     # print "seems with:", post.id, s[:5]

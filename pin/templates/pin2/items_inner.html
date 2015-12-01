@@ -53,6 +53,16 @@
 			<!-- text -->
 			<div class="post-text">
 				{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
+
+				<div class="post_footer mato20">
+					<div class="time pull-left">
+						<a href="{{post.get_absolute_url}}">{{post.create|date_filter}} <i class="time_icon"></i></a>
+					</div>
+					<div class="cat pull-left">
+						<a href="/category/{{post.category.id}}/">{{post.category}} <i class="cat_icon"></i></a>
+					</div>
+					<div class="clear"></div>
+				</div>
 			</div>
 			<!-- tags -->
 			{% if post.get_tags %}
@@ -101,12 +111,12 @@
 			</div>
 		</div>
 
+		{% if user.is_authenticated and user.is_active %}
 		<div id="submit_comment" class="box">
-			{% if user.is_authenticated and user.is_active %}
 			{% include "pin2/__comment_submit.html" %}	
-			{% endif %}
 			<div class="clear"></div>
 		</div>
+		{% endif %}
 
 		<div id="comments" class="box">
 			<div class="col-md-12 col-sm-12 col-xs-12 pa0">
