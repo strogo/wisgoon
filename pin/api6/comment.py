@@ -2,7 +2,7 @@ from pin.tools import AuthCache
 from pin.api6.http import return_json_data, return_not_found, return_un_auth, return_bad_request
 from pin.models import Comments, Post
 from django.views.decorators.csrf import csrf_exempt
-from pin.api6.tools import get_int, get_next_url, get_user_data
+from pin.api6.tools import get_int, get_next_url, get_simple_user_object
 from django.utils.translation import ugettext as _
 
 
@@ -22,7 +22,7 @@ def comment_post(request, item_id):
             comment_dict = {}
             comment_dict['id'] = comment.id
             comment_dict['comment'] = comment.comment
-            comment_dict['user'] = get_user_data(comment.user.id)
+            comment_dict['user'] = get_simple_user_object(comment.user.id)
             comments_list.append(comment_dict)
     except Exception as e:
         print e
@@ -62,7 +62,7 @@ def add_comment(request, item_id):
         comment = Comments.objects.create(object_pk=post, comment=text,
                                           user_id=get_int(current_user))
         comment_data = {'id': comment.id,
-                        'user': get_user_data(comment.user.id),
+                        'user': get_simple_user_object(comment.user.id, post.user_id),
                         'comment': comment.comment, 'status': True,
                         'message': 'Successfully Create Comment.'}
         return return_json_data(comment_data)
