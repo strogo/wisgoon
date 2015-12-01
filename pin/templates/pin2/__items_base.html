@@ -7,7 +7,6 @@
 			<img src="{{ item.get_image_236.url }}" width="236" height="{{ item.get_image_236.h }}" alt="{{item.text|remove_newlines|truncatewords:35}}">
 		</a>
 
-		<div class="img-shadow"></div>
 	</div>
 
 	
@@ -115,8 +114,8 @@
 
 
 		<div class="username">
-			<a href="{% url 'pin-absuser' item.get_username %}">
-				{{item.get_username}}
+			<a href="{% url 'pin-absuser' item.get_username %}" data-toggle="tooltip" data-placement="bottom" title="{{item.user.profile.name}}">
+				{{item.user.profile.name|truncatechars:"18"}}
 			</a>
 		</div>	
 
