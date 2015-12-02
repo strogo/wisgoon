@@ -2,7 +2,7 @@
 {% load pin_tags %}
 <div class="nav">
 	<div class="navbar navbar-default" role="navigation">
-   <!-- <div class="container"> -->
+		<!-- <div class="container"> -->
 		<div class="container" style="position:relative;">
 			<span class="mohrama-eleman" style="z-index:2;float: left; position: absolute; left: 0px; margin-top: 32px;">
 				<img src="{{MEDIA_URL}}v2/images/moharam.png" alt="">
@@ -25,7 +25,7 @@
 				</button>
 				{% endcomment %}
 				<a href="{% url "home" %}" class="header-brand">
-			   <!-- <img src="{{MEDIA_URL}}v2/images/logo.png" alt="{{SITE_NAME_FA}} {{SITE_NAME_EN}}"> -->
+					<!-- <img src="{{MEDIA_URL}}v2/images/logo.png" alt="{{SITE_NAME_FA}} {{SITE_NAME_EN}}"> -->
 					<img src="{{MEDIA_URL}}v2/images/logo.png" alt="{{SITE_NAME_FA}} {{SITE_NAME_EN}}">
 				</a>
 				
@@ -40,77 +40,76 @@
 						
 					</form>
 				</div>
-				<div class="col-md-5 col-sm-7 pull-left" id="top-userinfo">
+				<div class="col-md-5 col-sm-7 pull-right" id="top-userinfo">
 					<ul>
 						
 						{% if request.user.is_authenticated %}
 						<li>
-							<div class="send-photo" data-toggle="tooltip" data-placement="bottom" title="ارسال تصویر">
-								<a aria-expanded="true" data-toggle="dropdown" href=""><span class="glyphicon glyphicon-camera" ></span></a>
-								<ul class="dropdown-menu send-dropdown"
-								role="menu" aria-labelledby="dropdownMenuDivider">
-								<li role="presentation" class="send-border-bottom">
-									<a data-toggle="modal" data-target="#fromImageModal" href="#fromImageModal">
-										ارسال فایل
-									</a>
-								</li>
-								<li role="presentation">
-									<a data-toggle="modal" data-target="#fromUrlModal" href="#fromUrlModal">
-										ارسال از وب
-									</a>
-								</li>
-							</ul>
-						</div>
-					</li>
-					<li>
-						<div class="notification" data-toggle="tooltip" data-placement="bottom" title="اعلانات">
-							<a href="javascript:;" data-load="{% url 'show_notify' %}" title="اعلانات" class="popnotify" >
-								<span class="glyphicon glyphicon-bell"></span> {{request.user.id|get_user_notify}} 
-							</a>
-							<img src="{{MEDIA_URL}}v2/images/top-loading.gif" alt="..." class="loading-img" />
-						</div>
-					</li>
-
-					<li>
-						<div class="setting" data-toggle="tooltip" data-placement="bottom" title="تنظیمات">
-							<a aria-expanded="true" data-toggle="dropdown" href="">
-								<span class="glyphicon glyphicon-cog"></span>
-							</a>
-							<ul class="dropdown-menu setting-dropdown" role="menu" aria-labelledby="dropdownMenuDivider">
-								<li role="presentation" class="setting-border-bottom">
-									<div class="like">
+							<div class="send-photo">
+								<a aria-expanded="true" data-toggle="dropdown" href=""> ارسال عکس 
+									<span class="send_photo_icon"></span>
+								</a>
+								<ul class="dropdown-menu send-dropdown" role="menu" aria-labelledby="dropdownMenuDivider">
+									<li role="presentation" class="send-border-bottom">
+										<a data-toggle="modal" data-target="#fromImageModal" href="#fromImageModal">
+											ارسال فایل
+										</a>
+									</li>
+									<li role="presentation">
+										<a data-toggle="modal" data-target="#fromUrlModal" href="#fromUrlModal">
+											ارسال از وب
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li>
+							<div class="notification">
+								<a href="javascript:;" data-load="{% url 'show_notify' %}" title="اعلانات" class="popnotify" >  
+									{{request.user.id|get_user_notify|pn}} 
+									<i class="notif_icon"></i>
+								</a>
+								<img src="{{MEDIA_URL}}v2/images/top-loading.gif" alt="..." class="loading-img" />
+							</div>
+						</li>
+						<li>
+							<div class="hidden-xs nav_user_avatar">
+								<a aria-expanded="true" data-toggle="dropdown" href="javascript:;">
+									<img class="nav-avatar" src="{{request.user|get_avatar:41}}">
+								</a>
+								<ul class="dropdown-menu setting-dropdown" role="menu" aria-labelledby="dropdownMenuDivider">
+									<li role="presentation" class="setting-border-bottom">
+										<a href="{% url "pin-absuser" request.user %}">نمایش پروفایل</a>
+									</li>
+									<li role="presentation" class="setting-border-bottom">
 										<a href="/accounts/password/change/">تعویض رمز عبور</a>
-									</div>
-									<div class="comment">
+									</li>
+									<li role="presentation" class="setting-border-bottom">
 										<a href="/accounts/logout/">خروج</a>
-									</div>
+									</li>
 
-								</li>
+								</ul>
 
-							</ul>
-						</div>
-					</li>
+								<!-- <a href="{% url 'pin-absuser' user.username %}" class="topnav-user-avatar"> -->
+							</div>
+						</li>
+					</ul>
+				</div>
+				
+			</li>
+			{% else %}
+			<li class="guest">
+				<a href="{% url 'registration_register' %}">عضویت</a>
+			</li>
 
-					<li>
-						<div class="hidden-xs">
-							<a href="{% url 'pin-absuser' user.username %}" class="topnav-user-avatar">
-								<img class="nav-avatar" src="{{request.user|get_avatar:41}}">
-							</a>
-						</div>
-					</li>
-					{% else %}
-					<li class="guest">
-						<a href="{% url 'registration_register' %}">عضویت</a>
-					</li>
-
-					<li class="guest">
-						<a href="/accounts/login/"> ورود</a>
-					</li>
-					{% endif %}
-				</ul>
-			</div>
-		</div>
+			<li class="guest">
+				<a href="/accounts/login/"> ورود</a>
+			</li>
+			{% endif %}
+		</ul>
 	</div>
+</div>
+</div>
 </div>
 <div class="clear"></div>
 </div>
