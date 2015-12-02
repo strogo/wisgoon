@@ -11,12 +11,12 @@
         <div class="profile_data col-sm-10">
             <div class="user_status row">
                 <div class="col-sm-9">
-                    <div class="user_stats col-sm-8">
+                    <div class="user_stats">
                         <h2>
                             <a href='{% url "pin-absuser" profile.user_id|get_user_name %}'>{{profile.name}}</a>
                         </h2>
                         <small>{{profile.user.username}}</small>
-                        <p>{{profile.bio}}</p>
+                        <p>{{profile.bio|linebreaksbr}}</p>
                     </div>
                     <div class="clear"></div>
                 </div>
@@ -84,10 +84,12 @@
                     {% endif %}
 
                     {% if request.user.is_superuser %}
-                        {% if ban_by_admin != False %}
-                            <div class="row">
-                                <div class="col-sm-12 tale">دلیل: <span class="bg-danger">{{ban_by_admin|get_ban}}</span></div>
-                            </div>
+                        {% if ban_by_admin %}
+                            {% if ban_by_admin != "False" %}
+                                <div class="row">
+                                    <div class="col-sm-12 tale">دلیل: <span class="bg-danger">{{ban_by_admin|get_ban}}</span></div>
+                                </div>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
                 </div>

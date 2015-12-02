@@ -20,12 +20,12 @@ function createUploader(){
         allowedExtensions : ['png','jpg','jpe', 'jpeg', 'gif'],
         sizeLimit : 1024*1024*10,
         messages : {
-    		'typeError':'{file} برای بارگذاری مناسب نیست. تنها {extensions} فرمت ها مجاز هستند.',
-    		'sizeError':'{file} بسیار حجیم است. فایل شما باید کمتر از {sizeLimit} باشد.',
-    		'minSizeError':'{file} بسیار کوچک است. فایل شما باید بیشتر از {minSizeLimit} باشد.',
-    		'emptyError':'{file} فایل خالی است!',
-    		'onLeave':'فایل در حال بارگذاری است. در صورت ترک صفحه این عملیات لغو می شود.'},
-        showMessage:function(message){ 
+          'typeError':'{file} برای بارگذاری مناسب نیست. تنها {extensions} فرمت ها مجاز هستند.',
+          'sizeError':'{file} بسیار حجیم است. فایل شما باید کمتر از {sizeLimit} باشد.',
+          'minSizeError':'{file} بسیار کوچک است. فایل شما باید بیشتر از {minSizeLimit} باشد.',
+          'emptyError':'{file} فایل خالی است!',
+          'onLeave':'فایل در حال بارگذاری است. در صورت ترک صفحه این عملیات لغو می شود.'},
+          showMessage:function(message){ 
             alert(message); 
         },
         onComplete : function(id, fileName, responseJSON){
@@ -149,18 +149,29 @@ $('body').on('click', '.btn_like',function(){
         url: like_url,
         success: function(html) {
             ret = html;
-            
             var o = jQuery.parseJSON(ret);
-            
-            obj.children('span.count').text(pn(o[0].likes));
             obj.removeClass('disabled');
-            
-            if (o[0].user_act == 1){
-                obj.parent().addClass('user-liked');
-                alert_show('با موفقیت لایک شد', 'success');
-            }else{
-                obj.parent().removeClass('user-liked');
-                alert_show('لایک شما با موفقیت حذف شد', 'success');
+
+            if (obj.parents('.post_item_inner').length > 0) {
+                if (o[0].user_act == 1){
+                    $('.post_item_inner').find('a.btn_like').parent().addClass('user-liked');
+                    $('.liker_avatars').prepend('<a href="'+profile_url+'" class="my_avatar"><img src="'+profile_avatar+'" /></a>');
+                    alert_show('با موفقیت لایک شد', 'success');
+                }else{
+                    $('.post_item_inner').find('a.btn_like').parent().removeClass('user-liked');
+                    $('.liker_avatars').find('.my_avatar').remove();
+                    alert_show('لایک شما با موفقیت حذف شد', 'success');
+                }
+                $('.post_item_inner').find('a.btn_like').children('span.count').text(pn(o[0].likes));
+            }else{                
+                if (o[0].user_act == 1){
+                    obj.parent().addClass('user-liked');
+                    alert_show('با موفقیت لایک شد', 'success');
+                }else{
+                    obj.parent().removeClass('user-liked');
+                    alert_show('لایک شما با موفقیت حذف شد', 'success');
+                }
+                obj.children('span.count').text(pn(o[0].likes));
             }
         },
         error: function(){

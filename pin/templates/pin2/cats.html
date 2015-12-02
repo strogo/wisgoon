@@ -18,14 +18,14 @@
                         <a href="{% url 'pin-following' %}">مطالب دوستان</a>
                     </li>
                     <li class="{% if page == 'user_like' %} active{% endif %}">
-                        <a href="{% url 'pin-user-like' user.id %}">مطالب مورد علاقه</a>
+                        <a href="{% url 'pin-absuser-like' user %}">مطالب مورد علاقه</a>
                     </li>
                     {% endif %}
     
                     <li class="{% if page == 'latest' %} active{% endif %}"><a href="{% url 'pin-latest' %}">آخرین مطالب</a></li>
                     <li class=""><a href="/search/">جستجو</a></li>
                     <li class="">
-                        <a href="javascript:;">برترینها</a>
+                        <a href="javascript:;">برترینها <i class="fa fa-angle-down"></i></a>
                         <ul>
                             <li><a href="{% url 'pin-popular' %}">همه زمانها</a></li>
                             <li><a href="{% url 'pin-popular-offset' 'month' %}">یک ماه گذشته</a></li>
@@ -35,7 +35,7 @@
                         </ul>
                     </li>
                     <li class="cats">
-                        <a href="javascript:;"> گروه ها</a>
+                        <a href="javascript:;"> گروه ها <i class="fa fa-angle-down"></i></a>
                         <ul>
                             {% for c in subs %}
                             <li class="cat-{{c.id}}{% if c.sub_category %} parent{% endif %}">
@@ -55,14 +55,14 @@
                         </ul>
                     </li>
                     <li class="">
-                        <a href="javascript:;">برترین کاربران</a>
+                        <a href="javascript:;">برترین کاربران <i class="fa fa-angle-down"></i></a>
                         <ul>
                             <li><a href="{% url 'pin-topuser' %}">کل سایت</a></li>
                             <li><a href="{% url 'pin-topgroupuser' %}">گروه ها</a></li>
                         </ul>
                     </li>
                     <li class="{% if page == 'policy' or page == 'feedback' %}active{% endif %}">
-                        <a href="javascript:;">۰۰۰</a>
+                        <a href="javascript:;">۰۰۰ <i class="fa fa-angle-down"></i></a>
                         <ul>
                             <li class="{% if page == 'policy' %} active{% endif %}">
                                 <a href="{% url 'policy' %}">قوانین</a>

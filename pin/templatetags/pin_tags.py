@@ -238,14 +238,40 @@ def check_official(user_id):
 
 
 @register.filter
-def date_filter(index):
+def date_filter(index, time=False):
+    import pytz
     if not isinstance(index, datetime.datetime):
         return ''
-    try:
-        d = khayyam.JalaliDatetime.from_datetime(index).strftime("%d %B %Y")
-    except:
-        d = index
-    return d
+
+    tz = pytz.timezone('Asia/Tehran')
+    t1 = index.astimezone(tz).replace(tzinfo=None)
+    t2 = datetime.datetime.today()
+
+    days = (t2 - t1).days
+    if not days:
+        diff = (t2 - t1)
+        hour, minutue = divmod(diff.days * 86400 + diff.seconds, 3600)
+        if hour:
+            return '%d ساعت پیش' % hour
+        minutue, second = divmod(diff.days * 86400 + diff.seconds, 60)
+        if minutue:
+            return '%d دقیقه پیش' % minutue
+        elif not minutue and second:
+            return '%d ثانیه پیش' % second
+        else:
+            return 'لحظاتی پیش'
+    else:
+        if days > 31:
+            if time:
+                return khayyam.JalaliDatetime.from_datetime(t1).strftime("%d %B %Y- %H:%M")
+            else:
+                return khayyam.JalaliDatetime.from_datetime(t1).strftime("%B %Y")
+        else:
+            weeks = days / 7
+            if days > 7:
+                return '%d هفته پیش' % weeks
+            else:
+                return '%d روز پیش' % days
 
 
 @register.filter

@@ -11,7 +11,7 @@
 			<div class="username">
 				<h3>
 					<a href="{% url "pin-absuser" post.user_id|get_user_name %}">
-						{{post.user.profile.name}}
+						{{post.user.profile.name|truncatechars:"20"}}
 					</a>
 				</h3>
 			</div>
@@ -23,7 +23,7 @@
 		<div class="clear"></div>
 	</div>
 	<div class="clear"></div>
-	{% if profile.user_id != request.user.id and user.is_authenticated %}
+	{% if post.user.id != request.user.id and user.is_authenticated %}
 		{% if follow_status == 0 %}
 		<a class="wis_btn green w100 mabo10 ajax-follow" href='{% url "pin-follow" post.user_id 1 %}'>ایجاد دوستی</a>
 		{% else %}

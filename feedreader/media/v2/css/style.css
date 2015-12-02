@@ -143,16 +143,18 @@ hr{border-color: #d0d9e2 !important;}
 	z-index: 1100;
 }
 .send-photo{
-	background-color: #282e38;
 	text-align: center;
 	color: #fff;
 }
 .send-photo > a {
 	display: block;
 	height: 70px;
-	padding: 25px 20px;
+	padding: 15px 10px;
 }
 .send-photo a span{
+	background-color: #282e38;
+	padding: 18px;
+	border-radius: 50px;
 }
 a, a:link, a:hover, a:visited {
 	/*color: #fff;*/
@@ -164,7 +166,11 @@ a, a:link, a:hover, a:visited {
 }
 .notification a.popnotify{
 	display: block;
-	padding: 25px 20px;
+	padding: 25px 10px;
+}
+.setting-dropdown{
+	left: auto !important;
+	
 }
 .setting{
 	position: relative;
@@ -185,18 +191,7 @@ a, a:link, a:hover, a:visited {
 	border: none !important;
 	border-radius: 0 !important;
 }
-#top-userinfo .setting-dropdown {
-	background-color: #62686e;
-	border: none;
-	border-radius: 0px;
-	margin-top: 0px;
-	min-width: 260px;
-	color: #fff;
-}
-.setting ul li {
-	display: table;
-	padding: 10px 5px;
-}
+
 #top-userinfo .notification-dropdown {
 	background-color: #62686e;
 	border: none;
@@ -882,7 +877,13 @@ a.btn.btn-primary {
 }
 .post-content .liker_avatars {
 	float: right;
+	height: 50px;
+	overflow: hidden;
 	padding: 15px;
+	width: 310px;
+}
+.post-content .liker_avatars a{
+	margin-bottom: 10px;
 }
 .post-content .post_footer a{
 	color: #777 !important;
@@ -1449,16 +1450,37 @@ i.time_icon,
 .nav .open > a:hover, .nav .open > a:focus {
 	background-color: transparent;
 }
+.send-dropdown:before{
+	border-color: rgba(0, 0, 0, 0.15) transparent;
+	border-style: solid;
+	border-width: 0 7px 8px;
+	content: "";
+	display: block;
+	left: 90px;
+	position: absolute;
+	top: -9px;
+	width: 0;
+	z-index: 0;
+}
+.send-dropdown:after{
+	border-color: #4c535c transparent;
+	border-style: solid;
+	border-width: 0 7px 8px;
+	content: "";
+	display: block;
+	left: 90px;
+	position: absolute;
+	top: -8px;
+	width: 0;
+	z-index: 1;
+}
 .send-dropdown {
+	/*border: 1px solid rgba(0, 0, 0, 0.15) !important;*/
 	background-color: #4c535c;
-	border: medium none;
-	border-radius: 0;
-	box-shadow: none;
 	font-size: 13px;
-	margin-top: 0;
-	min-width: 80px;
-	right: 15px;
-	top: 72px;
+	margin-top: -7px;
+	min-width: 200px;
+	right: -20px;
 }
 .send-photo ul li{
 	display: block;
@@ -1469,13 +1491,17 @@ i.time_icon,
 }
 .send-photo ul li a:hover {
 	background: none !important;
-	color: #ff6a00 !important;
+	color: #FFAF00 !important;
 }
 .nav .open > a:focus{
 	background: transparent !important;
 }
+.setting-border-bottom,
 .send-border-bottom {
-	border-bottom: 1px solid #282e38;
+	border-bottom: 1px solid #454A51;
+}
+.setting-border-bottom:last-child{
+	border-bottom: none;
 }
 .friends-dropdown {
 	background-color: #f0f2f5;
@@ -1987,9 +2013,9 @@ a.img-move{
 }
 #top-userinfo .notification .loading-img{
 	display: none;
-	left: 5px;
+	left: 17px;
 	position: absolute;
-	top: 30px;
+	top: 50px;
 }
 .footer-loading-box{
 	padding: 40px;
@@ -2234,12 +2260,72 @@ div.comment div div.row:hover .del-comment{
 .notif-type {
 	padding: 10px 0;
 }
+.notif_icon{
+	width: 16px;
+	height: 19px;
+	display: inline-block;
+	background: url(../images/notification.png) no-repeat;
+	margin-bottom: -5px;
+}
+.send_photo_icon{
+	width: 22px;
+	height: 18px;
+	display: inline-block;
+	background: url(../images/send_pic.png) no-repeat center center;
+	margin-bottom: -11px;
+}
 .notif-actors a.user-avatar{
 	display: inline-block;
 	margin: 0 3px 6px;
 }
 .footer-loading-img, .comment-loading-img{
 	display: none;
+}
+.nav_user_avatar > a{
+	display: inline-block;
+	margin-right: 10px;
+}
+.nav_user_avatar .dropdown-menu:before{
+	border-color: rgba(0, 0, 0, 0.15) transparent;
+	border-style: solid;
+	border-width: 0 7px 8px;
+	content: "";
+	display: block;
+	left: 92px;
+	position: absolute;
+	top: -9px;
+	width: 0;
+	z-index: 0;
+}
+.nav_user_avatar .dropdown-menu:after{
+	border-color: #4c535c transparent;
+	border-style: solid;
+	border-width: 0 7px 8px;
+	content: "";
+	display: block;
+	left: 92px;
+	position: absolute;
+	top: -8px;
+	width: 0;
+	z-index: 1;
+}
+.nav_user_avatar .dropdown-menu{
+	background-color: #4c535c;
+	/*display: block;*/
+	left: 20px !important;
+	min-width: 200px;
+	right: auto !important;
+	margin-top: -6px;
+}
+.nav_user_avatar .dropdown-menu li{
+	display: block !important;
+}
+.nav_user_avatar .dropdown-menu li a{
+
+}
+.nav_user_avatar .dropdown-menu li a:hover{
+	color: #FFAF00 !important;
+	background: none;
 }
 .popover-close{
 	left: 3px;

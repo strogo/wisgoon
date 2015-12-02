@@ -1,4 +1,5 @@
 {% load compress %}
+{% load daddy_avatar %}
 
 <script type="text/javascript" src="{{MEDIA_URL}}v2/js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}v2/js/bootstrap.min.js"></script>
@@ -52,6 +53,10 @@
 
 <script type="text/javascript" src="{{MEDIA_URL}}js2/all.js?ver={{STATIC_VERSION}}"></script>
 {% if user.is_authenticated %}
+<script type="text/javascript">
+	var profile_url = '{% url "pin-absuser" request.user %}';
+	var profile_avatar = '{{request.user|get_avatar:41}}';
+</script>
 <script type="text/javascript" src="{{MEDIA_URL}}js2/pin-user.js?ver={{STATIC_VERSION}}"></script>
 {% endif %}
 

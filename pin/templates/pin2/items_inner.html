@@ -77,7 +77,7 @@
 			<div class="post_activity">
 				<div class="activity_btn">
 					<div class="btn-box comment">
-						<a href="#comments-box">
+						<a href="#submit_comment">
 							<span class="cnt-like">{{post.cnt_comments|pn}}</span>
 							<span class="cmnt_icon"></span>
 						</a>
@@ -101,7 +101,7 @@
 
 				<div class="liker_avatars">
 					{% for liker in post.likes %}
-					<a href="{% url "pin-absuser" liker.username %}">
+					<a href="{% url "pin-absuser" liker.username %}" {% if liker.id == request.user.id %}class="my_avatar"{% endif %}>
 						<img src="{{liker|get_avatar:50}}">
 					</a>
 					{% endfor %}
