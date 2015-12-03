@@ -31,7 +31,7 @@ function createUploader(){
         onComplete : function(id, fileName, responseJSON){
             if(responseJSON.success)
             {
-                $('#file-uploader').hide();
+                // $('#file-uploader').hide();
                 $('.uploaded-image').html('<img src="/media/pin/temp/t/'+responseJSON.file+'">');
                 $('#image_field').val(responseJSON.file);
                 image_selected=1;

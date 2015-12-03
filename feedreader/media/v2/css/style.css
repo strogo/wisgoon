@@ -142,6 +142,9 @@ hr{border-color: #d0d9e2 !important;}
 #fromImageModal{
 	z-index: 1100;
 }
+#fromImageModal .uploaded-image {
+	margin-bottom: 15px;
+}
 .send-photo{
 	text-align: center;
 	color: #fff;
@@ -160,6 +163,7 @@ a, a:link, a:hover, a:visited {
 	/*color: #fff;*/
 
 }
+/* notification */
 .notification{
 	position: relative;
 	z-index: 900000;
@@ -168,6 +172,26 @@ a, a:link, a:hover, a:visited {
 	display: block;
 	padding: 25px 10px;
 }
+.notification .popover{
+	background: #4C535C;
+}
+.notification .popover h3 {
+	color: #fff;
+	background: #434a54;
+	border: 0 none;
+}
+.popover_notif .notif_img{
+	display: flex;
+	float: left;
+	height: 40px;
+	overflow: hidden;
+	width: 40px;
+}
+.popover_notif .notif_img img {
+	height: 100%;
+	width: 100%;
+}
+/* end notification */
 .setting-dropdown{
 	left: auto !important;
 	
@@ -1539,7 +1563,7 @@ i.time_icon,
 }
 
 .notif {
-	border-bottom: 1px solid #DADADA;
+	border-bottom: 1px solid #5e646d;
 	clear: both;
 	margin-bottom: 10px;
 	margin-top: 10px;
@@ -1547,9 +1571,16 @@ i.time_icon,
 	padding-bottom: 10px;
 }
 
-.notif a img{
-	width: 24px;
+.popover.bottom > .arrow::after {
+	border-bottom-color: #434a54;
+}
+.popover.bottom > .arrow {
+	border-bottom-color: rgba(0, 0, 0, .8);
+}
+.notif a.actor img{
+	width: 45px;
 	padding: 2px;
+	border-radius: 45px;
 }
 
 .notification .popover {
@@ -1565,7 +1596,17 @@ i.time_icon,
 .notification .popover-content a{
 	color: #000;
 }
-
+.notification .popover-content .wis_btn {
+	color: #fff;
+}
+.notification .popover-content .notif_text {
+	color: #fff;
+	font-size: 11px;
+	padding: 10px 5px 0 0;
+}
+.notification .popover-content .notif_text .glyphicon-heart{
+	color: #ff6b01;
+}
 a.img-move{
 	color: #333;
 }
@@ -2250,9 +2291,12 @@ div.comment div div.row:hover .del-comment{
 	border-radius: 3px;
 	border: 1px solid #555;
 }
+
 .notif-item{
 	padding: 10px;
 	border-bottom: 1px solid #bbb;
+	margin: 0 auto;
+	width: 600px;
 }
 .notif-item:hover{
 	background: #ddd;
@@ -2328,10 +2372,13 @@ div.comment div div.row:hover .del-comment{
 	background: none;
 }
 .popover-close{
-	left: 3px;
+	color: #fff !important;
+	font-size: 20px;
+	font-weight: bold;
+	left: 6px;
+	padding: 0 7px;
 	position: absolute;
 	top: 3px;
-	padding: 5px 10px;
 }
 .webui-popover.bottom > .arrow, .webui-popover.bottom-right > .arrow, .webui-popover.bottom-left > .arrow {
 	direction: ltr;
