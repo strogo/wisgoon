@@ -23,9 +23,13 @@
 	<div id="pagetop"></div>
 	{% include "pin2/nav.html" %}
 	{% include "pin2/cats.html" %}
+
+	{% if DEBUG != "True" %}
 	<div class="tabliq-block" style="text-align:center">
 		{% include "base/clickyab.html" %}
 	</div>
+	{% endif %}
+	
 	{% block content %}{% endblock content%}
 
 	{% if next_url %}
