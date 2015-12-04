@@ -98,4 +98,5 @@ def global_values(request):
             'SITE_NAME_FA': settings.SITE_NAME_FA,
             'SITE_NAME_EN': settings.SITE_NAME_EN,
             'SITE_DESC': settings.SITE_DESC,
+            'DEBUG': settings.DEBUG,
             'SITE_URL_NAME': settings.SITE_URL_NAME}

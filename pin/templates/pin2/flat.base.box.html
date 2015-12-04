@@ -20,9 +20,12 @@
 	{% include "pin2/cats.html" %}
 
 	
+	{% if DEBUG != "True" %}
 	<div class="tabliq-block" style="text-align:center">
 		{% include "base/clickyab.html" %}
 	</div>
+	{% endif %}
+	
 	<div class="container">
 		{% comment %}
 		{% endcomment %}

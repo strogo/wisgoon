@@ -28,7 +28,6 @@ var loadingobj ;
 var a_url = a_url || "";
 var extend_query = extend_query || "";
 var disable_masonry = disable_masonry || 0 ;
-// var start_loading = 0;
 if (disable_masonry==0){
     feedobj.masonry({
         itemSelector : '.feed-item',
@@ -337,7 +336,7 @@ $('body').on('click', '.menu-box ul li.parent > a', function(event) {
 
 $('body').on('click', '.menu-box .colse-menu-btn', function(event) {
     event.preventDefault();
-    $('.menu-box').width(0);
+    $('.menu-box').hide('fast
 });
 
 $('body').on('click', '.report-btn', function(event) {
@@ -424,15 +423,6 @@ $('body').on('click', '.cats > ul > li', function(event) {
 $('body').on('click', '.sub-cats a', function(event) {
     window.location.href = $(this).attr('href');
 });
-
-// $('body').on('mouseleave', '.cats > ul > li', function(event) {
-//     event.preventDefault();
-//     var t = $(this);
-//     var ch = t.children('ul.sub-cats');
-//     if (ch.length > 0) {
-//         ch.stop(true, true).slideUp(300);
-//     }
-// });
 
 var l = $('.cats > ul > li');
 l.width(100/l.length+'%');
