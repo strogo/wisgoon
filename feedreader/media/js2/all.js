@@ -336,7 +336,7 @@ $('body').on('click', '.menu-box ul li.parent > a', function(event) {
 
 $('body').on('click', '.menu-box .colse-menu-btn', function(event) {
     event.preventDefault();
-    $('.menu-box').hide('fast
+    $('.menu-box').hide('fast');
 });
 
 $('body').on('click', '.report-btn', function(event) {
