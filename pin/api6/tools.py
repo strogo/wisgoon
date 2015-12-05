@@ -200,8 +200,14 @@ def get_objects_list(posts, cur_user_id=None, r=None):
             # print str(e)
             o['is_ad'] = False
 
-        o['permalink'] = abs_url(reverse("api-6-post-item",
-                                         kwargs={"item_id": p.id}))
+        o['permalink'] = {}
+
+        o['permalink']['api'] = abs_url(reverse("api-6-post-item",
+                                                kwargs={"item_id": p.id}))
+
+        o['permalink']['web'] = abs_url(reverse("pin-item",
+                                                kwargs={"item_id": p.id}),
+                                        api=False)
 
         if cur_user_id:
             o['like_with_user'] = LikesRedis(post_id=p.id)\
