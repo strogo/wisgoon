@@ -156,7 +156,10 @@ def get_last_likers(post_id, limit=3):
     likers_list = []
     for ll in l:
         ll = int(ll)
-        likers_list.append(get_simple_user_object(ll))
+        u = {
+            'user': get_simple_user_object(ll)
+        }
+        likers_list.append(u)
 
     return likers_list
 

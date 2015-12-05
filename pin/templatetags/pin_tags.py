@@ -325,9 +325,8 @@ def pn(value):
 
 @register.filter
 def get_ban(txt):
-    t = txt.split("||")
-
     try:
+        t = txt.split("||")
         result = t[1]
     except:
         result = txt
