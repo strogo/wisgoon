@@ -48,7 +48,7 @@ mlt: {{mlt.0.object.id}}
             $container.masonry({
                 isFitWidth: true,
                 gutterWidth: 3,
-                columnWidth: 130,
+                // columnWidth: 130,
                 itemSelector: '.user-post-item'
             });
             if (d.objects.length < 12) {
@@ -57,11 +57,17 @@ mlt: {{mlt.0.object.id}}
                 var t = 12;
             }
             for (var i = t - 1; i >= 0; i--) {
+                var cur_obj = d.objects[i];
 
-                var href = "{{SITE_URL}}/pin/"+d.objects[i].id+"/";
-                var title = d.objects[i].text;
-                var path = d.objects[i].images.thumbnail.url;
-                html += '<div class="user-post-item"><a href="'+href+'"><img src="'+ path +'" title="'+title+'"></a></div>';
+                var href = "{{SITE_URL}}/pin/" + cur_obj.id + "/";
+                var title = cur_obj.text;
+                var thumbnail = cur_obj.images.thumbnail;
+                var path = thumbnail.url;
+                var width = thumbnail.width;
+                var height = thumbnail.height;
+                wpercent = (125 / width)
+                hsize = parseInt( height * wpercent )
+                html += '<div class="user-post-item"><a href="'+href+'"><img width="'+125+'" height="'+hsize+'" src="'+ path +'" title="'+title+'"></a></div>';
             };
             $("div.user-post-items").append(html).each(function(){
                 $('.user-post-items').masonry('reloadItems');
