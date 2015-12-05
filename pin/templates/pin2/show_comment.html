@@ -1,5 +1,6 @@
 {% load daddy_avatar %}
 {% load humanize %}
+{% if comment %}
 <div class="cmnt_item" id="comment_row_{{comment.id}}">
 
 	<div class="cmnt_avatar">
@@ -25,3 +26,4 @@
 	</div>
 
 </div>
+{% endif %}
