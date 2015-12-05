@@ -4,13 +4,20 @@ when you run "manage.py test".
 
 Replace this with more appropriate tests for your application.
 """
+import unittest
+from models import Profile, CreditLog
+from django.contrib.auth.models import User
 
-from django.test import TestCase
 
+class ProfileTest(unittest.TestCase):
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+    def setUp(self):
+        self.amir, created = User.objects\
+            .get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
+
+    def tearDown(self):
+        super(ProfileTest, self).tearDown()
+
+    def test_create_profile(self):
+        self.profile = Profile.objects.get(user=self.amir)
+        self.assertIsInstance(self.profile, Profile)
