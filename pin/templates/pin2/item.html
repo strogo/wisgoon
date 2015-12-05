@@ -57,10 +57,11 @@ mlt: {{mlt.0.object.id}}
                 var t = 12;
             }
             for (var i = t - 1; i >= 0; i--) {
+                var cur_obj = d.objects[i];
 
-                var href = "{{SITE_URL}}/pin/"+d.objects[i].id+"/";
-                var title = d.objects[i].text;
-                var thumbnail = d.objects[i].images.thumbnail;
+                var href = "{{SITE_URL}}/pin/" + cur_obj.id + "/";
+                var title = cur_obj.text;
+                var thumbnail = cur_obj.images.thumbnail;
                 var path = thumbnail.url;
                 var width = thumbnail.width;
                 var height = thumbnail.height;
