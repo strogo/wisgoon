@@ -60,8 +60,13 @@ mlt: {{mlt.0.object.id}}
 
                 var href = "{{SITE_URL}}/pin/"+d.objects[i].id+"/";
                 var title = d.objects[i].text;
-                var path = d.objects[i].images.thumbnail.url;
-                html += '<div class="user-post-item"><a href="'+href+'"><img src="'+ path +'" title="'+title+'"></a></div>';
+                var thumbnail = d.objects[i].images.thumbnail;
+                var path = thumbnail.url;
+                var width = thumbnail.width;
+                var height = thumbnail.height;
+                wpercent = (125 / width)
+                hsize = parseInt( height * wpercent )
+                html += '<div class="user-post-item"><a href="'+href+'"><img width="'+125+'" height="'+hsize+'" src="'+ path +'" title="'+title+'"></a></div>';
             };
             $("div.user-post-items").append(html).each(function(){
                 $('.user-post-items').masonry('reloadItems');

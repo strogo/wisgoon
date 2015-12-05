@@ -263,9 +263,15 @@ def date_filter(index, time=False):
     else:
         if days > 31:
             if time:
-                return khayyam.JalaliDatetime.from_datetime(t1).strftime("%d %B %Y- %H:%M")
+                try:
+                    return khayyam.JalaliDatetime.from_datetime(t1).strftime("%d %B %Y- %H:%M")
+                except AttributeError:
+                    return t1
             else:
-                return khayyam.JalaliDatetime.from_datetime(t1).strftime("%B %Y")
+                try:
+                    return khayyam.JalaliDatetime.from_datetime(t1).strftime("%B %Y")
+                except AttributeError:
+                    return t1
         else:
             weeks = days / 7
             if days > 7:
