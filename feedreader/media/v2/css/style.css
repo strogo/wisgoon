@@ -86,16 +86,17 @@ hr{border-color: #d0d9e2 !important;}
 	z-index: 12;
 }
 .gotop{
-	background: #434a54;
-	border-radius: 50px 50px 50px 0;
+	background: #434a54 none repeat scroll 0 0;
+	border-radius: 50px;
 	bottom: 10px;
 	color: #fff !important;
-	/*display: block;*/
-	right: 10px;
-	opacity: 0.6;
-	padding: 15px 20px;
-	position: fixed;
 	display: none;
+	height: 50px;
+	opacity: 0.6;
+	padding: 15px 19px;
+	position: fixed;
+	right: 10px;
+	width: 50px;
 }
 .navbar{
 	margin-bottom: 0px;
@@ -1913,6 +1914,21 @@ a.img-move{
 }
 .menu-box ul li ul li:last-child{
 	border-bottom: 0;
+}
+.only_mobile_view{
+	display: none;
+}
+.social_icons_box{
+	padding: 10px;
+	text-align: center;
+}
+.social_icons{
+	margin: 0;
+	padding: 0;
+}
+.social_icons li a,
+.social_icons li{
+	display: inline-block;
 }
 @media (max-width: 540px) {
 	#main > div{
