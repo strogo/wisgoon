@@ -35,6 +35,7 @@ def get_avatar(user, size=165):
         user = int(user)
 
     if isinstance(user, (int, long)):
+        u = UserGeneric()
         u.id = int(user)
 
     if isinstance(user, User):
