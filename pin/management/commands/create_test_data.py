@@ -1,27 +1,36 @@
+# coding: utf-8
+import random
+import time
+import csv
+import sys
+
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from pin.models import Post, Category, SubCategory, Comments, Follow
-import random
-from pin.models_redis import LikesRedis
-import time
+from django.conf import settings
+
 from tastypie.models import ApiKey
+
+from pin.models import Post, Category, SubCategory, Comments, Follow
+from pin.models_redis import LikesRedis
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        word_file = "/usr/share/dict/words"
-        words = open(word_file).read().splitlines()[100:200]
-        sub_category = ['Sport', 'Political', 'Social', 'Cultural', 'Economic']
-        category = ['football', 'volyball', 'doller', 'social', 'cultural', 'economic']
 
         # Create Users
-        create_users(words)
+        create_users()
+
+        # Create Profile
+        create_profile()
 
         # Create Sub Category
-        create_sub_cat(sub_category)
+        create_sub_cat()
 
         # Create Category
-        create_category(category)
+        create_category()
 
         # Create Post
         create_post(1000)
@@ -38,7 +47,7 @@ def create_post(cnt_post):
         filename = "post_%s.jpg" % str(random.randint(1, 50))
         try:
             post = Post()
-            post.image = "pin/blackhole/images/o/%s" % (filename)
+            post.image = "pin/blackhole/test_data/%s" % (filename)
             post.user_id = random.randint(1, 100)
             post.timestamp = time.time()
             post.text = 'slaaaaam'
@@ -76,7 +85,8 @@ def create_like_comment():
     print "Finish Create Commnts and likes"
 
 
-def create_category(category_list):
+def create_category():
+    category_list = ['football', 'volyball', 'doller', 'social', 'cultural', 'economic']
     for cat in category_list:
         try:
             Category.objects.create(title=cat,
@@ -87,7 +97,8 @@ def create_category(category_list):
     print "Finish Create Category"
 
 
-def create_sub_cat(sub_category):
+def create_sub_cat():
+    sub_category = ['Sport', 'Political', 'Social', 'Cultural', 'Economic']
     for sub_cat in sub_category:
         try:
             SubCategory.objects.create(title=sub_cat,
@@ -98,10 +109,23 @@ def create_sub_cat(sub_category):
     print "Finish Create Sub Category"
 
 
-def create_users(usernames_list):
-    for word in usernames_list:
+def create_users():
+    users_list = []
+    media_url = settings.MEDIA_ROOT
+    path = "%s/pin/blackhole/test_data/auth_user.csv" % (media_url)
+    try:
+        f = open(path, 'rb')
+        reader = csv.reader(f)
+        for row in reader:
+            users_list.append([row[1], '1', row[4]])
+        f.close()
+    except Exception as e:
+        print str(e)
+        raise
+
+    for user in users_list:
         try:
-            user = User.objects.create_user(word, '1', 'a.a@gmail.com')
+            user = User.objects.create_user(user[0], user[1], user[2])
             ApiKey.objects.get_or_create(user=user)
         except Exception as e:
             print str(e)
@@ -119,3 +143,39 @@ def create_test_follow():
             print str(e)
             raise
     print "finish Create Follower and following"
+
+
+def create_profile():
+    profile_list = []
+    media_url = settings.MEDIA_ROOT
+    path = "%s/pin/blackhole/test_data/user_profile_profile.csv" % (media_url)
+    try:
+        f = open(path, 'rb')
+        reader = csv.reader(f)
+        for row in reader:
+            profile_list.append([row[1], row[2], row[3], row[4]])
+        f.close()
+    except Exception as e:
+        print str(e)
+        raise
+
+    user_list = User.objects.exclude(username='root').order_by('-id')
+    for index, user in enumerate(user_list):
+        try:
+            if profile_list[index][0]:
+                user.profile.name = profile_list[index][0]
+
+            if profile_list[index][1]:
+                user.profile.location = profile_list[index][1]
+
+            if profile_list[index][2]:
+                user.profile.website = profile_list[index][2]
+
+            if profile_list[index][3]:
+                user.profile.bio = profile_list[index][3]
+            user.profile.save()
+            print "user profile %s Updated" % user.username
+        except Exception as e:
+            print str(e)
+            raise
+    print "Finish Create Users"
