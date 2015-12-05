@@ -303,19 +303,15 @@ def profile(request, user_id):
         if Block.objects.filter(user_id=current_user, blocked_id=user_id).count():
             return return_json_data({"status": False, 'message': 'This User Has Blocked You'})
 
-        follow_status = Follow.objects.filter(follower=current_user,
-                                              following=user_id).count()
-    else:
-        follow_status = None
-
     try:
         profile = Profile.objects.only('banned', 'user', 'score', 'cnt_post', 'cnt_like', 'website', 'credit', 'level', 'bio').get(user_id=user_id)
     except Profile.DoesNotExist:
         profile = Profile.objects.create(user_id=user_id)
 
-    data = {'user': get_simple_user_object(user_id, current_user),
-            'profile': get_profile_data(profile, user_id),
-            'follow_status': follow_status}
+    data = {
+        'user': get_simple_user_object(user_id, current_user),
+        'profile': get_profile_data(profile, user_id)
+    }
     return return_json_data(data)
 
 

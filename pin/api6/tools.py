@@ -135,7 +135,9 @@ def get_simple_user_object(current_user, user_id_from_token=None):
     user_info['id'] = current_user
     user_info['avatar'] = media_abs_url(get_avatar(current_user, size=64))
     user_info['username'] = UserDataCache.get_user_name(current_user)
-    user_info['posts_url'] = abs_url(reverse('api-6-post-user', kwargs={'user_id': current_user}))
+    user_info['related'] = {}
+
+    user_info['related']['posts'] = abs_url(reverse('api-6-post-user', kwargs={'user_id': current_user}))
     if user_id_from_token:
         user_info['follow_by_user'] = Follow.objects\
             .filter(follower_id=current_user, following_id=user_id_from_token)\
