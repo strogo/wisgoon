@@ -39,7 +39,7 @@ def post_likers(request, item_id):
     data = {}
     data['meta'] = {'limit': 20,
                     'next': '',
-                    'total_count': 1000}
+                    'total_count': LikesRedis(post_id=item_id).cntlike()}
     likers_list = []
     before = request.GET.get('before', False)
     if not before:
