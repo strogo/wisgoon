@@ -200,8 +200,14 @@ def get_objects_list(posts, cur_user_id=None, r=None):
             # print str(e)
             o['is_ad'] = False
 
-        o['permalink'] = abs_url(reverse("api-6-post-item",
-                                         kwargs={"item_id": p.id}))
+        o['permalink'] = {}
+
+        o['permalink']['api'] = abs_url(reverse("api-6-post-item",
+                                                kwargs={"item_id": p.id}))
+
+        o['permalink']['web'] = abs_url(reverse("pin-item",
+                                                kwargs={"item_id": p.id}),
+                                        api=False)
 
         if cur_user_id:
             o['like_with_user'] = LikesRedis(post_id=p.id)\
@@ -210,20 +216,30 @@ def get_objects_list(posts, cur_user_id=None, r=None):
         o['images'] = {}
         try:
             p_500 = p.get_image_500(api=True)
+
+            p_500['url'] = media_abs_url(p_500['url'])
+            p_500['height'] = int(p_500['hw'].split("x")[0])
+            p_500['width'] = int(p_500['hw'].split("x")[1])
+
+            del(p_500['hw'])
+            del(p_500['h'])
+
             o['images']['low_resolution'] = p_500
-            o['images']['low_resolution']['url'] = media_abs_url(p_500['url'])
-            o['images']['low_resolution']['height'] = int(p_500['hw'].split("x")[0])
-            o['images']['low_resolution']['width'] = int(p_500['hw'].split("x")[1])
-            del(o['images']['low_resolution']['hw'])
-            del(o['images']['low_resolution']['h'])
+            # o['images']['low_resolution']['url'] = media_abs_url(p_500['url'])
+            # o['images']['low_resolution']['height'] = int(p_500['hw'].split("x")[0])
+            # o['images']['low_resolution']['width'] = int(p_500['hw'].split("x")[1])
+            # del(o['images']['low_resolution']['hw'])
+            # del(o['images']['low_resolution']['h'])
 
             p_236 = p.get_image_236(api=True)
+
+            p_236['url'] = media_abs_url(p_236['url'])
+            p_236['height'] = int(p_236['hw'].split("x")[0])
+            p_236['width'] = int(p_236['hw'].split("x")[1])
+            del(p_236['hw'])
+            del(p_236['h'])
+
             o['images']['thumbnail'] = p_236
-            o['images']['thumbnail']['url'] = media_abs_url(p_236['url'])
-            o['images']['thumbnail']['height'] = int(p_236['hw'].split("x")[0])
-            o['images']['thumbnail']['width'] = int(p_236['hw'].split("x")[1])
-            del(o['images']['thumbnail']['hw'])
-            del(o['images']['thumbnail']['h'])
 
             p_original = p.get_image_sizes()
             o['images']['original'] = p_original

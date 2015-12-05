@@ -8,9 +8,9 @@
 <meta property="og:title" content="{{post.text|striptags|remove_newlines|truncatechars:66}}" />
 <meta property="og:description" content="{{post.text|striptags|remove_newlines|truncatewords:30}}" />
 <meta property="og:type" content="image/jpeg" />
-<meta property="og:url" content="{{ post.get_host_url}}" />
-<meta property="og:image" content="{{ post.get_image_absolute_url }}" />
-<link rel="canonical" href="{{ post.get_host_url}}" />
+<meta property="og:url" content="{{post.get_host_url}}" />
+<meta property="og:image" content="{{post.get_image_absolute_url}}" />
+<link rel="canonical" href="{{post.get_host_url}}" />
 {% endblock opengraph %}
 
 {% block content %}
@@ -45,6 +45,7 @@ mlt: {{mlt.0.object.id}}
         .done(function(d) {
             var html = '';
             var $container = $('.user-post-items');
+            var otherPostWidth = 125;
             $container.masonry({
                 isFitWidth: true,
                 gutterWidth: 3,
@@ -56,18 +57,17 @@ mlt: {{mlt.0.object.id}}
             }else{
                 var t = 12;
             }
-            for (var i = t - 1; i >= 0; i--) {
-                var cur_obj = d.objects[i];
 
-                var href = "{{SITE_URL}}/pin/" + cur_obj.id + "/";
-                var title = cur_obj.text;
-                var thumbnail = cur_obj.images.thumbnail;
-                var path = thumbnail.url;
-                var width = thumbnail.width;
-                var height = thumbnail.height;
-                wpercent = (125 / width)
-                hsize = parseInt( height * wpercent )
-                html += '<div class="user-post-item"><a href="'+href+'"><img width="'+125+'" height="'+hsize+'" src="'+ path +'" title="'+title+'"></a></div>';
+            for (var i = t - 1; i >= 0; i--) {
+                var curObj = d.objects[i];
+                var href = curObj.permalink.web;
+                var title = curObj.text;
+                var path = curObj.images.thumbnail.url;
+                var width = curObj.images.thumbnail.width;
+                var height = curObj.images.thumbnail.height;
+                wpercent = (otherPostWidth / width);
+                hsize = parseInt(height * wpercent);
+                html += '<div class="user-post-item"><a href="'+href+'"><img width="'+otherPostWidth+'" height="'+hsize+'" src="'+ path +'" title="'+title+'"></a></div>';
             };
             $("div.user-post-items").append(html).each(function(){
                 $('.user-post-items').masonry('reloadItems');

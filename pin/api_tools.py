@@ -41,9 +41,12 @@ def get_next_url(url_name, before, token):
     return abs_url(n_url_p)
 
 
-def abs_url(url):
+def abs_url(url, api=True):
     if not url.startswith('http://'):
-        return settings.API_URL + url
+        if api:
+            return settings.API_URL + url
+        else:
+            return settings.SITE_URL + url
 
 
 def media_abs_url(url):
