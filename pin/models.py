@@ -671,6 +671,13 @@ class Post(models.Model):
     def get_absolute_url(self):
         return ('pin-item', [str(self.id)])
 
+    def get_web_absolute_url(self):
+        from pin.api_tools import abs_url
+
+        return abs_url(reverse("pin-item",
+                               kwargs={"item_id": self.id}),
+                       api=False)
+
     def get_user_url(self):
         url = '/pin/user/%s' % (str(self.user_id))
         return '<a href="%s" target="_blank">%s</a>' % (url, self.user)
