@@ -1,9 +1,9 @@
-from pin.tools import AuthCache
-from pin.api6.http import return_json_data, return_not_found, return_un_auth, return_bad_request
-from pin.models import Post
+from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
+    return_bad_request
 from pin.api6.tools import get_int, get_simple_user_object, get_next_url
-from pin.tools import get_post_user_cache
+from pin.models import Post
 from pin.models_redis import LikesRedis
+from pin.tools import AuthCache, get_post_user_cache
 
 
 def like_post(request, item_id):
@@ -20,7 +20,6 @@ def like_post(request, item_id):
     except Post.DoesNotExist:
         return return_not_found()
 
-    from pin.models_redis import LikesRedis
     like, dislike, current_like = LikesRedis(post_id=item_id)\
         .like_or_dislike(user_id=current_user, post_owner=post.user_id)
 
@@ -51,13 +50,18 @@ def post_likers(request, item_id):
         return return_not_found()
 
     if before:
-        likers = LikesRedis(post_id=post.id).get_likes(offset=get_int(before), limit=12, as_user_object=True)
+        likers = LikesRedis(post_id=post.id)\
+            .get_likes(offset=get_int(before), limit=12, as_user_object=True)
     else:
-        likers = LikesRedis(post_id=post.id).get_likes(offset=0, limit=12, as_user_object=True)
+        likers = LikesRedis(post_id=post.id)\
+            .get_likes(offset=0, limit=12, as_user_object=True)
 
     try:
         for user in likers:
-            likers_list.append(get_simple_user_object(user.id, post.user_id))
+            u = {
+                'user': get_simple_user_object(user.id, post.user_id)
+            }
+            likers_list.append(u)
     except Exception as e:
         print e
 
