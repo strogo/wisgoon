@@ -75,4 +75,4 @@ def post_likers(request, item_id):
         data['meta']['next'] = get_next_url(url_name='api-6-likers-post',
                                             before=int(before) + 20,
                                             url_args={"item_id": item_id})
-    return return_json_data({'status': True, 'post_likers': data})
+    return return_json_data(data)
