@@ -22,6 +22,20 @@ function pn(no){
     n = n.replace(/0/g, '۰');
     return n;
 }
+function en(no){
+    var n = no + '';
+    n = n.replace(/۱/g, '1');
+    n = n.replace(/۲/g, '2');
+    n = n.replace(/۳/g, '3');
+    n = n.replace(/۴/g, '4');
+    n = n.replace(/۵/g, '5');
+    n = n.replace(/۶/g, '6');
+    n = n.replace(/۷/g, '7');
+    n = n.replace(/۸/g, '8');
+    n = n.replace(/۹/g, '9');
+    n = n.replace(/۰/g, '0');
+    return n;
+}
 
 var feedobj = $('#feed');
 var loadingobj ;
