@@ -51,7 +51,7 @@ def create_post():
             post.user_id = random.randint(1, 200)
             post.timestamp = time.time()
             post.text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
-            post.category_id = random.randint(1, 88)
+            post.category_id = random.randint(1, 44)
             post.save()
             print "Post %s Created" % str(index)
 
