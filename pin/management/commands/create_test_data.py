@@ -10,8 +10,12 @@ from django.conf import settings
 
 from tastypie.models import ApiKey
 
+from user_profile.models import Profile
+
 from pin.models import Post, Category, SubCategory, Comments, Follow
 from pin.models_redis import LikesRedis
+
+default_text = u'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.'
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -21,19 +25,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # Create Users
-        create_users()
+        # create_users()
 
         # Create Profile
-        create_profile()
-
-        # Create Sub Category
-        create_sub_cat()
+        # create_profile()
 
         # Create Category
-        create_category()
+        # create_category()
 
         # Create Post
-        create_post(1000)
+        # create_post()
 
         # Create Like an Comments
         create_like_comment()
@@ -42,77 +43,80 @@ class Command(BaseCommand):
         create_test_follow()
 
 
-def create_post(cnt_post):
-    for index in xrange(1, cnt_post + 1):
+def create_post():
+    cnt_post = raw_input("How many posts you want to add?")
+    for index in range(1, int(cnt_post) + 1):
         filename = "post_%s.jpg" % str(random.randint(1, 50))
         try:
             post = Post()
-            post.image = "pin/blackhole/test_data/%s" % (filename)
-            post.user_id = random.randint(1, 100)
+            post.image = "v2/test_data/images/%s" % (filename)
+            post.user_id = random.randint(1, 200)
             post.timestamp = time.time()
-            post.text = 'slaaaaam'
-            post.category_id = random.randint(1, 6)
+            post.text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
+            post.category_id = random.randint(1, 44)
             post.save()
             print "Post %s Created" % str(index)
 
         except Exception as e:
             print str(e)
-            raise
+
     print "Finish Create Posts"
 
 
 def create_like_comment():
     posts = Post.objects.all()
-    comment_list = []
     for index, post in enumerate(posts):
-        text = "String number %s" % index
-        user_id = random.randint(1, 100)
+        text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
+        user_id = random.randint(1, 200)
 
-        like, dislike, current_like = LikesRedis(post_id=post.id)\
+        LikesRedis(post_id=post.id)\
             .like_or_dislike(user_id=user_id, post_owner=post.user_id)
 
         try:
-            comment_list.append(Comments(object_pk=post, comment=text, user_id=user_id))
+            comment = Comments()
+            comment.object_pk = post
+            comment.comment = text
+            comment.user_id = user_id
+            comment.save()
             print "comment %s append to list" % index
         except Exception as e:
             print str(e)
-            raise
-    try:
-        Comments.objects.bulk_create(comment_list)
-    except Exception as e:
-        print str(e)
-        raise
+
     print "Finish Create Commnts and likes"
 
 
 def create_category():
-    category_list = ['football', 'volyball', 'doller', 'social', 'cultural', 'economic']
-    for cat in category_list:
+    import json
+    media_url = settings.MEDIA_ROOT
+    path = "%s/v2/test_data/categories.json" % (media_url)
+
+    with open(path) as data_file:
+        data = json.load(data_file)
+
+    for obj in data:
         try:
-            Category.objects.create(title=cat,
-                                    image='pin/blackhole/images/o/unittest_image.jpg')
+            sub_cat = SubCategory.objects\
+                .create(title=obj['name'],
+                        image='v2/test_data/%s' % obj['img'])
+
+            for cat in obj['childs']:
+                cat_path = "v2/test_data/images/post_%s.jpg" % (random.randint(1, 50))
+                try:
+                    Category.objects.create(title=cat, parent=sub_cat,
+                                            image=cat_path)
+                except Exception as e:
+                    print str(e)
+
         except Exception as e:
             print str(e)
-            raise
+
     print "Finish Create Category"
-
-
-def create_sub_cat():
-    sub_category = ['Sport', 'Political', 'Social', 'Cultural', 'Economic']
-    for sub_cat in sub_category:
-        try:
-            SubCategory.objects.create(title=sub_cat,
-                                       image='pin/blackhole/images/o/unittest_image.jpg')
-        except Exception as e:
-            print str(e)
-            raise
-    print "Finish Create Sub Category"
 
 
 def create_users():
     users_list = []
     media_url = settings.MEDIA_ROOT
-    path = "%s/pin/blackhole/test_data/auth_user.csv" % (media_url)
+    path = "%s/v2/test_data/auth_user.csv" % (media_url)
     try:
         f = open(path, 'rb')
         reader = csv.reader(f)
@@ -129,26 +133,26 @@ def create_users():
             ApiKey.objects.get_or_create(user=user)
         except Exception as e:
             print str(e)
-            raise
+
     print "Finish Create Users"
 
 
 def create_test_follow():
-    for i in xrange(1, 51):
+    cnt_follow = raw_input("How many follow you want to add?")
+    for i in range(1, int(cnt_follow) + 1):
         try:
             Follow.objects.get_or_create(follower_id=i, following_id=i + 3)
             Follow.objects.get_or_create(follower_id=i + 3, following_id=i)
             print "Add Follower"
         except Exception as e:
             print str(e)
-            raise
     print "finish Create Follower and following"
 
 
 def create_profile():
     profile_list = []
     media_url = settings.MEDIA_ROOT
-    path = "%s/pin/blackhole/test_data/user_profile_profile.csv" % (media_url)
+    path = "%s/v2/test_data/user_profile_profile.csv" % (media_url)
     try:
         f = open(path, 'rb')
         reader = csv.reader(f)
@@ -157,25 +161,16 @@ def create_profile():
         f.close()
     except Exception as e:
         print str(e)
-        raise
 
-    user_list = User.objects.exclude(username='root').order_by('-id')
+    user_list = User.objects.order_by('-id')[:200]
     for index, user in enumerate(user_list):
         try:
-            if profile_list[index][0]:
-                user.profile.name = profile_list[index][0]
+            avatar_path = "v2/test_data/images/avatar/post_%s.jpg" % (random.randint(1, 50))
+            Profile.objects.filter(user=user)\
+                .update(avatar=avatar_path, name=profile_list[index][0],
+                        location=profile_list[index][1], website=profile_list[index][2],
+                        bio=profile_list[index][3])
 
-            if profile_list[index][1]:
-                user.profile.location = profile_list[index][1]
-
-            if profile_list[index][2]:
-                user.profile.website = profile_list[index][2]
-
-            if profile_list[index][3]:
-                user.profile.bio = profile_list[index][3]
-            user.profile.save()
             print "user profile %s Updated" % user.username
         except Exception as e:
             print str(e)
-            raise
-    print "Finish Create Users"

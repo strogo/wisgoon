@@ -1196,7 +1196,6 @@ class Comments(models.Model):
         from pin.classification import get_comment_category
         com_cat = str(get_comment_category(self.comment))
         if int(com_cat) in [2]:
-            print "ass"
             Log.bad_comment(post=self.object_pk,
                             actor=self.user,
                             ip_address=self.ip_address,
@@ -1204,17 +1203,14 @@ class Comments(models.Model):
             return
 
         if (self.user.profile.score < settings.SCORE_FOR_COMMENING):
-            print "asas"
             return
 
         if not self.pk:
-            print "dsds"
             Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
 
         comment_cache_name = "com_%d" % int(self.object_pk_id)
         cache.delete(comment_cache_name)
-        print "gaz"
 
         super(Comments, self).save(*args, **kwargs)
 
