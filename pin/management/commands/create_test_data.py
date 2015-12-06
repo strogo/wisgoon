@@ -28,14 +28,11 @@ class Command(BaseCommand):
         # Create Profile
         create_profile()
 
-        # Create Sub Category
-        create_sub_cat()
-
         # Create Category
         create_category()
 
         # Create Post
-        create_post(1000)
+        create_post(10)
 
         # Create Like an Comments
         create_like_comment()
@@ -49,17 +46,17 @@ def create_post(cnt_post):
         filename = "post_%s.jpg" % str(random.randint(1, 50))
         try:
             post = Post()
-            post.image = "v2/test_data/%s" % (filename)
-            post.user_id = random.randint(1, 100)
+            post.image = "v2/test_data/images/%s" % (filename)
+            post.user_id = random.randint(1, 200)
             post.timestamp = time.time()
-            post.text = 'slaaaaam'
-            post.category_id = random.randint(1, 6)
+            post.text = ''.join(random.sample(default_text, random.randint(0, 200)))
+            post.category_id = random.randint(1, 9)
             post.save()
             print "Post %s Created" % str(index)
 
         except Exception as e:
             print str(e)
-            raise
+
     print "Finish Create Posts"
 
 
@@ -68,47 +65,51 @@ def create_like_comment():
     comment_list = []
     for index, post in enumerate(posts):
         text = "String number %s" % index
-        user_id = random.randint(1, 100)
+        user_id = random.randint(1, 200)
 
         like, dislike, current_like = LikesRedis(post_id=post.id)\
             .like_or_dislike(user_id=user_id, post_owner=post.user_id)
 
         try:
-            comment_list.append(Comments(object_pk=post, comment=text, user_id=user_id))
+            comment_list.append(Comments(object_pk=post,
+                                         comment=text,
+                                         user_id=user_id))
             print "comment %s append to list" % index
         except Exception as e:
             print str(e)
-            raise
+
     try:
         Comments.objects.bulk_create(comment_list)
     except Exception as e:
         print str(e)
-        raise
+
     print "Finish Create Commnts and likes"
 
 
 def create_category():
-    category_list = [["مذهبی", "فرهنگی", "خاطرات", "تاریخی", "شهدا"], ["گوناگون", "اخبار", "سیاست", "علمی", "طنز", "عکس نوشته (دیالوگ، کتاب، نقل)"], ["هنری", "فیلم و سریال ایرانی", "کاریکاتور", "هنر عکاسی", "فیلم و سریال خارجی", "موسیقی", "فرش دکوراسیون", "زیورآلات"], ["بازی و اپلیکیشن", "تصاویر پس زمینه", "فناوری", "ویسگون", "تجهیزات جنگی", "ماشین و موتور", "مهارت و خلاقیت", "آموزش"], ["چهره های معروف", "در شهر", "جهانگردی", "هنرمندان ایرانی", "هنرمندان خارجی"], ["ورزش های عمومی", "فوتبال", "والیبال"], ["کودکان و والدین", "ازدواج"],["طبیعت", "حیوانات"], ["خوراکی", "عاشقانه ها", "مد و لباس زنانه", "مد و لباس مردانه", "شخصی"]]
-    for cat in category_list:
+    import json
+    media_url = settings.MEDIA_ROOT
+    path = "%s/v2/test_data/categories.json" % (media_url)
+
+    with open(path) as data_file:
+        data = json.load(data_file)
+
+    for obj in data:
         try:
-            Category.objects.create(title=cat,
-                                    image='v2/test_data/unittest_image.jpg')
+            sub_cat = SubCategory.objects\
+                .create(title=obj['name'],
+                        image='v2/test_data/%s' % obj['img'])
+
+            for cat in obj['childs']:
+                try:
+                    Category.objects.create(title=cat, parent=sub_cat)
+                except Exception as e:
+                    print str(e)
+
         except Exception as e:
             print str(e)
-            raise
+
     print "Finish Create Category"
-
-
-def create_sub_cat():
-    sub_category = ['فرهنگ', 'عمومی', 'هنر', 'کاربردی', 'مردم', 'ورزش', 'خانواده', 'جهان خلقت', 'سبک زندگی']
-    for sub_cat in sub_category:
-        try:
-            SubCategory.objects.create(title=sub_cat,
-                                       image='v2/test_data/unittest_image.jpg')
-        except Exception as e:
-            print str(e)
-            raise
-    print "Finish Create Sub Category"
 
 
 def create_users():
@@ -131,19 +132,18 @@ def create_users():
             ApiKey.objects.get_or_create(user=user)
         except Exception as e:
             print str(e)
-            raise
+
     print "Finish Create Users"
 
 
 def create_test_follow():
-    for i in range(1, 51):
+    for i in range(1, 150):
         try:
             Follow.objects.get_or_create(follower_id=i, following_id=i + 3)
             Follow.objects.get_or_create(follower_id=i + 3, following_id=i)
             print "Add Follower"
         except Exception as e:
             print str(e)
-            raise
     print "finish Create Follower and following"
 
 
@@ -159,7 +159,6 @@ def create_profile():
         f.close()
     except Exception as e:
         print str(e)
-        raise
 
     user_list = User.objects.order_by('-id')[:200]
     for index, user in enumerate(user_list):
@@ -175,10 +174,12 @@ def create_profile():
 
             if profile_list[index][3]:
                 user.profile.bio = profile_list[index][3]
-            user.profile.avatar = "%s/v2/test_data/" % (media_url)
+
+            avatar_path = "v2/test_data/images/post_%s.jpg" % (random.randint(1, 50))
+            user.profile.avatar = avatar_path
             user.profile.save()
             print "user profile %s Updated" % user.username
         except Exception as e:
             print str(e)
-            raise
+
     print "Finish Create Users"
