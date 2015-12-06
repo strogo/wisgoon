@@ -10,6 +10,8 @@ from django.conf import settings
 
 from tastypie.models import ApiKey
 
+from user_profile.models import Profile
+
 from pin.models import Post, Category, SubCategory, Comments, Follow
 from pin.models_redis import LikesRedis
 
@@ -23,16 +25,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # Create Users
-        create_users()
+        # create_users()
 
         # Create Profile
-        create_profile()
+        # create_profile()
 
         # Create Category
-        create_category()
+        # create_category()
 
         # Create Post
-        create_post()
+        # create_post()
 
         # Create Like an Comments
         create_like_comment()
@@ -67,7 +69,7 @@ def create_like_comment():
         text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
         user_id = random.randint(1, 200)
 
-        like, dislike, current_like = LikesRedis(post_id=post.id)\
+        LikesRedis(post_id=post.id)\
             .like_or_dislike(user_id=user_id, post_owner=post.user_id)
 
         try:
@@ -98,8 +100,10 @@ def create_category():
                         image='v2/test_data/%s' % obj['img'])
 
             for cat in obj['childs']:
+                cat_path = "v2/test_data/images/post_%s.jpg" % (random.randint(1, 50))
                 try:
-                    Category.objects.create(title=cat, parent=sub_cat)
+                    Category.objects.create(title=cat, parent=sub_cat,
+                                            image=cat_path)
                 except Exception as e:
                     print str(e)
 
@@ -161,23 +165,12 @@ def create_profile():
     user_list = User.objects.order_by('-id')[:200]
     for index, user in enumerate(user_list):
         try:
-            if profile_list[index][0]:
-                user.profile.name = profile_list[index][0]
+            avatar_path = "v2/test_data/images/avatar/post_%s.jpg" % (random.randint(1, 50))
+            Profile.objects.filter(user=user)\
+                .update(avatar=avatar_path, name=profile_list[index][0],
+                        location=profile_list[index][1], website=profile_list[index][2],
+                        bio=profile_list[index][3])
 
-            if profile_list[index][1]:
-                user.profile.location = profile_list[index][1]
-
-            if profile_list[index][2]:
-                user.profile.website = profile_list[index][2]
-
-            if profile_list[index][3]:
-                user.profile.bio = profile_list[index][3]
-
-            avatar_path = "v2/test_data/images/avatar/64_post_%s.jpg" % (random.randint(1, 50))
-            user.profile.avatar = avatar_path
-            user.profile.save()
             print "user profile %s Updated" % user.username
         except Exception as e:
             print str(e)
-
-    print "Finish Create Users"
