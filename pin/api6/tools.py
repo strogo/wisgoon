@@ -1,17 +1,19 @@
 import ast
-from django.core.urlresolvers import reverse
-from pin.api_tools import abs_url, media_abs_url
-from django.contrib.auth.models import User
-from django.conf import settings
-from time import time
-from pin.forms import PinDirectForm
 from io import FileIO, BufferedWriter
-from pin.tools import create_filename
-from pin.models import Post, Follow
-from daddy_avatar.templatetags.daddy_avatar import get_avatar
-from pin.cacheLayer import UserDataCache
-from pin.models_redis import LikesRedis
+from time import time
+
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
+
+from daddy_avatar.templatetags.daddy_avatar import get_avatar
+
+from pin.api_tools import abs_url, media_abs_url
+from pin.cacheLayer import UserDataCache
+from pin.forms import PinDirectForm
+from pin.models import Post, Follow
+from pin.models_redis import LikesRedis
+from pin.tools import create_filename
 
 
 def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
@@ -93,13 +95,15 @@ def save_post(request, user):
         upload = request.FILES.values()[0]
         filename = create_filename(upload.name)
         try:
-            u = "%s/pin/%s/images/o/%s" % (media_url, settings.INSTANCE_NAME, filename)
+            u = "{}/pin/{}/images/o/{}".\
+                format(media_url, settings.INSTANCE_NAME, filename)
             with BufferedWriter(FileIO(u, "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
 
             model = Post()
-            model.image = "pin/%s/images/o/%s" % (settings.INSTANCE_NAME, filename)
+            model.image = "pin/{}/images/o/{}".\
+                format(settings.INSTANCE_NAME, filename)
             model.user = user
             model.timestamp = time()
             model.text = form.cleaned_data['description']
@@ -137,7 +141,10 @@ def get_simple_user_object(current_user, user_id_from_token=None):
     user_info['username'] = UserDataCache.get_user_name(current_user)
     user_info['related'] = {}
 
-    user_info['related']['posts'] = abs_url(reverse('api-6-post-user', kwargs={'user_id': current_user}))
+    user_info['related']['posts'] = abs_url(reverse('api-6-post-user',
+                                                    kwargs={
+                                                        'user_id': current_user
+                                                    }))
     if user_id_from_token:
         user_info['follow_by_user'] = Follow.objects\
             .filter(follower_id=current_user, following_id=user_id_from_token)\
@@ -230,11 +237,6 @@ def get_objects_list(posts, cur_user_id=None, r=None):
             del(p_500['h'])
 
             o['images']['low_resolution'] = p_500
-            # o['images']['low_resolution']['url'] = media_abs_url(p_500['url'])
-            # o['images']['low_resolution']['height'] = int(p_500['hw'].split("x")[0])
-            # o['images']['low_resolution']['width'] = int(p_500['hw'].split("x")[1])
-            # del(o['images']['low_resolution']['hw'])
-            # del(o['images']['low_resolution']['h'])
 
             p_236 = p.get_image_236(api=True)
 
@@ -275,7 +277,9 @@ def get_profile_data(profile, user_id):
 def update_follower_following(profile, user_id):
     from pin.api6.http import return_bad_request
     try:
-        profile.cnt_follower = Follow.objects.filter(following_id=user_id).count()
-        profile.cnt_following = Follow.objects.filter(follower_id=user_id).count()
+        profile.cnt_follower = Follow.objects.filter(following_id=user_id)\
+            .count()
+        profile.cnt_following = Follow.objects.filter(follower_id=user_id)\
+            .count()
     except:
         return return_bad_request()

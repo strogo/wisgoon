@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-from pin.tools import AuthCache
-from pin.models import Post, Report, Ad
+from haystack.query import SearchQuerySet
+
 from django.conf import settings
 from django.db.models import Q
-from django.views.decorators.csrf import csrf_exempt
-from pin.api6.tools import get_next_url, get_int, save_post, get_list_post, get_objects_list
-from pin.api6.http import return_json_data, return_bad_request, return_not_found, return_un_auth
-from haystack.query import SearchQuerySet
 from django.utils.translation import ugettext as _
+from django.views.decorators.csrf import csrf_exempt
+
+from pin.api6.http import return_json_data, return_bad_request,\
+    return_not_found, return_un_auth
+from pin.api6.tools import get_next_url, get_int, save_post,\
+    get_list_post, get_objects_list
+from pin.models import Post, Report, Ad
+from pin.tools import AuthCache
 
 
 def latest(request):
@@ -177,7 +181,8 @@ def search(request):
 
     if data['objects']:
         data['meta']['next'] = get_next_url(url_name='api-6-post-search',
-                                            token=token, offset=next_offset, q=query)
+                                            token=token, offset=next_offset,
+                                            q=query)
 
     return return_json_data(data)
 
@@ -266,13 +271,21 @@ def edit(request, item_id):
         # Get Post Object
         try:
             posts = get_list_post([item_id])
-            data = get_objects_list(posts, cur_user_id=current_user.id, r=request)[0]
+            data = get_objects_list(posts, cur_user_id=current_user.id,
+                                    r=request)[0]
         except IndexError:
             return return_not_found()
-        return return_json_data({'status': True, 'message': _('Successfully Updated'), 'data': data})
+        return return_json_data({
+            'status': True,
+            'message': _('Successfully Updated'),
+            'data': data
+        })
 
     else:
-        return return_json_data({'status': False, 'message': _('Access Denied')})
+        return return_json_data({
+            'status': False,
+            'message': _('Access Denied')
+        })
 
 
 @csrf_exempt
@@ -292,9 +305,13 @@ def send(request):
 
     try:
         posts = get_list_post([post.id])
-        data = get_objects_list(posts, cur_user_id=current_user.id, r=request)[0]
+        data = get_objects_list(posts, cur_user_id=current_user.id,
+                                r=request)[0]
     except IndexError:
-        return return_json_data({'status': False, 'message': _('Post Not Found')})
+        return return_json_data({
+            'status': False,
+            'message': _('Post Not Found')
+        })
 
     if post.status == 1:
         msg = _('Your article has been sent.')
@@ -373,13 +390,16 @@ def promoted(request):
         return return_bad_request()
 
     if before:
-        ads = Ad.objects.filter(Q(owner=user) | Q(user=user), id__lt=before).order_by("-id")[:20]
+        ads = Ad.objects.filter(Q(owner=user) | Q(user=user), id__lt=before)\
+            .order_by("-id")[:20]
     else:
-        ads = Ad.objects.filter(Q(owner=user) | Q(user=user)).order_by("-id")[:20]
+        ads = Ad.objects.filter(Q(owner=user) | Q(user=user))\
+            .order_by("-id")[:20]
 
     for ad in ads:
         o = {}
-        o['post'] = get_objects_list([ad.post], cur_user_id=user.id, thumb_size=250)
+        o['post'] = get_objects_list([ad.post], cur_user_id=user.id,
+                                     thumb_size=250)
         o['cnt_view'] = ad.get_cnt_view()
         o['user'] = ad.user.id
         o['ended'] = ad.ended
@@ -432,7 +452,8 @@ def hashtag(request):
             except:
                 pass
 
-        data['objects'] = get_objects_list(posts, cur_user_id=cur_user, r=request)
+        data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
+                                           r=request)
 
         if data['objects']:
             data['meta']['next'] = get_next_url(url_name='api-6-post-hashtag',
