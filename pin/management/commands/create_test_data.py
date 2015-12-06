@@ -43,7 +43,7 @@ class Command(BaseCommand):
 
 
 def create_post(cnt_post):
-    for index in xrange(1, cnt_post + 1):
+    for index in range(1, cnt_post + 1):
         filename = "post_%s.jpg" % str(random.randint(1, 50))
         try:
             post = Post()
@@ -134,7 +134,7 @@ def create_users():
 
 
 def create_test_follow():
-    for i in xrange(1, 51):
+    for i in range(1, 51):
         try:
             Follow.objects.get_or_create(follower_id=i, following_id=i + 3)
             Follow.objects.get_or_create(follower_id=i + 3, following_id=i)
