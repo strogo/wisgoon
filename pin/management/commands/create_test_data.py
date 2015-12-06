@@ -47,7 +47,7 @@ def create_post(cnt_post):
         filename = "post_%s.jpg" % str(random.randint(1, 50))
         try:
             post = Post()
-            post.image = "pin/blackhole/test_data/%s" % (filename)
+            post.image = "v2/test_data/%s" % (filename)
             post.user_id = random.randint(1, 100)
             post.timestamp = time.time()
             post.text = 'slaaaaam'
@@ -90,7 +90,7 @@ def create_category():
     for cat in category_list:
         try:
             Category.objects.create(title=cat,
-                                    image='pin/blackhole/images/o/unittest_image.jpg')
+                                    image='v2/test_data/unittest_image.jpg')
         except Exception as e:
             print str(e)
             raise
@@ -102,7 +102,7 @@ def create_sub_cat():
     for sub_cat in sub_category:
         try:
             SubCategory.objects.create(title=sub_cat,
-                                       image='pin/blackhole/images/o/unittest_image.jpg')
+                                       image='v2/test_data/unittest_image.jpg')
         except Exception as e:
             print str(e)
             raise
@@ -112,7 +112,7 @@ def create_sub_cat():
 def create_users():
     users_list = []
     media_url = settings.MEDIA_ROOT
-    path = "%s/pin/blackhole/test_data/auth_user.csv" % (media_url)
+    path = "%s/v2/test_data/auth_user.csv" % (media_url)
     try:
         f = open(path, 'rb')
         reader = csv.reader(f)
@@ -148,7 +148,7 @@ def create_test_follow():
 def create_profile():
     profile_list = []
     media_url = settings.MEDIA_ROOT
-    path = "%s/pin/blackhole/test_data/user_profile_profile.csv" % (media_url)
+    path = "%s/v2/test_data/user_profile_profile.csv" % (media_url)
     try:
         f = open(path, 'rb')
         reader = csv.reader(f)
