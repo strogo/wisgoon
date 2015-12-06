@@ -41,6 +41,11 @@ def post_likers(request, item_id):
                     'total_count': LikesRedis(post_id=item_id).cntlike()}
     likers_list = []
     before = request.GET.get('before', False)
+
+    token = request.GET.get('token', False)
+    if token:
+        current_user = AuthCache.id_from_token(token=token)
+
     if not before:
         before = 0
 
@@ -59,7 +64,7 @@ def post_likers(request, item_id):
     try:
         for user in likers:
             u = {
-                'user': get_simple_user_object(user.id, post.user_id)
+                'user': get_simple_user_object(user.id, current_user)
             }
             likers_list.append(u)
     except Exception as e:
