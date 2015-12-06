@@ -13,7 +13,7 @@ from tastypie.models import ApiKey
 from pin.models import Post, Category, SubCategory, Comments, Follow
 from pin.models_redis import LikesRedis
 
-default_text = 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.'
+default_text = u'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.'
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -23,16 +23,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # Create Users
-        create_users()
+        # create_users()
 
         # Create Profile
-        create_profile()
+        # create_profile()
 
         # Create Category
-        create_category()
+        # create_category()
 
         # Create Post
-        create_post(10)
+        # create_post(500)
 
         # Create Like an Comments
         create_like_comment()
@@ -49,8 +49,8 @@ def create_post(cnt_post):
             post.image = "v2/test_data/images/%s" % (filename)
             post.user_id = random.randint(1, 200)
             post.timestamp = time.time()
-            post.text = ''.join(random.sample(default_text, random.randint(0, 200)))
-            post.category_id = random.randint(1, 9)
+            post.text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
+            post.category_id = random.randint(1, 40)
             post.save()
             print "Post %s Created" % str(index)
 
@@ -64,7 +64,7 @@ def create_like_comment():
     posts = Post.objects.all()
     comment_list = []
     for index, post in enumerate(posts):
-        text = "String number %s" % index
+        # text = "String number %s" % index
         user_id = random.randint(1, 200)
 
         like, dislike, current_like = LikesRedis(post_id=post.id)\
@@ -72,7 +72,7 @@ def create_like_comment():
 
         try:
             comment_list.append(Comments(object_pk=post,
-                                         comment=text,
+                                         comment=''.join(default_text[random.randint(0, 100):random.randint(200, 600)]),
                                          user_id=user_id))
             print "comment %s append to list" % index
         except Exception as e:
