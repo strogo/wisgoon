@@ -13,6 +13,8 @@ from tastypie.models import ApiKey
 from pin.models import Post, Category, SubCategory, Comments, Follow
 from pin.models_redis import LikesRedis
 
+default_text = 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.'
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -86,7 +88,7 @@ def create_like_comment():
 
 
 def create_category():
-    category_list = ['football', 'volyball', 'doller', 'social', 'cultural', 'economic']
+    category_list = [["مذهبی", "فرهنگی", "خاطرات", "تاریخی", "شهدا"], ["گوناگون", "اخبار", "سیاست", "علمی", "طنز", "عکس نوشته (دیالوگ، کتاب، نقل)"], ["هنری", "فیلم و سریال ایرانی", "کاریکاتور", "هنر عکاسی", "فیلم و سریال خارجی", "موسیقی", "فرش دکوراسیون", "زیورآلات"], ["بازی و اپلیکیشن", "تصاویر پس زمینه", "فناوری", "ویسگون", "تجهیزات جنگی", "ماشین و موتور", "مهارت و خلاقیت", "آموزش"], ["چهره های معروف", "در شهر", "جهانگردی", "هنرمندان ایرانی", "هنرمندان خارجی"], ["ورزش های عمومی", "فوتبال", "والیبال"], ["کودکان و والدین", "ازدواج"],["طبیعت", "حیوانات"], ["خوراکی", "عاشقانه ها", "مد و لباس زنانه", "مد و لباس مردانه", "شخصی"]]
     for cat in category_list:
         try:
             Category.objects.create(title=cat,
@@ -98,7 +100,7 @@ def create_category():
 
 
 def create_sub_cat():
-    sub_category = ['Sport', 'Political', 'Social', 'Cultural', 'Economic']
+    sub_category = ['فرهنگ', 'عمومی', 'هنر', 'کاربردی', 'مردم', 'ورزش', 'خانواده', 'جهان خلقت', 'سبک زندگی']
     for sub_cat in sub_category:
         try:
             SubCategory.objects.create(title=sub_cat,
@@ -159,7 +161,7 @@ def create_profile():
         print str(e)
         raise
 
-    user_list = User.objects.exclude(username='root').order_by('-id')
+    user_list = User.objects.order_by('-id')[:200]
     for index, user in enumerate(user_list):
         try:
             if profile_list[index][0]:
@@ -173,6 +175,7 @@ def create_profile():
 
             if profile_list[index][3]:
                 user.profile.bio = profile_list[index][3]
+            user.profile.avatar = "%s/v2/test_data/" % (media_url)
             user.profile.save()
             print "user profile %s Updated" % user.username
         except Exception as e:
