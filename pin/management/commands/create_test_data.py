@@ -23,16 +23,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # Create Users
-        # create_users()
+        create_users()
 
         # Create Profile
-        # create_profile()
+        create_profile()
 
         # Create Category
-        # create_category()
+        create_category()
 
         # Create Post
-        # create_post(500)
+        create_post()
 
         # Create Like an Comments
         create_like_comment()
@@ -41,8 +41,9 @@ class Command(BaseCommand):
         create_test_follow()
 
 
-def create_post(cnt_post):
-    for index in range(1, cnt_post + 1):
+def create_post():
+    cnt_post = raw_input("How many posts you want to add?")
+    for index in range(1, int(cnt_post) + 1):
         filename = "post_%s.jpg" % str(random.randint(1, 50))
         try:
             post = Post()
@@ -50,7 +51,7 @@ def create_post(cnt_post):
             post.user_id = random.randint(1, 200)
             post.timestamp = time.time()
             post.text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
-            post.category_id = random.randint(1, 40)
+            post.category_id = random.randint(1, 88)
             post.save()
             print "Post %s Created" % str(index)
 
@@ -62,26 +63,22 @@ def create_post(cnt_post):
 
 def create_like_comment():
     posts = Post.objects.all()
-    comment_list = []
     for index, post in enumerate(posts):
-        # text = "String number %s" % index
+        text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
         user_id = random.randint(1, 200)
 
         like, dislike, current_like = LikesRedis(post_id=post.id)\
             .like_or_dislike(user_id=user_id, post_owner=post.user_id)
 
         try:
-            comment_list.append(Comments(object_pk=post,
-                                         comment=''.join(default_text[random.randint(0, 100):random.randint(200, 600)]),
-                                         user_id=user_id))
+            comment = Comments()
+            comment.object_pk = post
+            comment.comment = text
+            comment.user_id = user_id
+            comment.save()
             print "comment %s append to list" % index
         except Exception as e:
             print str(e)
-
-    try:
-        Comments.objects.bulk_create(comment_list)
-    except Exception as e:
-        print str(e)
 
     print "Finish Create Commnts and likes"
 
@@ -137,7 +134,8 @@ def create_users():
 
 
 def create_test_follow():
-    for i in range(1, 150):
+    cnt_follow = raw_input("How many follow you want to add?")
+    for i in range(1, int(cnt_follow) + 1):
         try:
             Follow.objects.get_or_create(follower_id=i, following_id=i + 3)
             Follow.objects.get_or_create(follower_id=i + 3, following_id=i)
@@ -175,7 +173,7 @@ def create_profile():
             if profile_list[index][3]:
                 user.profile.bio = profile_list[index][3]
 
-            avatar_path = "v2/test_data/images/post_%s.jpg" % (random.randint(1, 50))
+            avatar_path = "v2/test_data/images/avatar/64_post_%s.jpg" % (random.randint(1, 50))
             user.profile.avatar = avatar_path
             user.profile.save()
             print "user profile %s Updated" % user.username
