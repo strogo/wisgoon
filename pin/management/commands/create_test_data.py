@@ -79,17 +79,19 @@ def create_like_comment():
     for index, post in enumerate(posts):
         text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
         user_id = random.randint(1, 200)
+        post_id = random.randint(1, posts.count())
 
-        LikesRedis(post_id=post.id)\
+        LikesRedis(post_id=post_id)\
             .like_or_dislike(user_id=user_id, post_owner=post.user_id)
 
         try:
             comment = Comments()
-            comment.object_pk = post
+            comment.object_pk_id = post_id
             comment.comment = text
             comment.user_id = user_id
             comment.save()
             print "comment %s append to list" % index
+            print "post %s" % post_id
         except Exception as e:
             print str(e)
             raise
@@ -155,7 +157,7 @@ def create_test_follow():
         try:
             Follow.objects.get_or_create(follower_id=i, following_id=i + 3)
             Follow.objects.get_or_create(follower_id=i + 3, following_id=i)
-            print "Add Follower"
+            print "Add %s Follow" % str(i)
         except Exception as e:
             print str(e)
     print "finish Create Follower and following"
