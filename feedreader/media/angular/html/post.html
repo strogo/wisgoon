@@ -1,0 +1,222 @@
+<div ng-include src="'/media/angular/html/nav.html'"></div>
+<div class="container-fluid">
+	<div class="post-detail row">
+		<div class="post col-md-9 col-sm-9 col-xs-12 pull-left">
+			<div class="post-content">
+				<div class="photo">
+					<a>
+						<img ng-src="{[{post.images.thumbnail.url}]}" height="{[{post.images.thumbnail.height}]}"
+						width="{[{post.images.thumbnail.width}]}" alt="عکس و تصویر" style="margin:0 auto">
+					</a>
+				</div>
+				<div class="row">
+					<div class="discription" itemprop="name">
+						<p> 
+							{[{post.text}]}
+						</p>
+
+						<span class="badge badge-success"></span>
+					</div>
+					<small class="time-box pull-left"></small>
+				</div>
+				<div class="row">
+					<div class="tags ">
+						<div class="tag ">
+						</div>
+
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="row likes">
+					<div class="content">
+						<div class="liker col-md-10 col-sm-10 col-xs-10">
+							<a ui-sref="profile({user_profile_id: liker.id})" ng-repeat="liker in likers">
+								<img ng-src="{[{liker.avatar}]}" style="display: inline;margin: 2px;" >
+							</a>
+						</div>
+						<!-- like icon -->
+						<div class="col-md-2 col-sm-2 col-xs-2 like-icon">
+							<a href="" class="btn_like" ng-click="likePost()">
+								<i class="glyphicon glyphicon-heart"></i>
+								<span class='count'>{[{post.cnt_like}]}</span>
+							</a>
+						</div>
+						<!-- end like icon -->
+						<div class="clear"></div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="footer">
+						<div class="footer-icons">
+							<div class="right-icons col-md-9 col-sm-12 col-xs-12">
+								<div class="col-md-2 col-sm-6 col-xs-6 seen cat-border-left ">
+									<a ui-sref="catPost({cat_id: post.category.id})">{[{post.category.title}]}</a>
+								</div>
+								<div class="col-md-3 col-sm-6 col-xs-6 download cat-border-left">
+									<span class="glyphicon glyphicon-download-alt"></span>
+									<a href="">دانلود تصاویر</a>
+
+								</div>
+								<div class="col-md-7 col-sm-12 col-xs-12 share cat-border-right">
+
+								</div>
+							</div>
+							<div class="left-icons col-md-3 col-sm-12 col-xs-12">
+								<a ng-click="report()" alt="" href="" style="margin-right: 5px" class="btn btn-warning btn_report "> <i class="glyphicon glyphicon-exclamation-sign"></i> گزارش تخلف</a>
+
+								<a class="wis_btn pull-left red_o user-action-btn" title="ویرایش" ui-sref="editPost">
+									<i class="glyphicon glyphicon-pencil"></i>
+								</a>
+							</div>
+							<div class="clear"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="clear"></div>
+			<div class="comment">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<div class="row">
+						<div class="send-comment" ng-hide="user_id == ''">
+							<form name="send-comment" ng-submit="sendCommentForm()">
+								<div class="form-group col-md-12">
+									<textarea class="form_group" ng-model="formData.comment"></textarea>
+								</div>
+								<button class="btn btn-primary" type="submit">ارسال</button>
+							</form>
+						</div>
+						<div id="comments_box">	
+							<div class="row comment-item" ng-repeat="comment in comments">
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="others-comment">
+
+										<div class="col-md-1 col-sm-12 col-xs-12 avatar">
+											<a ui-sref="profile({user_profile_id: comment.user.id})">
+												<img ng-src="{[{comment.user.avatar}]}" alt="">
+											</a>
+										</div>
+
+										<div class="col-md-9 col-sm-12 col-xs-12" style="color:#555;">
+											<div class="">
+												<a ui-sref="profile({user_profile_id: comment.user.id})">
+													{[{comment.user.username}]}:
+												</a> 
+											</div>
+											<div style="padding:10px;">
+												{[{comment.comment}]}
+											</div>
+											<a class="del-comment" ng-click="deleteCommentForm(comment.id)">
+												<i class="glyphicon glyphicon-remove"></i>
+											</a>
+										</div>
+
+										<div class="col-md-2 col-sm-12 col-xs-12" style="color:#aaa;text-align:left;">
+										</div>
+
+										<div class="clear"></div>
+									</div>
+								</div>
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="others-comment">
+
+										<div class="col-md-1 col-sm-12 col-xs-12 avatar">
+											<a ui-sref="profile({user_profile_id: comment.user.id})">
+												<img ng-src="{[{comment.user.avatar}]}" alt="">
+											</a>
+										</div>
+
+										<div class="col-md-9 col-sm-12 col-xs-12" style="color:#555;">
+											<div class="">
+												<a ui-sref="profile({user_profile_id: comment.user.id})">
+													{[{comment.user.username}]}:
+												</a> 
+											</div>
+											<div style="padding:10px;">
+												{[{comment.comment}]}
+											</div>
+											<a class="del-comment" ng-click="deleteCommentForm(comment.id)">
+												<i class="glyphicon glyphicon-remove"></i>
+											</a>
+										</div>
+
+										<div class="col-md-2 col-sm-12 col-xs-12" style="color:#aaa;text-align:left;">
+										</div>
+
+										<div class="clear"></div>
+									</div>
+								</div>
+								<div class="clear"></div>
+								<hr>
+							</div>
+						</div>
+						<div class="col-md-12" id="load-more">
+							<div class="" id="comment_load_more">
+								<div class="txt">ادامه‌ی دیدگاه ها</div> 
+								<div class="loader" style="display:none;">
+									<img width="30" class="footer-loading-img" alt="Loading..." src="/media/v2/images/big-loader.gif">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container-fluid">
+	<div id="feed" masonry load-images="false" reload-on-resize infinite-scroll='brickItem.nextPage()' infinite-scroll-distance='1' style="width:1230px">
+		<div ng-show='beytItem.busy'>Loading data...</div>
+		<div  class="masonry-brick" ng-repeat="brick in brickItem.bricks">
+			<div class="feed-item">
+				<div class="img-content">
+					<a class="pin-item-link" ui-sref="post({post_id: brick.id})">
+						<img ng-src="{[{brick.images.thumbnail.url}]}"  alt="" height="{[{brick.images.thumbnail.height}]}" width="{[{brick.images.thumbnail.width}]}">
+					</a>
+					<div class="img-shadow"></div>
+				</div>
+				<div class="avatar post-avatar">
+					<a ui-sref="profile({user_profile_id: brick.user.id})">
+						<img ng-src="{[{brick.user.avatar}]}" style="display: inline;" > 
+					</a>
+
+				</div>
+				<div class="username">
+					<a ui-sref="profile({user_profile_id: brick.user.id})">
+						{[{brick.user.username}]}
+					</a>
+				</div>	
+				<div class="clear"></div>
+
+				<div class="post-action">
+					<div class="btn-box likes">
+						<a href="" class="btn_like" ng-click="likePost()">
+							<span class="count">{[{brick.cnt_like}]}</span>
+							<i class="glyphicon glyphicon-heart"></i>
+						</a>
+					</div>
+					<div class="btn-box comment">
+						<a href="" >
+							<span class="glyphicon glyphicon-comment cnt-like-icon"></span>
+							<span class="cnt-like">{[{brick.cnt_comment}]}</span>
+						</a>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="clear"></div>
+
+				<div class="description">
+					<p>{[{brick.text}]}</p>
+					<p>بدون متن</p>
+				</div>
+
+				<div class="tags">
+					<a href="">#</a>
+				</div>
+
+
+				<div class="clear"></div>
+			</div>
+		</div>
+	</div>
+</div>
