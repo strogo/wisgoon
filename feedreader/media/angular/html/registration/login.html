@@ -1,0 +1,42 @@
+<div ng-include src="'/media/angular/html/nav.html'"></div>
+<div class="col-md-12">
+
+	<div class="col-md-6">
+		<form name="loginForm" ng-submit="loginFormValidat()" novalidate ng-controller="loginController as loginCtrl">
+			<div class="form-group" ng-class="{ 'haSerorr' : submitted}">
+				<label class="control-label" for="inputusername">نام کاربری:</label>
+				<input type="text" name="username" ng-model="formData.username" maxlength="254" id="inputusername" class="form-control" required>
+				<div class="help-block" ng-messages="loginForm.username.$error" ng-show="submitted">
+					<span ng-message="required"><i>*</i>نام کاربری را وارد کنید</span>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'haSerorr' : submitted}">
+				<label class="control-label" for="inputpassword1">رمز عبور :</label>
+				<input type="password" name="password" id="inputpassword" class="form-control" ng-model="formData.password" required>
+				<div class="help-block" ng-messages="loginForm.password.$error" ng-show="submitted">
+					<span ng-message="required"><i>*</i>رمز عبور را وارد کنید.</span>
+				</div>
+			</div>
+
+			<input type="text" ng-model="formData.token" ng-init="formData.token='e622c330c77a17c8426e638d7a85da6c2ec9f455'">
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary btn-large" ng-click="submitted=true">ورود</button>
+				<br/>
+				<div ng-show="showSuccess" ng-hide="showError" ng-class="{ 'alert alert-success' : submitted}">{[{message}]}</div>
+				<div ng-show="showError" ng-hide="showSuccess" ng-class="{ 'alert alert-danger' : submitted}">{[{errorName}]}</div>
+			</div>
+			<label class="forget-pass">
+				<a ui-sref="resetPass">رمز عبور خود را فراموش کرده اید؟</a>
+			</label>
+		</form>
+	</div>
+
+	<div class="col-md-6">
+		<div class=" hidden-sm hidden-xs" style="text-align:center">
+			<a target="_blank" title="دانلود نرم افزار موبایل" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">
+				<img src="{{MEDIA_URL}}v2/images/mobile.png">
+			</a>
+		</div>
+	</div>
+
+</div>

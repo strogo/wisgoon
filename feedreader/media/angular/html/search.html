@@ -1,0 +1,67 @@
+<div ng-include src="'/media/angular/html/nav.html'"></div>
+<div>
+    <div class="col-md-6 col-sm-5 top-search">
+    <form name="searchForm" ng-submit="showSearchPost()">
+            <input type="text" ng-model="query">
+            <button class="pull-left" type="submit">
+                <span class="glyphicon glyphicon-search"></span>
+            </button>
+        </form>
+    </div>
+    <div class="container-fluid">
+        <div id="feed" masonry load-images="false" infinite-scroll='nextPage()' infinite-scroll-distance='1' reload-on-resize style="width:1230px">
+            <div ng-show='beytItem.busy'>Loading data...</div>
+            <div  class="masonry-brick" ng-repeat="brick in bricks">
+                <div class="feed-item">
+                    <div class="img-content">
+                        <a class="pin-item-link" ui-sref="post({post_id: brick.id})">
+                            <img ng-src="{[{brick.images.thumbnail.url}]}"  alt="" height="{[{brick.images.thumbnail.height}]}" width="{[{brick.images.thumbnail.width}]}">
+                        </a>
+                        <div class="img-shadow"></div>
+                    </div>
+                    <div class="avatar post-avatar">
+                        <a href="">
+                            <img ng-src="{[{brick.user.avatar}]}" style="display: inline;" > 
+                        </a>
+
+                    </div>
+                    <div class="username">
+                        <a href="">
+                            {[{brick.user.username}]}
+                        </a>
+                    </div>  
+                    <div class="clear"></div>
+
+                    <div class="post-action">
+                        <div class="btn-box likes">
+                            <a href="" class="btn_like">
+                                <span class="count">{[{brick.cnt_comment}]}</span>
+                                <i class="glyphicon glyphicon-heart"></i>
+                            </a>
+                        </div>
+                        <div class="btn-box comment">
+                            <a href="">
+                                <span class="glyphicon glyphicon-comment cnt-like-icon"></span>
+                                <span class="cnt-like">{[{brick.like}]}</span>
+                            </a>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="clear"></div>
+
+                    <div class="description">
+                        <p>{[{brick.text}]}</p>
+                        <p>بدون متن</p>
+                    </div>
+
+                    <div class="tags">
+                        <a href="">#</a>
+                    </div>
+
+
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

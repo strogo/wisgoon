@@ -1,0 +1,74 @@
+<div ng-include src="'/media/angular/html/nav.html'"></div>
+<div class="container-fluid">
+	<div class="col-md-3">
+		<div class="avatar">
+			<a href=''>
+				<img ng-src="{[{profile_info.user.avatar}]}" alt="user avatar">
+			</a>
+		</div>
+
+		<div class="user-info">
+			<div class="col-md-12 col-sm-12 col-xs-12 username">
+				<h4>{[{profile_info.profile.name}]}</h4>
+
+				<a ng-show="user_profile_id == user_id" ui-sref="editProfile" class="btn btn-xs btn-primary f-white" data-toggle="modal" data-target="#profileModal">ویرایش</a>
+				<a class="btn btn-xs btn-success ajax-follow" href='' ng-click="follow()" ng-hide="user_profile_id == user_id">ایجاد دوستی</a>
+				<a class="btn btn-xs btn-danger ajax-follow" href='' ng-click="unfollow()" ng-hide="user_profile_id == user_id">قطع ارتباط</a>
+			</div>
+
+		</div>
+
+		<div class="clear"></div>
+
+		<div class="row">
+			<div aria-label="Vertical button group" role="group" class=" col-md-12 btn-group-vertical">
+				<a class="btn btn-default" href='' type="link">
+					مورد علاقه‌های کاربر
+				</a>
+				<a class="btn btn-primary btn-default" ui-sref='followingsList' type="button">
+					دنبال شوندگان 
+					<small>(</small><strong>{[{profile_info.profile.cnt_following}]}</strong><small>)</small>
+				</a>
+				<a class="btn btn-primary btn-default "  ui-sref='followersList' type="button">
+					دنبال کنندگان
+					<small>(</small><strong>{[{profile_info.profile.cnt_follower}]}</strong><small>)</small>
+				</a>
+			</div>
+		</div>
+		<div class="detail-info">
+			<div class="user-stat">
+				<table class="table table-hover">
+					<tr>
+						<td><small>امتیاز :</small></td>
+						<td><strong>{[{profile_info.profile.score}]}</strong></td>
+					</tr>
+					<tr>
+						<td>تعداد مطالب</td>
+						<td><strong>{[{profile_info.profile.cnt_post}]}</strong></td>
+					</tr>
+					<tr>
+						<td>تعداد لایک</td>
+						<td><strong>{[{profile_info.profile.cnt_like}]}</strong></td>
+					</tr>
+					<tr>
+						<td>موجودی حساب :</td>
+						<td><strong>{[{profile_info.profile.credit}]} ویس</strong>  
+							<a href="" class="btn btn-xs btn-success f-white">افزایش اعتبار</a>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-9">
+		<div class="col-md-4" ng-repeat="following in followings">
+			<div class="follow-box">
+				<img ng-src="{[{following.user.avatar}]}" title="user avatar">
+				<br/>
+				<a ui-sref="profile({user_profile_id : following.user.id})">
+					{[{following.user.username}]}
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
