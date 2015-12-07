@@ -3,7 +3,7 @@
 
 <div class="container">
     <div class="box profile_header pa10 mato20">
-        <div class="profile_avatar col-md-2">
+        <div class="profile_avatar col-xs-2">
             <a href='{% url "pin-absuser" profile.user_id|get_user_name %}'>
                 <img src="{{profile.user_id|get_avatar:210}}">
             </a>
@@ -23,6 +23,9 @@
                 <div class="user_stat_config col-sm-4">
 
                     {% if profile.user_id == request.user.id %}
+                    <div class="wallet wis_btn">
+                        <span>اعتبار</span> <span class="count">{{profile.get_credit|pn}}</span> ویس
+                    </div>
                     <div class="dropdown pull-left dl">
                         <a  href="" class="wis_btn ma0 profile_config dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             <i class="fa fa-cog"></i>
@@ -38,59 +41,59 @@
 
                     {% if request.user.is_superuser %}
                     
-                        {% if profile.user.is_active %}
-                        <div class="dropdown pull-left">
-                            <a href="" class="wis_btn dropdown-toggle red ma0 pa0"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-ban"></i></a>
-                            <ul class="dropdown-menu" aria-labelledby="ban_config">
-                                <li class="dropdown-header">توهین به</li>
-                                <li role="presentation">
-                                    <a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=توهین به مقدسات">مقدسات</a>
-                                </li>
-                                <li role="presentation">
-                                    <a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=توهین به مقامات کشوری">مقامات کشوری</a>
-                                </li>
-                                <li role="presentation">
-                                    <a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=توهین به کاربران">کاربران</a>
-                                </li>
+                    {% if profile.user.is_active %}
+                    <div class="dropdown pull-left">
+                        <a href="" class="wis_btn dropdown-toggle red ma0 pa0"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-ban"></i></a>
+                        <ul class="dropdown-menu" aria-labelledby="ban_config">
+                            <li class="dropdown-header">توهین به</li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=توهین به مقدسات">مقدسات</a>
+                            </li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=توهین به مقامات کشوری">مقامات کشوری</a>
+                            </li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=توهین به کاربران">کاربران</a>
+                            </li>
 
-                                <li class="dropdown-header">سایرتخلفات</li>
-                                <li role="presentation">
-                                    <a role="menuitem" tabindex="-1" href="{% url "activate-user" profile.user.id 0 %}?q=محتوای غیر اخلاقی">محتوای غیر اخلاقی</a>
-                                </li>
-                                <li role="presentation">
-                                    <a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0%}?q=نقض حریم خصوصی">نقض حریم خصوصی</a>
-                                </li>
-                                <li role="presentation">
-                                    <a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=تکرار تخلف">تکرار تخلف</a>
-                                </li>
-                                <li role="presentation">
-                                    <a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=ارسال هرزنامه">ارسال هرزنامه</a>
-                                </li>
-                            </ul>
-                        </div>
-                        {% else %}
-                        <a href="{% url 'activate-user' profile.user_id 1 %}" class="wis_btn green_o pull-left" data-toggle="tooltip" data-placement="bottom" title="{% if ban_by_admin != False %}{{ban_by_admin|get_ban}}{% endif %}">فعال‌سازی</a>
-                        {% endif %}
+                            <li class="dropdown-header">سایرتخلفات</li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="{% url "activate-user" profile.user.id 0 %}?q=محتوای غیر اخلاقی">محتوای غیر اخلاقی</a>
+                            </li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0%}?q=نقض حریم خصوصی">نقض حریم خصوصی</a>
+                            </li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=تکرار تخلف">تکرار تخلف</a>
+                            </li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="{% url 'activate-user' profile.user.id 0 %}?q=ارسال هرزنامه">ارسال هرزنامه</a>
+                            </li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'activate-user' profile.user_id 1 %}" class="wis_btn green_o pull-left" data-toggle="tooltip" data-placement="bottom" title="{% if ban_by_admin != False %}{{ban_by_admin|get_ban}}{% endif %}">فعال‌سازی</a>
+                    {% endif %}
                     {% endif %}
 
-                        {% if profile.user_id != request.user.id and request.user.is_authenticated %}
-                            {% if follow_status == 0 %}
-                            <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" profile.user_id 1 %}'>ایجاد دوستی <i class="fa fa-plus"></i></a>
-                            {% else %}
-                            <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left mabo10 red ajax-follow" href='{% url "pin-follow" profile.user_id 0 %}'>قطع ارتباط  <i class="fa fa-times"></i></a>
-                            {%endif%}
-                        {% endif %}
+                    {% if profile.user_id != request.user.id and request.user.is_authenticated %}
+                    {% if follow_status == 0 %}
+                    <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" profile.user_id 1 %}'>ایجاد دوستی <i class="fa fa-plus"></i></a>
+                    {% else %}
+                    <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left mabo10 red ajax-follow" href='{% url "pin-follow" profile.user_id 0 %}'>قطع ارتباط  <i class="fa fa-times"></i></a>
+                    {%endif%}
+                    {% endif %}
 
                     {% endif %}
 
                     {% if request.user.is_superuser %}
-                        {% if ban_by_admin %}
-                            {% if ban_by_admin != "False" %}
-                                <div class="row">
-                                    <div class="col-sm-12 tale">دلیل: <span class="bg-danger">{{ban_by_admin|get_ban}}</span></div>
-                                </div>
-                            {% endif %}
-                        {% endif %}
+                    {% if ban_by_admin %}
+                    {% if ban_by_admin != "False" %}
+                    <div class="row">
+                        <div class="col-sm-12 tale">دلیل: <span class="bg-danger">{{ban_by_admin|get_ban}}</span></div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
                     {% endif %}
                 </div>
 
@@ -99,40 +102,33 @@
                 <div class="col-sm-2">
                     <a href='{% url "pin-absuser" profile.user_id|get_user_name %}'>
                         <div class="icon"><i class="fa fa-camera"></i></div>
-                        <div><span>تعداد مطالب</span></div>
+                        <div class="p_label"><span>تعداد مطالب</span></div>
                         <div class="count">{{profile.cnt_post|pn}}</div>
                     </a>
                 </div>
-                {% if profile.user_id == request.user.id %}
-                <div class="col-sm-2">
-                    <div class="icon"><i class="fa fa-flash"></i></div>
-                    <div><span>اعتبار ویس</span></div>
-                    <div class="count">{{profile.get_credit|pn}}</div>
-                </div>
-                {% endif %}
                 <div class="col-sm-2">
                     <div class="icon"><i class="fa fa-star"></i></div>
-                    <div><span>امتیاز</span></div>
+                    <div class="p_label"><span>امتیاز</span></div>
                     <div class="count">{{profile.score|pn}}</div>
                 </div>
                 <div class="col-sm-2">
                     <a href="{% url "pin-absuser-followers" profile.user.username %}">
                         <div class="icon"><i class="fa fa-users"></i></div>
-                        <div><span>دنبال‌کنندگان</span></div>
+                        <div class="p_label"><span>دنبال‌کنندگان</span></div>
                         <div class="count">{{profile.get_cnt_followers|pn}}</div>
                     </a>
                 </div>
                 <div class="col-sm-2">
                     <a href="{% url "pin-absuser-following" profile.user.username %}">
                         <div class="icon"><i class="fa fa-user"></i></div>
-                        <div><span>دنبال‌‌شوندگان</span></div>
+                        <div class="p_label"><span>دنبال‌‌شوندگان</span></div>
                         <div class="count">{{profile.get_cnt_following|pn}}</div>
                     </a>
                 </div>
                 <div class="col-sm-2">
                     <a href="{% url "pin-absuser-like" profile.user.username %}">
                         <div class="icon"><i class="fa fa-heart"></i></div>
-                        <div><span>مورد‌ علاقه</span></div>
+                        <div class="p_label"><span>مورد‌ علاقه</span></div>
                         <div class="count">{{profile.cnt_like|pn}}</div>
                     </a>
                 </div>

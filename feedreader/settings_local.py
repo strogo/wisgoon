@@ -7,7 +7,7 @@ DEBUG = True
 THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
-STATIC_VERSION = '5.7.87'
+STATIC_VERSION = '5.7.88'
 SITE_ROOT = os.path.dirname(__file__)
 ADMINS = (
     ('bugs', 'bugs@wisgoon.com'),
@@ -345,8 +345,8 @@ SITE_DESC = 'what is going on, social image sharing'
 STREAM_CASSANDRA_HOSTS = 'localhost'
 
 
-SCORE_FOR_COMMENING = -100
-SCORE_FOR_STREAMS = -100
+SCORE_FOR_COMMENING = 0
+SCORE_FOR_STREAMS = 0
 
 # CELERY_ALWAYS_EAGER = True
 

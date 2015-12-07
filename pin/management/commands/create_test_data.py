@@ -25,16 +25,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # Create Users
-        # create_users()
+        create_users()
 
         # Create Profile
-        # create_profile()
+        create_profile()
 
         # Create Category
-        # create_category()
+        create_category()
 
         # Create Post
-        # create_post()
+        create_post(self)
 
         # Create Like an Comments
         create_like_comment()
@@ -43,22 +43,33 @@ class Command(BaseCommand):
         create_test_follow()
 
 
-def create_post():
+def create_post(self):
     cnt_post = raw_input("How many posts you want to add?")
+    cat_id = 0
     for index in range(1, int(cnt_post) + 1):
         filename = "post_%s.jpg" % str(random.randint(1, 50))
+        user_id = random.randint(1, 200)
         try:
             post = Post()
             post.image = "v2/test_data/images/%s" % (filename)
-            post.user_id = random.randint(1, 200)
+            post.user_id = user_id
             post.timestamp = time.time()
             post.text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
-            post.category_id = random.randint(1, 44)
+            if cat_id == 44:
+                cat_id = 1
+            else:
+                cat_id += 1
+            post.category_id = cat_id
             post.save()
-            print "Post %s Created" % str(index)
+            # profile = Profile.objects.get(user_id=user_id)
+            self.stdout.write("post %s status: %s" % (str(post.id), str(post.status)))
+            # self.stdout.write("user %s score: %s" % (str(user_id), str(profile.score)))
+            # self.stdout.write("cat_id: %s" % str(cat_id))
+            # self.stdout.write("Post %s Created" % str(index))
 
         except Exception as e:
             print str(e)
+            raise
 
     print "Finish Create Posts"
 
@@ -68,19 +79,22 @@ def create_like_comment():
     for index, post in enumerate(posts):
         text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
         user_id = random.randint(1, 200)
+        post_id = random.randint(1, posts.count())
 
-        LikesRedis(post_id=post.id)\
+        LikesRedis(post_id=post_id)\
             .like_or_dislike(user_id=user_id, post_owner=post.user_id)
 
         try:
             comment = Comments()
-            comment.object_pk = post
+            comment.object_pk_id = post_id
             comment.comment = text
             comment.user_id = user_id
             comment.save()
             print "comment %s append to list" % index
+            print "post %s" % post_id
         except Exception as e:
             print str(e)
+            raise
 
     print "Finish Create Commnts and likes"
 
@@ -143,7 +157,7 @@ def create_test_follow():
         try:
             Follow.objects.get_or_create(follower_id=i, following_id=i + 3)
             Follow.objects.get_or_create(follower_id=i + 3, following_id=i)
-            print "Add Follower"
+            print "Add %s Follow" % str(i)
         except Exception as e:
             print str(e)
     print "finish Create Follower and following"
@@ -169,7 +183,7 @@ def create_profile():
             Profile.objects.filter(user=user)\
                 .update(avatar=avatar_path, name=profile_list[index][0],
                         location=profile_list[index][1], website=profile_list[index][2],
-                        bio=profile_list[index][3])
+                        bio=profile_list[index][3], score=10000)
 
             print "user profile %s Updated" % user.username
         except Exception as e:
