@@ -145,41 +145,60 @@ $('body').on('click', '.btn_like',function(){
     var obj = $(this);
     obj.addClass('disabled');
     var like_url=obj.attr('href');
+    var n = parseInt(en(obj.children('span.count').text()));
+    if (obj.parents('.post_item_inner').length > 0) {
+        if (obj.parent().hasClass('user-liked')) {
+            $('.post_item_inner').find('a.btn_like').parent().removeClass('user-liked');
+            $('.liker_avatars').find('.my_avatar').remove();
+            $('.post_item_inner').find('a.btn_like').children('span.count').text(pn(n - 1));
+        }else{
+            $('.post_item_inner').find('a.btn_like').parent().addClass('user-liked');
+            $('.liker_avatars').prepend('<a href="'+profile_url+'" class="my_avatar"><img src="'+profile_avatar+'" /></a>');
+            $('.post_item_inner').find('a.btn_like').children('span.count').text(pn(n + 1));
+        }
+    }else{
+        if (obj.parent().hasClass('user-liked')) {
+            obj.parent().removeClass('user-liked');
+            obj.children('span.count').text(pn(n - 1));
+        }else{
+            obj.parent().addClass('user-liked');
+            obj.children('span.count').text(pn(n + 1));
+        }        
+    }
+
     $.ajax({
         url: like_url,
         success: function(html) {
             ret = html;
             var o = jQuery.parseJSON(ret);
             obj.removeClass('disabled');
-
-            if (obj.parents('.post_item_inner').length > 0) {
-                if (o[0].user_act == 1){
-                    $('.post_item_inner').find('a.btn_like').parent().addClass('user-liked');
-                    $('.liker_avatars').prepend('<a href="'+profile_url+'" class="my_avatar"><img src="'+profile_avatar+'" /></a>');
-                    alert_show('با موفقیت لایک شد', 'success');
-                }else{
-                    $('.post_item_inner').find('a.btn_like').parent().removeClass('user-liked');
-                    $('.liker_avatars').find('.my_avatar').remove();
-                    alert_show('لایک شما با موفقیت حذف شد', 'success');
-                }
-                $('.post_item_inner').find('a.btn_like').children('span.count').text(pn(o[0].likes));
-            }else{                
-                if (o[0].user_act == 1){
-                    obj.parent().addClass('user-liked');
-                    alert_show('با موفقیت لایک شد', 'success');
-                }else{
-                    obj.parent().removeClass('user-liked');
-                    alert_show('لایک شما با موفقیت حذف شد', 'success');
-                }
-                obj.children('span.count').text(pn(o[0].likes));
-            }
+            // if (obj.parents('.post_item_inner').length > 0) {
+            //     if (o[0].user_act == 1){
+            //         $('.post_item_inner').find('a.btn_like').parent().addClass('user-liked');
+            //         $('.liker_avatars').prepend('<a href="'+profile_url+'" class="my_avatar"><img src="'+profile_avatar+'" /></a>');
+            //         alert_show('با موفقیت لایک شد', 'success');
+            //     }else{
+            //         $('.post_item_inner').find('a.btn_like').parent().removeClass('user-liked');
+            //         $('.liker_avatars').find('.my_avatar').remove();
+            //         alert_show('لایک شما با موفقیت حذف شد', 'success');
+            //     }
+            //     $('.post_item_inner').find('a.btn_like').children('span.count').text(pn(o[0].likes));
+            // }else{                
+            //     if (o[0].user_act == 1){
+            //         obj.parent().addClass('user-liked');
+            //         alert_show('با موفقیت لایک شد', 'success');
+            //     }else{
+            //         obj.parent().removeClass('user-liked');
+            //         alert_show('لایک شما با موفقیت حذف شد', 'success');
+            //     }
+            //     obj.children('span.count').text(pn(o[0].likes));
+            // }
         },
         error: function(){
             alert_show('مشکلی پیش آمده است. با مدیریت تماس بگیرید', 'error');
-
         }
     });
-    return false;
+return false;
 });
 
 $('body').on('click', '.topuser-hover-btn',function(){

@@ -1,0 +1,20 @@
+<div ng-include src="'/media/angular/html/nav.html'"></div>
+<div class="container-fluid" style="position: relative; height: 0px; width: 1170px;">
+<div class="notif-item" ng-repeat="notif in notifs" >
+		<div class="notif-img pull-left">
+			<a class="pin-item-link" ui-sref="post({post_id: notif.post.id})" style="float:right">
+				<img class="img img-circle" style="width:40px;height:40px;" ng-src="{[{notif.post.images.low_resolution.url}]}">
+			</a>
+		</div>
+		<div class="notif-actors col-md-7 col-sm-7 col-xs-7 pull-right">
+			<a class="user-avatar" title="" ui-sref="profile({user_profile_id: notif.user.id})">
+				<img class="nav-avatar" ng-src="{[{notif.actor.avatar}]}">
+			</a>
+		</div>
+		<div class="notif-type col-md-3 col-sm-3 col-xs-4">
+			<i class="glyphicon glyphicon-comment"></i>
+			{[{notif.type}]}
+		</div>
+		<div class="clear"></div>
+	</div>
+</div>

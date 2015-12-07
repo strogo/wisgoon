@@ -296,7 +296,9 @@ def send_comment(request):
                                               comment=text,
                                               user=request.user,
                                               ip_address=get_user_ip(request))
-            return render(request, 'pin2/show_comment.html', {'comment': comment})
+            return render(request, 'pin2/show_comment.html', {
+                'comment': comment
+            })
 
     return HttpResponse('error')
 
@@ -309,8 +311,6 @@ def you_are_deactive(request):
 def sendurl(request):
     if request.method == "POST":
         post_values = request.POST.copy()
-        # tags = post_values['tags']
-        # post_values['tags'] = tags[tags.find("[")+1:tags.find("]")]
         form = PinForm(post_values)
         if form.is_valid():
             model = form.save(commit=False)
@@ -318,16 +318,17 @@ def sendurl(request):
             image_url = model.image
             filename = image_url.split('/')[-1]
             filename = create_filename(filename)
-            image_on = "%s/pin/images/o/%s" % (MEDIA_ROOT, filename)
+            # image_on = "{}/pin/images/o/{}".format(MEDIA_ROOT, filename)
+            image_on = "{}/pin/{}/images/o/{}".\
+                format(MEDIA_ROOT, settings.INSTANCE_NAME, filename)
 
             urllib.urlretrieve(image_url, image_on)
 
-            model.image = "pin/images/o/%s" % (filename)
+            model.image = "pin/{}/images/o/{}".\
+                format(settings.INSTANCE_NAME, filename)
             model.timestamp = time()
             model.user = request.user
             model.save()
-
-            form.save_m2m()
 
             if model.status == 1:
                 msg = 'مطلب شما با موفقیت ارسال شد. <a href="%s">مشاهده</a>' %\
@@ -366,25 +367,22 @@ def a_sendurl(request):
 def send(request):
     if request.method == "POST":
         post_values = request.POST.copy()
-        # tags = post_values['tags']
-        # post_values['tags'] = tags[tags.find("[") + 1:tags.find("]")]
         form = PinForm(post_values)
         if form.is_valid():
             model = form.save(commit=False)
             filename = model.image
 
-            # create_filename(filename)
-            image_o = "%s/pin/temp/o/%s" % (MEDIA_ROOT, filename)
-            image_on = "%s/pin/%s/images/o/%s" % (MEDIA_ROOT, settings.INSTANCE_NAME, filename)
+            image_o = "{}/pin/temp/o/{}".format(MEDIA_ROOT, filename)
+            image_on = "{}/pin/{}/images/o/{}".\
+                format(MEDIA_ROOT, settings.INSTANCE_NAME, filename)
 
             copyfile(image_o, image_on)
 
-            model.image = "pin/%s/images/o/%s" % (settings.INSTANCE_NAME, filename)
+            model.image = "pin/{}/images/o/{}".\
+                format(settings.INSTANCE_NAME, filename)
             model.timestamp = time()
             model.user = request.user
             model.save()
-
-            # form.save_m2m()
 
             if model.status == 1:
                 msg = 'مطلب شما با موفقیت ارسال شد. <a href="%s">مشاهده</a>' %\
@@ -401,9 +399,13 @@ def send(request):
     category = Category.objects.all()
 
     if request.is_ajax():
-        return render(request, 'pin/_send.html', {'form': form, 'category': category})
+        return render(request, 'pin/_send.html', {
+            'form': form, 'category': category
+        })
     else:
-        return render(request, 'pin/send.html', {'form': form, 'category': category})
+        return render(request, 'pin/send.html', {
+            'form': form, 'category': category
+        })
 
 
 @login_required

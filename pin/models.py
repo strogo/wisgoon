@@ -646,9 +646,9 @@ class Post(models.Model):
 
             image_file = open(file_path)
             self.hash = self.md5_for_file(image_file)
-
-            if self.hash_exists():
-                self.status = 0
+            if not settings.DEBUG:
+                if self.hash_exists():
+                    self.status = 0
 
             if not self.accept_for_stream():
                 self.status = 0
@@ -793,7 +793,10 @@ class Post(models.Model):
 
         if pid == 0:
             pl = r_server.lrange(cat_stream, 0, 20)
+            print "1"
         else:
+            print "12"
+
             cache_name = "cl_%s_%s" % (cat_stream, pid)
             cache_data = cache.get(cache_name)
             if cache_data:

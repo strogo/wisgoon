@@ -1,0 +1,57 @@
+<div ng-include src="'/media/angular/html/nav.html'"></div>
+		<div class="col-md-10 col-sm-12 col-xs-12 dr ">
+			<form ng-submit="registerationForm()" name="registerForm" ng-controller="registerController as formValidCtrl" class="form-horizontal"  novalidate>
+
+				<div class="control-group" ng-class="{ 'haSerorr' : submitted}">
+					<label class="control-label" for="inputusername">نام کاربری</label>
+					<div class="controls">
+						
+						<input type="text" name="username" class="form-control ltr" ng-model="formData.username" ng-minlength="3" ng-maxlength="8" required>
+						
+						<div class="help-block" ng-messages="registerForm.username.$error" ng-show="submitted">
+							<span ng-message="minlength"><i>*</i>نام کاربری باید بیشتر از ۳ کاراکتر باشد</span>
+							<span ng-message="maxlength"><i>*</i>نام کاربری باید کمتر از ۸ کاراکتر باشد</span>
+							<span ng-message="required"><i>*</i>نام کاربری الزامی است</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="control-group" ng-class="{ 'haSerorr' : submitted}">
+					<label class="control-label" for="inputEmail">ایمیل</label>
+					<div class="controls">
+						<input type="email" name="email" class="form-control ltr" ng-model="formData.email" required>
+						<div class="help-block" ng-messages="registerForm.email.$error" ng-show="submitted">
+							<span ng-message="required"><i>*</i>پست الکترونیکی الزامی است</span>
+							<span ng-message="email" ng-show="registerForm.email.$error"><i>*</i>پست الکترونیکی معتبر نیست</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="control-group" ng-class="{ 'haSerorr' : submitted}">
+					<label class="control-label" for="inputpassword">گذرواژه</label>
+					<div class="controls">
+						<input type="password" ng-model="formData.password" name="password" id="inputpassword" class="form-control ltr" ng-minlength="3" ng-maxlength="8" required>
+						<div class="help-block" ng-messages="registerForm.password.$error" ng-show="submitted">
+							<span ng-message="minlength"><i>*</i>رمز عبور باید بیشتر از ۳ کاراکتر باشد</span>
+							<span ng-message="maxlength"><i>*</i>رمز عبور بای کمتر از ۸ کاراکتر باشد</span>
+							<span ng-message="required"><i>*</i>رمز عبور الزامی است</span>
+						</div>
+					</div>
+				</div>
+				<br>
+				<br>
+				<input type="text" ng-model="formData.token" ng-init="formData.token='e622c330c77a17c8426e638d7a85da6c2ec9f455'">
+				<div class="clear mt20"></div>
+
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary btn-large" ng-click="submitted=true">ثبت نام</button>
+					<br/>
+					<div ng-show="showSuccess" ng-hide="showError" ng-class="{ 'alert alert-success' : submitted}">{[{message}]}</div>
+					<div ng-show="showError" ng-hide="showSuccess" ng-class="{ 'alert alert-danger' : submitted}">{[{errorName}]}</div>
+
+				</div>
+				<br>
+
+			</form>
+			
+		</div>
