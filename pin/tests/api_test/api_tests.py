@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-from django.test import Client
-from pin.models import Category, Post, Comments
-from django.contrib.auth.models import User
 import unittest
-from tastypie.models import ApiKey
 import os
+
+from django.test import Client
+from django.contrib.auth.models import User
 from django.conf import settings
+
+from tastypie.models import ApiKey
+
+from pin.models import Category, Post, Comments
 
 
 class AuthTestCase(unittest.TestCase):

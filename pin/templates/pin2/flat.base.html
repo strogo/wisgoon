@@ -16,16 +16,19 @@
 		var upload_url = "{% url 'pin-upload' %}";
 	</script>
 
-
 	{% include "base/analytics.html"%}
 </head>
 <body>
 	<div id="pagetop"></div>
 	{% include "pin2/nav.html" %}
 	{% include "pin2/cats.html" %}
+
+	{% if not DEBUG %}
 	<div class="tabliq-block" style="text-align:center">
 		{% include "base/clickyab.html" %}
 	</div>
+	{% endif %}
+	
 	{% block content %}{% endblock content%}
 
 	{% if next_url %}

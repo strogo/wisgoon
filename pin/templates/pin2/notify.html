@@ -1,53 +1,40 @@
 {% load pin_tags %}
 
 {% load daddy_avatar %}
-<a href="{% url 'pin-notif-user' %}">مشاهده همه اعلانات</a>
+<a href="{% url 'pin-notif-user' %}" class="wis_btn green w100">مشاهده همه اعلانات</a>
 
 <a aria-label="Close" href="javascript:;" data-dismiss="popover" class="popover-close" type="button">
     <span aria-hidden="true">×</span>
 </a>
+
+
 {% for noti in notif %}
-
-<div class="notif {{noti.type}}" style="">
-
-    {% if noti.type == 4 %}
-    <a href="{% url 'pin-item' noti.id %}" style="width:100px; height:100px">
-        <img src="{{noti.po.url}}" style="float:left;margin-right:5px; width:100px" />
+<div class="notif popover_notif notif_{{noti.type}}" style="">
+{# {{forloop.counter}} -- {{noti.type}} -- {{noti.po.get_image_236.url}} <br> #}
+    <a target="_blank" href="{% url 'pin-user' noti.actor %}" class="pull-right actor">
+        <img src="{{noti.actor|get_avatar:60}}">
     </a>
-    <div class="post-like-right">
-        <i class="glyphicon glyphicon-remove"></i>
-    </div>
-    <a target="_blank" href="{% url 'pin-user' noti.actor %}">
-        <img src="{{noti.actor|get_avatar:30}}"></a>
+    {% if noti.type != 10 %}
+    <a class="notif_img pull-left" href="{% url "pin-item" noti.po.id %}">
+        <img src="{{noti.po.get_image_236.url }}" />
+    </a>
+    {% endif %}
+    <div class="notif_text pull-right">
+        {% if noti.type == 1 %}
+        <i class="glyphicon glyphicon-heart"></i> تصویر شما را پسندید
+        {% elif noti.type == 2 %}
+        <i class="glyphicon glyphicon-comment"></i> برای تصویر شما نظر داد
+        {% elif noti.type == 4 %}
+        <i class="glyphicon glyphicon-remove"></i> تصویر شما حذف شد
         {% elif noti.type == 10 %}
-        <a class="bbbb" href="{% url 'pin-user' noti.po.0 %}" style="width:100px; height:100px">
-            <img src="{{noti.po.0|get_avatar:100}}" style="float:left;margin-right:5px; width:100px" />
-        </a>
-        <div class="post-like-right">
-            <i class="glyphicon glyphicon-user"></i>
-        </div>
-        
-        <a target="_blank" href="{% url 'pin-user' noti.owner %}">
-            <img src="{{noti.owner|get_avatar:30}}">
-        </a>
-        
-        {% else %}
-        <a href="{% url 'pin-item' noti.id %}" style="width:100px; height:100px"><img src="{{noti.po.get_image_236.url }}" style="float:left;margin-right:5px; width:100px" /></a>
-
-        <div class="post-like-right">
-            {% if noti.type == 1 %}
-            <i class="glyphicon glyphicon-heart"></i>
-            {% elif noti.type == 2 %}
-            <i class="glyphicon glyphicon-comment"></i>
-            {% elif noti.type == 3 %}
-            <i class="glyphicon glyphicon-ok"></i>
-            {% elif noti.type == 4 %}
-            <i class="glyphicon glyphicon-remove"></i>
-            {% endif %}
-        </div>
-        <a target="_blank" href="{% url 'pin-absuser' noti.actor|get_absusername %}"><img src="{{noti.actor|get_avatar:30}}"></a>
+        <i class="glyphicon glyphicon-user"></i> شما را دنبال می‌کند
         {% endif %}
-        <div class="clear"></div>
     </div>
-    {% endfor %}
+{% comment %}
+{% endcomment %}
+<div class="clear"></div>
+
+</div>
+
+{% endfor %}
 

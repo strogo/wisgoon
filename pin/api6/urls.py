@@ -11,7 +11,7 @@ urlpatterns = patterns('pin.api6.auth',
                        url(r'auth/user/(?P<user_id>\d+)/$', 'profile', name='api-6-auth-profile'),
                        url(r'auth/user/update/$', 'update_profile', name='api-6-auth-profile-update'),
                        url(r'auth/user/search/$', 'user_search', name='api-6-auth-user-search'),
-                       url(r'^auth/user/(?P<user_id>\d+)/likes/$', 'user_like', name='api-6-auth-user-like')
+                       url(r'auth/user/(?P<user_id>\d+)/likes/$', 'user_like', name='api-6-auth-user-like')
                        )
 
 urlpatterns += patterns('pin.api6.post',

@@ -3,9 +3,6 @@
 {% load humanize %}
 
 <div class="post-page mato20" itemscope itemtype="http://schema.org/CreativeWork">
-	<div class="post-sidebar">
-		{% include "pin2/_pin_sidebar.html" %}
-	</div>
 	<div class="post-content">
 		<div class="box post_item_inner">
 			<!--  buttons-->
@@ -29,8 +26,8 @@
 				<a class="wis_btn orange_o pull-left report-btn" title="گزارش تخلف" href="{% url "report_pin" post.id%}" data-toggle="tooltip" data-placement="bottom">
 					<span class="report_icon"></span>
 				</a>
-				<a href="{{MEDIA_URL}}{{post.image}}" class="wis_btn green_o pull-left">
-					دانلود <span class="download_icon"></span>
+				<a href="{{MEDIA_URL}}{{post.image}}" title="دانلود" class="wis_btn green_o pull-left" data-toggle="tooltip" data-placement="bottom">
+					<span class="download_icon"></span>
 				</a>
 				{% if user.is_superuser %}
 				<!-- delete -->
@@ -111,6 +108,13 @@
 			</div>
 		</div>
 
+		<div class="only_mobile_view social_icons_box box">
+			{% include "pin2/_share_social.html" %}
+		</div>
+		<div class="only_mobile_view">
+			{% include "pin2/mobil_ads.html" %}
+		</div>
+
 		{% if user.is_authenticated and user.is_active %}
 		<div id="submit_comment" class="box">
 			{% include "pin2/__comment_submit.html" %}	
@@ -147,4 +151,8 @@
 		</div>
 
 	</div>
+	<div class="post-sidebar">
+		{% include "pin2/_pin_sidebar.html" %}
+	</div>
+
 </div>

@@ -29,6 +29,8 @@ def get_avatar(user, size=165):
     if not user:
         return daddy_avatar('', size)
 
+    u = None
+
     if isinstance(user, (unicode)):
         user = int(user)
 
@@ -38,6 +40,10 @@ def get_avatar(user, size=165):
 
     if isinstance(user, User):
         u = user
+
+    if not u:
+        glob_avatar = daddy_avatar("", size)
+        return glob_avatar
 
     user_id = u.id
 
