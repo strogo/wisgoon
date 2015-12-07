@@ -107,7 +107,10 @@ def create_filename(filename):
                 print str(e)
     filestr = "%s/%f" % (folder, time.time())
     filestr = filestr.replace('.', '')
-    filename = "%s%s" % (filestr, os.path.splitext(filename)[1])
+    file_ext = os.path.splitext(filename)[1]
+    if not file_ext:
+        file_ext = ".jpg"
+    filename = "%s%s" % (filestr, file_ext)
     return filename
 
 

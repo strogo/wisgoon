@@ -288,13 +288,15 @@ def post_send(request):
         upload = request.FILES.values()[0]
         filename = create_filename(upload.name)
         try:
-            u = "%s/pin/%s/images/o/%s" % (MEDIA_ROOT, settings.INSTANCE_NAME, filename)
+            u = "{}/pin/{}/images/o/{}".\
+                format(MEDIA_ROOT, settings.INSTANCE_NAME, filename)
             with BufferedWriter(FileIO(u, "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
 
             model = Post()
-            model.image = "pin/%s/images/o/%s" % (settings.INSTANCE_NAME, filename)
+            model.image = "pin/{}/images/o/{}".\
+                format(settings.INSTANCE_NAME, filename)
             model.user = user
             model.timestamp = time.time()
             model.text = form.cleaned_data['description']
