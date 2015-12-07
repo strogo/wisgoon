@@ -22,6 +22,8 @@ ADMINS = (
 
 CASSANDRA_DB = '79.127.125.104'
 
+COMPRESS_OUTPUT_DIR = '{}_cache'.format(INSTANCE_NAME)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',

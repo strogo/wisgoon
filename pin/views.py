@@ -33,7 +33,6 @@ REPORT_TYPE = settings.REPORT_TYPE
 
 
 def home(request):
-    log_act("wisgoon.home.view.count")
     pid = get_request_pid(request)
     cache_str = "page:home:%s" % str(pid)
     enable_cacing = False
