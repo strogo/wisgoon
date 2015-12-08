@@ -25,22 +25,22 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # Create Users
-        create_users()
+        create_users(self)
 
         # Create Profile
-        create_profile()
+        create_profile(self)
 
         # Create Category
-        create_category()
+        create_category(self)
 
         # Create Post
         create_post(self)
 
         # Create Like an Comments
-        create_like_comment()
+        create_like_comment(self)
 
         # Create Follower
-        create_test_follow()
+        create_test_follow(self)
 
 
 def create_post(self):
@@ -61,20 +61,17 @@ def create_post(self):
                 cat_id += 1
             post.category_id = cat_id
             post.save()
-            # profile = Profile.objects.get(user_id=user_id)
-            self.stdout.write("post %s status: %s" % (str(post.id), str(post.status)))
-            # self.stdout.write("user %s score: %s" % (str(user_id), str(profile.score)))
-            # self.stdout.write("cat_id: %s" % str(cat_id))
-            # self.stdout.write("Post %s Created" % str(index))
+            self.stdout.write("post %s status: %s" % (str(post.id),
+                                                      str(post.status)))
 
         except Exception as e:
-            print str(e)
+            self.stdout.write(str(e))
             raise
 
-    print "Finish Create Posts"
+    self.stdout.write("Finish Create Posts")
 
 
-def create_like_comment():
+def create_like_comment(self):
     posts = Post.objects.all()
     for index, post in enumerate(posts):
         text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
@@ -90,22 +87,27 @@ def create_like_comment():
             comment.comment = text
             comment.user_id = user_id
             comment.save()
-            print "comment %s append to list" % index
-            print "post %s" % post_id
+
+            self.stdout.write("comment %s append to list" % str(index))
+            self.stdout.write("post %s" % str(post_id))
+
         except Exception as e:
-            print str(e)
+            self.stdout.write(str(e))
             raise
 
-    print "Finish Create Commnts and likes"
+    self.stdout.write("Finish Create Comments and likes")
 
 
-def create_category():
+def create_category(self):
     import json
     media_url = settings.MEDIA_ROOT
     path = "%s/v2/test_data/categories.json" % (media_url)
 
-    with open(path) as data_file:
-        data = json.load(data_file)
+    try:
+        with open(path) as data_file:
+            data = json.load(data_file)
+    except Exception as e:
+        self.stdout.write(str(e))
 
     for obj in data:
         try:
@@ -114,20 +116,20 @@ def create_category():
                         image='v2/test_data/%s' % obj['img'])
 
             for cat in obj['childs']:
-                cat_path = "v2/test_data/images/post_%s.jpg" % (random.randint(1, 50))
+                cat_path = "v2/test_data/images/post_%s.jpg" % str(random.randint(1, 50))
                 try:
                     Category.objects.create(title=cat, parent=sub_cat,
                                             image=cat_path)
                 except Exception as e:
-                    print str(e)
+                    self.stdout.write(str(e))
 
         except Exception as e:
-            print str(e)
+            self.stdout.write(str(e))
 
-    print "Finish Create Category"
+    self.stdout.write("Finish Create Category")
 
 
-def create_users():
+def create_users(self):
     users_list = []
     media_url = settings.MEDIA_ROOT
     path = "%s/v2/test_data/auth_user.csv" % (media_url)
@@ -138,7 +140,7 @@ def create_users():
             users_list.append([row[1], '1', row[4]])
         f.close()
     except Exception as e:
-        print str(e)
+        self.stdout.write(str(e))
         raise
 
     for user in users_list:
@@ -146,24 +148,24 @@ def create_users():
             user = User.objects.create_user(user[0], user[1], user[2])
             ApiKey.objects.get_or_create(user=user)
         except Exception as e:
-            print str(e)
+            self.stdout.write(str(e))
 
-    print "Finish Create Users"
+    self.stdout.write("Finish Create Users")
 
 
-def create_test_follow():
+def create_test_follow(self):
     cnt_follow = raw_input("How many follow you want to add?")
     for i in range(1, int(cnt_follow) + 1):
         try:
             Follow.objects.get_or_create(follower_id=i, following_id=i + 3)
             Follow.objects.get_or_create(follower_id=i + 3, following_id=i)
-            print "Add %s Follow" % str(i)
+            self.stdout.write("Add %s Follow" % str(i))
         except Exception as e:
-            print str(e)
-    print "finish Create Follower and following"
+            self.stdout.write(str(e))
+    self.stdout.write("finish Create Follower and following")
 
 
-def create_profile():
+def create_profile(self):
     profile_list = []
     media_url = settings.MEDIA_ROOT
     path = "%s/v2/test_data/user_profile_profile.csv" % (media_url)
@@ -174,17 +176,18 @@ def create_profile():
             profile_list.append([row[1], row[2], row[3], row[4]])
         f.close()
     except Exception as e:
-        print str(e)
+        self.stdout.write(str(e))
 
     user_list = User.objects.order_by('-id')[:200]
     for index, user in enumerate(user_list):
         try:
-            avatar_path = "v2/test_data/images/avatar/post_%s.jpg" % (random.randint(1, 50))
+            avatar_path = "v2/test_data/images/avatar/post_%s.jpg" % str(random.randint(1, 50))
             Profile.objects.filter(user=user)\
                 .update(avatar=avatar_path, name=profile_list[index][0],
-                        location=profile_list[index][1], website=profile_list[index][2],
+                        location=profile_list[index][1],
+                        website=profile_list[index][2],
                         bio=profile_list[index][3], score=10000)
 
-            print "user profile %s Updated" % user.username
+            self.stdout.write("user profile %s Updated" % user.username)
         except Exception as e:
-            print str(e)
+            self.stdout.write(str(e))
