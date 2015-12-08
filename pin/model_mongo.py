@@ -218,6 +218,11 @@ class MonthlyStats(Document):
     POST = "post"
     COMMENT = "comment"
     LIKE = "like"
+    USER = "user"
+    FOLLOW = "follow"
+    BLOCK = "block"
+    VIEW = "view_pages"
+    BILL = "bill"
 
     date = DateTimeField()
     object_type = StringField()
