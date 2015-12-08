@@ -74,22 +74,27 @@ def create_post(self):
 def create_like_comment(self):
     posts = Post.objects.all()
     for index, post in enumerate(posts):
-        text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
-        user_id = random.randint(1, 200)
-        post_id = random.randint(1, posts.count())
-
-        LikesRedis(post_id=post_id)\
-            .like_or_dislike(user_id=user_id, post_owner=post.user_id)
 
         try:
-            comment = Comments()
-            comment.object_pk_id = post_id
-            comment.comment = text
-            comment.user_id = user_id
-            comment.save()
+            like_range = random.randint(0, 20)
+            for a in range(like_range):
+                text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
+                user_id = random.randint(1, 200)
+                LikesRedis(post_id=post.id)\
+                    .like_or_dislike(user_id=user_id, post_owner=post.user_id)
+
+            comment_range = random.randint(5, 20)
+            for i in range(comment_range):
+                user_id = random.randint(1, 200)
+                text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
+                comment = Comments()
+                comment.object_pk_id = post.id
+                comment.comment = text
+                comment.user_id = user_id
+                comment.save()
 
             self.stdout.write("comment %s append to list" % str(index))
-            self.stdout.write("post %s" % str(post_id))
+            self.stdout.write("post %s" % str(post.id))
 
         except Exception as e:
             self.stdout.write(str(e))
@@ -154,14 +159,17 @@ def create_users(self):
 
 
 def create_test_follow(self):
-    cnt_follow = raw_input("How many follow you want to add?")
-    for i in range(1, int(cnt_follow) + 1):
-        try:
-            Follow.objects.get_or_create(follower_id=i, following_id=i + 3)
-            Follow.objects.get_or_create(follower_id=i + 3, following_id=i)
-            self.stdout.write("Add %s Follow" % str(i))
-        except Exception as e:
-            self.stdout.write(str(e))
+    # cnt_follow = raw_input("How many follow you want to add?")
+    for i in range(200):
+        loop_count = random.rondint(5, 30)
+
+        for user in range(loop_count):
+            try:
+                Follow.objects.get_or_create(follower_id=i,
+                                             following_id=random.rondint(1, 200))
+                self.stdout.write("Add %s Follow" % str(i))
+            except Exception as e:
+                self.stdout.write(str(e))
     self.stdout.write("finish Create Follower and following")
 
 
