@@ -69,6 +69,7 @@ function load_posts(page) {
         }
     }).done(function(d) {
         $('.footer-loading-box').hide(0);
+        feedobj.masonry('reload');
     })
     .fail(function(d) {
         $("#next_url").addClass("btn btn-success").html('کلیک کنید');
