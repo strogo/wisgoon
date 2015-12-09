@@ -216,11 +216,15 @@ class Notif(Document):
 class MonthlyStats(Document):
 
     POST = "post"
+    DELETE_POST = "delete_post"
     COMMENT = "comment"
     LIKE = "like"
+    DISLIKE = "dislike"
     USER = "user"
     FOLLOW = "follow"
+    UNFOLLOW = "unfollow"
     BLOCK = "block"
+    UNBLOCK = "unblock"
     VIEW = "view_pages"
     BILL = "bill"
 

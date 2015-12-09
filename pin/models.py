@@ -11,6 +11,7 @@ from textblob.classifiers import NaiveBayesClassifier
 
 from datetime import datetime, timedelta
 from time import mktime
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
@@ -28,6 +29,7 @@ from taggit.models import Tag
 
 from model_mongo import Notif as Notif_mongo, MonthlyStats
 from preprocessing import normalize_tags
+
 from pin.tasks import delete_image
 from pin.classification_tools import normalize
 
@@ -515,6 +517,7 @@ class Post(models.Model):
         from models_redis import LikesRedis
         LikesRedis(post_id=self.id).delete_likes()
 
+        MonthlyStats.log_hit(MonthlyStats.DELETE_POST)
         # from tasks import send_notif_bar
 
         # send_notif_bar(user=self.user.id, type=4, post=self.id,
@@ -915,10 +918,11 @@ class Follow(models.Model):
 
         Profile.objects.filter(user_id=following_id)\
             .update(cnt_followers=F('cnt_followers') - 1)
-
+        MonthlyStats.log_hit(MonthlyStats.UNFOLLOW)
         super(Follow, self).delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
+        MonthlyStats.log_hit(MonthlyStats.FOLLOW)
         super(Follow, self).save(*args, **kwargs)
 
     @classmethod
@@ -962,7 +966,7 @@ class Stream(models.Model):
             from pin.tasks import add_to_storage
             add_to_storage.delay(post_id=post.id)
 
-            MonthlyStats.log_hit(object_type="post")
+            MonthlyStats.log_hit(object_type=MonthlyStats.POST)
 
             from user_profile.models import Profile
             Profile.objects.filter(user_id=post.user_id)\
@@ -1319,6 +1323,7 @@ class Block(models.Model):
 
         try:
             Block.objects.get_or_create(user_id=user_id, blocked_id=blocked_id)
+            MonthlyStats.log_hit(MonthlyStats.BLOCK)
         except:
             pass
 
@@ -1328,6 +1333,7 @@ class Block(models.Model):
     def unblock_user(cls, user_id, blocked_id):
         if user_id == blocked_id:
             return False
+        MonthlyStats.log_hit(MonthlyStats.UNBLOCK)
         Block.objects.filter(user_id=user_id, blocked_id=blocked_id).delete()
 
 
