@@ -161,12 +161,12 @@ def create_users(self):
 def create_test_follow(self):
     # cnt_follow = raw_input("How many follow you want to add?")
     for i in range(200):
-        loop_count = random.rondint(5, 30)
+        loop_count = random.randint(5, 30)
 
         for user in range(loop_count):
             try:
                 Follow.objects.get_or_create(follower_id=i,
-                                             following_id=random.rondint(1, 200))
+                                             following_id=random.randint(1, 200))
                 self.stdout.write("Add %s Follow" % str(i))
             except Exception as e:
                 self.stdout.write(str(e))

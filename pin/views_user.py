@@ -634,6 +634,10 @@ def verify_payment(request, bill_id):
             p = bill.user.profile
             p.inc_credit(amount=bill.amount)
             messages.success(request, 'پرداخت با موفقیت انجام شد. کد رهگیری شما %s' % str(result['RefID']))
+
+            from pin.model_mongo import MonthlyStats
+            MonthlyStats.log_hit(object_type=MonthlyStats.BILL)
+
             return HttpResponseRedirect(reverse('pin-inc-credit'))
         else:
             messages.error(request, 'پرداخت نا موفق، در صورت کسر از حساب شما بانک مبلغ را برگشت خواهد داد.')
