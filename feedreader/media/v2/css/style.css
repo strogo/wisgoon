@@ -406,7 +406,7 @@ span.like_icon,
 	width: 17px;
 	height: 15px;
 	display: inline-block;
-	margin: 0 6px -4px 0;
+	margin: 0 2px -4px 0;
 }
 a:hover span.like_icon,
 .post-action .likes:hover span.like_icon{
@@ -422,7 +422,7 @@ span.cmnt_icon,
 	width: 17px;
 	height: 14px;
 	display: inline-block;
-	margin: 5px 6px -2px 0;
+	margin: 5px 2px -2px 0;
 }
 .post-action .comment,
 .post-action .likes{
@@ -902,14 +902,14 @@ a.btn.btn-primary {
 }
 .post-content .activity_btn .btn-box{
 	float: left;
-	margin-right: 30px;
+	margin-right: 10px;
 }
 .post-content .liker_avatars {
 	float: right;
 	height: 50px;
 	overflow: hidden;
-	padding: 15px;
-	width: 310px;
+	padding: 15px 10px 0 0;
+	width: 290px;
 }
 .post-content .liker_avatars a{
 	margin-bottom: 10px;
@@ -2522,6 +2522,7 @@ div.comment div div.row:hover .del-comment{
 }
 .wis_app > p span{
 	margin-bottom: 10px;
+	font-size: 13px;
 }
 .wis_app .app_btn {
 	display: block;
