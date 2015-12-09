@@ -56,6 +56,10 @@ class LikesRedis(object):
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') - 1)
 
+        user_last_likes = "{}_{}".\
+            format(settings.USER_LAST_LIKES, int(user_id))
+        rListServer.lrem(user_last_likes, self.postId)
+
         Profile.after_dislike(user_id=user_id)
 
         from pin.model_mongo import MonthlyStats
@@ -70,7 +74,8 @@ class LikesRedis(object):
         p = rListServer.pipeline()
         p.lpush(self.keyNameList, user_id)
         # Store user_last_likes
-        user_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(user_id))
+        user_last_likes = "{}_{}".\
+            format(settings.USER_LAST_LIKES, int(user_id))
         p.lrem(user_last_likes, self.postId)
         p.lpush(user_last_likes, self.postId)
         p.ltrim(user_last_likes, 0, 1000)

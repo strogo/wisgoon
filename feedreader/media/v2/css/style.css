@@ -1845,7 +1845,7 @@ a.img-move{
 	padding: 16px 22px 12px;
 	position: absolute;
 	top: 5px;
-	z-index: 999999;
+	z-index: 2;
 	text-shadow: 1px 1px 2px #000;
 }
 .menu-box{
@@ -1908,6 +1908,10 @@ a.img-move{
 }
 .menu-box ul li:hover{
 	background: #414449 !important;
+}
+.menu-box .colse-menu-btn {
+	color: #f89f0d;
+	margin-top: -8px;
 }
 .menu-box ul li a{
 	padding: 8px 15px;
@@ -2779,7 +2783,7 @@ div.comment div div.row:hover .del-comment{
 	}
 	.navbar-header img {
 		margin-right: 10px;
-		width: 40%;
+		width: 180px;
 	}
 	.navbar-default {
 		min-height: 60px;
@@ -2794,7 +2798,7 @@ div.comment div div.row:hover .del-comment{
 	}
 	.post-page{
 		width: 100%;
-		margin: 0 auto !important;
+		margin: 10px auto !important;
 	}
 	.post-content{
 		float: initial;
@@ -2921,9 +2925,39 @@ div.comment div div.row:hover .del-comment{
 	}
 	.user_avtivity div.icon{
 		float: right;
+		margin-left: 15px;
+		width: 22px;
 	}
 	.user_avtivity div.p_label{
 		float: right;
+	}
+	.user_avtivity div.count{
+		float: left;
+	}
+	.user_stat_config {
+		position: initial;
+	}
+	.profile_avatar{
+		width: 100%;
+		text-align: center;
+	}
+	.profile_avatar a {
+		display: inline-block;
+		width: 50%;
+	}
+	.profile_data .user_stats{
+		text-align: center;
+	}
+	#follower-box {
+		padding: 0 15px;
+		width: 100%;
+	}
+	.follow_box {
+		width: 100%;
+		margin-right: 0;
+	}
+	.wallet.wis_btn {
+		position: initial;
 	}
 }
 @media (max-width: 320px) {
