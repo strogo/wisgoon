@@ -25,9 +25,9 @@
 	<div class="clear"></div>
 	{% if post.user.id != request.user.id and user.is_authenticated %}
 		{% if follow_status == 0 %}
-		<a class="wis_btn green w100 mabo10 ajax-follow" href='{% url "pin-follow" post.user_id 1 %}'>ایجاد دوستی</a>
+		<a class="wis_btn green w100 mabo10 mato10 ajax-follow" href='{% url "pin-follow" post.user_id 1 %}'>ایجاد دوستی</a>
 		{% else %}
-		<a class="wis_btn w100 mabo10 red ajax-follow" href='{% url "pin-follow" post.user_id 0 %}'>قطع ارتباط</a>
+		<a class="wis_btn red w100 mabo10  mato10 ajax-follow" href='{% url "pin-follow" post.user_id 0 %}'>قطع ارتباط</a>
 		{%endif%}
 	{% endif %}
 

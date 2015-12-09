@@ -3,7 +3,7 @@
 <ul>
 	<li class="pa15">
 		<center>منوی کاربری 
-			<a href="javascript:;" class="pull-right colse-menu-btn"><span class='glyphicon glyphicon-minus-sign pull-right'></span></a>
+			<a href="javascript:;" class="pull-right colse-menu-btn"><span class='fa fa-close'></span></a>
 		</center>
 	</li>
 	<li class="pa15">
@@ -70,14 +70,11 @@
 		<a href="/accounts/register/">ثبت نام</a>
 	</li>
 	{% endif %}
-	<li class="nav-i {% if page == 'latest' %} active{% endif %}">
+	<li class="{% if page == 'latest' %} active{% endif %}">
 		<a href="{% url 'pin-latest' %}">آخرین مطالب</a>
 	</li>
 	<li>
 		<a href="{% url 'policy' %}">قوانین</a>
-	</li>
-	<li>
-		<a href="{% url 'stats' %}">آمار</a>
 	</li>
 	<li>
 		<a href="/search/">جستجو</a>
