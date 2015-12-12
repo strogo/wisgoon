@@ -76,6 +76,7 @@ function load_posts(page) {
     .always(function(d) {
         $('.footer-loading-box').hide(0);
     });
+    feedobj.masonry('reload');
 }
 
 
@@ -309,11 +310,11 @@ $(function () {
         .done(function(response) {
             if (response.status) {
                 alert_show(response.message, 'success');
-                t.attr('href', '/pin/follow/'+t.data('user-id')+'/0/');
+                t.attr('href', '/pin/follow/' + t.data('user-id') + '/0/');
                 t.html('قطع ارتباط <i class="fa fa-times"></i>').removeClass('green').addClass('red');
-            }else{
+            } else {
                 alert_show(response.message, 'success');
-                t.attr('href', '/pin/follow/'+t.data('user-id')+'/1/');
+                t.attr('href', '/pin/follow/' + t.data('user-id') + '/1/');
                 t.html('ایجاد دوستی  <i class="fa fa-plus"></i>').removeClass('red').addClass('green');
             }
             if (t.parents('.follow_box')) {
@@ -328,118 +329,120 @@ $(function () {
         });
     });
 
-$('[data-toggle="tooltip"]').tooltip();
-$('.menu-box ul li.parent').attr('data-content', '');
+    //
+    $('[data-toggle="tooltip"]').tooltip();
+    $('.menu-box ul li.parent').attr('data-content', '');
 
-$('body').on('click', '.menu-box ul li.parent > a', function(event) {
-    event.preventDefault();
-    p = $(this).parent();
-    if (p.attr('collapse') == 'true') {
-        p.removeAttr('collapse');
-        p.children('ul').slideUp('100');
-        p.attr('data-content', "");
-    }else{
-        p.parent().children('li').removeAttr('collapse');
-        p.parent().children('li').children('ul').slideUp('100');
-        $(this).parent().attr('collapse', 'true');
-        $(this).parent().children('ul').slideDown('100');
-        p.attr('data-content', "");
+    $('body').on('click', '.menu-box ul li.parent > a', function(event) {
+        event.preventDefault();
+        p = $(this).parent();
+        if (p.attr('collapse') == 'true') {
+            p.removeAttr('collapse');
+            p.children('ul').slideUp('100');
+            p.attr('data-content', "");
+        } else {
+            p.parent().children('li').removeAttr('collapse');
+            p.parent().children('li').children('ul').slideUp('100');
+            $(this).parent().attr('collapse', 'true');
+            $(this).parent().children('ul').slideDown('100');
+            p.attr('data-content', "");
 
-    }
-});
+        }
+    });
+    //
 
-$('body').on('click', '.menu-box .colse-menu-btn', function(event) {
-    event.preventDefault();
-    $('.menu-box').hide('fast');
-});
+    $('body').on('click', '.menu-box .colse-menu-btn', function(event) {
+        event.preventDefault();
+        $('.menu-box').hide('fast');
+    });
 
-$('body').on('click', '.report-btn', function(event) {
-    event.preventDefault();
-    var t = $(this);
-    t.append('<span class="loading-img"></span>');
-    $.ajax({
-        url: t.attr('href'),
-    })
-    .done(function(d) {
-        if (d.status) {
-            alert_show(d.msg, 'success');
+    $('body').on('click', '.report-btn', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        t.append('<span class="loading-img"></span>');
+        $.ajax({
+            url: t.attr('href'),
+        })
+        .done(function(d) {
+            if (d.status) {
+                alert_show(d.msg, 'success');
+            }else{
+                alert_show(d.msg, 'error');
+            }
+        })
+        .fail(function(d) {
+            alert_show('خطا! با مدیریت تماس بگیرید', 'error');
+        });
+        return false;
+    });
+
+    $('body').on('click', '.resp-menu', function(event) {
+        event.preventDefault();
+        $('.menu-box').css('display', 'block');
+        $('.menu-box').animate({
+            width: 320},
+            100, function() {});
+    });
+
+    $('body').on('mouseleave', '#wis_navbar', function(event) {
+        $(".marker").hide();
+    });
+    $('body').on('mouseenter', '#wis_navbar > ul > li', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        marker(t);
+    });
+    $('body').on('click', '#wis_navbar > ul > li', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        var ul = $(this).parent('ul');
+        if(t.children('ul').length != 0){
+            if (t.hasClass('open')) {
+                t.removeClass('open');
+                $('.marker').css('display', 'none');
+                t.children('ul').stop(true, false).slideUp('fast');
+            }else{
+                $('#wis_navbar > ul > li').removeClass('open');
+                $('#wis_navbar > ul > li > ul').stop(true, false).slideUp('fast');
+                t.addClass('open');
+                t.children('ul').stop(true, false).slideDown('fast');
+            }
         }else{
-            alert_show(d.msg, 'error');
+            window.location.href = $(this).children('a').attr('href');
         }
     })
-    .fail(function(d) {
-        alert_show('خطا! با مدیریت تماس بگیرید', 'error');
+    $('body').on('click', '#wis_navbar > ul > li.cats ul li', function(event) {
+        return false;
     });
-    return false;
-});
+    $('body').on('click', '#wis_navbar > ul > li > ul > li > a', function(event) {
+        window.location.href = $(this).attr('href');
+    });
 
-$('body').on('click', '.resp-menu', function(event) {
-    event.preventDefault();
-    $('.menu-box').css('display', 'block');
-    $('.menu-box').animate({
-        width: 320},
-        100, function() {});
-});
+    // $('body').on('mouseleave', '#wis_navbar', function(event) {
+    //     $('.marker').css('display', 'none');
+    // });
 
-$('body').on('mouseleave', '#wis_navbar', function(event) {
-    $(".marker").hide();
-});
-$('body').on('mouseenter', '#wis_navbar > ul > li', function(event) {
-    event.preventDefault();
-    var t = $(this);
-    marker(t);
-});
-$('body').on('click', '#wis_navbar > ul > li', function(event) {
-    event.preventDefault();
-    var t = $(this);
-    var ul = $(this).parent('ul');
-    if(t.children('ul').length != 0){
+    //
+    $('body').on('click', '.cats > ul > li', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        var ch = t.children('ul.sub-cats');
         if (t.hasClass('open')) {
             t.removeClass('open');
-            $('.marker').css('display', 'none');
-            t.children('ul').stop(true, false).slideUp('fast');
+            ch.stop(true, false).slideUp('fast');
         }else{
-            $('#wis_navbar > ul > li').removeClass('open');
-            $('#wis_navbar > ul > li > ul').stop(true, false).slideUp('fast');
+            $('.cats > ul > li.parent').removeClass('open');
+            $('.sub-cats').stop(true, false).slideUp('fast');
             t.addClass('open');
-            t.children('ul').stop(true, false).slideDown('fast');
+            t.children('ul.sub-cats').slideDown('fast');
         }
-    }else{
-        window.location.href = $(this).children('a').attr('href');
-    }
-})
-$('body').on('click', '#wis_navbar > ul > li.cats ul li', function(event) {
-    return false;
-});
-$('body').on('click', '#wis_navbar > ul > li > ul > li > a', function(event) {
-    window.location.href = $(this).attr('href');
-});
+    });
+    $('body').on('click', '.sub-cats a', function(event) {
+        window.location.href = $(this).attr('href');
+    });
 
-// $('body').on('mouseleave', '#wis_navbar', function(event) {
-//     $('.marker').css('display', 'none');
-// });
-
-
-$('body').on('click', '.cats > ul > li', function(event) {
-    event.preventDefault();
-    var t = $(this);
-    var ch = t.children('ul.sub-cats');
-    if (t.hasClass('open')) {
-        t.removeClass('open');
-        ch.stop(true, false).slideUp('fast');
-    }else{
-        $('.cats > ul > li.parent').removeClass('open');
-        $('.sub-cats').stop(true, false).slideUp('fast');
-        t.addClass('open');
-        t.children('ul.sub-cats').slideDown('fast');
-    }
-});
-$('body').on('click', '.sub-cats a', function(event) {
-    window.location.href = $(this).attr('href');
-});
-
-var l = $('.cats > ul > li');
-l.width(100/l.length+'%');
+    var l = $('.cats > ul > li');
+    l.width(100/l.length+'%');
 
 });
 

@@ -224,5 +224,8 @@ $('body').on('click', '.topuser-hover-btn',function(){
     })
     .always(function() {
     });
-    
+});
+
+$('#fromImageModal, #fromUrlModal').on('show.bs.modal', function (e) {
+    $('.nav .menu-box').hide('fast');
 });

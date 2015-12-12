@@ -62,6 +62,9 @@ class LikesRedis(object):
 
         Profile.after_dislike(user_id=user_id)
 
+        from pin.model_mongo import MonthlyStats
+        MonthlyStats.log_hit(object_type=MonthlyStats.DISLIKE)
+
     def like(self, user_id, post_owner):
         rSetServer.sadd(self.keyNameSet, str(user_id))
 

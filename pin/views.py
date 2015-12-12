@@ -890,6 +890,9 @@ def absuser(request, user_name=None):
 
 
 def item(request, item_id):
+    from pin.model_mongo import MonthlyStats
+    MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
+
     enable_cacing = False
     if not request.user.is_authenticated():
         enable_cacing = True
