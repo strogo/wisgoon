@@ -101,15 +101,21 @@ def today_comments(today):
 def highchart_data(start, end, chart_type):
     import datetime
     if chart_type:
-        chart_type = chart_type.upper()
+        chart_type = chart_type.lower()
 
-    start_date = datetime.datetime.strptime(start, '%y/%m/%d')
-    end_date = datetime.datetime.strptime(end, '%y/%m/%d')
+    start_date = datetime.datetime.strptime(start, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end, '%Y-%m-%d')
 
     if start_date > end_date:
         start_date, end_date = end, start
 
     points = MonthlyStats.objects(date__lte=end_date,
                                   date__gte=start_date,
-                                  object_type=chart_type)
-    return points
+                                  object_type=chart_type).order_by('timestamp')
+
+    point_list = []
+    for point in points:
+        point_list.append([point.timestamp, point.count])
+
+    data = {'name': chart_type, 'data': point_list}
+    return data

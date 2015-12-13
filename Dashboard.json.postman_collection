@@ -1,0 +1,35 @@
+{
+	"id": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+	"name": "Dashboard",
+	"description": "",
+	"order": [
+		"7752e0cd-c6e9-6bf6-de6d-7e89120fff42"
+	],
+	"folders": [],
+	"timestamp": 1449994837189,
+	"owner": 0,
+	"remoteLink": "",
+	"public": false,
+	"requests": [
+		{
+			"id": "7752e0cd-c6e9-6bf6-de6d-7e89120fff42",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [],
+			"dataMode": "params",
+			"name": "home_page",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1449994865532,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		}
+	]
+}
