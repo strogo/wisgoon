@@ -230,6 +230,7 @@ class MonthlyStats(Document):
 
     date = DateTimeField()
     object_type = StringField()
+    timestamp = StringField(default=datetime.datetime.now().strftime('%s'))
     count = IntField()
 
     meta = {

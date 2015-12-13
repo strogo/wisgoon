@@ -167,7 +167,7 @@ def create_test_follow(self):
             try:
                 Follow.objects.get_or_create(follower_id=i,
                                              following_id=random.randint(1, 200))
-                self.stdout.write("Add %s Follow" % str(i))
+                self.stdout.write("Add %s Follow for user %s" % (str(user), str(i)))
             except Exception as e:
                 self.stdout.write(str(e))
     self.stdout.write("finish Create Follower and following")
