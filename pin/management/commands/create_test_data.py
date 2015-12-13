@@ -82,6 +82,7 @@ def create_like_comment(self):
                 user_id = random.randint(1, 200)
                 LikesRedis(post_id=post.id)\
                     .like_or_dislike(user_id=user_id, post_owner=post.user_id)
+            self.stdout.write("add %s like for post %s" % (str(like_range), str(post.id)))
 
             comment_range = random.randint(5, 20)
             for i in range(comment_range):
@@ -93,8 +94,7 @@ def create_like_comment(self):
                 comment.user_id = user_id
                 comment.save()
 
-            self.stdout.write("comment %s append to list" % str(index))
-            self.stdout.write("post %s" % str(post.id))
+            self.stdout.write("add %s comment for post %s" % (str(comment_range), str(post.id)))
 
         except Exception as e:
             self.stdout.write(str(e))
@@ -167,7 +167,7 @@ def create_test_follow(self):
             try:
                 Follow.objects.get_or_create(follower_id=i,
                                              following_id=random.randint(1, 200))
-                self.stdout.write("Add %s Follow" % str(i))
+                self.stdout.write("Add %s Follow for user %s" % (str(user), str(i)))
             except Exception as e:
                 self.stdout.write(str(e))
     self.stdout.write("finish Create Follower and following")

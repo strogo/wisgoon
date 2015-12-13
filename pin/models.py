@@ -922,7 +922,6 @@ class Follow(models.Model):
         super(Follow, self).delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        MonthlyStats.log_hit(MonthlyStats.FOLLOW)
         super(Follow, self).save(*args, **kwargs)
 
     @classmethod
@@ -944,6 +943,7 @@ class Follow(models.Model):
                                        last_actor=instance.follower.id,
                                        date=datetime.now,
                                        seen=False)
+            MonthlyStats.log_hit(MonthlyStats.FOLLOW)
 
 
 class Stream(models.Model):
