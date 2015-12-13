@@ -12,13 +12,12 @@
 		<div class="clear"></div>
 	</section>
 
-	<!-- Main content -->
 	<section class="content">
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="box box-info">
 					<div class="box-header with-border">
-					<h3 class="box-title">آگهی ها</h3>
+						<h3 class="box-title">آگهی ها</h3>
 						<div class="box-tools pull-right">
 							<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
 							<button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -30,127 +29,103 @@
 						</div>
 					</div><!-- /.box-body -->
 				</div>
-				<div class="box">
-					<div class="box-body">
-						<table id="example2" class="table table-bordered table-hover">
-							<thead>
-								<tr>
-									<th><input type="checkbox" id="action-toggle" style="display: inline;"></th>
-									<th>ID</th>
-									<th>User</th>
-									<th>Owner</th>
-									<th>user id</th>
-									<th>action</th>
-									<th>object id</th>
-									<th>content type</th>
-									<th>get thumbnail</th>
-									<th>creat time</th>
-									<th>ip address</th>
-									<th>text</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td><input type="checkbox" id="action-toggle" style="display: inline;"></td>
-									<td>Trident</td>
-									<td>Internet
-										Explorer 4.0</td>
-										<td>Win 95+</td>
-										<td> 4</td>
-										<td>X</td>
-										<td>Trident</td>
-										<td>Internet
-											Explorer 4.0</td>
-											<td>Win 95+</td>
-											<td> 4</td>
-											<td>X</td>
-											<td>X</td>
-										</tr>
-										<tr>
-											<td><input type="checkbox" id="action-toggle" style="display: inline;"></td>
-											<td>Trident</td>
-											<td>Internet
-												Explorer 4.0</td>
-												<td>Win 95+</td>
-												<td> 4</td>
-												<td>X</td>
-												<td>Trident</td>
-												<td>Internet
-													Explorer 4.0</td>
-													<td>Win 95+</td>
-													<td> 4</td>
-													<td>X</td>
-													<td>X</td>
-												</tr>
-												<tr>
-													<td><input type="checkbox" id="action-toggle" style="display: inline;"></td>
-													<td>Trident</td>
-													<td>Internet
-														Explorer 4.0</td>
-														<td>Win 95+</td>
-														<td> 4</td>
-														<td>X</td>
-														<td>Trident</td>
-														<td>Internet
-															Explorer 4.0</td>
-															<td>Win 95+</td>
-															<td> 4</td>
-															<td>X</td>
-															<td>X</td>
-														</tr>
-														<tr>
-															<td><input type="checkbox" id="action-toggle" style="display: inline;"></td>
-															<td>Trident</td>
-															<td>Internet
-																Explorer 4.0</td>
-																<td>Win 95+</td>
-																<td> 4</td>
-																<td>X</td>
-																<td>Trident</td>
-																<td>Internet
-																	Explorer 4.0</td>
-																	<td>Win 95+</td>
-																	<td> 4</td>
-																	<td>X</td>
-																	<td>X</td>
-																</tr>
-																<tr>
-																	<td><input type="checkbox" id="action-toggle" style="display: inline;"></td>
-																	<td>Trident</td>
-																	<td>Internet
-																		Explorer 4.0</td>
-																		<td>Win 95+</td>
-																		<td> 4</td>
-																		<td>X</td>
-																		<td>Trident</td>
-																		<td>Internet
-																			Explorer 4.0</td>
-																			<td>Win 95+</td>
-																			<td> 4</td>
-																			<td>X</td>
-																			<td>X</td>
-																		</tr>
-																	</tbody>
-																</table>
-															</div><!-- /.box-body -->
-														</div><!-- /.box -->
-													</section><!-- /.content -->
-												</div>
-												{% endblock content %}
+				<div class="">
+					<div class="col-md-6">
+						<div class="ads-item">
+							<div class="col-md-6 ad-info pa0">
+								<ul>
+									<li><label>شناسه پست:</label><span></span></li>
+									<li><label>زمان شروع پروموت:</label><span></span></li>
+									<li><label>زمان پایان پروموت:</label><span></span></li>
+									<li><label>ارسال کننده پست:</label><span></span></li>
+									<li><label>شناسه پروموت کننده:</label><span>46500</span></li>
+									<li><label>نوع پروموت:</label><span></span></li>
 
-												{% block js%}
+								</ul>
+							</div>
+							<div class="col-md-6 ad-photo pa0">
+								<a href="">
+									<img src="{{ MEDIA_URL }}dashboard/dist/img/ff.jpg">
+								</a>
+								<span class="post-view"><li class="fa fa-eye"></li> ۲۴۵۴۱</span>
+							</div>
+						<div class="clear"></div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="ads-item">
+							<div class="col-md-6 ad-info pa0">
+								<ul>
+									<li><label>شناسه پست:</label><span></span></li>
+									<li><label>زمان شروع پروموت:</label><span></span></li>
+									<li><label>زمان پایان پروموت:</label><span></span></li>
+									<li><label>ارسال کننده پست:</label><span></span></li>
+									<li><label>شناسه پروموت کننده:</label><span>46500</span></li>
+									
+									<li><label>نوع پروموت:</label><span></span></li>
 
-												<script>
-													$(function () {
-														$("#example1").DataTable();
-														$('#example2').DataTable({
-															"paging": true,
-															"lengthChange": false,
-															"searching": false,
-															"ordering": true,
-															"info": true,
-															"autoWidth": false
-														});
-													});
-												</script>
-												{% endblock js%}
+								</ul>
+							</div>
+							<div class="col-md-6 ad-photo pa0">
+								<a href="">
+									<img src="{{ MEDIA_URL }}dashboard/dist/img/gg.jpg">
+								</a>
+								<span class="post-view"><li class="fa fa-eye"></li> ۲۴۵۴۱</span>
+							</div>
+						<div class="clear"></div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="ads-item">
+							<div class="col-md-6 ad-info pa0">
+								<ul>
+									<li><label>شناسه پست:</label><span></span></li>
+									<li><label>زمان شروع پروموت:</label><span></span></li>
+									<li><label>زمان پایان پروموت:</label><span></span></li>
+									<li><label>ارسال کننده پست:</label><span></span></li>
+									<li><label>شناسه پروموت کننده:</label><span>46500</span></li>
+									<li><label>نوع پروموت:</label><span></span></li>
+
+								</ul>
+							</div>
+							<div class="col-md-6 ad-photo pa0">
+								<a href="">
+									<img src="{{ MEDIA_URL }}dashboard/dist/img/photo2.png">
+								</a>
+								<span class="post-view"><li class="fa fa-eye"></li> ۲۴۵۴۱</span>
+							</div>
+						<div class="clear"></div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="ads-item">
+							<div class="col-md-6 ad-info pa0">
+								<ul>
+									<li><label>شناسه پست:</label><span></span></li>
+									<li><label>زمان شروع پروموت:</label><span></span></li>
+									<li><label>زمان پایان پروموت:</label><span></span></li>
+									<li><label>ارسال کننده پست:</label><span></span></li>
+									<li><label>شناسه پروموت کننده:</label><span>46500</span></li>
+									
+									<li><label>نوع پروموت:</label><span></span></li>
+
+								</ul>
+							</div>
+							<div class="col-md-6 ad-photo pa0">
+								<a href="">
+									<img src="{{ MEDIA_URL }}dashboard/dist/img/photo1.png">
+								</a>
+								<span class="post-view"><li class="fa fa-eye"></li> ۲۴۵۴۱</span>
+							</div>
+						<div class="clear"></div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		{% endblock content %}
+
+		{% block js%}
+
+
+		{% endblock js%}

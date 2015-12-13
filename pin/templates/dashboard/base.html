@@ -14,7 +14,7 @@
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/iCheck/flat/blue.css">
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/morris/morris.css">
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
-    <link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/datatables/dataTables.bootstrap.css">
+	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/datatables/dataTables.bootstrap.css">
 	
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/datepicker/datepicker3.css">
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/daterangepicker/daterangepicker-bs3.css">
@@ -28,12 +28,15 @@
 		{% include "dashboard/_header.html" %} 
 		{% include "dashboard/_sidebar.html" %} 
 		{% block content %} {% endblock content %}
+{# 		{% include "dashboard/sidebar-setting.html" %} #}
+
 		<footer class="main-footer">
 			
 			<strong>Copyright &copy; 2014-2015 <a href="">rokh group </a>.</strong> All rights reserved.
 		</footer>
-
 	</div>
+
+	
 	<script src="{{MEDIA_URL}}dashboard/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/dist/js/jquery-ui.min.js"></script>
 	<script>
@@ -50,7 +53,7 @@
 	<script src="{{MEDIA_URL}}dashboard/plugins/daterangepicker/daterangepicker.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/plugins/datepicker/bootstrap-datepicker.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-	  <script src="{{MEDIA_URL}}dashboard/plugins/datatables/dataTables.bootstrap.min.js"></script>
+	<script src="{{MEDIA_URL}}dashboard/plugins/datatables/dataTables.bootstrap.min.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/plugins/fastclick/fastclick.min.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/dist/js/app.min.js"></script>
