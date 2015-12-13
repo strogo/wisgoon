@@ -2960,6 +2960,12 @@ div.comment div div.row:hover .del-comment{
 	.wallet.wis_btn {
 		position: initial;
 	}
+	.notif-item{
+		width: 100%;
+	}
+	.notif-type {
+		padding: 10px 10px 0 0;
+	}
 }
 @media (max-width: 320px) {
 	.menu-box{

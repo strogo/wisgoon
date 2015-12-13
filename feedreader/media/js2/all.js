@@ -76,6 +76,7 @@ function load_posts(page) {
     .always(function(d) {
         $('.footer-loading-box').hide(0);
     });
+    feedobj.masonry('reload');
 }
 
 
