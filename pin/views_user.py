@@ -318,7 +318,6 @@ def sendurl(request):
             image_url = model.image
             filename = image_url.split('/')[-1]
             filename = create_filename(filename)
-            # image_on = "{}/pin/images/o/{}".format(MEDIA_ROOT, filename)
             image_on = "{}/pin/{}/images/o/{}".\
                 format(MEDIA_ROOT, settings.INSTANCE_NAME, filename)
 
@@ -330,15 +329,12 @@ def sendurl(request):
             model.user = request.user
             model.save()
 
-            if model.status == 1:
-                msg = 'مطلب شما با موفقیت ارسال شد. <a href="%s">مشاهده</a>' %\
-                    reverse('pin-item', args=[model.id])
-                messages.add_message(request, messages.SUCCESS, msg)
-            elif model.status == 0:
-                msg = 'مطلب شما با موفقیت ارسال شد و بعد از تایید در سایت نمایش داده می شود '
-                messages.add_message(request, messages.SUCCESS, msg)
+            next_url = reverse('pin-item', args=[model.id])
 
-            return HttpResponseRedirect('/pin/')
+            msg = 'مطلب شما با موفقیت ارسال شد.'
+            messages.add_message(request, messages.SUCCESS, msg)
+
+            return HttpResponseRedirect(next_url)
     else:
         form = PinForm()
 
