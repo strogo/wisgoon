@@ -4,9 +4,11 @@
 	<div class="navbar navbar-default" role="navigation">
 		<!-- <div class="container"> -->
 		<div class="container" style="position:relative;">
+			{% comment %}
 			<span class="mohrama-eleman" style="z-index:2;float: left; position: absolute; left: 0px; margin-top: 32px;">
 				<img src="{{MEDIA_URL}}v2/images/moharam.png" alt="">
 			</span>
+			{% endcomment %}
 
 			<a href="javascript:;" class="resp-menu">
 				<span class="fa fa-bars"></span>
@@ -31,47 +33,10 @@
 				
 			</div>
 			<div class="col-md-9 col-sm-8 navbar-collapse collapse">
-				<div class="col-md-6 col-sm-5 top-search">
-					<form action="{% url "search" %}">
-						<button class="pull-left">
-							<span class="glyphicon glyphicon-search"></span>
-						</button>
-						<input name="q" type="text">
-						
-					</form>
-				</div>
-				<div class="col-md-5 col-sm-7 pull-right" id="top-userinfo">
+				<div class="col-md-12 col-sm-12 pull-left" id="top-userinfo">
 					<ul>
 						
 						{% if request.user.is_authenticated %}
-						<li>
-							<div class="send-photo">
-								<a aria-expanded="true" data-toggle="dropdown" href=""> <span class="text">ارسال عکس</span> 
-									<span class="send_photo_icon"></span>
-								</a>
-								<ul class="dropdown-menu send-dropdown" role="menu" aria-labelledby="dropdownMenuDivider">
-									<li role="presentation" class="send-border-bottom">
-										<a data-toggle="modal" data-target="#fromImageModal" href="#fromImageModal">
-											ارسال فایل
-										</a>
-									</li>
-									<li role="presentation">
-										<a data-toggle="modal" data-target="#fromUrlModal" href="#fromUrlModal">
-											ارسال از وب
-										</a>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li>
-							<div class="notification">
-								<a href="javascript:;" data-load="{% url 'show_notify' %}" title="اعلانات" class="popnotify" >  
-									{{request.user.id|get_user_notify|pn}} 
-									<i class="notif_icon"></i>
-								</a>
-								<img src="{{MEDIA_URL}}v2/images/top-loading.gif" alt="..." class="loading-img" />
-							</div>
-						</li>
 						<li>
 							<div class="hidden-xs nav_user_avatar">
 								<a aria-expanded="true" data-toggle="dropdown" href="javascript:;">
@@ -93,23 +58,63 @@
 								<!-- <a href="{% url 'pin-absuser' user.username %}" class="topnav-user-avatar"> -->
 							</div>
 						</li>
+						<li>
+							<div class="notification">
+								<a href="javascript:;" data-load="{% url 'show_notify' %}" title="اعلانات" class="popnotify" >  
+									{{request.user.id|get_user_notify|pn}} 
+									<i class="notif_icon"></i>
+								</a>
+								<img src="{{MEDIA_URL}}v2/images/top-loading.gif" alt="..." class="loading-img" />
+							</div>
+						</li>
+						<li>
+							<div class="send-photo">
+								<a aria-expanded="true" data-toggle="dropdown" href=""> <span class="text">ارسال عکس</span> 
+									<span class="send_photo_icon"></span>
+								</a>
+								<ul class="dropdown-menu send-dropdown" role="menu" aria-labelledby="dropdownMenuDivider">
+									<li role="presentation" class="send-border-bottom">
+										<a data-toggle="modal" data-target="#fromImageModal" href="#fromImageModal">
+											ارسال فایل
+										</a>
+									</li>
+									<li role="presentation">
+										<a data-toggle="modal" data-target="#fromUrlModal" href="#fromUrlModal">
+											ارسال از وب
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						{% else %}
+						<li class="guest">
+							<a href="{% url 'registration_register' %}">عضویت</a>
+						</li>
+
+						<li class="guest">
+							<a href="/accounts/login/"> ورود</a>
+						</li>
+						{% endif %}
+
+						<li>
+							<div class="top-search">
+								<form action="{% url "search" %}">
+									<button class="pull-left">
+										<span class="glyphicon glyphicon-search"></span>
+									</button>
+									<input name="q" type="text">
+
+								</form>
+							</div>
+						</li>
+						
 					</ul>
 				</div>
 				
-			</li>
-			{% else %}
-			<li class="guest">
-				<a href="{% url 'registration_register' %}">عضویت</a>
-			</li>
 
-			<li class="guest">
-				<a href="/accounts/login/"> ورود</a>
-			</li>
-			{% endif %}
-		</ul>
+			</div>
+		</div>
 	</div>
-</div>
-</div>
 </div>
 <div class="clear"></div>
 </div>

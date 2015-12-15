@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+import re
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login
@@ -7,17 +9,21 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
 from tastypie.models import ApiKey
-from user_profile.forms import ProfileForm
-from pin.api6.http import return_bad_request, return_json_data, return_un_auth, return_not_found
+
+from pin.api6.http import return_bad_request, return_json_data, return_un_auth,\
+    return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object, get_int, get_profile_data,\
     update_follower_following, get_objects_list
-from pin.tools import AuthCache
-from pin.models import Follow, Block, Likes, Post
-from user_profile.models import Profile
 from pin.cacheLayer import UserDataCache
-# from daddy_avatar.templatetags import daddy_avatar
+from pin.models import Follow, Block, Likes, Post
+from pin.tools import AuthCache
+
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
+
 from haystack.query import SearchQuerySet
+
+from user_profile.models import Profile
+from user_profile.forms import ProfileForm
 
 
 def followers(request, user_id):
@@ -223,7 +229,6 @@ def login(request):
 
 @csrf_exempt
 def register(request):
-
     username = request.POST.get("username", '')
     password = request.POST.get("password", 'False')
     req_token = request.POST.get("token", '')
@@ -242,6 +247,14 @@ def register(request):
             'status': False,
             'message': _('Error in parameters')
         }
+        return return_json_data(data)
+
+    if not re.match("^[a-zA-Z0-9_.-]+$", username):
+        data = {
+            'status': False,
+            'message': _('Username bad characters')
+        }
+
         return return_json_data(data)
 
     if User.objects.filter(username=username).exists():
@@ -301,7 +314,10 @@ def profile(request, user_id):
 
     if current_user:
         if Block.objects.filter(user_id=current_user, blocked_id=user_id).count():
-            return return_json_data({"status": False, 'message': 'This User Has Blocked You'})
+            return return_json_data({
+                "status": False,
+                'message': _('This User Has Blocked You')
+            })
 
     try:
         profile = Profile.objects.only('banned', 'user', 'score', 'cnt_post', 'cnt_like', 'website', 'credit', 'level', 'bio').get(user_id=user_id)
@@ -337,9 +353,11 @@ def update_profile(request):
         status = True
     else:
         msg = form.errors
-    return return_json_data({'status': status, 'message': msg,
-                             'profile': get_profile_data(profile, current_user),
-                             'user': get_simple_user_object(current_user)})
+    return return_json_data({
+        'status': status, 'message': msg,
+        'profile': get_profile_data(profile, current_user),
+        'user': get_simple_user_object(current_user)
+    })
 
 
 def user_search(request):

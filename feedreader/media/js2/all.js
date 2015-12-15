@@ -88,7 +88,7 @@ $(window).scroll(function() {
         $('.gotop').css('display', 'none');
     }
 
-    loadingobj = $(".loading");
+    loadingobj = $('.footer-loading-box');
     var break_point = $(document).height() - ($(window).height() * 2.02);
     if ($(window).scrollTop() >= break_point) {
         var next_page = $('#feed span:last').attr('data-next');
