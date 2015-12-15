@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url, include
 
 urlpatterns = patterns('pin.views2.dashboard.home',
                        url(r'^$', 'home', name='dashboard-home'),
-                       url(r'^api/$', include('pin.views2.dashboard.api.urls')),
+                       url(r'^api/', include('pin.views2.dashboard.api.urls')),
                        )
 
 urlpatterns += patterns('pin.views2.dashboard.post',
