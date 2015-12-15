@@ -52,17 +52,7 @@ def followers(request, user_id):
     fq = Follow.objects.filter(following_id=user_id)[offset:offset + limit]
     for fol in fq:
         o = {}
-        u = {}
-        u['id'] = fol.follower_id
-        u['avatar'] = get_avatar(fol.follower_id, size=100)
-        u['username'] = UserDataCache.get_user_name(fol.follower_id)
-        o['user'] = u
-        if cur_user:
-            o['follow_by_user'] = Follow.objects\
-                .filter(follower_id=cur_user, following_id=fol.follower_id)\
-                .exists()
-        else:
-            o['follow_by_user'] = False
+        o['user'] = get_simple_user_object(fol.following_id, cur_user)
 
         objects_list.append(o)
 
@@ -97,20 +87,6 @@ def following(request, user_id=1):
     fq = Follow.objects.filter(follower_id=user_id)[offset:offset + limit]
     for fol in fq:
         o = {}
-        # u = {}
-        # u['id'] = fol.following_id
-        # u['avatar'] = get_avatar(fol.following_id, size=100)
-        # u['username'] = UserDataCache.get_user_name(fol.following_id)
-
-        # o['user'] = u
-
-        # if cur_user:
-        #     o['follow_by_user'] = Follow.objects\
-        #         .filter(follower_id=cur_user, following_id=fol.following_id)\
-        #         .exists()
-        # else:
-        #     o['follow_by_user'] = False
-
         o['user'] = get_simple_user_object(fol.following_id, cur_user)
 
         objects_list.append(o)
@@ -382,19 +358,20 @@ def user_search(request):
         for result in results:
             result = result.object
             o = {}
-            o['id'] = result.id
-            o['avatar'] = get_avatar(result.user, 100)
-            o['username'] = result.user.username
-            try:
-                o['name'] = result.name
-            except:
-                o['name'] = ""
+            o['user'] = get_simple_user_object(result.id, current_user)
+            # o['id'] = result.id
+            # o['avatar'] = get_avatar(result.user, 100)
+            # o['username'] = result.user.username
+            # try:
+            #     o['name'] = result.name
+            # except:
+            #     o['name'] = ""
 
-            if current_user:
-                o['follow_by_user'] = Follow\
-                    .get_follow_status(follower=current_user, following=result.id)
-            else:
-                o['follow_by_user'] = False
+            # if current_user:
+            #     o['follow_by_user'] = Follow\
+            #         .get_follow_status(follower=current_user, following=result.id)
+            # else:
+            #     o['follow_by_user'] = False
 
             data['objects'].append(o)
             if len(data['objects']) == 20:
