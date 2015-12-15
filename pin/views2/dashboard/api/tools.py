@@ -1,6 +1,8 @@
 # import datetime
+from django.db.models import Count
+
 from pin.model_mongo import MonthlyStats
-from pin.models import Report, Post
+from pin.models import Report, Post, Ad
 from pin.api6.tools import get_simple_user_object, get_profile_data
 
 
@@ -172,3 +174,22 @@ def range_date(start, end):
     # max_date = datetime.datetime.combine(end_date.date(),
     #                                      end_date.time.max)
     return start_date, end_date
+
+
+def calculate_post_percent():
+    posts = Post.objects.values('category').annotate(cnt_post=Count('category'))\
+        .order_by('-id')
+    count_of_posts = 0
+    for post in posts:
+        count_of_posts += post['cnt_post']
+
+    for post in posts:
+        post['cnt_post'] = (post['cnt_post'] * 100) / count_of_posts
+    posts.append({'count_of_posts': count_of_posts})
+    return posts
+
+
+def ads_group_by(group_by, ended):
+    ads = Ad.objects.values(group_by).annotate(cnt_ad=Count(group_by))\
+        .filter(ended=ended).order_by('-id')
+    return ads
