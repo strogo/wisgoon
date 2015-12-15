@@ -24,14 +24,31 @@ def reported(request):
     return return_json_data(post_reporter_list)
 
 
-def ads(request):
+def enable_ads(request):
     if not check_admin(request):
         return return_un_auth()
     point_list = []
-    ads = Ad.objects.values('start').annotate(cnt_ad=Count('start')).order_by('-id')
-
+    ads = Ad.objects.values('start').annotate(cnt_ad=Count('start'))\
+        .filter(ended=False).order_by('-id')
+    data = {}
     for ad in ads:
         timestamp = int(ad['start'].strftime('%s')) * 1000
         point_list.append([timestamp, ad['cnt_ad']])
+    data['data'] = point_list
+    data['name'] = 'Advertising'
+    return return_json_data(data)
 
-    return return_json_data(point_list)
+
+def disable_ads(request):
+    if not check_admin(request):
+        return return_un_auth()
+    point_list = []
+    ads = Ad.objects.values('start').annotate(cnt_ad=Count('start'))\
+        .filter(ended=True).order_by('-id')
+    data = {}
+    for ad in ads:
+        timestamp = int(ad['start'].strftime('%s')) * 1000
+        point_list.append([timestamp, ad['cnt_ad']])
+    data['data'] = point_list
+    data['name'] = 'Advertising'
+    return return_json_data(data)
