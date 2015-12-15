@@ -146,9 +146,9 @@ def get_simple_user_object(current_user, user_id_from_token=None):
                                                     kwargs={
                                                         'user_id': current_user
                                                     }))
-    if user_id_from_token and user_id_from_token != current_user:
+    if user_id_from_token:
         user_info['follow_by_user'] = Follow.objects\
-            .filter(follower_id=current_user, following_id=user_id_from_token)\
+            .filter(follower_id=user_id_from_token, following_id=current_user)\
             .exists()
 
     return user_info
