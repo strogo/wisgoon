@@ -171,91 +171,96 @@ def get_last_likers(post_id, limit=3):
     return likers_list
 
 
+def post_item_json(post, cur_user_id=None, r=None):
+    post_item = {}
+
+    post_item['id'] = post.id
+    post_item['text'] = post.text
+    post_item['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
+    post_item['timestamp'] = post.timestamp
+
+    post_item['user'] = get_simple_user_object(post.user_id)
+
+    post_item['last_likers'] = get_last_likers(post_id=post.id)
+
+    try:
+        post_item['url'] = post.url
+    except Exception, e:
+        print str(e)
+        if r:
+            print r.get_full_path()
+        post_item['url'] = None
+    post_item['cnt_like'] = post.cnt_like
+    post_item['like_with_user'] = False
+    post_item['status'] = post.status
+
+    try:
+        post_item['is_ad'] = False  # post.is_ad
+    except Exception, e:
+        # print str(e)
+        post_item['is_ad'] = False
+
+    post_item['permalink'] = {}
+
+    post_item['permalink']['api'] = abs_url(reverse("api-6-post-item",
+                                            kwargs={"item_id": post.id}))
+
+    post_item['permalink']['web'] = abs_url(reverse("pin-item",
+                                            kwargs={"item_id": post.id}),
+                                            api=False)
+
+    if cur_user_id:
+        post_item['like_with_user'] = LikesRedis(post_id=post.id)\
+            .user_liked(user_id=cur_user_id)
+
+    post_item['images'] = {}
+    try:
+        p_500 = post.get_image_500(api=True)
+
+        p_500['url'] = media_abs_url(p_500['url'])
+        p_500['height'] = int(p_500['hw'].split("x")[0])
+        p_500['width'] = int(p_500['hw'].split("x")[1])
+
+        del(p_500['hw'])
+        del(p_500['h'])
+
+        post_item['images']['low_resolution'] = p_500
+
+        p_236 = post.get_image_236(api=True)
+
+        p_236['url'] = media_abs_url(p_236['url'])
+        p_236['height'] = int(p_236['hw'].split("x")[0])
+        p_236['width'] = int(p_236['hw'].split("x")[1])
+        del(p_236['hw'])
+        del(p_236['h'])
+
+        post_item['images']['thumbnail'] = p_236
+
+        p_original = post.get_image_sizes()
+        post_item['images']['original'] = p_original
+        post_item['images']['original']['url'] = media_abs_url(post.image)
+    except Exception as e:
+        print str(e)
+
+    post_item['category'] = category_get_json(cat_id=post.category_id)
+    return post_item
+
+
 def get_objects_list(posts, cur_user_id=None, r=None):
 
     objects_list = []
-    for p in posts:
-        if not p:
+    for post in posts:
+        if not post:
             continue
 
         try:
-            if p.is_pending():
+            if post.is_pending():
                 continue
         except Post.DoesNotExist:
             continue
 
-        o = {}
-
-        o['id'] = p.id
-        o['text'] = p.text
-        o['cnt_comment'] = 0 if p.cnt_comment == -1 else p.cnt_comment
-        o['timestamp'] = p.timestamp
-
-        o['user'] = get_simple_user_object(p.user_id)
-
-        o['last_likers'] = get_last_likers(post_id=p.id)
-
-        try:
-            o['url'] = p.url
-        except Exception, e:
-            print str(e)
-            if r:
-                print r.get_full_path()
-            o['url'] = None
-        o['cnt_like'] = p.cnt_like
-        o['like_with_user'] = False
-        o['status'] = p.status
-
-        try:
-            o['is_ad'] = False  # p.is_ad
-        except Exception, e:
-            # print str(e)
-            o['is_ad'] = False
-
-        o['permalink'] = {}
-
-        o['permalink']['api'] = abs_url(reverse("api-6-post-item",
-                                                kwargs={"item_id": p.id}))
-
-        o['permalink']['web'] = abs_url(reverse("pin-item",
-                                                kwargs={"item_id": p.id}),
-                                        api=False)
-
-        if cur_user_id:
-            o['like_with_user'] = LikesRedis(post_id=p.id)\
-                .user_liked(user_id=cur_user_id)
-
-        o['images'] = {}
-        try:
-            p_500 = p.get_image_500(api=True)
-
-            p_500['url'] = media_abs_url(p_500['url'])
-            p_500['height'] = int(p_500['hw'].split("x")[0])
-            p_500['width'] = int(p_500['hw'].split("x")[1])
-
-            del(p_500['hw'])
-            del(p_500['h'])
-
-            o['images']['low_resolution'] = p_500
-
-            p_236 = p.get_image_236(api=True)
-
-            p_236['url'] = media_abs_url(p_236['url'])
-            p_236['height'] = int(p_236['hw'].split("x")[0])
-            p_236['width'] = int(p_236['hw'].split("x")[1])
-            del(p_236['hw'])
-            del(p_236['h'])
-
-            o['images']['thumbnail'] = p_236
-
-            p_original = p.get_image_sizes()
-            o['images']['original'] = p_original
-            o['images']['original']['url'] = media_abs_url(p.image)
-        except Exception, e:
-            continue
-
-        o['category'] = category_get_json(cat_id=p.category_id)
-        objects_list.append(o)
+        post_item = post_item_json(post, cur_user_id, r)
+        objects_list.append(post_item)
 
     return objects_list
 

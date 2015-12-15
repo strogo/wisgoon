@@ -5,6 +5,7 @@
 
 body {
 	background-color: #E9E9E9;
+	/*background-color: red;*/
 	padding: 0;
 	margin: 0;
 }
@@ -113,16 +114,17 @@ hr{border-color: #d0d9e2 !important;}
 	min-height: 70px;
 }
 .top-search{
+	width: 350px;
 	height: 40px;
 	border-radius: 30px;
 	background-color: #4c535c;
-	margin: 15px 0;
+	margin: 15px 0 15px 20px;
 	box-shadow: 0 1px #5e656f;
 }
 .top-search button{
 	background: transparent;
 	border: none;
-	padding: 10px 0px;
+	padding: 12px 13px;
 	color: #FFF;
 }
 .top-search input{
@@ -131,14 +133,20 @@ hr{border-color: #d0d9e2 !important;}
 	border: medium none;
 	height: 39px;
 	padding-right: 10px;
-	width: 90%;
+	width: 85%;
 }
 .navbar-collapse ul{
 	margin-bottom: 0px;
 	padding-right: 0px;
 }
+.nav_user_avatar ul li{
+	position: relative;	
+}
+#top-userinfo > ul > li {
+	float: left;
+}
 .navbar-collapse ul li {
-	display: table-cell;
+	display: inline-block;
 }
 #fromImageModal{
 	z-index: 1100;
@@ -1504,19 +1512,20 @@ i.time_icon,
 	z-index: 1;
 }
 .send-dropdown {
-	/*border: 1px solid rgba(0, 0, 0, 0.15) !important;*/
 	background-color: #4c535c;
 	font-size: 13px;
+	left: 0;
+	margin-left: 105px;
 	margin-top: -7px;
 	min-width: 200px;
-	right: -20px;
+	right: auto;
 }
 .send-photo ul li{
 	display: block;
 }
 .send-photo ul li a {
 	display: block !important;
-	padding: 10px 45px !important;
+	padding: 10px 25px !important;
 }
 .send-photo ul li a:hover {
 	background: none !important;
@@ -1580,7 +1589,7 @@ i.time_icon,
 	border-bottom-color: #434a54;
 }
 .popover.bottom > .arrow {
-	border-bottom-color: rgba(0, 0, 0, .8);
+	border-bottom-color: rgba(0, 0, 0, .2);
 }
 .notif a.actor img{
 	width: 45px;
@@ -1592,6 +1601,7 @@ i.time_icon,
 	width: 400px;
 	height: 400px;
 	text-align: right;
+	top: 52px !important;
 }
 
 .notification .popover-content {
@@ -2319,12 +2329,13 @@ div.comment div div.row:hover .del-comment{
 	display: inline-block;
 	margin: 0 3px 6px;
 }
-.footer-loading-img, .comment-loading-img{
+.comment-loading-img{
 	display: none;
 }
 .nav_user_avatar > a{
 	display: inline-block;
 	margin-right: 10px;
+	padding: 13px 10px;
 }
 .nav_user_avatar .dropdown-menu:before{
 	border-color: rgba(0, 0, 0, 0.15) transparent;
@@ -2352,11 +2363,10 @@ div.comment div div.row:hover .del-comment{
 }
 .nav_user_avatar .dropdown-menu{
 	background-color: #4c535c;
-	/*display: block;*/
-	left: 20px !important;
+	margin-right: -60px !important;
+	margin-top: -6px;
 	min-width: 200px;
 	right: auto !important;
-	margin-top: -6px;
 }
 .nav_user_avatar .dropdown-menu li{
 	display: block !important;
@@ -2715,6 +2725,71 @@ div.comment div div.row:hover .del-comment{
 	box-shadow: 0 0 2px #000 inset;
 	padding-top: 5px;
 	text-align: center;
+}
+
+/* submit modal css */
+.wis_modal_icon{
+	float: right;
+	margin-left: 10px;
+}
+.modal_buttons ul{
+	padding: 0;
+}
+.modal_buttons ul li{
+	display: inline-block;
+}
+.modal_buttons ul li .action_btn{
+	width: 70px;
+	height: 71px;
+	display: inline-block;
+	margin-left: 20px;
+}
+.modal_buttons .action_btn.img_crop_btn{
+	background: url(../images/icons/crop-icon.png) no-repeat top;
+}
+.modal_buttons .action_btn.img_rotate_btn{
+	background: url(../images/icons/rotate-icon.png) no-repeat top;
+}
+.modal_buttons .action_btn.img_reset_btn{
+	background: url(../images/icons/reset-icon.png) no-repeat top;
+}
+.modal_buttons .action_btn.active,
+.modal_buttons .action_btn:hover{
+	background-position: bottom;
+}
+.modal_form .form-group textarea,
+.select2-container--default .select2-selection--single,
+.modal_form .form-group input{
+	background: #e5e5e5 !important;
+	border: none !important;
+	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2) inset;
+}
+.modal_form .form-group textarea:focus,
+.modal_form .form-group input:focus{
+	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4) inset;
+	background: #f5f5f5 !important;
+}
+
+.modal_form .form-group textarea{
+	resize: none;
+}
+.modal_form .form-group input{
+	height: 27px;
+}
+.modal-header {
+	border-bottom: 1px solid #e5e5e5;
+	min-height: 16.43px;
+	padding: 8px 9px 12px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow b{
+	background: url(../images/icons/caret-down.png) top;
+	background-repeat: no-repeat;
+	width: 15px !important;
+	height: 10px !important;
+	border: none !important;
+	display: block;
+	left: 50%;
+	margin-top: -4px !important;
 }
 
 
