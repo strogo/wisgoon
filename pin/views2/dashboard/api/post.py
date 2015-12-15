@@ -1,9 +1,10 @@
+from django.db.models import Count
+
 from pin.api6.http import return_json_data, return_not_found, return_un_auth
-from pin.api6.tools import post_item_json
+from pin.api6.tools import post_item_json, get_next_url
 from pin.views2.dashboard.api.tools import post_reporter_user, get_reported_posts,\
     check_admin
 from pin.models import Ad
-from django.db.models import Count
 
 
 def reported(request):
@@ -11,16 +12,23 @@ def reported(request):
         return return_un_auth()
 
     post_reporter_list = []
-    reported_posts = get_reported_posts()
+    reported_posts = get_reported_posts(request)
 
     if not reported_posts:
         return return_not_found()
-
+    data = {'next': ''}
     for post in reported_posts:
         post_item = post_item_json(post)
-        post_item['reporter'] = post_reporter_user(post.id)
+        post_item['reporter'], post_item['reporter_scores'] = post_reporter_user(post.id)
+        post_item['cnt_report'] = post.report
         post_reporter_list.append(post_item)
 
+    if len(post_reporter_list):
+        before = int(request.GET.get('before', 0)) + 20
+        token = request.GET.get('token', '')
+        data['next'] = get_next_url(url_name='dashboard-api-post-reported',
+                                    before=before, token=token)
+        post_reporter_list.append(data)
     return return_json_data(post_reporter_list)
 
 

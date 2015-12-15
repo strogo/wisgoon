@@ -134,18 +134,26 @@ def post_reporter_user(post_id):
     reporters = Report.objects.filter(post_id=post_id)
     user_list = []
     user = {}
+    score = 0
     for reporter in reporters:
         user['detail'] = get_simple_user_object(reporter.user.id,
                                                 reporter.post.user.id)
         user['profile'] = get_profile_data(reporter.user.profile,
                                            reporter.user.id)
+        score += reporter.user.profile.score
         user_list.append(user)
-    return user_list
+    return user_list, score
 
 
-def get_reported_posts():
+def get_reported_posts(request):
+    before = request.GET.get('before', 0)
     try:
-        reported_posts = Post.objects.filter(report__gte=1).order_by('-id')
+        if before:
+            reported_posts = Post.objects.filter(report__gte=1)\
+                .order_by('-id')[before: (before + 1) * 20]
+        else:
+            reported_posts = Post.objects.filter(report__gte=1)\
+                .order_by('-id')[:20]
     except:
         reported_posts = []
     return reported_posts
