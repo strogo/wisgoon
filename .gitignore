@@ -6,6 +6,7 @@
 /.pydevproject
 /feedreader/*media*/pin/
 /feedreader/media/v2/test_data/
+/node_modules/
 /feedreader/*media*/rss/
 /feedreader/*media*/CACHE/
 /feedreader/*media*/cache/
