@@ -96,20 +96,22 @@ def following(request, user_id=1):
 
     fq = Follow.objects.filter(follower_id=user_id)[offset:offset + limit]
     for fol in fq:
-        o = {}
-        u = {}
-        u['id'] = fol.following_id
-        u['avatar'] = get_avatar(fol.following_id, size=100)
-        u['username'] = UserDataCache.get_user_name(fol.following_id)
+        # o = {}
+        # u = {}
+        # u['id'] = fol.following_id
+        # u['avatar'] = get_avatar(fol.following_id, size=100)
+        # u['username'] = UserDataCache.get_user_name(fol.following_id)
 
-        o['user'] = u
+        # o['user'] = u
 
-        if cur_user:
-            o['follow_by_user'] = Follow.objects\
-                .filter(follower_id=cur_user, following_id=fol.following_id)\
-                .exists()
-        else:
-            o['follow_by_user'] = False
+        # if cur_user:
+        #     o['follow_by_user'] = Follow.objects\
+        #         .filter(follower_id=cur_user, following_id=fol.following_id)\
+        #         .exists()
+        # else:
+        #     o['follow_by_user'] = False
+
+        o = get_simple_user_object(fol.following_id, cur_user)
 
         objects_list.append(o)
 
