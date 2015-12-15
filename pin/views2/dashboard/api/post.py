@@ -42,11 +42,11 @@ def enable_ads(request):
 
     point_list = []
     data = {}
+    objects = {}
     data['meta'] = {'limit': '',
                     'next': '',
                     'total_count': ''}
     ads = ads_group_by('start', False)
-    objects = {}
     for ad in ads:
         timestamp = int(ad['start'].strftime('%s')) * 1000
         point_list.append([timestamp, ad['cnt_ad']])
@@ -60,16 +60,31 @@ def disable_ads(request):
     if not check_admin(request):
         return return_un_auth()
     point_list = []
-    ads = ads_group_by('start', True)
     data = {}
+    objects = {}
+    data['meta'] = {'limit': '',
+                    'next': '',
+                    'total_count': ''}
+    ads = ads_group_by('start', True)
+
     for ad in ads:
         timestamp = int(ad['start'].strftime('%s')) * 1000
         point_list.append([timestamp, ad['cnt_ad']])
-    data['data'] = point_list
-    data['name'] = 'Advertising'
+
+    objects['data'] = point_list
+    objects['name'] = 'Advertising'
+    data['objects'] = objects
+
     return return_json_data(data)
 
 
 def post_of_category(request):
+    if not check_admin(request):
+        return return_un_auth()
+    data = {}
+    data['meta'] = {'limit': '',
+                    'next': '',
+                    'total_count': ''}
     posts = calculate_post_percent()
-    return return_json_data(posts)
+    data['objects'] = posts
+    return return_json_data(data)
