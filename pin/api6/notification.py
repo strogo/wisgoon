@@ -63,7 +63,7 @@ def notif(request):
 
         elif notif.type == Notif.FOLLOW:
             data_extra['actor'] = get_simple_user_object(notif.last_actor, notif.owner)
-            data_extra['owner'] = get_simple_user_object(notif.owner, notif.last_actor)
+            data_extra['owner'] = get_simple_user_object(notif.owner)
             data_extra['type'] = Notif.FOLLOW
             data_extra['id'] = str(notif.id)
             data_extra['date'] = notif.date.strftime("%s")
