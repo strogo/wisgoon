@@ -48,8 +48,8 @@ def notif(request):
     for notif in notifs:
         data_extra = {}
         if notif.type == Notif.LIKE:
-            data_extra['actor'] = get_simple_user_object(notif.last_actor, notif.owner)
-            data_extra['owner'] = get_simple_user_object(notif.owner, notif.last_actor)
+            data_extra['actor'] = get_simple_user_object(notif.last_actor)
+            data_extra['owner'] = get_simple_user_object(notif.owner)
             data_extra['date'] = notif.date.strftime("%s")
             try:
                 posts = get_list_post([notif.post])
@@ -70,8 +70,8 @@ def notif(request):
             notifs_list.append(data_extra)
 
         elif notif.type == Notif.COMMENT:
-            data_extra['actor'] = get_simple_user_object(notif.last_actor, notif.owner)
-            data_extra['owner'] = get_simple_user_object(notif.owner, notif.last_actor)
+            data_extra['actor'] = get_simple_user_object(notif.last_actor)
+            data_extra['owner'] = get_simple_user_object(notif.owner)
             data_extra['id'] = str(notif.id)
             data_extra['type'] = Notif.COMMENT
             data_extra['date'] = notif.date.strftime("%s")
@@ -84,8 +84,8 @@ def notif(request):
             notifs_list.append(data_extra)
 
         else:
-            data_extra['actor'] = get_simple_user_object(notif.last_actor, notif.owner)
-            data_extra['owner'] = get_simple_user_object(notif.owner, notif.last_actor)
+            data_extra['actor'] = get_simple_user_object(notif.last_actor)
+            data_extra['owner'] = get_simple_user_object(notif.owner)
             data_extra['type'] = Notif.DELETE_POST
             data_extra['id'] = str(notif.id)
             data_extra['date'] = notif.date.strftime("%s")
