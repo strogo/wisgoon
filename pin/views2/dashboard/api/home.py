@@ -20,15 +20,15 @@ def dashboard_home(request):
                            'more_info': 'url'}
     data['today_likes'] = {'cnt_likes': today_likes(today),
                            'more_info': 'url'}
-    data['today_follow'] = {'cnt_likes': today_follow(today),
+    data['today_follow'] = {'cnt_follows': today_follow(today),
                             'more_info': 'url'}
-    data['today_blocks'] = {'cnt_likes': today_blocks(today),
+    data['today_blocks'] = {'cnt_blocks': today_blocks(today),
                             'more_info': 'url'}
     data['today_view_pages'] = {'cnt_view_pages': today_view_pages(today),
                                 'more_info': 'url'}
-    data['today_bills'] = {'cnt_today_bills': today_bills(today),
+    data['today_bills'] = {'cnt_bills': today_bills(today),
                            'more_info': 'url'}
-    data['today_comments'] = {'cnt_today_bills': today_comments(today),
+    data['today_comments'] = {'cnt_comments': today_comments(today),
                               'more_info': 'url'}
 
     return return_json_data(data)

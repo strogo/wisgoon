@@ -14,6 +14,8 @@ def check_admin(request):
         token = request.GET.get('token', '')
         if token:
             current_user = AuthCache.user_from_token(token=token)
+        else:
+            current_user = request.user
     else:
         current_user = request.user
 
@@ -123,7 +125,8 @@ def get_monthly_stats_points(start_date, end_date, obj_type):
         obj_type = obj_type.lower()
         points = MonthlyStats.objects(date__lte=end_date,
                                       date__gte=start_date,
-                                      object_type=obj_type).order_by('timestamp')
+                                      object_type=obj_type)\
+            .order_by('timestamp')
     return points
 
 
