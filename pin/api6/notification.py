@@ -62,7 +62,7 @@ def notif(request):
             notifs_list.append(data_extra)
 
         elif notif.type == Notif.FOLLOW:
-            data_extra['actor'] = get_simple_user_object(notif.last_actor, notif.owner)
+            data_extra['actor'] = get_simple_user_object(notif.last_actor, current_user)
             data_extra['owner'] = get_simple_user_object(notif.owner)
             data_extra['type'] = Notif.FOLLOW
             data_extra['id'] = str(notif.id)
