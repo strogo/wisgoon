@@ -1,4 +1,3 @@
-# import datetime
 from django.db.models import Count
 
 from pin.model_mongo import MonthlyStats
@@ -177,19 +176,58 @@ def range_date(start, end):
 
 
 def calculate_post_percent():
-    posts = Post.objects.values('category').annotate(cnt_post=Count('category'))\
-        .order_by('-id')
     count_of_posts = 0
-    for post in posts:
+
+    # posts = post_group_by()
+    drilldown = []
+    first_step = []
+    post_of_cat = Post.objects.values('category__title', 'category__parent__title')\
+        .annotate(cnt_post=Count('category')).order_by('-id')
+
+    for post in post_of_cat:
         count_of_posts += post['cnt_post']
 
-    for post in posts:
-        post['cnt_post'] = (post['cnt_post'] * 100) / count_of_posts
-    posts.append({'count_of_posts': count_of_posts})
-    return posts
+    for post in post_of_cat:
+
+        percent = (post['cnt_post'] * 100) / count_of_posts
+        post['name'] = post['category__title']
+        post['id'] = post['category__title']
+        post['data'] = [post['category__title'], percent]
+        try:
+            del post['category__title']
+            del post['category__parent__title']
+            del post['cnt_post']
+        except KeyError:
+            pass
+        drilldown.append(post)
+
+    post_of_sub_cat = Post.objects\
+        .values('category__parent__title')\
+        .annotate(cnt_post=Count('category__parent')).order_by('-id')
+
+    for post in post_of_sub_cat:
+        post['y'] = (post['cnt_post'] * 100) / count_of_posts
+        post['name'] = post['category__parent__title']
+        post['drilldown'] = post['category__parent__title']
+        try:
+            del post['cnt_post']
+            del post['category__parent__title']
+        except KeyError:
+            pass
+        first_step.append(post)
+    # a={'name': 'Brand', 'data':[{'name':}]}
+    return drilldown, first_step, count_of_posts
 
 
 def ads_group_by(group_by, ended):
     ads = Ad.objects.values(group_by).annotate(cnt_ad=Count(group_by))\
         .filter(ended=ended).order_by('-id')
     return ads
+
+
+# def post_group_by():
+#     posts = Post.objects\
+#         .values('category', 'category__title', 'category__parent',
+#                 'category__parent__title')\
+#         .annotate(cnt_post=Count('category')).order_by('-id')
+#     return posts

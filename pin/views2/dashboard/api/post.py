@@ -85,6 +85,6 @@ def post_of_category(request):
     data['meta'] = {'limit': '',
                     'next': '',
                     'total_count': ''}
-    posts = calculate_post_percent()
-    data['objects'] = posts
+    data['objects'] = {}
+    data['objects']['drill_down'], data['objects']['sub_cat'], data['meta']['total_count'] = calculate_post_percent()
     return return_json_data(data)

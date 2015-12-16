@@ -24,4 +24,6 @@ urlpatterns += patterns('pin.views2.dashboard.api.post',
                             name='dashboard-api-post-ads-enable'),
                         url(r'post/disableAds/', 'disable_ads',
                             name='dashboard-api-post-ads-disable'),
+                        url(r'post/category/chart/', 'post_of_category',
+                            name='dashboard-api-post-category'),
                         )
