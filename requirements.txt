@@ -60,7 +60,7 @@ oauth2==1.5.211
 oauthlib==0.5.1
 paramiko==1.15.3
 pep8==1.6.2
-py2neo==1.6.4
+py2neo==2.0.8
 pyCalverter==1.6.1
 pycrypto==2.6.1
 pymongo==2.8
