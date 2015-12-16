@@ -3,6 +3,7 @@ import paramiko
 
 from feedreader.celery import app
 from django.conf import settings
+from dajngo.core.cache import cache
 
 
 @app.task(name="wisgoon.pin.add_to_storage")
@@ -105,6 +106,9 @@ def add_avatar_to_storage(profile_id):
     ssh.close()
     storage.num_files = storage.num_files + 3
     storage.save()
+
+    ava_str = settings.AVATAR_CACHE_KEY.format(profile.user_id)
+    cache.delete(ava_str)
 
     return "add_avatar_to_storage"
 
