@@ -1,7 +1,4 @@
-{% extends "dashboard/base.html"%}
-{% block content %}
 <div class="content-wrapper">
-  <!-- Content Header (Page header) -->
   <section class="content-header">
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> خانه</a></li>
@@ -14,9 +11,7 @@
     <div class="clear"></div>
   </section>
 
-  <!-- Main content -->
   <section class="content">
-    <!-- block -->
     <div class="box box-info">
       <div class="box-header with-border">
         <h3 class="box-title">بلاک ها</h3>
@@ -29,10 +24,9 @@
         <div class="chart">
           <canvas id="lineChart" style="height:250px"></canvas>
         </div>
-      </div><!-- /.box-body -->
+      </div>
     </div>
 
-    <!-- followers -->
     <div class="box box-info">
       <div class="box-header with-border">
         <h3 class="box-title">فالورها</h3>
@@ -45,10 +39,9 @@
         <div class="chart">
           <canvas id="lineChart" style="height:250px"></canvas>
         </div>
-      </div><!-- /.box-body -->
+      </div>
     </div>
 
-    <!-- likers -->
     <div class="box box-info">
       <div class="box-header with-border">
         <h3 class="box-title">لایک ها</h3>
@@ -61,10 +54,9 @@
         <div class="chart">
           <canvas id="lineChart" style="height:250px"></canvas>
         </div>
-      </div><!-- /.box-body -->
+      </div>
     </div>
 
-    <!-- comments-->
     <div class="box box-info">
       <div class="box-header with-border">
         <h3 class="box-title">نظرات</h3>
@@ -77,9 +69,8 @@
         <div class="chart">
           <canvas id="lineChart" style="height:250px"></canvas>
         </div>
-      </div><!-- /.box-body -->
+      </div>
     </div>
-    <!-- users-->
     <div class="box box-info">
       <div class="box-header with-border">
         <h3 class="box-title">کاربران</h3>
@@ -92,9 +83,7 @@
         <div class="chart">
           <canvas id="lineChart" style="height:250px"></canvas>
         </div>
-      </div><!-- /.box-body -->
+      </div>
     </div> 
   </section>
 </div>
-
-{% endblock content %}

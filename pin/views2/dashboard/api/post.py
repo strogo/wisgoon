@@ -23,7 +23,7 @@ def reported(request):
 
     data['posts'] = post_reporter_list
 
-    if len(post_reporter_list):
+    if len(post_reporter_list) == 20:
         before = int(request.GET.get('before', 0)) + 20
         token = request.GET.get('token', '')
         data['next'] = get_next_url(url_name='dashboard-api-post-reported',

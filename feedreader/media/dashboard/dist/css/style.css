@@ -33,7 +33,7 @@
 	margin: 10px 10px 40px ;
 }
 .content .photo img {
-	width: 100%;
+	width: 236px;
 }
 .content .photo .box-tools {
 	position: absolute;
@@ -66,8 +66,8 @@
 }
 .content .user {
 	left: 14px;
-	position: absolute;
-	top: 130px;
+	position: relative;
+	top: -29px;
 }
 .content .user img {
 	border: 3px solid #fff;
