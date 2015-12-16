@@ -3,7 +3,7 @@ import paramiko
 
 from feedreader.celery import app
 from django.conf import settings
-from dajngo.core.cache import cache
+from django.core.cache import cache
 
 
 @app.task(name="wisgoon.pin.add_to_storage")
