@@ -34,7 +34,9 @@
 			"order": [
 				"59a20f0a-4af5-3769-99bd-cc74bc23a149",
 				"9bc215ef-f18c-1830-c714-093f69d746ed",
-				"49b141e2-2f62-3a3c-7ad1-fbd3087358b2"
+				"49b141e2-2f62-3a3c-7ad1-fbd3087358b2",
+				"9aed9670-6ebf-f975-4cbd-ebd7357eb106",
+				"b924936f-e6a1-47bd-c0a9-125ab3ad8762"
 			],
 			"owner": 0
 		}
@@ -146,6 +148,27 @@
 			"folder": "39fcf8ac-f1db-1283-08d4-c830270d8ca9"
 		},
 		{
+			"id": "9aed9670-6ebf-f975-4cbd-ebd7357eb106",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/post/category/chart/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [],
+			"dataMode": "params",
+			"name": "Post of Category",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1450273600389,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "727aadbe-bb22-e468-c82b-03508372a7e5"
+		},
+		{
 			"id": "9bc215ef-f18c-1830-c714-093f69d746ed",
 			"headers": "",
 			"url": "http://127.0.0.1:8000/dashboard/api/post/enableAds/?token=1234",
@@ -163,6 +186,27 @@
 			"description": "",
 			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
 			"responses": []
+		},
+		{
+			"id": "b924936f-e6a1-47bd-c0a9-125ab3ad8762",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/post/showAds/?token=1234&date=2015-12-19&ended=0",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [],
+			"dataMode": "params",
+			"name": "Show Ads",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1450529397973,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "727aadbe-bb22-e468-c82b-03508372a7e5"
 		},
 		{
 			"id": "bb5211ab-8d03-6e26-df1f-779f1db41c41",

@@ -1,8 +1,11 @@
+import datetime
+
 from django.db.models import Count
 
 from pin.model_mongo import MonthlyStats
 from pin.models import Report, Post, Ad, Log
-from pin.api6.tools import get_simple_user_object, get_profile_data
+from pin.api6.tools import get_simple_user_object, get_profile_data,\
+    post_item_json
 
 
 def check_admin(request):
@@ -161,7 +164,6 @@ def get_reported_posts(request):
 
 
 def range_date(start, end):
-    import datetime
 
     start_date = datetime.datetime.strptime(str(start), '%Y-%m-%d')
     end_date = datetime.datetime.strptime(str(end), '%Y-%m-%d')
@@ -177,41 +179,9 @@ def range_date(start, end):
 
 # TO DO
 def calculate_post_percent():
-    count_of_posts = 0
-    drilldown = []
     first_step = []
-    post_of_cat = Post.objects.values('category__title', 'category__parent', 'category__parent__title')\
-        .annotate(cnt_post=Count('category')).order_by('-id')
-
-    for post in post_of_cat:
-        count_of_posts += post['cnt_post']
-
-    data = {}
-    for cat in post_of_cat:
-        percent = (cat['cnt_post'] * 100) / count_of_posts
-        d = data.get(cat['category__parent'], False)
-        if not d:
-            data.update({cat['category__parent']: {'name': cat['category__parent__title'],
-                                                   'data': [cat['category__title'], percent]}})
-        else:
-            data[cat['category__parent']]['data'].append([cat['category__title'], percent])
-
-    drilldown.append(data)
-
-    post_of_sub_cat = Post.objects\
-        .values('category__parent__title')\
-        .annotate(cnt_post=Count('category__parent')).order_by('-id')
-
-    for post in post_of_sub_cat:
-        post['y'] = (post['cnt_post'] * 100) / count_of_posts
-        post['name'] = post['category__parent__title']
-        post['drilldown'] = post['category__parent__title']
-        try:
-            del post['cnt_post']
-            del post['category__parent__title']
-        except KeyError:
-            pass
-        first_step.append(post)
+    drilldown, count_of_posts = post_group_by_category()
+    first_step = post_group_by_sub_category(count_of_posts)
     return drilldown, first_step, count_of_posts
 
 
@@ -221,7 +191,6 @@ def ads_group_by(group_by, ended):
     return ads
 
 
-# TO DO
 def cnt_post_deleted_by_user(user_id):
     cnt_log = Log.objects\
         .filter(content_type=Log.POST, user=user_id, owner=user_id).count()
@@ -240,3 +209,88 @@ def cnt_post_deleted_by_admin(user_id):
 #                 'category__parent__title')\
 #         .annotate(cnt_post=Count('category')).order_by('-id')
 #     return posts
+
+
+def post_group_by_category():
+    count_of_posts = 0
+    post_list = []
+    data = {}
+
+    post_of_cat = Post.objects.values('category__title', 'category__parent', 'category__parent__title')\
+        .annotate(cnt_post=Count('category')).order_by('-id')
+
+    for post in post_of_cat:
+        count_of_posts += post['cnt_post']
+
+    for cat in post_of_cat:
+        percent = (cat['cnt_post'] * 100) / count_of_posts
+        exist_key = data.get(cat['category__parent'], False)
+
+        if not exist_key:
+            data.update(
+                {cat['category__parent']: {'name': cat['category__parent__title'],
+                                           'data': [cat['category__title'],
+                                                    percent]}})
+        else:
+            data[cat['category__parent']]['data'].append([cat['category__title'],
+                                                          percent])
+
+    post_list.append(data)
+    return post_list, count_of_posts
+
+
+def post_group_by_sub_category(count_of_posts):
+    data = []
+    post_of_sub_cat = Post.objects\
+        .values('category__parent__title')\
+        .annotate(cnt_post=Count('category__parent')).order_by('-id')
+
+    for post in post_of_sub_cat:
+        post['y'] = (post['cnt_post'] * 100) / count_of_posts
+        post['name'] = post['category__parent__title']
+        post['drilldown'] = post['category__parent__title']
+        try:
+            del post['cnt_post']
+            del post['category__parent__title']
+        except KeyError:
+            pass
+        data.append(post)
+    return data
+
+
+def get_ads(before, date, ended):
+    ads_list = []
+    try:
+        if before:
+            ads = Ad.objects\
+                .filter(start__startswith=str(date),
+                        ended=ended)[before: (before + 1) * 20]
+        else:
+            ads = Ad.objects.filter(start__startswith=str(date),
+                                    ended=ended)[:20]
+    except:
+        ads = []
+
+    for ad in ads:
+        ad_dict = simple_ad_json(ad)
+        ads_list.append(ad_dict)
+
+    return ads_list
+
+
+def simple_ad_json(ad):
+    data = {}
+    data['id'] = ad.id
+    data['user'] = get_simple_user_object(ad.user_id)
+    data['owner'] = get_simple_user_object(ad.owner_id)
+    data['ended'] = ad.ended
+    data['cnt_view'] = ad.cnt_view
+    data['post'] = post_item_json(ad.post)
+    data['ads_type'] = ad.ads_type
+    data['start'] = ad.start.strftime('%s')
+    if ad.end:
+        data['end'] = ad.end.strftime('%s')
+    else:
+        data['end'] = ad.end
+    data['ip_address'] = ad.ip_address
+    return data
