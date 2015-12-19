@@ -89,7 +89,7 @@ def leaderboard(request):
     leaders_list = []
     for leader in leaders:
         o = {}
-        user_id = leader[0]
+        user_id = int(leader[0])
         user_score = leader[1]
         o['avatar'] = daddy_avatar.get_avatar(user=user_id)
         o['score'] = user_score
