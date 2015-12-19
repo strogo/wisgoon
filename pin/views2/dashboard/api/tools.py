@@ -1,7 +1,7 @@
 from django.db.models import Count
 
 from pin.model_mongo import MonthlyStats
-from pin.models import Report, Post, Ad
+from pin.models import Report, Post, Ad, Log
 from pin.api6.tools import get_simple_user_object, get_profile_data
 
 
@@ -175,31 +175,28 @@ def range_date(start, end):
     return start_date, end_date
 
 
+# TO DO
 def calculate_post_percent():
     count_of_posts = 0
-
-    # posts = post_group_by()
     drilldown = []
     first_step = []
-    post_of_cat = Post.objects.values('category__title', 'category__parent__title')\
+    post_of_cat = Post.objects.values('category__title', 'category__parent', 'category__parent__title')\
         .annotate(cnt_post=Count('category')).order_by('-id')
 
     for post in post_of_cat:
         count_of_posts += post['cnt_post']
 
-    for post in post_of_cat:
+    data = {}
+    for cat in post_of_cat:
+        percent = (cat['cnt_post'] * 100) / count_of_posts
+        d = data.get(cat['category__parent'], False)
+        if not d:
+            data.update({cat['category__parent']: {'name': cat['category__parent__title'],
+                                                   'data': [cat['category__title'], percent]}})
+        else:
+            data[cat['category__parent']]['data'].append([cat['category__title'], percent])
 
-        percent = (post['cnt_post'] * 100) / count_of_posts
-        post['name'] = post['category__title']
-        post['id'] = post['category__title']
-        post['data'] = [post['category__title'], percent]
-        try:
-            del post['category__title']
-            del post['category__parent__title']
-            del post['cnt_post']
-        except KeyError:
-            pass
-        drilldown.append(post)
+    drilldown.append(data)
 
     post_of_sub_cat = Post.objects\
         .values('category__parent__title')\
@@ -215,7 +212,6 @@ def calculate_post_percent():
         except KeyError:
             pass
         first_step.append(post)
-    # a={'name': 'Brand', 'data':[{'name':}]}
     return drilldown, first_step, count_of_posts
 
 
@@ -224,6 +220,19 @@ def ads_group_by(group_by, ended):
         .filter(ended=ended).order_by('-id')
     return ads
 
+
+# TO DO
+def cnt_post_deleted_by_user(user_id):
+    cnt_log = Log.objects\
+        .filter(content_type=Log.POST, user=user_id, owner=user_id).count()
+    return cnt_log
+
+
+def cnt_post_deleted_by_admin(user_id):
+    cnt_log = Log.objects\
+        .filter(content_type=Log.POST, owner=user_id)\
+        .exclude(user=user_id).count()
+    return cnt_log
 
 # def post_group_by():
 #     posts = Post.objects\
