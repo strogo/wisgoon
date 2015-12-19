@@ -86,17 +86,18 @@ def home(request):
 
 def leaderboard(request):
     leaders = LikesRedis().get_leaderboards()
-    print leaders
     leaders_list = []
     for leader in leaders:
         o = {}
-        o['avatar'] = daddy_avatar.get_avatar(user=leader[0])
-        o['score'] = leader[1]
-        u = User.objects.get(id=leader[0])
+        user_id = leader[0]
+        user_score = leader[1]
+        o['avatar'] = daddy_avatar.get_avatar(user=user_id)
+        o['score'] = user_score
+        u = User.objects.get(id=user_id)
         o['profile'] = reverse('pin-absuser', args=[u.username])
         leaders_list.append(o)
-    print leaders_list
-    return render(request, "pin2/leaderboard.html",{
+
+    return render(request, "pin2/leaderboard.html", {
         'leaders': leaders_list
     })
 
