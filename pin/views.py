@@ -22,7 +22,9 @@ from pin.tools import get_request_timestamp, get_request_pid, check_block,\
 from pin.context_processors import is_police
 
 from pin.model_mongo import Ads, PendingPosts
+from pin.models_redis import LikesRedis
 
+from daddy_avatar.templatetags import daddy_avatar
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
 
@@ -80,6 +82,23 @@ def home(request):
         cache.set(cache_str, response_data, 300)
 
     return response_data
+
+
+def leaderboard(request):
+    leaders = LikesRedis().get_leaderboards()
+    print leaders
+    leaders_list = []
+    for leader in leaders:
+        o = {}
+        o['avatar'] = daddy_avatar.get_avatar(user=leader[0])
+        o['score'] = leader[1]
+        u = User.objects.get(id=leader[0])
+        o['profile'] = reverse('pin-absuser', args=[u.username])
+        leaders_list.append(o)
+    print leaders_list
+    return render(request, "pin2/leaderboard.html",{
+        'leaders': leaders_list
+    })
 
 
 def search(request):

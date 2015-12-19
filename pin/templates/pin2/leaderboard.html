@@ -1,0 +1,23 @@
+{% extends "pin2/flat.base.box.html"%}
+{% load pin_tags %}
+{% load daddy_avatar %}
+{%load cache %}
+
+{%block title%} کاربران برتر ماه {%endblock title%}
+
+{% block content %}
+
+<div id="profile" class="row row-fluid">
+    <ul>
+	{% for leader in leaders %}
+        <li>
+        <a href="{{leader.profile}}">
+            <img src="{{leader.avatar}}" alt="">
+        </a>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
+
+
+{% endblock content %}

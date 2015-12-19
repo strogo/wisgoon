@@ -4,26 +4,31 @@ from django.db.models import F
 from django.contrib.auth.models import User
 
 from user_profile.models import Profile
+
 from models import Post
+from khayyam import JalaliDate
 
 # redis set server
 rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
 # redis list server
 rListServer = redis.Redis(settings.REDIS_DB_2, db=4)
+leaderBoardServer = redis.Redis(settings.REDIS_DB_2, db=0)
 
 
 class LikesRedis(object):
     KEY_PREFIX_SET = "p:l:"
     KEY_PREFIX_LIST = "l:l:"
+    KEY_LEADERBORD = "-".join(str(JalaliDate.today()).split("-")[:2])
 
     postId = 0
     postOwner = 0
     likesData = []
 
-    def __init__(self, post_id):
-        self.postId = str(post_id)
-        self.keyNameSet = self.KEY_PREFIX_SET + self.postId
-        self.keyNameList = self.KEY_PREFIX_LIST + self.postId
+    def __init__(self, post_id=None):
+        if post_id:
+            self.postId = str(post_id)
+            self.keyNameSet = self.KEY_PREFIX_SET + self.postId
+            self.keyNameList = self.KEY_PREFIX_LIST + self.postId
 
     def delete_likes(self):
         rListServer.delete(self.keyNameList)
@@ -94,7 +99,12 @@ class LikesRedis(object):
     def like_or_dislike(self, user_id, post_owner):
         if self.user_liked(user_id=user_id):
             self.dislike(user_id=user_id)
+            leaderBoardServer.zincrby(self.KEY_LEADERBORD, post_owner, -10)
             return False, True, self.cntlike()
         else:
             self.like(user_id=user_id, post_owner=post_owner)
+            leaderBoardServer.zincrby(self.KEY_LEADERBORD, post_owner, 10)
             return True, False, self.cntlike()
+
+    def get_leaderboards(self):
+        return leaderBoardServer.zrevrange(self.KEY_LEADERBORD, 0, 30, withscores=True)
