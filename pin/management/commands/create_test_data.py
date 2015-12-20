@@ -117,9 +117,8 @@ def create_category(self):
     for obj in data:
         try:
             sub_cat = SubCategory.objects\
-                .create(title=obj['name'],
+                .create(title=u'%s' % obj['name'],
                         image='v2/test_data/%s' % obj['img'])
-
             for cat in obj['childs']:
                 cat_path = "v2/test_data/images/post_%s.jpg" % str(random.randint(1, 50))
                 try:
