@@ -1,0 +1,71 @@
+	<aside class="main-sidebar">
+		<!-- sidebar: style can be found in sidebar.less -->
+		<section class="sidebar">
+			<!-- Sidebar user panel -->
+			<div class="user-panel">
+				<div class="pull-right image">
+					<img ng-src="{[{avatar}]}" class="img-circle" alt="User Image">
+				</div>
+				<div class="pull-left info">
+					<p>{[{username}]}</p>
+				</div>
+			</div>
+			<!-- search form -->
+			<form action="#" method="get" class="sidebar-form">
+				<div class="input-group">
+					<input type="text" name="q" class="form-control" placeholder="جستوجو ...">
+					<span class="input-group-btn">
+						<button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+					</span>
+				</div>
+			</form>
+			<!-- /.search form -->
+			<!-- sidebar menu: : style can be found in sidebar.less -->
+			<ul class="sidebar-menu">
+				<li class="header">ناوبری اصلی</li>
+				<li>
+					<a ui-sref="reported">
+						<i class="fa fa-flag-o"></i> <span>پستهای گزارش شده</span> <small class="label pull-left bg-green">جدید</small>
+					</a>
+				</li>
+				<li>
+					<a ui-sref="userActivity">
+						<i class="fa fa-briefcase"></i> <span>فعالیت های کاربران </span>
+					</a>
+				</li>
+				<li>
+					<a ui-sref="logs">
+						<i class="fa fa-briefcase"></i> <span>لاگ های برنامه </span>
+					</a>
+				</li>
+				<li class="treeview">
+					<a href="#">
+						<i class="fa fa-files-o"></i>
+						<span>آگهی ها</span>
+						<i class="fa fa-angle-left pull-left"></i>
+					</a>
+					<ul class="treeview-menu">
+						<li>
+							<a ui-sref="ads">
+								<i class="fa fa-circle-o"></i> آگهی های فعال
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li class="treeview">
+					<a href="#">
+						<i class="fa fa-th"></i>
+						<span>دسته بندی ها</span>
+						<i class="fa fa-angle-left pull-left"></i>
+					</a>
+					<ul class="treeview-menu">
+						<li>
+							<a ui-sref="categoreis">
+								<i class="fa fa-circle-o"></i> آمار محتوای ورودی
+							</a>
+						</li>
+					</ul>
+				</li>
+			</section>
+		</aside>
+		<div class="control-sidebar-bg"></div>
