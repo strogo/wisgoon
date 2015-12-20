@@ -348,13 +348,13 @@ class Post(models.Model):
                 "height": self.height
             }
 
-        ipath = "%s/%s" % (settings.MEDIA_ROOT, self.image)
-        img = Image.open(ipath)
-        Post.objects.filter(id=self.id)\
-            .update(height=img.size[1], width=img.size[0])
-        # self.height = img.size[1]
-        # self.width = img.size[0]
-        # self.save()
+        try:
+            ipath = "%s/%s" % (settings.MEDIA_ROOT, self.image)
+            img = Image.open(ipath)
+            Post.objects.filter(id=self.id)\
+                .update(height=img.size[1], width=img.size[0])
+        except Exception:
+            pass
         return {
             "width": self.width,
             "height": self.height
