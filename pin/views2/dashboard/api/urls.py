@@ -28,4 +28,19 @@ urlpatterns += patterns('pin.views2.dashboard.api.post',
                             name='dashboard-api-post-category'),
                         url(r'post/showAds/', 'show_ads',
                             name='dashboard-api-post-ads-show'),
+                        url(r'post/delete/', 'delete_post',
+                            name='dashboard-api-post-delete'),
+                        url(r'post/report/undo/', 'post_undo',
+                            name='dashboard-api-post-undo_report'),
+                        )
+
+
+urlpatterns += patterns('pin.views2.dashboard.api.log',
+                        url(r'log/show/', 'show_log',
+                            name='dashboard-api-log-show'),
+                        )
+
+urlpatterns += patterns('pin.views2.dashboard.api.user',
+                        url(r'user/search/', 'search_user',
+                            name='dashboard-api-user-search'),
                         )
