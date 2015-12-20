@@ -318,11 +318,11 @@ function _init() {
         if ($(window).width() > (screenSizes.sm - 1)) {
           if ($("body").hasClass('sidebar-collapse')) {
             $("body").removeClass('sidebar-collapse').trigger('expanded.pushMenu');
-            $(".content,.content-header>h1,.main-header>.navbar").removeClass('margin-50');
+            $(".content-header>h1,.main-header>.navbar").removeClass('margin-50');
             $(".sidebar-menu>li .label,.fa-angle-left").show();
           } else {
             $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
-            $(".content,.content-header>h1,.main-header>.navbar").addClass('margin-50');
+            $(".content-header>h1,.main-header>.navbar").addClass('margin-50');
             $(".sidebar-menu>li .label,.fa-angle-left").hide();
           }
         }
