@@ -19,26 +19,51 @@
 					<div class="box box-solid photo">
 						<a href=""><span class="fa fa-square-o pull-left"></span></a>
 						<a href="">
-							<img ng-src="{[{brick.posts.images.thumbnail.url}]}" height="{[{brick.posts.images.thumbnail.height}]}" width="{[{brick.posts.images.thumbnail.width}]}">
+							<img ng-src="{[{brick.images.thumbnail.url}]}" height="{[{brick.images.thumbnail.height}]}" width="{[{brick.images.thumbnail.width}]}">
 						</a>
 						<div class="user">
 							<div class="clear"></div>
-							<a href=""><img ng-src="{[{brick.posts.user.avatar}]}"></a>
+							<a href=""><img ng-src="{[{brick.user.avatar}]}"></a>
 						</div>
 						<div class="report-count">
 							<a href=""  data-toggle="modal" data-target="#reporter-modal">
-								<h5><span class="fa fa-flag-o"></span>{[{brick.posts.cnt_report}]} گزارش تخلف</h5>
+								<h5><span class="fa fa-flag-o"></span>{[{brick.cnt_report}]} گزارش تخلف</h5>
 							</a>
 						</div>
 						<div class="reporters">
 							<ul>
-								<li >
-									<img ng-src="{[{brick.posts.reporter.detail.avatar}]}">
+								<li ng-repeat="report in brick.reporter">
+									<img ng-src="{[{report.detail.avatar}]}" title="user avatar">
 								</li>
+								<div class="modal fade" id="reporter-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+									<div class="modal-dialog" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+												<h4 class="modal-title" id="myModalLabel">گزارش دهندگان</h4>
+											</div>
+											<div class="modal-body">
+												<div class="reporters" ng-repeat="brick in postItem.bricks">
+													<div class="reporter-item" ng-repeat="report in brick.reporter">
+														<div class="col-md-2">
+															<a href="">
+																<img ng-src="{[{report.detail.avatar}]}" title="user avatar">
+															</a>
+														</div>
+														<div class="col-md-10 user-score">
+															<h2>{[{report.profile.score}]}</h2>
+														</div>
+														<div class="clear"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
 							</ul>
 						</div>
 						<div class="score">
-							<label><i class="fa fa-star-o"></i>امتیازات :</label> <span>{[{brick.posts.reporter_scores}]}</span>
+							<label><i class="fa fa-star-o"></i>امتیازات :</label> <span>{[{brick.reporter_scores}]}</span>
 						</div>
 						<div class="dropdown user-info">
 							<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -65,51 +90,4 @@
 			</div>
 		</div>
 	</section>
-</div>
-<div class="modal fade" id="reporter-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="myModalLabel">گزارش دهندگان</h4>
-			</div>
-			<div class="modal-body">
-				<div class="reporters">
-					<div class="reporter-item">
-						<div class="col-md-2">
-							<a href="">
-								<img src="/media/dashboard/dist/img/avatar.png">
-							</a>
-						</div>
-						<div class="col-md-10 user-score">
-							<h2>۲۵۴،۴۵۷،۴۵۴،۵۴</h2>
-						</div>
-						<div class="clear"></div>
-					</div>
-					<div class="reporter-item">
-						<div class="col-md-2">
-							<a href="">
-								<img src="/media/dashboard/dist/img/avatar2.png">
-							</a>
-						</div>
-						<div class="col-md-10 user-score">
-							<h2>۲۵۴،۳۶۴</h2>
-						</div>
-						<div class="clear"></div>
-					</div>
-					<div class="reporter-item">
-						<div class="col-md-2">
-							<a href="">
-								<img src="/media/dashboard/dist/img/avatar3.png">
-							</a>
-						</div>
-						<div class="col-md-10 user-score">
-							<h2>۲۵۴،۴۵۷،۷۸</h2>
-						</div>
-						<div class="clear"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div>

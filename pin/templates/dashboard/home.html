@@ -21,6 +21,7 @@
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/fonts/fonts-fa.css">
 	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/bootstrap-rtl.min.css">
+	
 </head>
 
 <body class="skin-blue sidebar-mini" ng-app="myApp" ng-controller="mainController">
@@ -28,7 +29,7 @@
 		user_username="{{request.user.username}}";
 		user_id="{{request.user.id}}";
 		user_token="{{request.user.token}}";
-		user_avatar="{{request.user.avatar}}";
+		user_avatar="{{MEDIA_URL}}{{request.user.profile.avatar}}";
 	</script>
 	<div class="wrapper">
 		<div ng-include src="'/media/dashboard/html/_header.html'"></div>
@@ -83,6 +84,7 @@
 	<script src="{{MEDIA_URL}}dashboard/dist/js/app.min.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/dist/js/pages/dashboard.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/dist/js/demo.js"></script>
+
 </body>
 
 </html>

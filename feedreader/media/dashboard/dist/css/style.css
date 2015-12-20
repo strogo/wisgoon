@@ -98,7 +98,7 @@
 	top: 5px;
 }
 .content .reporters ul li{
-	display: inline;
+	display: inline-flex;
 }
 .content .reporters ul {
 	padding-right: 10px;
@@ -257,4 +257,10 @@ ul, ol{
 }
 .sidebar-collapse .content-wrapper, .sidebar-collapse .right-side, .sidebar-collapse .main-footer {
 	margin-right: 50px !important;
+}
+.user-panel > .info > p {
+  font-size: 20px;
+  font-weight: 600;
+  margin-right: 29px;
+  margin-top: 5px;
 }

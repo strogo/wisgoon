@@ -24,25 +24,21 @@ app.controller('categoryController',['$scope','$http', function($scope, $http) {
 }]);
 app.controller('reportedController',['$http' ,'$scope', function($http, $scope, reported) {
 
-$scope.user_token = "12345";
 	var reported = function() {
 		this.bricks = [];
+		this.reports=[];
 		this.busy = false;
 		this.after = '';
-		this.url = "http://127.0.0.1:8000/dashboard/api/post/reported/";
+		this.url = "http://127.0.0.1:8000/dashboard/api/post/reported/?token=12345";
 	};
 
 	reported.prototype.nextPage = function() {
-		if (this.busy)
+		if (this.busy || !this.url) return;
 		this.busy = true;
 
 		$http.get(this.url).success(function(data) {
-			this.url = data.next;
-			if (data.next == " "){
-				return;
-			}
-		console.log("value");
-			var bricks = data.posts;
+			this.url = data.meta.next;
+			var bricks = data.objects;
 			for (var i = 0; i < bricks.length; i++) {
 				this.bricks.push(bricks[i]);
 			}
