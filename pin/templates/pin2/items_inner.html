@@ -50,6 +50,15 @@
 			<!-- text -->
 			<div class="post-text">
 				{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
+				{% if post.get_pages %}
+				
+				<div class="mato20">
+					<h5 class="mabo10">تصاویر بیشتر در این زمینه:</h5>
+					{% for page in post.get_pages %}
+					{{page|safe}}
+					{% endfor %}
+				</div>
+				{% endif %}
 
 				<div class="post_footer mato20">
 					<div class="time pull-left">
@@ -144,7 +153,7 @@
 						</div>
 					</div>
 				</div>
-				
+
 			</div>
 
 			<div class="clear"></div>

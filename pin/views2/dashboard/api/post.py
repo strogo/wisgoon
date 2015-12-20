@@ -1,9 +1,10 @@
+from django.views.decorators.csrf import csrf_exempt
 
 from pin.api6.http import return_json_data, return_not_found, return_un_auth
 from pin.api6.tools import post_item_json, get_next_url
 from pin.views2.dashboard.api.tools import post_reporter_user, get_reported_posts,\
     check_admin, ads_group_by, calculate_post_percent, cnt_post_deleted_by_user,\
-    cnt_post_deleted_by_admin, get_ads
+    cnt_post_deleted_by_admin, get_ads, delete_posts, undo_report
 
 
 def reported(request):
@@ -25,7 +26,8 @@ def reported(request):
         post_item['reporter'], post_item['reporter_scores'] = post_reporter_user(post.id)
         post_item['cnt_report'] = post.report
         post_item['user']['score'] = post.user.profile.score
-        post_item['user']['status'] = post.user.profile.banned
+        post_item['user']['status'] = post.user.is_active
+        post_item['user']['banned'] = post.user.profile.banned
         post_item['user']['cnt_deleted'] = cnt_post_deleted_by_user(post.user.id)
         post_item['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(post.user.id)
         post_reporter_list.append(post_item)
@@ -116,3 +118,21 @@ def post_of_category(request):
     data['objects'] = {}
     data['objects']['drill_down'], data['objects']['sub_cat'], data['meta']['total_count'] = calculate_post_percent()
     return return_json_data(data)
+
+
+@csrf_exempt
+def delete_post(request):
+    if not check_admin(request):
+        return return_un_auth()
+
+    status = delete_posts(request)
+    return return_json_data({"status": status})
+
+
+@csrf_exempt
+def post_undo(request):
+    if not check_admin(request):
+        return return_un_auth()
+
+    status = undo_report(request)
+    return return_json_data({'status': status})

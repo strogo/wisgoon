@@ -369,7 +369,6 @@ app.controller('loginController',function($scope,$http,$location,$state) {
 		}) .success(function(data) {
 			$scope.message = data.message;
 			$scope.showSuccess = true;
-			$state.reload();
 			$location.path('/');
 		})
 		.error(function(data) {      
