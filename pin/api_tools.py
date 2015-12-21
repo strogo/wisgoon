@@ -44,7 +44,7 @@ def get_next_url(url_name, before, token):
 def abs_url(url, api=True):
     if not url.startswith('http://'):
         if api:
-            return settings.API_URL + url
+            return settings.SITE_URL + url
         else:
             return settings.SITE_URL + url
 
