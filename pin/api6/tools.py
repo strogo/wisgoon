@@ -14,6 +14,7 @@ from pin.forms import PinDirectForm
 from pin.models import Post, Follow
 from pin.models_redis import LikesRedis
 from pin.tools import create_filename
+from cache_layer import PostCacheLayer
 
 
 def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
@@ -171,6 +172,13 @@ def get_last_likers(post_id, limit=3):
 
 
 def post_item_json(post, cur_user_id=None, r=None):
+    cp = PostCacheLayer(post_id=post.id)
+    cache_post = cp.get()
+
+    if cache_post:
+        print "get post data item json from cache"
+        return cache_post
+
     post_item = {}
 
     post_item['id'] = post.id
@@ -242,6 +250,8 @@ def post_item_json(post, cur_user_id=None, r=None):
         print str(e)
 
     post_item['category'] = category_get_json(cat_id=post.category_id)
+
+    cp.set(post_item)
     return post_item
 
 
