@@ -176,51 +176,54 @@ def post_item_json(post, cur_user_id=None, r=None):
     cache_post = cp.get()
 
     if cache_post:
+        if cur_user_id:
+            cache_post['like_with_user'] = LikesRedis(post_id=post.id)\
+                .user_liked(user_id=cur_user_id)
         print "get post data item json from cache"
         return cache_post
 
-    post_item = {}
+    pi = {}  # post item
 
-    post_item['id'] = post.id
-    post_item['text'] = post.text
-    post_item['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
-    post_item['timestamp'] = post.timestamp
+    pi['id'] = post.id
+    pi['text'] = post.text
+    pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
+    pi['timestamp'] = post.timestamp
 
-    post_item['user'] = get_simple_user_object(post.user_id)
+    pi['user'] = get_simple_user_object(post.user_id)
 
-    post_item['last_likers'] = get_last_likers(post_id=post.id)
+    pi['last_likers'] = get_last_likers(post_id=post.id)
 
     try:
-        post_item['url'] = post.url
+        pi['url'] = post.url
     except Exception, e:
         print str(e)
         if r:
             print r.get_full_path()
-        post_item['url'] = None
-    post_item['cnt_like'] = post.cnt_like
-    post_item['like_with_user'] = False
-    post_item['status'] = post.status
+        pi['url'] = None
+    pi['cnt_like'] = post.cnt_like
+    pi['like_with_user'] = False
+    pi['status'] = post.status
 
     try:
-        post_item['is_ad'] = False  # post.is_ad
+        pi['is_ad'] = False  # post.is_ad
     except Exception, e:
         # print str(e)
-        post_item['is_ad'] = False
+        pi['is_ad'] = False
 
-    post_item['permalink'] = {}
+    pi['permalink'] = {}
 
-    post_item['permalink']['api'] = abs_url(reverse("api-6-post-item",
-                                            kwargs={"item_id": post.id}))
+    pi['permalink']['api'] = abs_url(reverse("api-6-post-item",
+                                     kwargs={"item_id": post.id}))
 
-    post_item['permalink']['web'] = abs_url(reverse("pin-item",
-                                            kwargs={"item_id": post.id}),
-                                            api=False)
+    pi['permalink']['web'] = abs_url(reverse("pin-item",
+                                     kwargs={"item_id": post.id}),
+                                     api=False)
 
     if cur_user_id:
-        post_item['like_with_user'] = LikesRedis(post_id=post.id)\
+        pi['like_with_user'] = LikesRedis(post_id=post.id)\
             .user_liked(user_id=cur_user_id)
 
-    post_item['images'] = {}
+    pi['images'] = {}
     try:
         p_500 = post.get_image_500(api=True)
 
@@ -231,7 +234,7 @@ def post_item_json(post, cur_user_id=None, r=None):
         del(p_500['hw'])
         del(p_500['h'])
 
-        post_item['images']['low_resolution'] = p_500
+        pi['images']['low_resolution'] = p_500
 
         p_236 = post.get_image_236(api=True)
 
@@ -241,18 +244,18 @@ def post_item_json(post, cur_user_id=None, r=None):
         del(p_236['hw'])
         del(p_236['h'])
 
-        post_item['images']['thumbnail'] = p_236
+        pi['images']['thumbnail'] = p_236
 
         p_original = post.get_image_sizes()
-        post_item['images']['original'] = p_original
-        post_item['images']['original']['url'] = media_abs_url(post.image)
+        pi['images']['original'] = p_original
+        pi['images']['original']['url'] = media_abs_url(post.image)
     except Exception as e:
         print str(e)
 
-    post_item['category'] = category_get_json(cat_id=post.category_id)
+    pi['category'] = category_get_json(cat_id=post.category_id)
 
-    cp.set(post_item)
-    return post_item
+    cp.set(pi)
+    return pi
 
 
 def get_objects_list(posts, cur_user_id=None, r=None):
