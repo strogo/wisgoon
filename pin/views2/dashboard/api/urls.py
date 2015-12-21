@@ -15,6 +15,8 @@ urlpatterns += patterns('pin.views2.dashboard.api.monthly_chart',
                             name='dashboard-api-like-stats'),
                         url(r'block_stats/', 'block_stats',
                             name='dashboard-api-block-stats'),
+                        url(r'ads_stats/', 'ads_stats',
+                            name='dashboard-api-ads-stats'),
                         )
 
 urlpatterns += patterns('pin.views2.dashboard.api.post',
