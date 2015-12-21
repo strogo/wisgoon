@@ -14,6 +14,15 @@
 			"owner": 0
 		},
 		{
+			"id": "8727e8af-fa60-1543-b9ac-d5c1d20203aa",
+			"name": "Log",
+			"description": "",
+			"order": [
+				"aba1e353-8ee1-2938-2d5f-84290c192d1a"
+			],
+			"owner": 0
+		},
+		{
 			"id": "39fcf8ac-f1db-1283-08d4-c830270d8ca9",
 			"name": "Monthly Stats Chart",
 			"description": "",
@@ -22,7 +31,8 @@
 				"c8228df7-c131-901c-c92e-2d697077e9a0",
 				"bb5211ab-8d03-6e26-df1f-779f1db41c41",
 				"e1a0c59e-5bf6-fe12-3108-8756b8714bc9",
-				"993f4dc8-4619-0a24-46c1-2fb8e4872922"
+				"993f4dc8-4619-0a24-46c1-2fb8e4872922",
+				"6ff28bbd-d802-834d-b483-8669a8c7147c"
 			],
 			"owner": 0,
 			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f"
@@ -36,7 +46,18 @@
 				"9bc215ef-f18c-1830-c714-093f69d746ed",
 				"49b141e2-2f62-3a3c-7ad1-fbd3087358b2",
 				"9aed9670-6ebf-f975-4cbd-ebd7357eb106",
-				"b924936f-e6a1-47bd-c0a9-125ab3ad8762"
+				"b924936f-e6a1-47bd-c0a9-125ab3ad8762",
+				"cc9b5695-2a50-2632-2120-0642c579f1b6",
+				"9ad35d5b-29b2-b02b-7ff2-5673ba9d353e"
+			],
+			"owner": 0
+		},
+		{
+			"id": "ef250837-d36d-a918-727a-baf1590cbe96",
+			"name": "User",
+			"description": "",
+			"order": [
+				"0abaa31f-9445-c086-865e-a55b141172cc"
 			],
 			"owner": 0
 		}
@@ -46,6 +67,40 @@
 	"remoteLink": "",
 	"public": false,
 	"requests": [
+		{
+			"id": "0abaa31f-9445-c086-865e-a55b141172cc",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/user/search/?token=1234&q=root",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [
+				{
+					"key": "post_ids",
+					"value": "5",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "post_ids",
+					"value": "6",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Search User",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1450616167319,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "ef250837-d36d-a918-727a-baf1590cbe96"
+		},
 		{
 			"id": "49b141e2-2f62-3a3c-7ad1-fbd3087358b2",
 			"headers": "",
@@ -108,6 +163,27 @@
 			"responses": []
 		},
 		{
+			"id": "6ff28bbd-d802-834d-b483-8669a8c7147c",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/ads_stats/?start=2015-12-29&chart_type=bar&token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [],
+			"dataMode": "params",
+			"name": "Ads stats",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1450686125736,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "39fcf8ac-f1db-1283-08d4-c830270d8ca9"
+		},
+		{
 			"id": "7752e0cd-c6e9-6bf6-de6d-7e89120fff42",
 			"headers": "",
 			"url": "http://127.0.0.1:8000/dashboard/api/home/?token=1234",
@@ -148,6 +224,40 @@
 			"folder": "39fcf8ac-f1db-1283-08d4-c830270d8ca9"
 		},
 		{
+			"id": "9ad35d5b-29b2-b02b-7ff2-5673ba9d353e",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/post/report/undo/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [
+				{
+					"key": "post_ids",
+					"value": "5",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "post_ids",
+					"value": "6",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Post Undo Report",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1450599565001,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "727aadbe-bb22-e468-c82b-03508372a7e5"
+		},
+		{
 			"id": "9aed9670-6ebf-f975-4cbd-ebd7357eb106",
 			"headers": "",
 			"url": "http://127.0.0.1:8000/dashboard/api/post/category/chart/?token=1234",
@@ -186,6 +296,40 @@
 			"description": "",
 			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
 			"responses": []
+		},
+		{
+			"id": "aba1e353-8ee1-2938-2d5f-84290c192d1a",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/log/show/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [
+				{
+					"key": "post_ids",
+					"value": "5",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "post_ids",
+					"value": "6",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Show Logs",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1450613806648,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "8727e8af-fa60-1543-b9ac-d5c1d20203aa"
 		},
 		{
 			"id": "b924936f-e6a1-47bd-c0a9-125ab3ad8762",
@@ -249,6 +393,40 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"folder": "39fcf8ac-f1db-1283-08d4-c830270d8ca9"
+		},
+		{
+			"id": "cc9b5695-2a50-2632-2120-0642c579f1b6",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/post/delete/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [
+				{
+					"key": "post_ids",
+					"value": "5",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "post_ids",
+					"value": "6",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Delete Posts",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1450599417955,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "727aadbe-bb22-e468-c82b-03508372a7e5"
 		},
 		{
 			"id": "e1a0c59e-5bf6-fe12-3108-8756b8714bc9",

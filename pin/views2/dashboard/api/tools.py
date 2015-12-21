@@ -6,6 +6,8 @@ from pin.model_mongo import MonthlyStats
 from pin.models import Report, Post, Ad, Log
 from pin.api6.tools import get_simple_user_object, get_profile_data,\
     post_item_json
+from pin.tools import post_after_delete, get_user_ip
+from django.contrib.auth.models import User
 
 
 def check_admin(request):
@@ -294,3 +296,83 @@ def simple_ad_json(ad):
         data['end'] = ad.end
     data['ip_address'] = ad.ip_address
     return data
+
+
+def delete_posts(request):
+    post_ids = request.POST.getlist('post_ids')
+    status = False
+    if post_ids:
+
+        try:
+            posts = Post.objects.filter(id__in=post_ids)
+            status = True
+        except:
+            posts = []
+
+        for post in posts:
+            post_after_delete(post=post,
+                              user=request.user,
+                              ip_address=get_user_ip(request))
+            post.delete()
+    return status
+
+
+def undo_report(request):
+    post_ids = request.POST.getlist('post_ids')
+    status = False
+    if post_ids:
+        try:
+            posts = Post.objects.filter(id__in=post_ids)
+            for post in posts:
+                post.report = 0
+                post.save()
+            status = True
+        except:
+            status = False
+    return status
+
+
+def simple_log_json(obj):
+    data = {}
+    data['id'] = obj.id
+    data['user'] = get_simple_user_object(obj.user_id)
+    data['owner'] = get_simple_user_object(obj.owner)
+    data['action'] = obj.action
+    data['object_id'] = obj.object_id
+    data['content_type'] = obj.content_type
+    data['text'] = obj.text
+    data['create_time'] = obj.create_time.strftime('%s')
+    data['post_image'] = obj.post_image
+    data['ip_address'] = obj.ip_address
+    return data
+
+
+def get_logs(content_type, action, before):
+    data = {}
+    if content_type:
+        data['content_type'] = str(content_type)
+
+    if action:
+        data['action'] = str(action)
+    try:
+        admin_users = User.objects\
+            .filter(is_superuser=True)\
+            .values_list('id', flat=True)
+
+        logs = Log.objects\
+            .filter(user_id__in=admin_users, **data)[before:(before + 1) * 20]
+    except:
+        logs = []
+    return logs
+
+
+def get_ads_point(start):
+    start_date = datetime.datetime.strptime(start, '%Y-%m-%d')
+    try:
+        ads = Ad.objects.filter(start__lte=start_date)\
+            .values('start')\
+            .annotate(cnt_ads=Count('start')).order_by('id')[:30]
+    except:
+        ads = []
+
+    return ads
