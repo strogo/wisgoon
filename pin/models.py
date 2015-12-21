@@ -297,7 +297,7 @@ class Post(models.Model):
         for r in Results.objects.all():
             if r.get_label_text() in text:
                 new_url = reverse('pin-result', args=[r.label])
-                href = '<a href="%s">%s</a>' % (new_url, r.get_label_text())
+                href = '<a class="wis_btn green_o" href="%s">%s</a>' % (new_url, r.get_label_text())
                 o.append(href)
         return o
 

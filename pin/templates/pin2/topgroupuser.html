@@ -6,46 +6,59 @@
 {%block title%} کاربران برتر {%endblock title%}
 
 {% block content %}
-{% cache 500 topgroupusers %}
-<div id="profile" class="row row-fluid">
-	<div id="feed-ul" class="container"style="width:940px;" >
-        <div class="accordion" id="accordion2">
-            {% for cat in cats %}
-            <div class="accordion-group">
-                <div class="accordion-heading" style="background-color:#FFF ">
-                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse{{cat.id}}">
-                        {{cat.title}}
-                    </a>
-                </div>
-                <div id="collapse{{cat.id}}" class="accordion-body collapse in">
-                  <div class="accordion-inner">
-                    <table style="width:100%" width="100%">
-                        <tr>
-                        {% for u in cat.tops %}
-                        <td>
-                        <div class="feed-item" style="padding:5px">
-                            <a href="{% url "pin-user" u.user.id %}">
-                                <img src="{{u.user|get_avatar:192}}" style="float:left; width:192px;" >
-                            </a>
-                            <table>
-                            <tr>
-                            <td><a href="{% url "pin-user" u.user.id %}">{{u.user|get_username}}</a></td>
-                            </tr>
-                            <tr>
-                            <td>امتیاز: {{u.sum_like}}</td>
-                            </tr>
-                            </table>
-                        </div>
-                        </td>
-                        {%endfor%}
-                        </tr>
-                    </table>
-                  </div>
+{% cache 50 topgroupusers %}
+<div class="top_user_boxes">
+    <div id="accordion">
+        {% for cat in cats %}
+
+        <div class="cat{% if forloop.counter == 1 %} open{% endif %}">
+            <div class="title">
+                <h4>
+                    <a class="cat_title">{{cat.title}}</a> 
+                    <a class="cat_view pull-left" href="/category/{{cat.id}}">#</a>
+                    <div class="clear"></div>
+                </h4>
+            </div>
+            <div id="c_{{cat.id}}" class="content{% if forloop.counter == 1 %} in{% endif %}">
+                <div>
+                    {% for u in cat.tops %}
+                    {% include "pin2/_user_box.html" %}
+                    {% comment %}
+                    <td><a href="{% url "pin-user" u.user.id %}">{{u.user|get_username}}</a></td>
+                    <td>امتیاز: {{u.sum_like}}</td>
+                    {% endcomment %}
+                    {%endfor%}
                 </div>
             </div>
-            {%endfor%}
         </div>
-	</div>
+
+        {%endfor%}
+    </div>
+
 </div>
 {%endcache%}
+{% comment %}
+{% endcomment %}
 {% endblock content %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            $('body').on('click', '.cat_title', function(event) {
+                event.preventDefault();
+                var t = $(this);
+                console.log(t);
+                if (t.parents('.cat').hasClass('open')) {
+                    t.parents('.cat').find('.content').css('display', 'none');
+                    t.parents('.cat').removeClass('open');
+                }else{
+                    $('.cat.open .content').css('display', 'none');
+                    $('.cat.open').removeClass('open');
+                    console.log(t.parents('.cat').find('.content'));
+                    t.parents('.cat').find('.content').css('display', 'block');
+                    t.parents('.cat').addClass('open');
+                }
+            });     
+        });
+    </script>
+{% endblock js %}

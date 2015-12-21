@@ -55,9 +55,9 @@ urlpatterns += patterns('pin.views',
 
     url(r'^popular/(?P<interval>\w+)/$', 'popular', name='pin-popular-offset'),
     url(r'^popular/', 'popular', name="pin-popular"),
-    url(r'^topuser/$', 'topuser', name='pin-topuser'),
-    url(r'^leaderboard/$', 'leaderboard', name='pin-leaderboard'),
-    url(r'^top-group-user/$', 'topgroupuser', name='pin-topgroupuser'),
+    url(r'^top/user/all/$', 'topuser', name='pin-topuser'),
+    url(r'^top/user/monthly/$', 'leaderboard', name='pin-leaderboard'),
+    url(r'^top/user/groups/$', 'topgroupuser', name='pin-topgroupuser'),
 )
 
 urlpatterns += patterns('pin.views3_api',

@@ -229,3 +229,10 @@ $('body').on('click', '.topuser-hover-btn',function(){
 $('#fromImageModal, #fromUrlModal').on('show.bs.modal', function (e) {
     $('.nav .menu-box').hide('fast');
 });
+
+$('body').on('click', '.reply-comment', function(event) {
+    event.preventDefault();
+    var t = $(this);
+    $('#id_comment').val($('#id_comment').val() + ' @' + t.data('user'));
+    $('#id_comment').focus();
+});
