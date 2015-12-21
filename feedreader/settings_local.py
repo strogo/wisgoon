@@ -233,7 +233,14 @@ CACHES = {
         LOCATION=['127.0.0.1:11211'],
         # LOCATION=['79.127.125.104:11211'],
         # JOHNNY_CACHE=False,
-    )
+    ),
+    'cache_layer': dict(
+        # BACKEND='johnny.backends.memcached.MemcachedCache',
+        BACKEND='django.core.cache.backends.memcached.MemcachedCache',
+        LOCATION=['127.0.0.1:11211'],
+        # LOCATION=['79.127.125.104:11211'],
+        # JOHNNY_CACHE=False,
+    ),
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'

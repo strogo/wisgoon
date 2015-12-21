@@ -4,6 +4,7 @@ from django.db.models import F
 from django.contrib.auth.models import User
 
 from user_profile.models import Profile
+from pin.api6.cache_layer import PostCacheLayer
 
 from models import Post
 from khayyam import JalaliDate
@@ -23,6 +24,7 @@ class LikesRedis(object):
     postId = 0
     postOwner = 0
     likesData = []
+    cntLike = None
 
     def __init__(self, post_id=None):
         if post_id:
@@ -53,7 +55,10 @@ class LikesRedis(object):
         return False
 
     def cntlike(self):
-        return rListServer.llen(self.keyNameList)
+        if self.cntLike:
+            return self.cntLike
+        self.cntLike = rListServer.llen(self.keyNameList)
+        return self.cntLike
 
     def dislike(self, user_id):
         rListServer.lrem(self.keyNameList, user_id)
@@ -100,10 +105,12 @@ class LikesRedis(object):
         if self.user_liked(user_id=user_id):
             self.dislike(user_id=user_id)
             leaderBoardServer.zincrby(self.KEY_LEADERBORD, post_owner, -10)
+            PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
             return False, True, self.cntlike()
         else:
             self.like(user_id=user_id, post_owner=post_owner)
             leaderBoardServer.zincrby(self.KEY_LEADERBORD, post_owner, 10)
+            PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
             return True, False, self.cntlike()
 
     def get_leaderboards(self):

@@ -364,3 +364,15 @@ def get_logs(content_type, action, before):
     except:
         logs = []
     return logs
+
+
+def get_ads_point(start):
+    start_date = datetime.datetime.strptime(start, '%Y-%m-%d')
+    try:
+        ads = Ad.objects.filter(start__lte=start_date)\
+            .values('start')\
+            .annotate(cnt_ads=Count('start')).order_by('id')[:30]
+    except:
+        ads = []
+
+    return ads
