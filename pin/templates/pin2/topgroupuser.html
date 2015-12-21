@@ -6,7 +6,7 @@
 {%block title%} کاربران برتر {%endblock title%}
 
 {% block content %}
-{% cache 500 topgroupusers %}
+{% cache 50 topgroupusers %}
 <div class="top_user_boxes">
     <div id="accordion">
         {% for cat in cats %}
