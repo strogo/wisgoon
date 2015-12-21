@@ -1,4 +1,6 @@
-from django.core.cache import cache
+from django.core.cache import get_cache
+
+cache = get_cache('cache_layer')
 
 
 class PostCacheLayer(object):
@@ -28,6 +30,8 @@ class PostCacheLayer(object):
         cache.set(self.CACHE_KEY, data, self.TTL)
 
     def like_change(self, cnt_like):
+        if not self.data:
+            return
         from tools import get_last_likers
         self.data['last_likers'] = get_last_likers(post_id=self.POST_ID)
         self.data['cnt_like'] = cnt_like

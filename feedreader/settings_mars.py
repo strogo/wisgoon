@@ -40,6 +40,10 @@ CACHES = {
         BACKEND='johnny.backends.memcached.MemcachedCache',
         LOCATION=['79.127.125.99:11211'],
         JOHNNY_CACHE=True,
+    ),
+    'cache_layer': dict(
+        BACKEND='django.core.cache.backends.memcached.MemcachedCache',
+        LOCATION=['79.127.125.98:11211'],
     )
 }
 
