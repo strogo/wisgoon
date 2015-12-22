@@ -1,41 +1,29 @@
 from pin.tools import AuthCache
-from pin.api6.http import return_json_data, return_not_found, return_un_auth, return_bad_request
+from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
+    return_bad_request
 from pin.models import Comments, Post
 from django.views.decorators.csrf import csrf_exempt
-from pin.api6.tools import get_int, get_next_url, get_simple_user_object
+from pin.api6.tools import get_int, get_next_url,\
+    get_comments, comment_objects_list, comment_item_json
 from django.utils.translation import ugettext as _
 
 
 def comment_post(request, item_id):
+    limit = 20
     data = {}
-    comments_list = []
     data['objects'] = {}
-    data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
-    before = request.GET.get('before', False)
+    data['meta'] = {'limit': limit, 'next': '', 'total_count': 1000}
+    before = request.GET.get('before', 0)
 
-    if before:
-        comments = Comments.objects.filter(id__lt=get_int(before)).order_by('-id')[:20]
-    else:
-        comments = Comments.objects.filter(object_pk_id=get_int(item_id)).order_by('-id')[:20]
-    try:
-        for comment in comments:
-            comment_dict = {}
-            comment_dict['id'] = comment.id
-            comment_dict['comment'] = comment.comment
-            comment_dict['user'] = get_simple_user_object(comment.user.id)
-            comments_list.append(comment_dict)
-    except Exception as e:
-        print e
+    comments = get_comments(item_id, limit, before)
+    data['objects'] = comment_objects_list(comments)
 
-    data['objects'] = comments_list
-
-    if data['objects']:
-        last_item = data['objects'][-1]['id']
+    if len(data['objects']) == 20:
+        last_item = (before + 1) * limit
         data['meta']['next'] = get_next_url(url_name='api-6-comment-post',
                                             before=last_item,
                                             url_args={"item_id": item_id}
                                             )
-
     return return_json_data(data)
 
 
@@ -61,10 +49,8 @@ def add_comment(request, item_id):
     try:
         comment = Comments.objects.create(object_pk=post, comment=text,
                                           user_id=get_int(current_user))
-        comment_data = {'id': comment.id,
-                        'user': get_simple_user_object(comment.user.id, post.user_id),
-                        'comment': comment.comment, 'status': True,
-                        'message': 'Successfully Create Comment.'}
+        comment_data = comment_item_json(comment)
+        comment_data['message'] = 'Successfully Create Comment.'
         return return_json_data(comment_data)
     except:
         return return_json_data({'status': False, 'message': _('Unsuccessfully Create Comment.')})

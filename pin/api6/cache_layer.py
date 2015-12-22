@@ -29,12 +29,40 @@ class PostCacheLayer(object):
     def set(self, data):
         cache.set(self.CACHE_KEY, data, self.TTL)
 
+    def delete(self):
+        cache.delete(self.CACHE_KEY)
+
     def like_change(self, cnt_like):
         if not self.data:
             return
         from tools import get_last_likers
         self.data['last_likers'] = get_last_likers(post_id=self.POST_ID)
         self.data['cnt_like'] = cnt_like
+        self.set(self.data)
+
+    def comment_change(self, cnt_comment):
+        if not self.data:
+            return
+        from tools import get_last_comments_setter
+        self.data['last_comments_setter'] = get_last_comments_setter(post_id=self.POST_ID)
+        self.data['cnt_comment'] += 1
+        self.set(self.data)
+
+    def delete_comment(self, cnt_comment):
+        if not self.data:
+            return
+        from tools import get_last_comments_setter
+        self.data['cnt_comment'] = cnt_comment
+        self.data['last_comments_setter'] = get_last_comments_setter(post_id=self.POST_ID)
+        self.set(self.data)
+
+    def post_change(self, post):
+        if not self.data:
+            return
+        from tools import category_get_json
+        self.data['category'] = category_get_json(cat_id=post.category_id)
+        self.data['text'] = post.text
+        self.data['url'] = post.url
         self.set(self.data)
 
 
