@@ -106,12 +106,13 @@ def get_cache(key):
 
     return None
 
+
 def get_list_post(pl, from_model='latest'):
     arp = []
     pl_str = '32_'.join(pl)
     cache_pl = md5(pl_str).hexdigest()
 
-    posts = get_cache(cache_pl) # cache.get(cache_pl)
+    posts = get_cache(cache_pl)  # cache.get(cache_pl)
     if posts:
         print "get list from cache"
         return posts
@@ -165,7 +166,6 @@ def get_thumb(o_image, thumb_size, thumb_quality):
                 'thumbnail': default_image,
                 'hw': dfsize
             }
-        #print imo
     return imo
 
 

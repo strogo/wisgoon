@@ -32,6 +32,7 @@ from preprocessing import normalize_tags
 
 from pin.tasks import delete_image
 from pin.classification_tools import normalize
+from pin.api6.cache_layer import PostCacheLayer
 
 LIKE_TO_DEFAULT_PAGE = 10
 
@@ -518,6 +519,7 @@ class Post(models.Model):
         #                actor=self.user.id)
 
         super(Post, self).delete(*args, **kwargs)
+        PostCacheLayer(post_id=self.id).delete()
 
     def date_lt(self, date, how_many_days=15):
         lt_date = datetime.now() - timedelta(days=how_many_days)
@@ -662,6 +664,7 @@ class Post(models.Model):
         self.text = normalize_tags(self.text)
         # print "all save"
         super(Post, self).save(*args, **kwargs)
+        PostCacheLayer(post_id=self.id).post_change(self)
         # print "after save - thumbnail "
 
     @models.permalink
@@ -1212,8 +1215,8 @@ class Comments(models.Model):
 
         comment_cache_name = "com_%d" % int(self.object_pk_id)
         cache.delete(comment_cache_name)
-
         super(Comments, self).save(*args, **kwargs)
+        PostCacheLayer(post_id=self.object_pk.id).comment_change(self.object_pk.cnt_comment)
 
     @classmethod
     def add_comment(cls, sender, instance, created, *args, **kwargs):
@@ -1225,7 +1228,6 @@ class Comments(models.Model):
         MonthlyStats.log_hit(object_type=MonthlyStats.COMMENT)
         comment = instance
         post = get_post_user_cache(post_id=comment.object_pk_id)
-
         actors_list = []
 
         if comment.user_id != post.user_id:
@@ -1280,6 +1282,7 @@ class Comments(models.Model):
         comment_cache_name = "com_%d" % self.object_pk.id
         cache.delete(comment_cache_name)
         super(Comments, self).delete(*args, **kwargs)
+        PostCacheLayer(post_id=self.object_pk.id).delete_comment(self.object_pk.cnt_comment)
 
     @models.permalink
     def get_absolute_url(self):
