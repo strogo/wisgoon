@@ -11,7 +11,7 @@ from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from pin.api_tools import abs_url, media_abs_url
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
-from pin.models import Post, Follow
+from pin.models import Post, Follow, Comments
 from pin.models_redis import LikesRedis
 from pin.tools import create_filename
 from cache_layer import PostCacheLayer
@@ -171,10 +171,15 @@ def get_last_likers(post_id, limit=3):
     return likers_list
 
 
+def get_last_comments_setter(post_id, limit=3):
+
+    comments = get_comments(post_id, limit, 0)
+    return comment_objects_list(comments)
+
+
 def post_item_json(post, cur_user_id=None, r=None):
     cp = PostCacheLayer(post_id=post.id)
     cache_post = cp.get()
-
     if cache_post:
         if cur_user_id:
             cache_post['like_with_user'] = LikesRedis(post_id=post.id)\
@@ -192,6 +197,7 @@ def post_item_json(post, cur_user_id=None, r=None):
     pi['user'] = get_simple_user_object(post.user_id)
 
     pi['last_likers'] = get_last_likers(post_id=post.id)
+    pi['last_comments_setter'] = get_last_comments_setter(post_id=post.id)
 
     try:
         pi['url'] = post.url
@@ -300,3 +306,43 @@ def update_follower_following(profile, user_id):
             .count()
     except:
         return return_bad_request()
+
+
+def get_comments(post_id, limit, before):
+    try:
+        comments = Comments.objects\
+            .filter(object_pk_id=post_id)\
+            .order_by('-id')[before:(before + 1) * limit]
+    except:
+        comments = []
+    return comments
+
+
+def comment_item_json(comment):
+    comment_dict = {}
+    comment_dict['id'] = comment.id
+    comment_dict['comment'] = comment.comment
+    comment_dict['user'] = get_simple_user_object(comment.user.id)
+    return comment_dict
+
+
+def comment_objects_list(comments):
+    comments_list = []
+    for comment in comments:
+        comment_dict = comment_item_json(comment)
+        comments_list.append(comment_dict)
+    return comments_list
+
+
+def ad_item_json(ad):
+    ad_dict = {}
+    ad_dict['post'] = post_item_json(ad.post)
+    ad_dict['cnt_view'] = ad.get_cnt_view()
+    ad_dict['user'] = ad.user.id
+    ad_dict['ended'] = ad.ended
+    ad_dict['owner'] = ad.owner.id
+    ad_dict['ads_type'] = ad.ads_type
+    ad_dict['start'] = str(ad.start)
+    ad_dict['end'] = str(ad.end)
+    ad_dict['id'] = ad.id
+    return ad_dict
