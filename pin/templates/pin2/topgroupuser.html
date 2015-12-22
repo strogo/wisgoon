@@ -46,7 +46,6 @@
             $('body').on('click', '.cat_title', function(event) {
                 event.preventDefault();
                 var t = $(this);
-                console.log(t);
                 if (t.parents('.cat').hasClass('open')) {
                     t.parents('.cat').find('.content').css('display', 'none');
                     t.parents('.cat').removeClass('open');
