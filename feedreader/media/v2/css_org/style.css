@@ -1706,19 +1706,6 @@ div.comment div div.row:hover .del-comment{
 	color: #4f4f4f;
 }
 
-.follow_box .flw_posts {
-	border-radius: 5px 5px 0 0;
-	overflow: hidden
-}
-
-.follow_box .flw_posts > a {
-	display: block;
-	height: 67px;
-	overflow: hidden;
-	float: right;
-	margin-left: 1px;
-	width: 24.7%
-}
 .top_user_boxes::after {
 	clear: both;
 	content: "";
@@ -2220,13 +2207,36 @@ div.comment div div.row:hover .del-comment{
 }
 .follow_box{
 	width: 280px;
-	/*float: right;*/
 	display: inline-block;
 	padding: 5px;
 	margin-right: 13px;
+	position: relative;
+	overflow: hidden;
 	text-align: center;
 }
+.follow_box .user_score {
+	background-color: rgba(255, 175, 0, .5);
+	height: 40px;
+	left: -60px;
+	position: absolute;
+	text-align: center;
+	top: 20px;
+	transform: rotate(-45deg);
+	width: 200px;
+}
+.follow_box .flw_posts {
+	border-radius: 5px 5px 0 0;
+	overflow: hidden
+}
 
+.follow_box .flw_posts > a {
+	display: block;
+	height: 67px;
+	overflow: hidden;
+	float: right;
+	margin-left: 1px;
+	width: 24.7%
+}
 .follow_box .follow_avatar{
 	display: inline-block;
 	margin-top: -40px;
