@@ -2199,7 +2199,7 @@ div.comment div div.row:hover .del-comment{
 }
 .follow_box.box_xs{
 	width: 180.35px;
-	overflow: initial;
+	overflow: initial !important;
 	margin-bottom: 40px;
 }
 .follow_box .action .wis_btn{
@@ -2582,10 +2582,6 @@ div.comment div div.row:hover .del-comment{
 		padding: 0 15px;
 		width: 100%;
 	}
-	.follow_box {
-		width: 100%;
-		margin-right: 0;
-	}
 	.wallet.wis_btn {
 		position: initial;
 	}
@@ -2596,6 +2592,7 @@ div.comment div div.row:hover .del-comment{
 		padding: 10px 10px 0 0;
 	}
 	.follow_box{
+		margin-right: 0;
 		width: 95%;
 	}
 }
