@@ -5,6 +5,8 @@
 <div class="follow_box box">
     {{u.user.id|get_user_posts|safe}}
 
+    <div class="user_score">امتیاز: <br> {{u.sum_like|pn}}</div>
+
     <div class="follow_avatar">
         <a href="{% url "pin-absuser" u.user %}">
             <img class="img-circle" src="{{u.user.id|get_avatar}}" />
