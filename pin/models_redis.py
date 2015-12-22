@@ -114,4 +114,4 @@ class LikesRedis(object):
             return True, False, self.cntlike()
 
     def get_leaderboards(self):
-        return leaderBoardServer.zrevrange(self.KEY_LEADERBORD, 0, 30, withscores=True)
+        return leaderBoardServer.zrevrange(self.KEY_LEADERBORD, 0, 23, withscores=True)
