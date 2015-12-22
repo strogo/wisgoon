@@ -7,17 +7,11 @@
 
 {% block content %}
 
-<div id="profile" class="row row-fluid">
-    <ul>
-	{% for leader in leaders %}
-        <li>
-        <a href="{{leader.profile}}">
-            <img src="{{leader.avatar}}" alt="">
-        </a>
-        </li>
+<div class="top_user_boxes">
+<h2 class="pa20"><i class="fa fa-diamond"></i> ۱۲ کاربر برتر این ماه</h2>
+    {% for u in leaders %}
+    {% include "pin2/_user_box_score.html" %}
     {% endfor %}
-    </ul>
 </div>
-
 
 {% endblock content %}

@@ -91,13 +91,12 @@ def leaderboard(request):
         o = {}
         user_id = int(leader[0])
         user_score = leader[1]
-        o['avatar'] = daddy_avatar.get_avatar(user=user_id)
-        o['score'] = user_score
+        o['sum_like'] = int(user_score)
         u = User.objects.get(id=user_id)
-        o['profile'] = reverse('pin-absuser', args=[u.username])
+        o['user'] = u
         leaders_list.append(o)
 
-    return render(request, "pin2/leaderboard.html", {
+    return render(request, "pin2/topmonthlyuser.html", {
         'leaders': leaders_list
     })
 
@@ -782,19 +781,11 @@ def popular(request, interval=""):
 
 
 def topuser(request):
-    cd = cache.get("topuser")
-    if not cd:
-        top_user = cd
-
-        top_user = Profile.objects.all().order_by('-score')[:152]
-        for tu in top_user:
-            tu.follow_status = Follow.objects\
-                .filter(follower=request.user.id, following=tu.user_id).count()
-            print tu.follow_status
-
-        cache.set("topuser", top_user, 86400)
-    else:
-        top_user = cd
+    top_user = Profile.objects.all().order_by('-score')[:48]
+    for tu in top_user:
+        tu.follow_status = Follow.objects\
+            .filter(follower=request.user.id, following=tu.user_id).count()
+        print tu.follow_status
 
     return render(request, 'pin2/topuser.html', {'top_user': top_user})
 

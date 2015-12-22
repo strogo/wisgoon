@@ -2,8 +2,7 @@
 {% load humanize %}
 {% load daddy_avatar %}
 
-<div class="follow_box box">
-    {{u.user.id|get_user_posts|safe}}
+<div class="follow_box box box_xs">
 
     <div class="follow_avatar">
         <a href="{% url "pin-absuser" u.user %}">
@@ -31,13 +30,10 @@
     </div>
 
     <div class="follow_stats">
-        <div class="col-xs-4">
-            مطالب <br> <span class="count"><strong>{{u.user.profile.cnt_post|pn}}</strong></span>
-        </div>
-        <div class="col-xs-4">
+        <div class="col-xs-6">
             دنبال‌کننده <br> <span class="follower_count"><strong>{{u.user.profile.cnt_followers|pn}}</strong></span>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-6">
             دنبا‌ل‌شونده <br> <span class="following_count"><strong>{{u.user.profile.cnt_following|pn}}</strong></span>
         </div>
     </div>

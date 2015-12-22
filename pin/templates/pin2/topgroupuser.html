@@ -22,7 +22,7 @@
             <div id="c_{{cat.id}}" class="content{% if forloop.counter == 1 %} in{% endif %}">
                 <div>
                     {% for u in cat.tops %}
-                    {% include "pin2/_user_box.html" %}
+                    {% include "pin2/_user_box_score.html" %}
                     {% comment %}
                     <td><a href="{% url "pin-user" u.user.id %}">{{u.user|get_username}}</a></td>
                     <td>امتیاز: {{u.sum_like}}</td>
@@ -37,8 +37,7 @@
 
 </div>
 {%endcache%}
-{% comment %}
-{% endcomment %}
+
 {% endblock content %}
 
 {% block js %}

@@ -36,6 +36,7 @@ hr{border-color: #d0d9e2 !important;}
 }
 .tale{text-align: left !important;}
 .tari{text-align: right !important;}
+.tace{text-align: center !important;}
 /*height*/
 .dr{direction: rtl !important;}
 .dl{direction: ltr !important;}
@@ -1753,24 +1754,6 @@ div.comment div div.row:hover .del-comment{
 	text-align: center;
 }
 
-.follow_box .flw_posts a.empty {
-	background: #f9f9f9;
-	border: 1px dashed #ddd
-}
-
-.follow_box .flw_posts>a:last-child {
-	margin: 0
-}
-
-.follow_box .flw_posts>a img {
-	width: 100%
-}
-
-.follow_box .flw_posts>a.l img {
-	height: 67px;
-	width: auto
-}
-
 .topuser-item {
 	overflow: hidden;
 	float: right;
@@ -2214,13 +2197,42 @@ div.comment div div.row:hover .del-comment{
 	overflow: hidden;
 	text-align: center;
 }
+.follow_box.box_xs{
+	width: 180.35px;
+	overflow: initial;
+	margin-bottom: 40px;
+}
+.follow_box .action .wis_btn{
+	margin-left: 0;
+}
+.follow_box .flw_posts a.empty {
+	background: #f9f9f9;
+	border: 1px dashed #ddd
+}
+
+.follow_box .flw_posts>a:last-child {
+	margin: 0
+}
+
+.follow_box .flw_posts>a img {
+	width: 100%
+}
+
+.follow_box .flw_posts>a.l img {
+	height: 67px;
+	width: auto
+}
 .follow_box .user_score {
 	background-color: rgba(255, 175, 0, .8);
 	height: 40px;
+	box-shadow: 0 1px 2px rgba(0,0,0,.5);
 	left: -60px;
 	position: absolute;
 	text-align: center;
 	top: 20px;
+	-moz-transform: rotate(-45deg);
+	-webkit-transform: rotate(-45deg);
+	-ms-transform: rotate(-45deg);
 	transform: rotate(-45deg);
 	width: 200px;
 }
