@@ -1,11 +1,14 @@
-from pin.tools import AuthCache
-from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
-    return_bad_request
-from pin.models import Comments, Post
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.translation import ugettext as _
+
+from pin.tools import AuthCache
+from pin.models import Comments, Post
 from pin.api6.tools import get_int, get_next_url,\
     get_comments, comment_objects_list, comment_item_json
-from django.utils.translation import ugettext as _
+from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
+    return_bad_request
+from pin.tools import check_block
+from pin.context_processors import is_police
 
 
 def comment_post(request, item_id):
@@ -46,6 +49,10 @@ def add_comment(request, item_id):
     if not text:
         return return_json_data({'status': False, 'message': _('Please Enter Your Comment')})
 
+    if check_block(user_id=post.user_id, blocked_id=request.user.id):
+        if not is_police(request, flat=True):
+            return return_json_data({'status': False,
+                                     'message': _('This User Has Blocked You')})
     try:
         comment = Comments.objects.create(object_pk=post, comment=text,
                                           user_id=get_int(current_user))
