@@ -38,10 +38,9 @@ def latest(request):
                                        cur_user_id=cur_user,
                                        r=request)
 
-    if len(data['objects']) == 20:
-        last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-6-post-latest',
-                                            token=token, before=last_item)
+    last_item = data['objects'][-1]['id']
+    data['meta']['next'] = get_next_url(url_name='api-6-post-latest',
+                                        token=token, before=last_item)
 
     return return_json_data(data)
 
@@ -74,10 +73,9 @@ def friends(request):
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
 
-    if len(data['objects']) == 20:
-        last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-6-post-friends',
-                                            token=token, before=last_item)
+    last_item = data['objects'][-1]['id']
+    data['meta']['next'] = get_next_url(url_name='api-6-post-friends',
+                                        token=token, before=last_item)
 
     return return_json_data(data)
 
@@ -105,13 +103,12 @@ def category(request, category_id):
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
 
-    if len(data['objects']) == 20:
-        last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-6-post-category',
-                                            token=token, before=last_item,
-                                            url_args={
-                                                "category_id": category_id
-                                            })
+    last_item = data['objects'][-1]['id']
+    data['meta']['next'] = get_next_url(url_name='api-6-post-category',
+                                        token=token, before=last_item,
+                                        url_args={
+                                            "category_id": category_id
+                                        })
 
     return return_json_data(data)
 
@@ -138,10 +135,9 @@ def choices(request):
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
 
-    if len(data['objects']) == 20:
-        last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-6-post-choices',
-                                            token=token, before=last_item)
+    last_item = data['objects'][-1]['id']
+    data['meta']['next'] = get_next_url(url_name='api-6-post-choices',
+                                        token=token, before=last_item)
 
     return return_json_data(data)
 
@@ -179,10 +175,9 @@ def search(request):
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
 
-    if len(data['objects']) == 20:
-        data['meta']['next'] = get_next_url(url_name='api-6-post-search',
-                                            token=token, offset=next_offset,
-                                            q=query)
+    data['meta']['next'] = get_next_url(url_name='api-6-post-search',
+                                        token=token, offset=next_offset,
+                                        q=query)
 
     return return_json_data(data)
 
@@ -332,12 +327,11 @@ def user_post(request, user_id):
 
     data['objects'] = get_objects_list(user_posts, user_id)
 
-    if len(data['objects']) == 20:
-        last_item = (before + 1) * 20
-        data['meta']['next'] = get_next_url(url_name='api-6-post-user',
-                                            before=last_item,
-                                            url_args={"user_id": user_id}
-                                            )
+    last_item = (before + 1) * 20
+    data['meta']['next'] = get_next_url(url_name='api-6-post-user',
+                                        before=last_item,
+                                        url_args={"user_id": user_id}
+                                        )
     return return_json_data(data)
 
 
@@ -395,11 +389,10 @@ def promoted(request):
 
     data['objects'] = objects
 
-    if len(data['objects']) == 20:
-        last_item = (before + 1) * 20
-        data['meta']['next'] = get_next_url(url_name='api-6-post-user',
-                                            before=last_item
-                                            )
+    last_item = (before + 1) * 20
+    data['meta']['next'] = get_next_url(url_name='api-6-post-user',
+                                        before=last_item
+                                        )
     return return_json_data(data)
 
 
@@ -437,12 +430,11 @@ def hashtag(request):
         data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                            r=request)
 
-        if len(data['objects']) == 20:
-            data['meta']['next'] = get_next_url(url_name='api-6-post-hashtag',
-                                                before=20,
-                                                token=token,
-                                                q=query
-                                                )
+        data['meta']['next'] = get_next_url(url_name='api-6-post-hashtag',
+                                            before=20,
+                                            token=token,
+                                            q=query
+                                            )
         return return_json_data(data)
     else:
         return return_bad_request()
