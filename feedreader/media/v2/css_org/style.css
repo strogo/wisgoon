@@ -2280,6 +2280,7 @@ div.comment div div.row:hover .del-comment{
 	box-shadow: 0 0 2px #000 inset;
 	padding-top: 5px;
 	text-align: center;
+	overflow: hidden;
 }
 
 /* submit modal css */
