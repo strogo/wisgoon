@@ -3,13 +3,8 @@
 {% for item in post.mlt %}
 	{% if item.get_image_236 %}
 		{% with 1 as related %}
-		{% if not request.user.is_authenticated %}
-			{% include "pin2/__items_base_not_login.html" %}
-		{% else %}
 			{% include "pin2/__items_base.html" %}
-		{% endif %}
 		{% endwith %}
-
 	{% endif %}
 
 {% if offset %}
