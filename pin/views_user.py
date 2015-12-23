@@ -21,7 +21,7 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
 from pin.context_processors import is_police
-from pin.models import Post, Stream, Follow, Ad,\
+from pin.models import Post, Stream, Follow, Ad, Block,\
     Report, Comments, Comments_score, Category, Bills2 as Bills
 
 from pin.model_mongo import Notif, UserMeta, NotifCount
@@ -682,3 +682,19 @@ def save_as_ads(request, post_id):
         'user_meta': profile,
         'Ads': Ad,
     })
+
+
+@login_required
+def block_user(request, user_id):
+    user = request.user
+
+    Block.block_user(user_id=user.id, blocked_id=user_id)
+    return HttpResponse('1')
+
+
+@login_required
+def unblock_user(request, user_id):
+    user = request.user
+
+    Block.unblock_user(user_id=user.id, blocked_id=user_id)
+    return HttpResponse('1')
