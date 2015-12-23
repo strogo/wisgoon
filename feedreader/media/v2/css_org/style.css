@@ -2394,17 +2394,17 @@ div.comment div div.row:hover .del-comment{
 	#main .nav{
 		padding: 0 !important;
 	}
-	#feed{
+	/*#feed{
 		width: 100% !important;
-	}
+	}*/
 	.feed-item{
 		margin: 0 10px 10px 0;
-		width: 45%;
+		width: 236px;
 	}
 	.feed-item .img-content,
 	.feed-item .img-content img{
 		width: 100%;
-		height: auto;
+		/*height: auto;*/
 	}
 	.post-action .col-sm-2{
 		display: inline-block;
