@@ -43,17 +43,17 @@ class PostCacheLayer(object):
     def comment_change(self, cnt_comment):
         if not self.data:
             return
-        from tools import get_last_comments_setter
-        self.data['last_comments_setter'] = get_last_comments_setter(post_id=self.POST_ID)
+        from tools import get_last_comments
+        self.data['last_comments'] = get_last_comments(post_id=self.POST_ID)
         self.data['cnt_comment'] = cnt_comment + 1
         self.set(self.data)
 
     def delete_comment(self, cnt_comment):
         if not self.data:
             return
-        from tools import get_last_comments_setter
+        from tools import get_last_comments
         self.data['cnt_comment'] = cnt_comment - 1
-        self.data['last_comments_setter'] = get_last_comments_setter(post_id=self.POST_ID)
+        self.data['last_comments'] = get_last_comments(post_id=self.POST_ID)
         self.set(self.data)
 
     def post_change(self, post):

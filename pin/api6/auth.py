@@ -43,10 +43,6 @@ def followers(request, user_id):
                     'previous': '',
                     'total_count': follow_cnt}
 
-    data['meta']['next'] = get_next_url(url_name='api-6-auth-followers',
-                                        offset=offset + 20, token=token,
-                                        url_args={'user_id': user_id})
-
     objects_list = []
 
     fq = Follow.objects.filter(following_id=user_id)[offset:offset + limit]
@@ -57,12 +53,17 @@ def followers(request, user_id):
         objects_list.append(o)
 
     data['objects'] = objects_list
+    if len(objects_list) == 20:
+        data['meta']['next'] = get_next_url(url_name='api-6-auth-followers',
+                                            offset=offset + 20, token=token,
+                                            url_args={'user_id': user_id})
 
     return return_json_data(data)
 
 
 def following(request, user_id=1):
     data = {}
+    objects_list = []
     cur_user = None
     follow_cnt = Follow.objects.filter(follower_id=user_id).count()
 
@@ -78,12 +79,6 @@ def following(request, user_id=1):
                     'previous': '',
                     'total_count': follow_cnt}
 
-    objects_list = []
-
-    data['meta']['next'] = get_next_url(url_name='api-6-auth-following',
-                                        offset=offset + 20, token=token,
-                                        url_args={'user_id': user_id})
-
     fq = Follow.objects.filter(follower_id=user_id)[offset:offset + limit]
     for fol in fq:
         o = {}
@@ -92,6 +87,10 @@ def following(request, user_id=1):
         objects_list.append(o)
 
     data['objects'] = objects_list
+    if len(objects_list) == 20:
+        data['meta']['next'] = get_next_url(url_name='api-6-auth-following',
+                                            offset=offset + 20, token=token,
+                                            url_args={'user_id': user_id})
 
     return return_json_data(data)
 
@@ -298,7 +297,9 @@ def profile(request, user_id):
             })
 
     try:
-        profile = Profile.objects.only('banned', 'user', 'score', 'cnt_post', 'cnt_like', 'website', 'credit', 'level', 'bio').get(user_id=user_id)
+        profile = Profile.objects\
+            .only('banned', 'user', 'score', 'cnt_post', 'cnt_like',
+                  'website', 'credit', 'level', 'bio').get(user_id=user_id)
     except Profile.DoesNotExist:
         profile = Profile.objects.create(user_id=user_id)
 

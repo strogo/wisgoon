@@ -171,7 +171,7 @@ def get_last_likers(post_id, limit=3):
     return likers_list
 
 
-def get_last_comments_setter(post_id, limit=3):
+def get_last_comments(post_id, limit=3):
 
     comments = get_comments(post_id, limit, 0)
     return comment_objects_list(comments)
@@ -197,7 +197,7 @@ def post_item_json(post, cur_user_id=None, r=None):
     pi['user'] = get_simple_user_object(post.user_id)
 
     pi['last_likers'] = get_last_likers(post_id=post.id)
-    pi['last_comments_setter'] = get_last_comments_setter(post_id=post.id)
+    pi['last_comments'] = get_last_comments(post_id=post.id)
 
     try:
         pi['url'] = post.url
