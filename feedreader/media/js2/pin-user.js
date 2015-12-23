@@ -226,6 +226,33 @@ $('body').on('click', '.topuser-hover-btn',function(){
     });
 });
 
+$('body').on('click', '.block_btn', function(event) {
+    event.preventDefault();
+    var t = $(this);
+    if (t.hasClass('unblock')) {
+        var action = 'unblock';
+        t.children('span').text('بلاک کاربر');
+        t.removeClass('unblock');
+        alert_show('success', 'با موفقیت رفع بلاک شد');
+    }else{
+        var action = 'block';
+        t.children('span').text('رفع بلاک');
+        t.addClass('unblock');
+        alert_show('success', 'کاربر با موفقیت بلاک شد');
+    }
+    
+    $.ajax({
+        url: t.attr('href'),
+        data: {action: action},
+    })
+    .fail(function(d) {
+        alert_show('error', 'خطا در بلاک کردن. با مدیریت تماس بگیرید');
+    });
+
+    return false;
+    
+});
+
 $('#fromImageModal, #fromUrlModal').on('show.bs.modal', function (e) {
     $('.nav .menu-box').hide('fast');
 });
