@@ -324,6 +324,13 @@ def pn(value):
 
 
 @register.filter
+def check_block(blocker_id, blocked_id):
+    from pin.tools import check_block
+
+    return check_block(blocker_id, blocked_id)
+
+
+@register.filter
 def get_ban(txt):
     try:
         t = txt.split("||")

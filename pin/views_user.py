@@ -685,16 +685,20 @@ def save_as_ads(request, post_id):
 
 
 @login_required
-def block_user(request, user_id):
+def block_action(request, user_id):
     user = request.user
+    action = request.GET.get('action', False)
 
-    Block.block_user(user_id=user.id, blocked_id=user_id)
-    return HttpResponse('1')
+    if not action:
+        data = {'status': False, 'type': 'None', 'message': 'کجاااااا؟'}
+    else:
+        if action == "block":
+            Block.block_user(user_id=user.id, blocked_id=user_id)
+            data = {'status': True, 'type': 'block', 'message': 'این کاربر با موفقیت بلاک شد'}
+        elif action == "unblock":
+            Block.unblock_user(user_id=user.id, blocked_id=user_id)
+            data = {'status': True, 'type': 'unblock', 'message': 'این کاربر با موفقیت رفع بلاک شد'}
+        else:
+            data = {'status': False, 'type': 'None', 'message': 'کجاااااا؟'}
 
-
-@login_required
-def unblock_user(request, user_id):
-    user = request.user
-
-    Block.unblock_user(user_id=user.id, blocked_id=user_id)
-    return HttpResponse('1')
+    return HttpResponse(json.dumps(data), content_type="application/json")
