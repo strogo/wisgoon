@@ -195,7 +195,7 @@ $('body').on('click', '.btn_like',function(){
             // }
         },
         error: function(){
-            alert_show('مشکلی پیش آمده است. با مدیریت تماس بگیرید', 'error');
+            alertify.error('مشکلی پیش آمده است. با مدیریت تماس بگیرید');
         }
     });
 return false;
@@ -232,13 +232,15 @@ $('body').on('click', '.block_btn', function(event) {
     if (t.hasClass('unblock')) {
         var action = 'unblock';
         t.children('span').text('بلاک کاربر');
+        t.children('i').removeClass('fa-user').addClass('fa-ban');
         t.removeClass('unblock');
-        alert_show('با موفقیت رفع بلاک شد', 'success');
+        alertify.success('با موفقیت رفع بلاک شد');
     }else{
         var action = 'block';
         t.children('span').text('رفع بلاک');
+        t.children('i').removeClass('fa-ban').addClass('fa-user');
         t.addClass('unblock');
-        alert_show('کاربر با موفقیت بلاک شد', 'success');
+        alertify.success('کاربر با موفقیت بلاک شد');
     }
     
     $.ajax({
@@ -246,7 +248,7 @@ $('body').on('click', '.block_btn', function(event) {
         data: {action: action},
     })
     .fail(function(d) {
-        alert_show('خطا در بلاک کردن. با مدیریت تماس بگیرید', 'error');
+        alertify.error('خطا در بلاک کردن. با مدیریت تماس بگیرید');
     });
 
     return false;
