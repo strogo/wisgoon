@@ -25,6 +25,13 @@
 		<div id="pagetop"></div>
 		{% include "pin2/nav.html" %}
 		{% include "pin2/cats.html" %}
+
+		{% if not DEBUG %}
+		<div class="tabliq-block" style="text-align:center">
+			{% include "base/tabliq.html" %}
+		</div>
+		{% endif %}
+		
 		
 		{% include "pin2/_user_data.html" %}
 

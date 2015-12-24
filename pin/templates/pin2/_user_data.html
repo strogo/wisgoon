@@ -44,7 +44,7 @@
                     
                     {% if profile.user.is_active %}
                     <div class="dropdown pull-left">
-                        <a href="" class="wis_btn dropdown-toggle red ma0 pa0"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-ban"></i></a>
+                        <a href="" class="wis_btn dropdown-toggle orange ma0 pa0"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-ban"></i></a>
                         <ul class="dropdown-menu" aria-labelledby="ban_config">
                             <li class="dropdown-header">توهین به</li>
                             <li role="presentation">
@@ -83,6 +83,13 @@
                     {% else %}
                     <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left mabo10 red ajax-follow" href='{% url "pin-follow" profile.user_id 0 %}'>قطع ارتباط  <i class="fa fa-times"></i></a>
                     {%endif%}
+
+                    {% if request.user.id|check_block:profile.user_id %}
+                        <a href="{% url "pin-user-block" profile.user_id %}" class="wis_btn pull-left ma0 pa0 block_btn unblock"> <span>رفع بلاک</span> <i class="fa fa-user"></i></a>
+                    {% else %}
+                        <a href="{% url "pin-user-block" profile.user_id %}" class="wis_btn pull-left ma0 pa0 block_btn block"> <span>بلاک کاربر</span> <i class="fa fa-ban"></i></a>
+                    {% endif %}
+
                     {% endif %}
 
                     {% endif %}

@@ -88,8 +88,7 @@ urlpatterns += patterns('pin.views_user',
     url(r'^inc/credit/$', 'inc_credit', name="pin-inc-credit"),
     url(r'^verify_payment/(?P<bill_id>\w+)/$', 'verify_payment', name="pin-verify-payment"),
     url(r'^save/as/ads/(?P<post_id>\w+)/$', 'save_as_ads', name="pin-save-as-ads"),
-    url(r'^user/block/(?P<user_id>\d+)/$', 'block_user', name="pin-user-block"),
-    url(r'^user/unblock/(?P<user_id>\d+)/$', 'unblock_user', name="pin-user-block"),
+    url(r'^user/action/(?P<user_id>\d+)/$', 'block_action', name="pin-user-block"),
 )
 
 urlpatterns += patterns('pin.views_backbone',
