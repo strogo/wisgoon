@@ -396,10 +396,9 @@ def promoted(request):
     return return_json_data(data)
 
 
-def hashtag(request):
+def hashtag(request, tag_name):
     token = request.GET.get('token', '')
-    query = str(request.GET.get('q', ''))
-    query = query.replace('#', '')
+    query = tag_name
     before = get_int(request.GET.get('before', 0))
 
     row_per_page = 20
@@ -409,7 +408,7 @@ def hashtag(request):
                     'next': "",
                     'total_count': 1000}
 
-    if query and token:
+    if query:
 
         results = SearchQuerySet().models(Post)\
             .filter(tags=query)\
@@ -433,7 +432,7 @@ def hashtag(request):
         data['meta']['next'] = get_next_url(url_name='api-6-post-hashtag',
                                             before=20,
                                             token=token,
-                                            q=query
+                                            url_args={'tag_name': query}
                                             )
         return return_json_data(data)
     else:
