@@ -178,6 +178,9 @@ def get_last_comments(post_id, limit=3):
 
 
 def post_item_json(post, cur_user_id=None, r=None):
+    if isinstance(post, int):
+        post = Post.objects.get(id=post)
+
     cp = PostCacheLayer(post_id=post.id)
     cache_post = cp.get()
     if cache_post:
@@ -193,6 +196,7 @@ def post_item_json(post, cur_user_id=None, r=None):
     pi['text'] = post.text
     pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
     pi['timestamp'] = post.timestamp
+    pi['show_in_default'] = post.show_in_default
 
     pi['user'] = get_simple_user_object(post.user_id)
 
@@ -209,6 +213,23 @@ def post_item_json(post, cur_user_id=None, r=None):
     pi['cnt_like'] = post.cnt_like
     pi['like_with_user'] = False
     pi['status'] = post.status
+
+    pi['tags'] = []
+    for tag in post.get_tags():
+        tag_url = abs_url(reverse("api-6-post-hashtag",
+                                  kwargs={"tag_name": tag}),
+                          api=False)
+        # hashtags
+        web_tag_url = abs_url(reverse("hashtags",
+                                      kwargs={"tag_name": tag}),
+                              api=False)
+        pi['tags'].append({
+            'title': tag,
+            'permalink': {
+                'web': web_tag_url,
+                'api': tag_url
+            }
+        })
 
     try:
         pi['is_ad'] = False  # post.is_ad

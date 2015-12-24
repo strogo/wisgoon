@@ -27,7 +27,7 @@ urlpatterns += patterns('pin.api6.post',
                         url(r'post/user/(?P<user_id>\d+)/$', 'user_post', name='api-6-post-user'),
                         url(r'post/related/(?P<item_id>\d+)/$', 'related_post', name='api-6-post-related'),
                         url(r'post/promoted/$', 'promoted', name='api-6-post-promoted'),
-                        url(r'post/hashtag/$', 'hashtag', name='api-6-post-hashtag'),
+                        url(r'post/hashtag/(?P<tag_name>.*)/$', 'hashtag', name='api-6-post-hashtag'),
                         )
 
 urlpatterns += patterns('pin.api6.comment',
