@@ -65,6 +65,10 @@ class PostCacheLayer(object):
         self.data['url'] = post.url
         self.set(self.data)
 
+    def invalid_url(self, url):
+        import requests
+        requests.request("PURGE", url.replace('&', ''))
+
 
 class Book():
     pass
