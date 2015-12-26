@@ -1,0 +1,16 @@
+{% spaceless %}
+
+{% for item in latest_items %}
+	{% if item.images.thumbnail.url %}
+		{% include "pin2/__items_base_v6.html" %}
+	{% endif %}
+
+	{% if offset %}
+		<span data-next="{{offset}}" ></span>
+	{%else%}
+		<span data-next="{{item.id}}" ></span>
+	{%endif%}
+
+{%endfor%}
+
+{% endspaceless %}

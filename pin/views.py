@@ -24,6 +24,8 @@ from pin.context_processors import is_police
 from pin.model_mongo import Ads, PendingPosts
 from pin.models_redis import LikesRedis
 
+from pin.api6.tools import post_item_json
+
 from daddy_avatar.templatetags import daddy_avatar
 from user_profile.models import Profile
 from taggit.models import Tag, TaggedItem
@@ -51,7 +53,10 @@ def home(request):
 
     for pll in pl:
         try:
-            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
+            post_id = int(pll)
+            post_item = post_item_json(post=post_id, cur_user_id=request.user.id)
+            arp.append(post_item)
+            # arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
             last_id = pll
         except Exception, e:
             print str(e)
@@ -65,14 +70,14 @@ def home(request):
 
     if request.is_ajax():
         if arp:
-            response_data = render(request, 'pin2/_items_2.html', {
+            response_data = render(request, 'pin2/_items_2_v6.html', {
                 'latest_items': arp,
                 'next_url': next_url,
             })
         else:
             response_data = HttpResponse(0)
     else:
-        response_data = render(request, 'pin2/home.html', {
+        response_data = render(request, 'pin2/home_v6.html', {
             'latest_items': arp,
             'next_url': next_url,
             'page': 'home'
