@@ -49,15 +49,21 @@ def abs_url(url, api=True):
             return settings.SITE_URL + url
 
 
-def media_abs_url(url):
+def media_abs_url(url, check_photos=False):
     if url.startswith('http://'):
-        return url
+        new_url = url
     elif not url.startswith('/media/'):
-        return settings.SITE_URL + '/media/' + url
+        new_url = settings.SITE_URL + '/media/' + url
     elif url.startswith('/media/'):
-        return settings.SITE_URL + url
+        new_url = settings.SITE_URL + url
 
-    return url
+    if check_photos:
+        if "photos1" in new_url:
+            new_url = new_url.replace("www.wisgoon.com", "photos1.wisgoon.com")
+        elif "photos2" in new_url:
+            new_url = new_url.replace("www.wisgoon.com", "photos2.wisgoon.com")
+
+    return new_url
 
 
 class MyEncoder(json.JSONEncoder):
