@@ -56,10 +56,10 @@ def post_likers(request, item_id):
 
     if before:
         likers = LikesRedis(post_id=post.id)\
-            .get_likes(offset=get_int(before), limit=12, as_user_object=True)
+            .get_likes(offset=get_int(before), limit=20, as_user_object=True)
     else:
         likers = LikesRedis(post_id=post.id)\
-            .get_likes(offset=0, limit=12, as_user_object=True)
+            .get_likes(offset=0, limit=20, as_user_object=True)
 
     try:
         for user in likers:
