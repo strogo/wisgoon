@@ -58,10 +58,10 @@ def media_abs_url(url, check_photos=False):
         new_url = settings.SITE_URL + url
 
     if check_photos:
-        if "photos1" in new_url:
-            new_url = new_url.replace("www.wisgoon.com", "photos1.wisgoon.com")
-        elif "photos2" in new_url:
-            new_url = new_url.replace("www.wisgoon.com", "photos2.wisgoon.com")
+        if "photos01" in new_url:
+            new_url = new_url.replace("www.wisgoon.com", "photos01.wisgoon.com")
+        elif "photos02" in new_url:
+            new_url = new_url.replace("www.wisgoon.com", "photos02.wisgoon.com")
 
     return new_url
 
