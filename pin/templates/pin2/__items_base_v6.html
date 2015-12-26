@@ -28,7 +28,7 @@
 		</div>
 		<div class="btn-box {% if user.is_superuser %}col-sm-4{% else %}col-sm-6{% endif %} comment">
 			<a href="{% url 'pin-item' item.id%}{% if related %}?from={{post.id}}{%endif%}">
-				<span class="cnt-like">{{item.cnt_comments|pn}}</span>
+				<span class="cnt-like">{{item.cnt_comment|pn}}</span>
 				<span class="cmnt_icon"></span>
 			</a>
 		</div>
