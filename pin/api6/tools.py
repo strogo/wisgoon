@@ -254,7 +254,7 @@ def post_item_json(post, cur_user_id=None, r=None):
     try:
         p_500 = post.get_image_500(api=True)
 
-        p_500['url'] = media_abs_url(p_500['url'])
+        p_500['url'] = media_abs_url(p_500['url'], check_photos=True)
         p_500['height'] = int(p_500['hw'].split("x")[0])
         p_500['width'] = int(p_500['hw'].split("x")[1])
 
@@ -265,7 +265,7 @@ def post_item_json(post, cur_user_id=None, r=None):
 
         p_236 = post.get_image_236(api=True)
 
-        p_236['url'] = media_abs_url(p_236['url'])
+        p_236['url'] = media_abs_url(p_236['url'], check_photos=True)
         p_236['height'] = int(p_236['hw'].split("x")[0])
         p_236['width'] = int(p_236['hw'].split("x")[1])
         del(p_236['hw'])
@@ -275,7 +275,7 @@ def post_item_json(post, cur_user_id=None, r=None):
 
         p_original = post.get_image_sizes()
         pi['images']['original'] = p_original
-        pi['images']['original']['url'] = media_abs_url(post.image)
+        pi['images']['original']['url'] = media_abs_url(post.image, check_photos=True)
     except Exception as e:
         print str(e)
 

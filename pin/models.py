@@ -1267,15 +1267,15 @@ class Comments(models.Model):
 
             actors_list.append(post.user_id)
 
-        users = Comments.objects.filter(object_pk=post.id).values_list('user_id', flat=True)
-        # for notif in Notif_mongo.objects.filter(type=2, post=post.id):
-        for act in users:
-            if act in actors_list:
-                continue
-            actors_list.append(act)
-            if act != comment.user_id:
-                send_notif_bar(user=act, type=2, post=post.id,
-                               actor=comment.user_id)
+        # users = Comments.objects.filter(object_pk=post.id).values_list('user_id', flat=True)
+        # # for notif in Notif_mongo.objects.filter(type=2, post=post.id):
+        # for act in users:
+        #     if act in actors_list:
+        #         continue
+        #     actors_list.append(act)
+        #     if act != comment.user_id:
+        #         send_notif_bar(user=act, type=2, post=post.id,
+        #                        actor=comment.user_id)
 
     def delete(self, *args, **kwargs):
         Post.objects.filter(pk=self.object_pk.id)\
