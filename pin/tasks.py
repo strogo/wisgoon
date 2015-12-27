@@ -68,17 +68,17 @@ def add_to_storage(post_id):
 
 @app.task(name="wisgoon.pin.check_porn")
 def check_porn(post_id):
-    from pin.api6.tools import post_item_json
+    from pin.models import Post
     import requests
     from requests.auth import HTTPBasicAuth
     import socket
 
     socket.setdefaulttimeout(30)
 
-    pjson = post_item_json(post=post_id)
-
-    img_url = pjson['images']['low_resolution']['url']
-    print img_url
+    post = Post.objects.get(id=post_id)
+    print post.get_image_500()
+    img_url = post.get_image_500()['url']
+    # print img_url
     r = requests.get(img_url)
     print r
     # print r.content
