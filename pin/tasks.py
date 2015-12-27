@@ -64,6 +64,31 @@ def add_to_storage(post_id):
     return "add_to_storage"
 
 
+@app.task(name="wisgoon.pin.check_porn")
+def check_porn(post_id):
+    from pin.api6.tools import post_item_json
+    import requests
+    from requests.auth import HTTPBasicAuth
+    import socket
+
+    socket.setdefaulttimeout(30)
+
+    pjson = post_item_json(post=post_id)
+
+    img_url = pjson['images']['low_resolution']['url']
+    print img_url
+    r = requests.get(img_url)
+    print r
+    # print r.content
+    try:
+        res = requests.post("https://188.75.73.226:1509/analyzer",
+                            auth=HTTPBasicAuth('wisgoon94', 'Ghavi!394YUASTTH'),
+                            verify=False, data=r.content)
+        print res.content
+    except Exception, e:
+        print str(e)
+
+
 @app.task(name="wisgoon.pin.add_avatar_to_storage")
 def add_avatar_to_storage(profile_id):
     from pin.models import Storages
