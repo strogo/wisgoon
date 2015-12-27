@@ -76,17 +76,17 @@ def check_porn(post_id):
     socket.setdefaulttimeout(30)
 
     post = Post.objects.get(id=post_id)
-    print post.get_image_500()
+    # print post.get_image_500()
     img_url = post.get_image_500()['url']
     # print img_url
     r = requests.get(img_url)
-    print r
+    # print r
     # print r.content
     try:
         res = requests.post("https://188.75.73.226:1509/analyzer",
                             auth=HTTPBasicAuth('wisgoon94', 'Ghavi!394YUASTTH'),
                             verify=False, data=r.content)
-        print res.content
+        print res.content, img_url
     except Exception, e:
         print str(e)
 
