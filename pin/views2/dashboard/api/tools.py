@@ -226,16 +226,14 @@ def post_group_by_category():
 
     for cat in post_of_cat:
         percent = (cat['cnt_post'] * 100) / count_of_posts
-        exist_key = data.get(cat['category__parent'], False)
+        exist_key = data.get(cat['category__parent__title'], False)
 
         if not exist_key:
             data.update(
-                {cat['category__parent']: {'name': cat['category__parent__title'],
-                                           'data': [cat['category__title'],
-                                                    percent]}})
+                {cat['category__parent__title']: {'name': cat['category__parent__title'],
+                                                  'data': [cat['category__title'], percent]}})
         else:
-            data[cat['category__parent']]['data'].append([cat['category__title'],
-                                                          percent])
+            data[cat['category__parent__title']]['data'].append([cat['category__title'], percent])
 
     post_list.append(data)
     return post_list, count_of_posts
