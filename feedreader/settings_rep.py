@@ -125,5 +125,8 @@ CELERY_ROUTES = {
     },
     'wisgoon.pin.post_to_follower_single': {
         'queue': 'wisgoon.push.follower'
+    },
+    'wisgoon.pin.check_porn': {
+        'queue': 'wisgoon.pin.check_porn'
     }
 }
