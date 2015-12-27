@@ -61,6 +61,8 @@ def add_to_storage(post_id):
     storage.num_files = storage.num_files + 3
     storage.save()
 
+    check_porn.delay(post_id=post_id)
+
     return "add_to_storage"
 
 
