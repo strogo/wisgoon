@@ -57,6 +57,7 @@ def add_comment(request, item_id):
         comment = Comments.objects.create(object_pk=post, comment=text,
                                           user_id=get_int(current_user))
         comment_data = comment_item_json(comment)
+        comment_data['status'] = True
         comment_data['message'] = 'Successfully Create Comment.'
         return return_json_data(comment_data)
     except:
