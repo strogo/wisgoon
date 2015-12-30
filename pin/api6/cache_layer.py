@@ -4,7 +4,7 @@ cache = get_cache('cache_layer')
 
 
 class PostCacheLayer(object):
-    CACHE_KEY = "pcl:1.3:{}"
+    CACHE_KEY = "pcl:1.4:{}"
     POST_ID = None
     TTL = 86400
     data = None
@@ -63,6 +63,13 @@ class PostCacheLayer(object):
         self.data['category'] = category_get_json(cat_id=post.category_id)
         self.data['text'] = post.text
         self.data['url'] = post.url
+        self.set(self.data)
+
+    def show_in_default_change(self, status):
+        if not self.data:
+            return
+
+        self.data['show_in_default'] = status
         self.set(self.data)
 
     def invalid_url(self, url):
