@@ -32,6 +32,7 @@ from pin.tools import create_filename, get_user_ip, get_request_pid, check_block
 from suds.client import Client
 
 MEDIA_ROOT = settings.MEDIA_ROOT
+MEDIA_URL = settings.MEDIA_URL
 MERCHANT_ID = settings.MERCHANT_ID
 SITE_URL = settings.SITE_URL
 
@@ -479,12 +480,14 @@ def upload(request):
         filename = create_filename(filename)
         success = save_upload(upload, filename, is_raw)
         if success:
+            image_original = "%spin/temp/o/%s" % (MEDIA_URL, filename)
             image_o = "%s/pin/temp/o/%s" % (MEDIA_ROOT, filename)
+            image_th = "%s/pin/temp/t/%s" % (MEDIA_URL, filename)
             image_t = "%s/pin/temp/t/%s" % (MEDIA_ROOT, filename)
 
             pin_image.resize(image_o, image_t, 99)
 
-        ret_json = {'success': success, 'file': filename}
+        ret_json = {'success': success, 'file_o': image_original, 'file_t': image_th, 'file': filename}
         return HttpResponse(json.dumps(ret_json))
 
     return HttpResponseBadRequest("Bad request")

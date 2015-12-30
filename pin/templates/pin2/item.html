@@ -79,7 +79,7 @@ mlt: {{mlt.0.object.id}}
             console.log("success");
         })
         .fail(function(d) {
-            alert_show('خطا در نمایش تصاویر کاربر', 'error');
+            alertify.error("خطا در نمایش تصاویر کاربر");
         }).always(function() {
             $('.post-loading').hide('fast');
         });

@@ -153,7 +153,111 @@ hr{border-color: #d0d9e2 !important;}
 	z-index: 1100;
 }
 #fromImageModal .uploaded-image {
+	background: #e5e5e5;
 	margin-bottom: 15px;
+	text-align: center;
+}
+#fromImageModal .uploaded-image canvas,
+#fromImageModal .uploaded-image img {
+	max-height: 300px;
+	max-width: 100%;
+	margin: 10px;
+}
+#fromImageModal .qq-upload-size,
+#fromImageModal .qq-upload-failed-text,
+#fromImageModal .qq-upload-file {
+	display: none;
+}
+#fromImageModal .qq-upload-list{
+	margin: 10px 0;
+	padding: 0;
+}
+#fromImageModal .qq-upload-success {
+	list-style: none;
+}
+
+#fromImageModal .filters{
+	display: none;
+}
+#fromImageModal .filters #PresetFilters a{
+	display: none;
+	float: right;
+	max-height: 100px;
+	margin: 1px 2px;
+	overflow: hidden;
+	padding: 0;
+	width: 100px;
+	cursor: pointer;
+}
+#fromImageModal .filters{
+	direction: ltr !important;
+	position: relative;
+}
+#fromImageModal .filters a img{
+	width: 100%;
+	min-height: 100%;
+}
+
+#PresetFilters .item{
+	background: #3fbf79;
+	padding: 30px 0px;
+	margin: 10px;
+	color: #FFF;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	text-align: center;
+}
+#filters .customNavigation a{
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+.filter_loader {
+	background: rgba(255, 255, 255, 0.5);
+	height: 100%;
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	text-align: center;
+}
+
+.filter_loader > img {
+	height: 20px !important;
+	min-height: 20px !important;
+	margin: 35px auto;
+	width: 30px !important;
+}
+.customNavigation{
+	text-align: center;
+}
+#fromImageModal .nav_btn{
+	position: absolute;
+	height: 100%;
+	width: 20px;
+	cursor: pointer;
+	background: rgba(0,0,0,.5);
+	top: 0;
+}
+#fromImageModal .nav_btn.next{
+	right: 0;
+}
+#fromImageModal .nav_btn.prev{
+	left: 0;
+}
+#fromImageModal .nav_btn i.fa{
+	height: 100%;
+	line-height: 100%;
+	padding-top: 40px;
+	position: absolute;
+	left: 5px;
+}
+#fromImageModal .nav_btn:hover{
+	color: #fff;
 }
 .send-photo{
 	text-align: center;
@@ -168,6 +272,11 @@ hr{border-color: #d0d9e2 !important;}
 	background-color: #282e38;
 	padding: 18px;
 	border-radius: 50px;
+}
+.nosize{
+	width: 0 !important;
+	height: 0 !important;
+	overflow: hidden !important;
 }
 a, a:link, a:hover, a:visited {
 	/*color: #fff;*/
@@ -643,6 +752,7 @@ a.btn.btn-primary {
 	margin-left: 10px;
 	text-align: center;
 	font-size: 13px;
+	cursor: pointer;
 }
 
 .wis_btn.orange{
@@ -2303,6 +2413,9 @@ div.comment div div.row:hover .del-comment{
 	display: inline-block;
 	margin-left: 20px;
 }
+.modal_buttons.actions ul li.active a{
+	background-position: bottom;
+}
 .modal_buttons .action_btn.img_crop_btn{
 	background: url(../images/icons/crop-icon.png) no-repeat top;
 }
@@ -2399,216 +2512,216 @@ div.comment div div.row:hover .del-comment{
 	}
 	/*#feed{
 		width: 100% !important;
-	}*/
-	.feed-item{
-		margin: 0 10px 10px 0;
-		width: 236px;
-	}
-	.feed-item .img-content,
-	.feed-item .img-content img{
-		width: 100%;
-		/*height: auto;*/
-	}
-	.post-action .col-sm-2{
-		display: inline-block;
-	}
-	.post-action .col-sm-2 a{
-		padding: 10px;
-		display: block;
-	}
-	.post-action .col-sm-2,
-	.btn-box.comment,
-	.btn-box.likes{
-		width: 50%;
-	}
-	.feed-item .avatar-box .username{
-		display: none;
-	}
-	.navbar-header{
-		width: 80%;
-	}
-	.navbar-header img {
-		margin-right: 10px;
-		width: 180px;
-	}
-	.navbar-default {
-		min-height: 60px;
-	}
-	.resp-menu {
-		background: none;
-		font-size: 20px;
-		left: 0;
-		display: inline-block;
-		padding: 10px 20px;
-		color: #FFAD00 !important;
-	}
-	.post-page{
-		width: 100%;
-		margin: 10px auto !important;
-	}
-	.post-content{
-		float: initial;
-		width: 100%;
-		margin: 0;
-	}
-	.post-content #submit_comment .text_box {
-		float: initial;
-		width: 100%;
-	}
-	.post-content .activity_btn{
-		width: 100%;
-		padding: 5px;
-	}
-	.post-content .activity_btn {
-		border-top: 1px solid #d0d9e2;
-	}
-	.post-content .activity_btn .btn-box {
-		float: left;
-		text-align: center;
-		width: 50%;
-		margin: 0;
-	}
-	.post-content .activity_btn .btn-box a {
-		display: block;
-		padding: 5px 0;
-	}
-	.post-content .liker_avatars{
-		border-top: 1px solid #d0d9e2;
-		width: 100%;
-		padding: 7px;
-	}
-	.post-content #submit_comment .text_box textarea{
-		margin-top: 10px;
-	}
-	.post-content #submit_comment .avatar {
-		float: initial;
+		}*/
+		.feed-item{
+			margin: 0 10px 10px 0;
+			width: 236px;
+		}
+		.feed-item .img-content,
+		.feed-item .img-content img{
+			width: 100%;
+			/*height: auto;*/
+		}
+		.post-action .col-sm-2{
+			display: inline-block;
+		}
+		.post-action .col-sm-2 a{
+			padding: 10px;
+			display: block;
+		}
+		.post-action .col-sm-2,
+		.btn-box.comment,
+		.btn-box.likes{
+			width: 50%;
+		}
+		.feed-item .avatar-box .username{
+			display: none;
+		}
+		.navbar-header{
+			width: 80%;
+		}
+		.navbar-header img {
+			margin-right: 10px;
+			width: 180px;
+		}
+		.navbar-default {
+			min-height: 60px;
+		}
+		.resp-menu {
+			background: none;
+			font-size: 20px;
+			left: 0;
+			display: inline-block;
+			padding: 10px 20px;
+			color: #FFAD00 !important;
+		}
+		.post-page{
+			width: 100%;
+			margin: 10px auto !important;
+		}
+		.post-content{
+			float: initial;
+			width: 100%;
+			margin: 0;
+		}
+		.post-content #submit_comment .text_box {
+			float: initial;
+			width: 100%;
+		}
+		.post-content .activity_btn{
+			width: 100%;
+			padding: 5px;
+		}
+		.post-content .activity_btn {
+			border-top: 1px solid #d0d9e2;
+		}
+		.post-content .activity_btn .btn-box {
+			float: left;
+			text-align: center;
+			width: 50%;
+			margin: 0;
+		}
+		.post-content .activity_btn .btn-box a {
+			display: block;
+			padding: 5px 0;
+		}
+		.post-content .liker_avatars{
+			border-top: 1px solid #d0d9e2;
+			width: 100%;
+			padding: 7px;
+		}
+		.post-content #submit_comment .text_box textarea{
+			margin-top: 10px;
+		}
+		.post-content #submit_comment .avatar {
+			float: initial;
+		}
+
+		.post-sidebar {
+			float: initial;
+			width: 100%;
+		}
+		.post-sidebar .user-posts .user-post-items{
+			width: 100% !important;
+		}
+		.post-sidebar .user-posts .user-post-item{
+			width: 49%;
+			float: right;
+		}
+		.only_mobile_view{
+			display: block;
+		}
+		.only_mobile_view .box:first-child{
+			margin-top: 30px !important;
+		}
+		.only_mobile_view .box:last-child{
+			margin-top: 45px !important;
+		}
+		.post-sidebar .user-posts{
+			max-height: initial;
+		}
+		.wis_btn a, .wis_btn{
+			padding: 5px 9px;
+		}
+		.wis_btn.pull-left a, .wis_btn.pull-left {
+			margin-right: 5px;
+		}
+		.post-sidebar .user-posts .user-post-item{
+			position: initial !important;
+			width: 100% !important;
+		}
+		.post-sidebar .user-posts .user-post-item img{
+			height: auto !important;
+		}
+
+		.mohrama-eleman {
+			float: right;
+			right: 0;
+		}
+		.top-search{
+			margin:0;
+		}
+
+		.mohrama-eleman,
+		#wis_navbar,
+		.navbar-toggle{
+			display: none;
+		}
+		.header-brand {
+			display: block;
+			text-align: right;
+		}
+		iframe{
+			width: 100% !important;
+		}
+
 	}
 
-	.post-sidebar {
-		float: initial;
-		width: 100%;
+	@media (max-width: 600px) {
+		.profile_data .user_avtivity{
+			display: block;
+		}
+		.user_avtivity > div{
+			width: 100%;
+			position: initial;
+			display: block;
+			clear: both;
+			border: none;
+			padding: 6px;
+			border-bottom: 1px solid #d0d9e2;
+		}
+		.user_avtivity div.icon{
+			float: right;
+			margin-left: 15px;
+			width: 22px;
+		}
+		.user_avtivity div.p_label{
+			float: right;
+		}
+		.user_avtivity div.count{
+			float: left;
+		}
+		.user_stat_config {
+			position: initial;
+		}
+		.profile_avatar{
+			width: 100%;
+			text-align: center;
+		}
+		.profile_avatar a {
+			display: inline-block;
+			width: 50%;
+		}
+		.profile_data .user_stats{
+			text-align: center;
+		}
+		#follower-box {
+			padding: 0 15px;
+			width: 100%;
+		}
+		.wallet.wis_btn {
+			position: initial;
+		}
+		.notif-item{
+			width: 100%;
+		}
+		.notif-type {
+			padding: 10px 10px 0 0;
+		}
+		.follow_box{
+			margin-right: 0;
+			width: 95%;
+		}
 	}
-	.post-sidebar .user-posts .user-post-items{
-		width: 100% !important;
+	@media (max-width: 320px) {
+		.menu-box{
+			width: 98% !important;
+		}
 	}
-	.post-sidebar .user-posts .user-post-item{
-		width: 49%;
-		float: right;
+	@media (max-width: 230px) {
+		.feed-item{
+			margin: 0;
+			margin-bottom: 10px;
+			width: 100%;
+		}
 	}
-	.only_mobile_view{
-		display: block;
-	}
-	.only_mobile_view .box:first-child{
-		margin-top: 30px !important;
-	}
-	.only_mobile_view .box:last-child{
-		margin-top: 45px !important;
-	}
-	.post-sidebar .user-posts{
-		max-height: initial;
-	}
-	.wis_btn a, .wis_btn{
-		padding: 5px 9px;
-	}
-	.wis_btn.pull-left a, .wis_btn.pull-left {
-		margin-right: 5px;
-	}
-	.post-sidebar .user-posts .user-post-item{
-		position: initial !important;
-		width: 100% !important;
-	}
-	.post-sidebar .user-posts .user-post-item img{
-		height: auto !important;
-	}
-
-	.mohrama-eleman {
-		float: right;
-		right: 0;
-	}
-	.top-search{
-		margin:0;
-	}
-	
-	.mohrama-eleman,
-	#wis_navbar,
-	.navbar-toggle{
-		display: none;
-	}
-	.header-brand {
-		display: block;
-		text-align: right;
-	}
-	iframe{
-		width: 100% !important;
-	}
-
-}
-
-@media (max-width: 600px) {
-	.profile_data .user_avtivity{
-		display: block;
-	}
-	.user_avtivity > div{
-		width: 100%;
-		position: initial;
-		display: block;
-		clear: both;
-		border: none;
-		padding: 6px;
-		border-bottom: 1px solid #d0d9e2;
-	}
-	.user_avtivity div.icon{
-		float: right;
-		margin-left: 15px;
-		width: 22px;
-	}
-	.user_avtivity div.p_label{
-		float: right;
-	}
-	.user_avtivity div.count{
-		float: left;
-	}
-	.user_stat_config {
-		position: initial;
-	}
-	.profile_avatar{
-		width: 100%;
-		text-align: center;
-	}
-	.profile_avatar a {
-		display: inline-block;
-		width: 50%;
-	}
-	.profile_data .user_stats{
-		text-align: center;
-	}
-	#follower-box {
-		padding: 0 15px;
-		width: 100%;
-	}
-	.wallet.wis_btn {
-		position: initial;
-	}
-	.notif-item{
-		width: 100%;
-	}
-	.notif-type {
-		padding: 10px 10px 0 0;
-	}
-	.follow_box{
-		margin-right: 0;
-		width: 95%;
-	}
-}
-@media (max-width: 320px) {
-	.menu-box{
-		width: 98% !important;
-	}
-}
-@media (max-width: 230px) {
-	.feed-item{
-		margin: 0;
-		margin-bottom: 10px;
-		width: 100%;
-	}
-}

@@ -10,12 +10,38 @@ $("#pin_form").submit(function(){
     }
 });
 
+function setDataToField(){
+    var c = document.getElementById("uploaded-image").childNodes[0];
+    $('#image_field').val(c.toDataURL());
+}
+
+function add_filter_box(){
+    Caman("#vintage img", function(){this.vintage();this.render();});
+    Caman("#lomo img", function(){this.lomo();this.render();});
+    Caman("#clarity img", function(){this.clarity();this.render();});
+    Caman("#sinCity img", function(){this.sinCity();this.render();});
+    Caman("#sunrise img", function(){this.sunrise();this.render();});
+    Caman("#crossProcess img", function(){this.crossProcess();this.render();});
+    Caman("#orangePeel img", function(){this.orangePeel();this.render();});
+    Caman("#love img", function(){this.love();this.render();});
+    Caman("#grungy img", function(){this.grungy();this.render();});
+    Caman("#jarques img", function(){this.jarques();this.render();});
+    Caman("#pinhole img", function(){this.pinhole();this.render();});
+    Caman("#oldBoot img", function(){this.oldBoot();this.render();});
+    Caman("#glowingSun img", function(){this.glowingSun();this.render();});
+    Caman("#hazyDays img", function(){this.hazyDays();this.render();});
+    Caman("#herMajesty img", function(){this.herMajesty();this.render();});
+    Caman("#nostalgia img", function(){this.nostalgia();this.render();});
+    Caman("#hemingway img", function(){this.hemingway();this.render();});
+    Caman("#concentrate img", function(){this.concentrate();this.render();});
+}
+
 // uploader
-function createUploader(){            
+function createUploader(){
     var uploader = new qq.FileUploader({
         element: document.getElementById('file-uploader'),
         action: upload_url,
-        debug: true,
+        debug: false,
         multiple: false,
         allowedExtensions : ['png','jpg','jpe', 'jpeg', 'gif'],
         sizeLimit : 1024*1024*10,
@@ -31,10 +57,26 @@ function createUploader(){
         onComplete : function(id, fileName, responseJSON){
             if(responseJSON.success)
             {
-                // $('#file-uploader').hide();
-                $('.uploaded-image').html('<img src="/media/pin/temp/t/'+responseJSON.file+'">');
-                $('#image_field').val(responseJSON.file);
+                $('.uploaded-image').html('<img id="img_thumb" src="'+responseJSON.file_o+'">');
+                $('#origin_image').remove();
+                Caman('#img_thumb', function(){
+                    this.render(function(){
+                        setDataToField();
+                    });
+                });
+
+                $('body').append('<img src="'+responseJSON.file_o+'" id="origin_image" style="display:none;" />');
+                $('.filters').show();
+                $('.qq-upload-size').hide('fast');
+                // $('#image_field').val(responseJSON.file_o);
                 image_selected=1;
+
+                $('.filters #PresetFilters a').css('display', 'block').html('<img src="'+responseJSON.file_t+'" />');
+
+                add_filter_box();
+
+
+
             }else{
                 alert('ﺦﻃﺍ ﻪﻧگﺎﻣ ﺬﺧیﺮﻫ ﻑﺍیﻝ.');
             }
@@ -42,6 +84,75 @@ function createUploader(){
     });           
 }
 createUploader(); 
+
+$('body').on('click', '.filters #PresetFilters a', function(event) {
+    event.preventDefault();
+    var c = $('#origin_image').clone().attr('id', 'img_clone');
+    c.appendTo('body');
+
+    var t = $(this);
+    var fn = t.attr('id');
+    t.append('<div class="filter_loader"><img src="/media/v2/images/loading-img.gif" alt="" /></div>');
+
+    Caman('#img_clone', function(){
+        eval('this.'+fn+'()');
+        this.render(function(){
+            $('.uploaded-image').children('*').remove();
+            $('#img_clone').appendTo('.uploaded-image');
+            $('#img_clone').show().attr('id', 'rendered');            
+            t.children('.filter_loader').remove();
+            setDataToField();
+        });
+    });
+});
+
+var angleInDegrees=0;
+
+$('body').on('click', '.img_rotate_btn', function(event) {
+    var canvas = document.getElementById("img_thumb");
+    if (typeof canvas == 'undefined' || canvas == null) {
+        var canvas = document.getElementById("rendered");
+    }
+
+    angleInDegrees+=90;
+
+    var image=document.createElement("img");
+    // image.onload=function(){
+    //     drawRotated(canvas, image, 0);
+    // }
+    // image.src=$('#origin_image').attr('src');
+    image.src = canvas.toDataURL();
+
+    angleInDegrees= angleInDegrees % 360;
+    drawRotated(canvas, image, angleInDegrees);
+});
+
+function drawRotated(canvas, image, degrees){
+    // canvas = document.createElement("canvas");
+    var ctx=canvas.getContext("2d");
+    var w = canvas.width;
+    var h = canvas.height;
+
+    if(degrees == 90 || degrees == 270) {
+        canvas.width = image.height;
+        canvas.height = image.width;
+    } else {
+        canvas.width = image.width;
+        canvas.height = image.height;
+    }
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(degrees == 90 || degrees == 270) {
+        ctx.translate(image.height/2,image.width/2);
+    } else {
+        ctx.translate(image.width/2,image.height/2);
+    }
+    ctx.rotate(degrees*Math.PI/180);
+    ctx.drawImage(image,-image.width/2,-image.height/2);
+    document.getElementById('uploaded-image').innerHTML = '';
+
+    document.getElementById('uploaded-image').appendChild(canvas);
+}
 
 var parent_to_del = '';
 
@@ -214,10 +325,8 @@ $('body').on('click', '.topuser-hover-btn',function(){
         var d = $.parseJSON(data);
         if (d['status'] == true) {
             th.data('actionid', '0');
-            console.log(d['message']);
         }else{
             th.data('actionid', '1');
-            console.log(d['message']);
         }
     })
     .fail(function() {
@@ -250,7 +359,6 @@ $('body').on('click', '.block_btn', function(event) {
     .fail(function(d) {
         alertify.error('خطا در بلاک کردن. با مدیریت تماس بگیرید');
     });
-
     return false;
     
 });
@@ -264,4 +372,11 @@ $('body').on('click', '.reply-comment', function(event) {
     var t = $(this);
     $('#id_comment').val($('#id_comment').val() + ' @' + t.data('user'));
     $('#id_comment').focus();
+});
+
+$('body').on('click', '.modal_buttons.actions li', function(event) {
+    event.preventDefault();
+    var t = $(this);
+    $('.modal_buttons.actions li').removeClass('active');
+    t.addClass('active');
 });
