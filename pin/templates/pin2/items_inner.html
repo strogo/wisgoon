@@ -49,8 +49,8 @@
 			</div>
 			<!-- text -->
 			<div class="post-text">
-				<h1 class="post-text" style="line-height:20px!important;">
-				{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
+				<h1 class="post-text">
+					{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
 				</h1>
 				{% if post.get_pages %}
 				
@@ -67,8 +67,8 @@
 						<a href="{{post.get_absolute_url}}">{{post.create|date_filter}} <i class="time_icon"></i></a>
 					</div>
 					<div class="cat pull-left">
-						<h2 style="font-weight:20px;font-size:13px">
-						<a href="/category/{{post.category.id}}/">{{post.category}} <i class="cat_icon"></i></a>
+						<h2>
+							<a href="/category/{{post.category.id}}/">{{post.category}} <i class="cat_icon"></i></a>
 						</h2>
 					</div>
 					<div class="clear"></div>

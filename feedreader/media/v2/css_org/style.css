@@ -936,6 +936,9 @@ a.btn.btn-primary {
 .post-content .post-text a{
 	color: #257399 !important;
 }
+.post-content .post-text h1{
+	line-height: 20px!important;
+}
 .post-content .post-text {
 	font-size: 13px;
 	padding: 20px 10px 10px;
@@ -980,6 +983,11 @@ a.btn.btn-primary {
 }
 .post-content .post_footer .cat{
 	margin-left: 10px;
+}
+.post-content .post_footer .cat h2{
+	margin: 0;
+	font-weight:20px;
+	font-size:13px;
 }
 .post-content .liker_avatars img{
 	border-radius: 50px;
