@@ -121,7 +121,7 @@ def preparing_chart_points(points):
 
     point_list = []
     for point in points:
-        point_list.append([point.timestamp, point.count])
+        point_list.append([int(point.timestamp) * 1000, point.count])
     return point_list
 
 

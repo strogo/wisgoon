@@ -1,4 +1,5 @@
-var app = angular.module('myApp', ['ui.router','infinite-scroll','wu.masonry']);
+'use strict';
+var app = angular.module('myApp', ['ui.router','highcharts-ng','infinite-scroll','wu.masonry']);
 
 app.config(function($interpolateProvider) {
   $interpolateProvider.startSymbol('{[{');
@@ -32,7 +33,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
      .state('categoreis', {
         url: "/categoreis",
         templateUrl: "http://127.0.0.1:8000/media/dashboard/html/post/categories.html",
-        controller: "categoryController"
+        controller: "catstatController"
     })
      .state('reported', {
         url: "/reported",
