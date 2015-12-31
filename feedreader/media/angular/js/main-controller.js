@@ -60,6 +60,9 @@ app.controller('postController',['$scope','$http','$stateParams', function($scop
 	});
 
 	$scope.deleteCommentForm = function(cmId) {
+		$http.$.post('http://127.0.0.1:8000/api/v6/comment/delete/'+"/?token="+user_token, {posts_ids: cmId}, function(data, textStatus, xhr) {
+			/*optional stuff to do after success */
+		});
 		$http.get("http://127.0.0.1:8000/api/v6/comment/delete/"+cmId+"/?token="+user_token)
 		.success(function(data){
 			console.log("deleted");

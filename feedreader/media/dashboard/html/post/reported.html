@@ -12,80 +12,88 @@
 		<div class="clear"></div>
 	</section>
 	<section class="content">
-		<div class="row">
-			<div id="feed" masonry load-images="false" reload-on-resize infinite-scroll='postItem.nextPage()' infinite-scroll-distance='1' style="width:1036px">
-				<div ng-show='postItem.busy'>Loading data...</div>
-				<div  class="masonry-brick" ng-repeat="brick in postItem.bricks">
-					<div class="box box-solid photo">
-						<a href=""><span class="fa fa-square-o pull-left"></span></a>
-						<a href="">
-							<img ng-src="{[{brick.images.thumbnail.url}]}" height="{[{brick.images.thumbnail.height}]}" width="{[{brick.images.thumbnail.width}]}">
+		<div class="select">
+			<form name="searchForm" ng-submit="showSearchPost()" ng-controller="searchController">
+			<input type="text" placeholder="جست و جو ..." ng-model="query"><button type="submit"><i class="fa fa-search"></i></button>
+			</form>
+				<button class="pull-left button" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
+			<span class="pull-left"><a href="" ng-show="select"><i class="fa fa-trash"></i></a></span>
+		</div>
+		<div id="feed" masonry load-images="false" reload-on-resize infinite-scroll='postItem.nextPage()' infinite-scroll-distance='1' style="width:1036px">
+			<div ng-show='postItem.busy'>Loading data...</div>
+			<div  class="masonry-brick" ng-repeat="brick in postItem.bricks">
+				
+				<div class="box box-solid photo" id="br-{[{brick.id}]}">
+					<a href="" ng-show="select" ng-click="selectItem(brick.id)">
+						<span ng-class="class" class="fa fa-square-o pull-left"></span>
+					</a>
+					<a href="{[{brick.permalink.web}]}">
+						<img ng-src="{[{brick.images.thumbnail.url}]}" height="{[{brick.images.thumbnail.height}]}" width="{[{brick.images.thumbnail.width}]}">
+					</a>
+					<div class="user">
+						<div class="clear"></div>
+						<a href=""><img ng-src="{[{brick.user.avatar}]}"></a>
+					</div>
+					<div class="report-count">
+						<a href=""  data-toggle="modal" data-target="#reporter-modal{[{brick.id}]}">
+							<h5><span class="fa fa-flag-o"></span>{[{brick.cnt_report}]} گزارش تخلف</h5>
 						</a>
-						<div class="user">
-							<div class="clear"></div>
-							<a href=""><img ng-src="{[{brick.user.avatar}]}"></a>
-						</div>
-						<div class="report-count">
-							<a href=""  data-toggle="modal" data-target="#reporter-modal">
-								<h5><span class="fa fa-flag-o"></span>{[{brick.cnt_report}]} گزارش تخلف</h5>
-							</a>
-						</div>
-						<div class="reporters">
-							<ul>
-								<li ng-repeat="report in brick.reporter">
-									<img ng-src="{[{report.detail.avatar}]}" title="user avatar">
-								</li>
-								<div class="modal fade" id="reporter-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header">
-												<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-												<h4 class="modal-title" id="myModalLabel">گزارش دهندگان</h4>
+					</div>
+					<div class="reporters">
+						<ul>
+							<li ng-repeat="report in brick.reporter">
+								<img ng-src="{[{report.detail.avatar}]}" title="user avatar">
+							</li>
+						</ul>
+					</div>
+					<div class="score">
+						<label><i class="fa fa-star-o"></i>امتیازات :</label> <span>{[{brick.reporter_scores}]}</span>
+					</div>
+					<div class="dropdown user-info">
+						<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							اطلاعات کاربر
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							<li>بن:<span>{[{brick.user.banned}]}</span></li>
+							<li>پست های حذف شده توسط ادمین:<span>{[{brick.user.cnt_admin_deleted}]}</span></li>
+							<li>امتیاز کار بر:<span>{[{brick.user.score}]}</span></li>
+							<li>پست های حذف شده توسط کاربر:<span>{[{brick.user.cnt_deleted}]}</span></li>
+						</ul>
+					</div>
+					<div class="box-tools">
+						<button class="undo" ng-click="undoPost(brick.id)">
+							<i class="fa fa-check"></i>
+						</button>
+						<button class="delete" ng-click="deletePost(brick.id)">
+							<i class="fa fa-times"></i>
+						</button>
+					</div>
+					<div class="modal fade reporter-modal" id="reporter-modal{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-repeat="report in brick.reporter">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									<h4 class="modal-title" id="myModalLabel">گزارش دهندگان</h4>
+								</div>
+								<div class="modal-body">
+									<div class="reporters">
+										<div class="reporter-item" ng-repeat="report in brick.reporter">
+											<div class="col-md-2">
+												<a href="">
+													<img ng-src="{[{report.detail.avatar}]}" title="user avatar">
+												</a>
 											</div>
-											<div class="modal-body">
-												<div class="reporters" ng-repeat="brick in postItem.bricks">
-													<div class="reporter-item" ng-repeat="report in brick.reporter">
-														<div class="col-md-2">
-															<a href="">
-																<img ng-src="{[{report.detail.avatar}]}" title="user avatar">
-															</a>
-														</div>
-														<div class="col-md-10 user-score">
-															<h2>{[{report.profile.score}]}</h2>
-														</div>
-														<div class="clear"></div>
-													</div>
-												</div>
+											<div class="col-md-10 user-score">
+												<h2>{[{report.profile.score}]}</h2>
 											</div>
+											<div class="clear"></div>
 										</div>
 									</div>
 								</div>
-							</ul>
+							</div>
 						</div>
-						<div class="score">
-							<label><i class="fa fa-star-o"></i>امتیازات :</label> <span>{[{brick.reporter_scores}]}</span>
-						</div>
-						<div class="dropdown user-info">
-							<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-								اطلاعات کاربر
-								<span class="caret"></span>
-							</button>
-							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-								<li><a href="#">پست های حذف شده توسط مدیر</a></li>
-								<li><a href="#">Another action</a></li>
-								<li><a href="#">Something else here</a></li>
-								<li><a href="#">Separated link</a></li>
-							</ul>
-						</div>
-						<div class="box-tools">
-							<button class="undo">
-								<i class="fa fa-check"></i>
-							</button>
-							<button class="delete" >
-								<i class="fa fa-times"></i>
-							</button>
-						</div>
-					</div>
+					</div>	
 				</div>
 			</div>
 		</div>
