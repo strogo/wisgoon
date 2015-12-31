@@ -61,7 +61,34 @@ def add_to_storage(post_id):
     storage.num_files = storage.num_files + 3
     storage.save()
 
+    check_porn.delay(post_id=post_id)
+
     return "add_to_storage"
+
+
+@app.task(name="wisgoon.pin.check_porn")
+def check_porn(post_id):
+    from pin.models import Post
+    import requests
+    from requests.auth import HTTPBasicAuth
+    import socket
+
+    socket.setdefaulttimeout(30)
+
+    post = Post.objects.get(id=post_id)
+    # print post.get_image_500()
+    img_url = post.get_image_500()['url']
+    # print img_url
+    r = requests.get(img_url)
+    # print r
+    # print r.content
+    try:
+        res = requests.post("https://188.75.73.226:1509/analyzer",
+                            auth=HTTPBasicAuth('wisgoon94', 'Ghavi!394YUASTTH'),
+                            verify=False, data=r.content)
+        print res.content, img_url
+    except Exception, e:
+        print str(e)
 
 
 @app.task(name="wisgoon.pin.add_avatar_to_storage")

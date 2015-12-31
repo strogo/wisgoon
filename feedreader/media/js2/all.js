@@ -200,14 +200,14 @@ $('body').on('click', '.del-comment', function(event) {
     })
     .done(function(res) {
         if (res.status === true) {
-            alert_show(res.message, 'success');
+            alertify.success(res.message);
             t.parents('.cmnt_item').slideUp('fast');
         }else{
-            alert_show('خطا در حذف دیدگاه', 'error');
+            alertify.error("خطا در حذف دیدگاه");
         }
     })
     .fail(function() {
-        alert_show('خطا در حذف دیدگاه', 'error');
+        alertify.error("خطا در حذف دیدگاه");
     });
     return false;
 });
@@ -223,7 +223,7 @@ $('.topuser-thumb').webuiPopover('destroy').webuiPopover({
 
 $('body').on('click', '.login_required', function(event) {
     event.preventDefault();
-    alert_show('ابتدا وارد حساب کاربری خود شوید', 'error');
+    alertify.error("ابتدا وارد حساب کاربری خود شوید");
     return false;
 });
 
@@ -283,13 +283,13 @@ $(function () {
         .done(function(response) {
             if (response == '0') {
                 t.addClass('disabled');
-                alert_show('مورد بیشتری پیدا نشد', 'error');
+                alertify.error("مورد بیشتری پیدا نشد");
             }else{
                 $('#follower-box').append(response);
             }
         })
         .fail(function() {
-            alert_show('خطا. با مدیر تماس بگیرید');
+            alertify.error("خطا. با مدیر تماس بگیرید");
         })
         .always(function() {
             t.children('img').css('display', 'none');
@@ -309,11 +309,11 @@ $(function () {
         })
         .done(function(response) {
             if (response.status) {
-                alert_show(response.message, 'success');
+                alertify.success(response.message);
                 t.attr('href', '/pin/follow/' + t.data('user-id') + '/0/');
                 t.html('قطع ارتباط <i class="fa fa-times"></i>').removeClass('green').addClass('red');
             } else {
-                alert_show(response.message, 'success');
+                alertify.success(response.message);
                 t.attr('href', '/pin/follow/' + t.data('user-id') + '/1/');
                 t.html('ایجاد دوستی  <i class="fa fa-plus"></i>').removeClass('red').addClass('green');
             }
@@ -365,13 +365,13 @@ $(function () {
         })
         .done(function(d) {
             if (d.status) {
-                alert_show(d.msg, 'success');
+                alertify.success(d.msg);
             }else{
-                alert_show(d.msg, 'error');
+                alertify.error(d.msg);
             }
         })
         .fail(function(d) {
-            alert_show('خطا! با مدیریت تماس بگیرید', 'error');
+            alertify.error("خطا! با مدیریت تماس بگیرید");
         });
         return false;
     });

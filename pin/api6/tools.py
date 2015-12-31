@@ -344,6 +344,7 @@ def comment_item_json(comment):
     comment_dict['id'] = comment.id
     comment_dict['comment'] = comment.comment
     comment_dict['user'] = get_simple_user_object(comment.user.id)
+    comment_dict['date'] = int(comment.submit_date.strftime("%s"))
     return comment_dict
 
 

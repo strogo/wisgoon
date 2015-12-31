@@ -78,11 +78,11 @@ $(function () {
             }else{
                 $('#comments_box').prepend(response);
                 $('#comments_box').find('.no-comment').hide('fast');
-                alert_show('دیدگاه شما با موفقیت ثبت شد', 'success');
+                alertify.success("دیدگاه شما با موفقیت ثبت شد");
             }
         })
         .fail(function() {
-            alert_show('خطا! با مدیریت سایت تماس بگیرید', 'error');
+            alertify.error("خطا! با مدیریت سایت تماس بگیرید");
         })
         .always(function() {
             $('.comment-loading-img').hide();

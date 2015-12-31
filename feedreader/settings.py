@@ -99,10 +99,6 @@ API_URL = "http://api.wisgoon.com"
 MEDIA_PREFIX = 'http://media.wisgoon.com'
 
 ENABLE_CACHING = True
-SITE_NAME_FA = 'ویسگون'
-SITE_NAME_EN = 'wisgoon'
-SITE_URL_NAME = 'wisgoon.com'
-SITE_DESC = 'what is going on, social image sharing'
 
 SCORE_FOR_COMMENING = -5000
 SCORE_FOR_STREAMS = 10000
@@ -125,5 +121,8 @@ CELERY_ROUTES = {
     },
     'wisgoon.pin.post_to_follower_single': {
         'queue': 'wisgoon.push.follower'
+    },
+    'wisgoon.pin.check_porn': {
+        'queue': 'wisgoon.pin.check_porn'
     }
 }

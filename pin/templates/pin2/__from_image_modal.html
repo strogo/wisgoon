@@ -3,46 +3,92 @@
 
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/select2.min.css" />
+<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/owl.carousel.css" />
 {% endblock css %}
 
 <div class="modal fade" id="fromImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h4 class="modal-title" id="fromImageModal">ارسال مطلب جدید</h4>
-			</div>
-			<div class="modal-body">
-				<form role="form" method="post" class="form-horizontal" action="{% url 'pin-send' %}" id="pin_form">
-					{% csrf_token%}
-					<div class="form-group">
-						{{ form.errors}}
-						<label>تصویر: </label>
+			<form role="form" method="post" class="form-horizontal" action="{% url 'pin-send' %}" id="pin_form">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title" id="fromImageModal">ارسال مطلب جدید<img src="{{MEDIA_URL}}v2/images/icons/wis-icon.png" alt="" class="wis_modal_icon"></h4>
+				</div>
+				<div class="modal-body">
+
+					<div class="col-xs-4 modal_form">
+						{% comment %}
+						<div class="modal_buttons actions row">
+							<ul>
+								<li><a href="javascript:;" class="action_btn img_crop_btn"></a></li>
+								<li><a href="javascript:;" class="action_btn img_rotate_btn"></a></li>
+								<li><a href="javascript:;" class="action_btn img_reset_btn"></a></li>
+							</ul>
+						</div>
+						{% endcomment %}
+						{% csrf_token%}
+						<div class="form-group">
+							{{ form.errors}}
+						</div>
+						<div class="form-group ">
+							<label>توضیحات: </label>
+							<textarea class="form-control" id="id_text" rows="5" cols="40" name="text"> </textarea>
+						</div>
+						<div class="form-group">
+							<label>آدرس:</label>
+							<input type="text" name="url" placeholder="URL" class="form-control  span3 ltr">
+						</div>
+						<div class="form-group">
+							<label>گروه </label>
+							{% render_field pin_form.category class+="form-control select2" %}
+						</div>
+
+						<center>
+							<input type="submit" class="wis_btn orange" value="ذخیره" />
+						</center>
+					</div>
+					<div class="col-xs-8 modal_image">
 						<div class="controls">
-							<div class="uploaded-image"> </div>
-							<input type="hidden" value="" id="image_field" name="image" />
 							<div id="file-uploader">
 								<noscript>
 									<p>جاوا اسکریپت مرورگر شما غیر فعال است!</p>
 								</noscript>
 							</div>
+							<div class="uploaded-image" id="uploaded-image"></div>
+							<input type="hidden" value="" id="image_field" name="image" />
+						</div>
+						<div class="filters">
+							<div id="PresetFilters" class="owl-carousel owl-theme">
+
+								<a id="vintage" data-preset="vintage"></a>
+								<a id="lomo" data-preset="lomo"></a>
+								<a id="clarity" data-preset="clarity"></a>
+								<a id="sinCity" data-preset="sinCity"></a>
+								<a id="sunrise" data-preset="sunrise"></a>
+								<a id="crossProcess" data-preset="crossProcess"></a>
+								<a id="orangePeel" data-preset="orangePeel"></a>
+								<a id="love" data-preset="love"></a>
+								<a id="grungy" data-preset="grungy"></a>
+								<a id="jarques" data-preset="jarques"></a>
+								<a id="pinhole" data-preset="pinhole"></a>
+								<a id="oldBoot" data-preset="oldBoot"></a>
+								<a id="glowingSun" data-preset="glowingSun"></a>
+								<a id="hazyDays" data-preset="hazyDays"></a>
+								<a id="herMajesty" data-preset="herMajesty"></a>
+								<a id="nostalgia" data-preset="nostalgia"></a>
+								<a id="hemingway" data-preset="hemingway"></a>
+								<a id="concentrate" data-preset="concentrate"></a>
+
+							</div>
+
+							<a class="prev nav_btn"> <i class="fa fa-chevron-left"></i> </a>
+							<a class="next nav_btn"> <i class="fa fa-chevron-right"></i> </a>
 						</div>
 					</div>
-					<div class="form-group ">
-						<label>توضیحات: </label>
-						<textarea class="form-control" id="id_text" rows="5" cols="40" name="text"> </textarea>
-					</div>
-					<div class="form-group">
-						<label>آدرس:</label>
-						<input type="text" name="url" placeholder="URL" class="form-control  span3 ltr">
-					</div>
-					<div class="form-group">
-						<label>گروه </label>
-						{% render_field pin_form.category class+="form-control select2" %}
-					</div>
-				</div>
-				<div class="modal-footer">
-					<input type="submit" class="btn btn-primary" value="ذخیره" />
+					<div class="clear"></div>
+
+
+					
 				</div>
 			</form>
 		</div>
@@ -51,11 +97,30 @@
 
 {% block js %}
 <script type="text/javascript" src="{{MEDIA_URL}}v2/js/select2.min.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}v2/js/owl.carousel.min.js"></script>
+
 <script type="text/javascript">
 	$.fn.modal.Constructor.prototype.enforceFocus = function () {};
 	$('.select2').select2({
 		width:'100%',
 		dir: "rtl",
 	});
+
+	var owl = $("#PresetFilters");
+
+	owl.owlCarousel({
+		itemsDesktop : [1000,5], 
+		itemsDesktopSmall : [900,3], 
+		itemsTablet: [600,2], 
+		itemsMobile : false 
+	});
+
+	$(".nav_btn.next").click(function(){
+		owl.trigger('owl.next');
+	});
+	$(".nav_btn.prev").click(function(){
+		owl.trigger('owl.prev');
+	});
+
 </script>
 {% endblock js %}

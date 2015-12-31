@@ -49,7 +49,9 @@
 			</div>
 			<!-- text -->
 			<div class="post-text">
-				{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
+				<h1 class="post-text">
+					{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
+				</h1>
 				{% if post.get_pages %}
 				
 				<div class="mato20">
@@ -65,7 +67,9 @@
 						<a href="{{post.get_absolute_url}}">{{post.create|date_filter}} <i class="time_icon"></i></a>
 					</div>
 					<div class="cat pull-left">
-						<a href="/category/{{post.category.id}}/">{{post.category}} <i class="cat_icon"></i></a>
+						<h2>
+							<a href="/category/{{post.category.id}}/">{{post.category}} <i class="cat_icon"></i></a>
+						</h2>
 					</div>
 					<div class="clear"></div>
 				</div>
