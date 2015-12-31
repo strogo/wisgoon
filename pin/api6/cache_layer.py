@@ -59,10 +59,11 @@ class PostCacheLayer(object):
     def post_change(self, post):
         if not self.data:
             return
-        from tools import category_get_json
+        from tools import category_get_json, get_post_tags
         self.data['category'] = category_get_json(cat_id=post.category_id)
         self.data['text'] = post.text
         self.data['url'] = post.url
+        self.data['tags'] = get_post_tags(post)
         self.set(self.data)
 
     def show_in_default_change(self, status):

@@ -172,9 +172,29 @@ def get_last_likers(post_id, limit=3):
 
 
 def get_last_comments(post_id, limit=3):
-
     comments = get_comments(post_id, limit, 0)
     return comment_objects_list(comments)
+
+
+def get_post_tags(post):
+    tags = []
+    for tag in post.get_tags():
+        tag_url = abs_url(reverse("api-6-post-hashtag",
+                                  kwargs={"tag_name": tag}),
+                          api=False)
+        # hashtags
+        web_tag_url = abs_url(reverse("hashtags",
+                                      kwargs={"tag_name": tag}),
+                              api=False)
+        tags.append({
+            'title': tag,
+            'permalink': {
+                'web': web_tag_url,
+                'api': tag_url
+            }
+        })
+
+    return tags
 
 
 def post_item_json(post, cur_user_id=None, r=None):
@@ -214,22 +234,7 @@ def post_item_json(post, cur_user_id=None, r=None):
     pi['like_with_user'] = False
     pi['status'] = post.status
 
-    pi['tags'] = []
-    for tag in post.get_tags():
-        tag_url = abs_url(reverse("api-6-post-hashtag",
-                                  kwargs={"tag_name": tag}),
-                          api=False)
-        # hashtags
-        web_tag_url = abs_url(reverse("hashtags",
-                                      kwargs={"tag_name": tag}),
-                              api=False)
-        pi['tags'].append({
-            'title': tag,
-            'permalink': {
-                'web': web_tag_url,
-                'api': tag_url
-            }
-        })
+    pi['tags'] = get_post_tags(post)
 
     try:
         pi['is_ad'] = False  # post.is_ad
