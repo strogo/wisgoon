@@ -516,14 +516,24 @@ def upload(request):
         filename = create_filename(filename)
         success = save_upload(upload, filename, is_raw)
         if success:
-            image_original = "%spin/temp/o/%s" % (MEDIA_URL, filename)
-            image_o = "%s/pin/temp/o/%s" % (MEDIA_ROOT, filename)
-            image_th = "%s/pin/temp/t/%s" % (MEDIA_URL, filename)
-            image_t = "%s/pin/temp/t/%s" % (MEDIA_ROOT, filename)
+            image_original = "{}pin/temp/o/{}".format(MEDIA_URL, filename)
+            image_o = "{}/pin/temp/o/{}".format(MEDIA_ROOT, filename)
+            image_th = "{}pin/temp/t/{}".format(MEDIA_URL, filename)
+            image_t = "{}/pin/temp/t/{}".format(MEDIA_ROOT, filename)
+
+            image_500_th = "{}pin/temp/t/{}".format(MEDIA_URL, filename.replace('.', '_500.'))
+            image_500_t = "{}/pin/temp/t/{}".format(MEDIA_ROOT, filename.replace('.', '_500.'))
 
             pin_image.resize(image_o, image_t, 99)
+            pin_image.resize(image_o, image_500_t, 500)
 
-        ret_json = {'success': success, 'file_o': image_original, 'file_t': image_th, 'file': filename}
+        ret_json = {
+            'success': success,
+            'file_o': image_original,
+            'file_t': image_th,
+            'file_low': image_500_th,
+            'file': filename
+        }
         return HttpResponse(json.dumps(ret_json))
 
     return HttpResponseBadRequest("Bad request")
