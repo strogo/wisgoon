@@ -2803,6 +2803,22 @@ div.comment div div.row:hover .del-comment{
 		margin-right: 0;
 		width: 95%;
 	}
+	.top-search input{
+		width: 78%;
+	}
+	#fromImageModal .uploaded-image canvas, #fromImageModal .uploaded-image img{
+		max-width: 90%;
+	}
+	.owl-carousel .owl-item, .owl-carousel .owl-wrapper{
+		overflow: hidden;
+	}
+	.modal_form .actions,
+	.filters{
+		display: none !important;
+	}
+	.modal_image{
+		padding: 0;
+	}
 }
 @media (max-width: 320px) {
 	.menu-box{
