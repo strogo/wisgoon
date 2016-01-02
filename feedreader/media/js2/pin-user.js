@@ -1,98 +1,185 @@
 // pin images
 var image_selected=0;
-$("#pin_form").submit(function(){
-    if(image_selected == 0){
-        alert('لطفا یک تصویر انتخاب کنید');
-        return false;
-        
-    }else{
-        return true;
-    }
-});
 
 function setDataToField(){
-    var c = document.getElementById("uploaded-image").childNodes[0];
+    var c = document.getElementById("uploaded_image").childNodes[0];
     $('#image_field').val(c.toDataURL());
 }
 
 function add_filter_box(){
-    Caman("#vintage img", function(){this.vintage();this.render();});
-    Caman("#lomo img", function(){this.lomo();this.render();});
-    Caman("#clarity img", function(){this.clarity();this.render();});
-    Caman("#sinCity img", function(){this.sinCity();this.render();});
-    Caman("#sunrise img", function(){this.sunrise();this.render();});
-    Caman("#crossProcess img", function(){this.crossProcess();this.render();});
-    Caman("#orangePeel img", function(){this.orangePeel();this.render();});
-    Caman("#love img", function(){this.love();this.render();});
-    Caman("#grungy img", function(){this.grungy();this.render();});
-    Caman("#jarques img", function(){this.jarques();this.render();});
-    Caman("#pinhole img", function(){this.pinhole();this.render();});
-    Caman("#oldBoot img", function(){this.oldBoot();this.render();});
-    Caman("#glowingSun img", function(){this.glowingSun();this.render();});
-    Caman("#hazyDays img", function(){this.hazyDays();this.render();});
-    Caman("#herMajesty img", function(){this.herMajesty();this.render();});
-    Caman("#nostalgia img", function(){this.nostalgia();this.render();});
-    Caman("#hemingway img", function(){this.hemingway();this.render();});
-    Caman("#concentrate img", function(){this.concentrate();this.render();});
+    Caman("#vintage canvas", function(){this.vintage();this.render();});
+    Caman("#lomo canvas", function(){this.lomo();this.render();});
+    Caman("#clarity canvas", function(){this.clarity();this.render();});
+    Caman("#sinCity canvas", function(){this.sinCity();this.render();});
+    Caman("#sunrise canvas", function(){this.sunrise();this.render();});
+    Caman("#crossProcess canvas", function(){this.crossProcess();this.render();});
+    Caman("#orangePeel canvas", function(){this.orangePeel();this.render();});
+    Caman("#love canvas", function(){this.love();this.render();});
+    Caman("#grungy canvas", function(){this.grungy();this.render();});
+    Caman("#jarques canvas", function(){this.jarques();this.render();});
+    Caman("#pinhole canvas", function(){this.pinhole();this.render();});
+    Caman("#oldBoot canvas", function(){this.oldBoot();this.render();});
+    Caman("#glowingSun canvas", function(){this.glowingSun();this.render();});
+    Caman("#hazyDays canvas", function(){this.hazyDays();this.render();});
+    Caman("#herMajesty canvas", function(){this.herMajesty();this.render();});
+    Caman("#nostalgia canvas", function(){this.nostalgia();this.render();});
+    Caman("#hemingway canvas", function(){this.hemingway();this.render();});
+    Caman("#concentrate canvas", function(){this.concentrate();this.render();});
 }
 
-// uploader
-function createUploader(){
-    var uploader = new qq.FileUploader({
-        element: document.getElementById('file-uploader'),
-        action: upload_url,
-        debug: false,
-        multiple: false,
-        allowedExtensions : ['png','jpg','jpe', 'jpeg', 'gif'],
-        sizeLimit : 1024*1024*10,
-        messages : {
-          'typeError':'{file} برای بارگذاری مناسب نیست. تنها {extensions} فرمت ها مجاز هستند.',
-          'sizeError':'{file} بسیار حجیم است. فایل شما باید کمتر از {sizeLimit} باشد.',
-          'minSizeError':'{file} بسیار کوچک است. فایل شما باید بیشتر از {minSizeLimit} باشد.',
-          'emptyError':'{file} فایل خالی است!',
-          'onLeave':'فایل در حال بارگذاری است. در صورت ترک صفحه این عملیات لغو می شود.'},
-          showMessage:function(message){ 
-            alert(message); 
-        },
-        onComplete : function(id, fileName, responseJSON){
-            if(responseJSON.success)
-            {
-                $('.uploaded-image').html('<img id="img_thumb" src="'+responseJSON.file_o+'">');
-                $('#origin_image').remove();
-                Caman('#img_thumb', function(){
-                    this.render(function(){
-                        setDataToField();
-                    });
-                });
 
-                $('body').append('<img src="'+responseJSON.file_o+'" id="origin_image" style="display:none;" />');
-                $('.filters').show();
-                $('.qq-upload-size').hide('fast');
-                // $('#image_field').val(responseJSON.file_o);
-                image_selected=1;
+$('body').on('click', '.upload_img_btn', function(event) {
+    event.preventDefault();
+    $('#image_upload_input').click();
+});
 
-                $('.filters #PresetFilters a').css('display', 'block').html('<img src="'+responseJSON.file_t+'" />');
+$('body').on('change', '#image_upload_input', function(event) {
+    event.preventDefault();
+    $('.filters #PresetFilters a').removeClass('selected');
+    $('#origin_image, #uploaded_image_origin').remove();
+    var canvas = document.getElementById('uploaded_image_canvas');
+    if ($('#uploaded_image #uploaded_image_canvas').length == 0) {
+        var canvas = document.getElementById('rendered');
+    };
+    canvas.width = 500;
+    canvas.height = 1000;
+    var ctx = canvas.getContext('2d');
+    var canvas2 = document.createElement('canvas');
+    var ctx2 = canvas2.getContext('2d');
+    canvas2.width = 100;
+    canvas2.height = 200;
 
-                add_filter_box();
-
-
-
-            }else{
-                alert('ﺦﻃﺍ ﻪﻧگﺎﻣ ﺬﺧیﺮﻫ ﻑﺍیﻝ.');
+    var reader = new FileReader();
+    reader.onload = function(event) {
+        $('body').append('<img src="'+reader.result+'" id="origin_image" style="display: none;" />')
+        img = new Image();
+        img.onload = function(){
+            var wrh = img.width / img.height;
+            var newWidth = canvas.width;
+            var newHeight = newWidth / wrh;
+            if (newHeight > canvas.height) {
+                newHeight = canvas.height;
+                newWidth = newHeight * wrh;
             }
+            canvas.height = newHeight;
+            canvas.width = newWidth;
+            ctx.drawImage(img,0,0, newWidth , newHeight);
+
+            $('body').append('<img src="" alt="" id="uploaded_image_origin" style="display:none;" />')
+            $('#uploaded_image_origin').attr('src', canvas.toDataURL());
+            // canvas.setAttribute('id', 'rendered');
         }
-    });           
-}
-createUploader(); 
+        img.src = reader.result;
+
+
+        img2 = new Image();
+        img2.onload = function(){
+            var wrh = img2.width / img2.height;
+            var newWidth = canvas2.width;
+            var newHeight = newWidth / wrh;
+            if (newHeight > canvas2.height) {
+                newHeight = canvas2.height;
+                newWidth = newHeight * wrh;
+            }
+            canvas2.height = newHeight;
+            canvas2.width = newWidth;
+            ctx2.drawImage(img2,0,0, newWidth , newHeight);
+
+            var f = document.getElementsByClassName('filter');
+
+            for (var i = f.length - 1; i >= 0; i--) {
+                var c = canvas2.cloneNode(true);
+                var cx = c.getContext('2d');
+                cx.drawImage(img2,0,0, newWidth , newHeight);
+                c.setAttribute('id', '');
+                f[i].innerHTML = '';
+                f[i].appendChild(c);
+            };
+            if (newHeight > 100) {
+                newHeight = 100;
+            };
+            $('.filters .nav_btn').css({
+                height: newHeight,
+                paddingTop: (newHeight - 14) / 2
+            });
+            add_filter_box();
+        }
+        img2.src = reader.result;
+        $('.filters #PresetFilters a').css('display', 'block');
+    }
+    reader.readAsDataURL(this.files[0]);
+
+    $('.filters').show();
+    
+});
+
+$('body').on('click', '.img_reset_btn', function(event) {
+    event.preventDefault();
+    $('#uploaded_image').html('');
+    var b = $('#uploaded_image_origin').clone();
+    b.attr('id', 'rendered').appendTo('#uploaded_image').css('display', 'initial');
+    Caman("#uploaded_image img", function(){this.render();});
+});
+
+$('body').on('submit', '#pin_form', function(event) {
+    event.preventDefault();
+    // $('#submit_loader').css('display', 'block');
+    
+
+
+
+});
+
+
+var bar = $('.bar');
+var percent = $('.percent');
+var s = $('.status');
+
+$('#pin_form').ajaxForm({
+    beforeSend: function() {
+        if ($('.filter.selected').length == 0) {
+            $('#image_field').attr('src', $('#origin_image').attr('src'));
+        }else{
+            var f = $('.filter.selected').attr('id');
+            Caman('#origin_image', function(){
+                eval('this.'+f+'()');
+                this.render(function(){
+                    var canv = document.getElementById('origin_image');
+                    $('#image_field').attr('src', canv.toDataURL());
+                });
+            });
+        }
+        $('.progress').css('display', 'block');
+        s.empty();
+        var percentVal = '0%';
+        bar.width(percentVal);
+        percent.html(percentVal);
+    },
+    uploadProgress: function(event, position, total, percentComplete) {
+        var percentVal = percentComplete + '%';
+        bar.width(percentVal);
+        percent.html(percentVal);
+    },
+    complete: function(xhr) {
+
+    }
+});
 
 $('body').on('click', '.filters #PresetFilters a', function(event) {
     event.preventDefault();
-    var c = $('#origin_image').clone().attr('id', 'img_clone');
+    var c = $('#uploaded_image_origin').clone().attr('id', 'img_clone');
     c.appendTo('body');
 
     var t = $(this);
+    $('.filters #PresetFilters a').removeClass('selected');
+    t.addClass('selected');
     var fn = t.attr('id');
     t.append('<div class="filter_loader"><img src="/media/v2/images/loading-img.gif" alt="" /></div>');
+    $('.filter_loader img').css({
+        display: 'block',
+        marginTop: ($('.filter_loader').height() - 20) / 2 +'px',
+        marginRight: ($('.filter_loader').width() - 30) / 2 +'px'
+    });
 
     Caman('#img_clone', function(){
         eval('this.'+fn+'()');
@@ -101,7 +188,6 @@ $('body').on('click', '.filters #PresetFilters a', function(event) {
             $('#img_clone').appendTo('.uploaded-image');
             $('#img_clone').show().attr('id', 'rendered');            
             t.children('.filter_loader').remove();
-            setDataToField();
         });
     });
 });
@@ -283,33 +369,12 @@ $('body').on('click', '.btn_like',function(){
             ret = html;
             var o = jQuery.parseJSON(ret);
             obj.removeClass('disabled');
-            // if (obj.parents('.post_item_inner').length > 0) {
-            //     if (o[0].user_act == 1){
-            //         $('.post_item_inner').find('a.btn_like').parent().addClass('user-liked');
-            //         $('.liker_avatars').prepend('<a href="'+profile_url+'" class="my_avatar"><img src="'+profile_avatar+'" /></a>');
-            //         alert_show('با موفقیت لایک شد', 'success');
-            //     }else{
-            //         $('.post_item_inner').find('a.btn_like').parent().removeClass('user-liked');
-            //         $('.liker_avatars').find('.my_avatar').remove();
-            //         alert_show('لایک شما با موفقیت حذف شد', 'success');
-            //     }
-            //     $('.post_item_inner').find('a.btn_like').children('span.count').text(pn(o[0].likes));
-            // }else{                
-            //     if (o[0].user_act == 1){
-            //         obj.parent().addClass('user-liked');
-            //         alert_show('با موفقیت لایک شد', 'success');
-            //     }else{
-            //         obj.parent().removeClass('user-liked');
-            //         alert_show('لایک شما با موفقیت حذف شد', 'success');
-            //     }
-            //     obj.children('span.count').text(pn(o[0].likes));
-            // }
         },
         error: function(){
             alertify.error('مشکلی پیش آمده است. با مدیریت تماس بگیرید');
         }
     });
-return false;
+    return false;
 });
 
 $('body').on('click', '.topuser-hover-btn',function(){

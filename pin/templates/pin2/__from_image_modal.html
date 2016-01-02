@@ -17,15 +17,15 @@
 				<div class="modal-body">
 
 					<div class="col-xs-4 modal_form">
-						{% comment %}
 						<div class="modal_buttons actions row">
 							<ul>
+								{% comment %}
 								<li><a href="javascript:;" class="action_btn img_crop_btn"></a></li>
 								<li><a href="javascript:;" class="action_btn img_rotate_btn"></a></li>
-								<li><a href="javascript:;" class="action_btn img_reset_btn"></a></li>
+								{% endcomment %}
+								<li><a href="javascript:;" class="action_btn img_reset_btn" data-toggle="tooltip" data-placement="bottom" title="بازگرداندن به حالت اول"></a></li>
 							</ul>
 						</div>
-						{% endcomment %}
 						{% csrf_token%}
 						<div class="form-group">
 							{{ form.errors}}
@@ -45,39 +45,47 @@
 
 						<center>
 							<input type="submit" class="wis_btn orange" value="ذخیره" />
+							<img id="submit_loader" src="{{MEDIA_URL}}v2/images/loading-img.gif" alt="">
 						</center>
+						<div class="row">
+							<div class="progress" style="display:none;">
+								<div class="bar"></div>
+								<div class="percent">0%</div>
+							</div>
+						</div>
 					</div>
 					<div class="col-xs-8 modal_image">
 						<div class="controls">
+							<a href="javascript:;" class="upload_img_btn wis_btn green mabo10">انتخاب تصویر</a>
 							<div id="file-uploader">
-								<noscript>
-									<p>جاوا اسکریپت مرورگر شما غیر فعال است!</p>
-								</noscript>
+								<input type="file" name="image" id="image_upload_input" />
 							</div>
-							<div class="uploaded-image" id="uploaded-image"></div>
+							<div class="uploaded-image" id="uploaded_image">
+								<canvas id="uploaded_image_canvas" height="1000" width="500"></canvas>
+							</div>
 							<input type="hidden" value="" id="image_field" name="image_data" />
 						</div>
 						<div class="filters">
 							<div id="PresetFilters" class="owl-carousel owl-theme">
 
-								<a id="vintage" data-preset="vintage"></a>
-								<a id="lomo" data-preset="lomo"></a>
-								<a id="clarity" data-preset="clarity"></a>
-								<a id="sinCity" data-preset="sinCity"></a>
-								<a id="sunrise" data-preset="sunrise"></a>
-								<a id="crossProcess" data-preset="crossProcess"></a>
-								<a id="orangePeel" data-preset="orangePeel"></a>
-								<a id="love" data-preset="love"></a>
-								<a id="grungy" data-preset="grungy"></a>
-								<a id="jarques" data-preset="jarques"></a>
-								<a id="pinhole" data-preset="pinhole"></a>
-								<a id="oldBoot" data-preset="oldBoot"></a>
-								<a id="glowingSun" data-preset="glowingSun"></a>
-								<a id="hazyDays" data-preset="hazyDays"></a>
-								<a id="herMajesty" data-preset="herMajesty"></a>
-								<a id="nostalgia" data-preset="nostalgia"></a>
-								<a id="hemingway" data-preset="hemingway"></a>
-								<a id="concentrate" data-preset="concentrate"></a>
+								<a class="filter" id="oldBoot" data-preset="oldBoot"></a>
+								<a class="filter" id="glowingSun" data-preset="glowingSun"></a>
+								<a class="filter" id="hazyDays" data-preset="hazyDays"></a>
+								<a class="filter" id="vintage" data-preset="vintage"></a>
+								<a class="filter" id="lomo" data-preset="lomo"></a>
+								<a class="filter" id="clarity" data-preset="clarity"></a>
+								<a class="filter" id="sinCity" data-preset="sinCity"></a>
+								<a class="filter" id="sunrise" data-preset="sunrise"></a>
+								<a class="filter" id="crossProcess" data-preset="crossProcess"></a>
+								<a class="filter" id="orangePeel" data-preset="orangePeel"></a>
+								<a class="filter" id="love" data-preset="love"></a>
+								<a class="filter" id="grungy" data-preset="grungy"></a>
+								<a class="filter" id="jarques" data-preset="jarques"></a>
+								<a class="filter" id="pinhole" data-preset="pinhole"></a>
+								<a class="filter" id="herMajesty" data-preset="herMajesty"></a>
+								<a class="filter" id="nostalgia" data-preset="nostalgia"></a>
+								<a class="filter" id="hemingway" data-preset="hemingway"></a>
+								<a class="filter" id="concentrate" data-preset="concentrate"></a>
 
 							</div>
 
@@ -88,7 +96,7 @@
 					<div class="clear"></div>
 
 
-					
+
 				</div>
 			</form>
 		</div>
@@ -115,12 +123,12 @@
 		itemsMobile : false 
 	});
 
-	$(".nav_btn.next").click(function(){
-		owl.trigger('owl.next');
-	});
-	$(".nav_btn.prev").click(function(){
-		owl.trigger('owl.prev');
-	});
+	// $(".nav_btn.next").click(function(){
+	// 	owl.trigger('owl.next');
+	// });
+	// $(".nav_btn.prev").click(function(){
+	// 	owl.trigger('owl.prev');
+	// });
 
 </script>
 {% endblock js %}

@@ -15,7 +15,7 @@
 
 <!-- {% include "base/app.html" %} -->
 
-<div id="main">
+<div id="main" class="search_page">
 	{% comment %}
 	<div class="col-md-12" style="text-align:center;height:97px;">
 		{% include "base/ad-720x92.html" %}
@@ -24,18 +24,23 @@
 	<div class="container">
 		<form rel="form" class="form-inline">
 			<div class="form-group">
-				<input type="text" class="form-control" name="q">
+				<input type="text" class="form-control" placeholder="جستجو کنید..." name="q" value="{{query}}">
+				<span class="search_icon fa fa-search"></span>
 				<input type="submit" class="form-control" value="جستجو" >
+			</div>
+
+			<div class="tags">
+				{% for tag in tags %}
+					<a href="/hashtag/{{tag}}/">{{tag}}</a>
+				{% endfor %}
 			</div>
 		</form>
 	</div>
-	<div class="container-fluid">
+	<div class="">
 		<div id="feed" class="masonry">
 			{% include "pin2/__search.html" %}
 		</div>
 	</div>
 </div>
-
-{% include "pin/pin_scripts.html" %}
 
 {% endblock content %}
