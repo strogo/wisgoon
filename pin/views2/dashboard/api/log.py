@@ -9,7 +9,7 @@ def show_log(request):
         return return_un_auth()
 
     data = {}
-    data['meta'] = {'limit': 20, 'next': '', 'total_count': ''}
+    data['meta'] = {'limit': 10, 'next': '', 'previous': '', 'total_count': ''}
     content_type = request.GET.get('content_type', False)
     action = request.GET.get('action', False)
     before = request.GET.get('before', 0)
@@ -20,10 +20,9 @@ def show_log(request):
         logs_list.append(simple_log_json(log))
 
     data['objects'] = logs_list
-
-    if len(logs_list) == 20:
-        before = int(before) + 20
-        token = request.GET.get('token', '')
-        data['meta']['next'] = get_next_url(url_name='dashboard-api-log-show',
-                                            before=before, token=token)
+    data['meta']['previous'] = get_next_url(url_name='dashboard-api-log-show',
+                                            before=before)
+    before = int(before) + 10
+    data['meta']['next'] = get_next_url(url_name='dashboard-api-log-show',
+                                        before=before)
     return return_json_data(data)
