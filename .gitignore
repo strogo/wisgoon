@@ -19,6 +19,7 @@
 /feedreader/*media*/app/
 /feedreader/*media*/packages/
 /feedreader/media/v2/test_data/
+/feedreader/*media*/product/
 wenv/
 feedreader/*media*/cache2/
 /src/
