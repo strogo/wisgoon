@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>wisgoon shop</title>
+
+	<link rel="stylesheet" type="text/css" href="/media/shop/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/media/shop/css/bootstrap-rtl.min.css">
+	<link rel="stylesheet" type="text/css" href="/media/shop/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/media/shop/css/font-awesome-animation.min.css">
+	<link rel="stylesheet" type="text/css" href="/media/shop/css/fonts.css">
+	<link rel="stylesheet" type="text/css" href="/media/shop/css/style.css">
+
+</head>
+<body>
+	<div>
+		<nav class="nav">
+			<div class="navbar navbar-default">
+				<div class="container">
+					<div class="col-md-2 col-xs-6 col-sm-2 logo">
+						<a href="{% url "shop-home" %}">
+							<img src="/media/shop/images/logo.png">
+						</a>
+					</div>
+					<div class="col-md-8 col-sm-7 hidden-xs" ></div>
+					<div class="col-md-2 user col-xs-6 col-sm-3">
+						<img src="/media/shop/images/avatar.jpg">
+						<a href="{% url "shop-cart" %}"><span>سبد خرید</span></a>
+					</div>
+				</div>
+			</div>
+		</nav>
+{% block content %} {% endblock content%}
+
+		<footer>
+			<div class="footer">
+				<div class="container">
+					<div class="col-md-4">
+						ایمیل پشتیبانی:
+						<a href="">info@wisgoon.com</a>
+					</div>
+					<div class="col-md-4">
+
+					</div>
+					<div class="col-md-4">
+						طراحی و توسعه توسط  <a href="">گروه نرم افزاری رخ</a>
+					</div>
+				</div>	
+			</div>
+		</footer>
+	</div>
+	<script type="text/javascript" src="/media/shop/js/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="/media/shop/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/media/shop/js/masonry.min.js"></script>
+	{% block footer-script %}
+	{% endblock%}
+</body>
+</html>

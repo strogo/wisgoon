@@ -1,0 +1,45 @@
+{% extends "shop/base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="main">
+	<div class="container">
+		<div class="col-md-3"></div>
+		<div class="col-md-6 address-form ">
+<form method="post">
+	{% csrf_token %}
+	<div>
+		<span class="hidden-xs">
+			<img src="/media/shop/images/icon/username.png">
+		</span>
+		{% render_field form.full_name type="text" name="full_name" placeholder="نام و نام خانوادگی" style="width: 78%;" %}
+		{{form.errors.full_name}}
+	</div>
+	<div>
+		<span class="hidden-xs map">
+			<img src="/media/shop/images/icon/address.png">
+		</span>
+		{% render_field form.address placeholder="آدرس" style="width:78%; height: 120px" %}
+		{{form.errors.address}}
+	</div>
+	<div>
+		<span class="hidden-xs">
+			<img src="/media/shop/images/icon/phone.png">
+		</span>
+		{% render_field form.phone type="text" class="tell" placeholder="تلفن" style="width: 78%;" %}
+		{{form.errors.phone}}
+	</div>
+	<div>
+		<span class="hidden-xs">
+			<img src="/media/shop/images/icon/zipcode.png">
+		</span>
+		{% render_field form.postal_code type="text" class="postal-code" placeholder="کد پستی" style="width: 78%;" %}
+		{{form.errors.postal_code}}
+	</div>
+	<div><button type="submit">تکمیل فرآیند خرید</button></div>
+</form>
+		</div>
+		<div class="col-md-3"></div>
+	</div>
+	<div class="clear"></div>
+</div>
+{% endblock content %}
