@@ -120,17 +120,6 @@ def search(request):
             'مهران_مدیری',
             'سعید_معروف']
 
-    if not query:
-        sqs = SearchQuerySet().models(Post)\
-            .facet('tags', mincount=10, limit=100)
-        # print sqs.facet_counts()
-
-        tags = [t for t in sqs.facet_counts()['fields']['tags']]
-
-        return render(request, 'pin2/tags.html', {
-            'tags': tags,
-        })
-
     posts = SearchQuerySet().models(Post)\
         .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
@@ -145,6 +134,7 @@ def search(request):
     return render(request, 'pin2/search.html', {
         'results': results,
         'posts': posts,
+        'tags': tags,
         'query': query,
         'offset': offset + row_per_page,
     })

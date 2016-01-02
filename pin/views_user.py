@@ -334,9 +334,6 @@ def sendurl(request):
 
             next_url = reverse('pin-item', args=[model.id])
 
-            msg = 'مطلب شما با موفقیت ارسال شد.'
-            messages.add_message(request, messages.SUCCESS, msg)
-
             return HttpResponseRedirect(next_url)
     else:
         form = PinForm()
@@ -425,8 +422,6 @@ def send(request):
 
             next_url = reverse('pin-item', args=[model.id])
 
-            msg = 'مطلب شما با موفقیت ارسال شد.'
-            messages.add_message(request, messages.SUCCESS, msg)
             return HttpResponseRedirect(next_url)
     else:
         form = PinForm()
