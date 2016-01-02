@@ -127,10 +127,10 @@ $('body').on('click', '.img_reset_btn', function(event) {
 
 
 $('body').on('click', '#pin_form .sub_btn', function(event) {
-    console.log('start');
+    $(this).attr('disabled', 'disabled').text('لطفا صبر کنید...');
     if ($('.filter.selected').length == 0) {
         $('#image_field').val($('#origin_image').attr('src'));
-        console.log('origin');
+        $('#pin_form').submit();
     }else{
         var f = $('.filter.selected').attr('id');
         console.log('filterd');
@@ -139,38 +139,25 @@ $('body').on('click', '#pin_form .sub_btn', function(event) {
             this.render(function(){
                 var canv = document.getElementById('origin_image');
                 $('#image_field').val(canv.toDataURL());
-                
+                $('#pin_form').submit();
             });
         });
     }
 
-    $('#pin_form').submit();
-
 });
-
-var bar = $('.bar');
-var percent = $('.percent');
 
 $('#pin_form').ajaxForm({
     beforeSend: function() {
-        console.log('beforeSend');
         $('.progress').css('display', 'block');
-        var percentVal = '0%';
-        bar.width(percentVal)
-        percent.html(percentVal);
     },
     uploadProgress: function(event, position, total, percentComplete) {
         var percentVal = percentComplete + '%';
-        bar.width(percentVal)
-        percent.html(percentVal);
     },
     success: function(res) {
-        var percentVal = '100%';
-        bar.width(percentVal)
-        percent.html(percentVal);
-        if (res.responseJSON.status === true) {
-            window.location.href = res.responseJSON.location;
-        } else{
+        if (res.status === true) {
+            window.location.href = res.location;
+        }else{
+            $('#pin_form .sub_btn').removeAttr('disabled').text('ذخیره');
             alertify.error('خطا. دوباره تلاش کنید!');
         };
     },
