@@ -365,14 +365,7 @@ def send(request):
     filename = None
     status = False
     if request.method == "POST":
-
         post_values = request.POST.copy()
-        print post_values
-        # if 'image_data' in post_values:
-        #     print "image data is here2"
-        #     print post_values
-        #     if post_values['image_data']:
-
         data_url_pattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
         image_data_post = post_values['image']
         image_data = data_url_pattern.match(image_data_post).group(2)
