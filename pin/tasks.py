@@ -1,4 +1,5 @@
 import os
+import json
 import paramiko
 
 from feedreader.celery import app
@@ -72,6 +73,7 @@ def check_porn(post_id):
     import requests
     from requests.auth import HTTPBasicAuth
     import socket
+    import paho.mqtt.publish as publish
 
     socket.setdefaulttimeout(30)
 
@@ -86,7 +88,13 @@ def check_porn(post_id):
         res = requests.post("https://188.75.73.226:1509/analyzer",
                             auth=HTTPBasicAuth('wisgoon94', 'Ghavi!394YUASTTH'),
                             verify=False, data=r.content)
-        print res.content, img_url
+        d = {
+            "number": res.content,
+            "image": post.get_image_236()['url'],
+            "h": post.get_image_236()['h']
+        }
+        print d
+        publish.single("wisgoon/check/porn", json.dumps(d), hostname="127.0.0.1")
     except Exception, e:
         print str(e)
 

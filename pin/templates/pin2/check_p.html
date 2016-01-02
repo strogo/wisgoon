@@ -1,0 +1,70 @@
+<html>
+
+<body>
+<script type="text/javascript" src="{{MEDIA_URL}}/js/jquery.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}/js2/mqttws31.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/3.3.2/masonry.pkgd.min.js"></script>
+
+<style>
+.grid-item { width: 240px; }
+.grid-item--width2 { width: 400px; }
+</style>
+
+<script type="text/javascript">
+if (!String.prototype.format) {
+  String.prototype.format = function() {
+    var args = arguments;
+    return this.replace(/{(\d+)}/g, function(match, number) { 
+      return typeof args[number] != 'undefined'
+        ? args[number]
+        : match
+      ;
+    });
+  };
+}else{
+	console.log("format of text in implemented");
+}
+var $grid = 0;
+client = new Paho.MQTT.Client("localhost", 10001, "clientId");
+
+client.onConnectionLost = onConnectionLost;
+client.onMessageArrived = onMessageArrived;
+
+client.connect({onSuccess:onConnect});
+
+function onConnect() {
+  console.log("onConnect");
+  client.subscribe("wisgoon/check/porn");
+}
+
+// called when the client loses its connection
+function onConnectionLost(responseObject) {
+  if (responseObject.errorCode !== 0) {
+    console.log("onConnectionLost:"+responseObject.errorMessage);
+  }
+}
+
+// called when a message arrives
+function onMessageArrived(message) {
+  console.log("onMessageArrived:"+message.payloadString);
+  var obj = jQuery.parseJSON( message.payloadString );
+  s = "<div class='grid-item'><img src='{0}?q=2' style='width:236px; height:{1}px'> score:{2}</div>".format(obj.image, obj.h, obj.number);
+  // $("div.grid").prepend(s);
+  $items = $(s);
+  $grid.prepend($items).masonry('prepended', $items );
+}
+
+</script>
+<div class="grid">
+</div>
+
+<script>
+var $grid = $('.grid').masonry({
+  // options
+  itemSelector: '.grid-item',
+  columnWidth: 240
+});
+</script>
+</body>
+
+</html>
