@@ -348,17 +348,18 @@ def simple_log_json(obj):
 def get_logs(content_type, action, before):
     data = {}
     if content_type:
-        data['content_type'] = str(content_type)
+        data['content_type'] = int(content_type)
 
     if action:
-        data['action'] = str(action)
+        data['action'] = int(action)
     try:
         admin_users = User.objects\
             .filter(is_superuser=True)\
             .values_list('id', flat=True)
+        data['user_id__in'] = admin_users
 
         logs = Log.objects\
-            .filter(user_id__in=admin_users, **data)[before:(before + 1) * 20]
+            .filter(**data)[before:(before + 1) * 20]
     except:
         logs = []
     return logs
