@@ -18,7 +18,8 @@
 			"name": "Log",
 			"description": "",
 			"order": [
-				"aba1e353-8ee1-2938-2d5f-84290c192d1a"
+				"aba1e353-8ee1-2938-2d5f-84290c192d1a",
+				"c7ecb43e-9da4-c60e-1962-ea99aab93208"
 			],
 			"owner": 0
 		},
@@ -261,22 +262,20 @@
 			"id": "9aed9670-6ebf-f975-4cbd-ebd7357eb106",
 			"headers": "",
 			"url": "http://127.0.0.1:8000/dashboard/api/post/category/chart/?token=1234",
-			"pathVariables": {},
 			"preRequestScript": "",
+			"pathVariables": {},
 			"method": "GET",
-			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
 			"data": [],
 			"dataMode": "params",
-			"name": "Post of Category",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1450273600389,
 			"version": 2,
-			"responses": [],
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"folder": "727aadbe-bb22-e468-c82b-03508372a7e5"
+			"time": 1451720049774,
+			"name": "Post of Category",
+			"description": "",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"responses": []
 		},
 		{
 			"id": "9bc215ef-f18c-1830-c714-093f69d746ed",
@@ -372,6 +371,27 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"folder": "39fcf8ac-f1db-1283-08d4-c830270d8ca9"
+		},
+		{
+			"id": "c7ecb43e-9da4-c60e-1962-ea99aab93208",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/log/search/?token=1234&q=41",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [],
+			"dataMode": "params",
+			"name": "Search log",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1451737466007,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "8727e8af-fa60-1543-b9ac-d5c1d20203aa"
 		},
 		{
 			"id": "c8228df7-c131-901c-c92e-2d697077e9a0",
