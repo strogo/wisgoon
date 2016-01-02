@@ -25,7 +25,8 @@ if (!String.prototype.format) {
 	console.log("format of text in implemented");
 }
 var $grid = 0;
-client = new Paho.MQTT.Client("79.127.125.98", 10001, "clientId");
+var clid = 'mqttjs_' + Math.random().toString(16).substr(2, 8);
+client = new Paho.MQTT.Client("79.127.125.98", 10001, clid);
 
 client.onConnectionLost = onConnectionLost;
 client.onMessageArrived = onMessageArrived;

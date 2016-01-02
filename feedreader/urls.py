@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     url(r'^api/v6/', include('pin.api6.urls')),
     url(r'^dashboard/', include('pin.views2.dashboard.urls')),
     url(r'^angular/', include('pin.views2.angular.urls')),
+    url(r'^shop/', include('shop.urls')),
 )
 
 urlpatterns += patterns('pin.views',

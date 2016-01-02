@@ -175,6 +175,7 @@ INSTALLED_APPS = (
     # 'debug_toolbar',
     'widget_tweaks',
     'ckeditor',
+    'shop',
 )
 
 HAYSTACK_CONNECTIONS = {

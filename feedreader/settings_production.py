@@ -12,7 +12,7 @@ THUMBNAIL_DEBUG = False
 # )
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
-STATIC_DOMAIN = "http://static.wisgoon.com/media/"
+STATIC_DOMAIN = "http://static.wisgoon.com/"
 
 IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT, 'image_cache')
 COMPRESS_URL = MEDIA_URL
