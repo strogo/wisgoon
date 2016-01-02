@@ -37,6 +37,7 @@ $('body').on('change', '#image_upload_input', function(event) {
     event.preventDefault();
     $('.filters #PresetFilters a').removeClass('selected');
     $('#origin_image, #uploaded_image_origin').remove();
+    $('.progress').css('display', 'none');
     var canvas = document.getElementById('uploaded_image_canvas');
     if ($('#uploaded_image #uploaded_image_canvas').length == 0) {
         var canvas = document.getElementById('rendered');
@@ -110,6 +111,7 @@ $('body').on('change', '#image_upload_input', function(event) {
     reader.readAsDataURL(this.files[0]);
 
     $('.filters').show();
+    $('#image_upload_input').val('');
     
 });
 
@@ -121,49 +123,45 @@ $('body').on('click', '.img_reset_btn', function(event) {
     Caman("#uploaded_image img", function(){this.render();});
 });
 
-$('body').on('submit', '#pin_form', function(event) {
-    event.preventDefault();
-    // $('#submit_loader').css('display', 'block');
+$('body').on('click', '#pin_form input[type="submit"]', function(event) {
+    if ($('.filter.selected').length == 0) {
+        $('#image_field').val($('#origin_image').attr('src'));
+    }else{
+        var f = $('.filter.selected').attr('id');
+        Caman('#origin_image', function(){
+            eval('this.'+f+'()');
+            this.render(function(){
+                var canv = document.getElementById('origin_image');
+                $('#image_field').val(canv.toDataURL());
+                
+            });
+        });
+    }
+
     
+    $('#pin_form').ajaxForm({
+        beforeSend: function() {
+            $('.progress').css('display', 'block');
+            s.empty();
+            var percentVal = '0%';
+            bar.width(percentVal);
+            percent.html(percentVal);
+        },
+        uploadProgress: function(event, position, total, percentComplete) {
+            var percentVal = percentComplete + '%';
+            bar.width(percentVal);
+            percent.html(percentVal);
+        },
+        complete: function(xhr) {
 
-
-
+        }
+    });
 });
-
 
 var bar = $('.bar');
 var percent = $('.percent');
 var s = $('.status');
 
-$('#pin_form').ajaxForm({
-    beforeSend: function() {
-        if ($('.filter.selected').length == 0) {
-            $('#image_field').attr('src', $('#origin_image').attr('src'));
-        }else{
-            var f = $('.filter.selected').attr('id');
-            Caman('#origin_image', function(){
-                eval('this.'+f+'()');
-                this.render(function(){
-                    var canv = document.getElementById('origin_image');
-                    $('#image_field').attr('src', canv.toDataURL());
-                });
-            });
-        }
-        $('.progress').css('display', 'block');
-        s.empty();
-        var percentVal = '0%';
-        bar.width(percentVal);
-        percent.html(percentVal);
-    },
-    uploadProgress: function(event, position, total, percentComplete) {
-        var percentVal = percentComplete + '%';
-        bar.width(percentVal);
-        percent.html(percentVal);
-    },
-    complete: function(xhr) {
-
-    }
-});
 
 $('body').on('click', '.filters #PresetFilters a', function(event) {
     event.preventDefault();

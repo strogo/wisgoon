@@ -45,7 +45,6 @@
 
 						<center>
 							<input type="submit" class="wis_btn orange" value="ذخیره" />
-							<img id="submit_loader" src="{{MEDIA_URL}}v2/images/loading-img.gif" alt="">
 						</center>
 						<div class="row">
 							<div class="progress" style="display:none;">
@@ -58,12 +57,12 @@
 						<div class="controls">
 							<a href="javascript:;" class="upload_img_btn wis_btn green mabo10">انتخاب تصویر</a>
 							<div id="file-uploader">
-								<input type="file" name="image" id="image_upload_input" />
+								<input type="file" name="image_uploader" id="image_upload_input" />
 							</div>
 							<div class="uploaded-image" id="uploaded_image">
 								<canvas id="uploaded_image_canvas" height="1000" width="500"></canvas>
 							</div>
-							<input type="hidden" value="" id="image_field" name="image_data" />
+							<input type="hidden" value="" id="image_field" name="image" />
 						</div>
 						<div class="filters">
 							<div id="PresetFilters" class="owl-carousel owl-theme">
