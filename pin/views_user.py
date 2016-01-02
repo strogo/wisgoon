@@ -366,33 +366,36 @@ def send(request):
     if request.method == "POST":
 
         post_values = request.POST.copy()
-        if 'image_data' in post_values:
-            if post_values['image_data']:
-                print "image data is here2"
+        print post_values
+        # if 'image_data' in post_values:
+        #     print "image data is here2"
+        #     print post_values
+        #     if post_values['image_data']:
 
-                data_url_pattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
-                image_data_post = post_values['image_data']
-                image_data = data_url_pattern.match(image_data_post).group(2)
-                image_type = data_url_pattern.match(image_data_post).group(1)
+        data_url_pattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
+        image_data_post = post_values['image']
+        image_data = data_url_pattern.match(image_data_post).group(2)
+        image_type = data_url_pattern.match(image_data_post).group(1)
 
-                # If none or len 0, means illegal image data
-                if not image_data or len(image_data) == 0:
-                    # PRINT ERROR MESSAGE HERE
-                    pass
+        # If none or len 0, means illegal image data
+        if not image_data or len(image_data) == 0:
+            # PRINT ERROR MESSAGE HERE
+            pass
 
-                image_data = base64.b64decode(image_data)
-                f = "1.{}".format(image_type)
-                filename = create_filename(f)
+        image_data = base64.b64decode(image_data)
+        f = "1.{}".format(image_type)
+        filename = create_filename(f)
 
-                fpath = "{}/pin/temp/o/{}".format(MEDIA_ROOT, filename)
-                with open(fpath, 'wb') as dest:
-                    print "fpath is:", fpath
-                    dest.write(image_data)
-                    # return True
+        fpath = "{}/pin/temp/o/{}".format(MEDIA_ROOT, filename)
+        with open(fpath, 'wb') as dest:
+            print "fpath is:", fpath
+            dest.write(image_data)
+            # return True
 
-                post_values['image'] = fpath
+        post_values['image'] = fpath
 
         form = PinForm(post_values)
+        # return HttpResponse(0)
 
         if form.is_valid():
             model = form.save(commit=False)
@@ -421,6 +424,10 @@ def send(request):
             model.save()
 
             next_url = reverse('pin-item', args=[model.id])
+            data = {
+                "location": next_url
+            }
+            return HttpResponse(json.dumps(data), content_type="application/json")
 
             return HttpResponseRedirect(next_url)
     else:
