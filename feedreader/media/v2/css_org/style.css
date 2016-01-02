@@ -2443,6 +2443,7 @@ div.comment div div.row:hover .del-comment{
 	height: 71px;
 	display: inline-block;
 	margin-left: 20px;
+	border: none;
 }
 .modal_buttons.actions ul li.active a{
 	background-position: bottom;

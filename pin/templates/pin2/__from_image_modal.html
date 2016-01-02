@@ -23,7 +23,9 @@
 								<li><a href="javascript:;" class="action_btn img_crop_btn"></a></li>
 								<li><a href="javascript:;" class="action_btn img_rotate_btn"></a></li>
 								{% endcomment %}
-								<li><a href="javascript:;" class="action_btn img_reset_btn" data-toggle="tooltip" data-placement="bottom" title="بازگرداندن به حالت اول"></a></li>
+								<li>
+									<button class="action_btn img_reset_btn" disabled="disabled" data-toggle="tooltip" data-placement="bottom" title="بازگرداندن به حالت اول"></button>
+								</li>
 							</ul>
 						</div>
 						{% csrf_token%}
@@ -44,7 +46,7 @@
 						</div>
 
 						<center>
-							<input type="button" class="wis_btn orange sub_btn" value="ذخیره" />
+							<button type="button" class="wis_btn orange sub_btn" disabled="">ذخیره</button>
 							<input type="submit" value="ذخیره" style="display:none;" />
 						</center>
 						<div class="row">

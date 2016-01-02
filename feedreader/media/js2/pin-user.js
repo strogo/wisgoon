@@ -111,6 +111,7 @@ $('body').on('change', '#image_upload_input', function(event) {
     reader.readAsDataURL(this.files[0]);
 
     $('.filters').show();
+    $('button[disabled]').removeAttr('disabled');
     $('#image_upload_input').val('');
     
 });
@@ -163,17 +164,20 @@ $('#pin_form').ajaxForm({
         bar.width(percentVal)
         percent.html(percentVal);
     },
-    success: function() {
+    success: function(res) {
         var percentVal = '100%';
         bar.width(percentVal)
         percent.html(percentVal);
+        if (res.responseJSON.status === true) {
+            window.location.href = res.responseJSON.location;
+        } else{
+            alertify.error('خطا. دوباره تلاش کنید!');
+        };
     },
     complete: function(msg) {
         // console.log(msg);
-        window.location.href = msg.responseJSON.location;
     }
 }); 
-
 
 $('body').on('click', '.filters #PresetFilters a', function(event) {
     event.preventDefault();
