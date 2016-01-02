@@ -231,7 +231,7 @@ def post_group_by_category():
         if not exist_key:
             data.update(
                 {cat['category__parent__title']: {'name': cat['category__parent__title'],
-                                                  'data': [cat['category__title'], percent]}})
+                                                  'data': [[cat['category__title'], percent]]}})
         else:
             data[cat['category__parent__title']]['data'].append([cat['category__title'], percent])
 
