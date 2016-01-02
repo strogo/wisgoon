@@ -363,6 +363,7 @@ def a_sendurl(request):
 def send(request):
     fpath = None
     filename = None
+    status = False
     if request.method == "POST":
 
         post_values = request.POST.copy()
@@ -424,8 +425,10 @@ def send(request):
             model.save()
 
             next_url = reverse('pin-item', args=[model.id])
+            status = True
             data = {
-                "location": next_url
+                "location": next_url,
+                "status": status
             }
             return HttpResponse(json.dumps(data), content_type="application/json")
 
