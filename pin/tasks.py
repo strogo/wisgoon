@@ -94,7 +94,7 @@ def check_porn(post_id):
             "h": post.get_image_236()['h']
         }
         print d
-        publish.single("wisgoon/check/porn", json.dumps(d), hostname="127.0.0.1")
+        publish.single("wisgoon/check/porn", json.dumps(d), hostname="127.0.0.1", qos=1)
     except Exception, e:
         print str(e)
 
