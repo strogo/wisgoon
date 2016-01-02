@@ -118,16 +118,21 @@ $('body').on('change', '#image_upload_input', function(event) {
 $('body').on('click', '.img_reset_btn', function(event) {
     event.preventDefault();
     $('#uploaded_image').html('');
+    $('.filters #PresetFilters a').removeClass('selected');
     var b = $('#uploaded_image_origin').clone();
     b.attr('id', 'rendered').appendTo('#uploaded_image').css('display', 'initial');
     Caman("#uploaded_image img", function(){this.render();});
 });
 
-$('body').on('click', '#pin_form input[type="submit"]', function(event) {
+
+$('body').on('click', '#pin_form .sub_btn', function(event) {
+    console.log('start');
     if ($('.filter.selected').length == 0) {
         $('#image_field').val($('#origin_image').attr('src'));
+        console.log('origin');
     }else{
         var f = $('.filter.selected').attr('id');
+        console.log('filterd');
         Caman('#origin_image', function(){
             eval('this.'+f+'()');
             this.render(function(){
@@ -138,29 +143,36 @@ $('body').on('click', '#pin_form input[type="submit"]', function(event) {
         });
     }
 
-    
-    $('#pin_form').ajaxForm({
-        beforeSend: function() {
-            $('.progress').css('display', 'block');
-            s.empty();
-            var percentVal = '0%';
-            bar.width(percentVal);
-            percent.html(percentVal);
-        },
-        uploadProgress: function(event, position, total, percentComplete) {
-            var percentVal = percentComplete + '%';
-            bar.width(percentVal);
-            percent.html(percentVal);
-        },
-        complete: function(xhr) {
+    $('#pin_form').submit();
 
-        }
-    });
 });
 
 var bar = $('.bar');
 var percent = $('.percent');
-var s = $('.status');
+
+$('#pin_form').ajaxForm({
+    beforeSend: function() {
+        console.log('beforeSend');
+        $('.progress').css('display', 'block');
+        var percentVal = '0%';
+        bar.width(percentVal)
+        percent.html(percentVal);
+    },
+    uploadProgress: function(event, position, total, percentComplete) {
+        var percentVal = percentComplete + '%';
+        bar.width(percentVal)
+        percent.html(percentVal);
+    },
+    success: function() {
+        var percentVal = '100%';
+        bar.width(percentVal)
+        percent.html(percentVal);
+    },
+    complete: function(msg) {
+        // console.log(msg);
+        window.location.href = msg.responseJSON.location;
+    }
+}); 
 
 
 $('body').on('click', '.filters #PresetFilters a', function(event) {
@@ -190,25 +202,7 @@ $('body').on('click', '.filters #PresetFilters a', function(event) {
     });
 });
 
-var angleInDegrees=0;
-
 $('body').on('click', '.img_rotate_btn', function(event) {
-    var canvas = document.getElementById("img_thumb");
-    if (typeof canvas == 'undefined' || canvas == null) {
-        var canvas = document.getElementById("rendered");
-    }
-
-    angleInDegrees+=90;
-
-    var image=document.createElement("img");
-    // image.onload=function(){
-    //     drawRotated(canvas, image, 0);
-    // }
-    // image.src=$('#origin_image').attr('src');
-    image.src = canvas.toDataURL();
-
-    angleInDegrees= angleInDegrees % 360;
-    drawRotated(canvas, image, angleInDegrees);
 });
 
 function drawRotated(canvas, image, degrees){

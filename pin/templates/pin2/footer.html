@@ -7,7 +7,6 @@
 <script type="text/javascript" src="{{MEDIA_URL}}v2/js/alertify.min.js"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}v2/js/caman.full.min.js"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}v2/js/jquery.form.min.js"></script>
 
 
 {% include "pin2/__from_image_modal.html" %}
@@ -59,6 +58,7 @@
 	var profile_url = '{% url "pin-absuser" request.user %}';
 	var profile_avatar = '{{request.user|get_avatar:41}}';
 </script>
+<script type="text/javascript" src="{{MEDIA_URL}}v2/js/jquery.form.min.js"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}js2/pin-user.js?ver={{STATIC_VERSION}}"></script>
 {% endif %}
 

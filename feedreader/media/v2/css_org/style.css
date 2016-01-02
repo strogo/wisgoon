@@ -1,7 +1,7 @@
 /* basic */
-::selection {background: #333333;color: #fff;}
-::-moz-selection {background: #333333;color: #fff;}
-::-webkit-selection {background: #333333;color: #fff;}
+::selection {background: #FF6B01;color: #fff;}
+::-moz-selection {background: #FF6B01;color: #fff;}
+::-webkit-selection {background: #FF6B01;color: #fff;}
 
 body {
 	background-color: #E9E9E9;
@@ -263,13 +263,19 @@ hr{border-color: #d0d9e2 !important;}
 #pin_form .progress{
 	margin-top: 20px;
 	position: relative;
+	background: #e5e5e5;
+	border: medium none !important;
+	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2) inset;
 }
 #pin_form .bar{
 	background: #3CB100;
+	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2) inset;
 	height: 100%;
 }
 #pin_form .progress .percent{
+	font-size: 12px;
 	left: 0;
+	padding-top: 2px;
 	position: absolute;
 	right: 0;
 	text-align: center;
