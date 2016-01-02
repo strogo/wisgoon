@@ -40,6 +40,8 @@ urlpatterns += patterns('pin.views2.dashboard.api.post',
 urlpatterns += patterns('pin.views2.dashboard.api.log',
                         url(r'log/show/', 'show_log',
                             name='dashboard-api-log-show'),
+                        url(r'log/search/', 'search_log',
+                            name='dashboard-api-log-search'),
                         )
 
 urlpatterns += patterns('pin.views2.dashboard.api.user',

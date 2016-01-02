@@ -8,6 +8,7 @@ from pin.api6.tools import get_simple_user_object, get_profile_data,\
     post_item_json
 from pin.tools import post_after_delete, get_user_ip
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 def check_admin(request):
@@ -375,3 +376,10 @@ def get_ads_point(start):
         ads = []
 
     return ads
+
+
+def get_search_log(string):
+    logs = Log.objects.filter(Q(user__id__iexact=string) |
+                              Q(owner__iexact=string) |
+                              Q(object_id__iexact=string))
+    return logs
