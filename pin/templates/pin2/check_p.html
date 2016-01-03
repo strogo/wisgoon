@@ -49,7 +49,7 @@ function onConnectionLost(responseObject) {
 function onMessageArrived(message) {
   console.log("onMessageArrived:"+message.payloadString);
   var obj = jQuery.parseJSON( message.payloadString );
-  s = "<div class='grid-item'><a target='_blank' href='http://wisgoon.com/pin/{0}/'><img src='{1}' style='width:236px; height:{2}px'></a> score:{3}</div>".format(obj.id, obj.image, obj.h, obj.number);
+  s = "<div class='grid-item'><a target='_blank' href='http://wisgoon.com/pin/{0}/'><img src='{1}' style='width:236px; height:236px'></a> score:{3}</div>".format(obj.id, obj.image, obj.h, obj.number);
   // $("div.grid").prepend(s);
   $items = $(s);
   $grid.prepend($items).masonry('prepended', $items );
