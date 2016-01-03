@@ -49,7 +49,10 @@ function onConnectionLost(responseObject) {
 function onMessageArrived(message) {
   console.log("onMessageArrived:"+message.payloadString);
   var obj = jQuery.parseJSON( message.payloadString );
-  s = "<div class='grid-item'><a target='_blank' href='http://wisgoon.com/pin/{0}/'><img src='{1}' style='width:236px; height:236px'></a> score:{3}</div>".format(obj.id, obj.image, obj.h, obj.number);
+  ratio = 236 / obj.h; // get ratio for scaling image
+  width = 236 * ratio;    // Reset width to match scaled image
+  height = obj.h * ratio;
+  s = "<div class='grid-item'><a target='_blank' href='http://wisgoon.com/pin/{0}/'><img src='{1}' style='width:236px; height:{}px'></a> score:{3}</div>".format(obj.id, obj.image, height, obj.number);
   // $("div.grid").prepend(s);
   $items = $(s);
   $grid.prepend($items).masonry('prepended', $items );
