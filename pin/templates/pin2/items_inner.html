@@ -1,8 +1,29 @@
+{% load i18n %}
 {% load pin_tags %}
 {% load daddy_avatar %}
 {% load humanize %}
 
-<div class="post-page mato20" itemscope itemtype="http://schema.org/ImageObject">
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "headline": "{{post.text|striptags|remove_newlines|truncatechars:108}}",
+  "author" : {
+    "@type" : "Person",
+    "name" : "{{post.user.username}}"
+  },
+  "datePublished" : {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
+  "image" : "{{media_prefix}}{{MEDIA_URL}}{{post.image}}",
+  "articleSection" : "{{post.category.title}}",
+  "articleBody" : "{{post.text}}",
+  "aggregateRating" : {
+    "@type" : "AggregateRating",
+    "ratingCount" : "{{post.cnt_like}}"
+  }
+}
+</script>
+
+<div class="post-page mato20">
 	<div class="post-content">
 		<div class="box post_item_inner">
 			<!--  buttons-->
@@ -44,12 +65,12 @@
 			<!-- img -->
 			<div class="post-img">
 				<a href="{{media_prefix}}{{MEDIA_URL}}{{post.image}}" >
-					<img itemprop="image" src="{{ post.get_image_500.url }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
+					<img src="{{ post.get_image_500.url }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
 				</a>
 			</div>
 			<!-- text -->
 			<div class="post-text">
-				<h1 class="post-text" itemprop="name">
+				<h1 class="post-text">
 					{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
 				</h1>
 				{% if post.get_pages %}
