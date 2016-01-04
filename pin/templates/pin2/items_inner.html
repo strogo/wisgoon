@@ -13,6 +13,7 @@
     "name" : "{{post.user.username}}"
   },
   "datePublished" : {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
+  "dateModified": {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
   "image": {
     "@type": "ImageObject",
     "url": "{{media_prefix}}{{MEDIA_URL}}{{post.image}}",
