@@ -20,7 +20,7 @@
     "width": {{post.width}}
   },
   "articleSection" : "{{post.category.title}}",
-  "articleBody" : "{{post.text|addslashes}}",
+  "articleBody" : "{{post.text|striptags|remove_newlines|addslashes}}",
   "publisher": {
     "@type": "Organization",
     "name": "Wisgoon",
