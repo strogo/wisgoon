@@ -12,6 +12,10 @@
     "@type" : "Person",
     "name" : "{{post.user.username}}"
   },
+  "mainEntityOfPage":{
+    "@type":"WebPage",
+    "@id":"http://wisgoon.com/pin"
+  },
   "datePublished" : {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
   "dateModified": {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
   "image": {
