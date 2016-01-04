@@ -7,7 +7,7 @@
 {
   "@context" : "http://schema.org",
   "@type" : "Article",
-  "headline": "{{post.text|striptags|remove_newlines|truncatechars:108}}",
+  "headline": "{{post.text|striptags|remove_newlines|truncatechars:108|addslashes}}",
   "author" : {
     "@type" : "Person",
     "name" : "{{post.user.username}}"
@@ -20,7 +20,7 @@
     "width": {{post.width}}
   },
   "articleSection" : "{{post.category.title}}",
-  "articleBody" : "{{post.text}}",
+  "articleBody" : "{{post.text|addslashes}}",
   "publisher": {
     "@type": "Organization",
     "name": "Wisgoon",
