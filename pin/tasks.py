@@ -91,8 +91,12 @@ def check_porn(post_id):
         d = {
             "number": res.content,
             "image": post.get_image_236()['url'],
-            "h": post.get_image_236()['h']
+            "h": post.get_image_236()['h'],
+            "id": post.id
         }
+        if float(res.content) > 0.7:
+            post.report = post.report + 10
+            post.save()
         print d
         publish.single("wisgoon/check/porn", json.dumps(d), hostname="127.0.0.1", qos=2)
     except Exception, e:

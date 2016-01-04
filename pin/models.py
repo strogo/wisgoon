@@ -666,7 +666,10 @@ class Post(models.Model):
         # print "all save"
         super(Post, self).save(*args, **kwargs)
         if settings.TUNING_CACHE:
-            PostCacheLayer(post_id=self.id).post_change(self)
+            try:
+                PostCacheLayer(post_id=self.id).post_change(self)
+            except Exception, e:
+                print str(e)
         # print "after save - thumbnail "
 
     @models.permalink
