@@ -13,12 +13,23 @@
     "name" : "{{post.user.username}}"
   },
   "datePublished" : {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
-  "image" : "{{media_prefix}}{{MEDIA_URL}}{{post.image}}",
+  "image": {
+    "@type": "ImageObject",
+    "url": "{{media_prefix}}{{MEDIA_URL}}{{post.image}}",
+    "height": {{post.height}},
+    "width": {{post.width}}
+  },
   "articleSection" : "{{post.category.title}}",
   "articleBody" : "{{post.text}}",
-  "aggregateRating" : {
-    "@type" : "AggregateRating",
-    "ratingCount" : "{{post.cnt_like}}"
+  "publisher": {
+    "@type": "Organization",
+    "name": "Wisgoon",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://static.wisgoon.com/media/v2/images/logo_moharam.png",
+      "width": 216,
+      "height": 44
+    }
   }
 }
 </script>
