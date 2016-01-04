@@ -305,7 +305,7 @@ def profile(request, user_id):
         profile = Profile.objects.create(user_id=user_id)
 
     data = {
-        'user': get_simple_user_object(user_id, current_user),
+        'user': get_simple_user_object(user_id, current_user, avatar=210),
         'profile': get_profile_data(profile, user_id)
     }
     return return_json_data(data)
