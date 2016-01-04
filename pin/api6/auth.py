@@ -8,22 +8,21 @@ from django.contrib.auth import logout as auth_logout
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
-from tastypie.models import ApiKey
-
+from pin.models import Follow, Block, Likes, Post
+from pin.tools import AuthCache
 from pin.api6.http import return_bad_request, return_json_data, return_un_auth,\
     return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object, get_int, get_profile_data,\
     update_follower_following, get_objects_list
-from pin.cacheLayer import UserDataCache
-from pin.models import Follow, Block, Likes, Post
-from pin.tools import AuthCache
-
-from daddy_avatar.templatetags.daddy_avatar import get_avatar
-
-from haystack.query import SearchQuerySet
 
 from user_profile.models import Profile
 from user_profile.forms import ProfileForm
+
+from daddy_avatar.templatetags.daddy_avatar import get_avatar
+
+from tastypie.models import ApiKey
+
+from haystack.query import SearchQuerySet
 
 
 def followers(request, user_id):
@@ -41,7 +40,8 @@ def followers(request, user_id):
     data['meta'] = {'limit': limit,
                     'offset': offset,
                     'previous': '',
-                    'total_count': follow_cnt}
+                    'total_count': follow_cnt,
+                    'next': ''}
 
     objects_list = []
 
@@ -77,7 +77,8 @@ def following(request, user_id=1):
     data['meta'] = {'limit': limit,
                     'offset': offset,
                     'previous': '',
-                    'total_count': follow_cnt}
+                    'total_count': follow_cnt,
+                    'next': ''}
 
     fq = Follow.objects.filter(follower_id=user_id)[offset:offset + limit]
     for fol in fq:
