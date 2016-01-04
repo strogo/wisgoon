@@ -48,7 +48,7 @@ def followers(request, user_id):
     fq = Follow.objects.filter(following_id=user_id)[offset:offset + limit]
     for fol in fq:
         o = {}
-        o['user'] = get_simple_user_object(fol.following_id, cur_user)
+        o['user'] = get_simple_user_object(fol.follower_id, cur_user)
 
         objects_list.append(o)
 
