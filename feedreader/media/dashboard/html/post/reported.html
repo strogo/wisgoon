@@ -11,19 +11,16 @@
 		</h1>
 		<div class="clear"></div>
 	</section>
-	<section class="content">
+	<section class="content reported">
 		<div class="select">
-			<form name="searchForm" ng-submit="showSearchPost()" ng-controller="searchController">
-			<input type="text" placeholder="جست و جو ..." ng-model="query"><button type="submit"><i class="fa fa-search"></i></button>
-			</form>
-				<button class="pull-left button" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
-			<span class="pull-left"><a href="" ng-show="select"><i class="fa fa-trash"></i></a></span>
+				<button class="button" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
+			<span><a href="" ng-show="select" ng-click="batchDelete()"><i class="fa fa-trash"></i></a></span>
 		</div>
 		<div id="feed" masonry load-images="false" reload-on-resize infinite-scroll='postItem.nextPage()' infinite-scroll-distance='1' style="width:1036px">
 			<div ng-show='postItem.busy'>Loading data...</div>
 			<div  class="masonry-brick" ng-repeat="brick in postItem.bricks">
 				
-				<div class="box box-solid photo" id="br-{[{brick.id}]}">
+				<div class="box box-solid photo" id="br-{[{brick.id}]}" postId="{[{brick.id}]}">
 					<a href="" ng-show="select" ng-click="selectItem(brick.id)">
 						<span ng-class="class" class="fa fa-square-o pull-left"></span>
 					</a>
