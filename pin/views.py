@@ -850,7 +850,7 @@ def absuser(request, user_name=None):
     except Profile.DoesNotExist:
         profile = Profile.objects.create(user_id=user_id)
 
-    if profile.banned:
+    if profile.banned and not request.user.is_authenticated():
         return render(request, 'pin2/samandehi.html')
 
     ban_by_admin = False
