@@ -372,7 +372,7 @@ app.controller('loginController',function($scope,$http,$location,$state) {
 		}) .success(function(data) {
 			$scope.message = data.message;
 			$scope.showSuccess = true;
-			$location.path('/');
+			$location.path('/latest');
 		})
 		.error(function(data) {      
 			$scope.errorName = data.message;
