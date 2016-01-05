@@ -298,7 +298,8 @@ def simple_ad_json(ad):
 
 
 def delete_posts(request):
-    post_ids = request.POST.getlist('post_ids')
+    import ast
+    post_ids = ast.literal_eval(request.POST.get('post_ids'))
     status = False
     if post_ids:
 
