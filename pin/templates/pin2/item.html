@@ -1,8 +1,8 @@
 {% extends "pin2/flat.base.html" %}
 {% load pin_tags %}
 
-{% block title%} - {{post.text|striptags|remove_newlines|truncatechars:66}}{% endblock title%}
-{% block description%}{{post.text|striptags|remove_newlines|truncatewords:30}}{%endblock%}
+{% block title%} - {{post.text|striptags|remove_newlines|truncatechars:66|addslashes}}{% endblock title%}
+{% block description%}{{post.text|striptags|remove_newlines|truncatewords:30|addslashes}}{%endblock%}
 
 {% block opengraph %}
 <meta property="og:title" content="{{post.text|striptags|remove_newlines|truncatechars:66}}" />

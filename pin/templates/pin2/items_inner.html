@@ -1,8 +1,68 @@
+{% load i18n %}
 {% load pin_tags %}
 {% load daddy_avatar %}
 {% load humanize %}
 
-<div class="post-page mato20" itemscope itemtype="http://schema.org/ImageObject">
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Article",
+  "headline": "{{post.text|striptags|remove_newlines|truncatechars:108|addslashes}}",
+  "author" : {
+    "@type" : "Person",
+    "name" : "{{post.user.username}}"
+  },
+  "mainEntityOfPage":{
+    "@type":"WebPage",
+    "@id":"http://wisgoon.com/pin"
+  },
+  "datePublished" : {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
+  "dateModified": {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
+  "image": {
+    "@type": "ImageObject",
+    "url": "{{media_prefix}}{{MEDIA_URL}}{{post.image}}",
+    "height": {{post.height}},
+    "width": {{post.width}}
+  },
+  "articleSection" : "{{post.category.title}}",
+  "articleBody" : "{{post.text|striptags|remove_newlines|addslashes}}",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Wisgoon",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://static.wisgoon.com/media/v2/images/logo_moharam.png",
+      "width": 216,
+      "height": 44
+    }
+  }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "item": {
+      "@id": "http://wisgoon.com/pin/",
+      "name": "Pin"
+    }
+    
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "item": {
+      "@id": "http://wisgoon.com/category/{{post.category_id}}/",
+      "name": "{{post.category}}"
+    }
+  }]
+}
+</script>
+
+<div class="post-page mato20">
 	<div class="post-content">
 		<div class="box post_item_inner">
 			<!--  buttons-->
@@ -44,12 +104,12 @@
 			<!-- img -->
 			<div class="post-img">
 				<a href="{{media_prefix}}{{MEDIA_URL}}{{post.image}}" >
-					<img itemprop="image" src="{{ post.get_image_500.url }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
+					<img src="{{ post.get_image_500.url }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
 				</a>
 			</div>
 			<!-- text -->
 			<div class="post-text">
-				<h1 class="post-text" itemprop="name">
+				<h1 class="post-text">
 					{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
 				</h1>
 				{% if post.get_pages %}
