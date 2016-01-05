@@ -31,7 +31,7 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 		});
 		$http({
 			method  : 'POST',
-			data    :  post_ids,
+			data    :  'post_ids='+post_ids,
 			url     : 'http://127.0.0.1:8000/dashboard/api/post/delete/',
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		});
@@ -39,63 +39,63 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 	};
 
 	$scope.deletePost = function(cmId) {
-			$http({
-				method  : 'POST',
-				data    :  'post_ids='+ cmId,
-				url     : 'http://127.0.0.1:8000/dashboard/api/post/delete/',
-				headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-			});
+		$http({
+			method  : 'POST',
+			data    :  'post_ids='+ cmId,
+			url     : 'http://127.0.0.1:8000/dashboard/api/post/delete/',
+			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+		});
 
-		};
-		$scope.undoPost = function(cmId) {
+	};
+	$scope.undoPost = function(cmId) {
 
-			$http({
-				method  : 'POST',
-				data    : 'post_ids='+ cmId,
-				url     : 'http://127.0.0.1:8000/dashboard/api/post/report/undo/',
-				headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-			})
+		$http({
+			method  : 'POST',
+			data    : 'post_ids='+ cmId,
+			url     : 'http://127.0.0.1:8000/dashboard/api/post/report/undo/',
+			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+		})
 
-		};
+	};
 
 
-		var reported = function() {
-			this.bricks = [];
-			this.busy = false;
-			this.after = '';
-			this.url = "http://127.0.0.1:8000/dashboard/api/post/reported/";
-		};
+	var reported = function() {
+		this.bricks = [];
+		this.busy = false;
+		this.after = '';
+		this.url = "http://127.0.0.1:8000/dashboard/api/post/reported/";
+	};
 
-		reported.prototype.nextPage = function() {
-			if (this.busy || !this.url) return;
-			this.busy = true;
+	reported.prototype.nextPage = function() {
+		if (this.busy || !this.url) return;
+		this.busy = true;
 
-			$http.get(this.url).success(function(data) {
-				this.url = data.meta.next;
-				var bricks = data.objects;
+		$http.get(this.url).success(function(data) {
+			this.url = data.meta.next;
+			var bricks = data.objects;
 
-				for (var i = 0; i < bricks.length; i++) {
-					this.bricks.push(bricks[i]);
+			for (var i = 0; i < bricks.length; i++) {
+				this.bricks.push(bricks[i]);
 
-				};
-
-				this.busy = false;
-			}.bind(this));
-
-			$scope.selectItem = function(br) {
-				var id = '#br-'+br;
-				if ($(id).hasClass('checked')) {
-					$(id).removeClass('checked');
-					$(id + ' > a:first-child > span').removeClass('fa-check-square-o').addClass('fa-square-o');
-				}else{
-					$(id).addClass('checked');
-					$(id + ' > a:first-child > span').removeClass('fa-square-o').addClass('fa-check-square-o');				
-				}
 			};
-		};
 
-		$scope.postItem = new reported();
-	}]);
+			this.busy = false;
+		}.bind(this));
+
+		$scope.selectItem = function(br) {
+			var id = '#br-'+br;
+			if ($(id).hasClass('checked')) {
+				$(id).removeClass('checked');
+				$(id + ' > a:first-child > span').removeClass('fa-check-square-o').addClass('fa-square-o');
+			}else{
+				$(id).addClass('checked');
+				$(id + ' > a:first-child > span').removeClass('fa-square-o').addClass('fa-check-square-o');				
+			}
+		};
+	};
+
+	$scope.postItem = new reported();
+}]);
 
 app.controller('catstatController',['$http','$scope', function($http, $scope, drilldown) {
 
@@ -269,7 +269,6 @@ app.controller('adsstatController',['$scope','$http', function($scope, $http) {
         }
 
     });
-
 }]);
 
 app.controller('blockCtrl',['$scope','$http', function($scope, $http) {
@@ -497,8 +496,6 @@ app.controller('logsCtrl',['$scope','$http', function($scope, $http ,logsInfo) {
 	};
 	$scope.logsItem = new logsInfo();
 	return false;
-
-
 }]);
 
 app.controller('searchController',['$scope','$stateParams','$http','$location',function($scope,$stateParams,$http,$location) {
