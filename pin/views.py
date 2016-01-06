@@ -846,7 +846,7 @@ def absuser(request, user_name=None):
     user_id = user.id
 
     try:
-        profile = Profile.objects.only('banned', 'user', 'score', 'cnt_post', 'cnt_like', 'website', 'credit', 'level', 'bio').get(user_id=user_id)
+        profile = Profile.objects.only('banned', 'user', 'score', 'cnt_post', 'website', 'credit', 'level', 'bio').get(user_id=user_id)
     except Profile.DoesNotExist:
         profile = Profile.objects.create(user_id=user_id)
 

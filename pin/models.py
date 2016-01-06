@@ -1409,6 +1409,8 @@ class PostMetaData(models.Model):
 class BannedImei(models.Model):
     imei = models.CharField(max_length=50, db_index=True)
     create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
+    description = models.TextField(default="")
+    user = models.ForeignKey(User, default=1)
 
 
 class Log(models.Model):
