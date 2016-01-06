@@ -1,4 +1,5 @@
 import os
+import redis
 import json
 import paramiko
 
@@ -6,15 +7,23 @@ from feedreader.celery import app
 from django.conf import settings
 from django.core.cache import cache
 
+activityServer = redis.Redis(settings.REDIS_DB_3)
+
 
 @app.task(name="wisgoon.pin.activity")
 def activity(who, post_id, act_type):
     from pin.models import Follow
-    from models_redis import ActivityRedis
     flist = Follow.objects.filter(following_id=who)\
         .values_list('follower_id', flat=True)
+
+    acts = activityServer.pipeline()
     for u in flist:
-        ActivityRedis(user_id=u).add_to_activity(act_type, who, post_id)
+        key_prefix = "act:1.0:{}".format(u)
+        # ActivityRedis(user_id=u).add_to_activity(act_type, who, post_id)
+        data = "{}:{}:{}".format(act_type, who, post_id)
+        acts.lpush(key_prefix, data)
+        acts.ltrim(key_prefix, 0, 50)
+    acts.execute()
 
 
 @app.task(name="wisgoon.pin.add_to_storage")
