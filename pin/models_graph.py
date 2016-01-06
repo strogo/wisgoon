@@ -27,7 +27,7 @@ class UserGraph():
         try:
             node = graph.merge_one(lable, "user_id", str(user_id))
             node['name'] = str(username)
-            node['username'] = str(username)
+            node['profile_name'] = str(nickname)
             node.push()
             user_node = node
         except Exception as e:
@@ -106,13 +106,29 @@ class FollowUser():
     @classmethod
     def friend_suggestion(cls, username):
         friend_list = []
-        query = 'MATCH (user { name: "%s" })-[:follow*2]-(friend_of_friend)\
+        query = 'MATCH (user { name: "%s" })-[:follow*2]->(friend_of_friend)\
                 WHERE NOT (user)-[:follow]-(friend_of_friend)\
                 RETURN friend_of_friend.name, COUNT(*)\
                 ORDER BY COUNT(*) DESC , friend_of_friend.name LIMIT 3' % str(username)
         results = graph.cypher.execute(query)
         for result in results:
             friend_list.append(str(result['friend_of_friend.name']))
+        return friend_list
+
+
+class Mention():
+    @classmethod
+    def search_user(cls, name, string):
+        friend_list = []
+        query = 'MATCH (user { name: "%s" })-[:follow]->(friends)\
+                 WHERE friends.name CONTAINS "%s" OR\
+                 friends.profile_name CONTAINS "%s"\
+                 RETURN friends.user_id' % (name, string, string)
+
+        results = graph.cypher.execute(query)
+        for result in results:
+            friend_list.append(result['friends.user_id'])
+
         return friend_list
 
 
