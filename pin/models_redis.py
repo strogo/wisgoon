@@ -27,10 +27,18 @@ class ActivityRedis(object):
     def __init__(self, user_id):
         self.KEY_PREFIX_LIST = self.KEY_PREFIX_LIST.format(user_id)
 
-    def add_to_activity(self, act_type, user_id, object_id):
-        data = "{}:{}:{}".format(act_type, user_id, object_id)
-        activityServer.lpush(self.KEY_PREFIX_LIST, data)
-        activityServer.ltrim(self.KEY_PREFIX_LIST, 0, 50)
+    def get_activity(self):
+        from pin.api6.tools import post_item_json, get_simple_user_object
+        act_data = activityServer.lrange(self.KEY_PREFIX_LIST, 0, -1)
+        jdata = []
+        for actd in act_data:
+            act_type, actor, object_id = actd.split(":")
+            o = {}
+            o['object'] = post_item_json(int(object_id))
+            o['actor'] = get_simple_user_object(actor)
+            o['act_type'] = int(act_type)
+            jdata.append(o)
+        return jdata
 
     @classmethod
     def push_to_activity(cls, act_type, who, post_id):
