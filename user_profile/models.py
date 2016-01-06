@@ -136,8 +136,8 @@ class Profile(models.Model):
 
             return
 
-        Profile.objects.filter(user_id=user_id)\
-            .update(cnt_like=F('cnt_like') + 1, score=F('score') + 10)
+        # Profile.objects.filter(user_id=user_id)\
+        #     .update(cnt_like=F('cnt_like') + 1, score=F('score') + 10)
 
     @classmethod
     def after_dislike(cls, user_id):
@@ -147,8 +147,8 @@ class Profile(models.Model):
 
             return
 
-        Profile.objects.filter(user_id=user_id)\
-            .update(cnt_like=F('cnt_like') - 1, score=F('score') - 10)
+        # Profile.objects.filter(user_id=user_id)\
+        #     .update(cnt_like=F('cnt_like') - 1, score=F('score') - 10)
 
     def get_avatar_64_str(self):
         s = str(self.avatar)
