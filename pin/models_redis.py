@@ -32,6 +32,19 @@ class ActivityRedis(object):
         activityServer.lpush(self.KEY_PREFIX_LIST, data)
         activityServer.ltrim(self.KEY_PREFIX_LIST, 0, 50)
 
+    @classmethod
+    def push_to_activity(cls, act_type, who, post_id):
+        from pin.models import Follow
+        flist = Follow.objects.filter(following_id=who)\
+            .values_list('follower_id', flat=True)
+        asp = activityServer.pipeline()
+        for u in flist:
+            cpl = cls.KEY_PREFIX_LIST.format(u)
+            data = "{}:{}:{}".format(act_type, who, post_id)
+            asp.lpush(cpl, data)
+            asp.ltrim(cpl, 0, 50)
+        asp.execute()
+
 
 class LikesRedis(object):
     KEY_PREFIX_SET = "p:l:"
@@ -127,7 +140,7 @@ class LikesRedis(object):
         else:
             # if int(user_id) == 1:
             from pin.tasks import activity
-            activity.delay(who=user_id, post_id=self.postId, act_type=1)
+            activity.delay(act_type=1, who=user_id, post_id=self.postId)
             self.like(user_id=user_id, post_owner=post_owner)
             leaderBoardServer.zincrby(self.KEY_LEADERBORD, post_owner, 10)
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
