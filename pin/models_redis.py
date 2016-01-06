@@ -125,9 +125,9 @@ class LikesRedis(object):
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
             return False, True, self.cntlike()
         else:
-            if int(user_id) == 1:
-                from pin.tasks import activity
-                activity.delay(who=user_id, post_id=self.postId, act_type=1)
+            # if int(user_id) == 1:
+            from pin.tasks import activity
+            activity.delay(who=user_id, post_id=self.postId, act_type=1)
             self.like(user_id=user_id, post_owner=post_owner)
             leaderBoardServer.zincrby(self.KEY_LEADERBORD, post_owner, 10)
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
