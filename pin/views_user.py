@@ -600,6 +600,7 @@ def notif_user(request):
 @login_required
 def notif_following(request):
     notif_data = ActivityRedis(user_id=request.user.id).get_activity()
+    return HttpResponse(json.dumps(notif_data))
     return render(request, 'pin/notif_user_following.html', {
         'notif': notif_data
     })
