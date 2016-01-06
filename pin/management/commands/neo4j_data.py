@@ -26,4 +26,3 @@ def create_follow():
         target = UserGraph.get_node("Person", follow_obj.following_id)
         a = FollowUser.get_or_create(start_node=user, end_node=target, rel_type="follow")
         print a
-        print "create %s" % str(follow_obj.id)

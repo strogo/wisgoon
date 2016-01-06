@@ -105,12 +105,15 @@ class FollowUser():
 
     @classmethod
     def friend_suggestion(cls, username):
+        friend_list = []
         query = 'MATCH (user { name: "%s" })-[:follow*2]-(friend_of_friend)\
-                WHERE NOT (user)-[:follow]-(friend_of_friend) and not (user)\
+                WHERE NOT (user)-[:follow]-(friend_of_friend)\
                 RETURN friend_of_friend.name, COUNT(*)\
-                ORDER BY COUNT(*) DESC , friend_of_friend.name' % str(username)
-        result = graph.cypher.execute(query)
-        return result
+                ORDER BY COUNT(*) DESC , friend_of_friend.name LIMIT 3' % str(username)
+        results = graph.cypher.execute(query)
+        for result in results:
+            friend_list.append(str(result['friend_of_friend.name']))
+        return friend_list
 
 
 # class PostGraph():
