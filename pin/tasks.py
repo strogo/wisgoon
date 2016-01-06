@@ -98,7 +98,7 @@ def check_porn(post_id):
             post.report = post.report + 10
             post.save()
         print d
-        publish.single("wisgoon/check/porn", json.dumps(d), hostname="127.0.0.1", qos=2)
+        publish.single("wisgoon/check/porn", json.dumps(d), hostname="mosq.wisgoon.com", qos=2)
     except Exception, e:
         print str(e)
 
