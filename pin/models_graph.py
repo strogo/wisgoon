@@ -40,7 +40,7 @@ class UserGraph():
         try:
             node = graph.find_one(lable,
                                   property_key="user_id",
-                                  property_value=user_id)
+                                  property_value=str(user_id))
         except Exception as e:
             print str(e), '4 models_graph'
             node = None
@@ -60,13 +60,19 @@ class UserGraph():
 class FollowUser():
 
     @classmethod
-    def get_relationship(cls, start_node, end_node, rel_type, bidirectional=False, limit=None):
+    def get_relationship(cls, start_node, rel_type, end_node=None,
+                         bidirectional=None, limit=None):
+        data = {'start_node': start_node, 'rel_type': rel_type}
+
+        if end_node:
+            data['end_node'] = end_node
+        if bidirectional:
+            data['bidirectional'] = bidirectional
+        if limit:
+            data['limit'] = limit
+
         try:
-            relation = list(graph.match(start_node=start_node,
-                                        end_node=end_node,
-                                        rel_type=rel_type,
-                                        limit=limit,
-                                        bidirectional=bidirectional))
+            relation = list(graph.match(**data))
         except Exception as e:
             print str(e), '6 models_graph'
             relation = None
@@ -76,7 +82,9 @@ class FollowUser():
     @classmethod
     def get_or_create(cls, start_node, end_node, rel_type):
         try:
-            relation = cls.get_relationship(start_node, end_node, rel_type)
+            relation = cls.get_relationship(start_node=start_node,
+                                            end_node=end_node,
+                                            rel_type=rel_type)
             if not relation:
                 relation = graph.create_unique(Relationship(start_node, rel_type, end_node))
         except Exception as e:
@@ -94,6 +102,15 @@ class FollowUser():
             print str(e), '8 models_graph'
             status = False
         return status
+
+    @classmethod
+    def friend_suggestion(cls, username):
+        query = 'MATCH (user { name: "%s" })-[:follow*2..2]-(friend_of_friend)\
+                WHERE NOT (user)-[:follow]-(friend_of_friend) and not (user)\
+                RETURN friend_of_friend.name, COUNT(*)\
+                ORDER BY COUNT(*) DESC , friend_of_friend.name' % str(username)
+        result = graph.cypher.execute(query)
+        return result
 
 
 # class PostGraph():
