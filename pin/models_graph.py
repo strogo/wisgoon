@@ -105,7 +105,7 @@ class FollowUser():
 
     @classmethod
     def friend_suggestion(cls, username):
-        query = 'MATCH (user { name: "%s" })-[:follow*2..2]-(friend_of_friend)\
+        query = 'MATCH (user { name: "%s" })-[:follow*2]-(friend_of_friend)\
                 WHERE NOT (user)-[:follow]-(friend_of_friend) and not (user)\
                 RETURN friend_of_friend.name, COUNT(*)\
                 ORDER BY COUNT(*) DESC , friend_of_friend.name' % str(username)

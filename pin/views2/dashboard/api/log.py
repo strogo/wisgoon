@@ -22,10 +22,14 @@ def show_log(request):
     data['objects'] = logs_list
 
     data['meta']['previous'] = get_next_url(url_name='dashboard-api-log-show',
-                                            before=before)
+                                            before=before,
+                                            content_type=content_type,
+                                            action=action)
     before = int(before) + 10
     data['meta']['next'] = get_next_url(url_name='dashboard-api-log-show',
-                                        before=before)
+                                        before=before,
+                                        content_type=content_type,
+                                        action=action)
     return return_json_data(data)
 
 
@@ -43,8 +47,10 @@ def search_log(request):
     data['objects'] = result
 
     data['meta']['previous'] = get_next_url(url_name='dashboard-api-log-search',
-                                            before=before)
+                                            before=before,
+                                            q=string)
     before = int(before) + 10
     data['meta']['next'] = get_next_url(url_name='dashboard-api-log-search',
-                                        before=before)
+                                        before=before,
+                                        q=string)
     return return_json_data(data)
