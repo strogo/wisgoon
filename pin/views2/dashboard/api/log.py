@@ -14,7 +14,6 @@ def show_log(request):
     action = request.GET.get('action', False)
     before = request.GET.get('before', 0)
     logs_list = []
-
     logs = get_logs(content_type, action, before)
     for log in logs:
         logs_list.append(simple_log_json(log))
@@ -22,10 +21,10 @@ def show_log(request):
     data['objects'] = logs_list
 
     data['meta']['previous'] = get_next_url(url_name='dashboard-api-log-show',
-                                            before=before,
+                                            before=int(before) - 10 if int(before) > 0 else "0",
                                             content_type=content_type,
                                             action=action)
-    before = int(before) + 10
+    before = int(before) + 10 if int(before) > 0 else 10
     data['meta']['next'] = get_next_url(url_name='dashboard-api-log-show',
                                         before=before,
                                         content_type=content_type,
@@ -47,9 +46,9 @@ def search_log(request):
     data['objects'] = result
 
     data['meta']['previous'] = get_next_url(url_name='dashboard-api-log-search',
-                                            before=before,
+                                            before=int(before) - 10 if int(before) > 0 else "0",
                                             q=string)
-    before = int(before) + 10
+    before = int(before) + 10 if int(before) > 0 else 10
     data['meta']['next'] = get_next_url(url_name='dashboard-api-log-search',
                                         before=before,
                                         q=string)
