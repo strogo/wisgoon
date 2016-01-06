@@ -75,7 +75,7 @@ def check_porn(post_id):
     import socket
     import paho.mqtt.publish as publish
 
-    socket.setdefaulttimeout(30)
+    socket.setdefaulttimeout(10)
 
     try:
         post = Post.objects.get(id=post_id)
