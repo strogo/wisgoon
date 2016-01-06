@@ -75,9 +75,12 @@ def check_porn(post_id):
     import socket
     import paho.mqtt.publish as publish
 
-    socket.setdefaulttimeout(30)
+    socket.setdefaulttimeout(10)
 
-    post = Post.objects.get(id=post_id)
+    try:
+        post = Post.objects.get(id=post_id)
+    except Post.DoesNotExist:
+        return "post does not exists"
     # print post.get_image_500()
     img_url = post.get_image_500()['url']
     # print img_url
@@ -98,7 +101,7 @@ def check_porn(post_id):
             post.report = post.report + 10
             post.save()
         print d
-        publish.single("wisgoon/check/porn", json.dumps(d), hostname="127.0.0.1", qos=2)
+        publish.single("wisgoon/check/porn", json.dumps(d), hostname="mosq.wisgoon.com", qos=2)
     except Exception, e:
         print str(e)
 
