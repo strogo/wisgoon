@@ -35,7 +35,7 @@ class ActivityRedis(object):
             act_type, actor, object_id = actd.split(":")
             o = {}
             o['object'] = post_item_json(int(object_id))
-            o['actor'] = get_simple_user_object(actor)
+            o['actor'] = get_simple_user_object(int(actor))
             o['act_type'] = int(act_type)
             jdata.append(o)
         return jdata
