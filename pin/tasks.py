@@ -77,7 +77,10 @@ def check_porn(post_id):
 
     socket.setdefaulttimeout(30)
 
-    post = Post.objects.get(id=post_id)
+    try:
+        post = Post.objects.get(id=post_id)
+    except Post.DoesNotExist:
+        return "post does not exists"
     # print post.get_image_500()
     img_url = post.get_image_500()['url']
     # print img_url
