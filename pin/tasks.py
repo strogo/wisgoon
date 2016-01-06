@@ -7,6 +7,16 @@ from django.conf import settings
 from django.core.cache import cache
 
 
+@app.task(name="wisgoon.pin.activity")
+def activity(who, post_id, act_type):
+    from pin.models import Follow
+    from models_redis import ActivityRedis
+    flist = Follow.objects.filter(following_id=who)\
+        .values_list('follower_id', flat=True)
+    for u in flist:
+        ActivityRedis(user_id=u).add_to_activity(act_type, who, post_id)
+
+
 @app.task(name="wisgoon.pin.add_to_storage")
 def add_to_storage(post_id):
     from pin.models import Storages, Post

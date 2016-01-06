@@ -14,6 +14,23 @@ rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
 # redis list server
 rListServer = redis.Redis(settings.REDIS_DB_2, db=4)
 leaderBoardServer = redis.Redis(settings.REDIS_DB_2, db=0)
+activityServer = redis.Redis(settings.REDIS_DB_3)
+
+
+class ActivityRedis(object):
+    KEY_PREFIX_LIST = "act:1.0:{}"
+
+    LIKE = 1
+    COMMENT = 2
+    FOLLOW = 3
+
+    def __init__(self, user_id):
+        self.KEY_PREFIX_LIST = self.KEY_PREFIX_LIST.format(user_id)
+
+    def add_to_activity(self, act_type, user_id, object_id):
+        data = "{}:{}:{}".format(act_type, user_id, object_id)
+        activityServer.lpush(self.KEY_PREFIX_LIST, data)
+        activityServer.ltrim(self.KEY_PREFIX_LIST, 0, 50)
 
 
 class LikesRedis(object):
@@ -108,6 +125,9 @@ class LikesRedis(object):
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
             return False, True, self.cntlike()
         else:
+            if int(user_id) == 1:
+                from pin.tasks import activity
+                activity.delay(who=user_id, post_id=self.postId, act_type=1)
             self.like(user_id=user_id, post_owner=post_owner)
             leaderBoardServer.zincrby(self.KEY_LEADERBORD, post_owner, 10)
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
