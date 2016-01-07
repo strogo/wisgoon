@@ -12,21 +12,19 @@ from pin.context_processors import is_police
 
 
 def comment_post(request, item_id):
-    limit = 20
+    limit = 10
     data = {}
     data['objects'] = {}
     data['meta'] = {'limit': limit, 'next': '', 'total_count': 1000}
-    before = request.GET.get('before', 0)
+    before = int(request.GET.get('before', 0))
 
     comments = get_comments(item_id, limit, before)
     data['objects'] = comment_objects_list(comments)
 
-    if len(data['objects']) == 20:
-        last_item = (before + 1) * limit
-        data['meta']['next'] = get_next_url(url_name='api-6-comment-post',
-                                            before=last_item,
-                                            url_args={"item_id": item_id}
-                                            )
+    data['meta']['next'] = get_next_url(url_name='api-6-comment-post',
+                                        before=before + limit,
+                                        url_args={"item_id": item_id}
+                                        )
     return return_json_data(data)
 
 
