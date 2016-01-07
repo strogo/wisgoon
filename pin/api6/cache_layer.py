@@ -4,7 +4,7 @@ cache = get_cache('cache_layer')
 
 
 class PostCacheLayer(object):
-    CACHE_KEY = "pcl:1.5:{}"
+    CACHE_KEY = "pcl:1.6:{}"
     POST_ID = None
     TTL = 86400
     data = None
