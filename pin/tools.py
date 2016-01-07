@@ -9,7 +9,8 @@ try:
 except ImportError:
     import json
 
-from datetime import datetime
+import datetime
+
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -91,7 +92,7 @@ def get_fixed_ads():
 
 
 def create_filename(filename):
-    d = datetime.now()
+    d = datetime.datetime.now()
     folder = "%d/%d/%d/%d" % (d.year, d.month, d.day, d.hour)
     paths = []
     paths.append("%s/pin/temp/o/" % (settings.MEDIA_ROOT))
@@ -472,3 +473,9 @@ def revalidate_bazaar(bill):
         print "hello vahid"
         print str(e)
         return None
+
+
+def get_delta_timestamp(days):
+    today_date = datetime.date.today()
+    days_stamp = (today_date - datetime.timedelta(days)).strftime("%s")
+    return int(days_stamp)

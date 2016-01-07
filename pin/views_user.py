@@ -27,6 +27,7 @@ from pin.models import Post, Stream, Follow, Ad, Block,\
     Report, Comments, Comments_score, Category, Bills2 as Bills
 
 from pin.model_mongo import Notif, UserMeta, NotifCount
+from pin.models_redis import ActivityRedis
 import pin_image
 from pin.tools import create_filename, get_user_ip, get_request_pid, check_block,\
     post_after_delete, get_post_user_cache
@@ -594,6 +595,15 @@ def notif_user(request):
         return render(request, 'pin/_notif.html', {'notif': nl})
     else:
         return render(request, 'pin/notif_user.html', {'notif': nl})
+
+
+@login_required
+def notif_following(request):
+    notif_data = ActivityRedis(user_id=request.user.id).get_activity()
+    # return HttpResponse(json.dumps(notif_data))
+    return render(request, 'pin/notif_user_following.html', {
+        'notif': notif_data
+    })
 
 
 @login_required

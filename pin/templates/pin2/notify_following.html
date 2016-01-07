@@ -1,0 +1,40 @@
+{% load pin_tags %}
+
+{% load daddy_avatar %}
+<a href="{% url 'pin-notif-user' %}" class="wis_btn green w100">مشاهده همه اعلانات</a>
+
+<a aria-label="Close" href="javascript:;" data-dismiss="popover" class="popover-close" type="button">
+    <span aria-hidden="true">×</span>
+</a>
+
+
+{% for noti in notif %}
+<div class="notif popover_notif notif_{{noti.type}}" style="">
+{# {{forloop.counter}} -- {{noti.type}} -- {{noti.po.get_image_236.url}} <br> #}
+    <a target="_blank" href="{% url 'pin-user' noti.actor %}" class="pull-right actor">
+        <img src="{{noti.actor|get_avatar:60}}">
+    </a>
+    {% if noti.type != 10 %}
+    <a class="notif_img pull-left" href="{% url "pin-item" noti.po.id %}">
+        <img src="{{noti.po.get_image_236.url }}" />
+    </a>
+    {% endif %}
+    <div class="notif_text pull-right">
+        {% if noti.type == 1 %}
+        <i class="glyphicon glyphicon-heart"></i> تصویر شما را پسندید
+        {% elif noti.type == 2 %}
+        <i class="glyphicon glyphicon-comment"></i> برای تصویر شما نظر داد
+        {% elif noti.type == 4 %}
+        <i class="glyphicon glyphicon-remove"></i> تصویر شما حذف شد
+        {% elif noti.type == 10 %}
+        <i class="glyphicon glyphicon-user"></i> شما را دنبال می‌کند
+        {% endif %}
+    </div>
+{% comment %}
+{% endcomment %}
+<div class="clear"></div>
+
+</div>
+
+{% endfor %}
+

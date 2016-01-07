@@ -17,7 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.models import Post, Follow, Likes, Category, Comments, Report,\
     Results
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
-    get_user_meta, get_user_ip, log_act
+    get_user_meta, get_user_ip, log_act, get_delta_timestamp
 
 from pin.context_processors import is_police
 
@@ -111,6 +111,14 @@ def search(request):
     results = []
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
+
+    today_stamp = get_delta_timestamp(days=0)
+    week_statmp = get_delta_timestamp(days=7)
+    month_statmp = get_delta_timestamp(days=30)
+
+    print today_stamp
+    print week_statmp
+    print month_statmp
 
     tags = ['کربلا',
             'حرم',

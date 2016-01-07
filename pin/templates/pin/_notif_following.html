@@ -1,0 +1,37 @@
+{% load pin_tags%}
+{% load humanize %}
+{% load thumbnail %}
+{% load daddy_avatar%}
+
+{% spaceless %}
+{% for item in notif %}
+<div class="notif-item">
+	<div class="notif-img pull-left">
+		<a class="pin-item-link" style="float:right" href="{% url "pin-item" item.object.id%}">
+			<img src="{{item.object.images.thumbnail.url }}" class="img img-circle" style="width:40px;height:40px;" />
+		</a>
+	</div>
+
+	<div class="notif-actors col-md-2 col-sm-2 col-xs-2 pull-right">
+		<div>
+			<a target="_blank" href="{% url 'pin-absuser' item.actor.username %}" class="user-avatar" data-toggle="tooltip" data-placement="bottom" title="{{item.actor.username}}">
+				<img class="nav-avatar" src="{{item.actor.avatar}}">
+			</a>
+		</div>
+	</div>
+	<div class="notif-type col-md-5 col-sm-5 col-xs-8">
+		{% if item.act_type == 1 %}
+		<i class="glyphicon glyphicon-heart-empty red"></i> پسندید
+		{% endif %}
+	</div>
+	{% if offset %}
+	<span data-next="{{offset}}" ></span>
+	{%else%}
+	<span data-next="{{item.pid}}" ></span>
+	{%endif%}
+	<div class="clear"></div>
+</div>
+<div class="clear"></div>
+
+{%endfor%}
+{% endspaceless %}

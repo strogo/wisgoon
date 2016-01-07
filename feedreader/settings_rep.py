@@ -124,5 +124,8 @@ CELERY_ROUTES = {
     },
     'wisgoon.pin.check_porn': {
         'queue': 'wisgoon.pin.check_porn'
+    },
+    'wisgoon.pin.activity': {
+        'queue': 'wisgoon.pin.activity'
     }
 }
