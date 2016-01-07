@@ -20,17 +20,17 @@ class Command(BaseCommand):
 
             for follow_obj in follows:
                 usr = follow_obj
-                user = UserGraph.get_or_create("Person",
-                                               usr.follower.username,
-                                               usr.follower.profile.name,
-                                               usr.follower.id)
-                target = UserGraph.get_or_create("Person",
-                                                 usr.following.username,
-                                                 usr.following.profile.name,
-                                                 usr.following.id)
+                UserGraph.get_or_create("Person",
+                                        usr.follower.username,
+                                        usr.follower.profile.name,
+                                        usr.follower.id)
+                UserGraph.get_or_create("Person",
+                                        usr.following.username,
+                                        usr.following.profile.name,
+                                        usr.following.id)
 
-                FollowUser.get_or_create(start_node=user,
-                                         end_node=target,
+                FollowUser.get_or_create(start_id=usr.follower.id,
+                                         end_id=usr.following.id,
                                          rel_type="follow")
             limit += 1001
             print limit

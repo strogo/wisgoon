@@ -60,41 +60,48 @@ class UserGraph():
 class FollowUser():
 
     @classmethod
-    def get_relationship(cls, start_node, rel_type, end_node=None,
-                         bidirectional=None, limit=None):
-        data = {'start_node': start_node, 'rel_type': rel_type}
+    def get_relationship(cls, start_id, rel_type, end_id):
+        relation = None
+        start = None
+        end = None
 
-        if end_node:
-            data['end_node'] = end_node
-        if bidirectional:
-            data['bidirectional'] = bidirectional
-        if limit:
-            data['limit'] = limit
+        start = UserGraph.get_node("Person", start_id)
+        end = UserGraph.get_node("Person", end_id)
 
-        try:
-            relation = list(graph.match(**data))
-        except Exception as e:
-            print str(e), '6 models_graph'
-            relation = None
+        if start and end:
+            data = {'start_node': start,
+                    'end_node': end,
+                    'rel_type': rel_type}
+            try:
+                relation = list(graph.match(**data))
+            except Exception as e:
+                print str(e), '6 models_graph'
+                relation = None
 
-        return relation
+        return relation, start, end
 
     @classmethod
-    def get_or_create(cls, start_node, end_node, rel_type):
+    def get_or_create(cls, start_id, end_id, rel_type):
         try:
-            relation = cls.get_relationship(start_node=start_node,
-                                            end_node=end_node,
-                                            rel_type=rel_type)
+            relation, start, end = cls.get_relationship(start_id=start_id,
+                                                        end_id=end_id,
+                                                        rel_type=rel_type)
             if not relation:
-                relation = graph.create_unique(Relationship(start_node, rel_type, end_node))
+                query = Relationship(start,
+                                     rel_type,
+                                     end)
+                relation = graph.create_unique(query)
         except Exception as e:
             print str(e), '7 models_graph'
             relation = None
         return relation
 
     @classmethod
-    def delete_relations(cls, relations):
+    def delete_relations(cls, follower_id, following_id):
         try:
+            relations, start, end = cls.get_relationship(start_id=str(follower_id),
+                                                         rel_type="follow",
+                                                         end_id=str(following_id))
             for relation in relations:
                 graph.delete(relation)
             status = True

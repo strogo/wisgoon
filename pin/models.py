@@ -33,6 +33,7 @@ from preprocessing import normalize_tags
 from pin.tasks import delete_image
 from pin.classification_tools import normalize
 from pin.api6.cache_layer import PostCacheLayer
+from pin.models_graph import FollowUser
 
 LIKE_TO_DEFAULT_PAGE = 10
 
@@ -915,13 +916,19 @@ class Follow(models.Model):
         from user_profile.models import Profile
         follower_id = self.follower.id
         following_id = self.following.id
+
         Profile.objects.filter(user_id=follower_id)\
             .update(cnt_following=F('cnt_following') - 1)
 
         Profile.objects.filter(user_id=following_id)\
             .update(cnt_followers=F('cnt_followers') - 1)
+
         MonthlyStats.log_hit(MonthlyStats.UNFOLLOW)
+
         super(Follow, self).delete(*args, **kwargs)
+
+        FollowUser.delete_relations(self.follower.id,
+                                    self.following.id)
 
     def save(self, *args, **kwargs):
         super(Follow, self).save(*args, **kwargs)
@@ -946,6 +953,8 @@ class Follow(models.Model):
                                        date=datetime.now,
                                        seen=False)
             MonthlyStats.log_hit(MonthlyStats.FOLLOW)
+
+            FollowUser.get_or_create(follower_id, following_id, "follow")
 
 
 class Stream(models.Model):
