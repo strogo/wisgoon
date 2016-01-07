@@ -13,8 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         limit = 0
         while True:
-            follows = Follow.objects.all()[limit: limit + 1000]
-
+            follows = Follow.objects.filter(id__range=[limit, limit + 1000])
             if not follows:
                 break
 
