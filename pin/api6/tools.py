@@ -341,7 +341,7 @@ def get_comments(post_id, limit, before):
     try:
         comments = Comments.objects\
             .filter(object_pk_id=post_id)\
-            .order_by('-id')[before:(before + 1) * limit]
+            .order_by('-id')[before: before + limit]
     except:
         comments = []
     return comments

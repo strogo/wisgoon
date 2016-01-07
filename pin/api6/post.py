@@ -38,9 +38,11 @@ def latest(request):
                                        cur_user_id=cur_user,
                                        r=request)
 
-    last_item = data['objects'][-1]['id']
-    data['meta']['next'] = get_next_url(url_name='api-6-post-latest',
-                                        token=token, before=last_item)
+    if data['objects']:
+        last_item = data['objects'][-1]['id']
+        data['meta']['next'] = get_next_url(url_name='api-6-post-latest',
+                                            token=token,
+                                            before=last_item)
 
     return return_json_data(data)
 
@@ -72,10 +74,10 @@ def friends(request):
 
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
-
-    last_item = data['objects'][-1]['id']
-    data['meta']['next'] = get_next_url(url_name='api-6-post-friends',
-                                        token=token, before=last_item)
+    if data['objects']:
+        last_item = data['objects'][-1]['id']
+        data['meta']['next'] = get_next_url(url_name='api-6-post-friends',
+                                            token=token, before=last_item)
 
     return return_json_data(data)
 
@@ -102,13 +104,13 @@ def category(request, category_id):
 
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
-
-    last_item = data['objects'][-1]['id']
-    data['meta']['next'] = get_next_url(url_name='api-6-post-category',
-                                        token=token, before=last_item,
-                                        url_args={
-                                            "category_id": category_id
-                                        })
+    if data['objects']:
+        last_item = data['objects'][-1]['id']
+        data['meta']['next'] = get_next_url(url_name='api-6-post-category',
+                                            token=token, before=last_item,
+                                            url_args={
+                                                "category_id": category_id
+                                            })
 
     return return_json_data(data)
 
@@ -134,19 +136,17 @@ def choices(request):
 
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
-
-    last_item = data['objects'][-1]['id']
-    data['meta']['next'] = get_next_url(url_name='api-6-post-choices',
-                                        token=token, before=last_item)
+    if data['objects']:
+        last_item = data['objects'][-1]['id']
+        data['meta']['next'] = get_next_url(url_name='api-6-post-choices',
+                                            token=token, before=last_item)
 
     return return_json_data(data)
 
 
 def search(request):
-    row_per_page = 20
+    limit = 20
     query = request.GET.get('q', '')
-    offset = int(request.GET.get('offset', 0))
-    next_offset = offset + 1 * row_per_page
 
     cur_user = None
     data = {}
@@ -154,17 +154,14 @@ def search(request):
                     'next': "",
                     'total_count': 1000}
 
-    before = request.GET.get('before', None)
+    before = int(request.GET.get('before', 0))
     token = request.GET.get('token', None)
 
     if token:
         cur_user = AuthCache.id_from_token(token=token)
 
-    if not before:
-        before = 0
-
     posts = SearchQuerySet().models(Post)\
-        .filter(content__contains=query)[offset:next_offset]
+        .filter(content__contains=query)[before:before + limit]
 
     idis = []
     for pmlt in posts:
@@ -176,7 +173,7 @@ def search(request):
                                        r=request)
 
     data['meta']['next'] = get_next_url(url_name='api-6-post-search',
-                                        token=token, offset=next_offset,
+                                        token=token, offset=before + limit,
                                         q=query)
 
     return return_json_data(data)
@@ -316,14 +313,14 @@ def send(request):
 
 
 def user_post(request, user_id):
-    before = request.GET.get('before', False)
+    before = int(request.GET.get('before', 0))
     data = {}
     data['meta'] = {'limit': 20,
                     'next': "",
                     'total_count': 1000}
 
     user_posts = Post.objects.only(*Post.NEED_KEYS_WEB)\
-        .filter(user=user_id).order_by('-id')[before:(before + 1) * 20]
+        .filter(user=user_id).order_by('-id')[before:before + 20]
 
     token = request.GET.get('token', False)
     current_user = None
@@ -332,7 +329,7 @@ def user_post(request, user_id):
 
     data['objects'] = get_objects_list(user_posts, current_user)
 
-    last_item = (before + 1) * 20
+    last_item = before + 20
     data['meta']['next'] = get_next_url(url_name='api-6-post-user',
                                         before=last_item,
                                         url_args={"user_id": user_id}
@@ -386,7 +383,7 @@ def promoted(request):
         return return_bad_request()
 
     ads = Ad.objects.filter(Q(owner=user) | Q(user=user))\
-        .order_by("-id")[before:(before + 1) * 20]
+        .order_by("-id")[before:before + 20]
 
     for ad in ads:
         ad_json = ad_item_json(ad)
@@ -394,7 +391,7 @@ def promoted(request):
 
     data['objects'] = objects
 
-    last_item = (before + 1) * 20
+    last_item = before + 20
     data['meta']['next'] = get_next_url(url_name='api-6-post-user',
                                         before=last_item
                                         )
@@ -435,7 +432,7 @@ def hashtag(request, tag_name):
                                            r=request)
 
         data['meta']['next'] = get_next_url(url_name='api-6-post-hashtag',
-                                            before=20,
+                                            before=before + row_per_page,
                                             token=token,
                                             url_args={'tag_name': query}
                                             )
