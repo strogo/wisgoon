@@ -99,3 +99,5 @@ SCORE_FOR_STREAMS = 10000
 
 BROKER_URL = 'amqp://guest@79.127.125.98//'
 CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.98//'
+
+NEO4J_DATABASE = "http://79.127.125.98:7474/db/data/"

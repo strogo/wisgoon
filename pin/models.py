@@ -799,10 +799,7 @@ class Post(models.Model):
 
         if pid == 0:
             pl = r_server.lrange(cat_stream, 0, 20)
-            print "1"
         else:
-            print "12"
-
             cache_name = "cl_%s_%s" % (cat_stream, pid)
             cache_data = cache.get(cache_name)
             if cache_data:

@@ -5,7 +5,6 @@ INSTANCE_NAME = 'jupiter'
 
 COMPRESS_OUTPUT_DIR = '{}_cache'.format(INSTANCE_NAME)
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
