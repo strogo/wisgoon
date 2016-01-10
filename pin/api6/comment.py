@@ -12,7 +12,7 @@ from pin.context_processors import is_police
 
 
 def comment_post(request, item_id):
-    limit = 10
+    limit = 20
     data = {}
     data['objects'] = {}
     data['meta'] = {'limit': limit, 'next': '', 'total_count': 1000}

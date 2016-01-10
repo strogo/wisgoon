@@ -414,7 +414,7 @@ def hashtag(request, tag_name):
 
         results = SearchQuerySet().models(Post)\
             .filter(tags=query)\
-            .order_by('-timestamp_i')[before:before + 1 * row_per_page]
+            .order_by('-timestamp_i')[before:before + row_per_page]
 
         cur_user = AuthCache.id_from_token(token=token)
         posts = []
