@@ -5,6 +5,17 @@ INSTANCE_NAME = 'saturn'
 
 COMPRESS_OUTPUT_DIR = '{}_cache'.format(INSTANCE_NAME)
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'feedreader',
+        'USER': 'root',
+        'PASSWORD': '-)**Z{QT',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+
 CELERY_ROUTES.update({
     'wisgoon.pin.add_to_storage': {
         'queue': 'add_storage_%s' % INSTANCE_NAME,
