@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 from settings_local import *
 
-INSTANCE_NAME = 'jupiter'
-
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
 
-# TEMPLATE_DIRS = (
-#     os.path.join(SITE_ROOT, 'templates'),
-# )
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
 STATIC_DOMAIN = "http://static.wisgoon.com/"
@@ -23,8 +18,6 @@ ADMINS = (
 )
 
 CASSANDRA_DB = '79.127.125.104'
-
-COMPRESS_OUTPUT_DIR = '{}_cache'.format(INSTANCE_NAME)
 
 DATABASES = {
     'default': {
@@ -60,15 +53,14 @@ CACHES = {
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://79.127.125.106:8080/solr'
-        # ...or for multicore...
-        # 'URL': 'http://127.0.0.1:8983/solr/mysite',
+        'URL': 'http://79.127.125.106:8080/solr',
     },
 }
 
-# DATABASE_ROUTERS = ['pin.MasterSlaveRouter']
+ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com', 'wisgoon.com', "Sib-DL2",
+                 "127.0.0.1:3060", "127.0.0.1:3061", "127.0.0.1:3062",
+                 "127.0.0.1"]
 
-ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com', 'wisgoon.com', "Sib-DL2", "127.0.0.1:3060", "127.0.0.1:3061", "127.0.0.1:3062", "127.0.0.1"]
 EMAIL_HOST = "wisgoon.com"
 DEFAULT_FROM_EMAIL = "info@wisgoon.com"
 
@@ -107,24 +99,3 @@ SCORE_FOR_STREAMS = 10000
 
 BROKER_URL = 'amqp://guest@79.127.125.98//'
 CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.98//'
-
-CELERY_ROUTES = {
-    'wisgoon.pin.add_to_storage': {
-        'queue': 'add_storage_%s' % INSTANCE_NAME,
-    },
-    'wisgoon.pin.add_avatar_to_storage': {
-        'queue': 'add_avatar_to_storage_%s' % INSTANCE_NAME,
-    },
-    'wisgoon.pin.migrate_avatar_storage': {
-        'queue': 'migrate_avatar_storage_%s' % INSTANCE_NAME,
-    },
-    'wisgoon.pin.post_to_followers': {
-        'queue': 'wisgoon.push.to.followers'
-    },
-    'wisgoon.pin.post_to_follower_single': {
-        'queue': 'wisgoon.push.follower'
-    },
-    'wisgoon.pin.check_porn': {
-        'queue': 'wisgoon.pin.check_porn'
-    }
-}

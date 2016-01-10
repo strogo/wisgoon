@@ -380,5 +380,20 @@ CELERY_ROUTES = {
     }
 }
 
+CELERY_ROUTES.update({
+    'wisgoon.pin.post_to_followers': {
+        'queue': 'wisgoon.push.to.followers'
+    },
+    'wisgoon.pin.post_to_follower_single': {
+        'queue': 'wisgoon.push.follower'
+    },
+    'wisgoon.pin.check_porn': {
+        'queue': 'wisgoon.pin.check_porn'
+    },
+    'wisgoon.pin.activity': {
+        'queue': 'wisgoon.pin.activity'
+    }
+})
+
 # format of avatar cache name by user_id
 AVATAR_CACHE_KEY = "dad:avatar:{}"
