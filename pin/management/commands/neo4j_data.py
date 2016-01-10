@@ -20,18 +20,19 @@ class Command(BaseCommand):
             for follow_obj in follows:
                 try:
                     usr = follow_obj
-                    UserGraph.get_or_create("Person",
-                                            usr.follower.username,
-                                            usr.follower.profile.name,
-                                            usr.follower.id)
-                    UserGraph.get_or_create("Person",
-                                            usr.following.username,
-                                            usr.following.profile.name,
-                                            usr.following.id)
+                    # UserGraph.get_or_create("Person",
+                    #                         usr.follower.username,
+                    #                         usr.follower.profile.name,
+                    #                         usr.follower.id)
+                    # UserGraph.get_or_create("Person",
+                    #                         usr.following.username,
+                    #                         usr.following.profile.name,
+                    #                         usr.following.id)
 
-                    FollowUser.get_or_create(start_id=usr.follower.id,
-                                             end_id=usr.following.id,
+                    FollowUser.get_or_create(start=usr.follower,
+                                             end=usr.following,
                                              rel_type="follow")
+                    self.stdout.write("relation {} created".format(follow_obj.id))
                 except Exception as e:
                     print str(e)
             limit += 1001
