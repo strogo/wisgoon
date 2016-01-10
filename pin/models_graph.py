@@ -1,12 +1,13 @@
 # -*- coding:utf-8 -*-
+import sys
 
 from py2neo import Graph
 from py2neo import Relationship
-# from py2neo import neo4j
-# from py2neo import rel
-# from py2neo import Node
 
 from django.conf import settings
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 try:
     graph = Graph(settings.NEO4J_DATABASE)
