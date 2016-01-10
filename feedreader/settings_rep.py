@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from settings_local import *
+from settings_production import *
 
 INSTANCE_NAME = 'saturn'
 

@@ -1,9 +1,20 @@
 # -*- coding: utf-8 -*-
-from settings_local import *
+from settings_production import *
 
 INSTANCE_NAME = 'mars'
 
 COMPRESS_OUTPUT_DIR = '{}_cache'.format(INSTANCE_NAME)
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'feedreader',
+        'USER': 'wisgoon_mars',
+        'PASSWORD': 'mjewyDbvLjtpCyAX',
+        'HOST': '79.127.125.104',
+        'PORT': '',
+    },
+}
 
 CELERY_ROUTES.update({
     'wisgoon.pin.add_to_storage': {
