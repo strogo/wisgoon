@@ -11,7 +11,7 @@ sys.setdefaultencoding('utf8')
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        limit = 5000
+        limit = 0
         while True:
             follows = Follow.objects.filter(id__range=[limit, limit + 1000])
             if not follows:

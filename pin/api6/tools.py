@@ -210,7 +210,7 @@ def post_item_json(post, cur_user_id=None, r=None):
         if cur_user_id:
             cache_post['like_with_user'] = LikesRedis(post_id=post.id)\
                 .user_liked(user_id=cur_user_id)
-        print "get post data item json from cache"
+        # print "get post data item json from cache"
         return cache_post
 
     pi = {}  # post item
