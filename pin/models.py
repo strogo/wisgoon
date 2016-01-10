@@ -925,10 +925,9 @@ class Follow(models.Model):
 
         MonthlyStats.log_hit(MonthlyStats.UNFOLLOW)
 
+        FollowUser.delete_relations(self.follower,
+                                    self.following)
         super(Follow, self).delete(*args, **kwargs)
-
-        FollowUser.delete_relations(self.follower.id,
-                                    self.following.id)
 
     def save(self, *args, **kwargs):
         super(Follow, self).save(*args, **kwargs)
@@ -953,8 +952,7 @@ class Follow(models.Model):
                                        date=datetime.now,
                                        seen=False)
             MonthlyStats.log_hit(MonthlyStats.FOLLOW)
-
-            FollowUser.get_or_create(follower_id, following_id, "follow")
+            FollowUser.get_or_create(instance.follower, instance.following, "follow")
 
 
 class Stream(models.Model):

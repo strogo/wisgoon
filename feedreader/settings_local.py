@@ -46,7 +46,7 @@ DATABASES = {
     }
 }
 
-NEO4J_DATABASE = "http://79.127.125.98:7474/db/data/"
+NEO4J_DATABASE = "http://localhost:7474/db/data/"
 
 REDIS_DB = 'wisgoon.db'
 REDIS_DB_NUMBER = 11

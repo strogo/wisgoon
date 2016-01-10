@@ -60,14 +60,15 @@ class UserGraph():
 class FollowUser():
 
     @classmethod
-    def get_relationship(cls, start_id, rel_type, end_id):
-        relation = None
-        start = None
-        end = None
+    def get_relationship(cls, start=None, rel_type=None, end=None):
 
-        start = UserGraph.get_node("Person", start_id)
-        end = UserGraph.get_node("Person", end_id)
+        start = UserGraph.get_or_create("Person", start.username,
+                                        start.profile.name,
+                                        start.id)
 
+        end = UserGraph.get_or_create("Person", end.username,
+                                      end.profile.name,
+                                      end.id)
         if start and end:
             data = {'start_node': start,
                     'end_node': end,
@@ -81,10 +82,10 @@ class FollowUser():
         return relation, start, end
 
     @classmethod
-    def get_or_create(cls, start_id, end_id, rel_type):
+    def get_or_create(cls, start, end, rel_type):
         try:
-            relation, start, end = cls.get_relationship(start_id=start_id,
-                                                        end_id=end_id,
+            relation, start, end = cls.get_relationship(start=start,
+                                                        end=end,
                                                         rel_type=rel_type)
             if not relation:
                 query = Relationship(start,
@@ -97,11 +98,11 @@ class FollowUser():
         return relation
 
     @classmethod
-    def delete_relations(cls, follower_id, following_id):
+    def delete_relations(cls, follower, following):
         try:
-            relations, start, end = cls.get_relationship(start_id=str(follower_id),
+            relations, start, end = cls.get_relationship(start=follower,
                                                          rel_type="follow",
-                                                         end_id=str(following_id))
+                                                         end=following)
             for relation in relations:
                 graph.delete(relation)
             status = True

@@ -68,6 +68,8 @@ HAYSTACK_CONNECTIONS = {
 
 # DATABASE_ROUTERS = ['pin.MasterSlaveRouter']
 
+NEO4J_DATABASE = "http://79.127.125.98:7474/db/data/"
+
 ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com', 'wisgoon.com', "Sib-DL2", "127.0.0.1:3060", "127.0.0.1:3061", "127.0.0.1:3062", "127.0.0.1"]
 EMAIL_HOST = "wisgoon.com"
 DEFAULT_FROM_EMAIL = "info@wisgoon.com"
