@@ -50,7 +50,8 @@
 			"description": "",
 			"order": [
 				"66cc3542-0aa4-791f-883f-e6647c732acc",
-				"c9c055d8-2a51-6c6c-2a0c-76fc13d9fdfa"
+				"c9c055d8-2a51-6c6c-2a0c-76fc13d9fdfa",
+				"9f96b273-4b51-b3e6-458c-5ba6d8765fea"
 			],
 			"owner": 0
 		},
@@ -71,7 +72,6 @@
 			"order": [
 				"dd82cd5f-75c2-dddc-9ced-78df14fe9a65",
 				"2e936f03-921a-01b6-a866-404c96fcd9f8",
-				"40602da7-5978-4e1f-23ef-e0307e822589",
 				"b9acda3b-1a6e-ab4e-f6c9-2f7e200946ef",
 				"8649d99c-4df9-d2dc-d7fb-a9dc5ff3db25",
 				"36c04420-14d0-e41e-3e9d-1438114aaf5c",
@@ -81,7 +81,8 @@
 				"e7aa4958-d38c-4255-f8b9-87bd45a3a362",
 				"fc5faee1-f01c-0424-e187-d32515f18da5",
 				"34bd7317-cc64-4aa1-4f69-e9a6df2c2d2f",
-				"eee7e768-2069-e2c8-2ada-4410aaaae3c5"
+				"eee7e768-2069-e2c8-2ada-4410aaaae3c5",
+				"c9b7db01-97ec-0ba8-1bfc-f17df968dd1f"
 			],
 			"owner": 0
 		},
@@ -399,27 +400,6 @@
 			"folder": "2b7d0f27-38b9-f9a9-8c38-d4bfcaa56b6d"
 		},
 		{
-			"id": "40602da7-5978-4e1f-23ef-e0307e822589",
-			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v6/post/category/1/?token=1234",
-			"pathVariables": {},
-			"preRequestScript": "",
-			"method": "GET",
-			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
-			"data": [],
-			"dataMode": "params",
-			"name": "Category",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1438433960464,
-			"version": 2,
-			"responses": [],
-			"tests": "",
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"folder": "9715ba0b-1c4a-96fb-89a2-992511c31dec"
-		},
-		{
 			"id": "48c975fd-f4bc-b13d-198a-e60ffb781cda",
 			"headers": "",
 			"url": "http://127.0.0.1:8000/api/v6/category/1/?token=1234",
@@ -581,6 +561,27 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"folder": "9715ba0b-1c4a-96fb-89a2-992511c31dec"
+		},
+		{
+			"id": "9f96b273-4b51-b3e6-458c-5ba6d8765fea",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/user/1/likes/?token=1234&before=27",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
+			"data": [],
+			"dataMode": "params",
+			"name": "User likes",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1452175892721,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "2e962602-edad-78ca-642f-076d1a663ddf"
 		},
 		{
 			"id": "a219b8b5-085e-7f35-2913-fb292cea8da5",
@@ -810,6 +811,27 @@
 			"responses": []
 		},
 		{
+			"id": "c9b7db01-97ec-0ba8-1bfc-f17df968dd1f",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/category/44/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
+			"data": [],
+			"dataMode": "params",
+			"name": "Post of Caregory",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1449480480667,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "9715ba0b-1c4a-96fb-89a2-992511c31dec"
+		},
+		{
 			"id": "c9c055d8-2a51-6c6c-2a0c-76fc13d9fdfa",
 			"headers": "",
 			"url": "http://127.0.0.1:8000/api/v6/like/post/1/?token=1234",
@@ -980,25 +1002,46 @@
 		{
 			"id": "eee7e768-2069-e2c8-2ada-4410aaaae3c5",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v6/hashtag/?token=1234&q=sport",
-			"pathVariables": {},
+			"url": "http://127.0.0.1:8000/api/v6/post/hashtag/?token=1234&q=sport",
 			"preRequestScript": "",
+			"pathVariables": {},
 			"method": "GET",
-			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
-			"data": [],
+			"data": [
+				{
+					"key": "image",
+					"value": null,
+					"type": "file",
+					"enabled": true
+				},
+				{
+					"key": "description",
+					"value": "kjljkljjk",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "url",
+					"value": "http://www.google.com",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "category",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				}
+			],
 			"dataMode": "params",
-			"name": "Hashtag",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1447828120161,
 			"version": 2,
-			"responses": [],
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"folder": "9715ba0b-1c4a-96fb-89a2-992511c31dec",
-			"isFromCollection": true,
-			"collectionRequestId": "eee7e768-2069-e2c8-2ada-4410aaaae3c5"
+			"time": 1448181043931,
+			"name": "Hashtag",
+			"description": "",
+			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff",
+			"responses": []
 		},
 		{
 			"id": "f883a6b2-90da-0788-944a-f5de822f0dd6",

@@ -7,6 +7,12 @@ from django.conf import settings
 from django.core.cache import cache
 
 
+@app.task(name="wisgoon.pin.activity")
+def activity(act_type, who, post_id):
+    from models_redis import ActivityRedis
+    ActivityRedis.push_to_activity(act_type, who, post_id)
+
+
 @app.task(name="wisgoon.pin.add_to_storage")
 def add_to_storage(post_id):
     from pin.models import Storages, Post

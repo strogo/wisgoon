@@ -30,7 +30,8 @@ class CommentClassificationTagsAdmin(admin.ModelAdmin):
 
 
 class BannedImeiAdmin(admin.ModelAdmin):
-    list_display = ('id', 'imei', 'create_time')
+    list_display = ('id', 'imei', 'create_time', 'user')
+    raw_id_fields = ("user",)
 
     search_fields = ["=imei", ]
 

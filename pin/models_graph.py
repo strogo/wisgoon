@@ -1,12 +1,13 @@
 # -*- coding:utf-8 -*-
+import sys
 
 from py2neo import Graph
 from py2neo import Relationship
-# from py2neo import neo4j
-# from py2neo import rel
-# from py2neo import Node
 
 from django.conf import settings
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 try:
     graph = Graph(settings.NEO4J_DATABASE)
@@ -27,7 +28,7 @@ class UserGraph():
         try:
             node = graph.merge_one(lable, "user_id", str(user_id))
             node['name'] = str(username)
-            node['username'] = str(username)
+            node['profile_name'] = str(nickname)
             node.push()
             user_node = node
         except Exception as e:
@@ -60,41 +61,49 @@ class UserGraph():
 class FollowUser():
 
     @classmethod
-    def get_relationship(cls, start_node, rel_type, end_node=None,
-                         bidirectional=None, limit=None):
-        data = {'start_node': start_node, 'rel_type': rel_type}
+    def get_relationship(cls, start=None, rel_type=None, end=None):
 
-        if end_node:
-            data['end_node'] = end_node
-        if bidirectional:
-            data['bidirectional'] = bidirectional
-        if limit:
-            data['limit'] = limit
+        start = UserGraph.get_or_create("Person", start.username,
+                                        start.profile.name,
+                                        start.id)
 
-        try:
-            relation = list(graph.match(**data))
-        except Exception as e:
-            print str(e), '6 models_graph'
-            relation = None
+        end = UserGraph.get_or_create("Person", end.username,
+                                      end.profile.name,
+                                      end.id)
+        if start and end:
+            data = {'start_node': start,
+                    'end_node': end,
+                    'rel_type': rel_type}
+            try:
+                relation = list(graph.match(**data))
+            except Exception as e:
+                print str(e), '6 models_graph'
+                relation = None
 
-        return relation
+        return relation, start, end
 
     @classmethod
-    def get_or_create(cls, start_node, end_node, rel_type):
+    def get_or_create(cls, start, end, rel_type):
         try:
-            relation = cls.get_relationship(start_node=start_node,
-                                            end_node=end_node,
-                                            rel_type=rel_type)
+            relation, start, end = cls.get_relationship(start=start,
+                                                        end=end,
+                                                        rel_type=rel_type)
             if not relation:
-                relation = graph.create_unique(Relationship(start_node, rel_type, end_node))
+                query = Relationship(start,
+                                     rel_type,
+                                     end)
+                relation = graph.create_unique(query)
         except Exception as e:
             print str(e), '7 models_graph'
             relation = None
         return relation
 
     @classmethod
-    def delete_relations(cls, relations):
+    def delete_relations(cls, follower, following):
         try:
+            relations, start, end = cls.get_relationship(start=follower,
+                                                         rel_type="follow",
+                                                         end=following)
             for relation in relations:
                 graph.delete(relation)
             status = True
@@ -105,12 +114,31 @@ class FollowUser():
 
     @classmethod
     def friend_suggestion(cls, username):
-        query = 'MATCH (user { name: "%s" })-[:follow*2]-(friend_of_friend)\
-                WHERE NOT (user)-[:follow]-(friend_of_friend) and not (user)\
+        friend_list = []
+        query = 'MATCH (user { name: "%s" })-[:follow*2]->(friend_of_friend)\
+                WHERE NOT (user)-[:follow]-(friend_of_friend)\
                 RETURN friend_of_friend.name, COUNT(*)\
-                ORDER BY COUNT(*) DESC , friend_of_friend.name' % str(username)
-        result = graph.cypher.execute(query)
-        return result
+                ORDER BY COUNT(*) DESC , friend_of_friend.name LIMIT 3' % str(username)
+        results = graph.cypher.execute(query)
+        for result in results:
+            friend_list.append(str(result['friend_of_friend.name']))
+        return friend_list
+
+
+class Mention():
+    @classmethod
+    def search_user(cls, name, string):
+        friend_list = []
+        query = 'MATCH (user { name: "%s" })-[:follow]->(friends)\
+                 WHERE friends.name CONTAINS "%s" OR\
+                 friends.profile_name CONTAINS "%s"\
+                 RETURN friends.user_id' % (name, string, string)
+
+        results = graph.cypher.execute(query)
+        for result in results:
+            friend_list.append(result['friends.user_id'])
+
+        return friend_list
 
 
 # class PostGraph():

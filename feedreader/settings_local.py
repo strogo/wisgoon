@@ -54,6 +54,8 @@ REDIS_DB_NUMBER = 11
 REDIS_DB_2 = 'wisgoon.db.2'
 REDIS_DB_NUMBER_2 = 10
 
+REDIS_DB_3 = 'wisgoon.db.3'
+
 MONGO_DB = "wisgoon"
 MONGO_DB_HOST = "wisgoon.mongo.db"
 
@@ -377,6 +379,21 @@ CELERY_ROUTES = {
         'queue': 'feeds'
     }
 }
+
+CELERY_ROUTES.update({
+    'wisgoon.pin.post_to_followers': {
+        'queue': 'wisgoon.push.to.followers'
+    },
+    'wisgoon.pin.post_to_follower_single': {
+        'queue': 'wisgoon.push.follower'
+    },
+    'wisgoon.pin.check_porn': {
+        'queue': 'wisgoon.pin.check_porn'
+    },
+    'wisgoon.pin.activity': {
+        'queue': 'wisgoon.pin.activity'
+    }
+})
 
 # format of avatar cache name by user_id
 AVATAR_CACHE_KEY = "dad:avatar:{}"

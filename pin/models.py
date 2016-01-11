@@ -33,6 +33,7 @@ from preprocessing import normalize_tags
 from pin.tasks import delete_image
 from pin.classification_tools import normalize
 from pin.api6.cache_layer import PostCacheLayer
+from pin.models_graph import FollowUser
 
 LIKE_TO_DEFAULT_PAGE = 10
 
@@ -798,10 +799,7 @@ class Post(models.Model):
 
         if pid == 0:
             pl = r_server.lrange(cat_stream, 0, 20)
-            print "1"
         else:
-            print "12"
-
             cache_name = "cl_%s_%s" % (cat_stream, pid)
             cache_data = cache.get(cache_name)
             if cache_data:
@@ -915,12 +913,17 @@ class Follow(models.Model):
         from user_profile.models import Profile
         follower_id = self.follower.id
         following_id = self.following.id
+
         Profile.objects.filter(user_id=follower_id)\
             .update(cnt_following=F('cnt_following') - 1)
 
         Profile.objects.filter(user_id=following_id)\
             .update(cnt_followers=F('cnt_followers') - 1)
+
         MonthlyStats.log_hit(MonthlyStats.UNFOLLOW)
+
+        FollowUser.delete_relations(self.follower,
+                                    self.following)
         super(Follow, self).delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
@@ -946,6 +949,7 @@ class Follow(models.Model):
                                        date=datetime.now,
                                        seen=False)
             MonthlyStats.log_hit(MonthlyStats.FOLLOW)
+            FollowUser.get_or_create(instance.follower, instance.following, "follow")
 
 
 class Stream(models.Model):
@@ -1409,6 +1413,8 @@ class PostMetaData(models.Model):
 class BannedImei(models.Model):
     imei = models.CharField(max_length=50, db_index=True)
     create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
+    description = models.TextField(default="")
+    user = models.ForeignKey(User, default=1)
 
 
 class Log(models.Model):

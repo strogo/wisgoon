@@ -11,6 +11,7 @@ from django.db.models import F
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from pin.model_mongo import MonthlyStats
+from pin.models_graph import UserGraph
 
 
 def avatar_file_name(instance, filename):
@@ -252,6 +253,13 @@ class CreditLog(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         MonthlyStats.log_hit(object_type=MonthlyStats.USER)
-        profile, created = Profile.objects.get_or_create(user=instance, name=instance.username)
+
+        profile, created = Profile.objects\
+            .get_or_create(user=instance, name=instance.username)
+        try:
+            UserGraph.get_or_create("Person", instance.username,
+                                    instance.profile.name, instance.id)
+        except Exception as e:
+            print str(e)
 
 post_save.connect(create_user_profile, sender=User)

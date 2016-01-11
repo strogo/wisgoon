@@ -14,6 +14,44 @@ rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
 # redis list server
 rListServer = redis.Redis(settings.REDIS_DB_2, db=4)
 leaderBoardServer = redis.Redis(settings.REDIS_DB_2, db=0)
+activityServer = redis.Redis(settings.REDIS_DB_3)
+
+
+class ActivityRedis(object):
+    KEY_PREFIX_LIST = "act:1.0:{}"
+
+    LIKE = 1
+    COMMENT = 2
+    FOLLOW = 3
+
+    def __init__(self, user_id):
+        self.KEY_PREFIX_LIST = self.KEY_PREFIX_LIST.format(user_id)
+
+    def get_activity(self):
+        from pin.api6.tools import post_item_json, get_simple_user_object
+        act_data = activityServer.lrange(self.KEY_PREFIX_LIST, 0, -1)
+        jdata = []
+        for actd in act_data:
+            act_type, actor, object_id = actd.split(":")
+            o = {}
+            o['object'] = post_item_json(int(object_id))
+            o['actor'] = get_simple_user_object(int(actor))
+            o['act_type'] = int(act_type)
+            jdata.append(o)
+        return jdata
+
+    @classmethod
+    def push_to_activity(cls, act_type, who, post_id):
+        from pin.models import Follow
+        flist = Follow.objects.filter(following_id=who)\
+            .values_list('follower_id', flat=True)
+        asp = activityServer.pipeline()
+        for u in flist:
+            cpl = cls.KEY_PREFIX_LIST.format(u)
+            data = "{}:{}:{}".format(act_type, who, post_id)
+            asp.lpush(cpl, data)
+            asp.ltrim(cpl, 0, 50)
+        asp.execute()
 
 
 class LikesRedis(object):
@@ -108,6 +146,9 @@ class LikesRedis(object):
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
             return False, True, self.cntlike()
         else:
+            # if int(user_id) == 1:
+            from pin.tasks import activity
+            activity.delay(act_type=1, who=user_id, post_id=self.postId)
             self.like(user_id=user_id, post_owner=post_owner)
             leaderBoardServer.zincrby(self.KEY_LEADERBORD, post_owner, 10)
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())

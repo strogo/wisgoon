@@ -8,12 +8,12 @@ from django.contrib.auth import logout as auth_logout
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
-from pin.models import Follow, Block, Likes, Post
+from pin.models import Follow, Block, Likes
 from pin.tools import AuthCache
 from pin.api6.http import return_bad_request, return_json_data, return_un_auth,\
     return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object, get_int, get_profile_data,\
-    update_follower_following, get_objects_list
+    update_follower_following, post_item_json
 
 from user_profile.models import Profile
 from user_profile.forms import ProfileForm
@@ -53,10 +53,9 @@ def followers(request, user_id):
         objects_list.append(o)
 
     data['objects'] = objects_list
-    if len(objects_list) == 20:
-        data['meta']['next'] = get_next_url(url_name='api-6-auth-followers',
-                                            offset=offset + 20, token=token,
-                                            url_args={'user_id': user_id})
+    data['meta']['next'] = get_next_url(url_name='api-6-auth-followers',
+                                        offset=offset + 20, token=token,
+                                        url_args={'user_id': user_id})
 
     return return_json_data(data)
 
@@ -88,10 +87,10 @@ def following(request, user_id=1):
         objects_list.append(o)
 
     data['objects'] = objects_list
-    if len(objects_list) == 20:
-        data['meta']['next'] = get_next_url(url_name='api-6-auth-following',
-                                            offset=offset + 20, token=token,
-                                            url_args={'user_id': user_id})
+    data['meta']['next'] = get_next_url(url_name='api-6-auth-following',
+                                        offset=offset + 20,
+                                        token=token,
+                                        url_args={'user_id': user_id})
 
     return return_json_data(data)
 
@@ -356,7 +355,7 @@ def user_search(request):
             return return_un_auth()
 
         results = SearchQuerySet().models(Profile)\
-            .filter(content__contains=query)[before:before + 1 * row_per_page]
+            .filter(content__contains=query)[before:before + row_per_page]
         for result in results:
             result = result.object
             o = {}
@@ -376,10 +375,10 @@ def user_search(request):
             #     o['follow_by_user'] = False
 
             data['objects'].append(o)
-            if len(data['objects']) == 20:
-                data['meta']['next'] = get_next_url(url_name='api-6-post-search',
-                                                    token=token,
-                                                    before=before + 1 * row_per_page)
+
+            data['meta']['next'] = get_next_url(url_name='api-6-post-search',
+                                                token=token,
+                                                before=before + row_per_page)
         return return_json_data(data)
     else:
         return return_bad_request()
@@ -391,12 +390,17 @@ def logout(request):
 
 
 def user_like(request, user_id):
+
     user_id = int(user_id)
-    post_list = []
-    token = request.GET.get('token', '')
     current_user_data = None
+    post_list = []
+
+    token = request.GET.get('token', '')
+    before = get_int(request.GET.get('before', 0))
+
     data = {}
     data['meta'] = {'limit': 20, 'next': "", 'total_count': 1000}
+
     if token:
         current_user = AuthCache.user_from_token(token=token)
         if not current_user:
@@ -408,28 +412,28 @@ def user_like(request, user_id):
         User.objects.get(id=user_id)
     except User.DoesNotExist:
         return return_not_found()
+    try:
+        profile = Profile.objects.get(user_id=user_id)
+    except:
+        profile = Profile.objects.create(user_id=user_id)
 
-    profile = Profile.objects.get(user_id=user_id)
-
-    before = request.GET.get('before', '')
-    if before:
-        user_likes = Likes.user_likes(user_id=user_id, pid=before)
-    else:
-        user_likes = Likes.user_likes(user_id=user_id)
+    user_likes = Likes.user_likes(user_id=user_id, pid=before)
 
     for obj in user_likes:
         try:
-            post_list.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=obj))
-        except:
-            pass
-
-    data['latest_items'] = get_objects_list(post_list)
+            if token:
+                post_list.append(post_item_json(int(obj), int(current_user.id)))
+            else:
+                post_list.append(post_item_json(int(obj)))
+        except Exception as e:
+            print str(e)
+    data['latest_items'] = post_list
     data['user'] = get_simple_user_object(user_id)
     data['profile'] = get_profile_data(profile, user_id)
     data['current_user'] = current_user_data
-
-    if len(data['latest_items']) == 20:
-        last_item = data['latest_items'][-1]['id']
+    if post_list:
         data['meta']['next'] = get_next_url(url_name='api-6-auth-user-like',
-                                            token=token, before=last_item)
+                                            token=token,
+                                            before=post_list[-1]['id'],
+                                            url_args={"user_id": user_id})
     return return_json_data(data)
