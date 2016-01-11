@@ -30,7 +30,8 @@
 .content .photo {
 	padding-bottom: 50px;
 	width: 236px;
-	margin: 10px 10px 40px ;
+	box-shadow: 0 5px 10px #999;
+	margin-bottom: 20px;
 }
 .content .photo img {
 	width: 236px;
@@ -252,6 +253,8 @@ ul, ol{
 }
 .sidebar-menu small {
 	background-color: #ff6a00 !important;
+	position: relative;
+	bottom: 20px;
 }
 .main-footer a {
 	color: #ff6a00 !important;
@@ -281,7 +284,7 @@ ul, ol{
 table img {
 	width: 100px;
 }
- .logs .select {
+.logs .select {
 	border-bottom: 1px solid #ccc;
 	padding-bottom: 10px;
 	margin-bottom: 10px;
@@ -290,7 +293,6 @@ table img {
 	border-bottom: 1px solid #ccc;
 	margin: 0 22px;
 	padding-bottom: 10px;
-	width: 1006px !important;
 }
 .select .button {
 	background-color: transparent;
@@ -329,11 +331,11 @@ table img {
 	margin: 0 10px;
 	padding: 5px 10px;
 }
-.pagination-table {
-position: relative;
-bottom: 20px;
+.tables-pagination {
+	position: relative;
+	bottom: 20px;
 }
-.pagination-table a {
+.tables-pagination a {
 	border-color: #ccc !important;
 	color: #ccc !important;
 	margin-right: 0px !important;
@@ -364,4 +366,51 @@ bottom: 20px;
 }
 .filter .title h6 {
 	margin: 0;
+}
+.filter .submit button {
+	border: 1px solid #ccc;
+	float: left;
+}
+.masonry-brick {
+	margin: 10px;
+}
+.resize {
+	width: 860px !important;
+}
+.filter a:hover,
+.filter a:active,
+.filter a:focus {
+	color: #444 !important;
+}
+.tables-pagination a:hover {
+	border-color: #444 !important;
+	color: #444 !important;
+}
+.box-tools input {
+  border: 1px solid #f4f4f4;
+  border-radius: 5px;
+  margin-left: 20px;
+  padding: 3px 5px;
+  width: 185px;
+  padding-right: 15px;
+}
+.box-tools label {
+  font-size: 11px;
+  font-weight: normal;
+  padding-left: 5px;
+  position: relative;
+  top: -2px;
+}
+.fa.fa-calendar {
+  color: #ccc;
+  font-size: 17px;
+  padding-left: 5px;
+  position: relative;
+  top: 2px;
+}
+.btn-next {
+  transform: rotate(180deg);
+}
+.btn-prev {
+  transform: rotate(-180deg);
 }

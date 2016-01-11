@@ -12,10 +12,17 @@
   </section>
 
   <section class="content">
-      <div class="box box-info">
+
+    <div class="box box-info">
       <div class="box-header with-border">
         <h3 class="box-title">فالورها</h3>
         <div class="box-tools pull-right">
+          <label>از تاریخ :</label>
+          <input id="follow_start" type="text"/>
+          <input id="follow_start_value" type="hidden"/>
+          <label>تا تاریخ :</label>
+          <input id="follow_end" type="text">
+          <input id="follow_end_value" type="hidden"/>
           <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
           <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
@@ -31,6 +38,12 @@
       <div class="box-header with-border">
         <h3 class="box-title">بلاک ها</h3>
         <div class="box-tools pull-right">
+          <label>از تاریخ :</label>
+          <input id="block_start" type="text"/>
+          <input id="block_start_value" type="hidden"/>
+          <label>تا تاریخ :</label>
+          <input id="block_end" type="text">
+          <input id="block_end_value" type="hidden"/>
           <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
           <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
@@ -46,6 +59,12 @@
       <div class="box-header with-border">
         <h3 class="box-title">لایک ها</h3>
         <div class="box-tools pull-right">
+          <label>از تاریخ :</label>
+          <input id="like_start" type="text"/>
+          <input id="like_start_value" type="hidden"/>
+          <label>تا تاریخ :</label>
+          <input id="like_end" type="text">
+          <input id="like_end_value" type="hidden"/>
           <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
           <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
@@ -61,29 +80,93 @@
       <div class="box-header with-border">
         <h3 class="box-title">نظرات</h3>
         <div class="box-tools pull-right">
+          <label>از تاریخ :</label>
+          <input id="comment_start" type="text"/>
+          <input id="comment_start_value" type="hidden"/>
+          <label>تا تاریخ :</label>
+          <input id="comment_end" type="text">
+          <input id="comment_end_value" type="hidden"/>
           <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
           <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
       </div>
       <div class="box-body">
-       <div class="chart" ng-controller="cmCtrl">
-          <highchart class="chart-ltr" config="highchartsNG"></highchart>
-        </div>
+       <div class="chart" ng-controller="commentCtrl">
+        <highchart class="chart-ltr" config="highchartsNG"></highchart>
       </div>
     </div>
-    <div class="box box-info">
-      <div class="box-header with-border">
-        <h3 class="box-title">کاربران</h3>
-        <div class="box-tools pull-right">
-          <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-          <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-        </div>
+  </div>
+
+  <div class="box box-info">
+    <div class="box-header with-border">
+      <h3 class="box-title">کاربران</h3>
+      <div class="box-tools pull-right">
+        <label>از تاریخ :</label>
+        <input id="user_start" type="text"/>
+        <input id="user_start_value" type="hidden"/>
+        <label>تا تاریخ :</label>
+        <input id="user_end" type="text">
+        <input id="user_end_value" type="hidden"/>
+        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
       </div>
-      <div class="box-body">
-        <div class="chart">
-          <canvas id="lineChart" style="height:250px"></canvas>
-        </div>
+    </div>
+    <div class="box-body">
+      <div class="chart" ng-controller="userCtrl">
+        <highchart class="chart-ltr" config="highchartsNG"></highchart>
       </div>
-    </div> 
-  </section>
+    </div>
+  </div> 
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+    //user
+    $('#user_start').pDatepicker({
+      altField: '#user_start_value',
+      format: 'YYYY-MM-DD'
+    });
+    $('#user_end').pDatepicker({
+      altField: '#user_end_value',
+      format: 'YYYY-MM-DD'
+    });
+    //comment
+    $('#comment_start').pDatepicker({
+      altField: '#comment_start_value',
+      format: 'YYYY-MM-DD'
+    });
+    $('#comment_end').pDatepicker({
+      altField: '#comment_end_value',
+      format: 'YYYY-MM-DD'
+    });
+     //like
+     $('#like_start').pDatepicker({
+      altField: '#like_start_value',
+      format: 'YYYY-MM-DD'
+    });
+     $('#like_end').pDatepicker({
+      altField: '#like_end_value',
+      format: 'YYYY-MM-DD'
+    });
+    //block
+    $('#block_start').pDatepicker({
+      altField: '#block_start_value',
+      format: 'YYYY-MM-DD'
+    });
+    $('#block_end').pDatepicker({
+      altField: '#block_end_value',
+      format: 'YYYY-MM-DD'
+    });
+      //follow
+      $('#follow_start').pDatepicker({
+        altField: '#follow_start_value',
+        format: 'YYYY-MM-DD',
+      });
+      $('#follow_end').pDatepicker({
+        altField: '#follow_end_value',
+        format: 'YYYY-MM-DD',
+
+      });
+    });
+</script>
+</section>
 </div>

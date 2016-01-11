@@ -11,12 +11,6 @@ app.controller('indexController',['$scope','$http', function($scope, $http) {
 	});
 }]);
 
-app.controller('adsController',['$scope','$http', function($scope, $http) {
-}]);
-
-app.controller('logsController',['$scope','$http', function($scope, $http) {
-}]);
-
 app.controller('activityUserController',['$scope','$http', function($scope, $http) {
 }]);
 
@@ -41,12 +35,16 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 	$scope.deletePost = function(cmId) {
 		$http({
 			method  : 'POST',
-			data    :  'post_ids='+ cmId,
+			data    :  'post_ids='+ cmId+ ',',
 			url     : 'http://127.0.0.1:8000/dashboard/api/post/delete/',
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+		}).success(function(data) {
+			console.log(data);
 		});
 
+		$( "[postId='"+cmId+"']").remove();
 	};
+
 	$scope.undoPost = function(cmId) {
 
 		$http({
@@ -57,7 +55,6 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 		})
 
 	};
-
 
 	var reported = function() {
 		this.bricks = [];
@@ -158,7 +155,7 @@ app.controller('catstatController',['$http','$scope', function($http, $scope, dr
 	});
 }]);
 
-app.controller('adsstatController',['$scope','$http', function($scope, $http) {
+app.controller('adsController',['$scope','$http', function($scope, $http) {
 	
 	$http.get("http://127.0.0.1:8000/dashboard/api/post/showAds/?date=2015-12-19&ended=0")
 	.success(function(data){
@@ -319,8 +316,60 @@ app.controller('blockCtrl',['$scope','$http', function($scope, $http) {
 	});
 }]);
 
+app.controller('userCtrl',['$scope','$http', function($scope, $http) {
+	$http.get("http://127.0.0.1:8000/dashboard/api/user_stats/?start=2015-12-09&end=2015-12-13&chart_type=bar")
+	.success(function(data){
+		var userChartInfo= data.objects;
+		$scope.highchartsNG = {
+			options: {
+				chart: {
+					type: userChartInfo.chart_type
+				},
+				title: {
+					text: 'Browser market shares. January, 2015 to May, 2015'
+				},
+				subtitle: {
+					text: 'تعداد کاربر های به مدت یک ماه'
+				},
+				plotOptions: {
+					series: {
+						dataLabels: {
+							enabled: true,
+							format: '{point.name}: {point.y}'
+						}
+					}
+				},
+				xAxis: { type: 'datetime' },
+				yAxis: {
+					title:{
+						text: "تعداد کاربر ها"
+					}
+
+				},
+				tooltip: {
+					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> کاربر ها به مدت یک ماه<br/>'
+				},
+			},
+			series: [{
+				name: 'کاربر ها',
+				colorByPoint: true,
+				data: userChartInfo.sub_cat
+			}],
+			title: {
+				text: ''
+			},
+			loading: false
+		}
+	});
+}]);
+
 app.controller('followCtrl',['$scope','$http', function($scope, $http) {
-	$http.get("http://127.0.0.1:8000/dashboard/api/follow_stats/?start=2015-12-09&end=2015-12-28&chart_type=line")
+
+	var start_time = $( "#follow_start_value" ).val();
+	var end_time = $( "#follow_end_value" ).val();
+
+	$http.get('http://127.0.0.1:8000/dashboard/api/follow_stats/?start='+start_time+'&end='+end_time+'&chart_type=line')
 	.success(function(data){
 		var folowChartInfo= data.objects;
 		$scope.highchartsNG = {
@@ -425,7 +474,79 @@ app.controller('likesCtrl',['$scope','$http', function($scope, $http) {
 	});
 }]);
 
-app.controller('cmCtrl',['$scope','$http', function($scope, $http) {
+app.controller('sellCtrl',['$scope','$http', function($scope, $http) {
+	$http.get("http://127.0.0.1:8000/dashboard/api/bill_stats/?start=2015-12-09&end=2016-01-25&chart_type=area")
+	.success(function(data){
+		var sellChartInfo= data.objects;
+		$scope.highchartsNG = {
+			options: {
+				chart: {
+					type: sellChartInfo.chart_type,
+					backgroundColor: "transparent",
+					colors:['#fff'],
+					height: 290
+				},
+				title: {
+					text: 'Browser market shares. January, 2015 to May, 2015',
+					style: {
+						fontSize:'16px',
+						color: '#fff'
+					}
+					
+				},
+				subtitle: {
+					text: 'فروش ویس به مدت یک ماه',
+					style: {
+						fontSize:'16px',
+						color: '#fff'
+					}
+				},
+				plotOptions: {
+					series: {
+						dataLabels: {
+							enabled: true,
+							format: '{point.y}'
+						}
+					}
+				},
+				xAxis: { type: 'datetime' },
+				yAxis: {
+					title:{
+						text: "فروش ویس"
+					}
+
+				},
+				yAxis: {
+					title:{
+						text: "فروش ویس",
+						style: {
+							fontSize:'16px',
+							color: '#fff'
+						}
+					}
+
+				},
+
+
+				tooltip: {
+					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> ویس های فروخنه شده به مدت یک ماه<br/>'
+				},
+			},
+			series: [{
+				name: 'فروش',
+				data: sellChartInfo.data
+			}],
+
+			title: {
+				text: ''
+			},
+			loading: false
+		}
+	});
+}]);
+
+app.controller('commentCtrl',['$scope','$http', function($scope, $http) {
 	$http.get("http://127.0.0.1:8000/dashboard/api/comment_stats/?start=2015-12-09&end=2015-12-28&chart_type=line")
 	.success(function(data){
 		var cmChartInfo= data.objects;
@@ -481,21 +602,58 @@ app.controller('cmCtrl',['$scope','$http', function($scope, $http) {
 	});
 }]);
 
-app.controller('logsCtrl',['$scope','$http', function($scope, $http ,logsInfo) {
-	var logsInfo = function() {
-		this.logs = [];
-		this.url = "http://127.0.0.1:8000/dashboard/api/log/show/";
+app.controller('logsController',['$scope','$http', function($scope, $http ) {
+	$scope.contentValue = 1;
+	$scope.actionValue = 1;
 
+	$scope.submitForm = function () {	
+		var actionFilter = $scope.contentValue;
+		var contentFilter = $scope.actionValue;
+
+		this.logs=[];
+
+		this.url="http://127.0.0.1:8000/dashboard/api/log/show/?content_type="+contentFilter+"&action="+actionFilter;
 		$http.get(this.url).success(function(data) {
-			this.url = data.meta.next;
+			$scope.nextUrl = data.meta.next;
+			$scope.prevUrl = data.meta.previous;
 			var logs = data.objects;
 			for (var i = 0; i < logs.length; i++) {
 				this.logs.push(logs[i]);
-			}
+			};
 		}.bind(this));
 	};
-	$scope.logsItem = new logsInfo();
-	return false;
+	$scope.next_page= function () {	
+		var actionFilter = $scope.contentValue;
+		var contentFilter = $scope.actionValue;
+
+		this.logs=[];
+
+		this.url=$scope.nextUrl;
+		$http.get(this.url).success(function(data) {
+			$scope.nextUrl = data.meta.next;
+			$scope.prevUrl = data.meta.previous;
+			var logs = data.objects;
+			for (var i = 0; i < logs.length; i++) {
+				this.logs.push(logs[i]);
+			};
+		}.bind(this));
+	};
+	$scope.prev_page= function () {	
+		var actionFilter = $scope.contentValue;
+		var contentFilter = $scope.actionValue;
+
+		this.logs=[];
+
+		this.url=$scope.prevUrl;
+		$http.get(this.url).success(function(data) {
+			$scope.nextUrl = data.meta.next;
+			$scope.prevUrl = data.meta.previous;
+			var logs = data.objects;
+			for (var i = 0; i < logs.length; i++) {
+				this.logs.push(logs[i]);
+			};
+		}.bind(this));
+	};
 }]);
 
 app.controller('searchController',['$scope','$stateParams','$http','$location',function($scope,$stateParams,$http,$location) {
@@ -533,3 +691,18 @@ app.controller('searchController',['$scope','$stateParams','$http','$location',f
 		}.bind(this));
 	};
 }]);
+
+app.controller('viewController',['$scope','$stateParams','$http','$location',function($scope,$stateParams,$http,$location) {
+
+}]);
+
+app.controller('logoutController',function($scope,$http,$location){
+	$scope.logout = function() {
+		$http.get("http://127.0.0.1:8000/api/v6/auth/logout/")
+		.success(function(data) {
+			user_token='';
+			user_id='';
+			$location.path('/login');
+		})
+	};
+});

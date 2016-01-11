@@ -25,14 +25,14 @@ if (typeof jQuery === "undefined") {
  *              prevents conflict with other plugins and is a better
  *              way to organize our code.
  */
-$.AdminLTE = {};
+ $.AdminLTE = {};
 
 /* --------------------
  * - AdminLTE Options -
  * --------------------
  * Modify these options to suit your implementation
  */
-$.AdminLTE.options = {
+ $.AdminLTE.options = {
   //Add slimscroll to navbar menus
   //This requires you to load the slimscroll plugin
   //in every page before app.js
@@ -137,22 +137,21 @@ $.AdminLTE.options = {
  * functions and plugins as specified by the
  * options above.
  */
-$(function () {
+ $(function () {
   "use strict";
 
   //Extend options if external options exist
   if (typeof AdminLTEOptions !== "undefined") {
     $.extend(true,
-            $.AdminLTE.options,
-            AdminLTEOptions);
+      $.AdminLTE.options,
+      AdminLTEOptions);
   }
 
   //Easy access to options
   var o = $.AdminLTE.options;
 
   //Set up the object
-  _init();
-
+  _init();  
   //Activate the layout maker
   $.AdminLTE.layout.activate();
 
@@ -207,7 +206,7 @@ $(function () {
    * INITIALIZE BUTTON TOGGLE
    * ------------------------
    */
-  $('.btn-group[data-toggle="btn-toggle"]').each(function () {
+   $('.btn-group[data-toggle="btn-toggle"]').each(function () {
     var group = $(this);
     $(this).find(".btn").on('click', function (e) {
       group.find(".btn.active").removeClass("active");
@@ -216,14 +215,14 @@ $(function () {
     });
 
   });
-});
+ });
 
 /* ----------------------------------
  * - Initialize the AdminLTE Object -
  * ----------------------------------
  * All AdminLTE functions are implemented below.
  */
-function _init() {
+ function _init() {
   'use strict';
   /* Layout
    * ======
@@ -234,7 +233,7 @@ function _init() {
    *        $.AdminLTE.layout.fix()
    *        $.AdminLTE.layout.fixSidebar()
    */
-  $.AdminLTE.layout = {
+   $.AdminLTE.layout = {
     activate: function () {
       var _this = this;
       _this.fix();
@@ -305,22 +304,26 @@ function _init() {
    * @type Function
    * @usage: $.AdminLTE.pushMenu("[data-toggle='offcanvas']")
    */
-  $.AdminLTE.pushMenu = {
+   $.AdminLTE.pushMenu = {
     activate: function (toggleBtn) {
       //Get the screen sizes
       var screenSizes = $.AdminLTE.options.screenSizes;
 
       //Enable sidebar toggle
-      $(toggleBtn).on('click', function (e) {
+      $(document).on('click', toggleBtn, function (e) {
         e.preventDefault();
 
         //Enable sidebar push menu
         if ($(window).width() > (screenSizes.sm - 1)) {
           if ($("body").hasClass('sidebar-collapse')) {
+            $("#feed").addClass('resize');
+            $('#feed').masonry();
             $("body").removeClass('sidebar-collapse').trigger('expanded.pushMenu');
             $(".content-header>h1,.main-header>.navbar").removeClass('margin-50');
             $(".sidebar-menu>li .label,.fa-angle-left").show();
           } else {
+            $("#feed").removeClass('resize');
+            $('#feed').masonry();
             $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
             $(".content-header>h1,.main-header>.navbar").addClass('margin-50');
             $(".sidebar-menu>li .label,.fa-angle-left").hide();
@@ -336,7 +339,7 @@ function _init() {
         }
       });
 
-      $(".content-wrapper").click(function () {
+$(".content-wrapper").click(function () {
         //Enable hide menu when clicking on the content-wrapper on small screens
         if ($(window).width() <= (screenSizes.sm - 1) && $("body").hasClass("sidebar-open")) {
           $("body").removeClass('sidebar-open');
@@ -345,28 +348,28 @@ function _init() {
 
       //Enable expand on hover for sidebar mini
       if ($.AdminLTE.options.sidebarExpandOnHover
-              || ($('body').hasClass('fixed')
-                      && $('body').hasClass('sidebar-mini'))) {
+        || ($('body').hasClass('fixed')
+          && $('body').hasClass('sidebar-mini'))) {
         this.expandOnHover();
-      }
-    },
-    expandOnHover: function () {
-      var _this = this;
-      var screenWidth = $.AdminLTE.options.screenSizes.sm - 1;
+    }
+  },
+  expandOnHover: function () {
+    var _this = this;
+    var screenWidth = $.AdminLTE.options.screenSizes.sm - 1;
       //Expand sidebar on hover
       $('.main-sidebar').hover(function () {
         if ($('body').hasClass('sidebar-mini')
-                && $("body").hasClass('sidebar-collapse')
-                && $(window).width() > screenWidth) {
+          && $("body").hasClass('sidebar-collapse')
+          && $(window).width() > screenWidth) {
           _this.expand();
-        }
-      }, function () {
-        if ($('body').hasClass('sidebar-mini')
-                && $('body').hasClass('sidebar-expanded-on-hover')
-                && $(window).width() > screenWidth) {
-          _this.collapse();
-        }
-      });
+      }
+    }, function () {
+      if ($('body').hasClass('sidebar-mini')
+        && $('body').hasClass('sidebar-expanded-on-hover')
+        && $(window).width() > screenWidth) {
+        _this.collapse();
+    }
+  });
     },
     expand: function () {
       $("body").removeClass('sidebar-collapse').addClass('sidebar-expanded-on-hover');
@@ -386,7 +389,7 @@ function _init() {
    * @type Function
    * @Usage: $.AdminLTE.tree('.sidebar')
    */
-  $.AdminLTE.tree = function (menu) {
+   $.AdminLTE.tree = function (menu) {
     var _this = this;
     var animationSpeed = $.AdminLTE.options.animationSpeed;
     $(document).on('click', menu + ' li a', function (e) {
@@ -430,7 +433,7 @@ function _init() {
         e.preventDefault();
       }
     });
-  };
+};
 
   /* ControlSidebar
    * ==============
@@ -439,7 +442,7 @@ function _init() {
    * @type Object
    * @usage $.AdminLTE.controlSidebar.activate(options)
    */
-  $.AdminLTE.controlSidebar = {
+   $.AdminLTE.controlSidebar = {
     //instantiate the object
     activate: function () {
       //Get the object
@@ -456,13 +459,13 @@ function _init() {
         e.preventDefault();
         //If the sidebar is not open
         if (!sidebar.hasClass('control-sidebar-open')
-                && !$('body').hasClass('control-sidebar-open')) {
+          && !$('body').hasClass('control-sidebar-open')) {
           //Open the sidebar
-          _this.open(sidebar, o.slide);
-        } else {
-          _this.close(sidebar, o.slide);
-        }
-      });
+        _this.open(sidebar, o.slide);
+      } else {
+        _this.close(sidebar, o.slide);
+      }
+    });
 
       //If the body has a boxed layout, fix the sidebar bg position
       var bg = $(".control-sidebar-bg");
@@ -534,7 +537,7 @@ function _init() {
    * @usage $.AdminLTE.boxWidget.activate()
    *        Set all your options in the main $.AdminLTE.options object
    */
-  $.AdminLTE.boxWidget = {
+   $.AdminLTE.boxWidget = {
     selectors: $.AdminLTE.options.boxWidgetOptions.boxWidgetSelectors,
     icons: $.AdminLTE.options.boxWidgetOptions.boxWidgetIcons,
     animationSpeed: $.AdminLTE.options.animationSpeed,
@@ -564,8 +567,8 @@ function _init() {
       if (!box.hasClass("collapsed-box")) {
         //Convert minus into plus
         element.children(":first")
-                .removeClass(_this.icons.collapse)
-                .addClass(_this.icons.open);
+        .removeClass(_this.icons.collapse)
+        .addClass(_this.icons.open);
         //Hide the content
         box_content.slideUp(_this.animationSpeed, function () {
           box.addClass("collapsed-box");
@@ -573,8 +576,8 @@ function _init() {
       } else {
         //Convert plus into minus
         element.children(":first")
-                .removeClass(_this.icons.open)
-                .addClass(_this.icons.collapse);
+        .removeClass(_this.icons.open)
+        .addClass(_this.icons.collapse);
         //Show the content
         box_content.slideDown(_this.animationSpeed, function () {
           box.removeClass("collapsed-box");
@@ -587,7 +590,7 @@ function _init() {
       box.slideUp(this.animationSpeed);
     }
   };
-}
+};
 
 /* ------------------
  * - Custom Plugins -
@@ -604,7 +607,7 @@ function _init() {
  * @type plugin
  * @usage $("#box-widget").boxRefresh( options );
  */
-(function ($) {
+ (function ($) {
 
   "use strict";
 
@@ -682,7 +685,7 @@ function _init() {
  * @type plugin
  * @usage $("#box-widget").activateBox();
  */
-(function ($) {
+ (function ($) {
 
   'use strict';
 
@@ -700,7 +703,7 @@ function _init() {
  * @type plugin
  * @usage $("#todo-widget").todolist( options );
  */
-(function ($) {
+ (function ($) {
 
   'use strict';
 
@@ -745,3 +748,10 @@ function _init() {
     });
   };
 }(jQuery));
+var masonryUpdate = function() {
+    setTimeout(function() {
+        $('#feed').masonry();
+    }, 500);
+}
+$(document).on('click', masonryUpdate);
+$(document).ajaxComplete(masonryUpdate);

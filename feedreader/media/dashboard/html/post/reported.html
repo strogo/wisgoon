@@ -13,13 +13,13 @@
 	</section>
 	<section class="content reported">
 		<div class="select">
-				<button class="button" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
+			<button class="button" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
 			<span><a href="" ng-show="select" ng-click="batchDelete()"><i class="fa fa-trash"></i></a></span>
 		</div>
-		<div id="feed" masonry load-images="false" reload-on-resize infinite-scroll='postItem.nextPage()' infinite-scroll-distance='1' style="width:1036px">
+		<div class="clear"></div>
+		<div id="feed" load-images="false" class="resize" masonry reload-on-resize  infinite-scroll='postItem.nextPage()' infinite-scroll-distance='1'>
 			<div ng-show='postItem.busy'>Loading data...</div>
 			<div  class="masonry-brick" ng-repeat="brick in postItem.bricks">
-				
 				<div class="box box-solid photo" id="br-{[{brick.id}]}" postId="{[{brick.id}]}">
 					<a href="" ng-show="select" ng-click="selectItem(brick.id)">
 						<span ng-class="class" class="fa fa-square-o pull-left"></span>

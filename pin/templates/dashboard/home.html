@@ -5,8 +5,8 @@
 	<meta charset="UTF-8">
 	<title>wisgoon Dashboard</title>
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/font-awesome.min.css">
+	<link rel="stylesheet" href="{{MEDIA_URL}}v2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="{{MEDIA_URL}}v2/css/font-awesome.min.css">
 	<link rel="stylesheet" href="{{ MEDIA_URL }}dashboard/dist/css/ionicons.min.css">
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/css/AdminLTE.min.css">
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/css/style.css">
@@ -15,13 +15,14 @@
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/morris/morris.css">
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/datatables/dataTables.bootstrap.css">
-	
-	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/datepicker/datepicker3.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/daterangepicker/daterangepicker-bs3.css">
+	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/css/persian-datepicker-0.4.5.min.css">
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/fonts/fonts-fa.css">
 	<link rel="stylesheet" href="{{MEDIA_URL}}v2/css/bootstrap-rtl.min.css">
 	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/css/highslide.css">
+	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/css/AdminLTE.css">
+	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/build/less/sidebar.less">
+
 
 </head>
 
@@ -41,7 +42,7 @@
 		</footer>
 	</div>
 	<!-- npm node_modules  -->
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/jquery.js"></script>
+	<script src="{{MEDIA_URL}}dashboard/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 	<script src="{{ MEDIA_URL }}angular/js/node_modules/jquery.bridget.js"></script>
 	<script src="{{ MEDIA_URL }}angular/js/node_modules/get-style-property.js"></script>
 	<script src="{{ MEDIA_URL }}angular/js/node_modules/get-size.js"></script>
@@ -59,18 +60,7 @@
 	<script src="{{ MEDIA_URL }}angular/js/node_modules/angular-ui-router.min.js"></script>
 
 
-	<!-- end npm angular/js/node_modules -->
-	<script src="{{ MEDIA_URL }}dashboard/js/app.js"></script>
-	<script src="{{ MEDIA_URL }}dashboard/js/main-controller.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/ng-infinite-scroll.min.js"></script>
-	<script src="{{MEDIA_URL}}dashboard/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/dist/js/jquery-ui.min.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/highcharts-ng.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/highstock.src.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/drilldown.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/highslide-full.min.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/highslide.config.js"></script>
-		<script src="{{MEDIA_URL}}dashboard/dist/js/app.min.js"></script>
 	<script>
 		$.widget.bridge('uibutton', $.ui.button);
 	</script>
@@ -81,13 +71,23 @@
 	<script src="{{MEDIA_URL}}dashboard/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/plugins/knob/jquery.knob.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/dist/js/moment.min.js"></script>
-	<script src="{{MEDIA_URL}}dashboard/plugins/daterangepicker/daterangepicker.js"></script>
-	<script src="{{MEDIA_URL}}dashboard/plugins/datepicker/bootstrap-datepicker.js"></script>
+	<script src="{{MEDIA_URL}}dashboard/plugins/persian-datepicker-0.4.5.min.js"></script>
+	<script src="{{MEDIA_URL}}dashboard/plugins/persian-date.js"></script>
+	<script src="{{MEDIA_URL}}dashboard/plugins/pwt-date.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/plugins/fastclick/fastclick.min.js"></script>
+	<script src="{{MEDIA_URL}}dashboard/dist/js/appw.js"></script>
 	<script src="{{MEDIA_URL}}dashboard/dist/js/demo.js"></script>
-
+	<!-- end npm angular/js/node_modules -->
+	<script src="{{ MEDIA_URL }}dashboard/js/app.js"></script>
+	<script src="{{ MEDIA_URL }}dashboard/js/main-controller.js"></script>
+	<script src="{{ MEDIA_URL }}angular/js/ng-infinite-scroll.min.js"></script>
+	<script src="{{MEDIA_URL}}angular/js/highcharts-ng.js"></script>
+	<script src="{{MEDIA_URL}}angular/js/highstock.src.js"></script>
+	<script src="{{MEDIA_URL}}angular/js/drilldown.js"></script>
+	<script src="{{MEDIA_URL}}angular/js/highslide-full.min.js"></script>
+	<script src="{{MEDIA_URL}}angular/js/highslide.config.js"></script>
 </body>
 
 </html>

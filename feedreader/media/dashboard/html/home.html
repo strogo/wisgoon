@@ -8,7 +8,6 @@
 
 		<h1>
 			پیشخوان
-			<small>پنل مدیریت</small>
 		</h1>
 		<div class="clear"></div>
 
@@ -97,7 +96,7 @@
 					<span class="info-box-icon bg-yellow"><i class="fa fa-user"></i></span>
 					<div class="info-box-content">
 						<span class="info-box-text">تعداد فالو ها</span>
-						<span class="info-box-number">{[{indexInfo.today_follow.cnt_follow}]}</span>
+						<span class="info-box-number">{[{indexInfo.today_follow.cnt_follows}]}</span>
 					</div><!-- /.info-box-content -->
 				</div><!-- /.info-box -->
 			</div><!-- /.col -->
@@ -133,23 +132,7 @@
 							</h3>
 						</div>
 						<div class="box-body">
-							<div id="world-map" style="height: 250px; width: 100%;"></div>
-						</div><!-- /.box-body-->
-						<div class="box-footer no-border">
-							<div class="row">
-								<div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
-									<div id="sparkline-1"></div>
-									<div class="knob-label">Visitors</div>
-								</div><!-- ./col -->
-								<div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
-									<div id="sparkline-2"></div>
-									<div class="knob-label">Online</div>
-								</div><!-- ./col -->
-								<div class="col-xs-4 text-center">
-									<div id="sparkline-3"></div>
-									<div class="knob-label">Exists</div>
-								</div><!-- ./col -->
-							</div><!-- /.row -->
+							<div id="world-map" style="height: 290px; width: 100%;"></div>
 						</div>
 					</div>
 				</div>
@@ -166,25 +149,9 @@
 								<button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
 							</div>
 						</div>
-						<div class="box-body border-radius-none">
-							<div class="chart" id="line-chart" style="height: 250px;"></div>
+						<div class="box-body border-radius-none"  ng-controller="sellCtrl">
+							<highchart class="chart-ltr" config="highchartsNG"></highchart>
 						</div><!-- /.box-body -->
-						<div class="box-footer no-border">
-							<div class="row">
-								<div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
-									<input type="text" class="knob" data-readonly="true" value="20" data-width="60" data-height="60" data-fgColor="#39CCCC">
-									<div class="knob-label">Mail-Orders</div>
-								</div><!-- ./col -->
-								<div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
-									<input type="text" class="knob" data-readonly="true" value="50" data-width="60" data-height="60" data-fgColor="#39CCCC">
-									<div class="knob-label">Online</div>
-								</div><!-- ./col -->
-								<div class="col-xs-4 text-center">
-									<input type="text" class="knob" data-readonly="true" value="30" data-width="60" data-height="60" data-fgColor="#39CCCC">
-									<div class="knob-label">In-Store</div>
-								</div><!-- ./col -->
-							</div><!-- /.row -->
-						</div><!-- /.box-footer -->
 					</div>
 				</div><!-- /.box -->
 
