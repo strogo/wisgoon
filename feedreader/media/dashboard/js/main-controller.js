@@ -5,7 +5,7 @@ app.controller('mainController',['$scope','$http', function($scope, $http) {
 }]);
 
 app.controller('indexController',['$scope','$http', function($scope, $http) {
-	$http.get("http://127.0.0.1:8000/dashboard/api/home/")
+	$http.get("/dashboard/api/home/")
 	.success(function(data){
 		$scope.indexInfo=data.objects;
 	});
@@ -26,7 +26,7 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 		$http({
 			method  : 'POST',
 			data    :  'post_ids='+post_ids,
-			url     : 'http://127.0.0.1:8000/dashboard/api/post/delete/',
+			url     : '/dashboard/api/post/delete/',
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		});
 
@@ -36,7 +36,7 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 		$http({
 			method  : 'POST',
 			data    :  'post_ids='+ cmId+ ',',
-			url     : 'http://127.0.0.1:8000/dashboard/api/post/delete/',
+			url     : '/dashboard/api/post/delete/',
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		}).success(function(data) {
 			console.log(data);
@@ -50,7 +50,7 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 		$http({
 			method  : 'POST',
 			data    : 'post_ids='+ cmId,
-			url     : 'http://127.0.0.1:8000/dashboard/api/post/report/undo/',
+			url     : '/dashboard/api/post/report/undo/',
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		})
 
@@ -60,7 +60,7 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 		this.bricks = [];
 		this.busy = false;
 		this.after = '';
-		this.url = "http://127.0.0.1:8000/dashboard/api/post/reported/";
+		this.url = "/dashboard/api/post/reported/";
 	};
 
 	reported.prototype.nextPage = function() {
@@ -96,7 +96,7 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 
 app.controller('catstatController',['$http','$scope', function($http, $scope, drilldown) {
 
-	$http.get("http://127.0.0.1:8000/dashboard/api/post/category/chart/")
+	$http.get("/dashboard/api/post/category/chart/")
 	.success(function(data){
 		var chartInfo= data.objects;
 		var pointList= [];
@@ -157,12 +157,12 @@ app.controller('catstatController',['$http','$scope', function($http, $scope, dr
 
 app.controller('adsController',['$scope','$http', function($scope, $http) {
 	
-	$http.get("http://127.0.0.1:8000/dashboard/api/post/showAds/?date=2015-12-19&ended=0")
+	$http.get("/dashboard/api/post/showAds/?date=2015-12-19&ended=0")
 	.success(function(data){
 		$scope.showPosts= data.objects;
 	});
 
-	$http.get("http://127.0.0.1:8000/dashboard/api/ads_stats/?start=2016-01-30&chart_type=line")
+	$http.get("/dashboard/api/ads_stats/?start=2016-01-30&chart_type=line")
 	.success(function(data){
 		var adsChartInfo= data.objects;
 		$scope.highchartsNG ={
@@ -269,7 +269,7 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
 }]);
 
 app.controller('blockCtrl',['$scope','$http', function($scope, $http) {
-	$http.get("http://127.0.0.1:8000/dashboard/api/block_stats/?start=2015-12-09&end=2015-12-13&chart_type=bar")
+	$http.get("/dashboard/api/block_stats/?start=2015-12-09&end=2015-12-13&chart_type=bar")
 	.success(function(data){
 		var blockChartInfo= data.objects;
 		$scope.highchartsNG = {
@@ -317,7 +317,7 @@ app.controller('blockCtrl',['$scope','$http', function($scope, $http) {
 }]);
 
 app.controller('userCtrl',['$scope','$http', function($scope, $http) {
-	$http.get("http://127.0.0.1:8000/dashboard/api/user_stats/?start=2015-12-09&end=2015-12-13&chart_type=bar")
+	$http.get("/dashboard/api/user_stats/?start=2015-12-09&end=2015-12-13&chart_type=bar")
 	.success(function(data){
 		var userChartInfo= data.objects;
 		$scope.highchartsNG = {
@@ -369,7 +369,7 @@ app.controller('followCtrl',['$scope','$http', function($scope, $http) {
 	var start_time = $( "#follow_start_value" ).val();
 	var end_time = $( "#follow_end_value" ).val();
 
-	$http.get('http://127.0.0.1:8000/dashboard/api/follow_stats/?start='+start_time+'&end='+end_time+'&chart_type=line')
+	$http.get('/dashboard/api/follow_stats/?start='+start_time+'&end='+end_time+'&chart_type=line')
 	.success(function(data){
 		var folowChartInfo= data.objects;
 		$scope.highchartsNG = {
@@ -419,7 +419,7 @@ app.controller('followCtrl',['$scope','$http', function($scope, $http) {
 }]);
 
 app.controller('likesCtrl',['$scope','$http', function($scope, $http) {
-	$http.get("http://127.0.0.1:8000/dashboard/api/like_stats/?start=2015-12-09&end=2015-12-28&chart_type=line")
+	$http.get("/dashboard/api/like_stats/?start=2015-12-09&end=2015-12-28&chart_type=line")
 	.success(function(data){
 		var likesChartInfo= data.objects;
 		$scope.highchartsNG = {
@@ -475,7 +475,7 @@ app.controller('likesCtrl',['$scope','$http', function($scope, $http) {
 }]);
 
 app.controller('sellCtrl',['$scope','$http', function($scope, $http) {
-	$http.get("http://127.0.0.1:8000/dashboard/api/bill_stats/?start=2015-12-09&end=2016-01-25&chart_type=area")
+	$http.get("/dashboard/api/bill_stats/?start=2015-12-09&end=2016-01-25&chart_type=area")
 	.success(function(data){
 		var sellChartInfo= data.objects;
 		$scope.highchartsNG = {
@@ -547,7 +547,7 @@ app.controller('sellCtrl',['$scope','$http', function($scope, $http) {
 }]);
 
 app.controller('commentCtrl',['$scope','$http', function($scope, $http) {
-	$http.get("http://127.0.0.1:8000/dashboard/api/comment_stats/?start=2015-12-09&end=2015-12-28&chart_type=line")
+	$http.get("/dashboard/api/comment_stats/?start=2015-12-09&end=2015-12-28&chart_type=line")
 	.success(function(data){
 		var cmChartInfo= data.objects;
 		$scope.highchartsNG = {
@@ -612,7 +612,7 @@ app.controller('logsController',['$scope','$http', function($scope, $http ) {
 
 		this.logs=[];
 
-		this.url="http://127.0.0.1:8000/dashboard/api/log/show/?content_type="+contentFilter+"&action="+actionFilter;
+		this.url="/dashboard/api/log/show/?content_type="+contentFilter+"&action="+actionFilter;
 		$http.get(this.url).success(function(data) {
 			$scope.nextUrl = data.meta.next;
 			$scope.prevUrl = data.meta.previous;
@@ -664,7 +664,7 @@ app.controller('searchController',['$scope','$stateParams','$http','$location',f
 		this.busy = false;
 		this.after = '';
 		$stateParams.s_query=this.query;
-		this.url = "http://127.0.0.1:8000/dashboard/api/user/search/?q="+$stateParams.s_query;
+		this.url = "/dashboard/api/user/search/?q="+$stateParams.s_query;
 		$scope.nextPage();
 	};
 
@@ -698,7 +698,7 @@ app.controller('viewController',['$scope','$stateParams','$http','$location',fun
 
 app.controller('logoutController',function($scope,$http,$location){
 	$scope.logout = function() {
-		$http.get("http://127.0.0.1:8000/api/v6/auth/logout/")
+		$http.get("/api/v6/auth/logout/")
 		.success(function(data) {
 			user_token='';
 			user_id='';
