@@ -69,6 +69,11 @@ def add_to_storage(post_id):
     storage.save()
 
     check_porn.delay(post_id=post_id)
+    try:
+        from pin.api6.cache_layer import PostCacheLayer
+        PostCacheLayer(post_id=post_id).delete()
+    except Exception, e:
+        print str(e)
 
     return "add_to_storage"
 
