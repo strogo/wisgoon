@@ -24,7 +24,19 @@ DATABASES = {
     }
 }
 
-CELERY_ROUTES.update({
+CELERY_ROUTES = {
+    'wisgoon.pin.post_to_followers': {
+        'queue': 'wisgoon.push.to.followers'
+    },
+    'wisgoon.pin.post_to_follower_single': {
+        'queue': 'wisgoon.push.follower'
+    },
+    'wisgoon.pin.check_porn': {
+        'queue': 'wisgoon.pin.check_porn'
+    },
+    'wisgoon.pin.activity': {
+        'queue': 'wisgoon.pin.activity'
+    },
     'wisgoon.pin.add_to_storage': {
         'queue': 'add_storage_%s' % INSTANCE_NAME,
     },
@@ -34,4 +46,4 @@ CELERY_ROUTES.update({
     'wisgoon.pin.migrate_avatar_storage': {
         'queue': 'migrate_avatar_storage_%s' % INSTANCE_NAME,
     },
-})
+}
