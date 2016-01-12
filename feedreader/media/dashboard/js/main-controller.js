@@ -4,10 +4,12 @@ app.controller('mainController',['$scope','$http', function($scope, $http) {
 	$scope.avatar = user_avatar;
 }]);
 
-app.controller('indexController',['$scope','$http', function($scope, $http) {
+app.controller('indexController',['$scope','$http', '$location', function($scope, $http, $location) {
 	$http.get("/dashboard/api/home/")
 	.success(function(data){
 		$scope.indexInfo=data.objects;
+	}).error(function(data){
+		$location.path('/accounts/login/');
 	});
 }]);
 
@@ -156,26 +158,29 @@ app.controller('catstatController',['$http','$scope', function($http, $scope, dr
 }]);
 
 app.controller('adsController',['$scope','$http', function($scope, $http) {
-	
-	$http.get("/dashboard/api/post/showAds/?date=2015-12-19&ended=0")
-	.success(function(data){
-		$scope.showPosts= data.objects;
-	});
 
-	$http.get("/dashboard/api/ads_stats/?start=2016-01-30&chart_type=line")
-	.success(function(data){
-		var adsChartInfo= data.objects;
-		$scope.highchartsNG ={
+	var start_time = $( "#ads_start_value" ).val();
+	$scope.show_posts=function(){
+		$http.get("/dashboard/api/post/showAds/?date=2015-12-19&ended=0")
+		.success(function(data){
+			$scope.showPosts= data.objects;
+		});
+	};
+	$scope.refresh_ads=function(){
+		$http.get("/dashboard/api/ads_stats/?start="+start_time+"&chart_type=line")
+		.success(function(data){
+			var adsChartInfo= data.objects;
+			$scope.highchartsNG ={
 
-			data: {
-				cva : adsChartInfo.data
-			},
+				data: {
+					cva : adsChartInfo.data
+				},
 
-			title: {
-				text: 'پست های پروموت شده'
-			},
+				title: {
+					text: 'پست های پروموت شده'
+				},
 
-			xAxis: {
+				xAxis: {
                 tickInterval: 7 * 24 * 3600 * 1000, // one week
                 tickWidth: 0,
                 gridLineWidth: 1,
@@ -263,219 +268,235 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
             }, {
             	name: 'New visitors'
             }]
-        }
-
+        };
     });
+};
 }]);
 
 app.controller('blockCtrl',['$scope','$http', function($scope, $http) {
-	$http.get("/dashboard/api/block_stats/?start=2015-12-09&end=2015-12-13&chart_type=bar")
-	.success(function(data){
-		var blockChartInfo= data.objects;
-		$scope.highchartsNG = {
-			options: {
-				chart: {
-					type: blockChartInfo.chart_type
-				},
-				title: {
-					text: 'Browser market shares. January, 2015 to May, 2015'
-				},
-				subtitle: {
-					text: 'تعداد بلاک های به مدت یک ماه'
-				},
-				plotOptions: {
-					series: {
-						dataLabels: {
-							enabled: true,
-							format: '{point.name}: {point.y}'
+	$scope.refresh_blocks=function(){
+		var start_time = $( "#block_start_value" ).val();
+		var end_time = $( "#block_end_value" ).val();
+		$http.get("/dashboard/api/block_stats/?start="+start_time+"&end="+end_time+"&chart_type=bar")
+		.success(function(data){
+			var blockChartInfo= data.objects;
+			$scope.highchartsNG = {
+				options: {
+					chart: {
+						type: blockChartInfo.chart_type
+					},
+					title: {
+						text: 'Browser market shares. January, 2015 to May, 2015'
+					},
+					subtitle: {
+						text: 'تعداد بلاک های به مدت یک ماه'
+					},
+					plotOptions: {
+						series: {
+							dataLabels: {
+								enabled: true,
+								format: '{point.name}: {point.y}'
+							}
 						}
-					}
-				},
-				xAxis: { type: 'datetime' },
-				yAxis: {
-					title:{
-						text: "تعداد بلاک ها"
-					}
+					},
+					xAxis: { type: 'datetime' },
+					yAxis: {
+						title:{
+							text: "تعداد بلاک ها"
+						}
 
+					},
+					tooltip: {
+						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+					},
 				},
-				tooltip: {
-					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+				series: [{
+					name: 'بلاک ها',
+					colorByPoint: true,
+					data: blockChartInfo.sub_cat
+				}],
+				title: {
+					text: ''
 				},
-			},
-			series: [{
-				name: 'بلاک ها',
-				colorByPoint: true,
-				data: blockChartInfo.sub_cat
-			}],
-			title: {
-				text: ''
-			},
-			loading: false
-		}
-	});
+				loading: false
+			}
+		});
+	};
 }]);
 
 app.controller('userCtrl',['$scope','$http', function($scope, $http) {
-	$http.get("/dashboard/api/user_stats/?start=2015-12-09&end=2015-12-13&chart_type=bar")
-	.success(function(data){
-		var userChartInfo= data.objects;
-		$scope.highchartsNG = {
-			options: {
-				chart: {
-					type: userChartInfo.chart_type
-				},
-				title: {
-					text: 'Browser market shares. January, 2015 to May, 2015'
-				},
-				subtitle: {
-					text: 'تعداد کاربر های به مدت یک ماه'
-				},
-				plotOptions: {
-					series: {
-						dataLabels: {
-							enabled: true,
-							format: '{point.name}: {point.y}'
+	$scope.refresh_users = function(){
+		var start_time = $( "#user_start_value" ).val();
+		var end_time = $( "#user_end_value" ).val();
+		$http.get("/dashboard/api/user_stats/?start="+start_time+"&end="+end_time+"&chart_type=bar")
+		.success(function(data){
+			var userChartInfo= data.objects;
+			$scope.highchartsNG = {
+				options: {
+					chart: {
+						type: userChartInfo.chart_type
+					},
+					title: {
+						text: 'Browser market shares. January, 2015 to May, 2015'
+					},
+					subtitle: {
+						text: 'تعداد کاربر های به مدت یک ماه'
+					},
+					plotOptions: {
+						series: {
+							dataLabels: {
+								enabled: true,
+								format: '{point.name}: {point.y}'
+							}
 						}
-					}
-				},
-				xAxis: { type: 'datetime' },
-				yAxis: {
-					title:{
-						text: "تعداد کاربر ها"
-					}
+					},
+					xAxis: { type: 'datetime' },
+					yAxis: {
+						title:{
+							text: "تعداد کاربر ها"
+						}
 
+					},
+					tooltip: {
+						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> کاربر ها به مدت یک ماه<br/>'
+					},
 				},
-				tooltip: {
-					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> کاربر ها به مدت یک ماه<br/>'
+				series: [{
+					name: 'کاربر ها',
+					colorByPoint: true,
+					data: userChartInfo.sub_cat
+				}],
+				title: {
+					text: ''
 				},
-			},
-			series: [{
-				name: 'کاربر ها',
-				colorByPoint: true,
-				data: userChartInfo.sub_cat
-			}],
-			title: {
-				text: ''
-			},
-			loading: false
-		}
-	});
+				loading: false
+			}
+		});
+	};
 }]);
 
 app.controller('followCtrl',['$scope','$http', function($scope, $http) {
 
-	var start_time = $( "#follow_start_value" ).val();
-	var end_time = $( "#follow_end_value" ).val();
+	$scope.refresh_follows = function() {
+		var start_time = $( "#follow_start_value" ).val();
+		var end_time = $( "#follow_end_value" ).val();
 
-	$http.get('/dashboard/api/follow_stats/?start='+start_time+'&end='+end_time+'&chart_type=line')
-	.success(function(data){
-		var folowChartInfo= data.objects;
-		$scope.highchartsNG = {
-			options: {
-				chart: {
-					type: folowChartInfo.chart_type
-				},
-				title: {
-					text: 'Browser market shares. January, 2015 to May, 2015'
-				},
-				subtitle: {
-					text: 'تعداد فالو های به مدت یک ماه'
-				},
-				plotOptions: {
-					series: {
-						dataLabels: {
-							enabled: true,
-							format: '{point.y}'
+		$http.get('/dashboard/api/follow_stats/?start='+start_time+'&end='+end_time+'&chart_type=line')
+		.success(function(data){
+			var folowChartInfo= data.objects;
+			$scope.highchartsNG = {
+				options: {
+					chart: {
+						type: folowChartInfo.chart_type
+					},
+					title: {
+						text: 'Browser market shares. January, 2015 to May, 2015'
+					},
+					subtitle: {
+						text: 'تعداد فالو های به مدت یک ماه'
+					},
+					plotOptions: {
+						series: {
+							dataLabels: {
+								enabled: true,
+								format: '{point.y}'
+							}
 						}
-					}
-				},
-				xAxis: { type: 'datetime' },
-				yAxis: {
-					title:{
-						text: "تعداد فالوها"
-					}
+					},
+					xAxis: { type: 'datetime' },
+					yAxis: {
+						title:{
+							text: "تعداد فالوها"
+						}
 
-				},
+					},
 
 
-				tooltip: {
-					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+					tooltip: {
+						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+					},
 				},
-			},
-			series: [{
-				name: 'فالو ها',
-				colorByPoint: true,
-				data: folowChartInfo.data
-			}],
-			title: {
-				text: ''
-			},
-			loading: false
-		}
-	});
+				series: [{
+					name: 'فالو ها',
+					colorByPoint: true,
+					data: folowChartInfo.data
+				}],
+				title: {
+					text: ''
+				},
+				loading: false
+			}
+		});
+	};
 }]);
 
 app.controller('likesCtrl',['$scope','$http', function($scope, $http) {
-	$http.get("/dashboard/api/like_stats/?start=2015-12-09&end=2015-12-28&chart_type=line")
-	.success(function(data){
-		var likesChartInfo= data.objects;
-		$scope.highchartsNG = {
-			options: {
-				chart: {
-					type: likesChartInfo.chart_type
-				},
-				title: {
-					text: 'Browser market shares. January, 2015 to May, 2015'
-				},
-				subtitle: {
-					text: 'تعداد لایک های به مدت یک ماه'
-				},
-				plotOptions: {
-					series: {
-						dataLabels: {
-							enabled: true,
-							format: '{point.y}'
+	$scope.refresh_likes=function(){
+		var start_time = $( "#like_start_value" ).val();
+		var end_time = $( "#like_end_value" ).val();
+		$http.get("/dashboard/api/like_stats/?start="+start_time+"&end="+end_time+"&chart_type=line")
+		.success(function(data){
+			var likesChartInfo= data.objects;
+			$scope.highchartsNG = {
+				options: {
+					chart: {
+						type: likesChartInfo.chart_type
+					},
+					title: {
+						text: 'Browser market shares. January, 2015 to May, 2015'
+					},
+					subtitle: {
+						text: 'تعداد لایک های به مدت یک ماه'
+					},
+					plotOptions: {
+						series: {
+							dataLabels: {
+								enabled: true,
+								format: '{point.y}'
+							}
 						}
-					}
-				},
-				xAxis: { type: 'datetime' },
-				yAxis: {
-					title:{
-						text: "تعداد لایک ها"
-					}
+					},
+					xAxis: { type: 'datetime' },
+					yAxis: {
+						title:{
+							text: "تعداد لایک ها"
+						}
 
-				},
-				yAxis: {
-					title:{
-						text: "تعداد لایک ها"
-					}
+					},
+					yAxis: {
+						title:{
+							text: "تعداد لایک ها"
+						}
 
-				},
+					},
 
 
-				tooltip: {
-					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+					tooltip: {
+						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+					},
 				},
-			},
-			series: [{
-				name: 'لایک ها',
-				colorByPoint: true,
-				data: likesChartInfo.data
-			}],
-			title: {
-				text: ''
-			},
-			loading: false
-		}
-	});
+				series: [{
+					name: 'لایک ها',
+					colorByPoint: true,
+					data: likesChartInfo.data
+				}],
+				title: {
+					text: ''
+				},
+				loading: false
+			}
+		});
+};
 }]);
 
 app.controller('sellCtrl',['$scope','$http', function($scope, $http) {
-	$http.get("/dashboard/api/bill_stats/?start=2015-12-09&end=2016-01-25&chart_type=area")
+	var start_time = $( "#sell_start_value" ).val();
+	var end_time = $( "#sell_end_value" ).val();
+	$http.get("/dashboard/api/bill_stats/?start="+start_time+"&end="+end_time+"&chart_type=area")
 	.success(function(data){
 		var sellChartInfo= data.objects;
 		$scope.highchartsNG = {
@@ -547,59 +568,63 @@ app.controller('sellCtrl',['$scope','$http', function($scope, $http) {
 }]);
 
 app.controller('commentCtrl',['$scope','$http', function($scope, $http) {
-	$http.get("/dashboard/api/comment_stats/?start=2015-12-09&end=2015-12-28&chart_type=line")
-	.success(function(data){
-		var cmChartInfo= data.objects;
-		$scope.highchartsNG = {
-			options: {
-				chart: {
-					type: cmChartInfo.chart_type
-				},
-				title: {
-					text: 'Browser market shares. January, 2015 to May, 2015'
-				},
-				subtitle: {
-					text: 'تعداد نظر های به مدت یک ماه'
-				},
-				plotOptions: {
-					series: {
-						dataLabels: {
-							enabled: true,
-							format: '{point.y}'
+	$scope.refresh_comments=function(){
+		var start_time = $( "#comment_start_value" ).val();
+		var end_time = $( "#comment_end_value" ).val();
+		$http.get("/dashboard/api/comment_stats/?start="+start_time+"&end="+end_time+"&chart_type=line")
+		.success(function(data){
+			var cmChartInfo= data.objects;
+			$scope.highchartsNG = {
+				options: {
+					chart: {
+						type: cmChartInfo.chart_type
+					},
+					title: {
+						text: 'Browser market shares. January, 2015 to May, 2015'
+					},
+					subtitle: {
+						text: 'تعداد نظر های به مدت یک ماه'
+					},
+					plotOptions: {
+						series: {
+							dataLabels: {
+								enabled: true,
+								format: '{point.y}'
+							}
 						}
-					}
-				},
-				xAxis: { type: 'datetime' },
-				yAxis: {
-					title:{
-						text: "تعداد نظر ها"
-					}
+					},
+					xAxis: { type: 'datetime' },
+					yAxis: {
+						title:{
+							text: "تعداد نظر ها"
+						}
 
-				},
-				yAxis: {
-					title:{
-						text: "تعداد نظرات"
-					}
+					},
+					yAxis: {
+						title:{
+							text: "تعداد نظرات"
+						}
 
-				},
+					},
 
 
-				tooltip: {
-					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+					tooltip: {
+						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+					},
 				},
-			},
-			series: [{
-				name: 'نظر ها',
-				colorByPoint: true,
-				data: cmChartInfo.data
-			}],
-			title: {
-				text: ''
-			},
-			loading: false
-		}
-	});
+				series: [{
+					name: 'نظر ها',
+					colorByPoint: true,
+					data: cmChartInfo.data
+				}],
+				title: {
+					text: ''
+				},
+				loading: false
+			}
+		});
+	};
 }]);
 
 app.controller('logsController',['$scope','$http', function($scope, $http ) {

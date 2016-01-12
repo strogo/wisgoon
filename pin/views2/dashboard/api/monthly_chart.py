@@ -105,7 +105,7 @@ def ads_stats(request):
                     'next': '',
                     'total_count': ''}
 
-    start = request.GET.get('start', '')
+    start = request.GET.get('start', '')[:10]
     points = get_ads_point(start)
 
     point_list = []
