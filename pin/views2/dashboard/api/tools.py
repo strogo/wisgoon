@@ -128,7 +128,9 @@ def preparing_chart_points(points):
 
 def get_monthly_stats_points(start_date, end_date, obj_type):
     points = ''
-    if obj_type:
+    start_date, end_date = range_date(start_date, end_date)
+
+    if obj_type and start_date and end_date:
         obj_type = obj_type.lower()
         points = MonthlyStats.objects(date__lte=end_date,
                                       date__gte=start_date,
@@ -167,12 +169,22 @@ def get_reported_posts(request):
 
 
 def range_date(start, end):
+    start_date = None
+    end_date = None
+    try:
+        start = start[:10]
+        end = end[:10]
 
-    start_date = datetime.datetime.strptime(str(start), '%Y-%m-%d')
-    end_date = datetime.datetime.strptime(str(end), '%Y-%m-%d')
+        start_date = datetime.datetime\
+            .fromtimestamp(int(start)).strftime("%Y-%m-%d")
 
-    if start_date > end_date:
-        start_date, end_date = end, start
+        end_date = datetime.datetime\
+            .fromtimestamp(int(end)).strftime("%Y-%m-%d")
+
+        if start_date > end_date:
+            start_date, end_date = end_date, start_date
+    except Exception as e:
+        print str(e), "Dashboard tools api range_date error."
     # min_date = datetime.datetime.combine(start_date.date(),
     #                                      start_date.time.min)
     # max_date = datetime.datetime.combine(end_date.date(),
@@ -368,7 +380,9 @@ def get_logs(content_type, action, before):
 
 
 def get_ads_point(start):
-    start_date = datetime.datetime.strptime(start, '%Y-%m-%d')
+    start = start[:10]
+    start_date = datetime.datetime\
+        .fromtimestamp(int(start)).strftime("%Y-%m-%d")
     try:
         ads = Ad.objects.filter(start__lte=start_date)\
             .values('start')\

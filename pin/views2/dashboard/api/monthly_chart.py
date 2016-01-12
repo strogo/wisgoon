@@ -11,8 +11,8 @@ def follow_stats(request):
                     'next': '',
                     'total_count': ''}
 
-    start = str(request.GET.get('start'))[:10]
-    end = str(request.GET.get('end'))[:10]
+    start = str(request.GET.get('start'))
+    end = str(request.GET.get('end'))
 
     points = get_monthly_stats_points(start, end, 'follow')
 
@@ -30,8 +30,8 @@ def block_stats(request):
                     'next': '',
                     'total_count': ''}
 
-    start = str(request.GET.get('start'))[:10]
-    end = str(request.GET.get('end'))[:10]
+    start = str(request.GET.get('start'))
+    end = str(request.GET.get('end'))
 
     points = get_monthly_stats_points(start, end, 'block')
 
@@ -49,8 +49,8 @@ def like_stats(request):
                     'next': '',
                     'total_count': ''}
 
-    start = str(request.GET.get('start'))[:10]
-    end = str(request.GET.get('end'))[:10]
+    start = str(request.GET.get('start'))
+    end = str(request.GET.get('end'))
 
     points = get_monthly_stats_points(start, end, 'like')
 
@@ -67,8 +67,8 @@ def comment_stats(request):
     data['meta'] = {'limit': '',
                     'next': '',
                     'total_count': ''}
-    start = str(request.GET.get('start'))[:10]
-    end = str(request.GET.get('end'))[:10]
+    start = str(request.GET.get('start'))
+    end = str(request.GET.get('end'))
 
     points = get_monthly_stats_points(start, end, 'comment')
 
@@ -86,8 +86,8 @@ def bill_stats(request):
                     'next': '',
                     'total_count': ''}
 
-    start = str(request.GET.get('start'))[:10]
-    end = str(request.GET.get('end'))[:10]
+    start = str(request.GET.get('start'))
+    end = str(request.GET.get('end'))
 
     points = get_monthly_stats_points(start, end, 'bill')
 
@@ -126,8 +126,8 @@ def join_user_state(request):
     data['meta'] = {'limit': '',
                     'next': '',
                     'total_count': ''}
-    start = str(request.GET.get('start'))[:10]
-    end = str(request.GET.get('end'))[:10]
+    start = str(request.GET.get('start'))
+    end = str(request.GET.get('end'))
 
     points = get_monthly_stats_points(start, end, 'user')
 
