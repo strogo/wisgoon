@@ -40,5 +40,10 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         templateUrl: "/media/dashboard/html/post/reported.html",
         controller: "reportedController"
     })
+     .state('permissionDenied', {
+        url: "/permissionDenied",
+        templateUrl: "/media/dashboard/html/permissionDenied.html",
+        controller: "indexController"
+    })
      
  });

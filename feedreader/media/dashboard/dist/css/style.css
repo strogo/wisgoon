@@ -389,9 +389,9 @@ table img {
 .box-tools input {
   border: 1px solid #f4f4f4;
   border-radius: 5px;
-  margin-left: 20px;
+  margin-left: 10px;
   padding: 3px 5px;
-  width: 185px;
+  width: 100px;
   padding-right: 15px;
 }
 .box-tools label {
@@ -401,16 +401,26 @@ table img {
   position: relative;
   top: -2px;
 }
-.fa.fa-calendar {
-  color: #ccc;
-  font-size: 17px;
-  padding-left: 5px;
-  position: relative;
-  top: 2px;
-}
+
 .btn-next {
   transform: rotate(180deg);
 }
 .btn-prev {
   transform: rotate(-180deg);
+}
+.cell {
+  border-bottom: 1px solid #ddd;
+  margin: 0 10px 0 34px;
+  padding-bottom: 10px;
+  text-align: center;
+}
+.box-header i {
+	padding-left: 5px;
+}
+.box-tools i {
+	padding: 0;
+}
+.fa-refresh {
+	padding: 0 0 0 20px !important;
+	color: #ff6a00 !important;
 }

@@ -1,11 +1,11 @@
 <div class="content-wrapper">
 	<section class="content-header">
 		<ol class="breadcrumb">
-			<li><a href="#"><i class="fa fa-dashboard"></i> خانه</a></li>
-			<li class="active">لاگ های برنامه</li>
+			<li><a ui-sref="home"><i class="fa fa-dashboard"></i> خانه</a></li>
+			<li class="active">آگهی ها</li>
 		</ol>
 		<h1>
-			لاگ های برنامه
+			آگهی های فعال
 		</h1>
 		<div class="clear"></div>
 	</section>
@@ -17,12 +17,16 @@
 					<div class="box-header with-border">
 						<h3 class="box-title">آگهی ها</h3>
 						<div class="box-tools pull-right">
+							<label>از تاریخ :</label>
+							<input id="ads_start" type="text"/>
+							<input id="ads_start_value" type="hidden"/>
+							<a href="" ng-click="refresh_ads()"><i class="fa fa-refresh"></i></a>
 							<button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
 							<button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
 						</div>
 					</div>
 					<div class="box-body">
-						<div class="chart" ng-controller="adsController">
+						<div class="chart">
 							<highchart class="chart-ltr" config="highchartsNG"></highchart>
 						</div>
 					</div><!-- /.box-body -->
@@ -47,9 +51,17 @@
 								</a>
 								<span class="post-view"><li class="fa fa-eye"></li> ۲۴۵۴۱</span>
 							</div>
-						<div class="clear"></div>
+							<div class="clear"></div>
 						</div>
 					</div>
 				</div>
+				<script type="text/javascript">
+					$(document).ready(function () {
+						$('#ads_start').pDatepicker({
+							altField: '#ads_start_value',
+							format: 'YYYY-MM-DD'
+						});
+					});
+				</script>
 			</section>
 		</div>
