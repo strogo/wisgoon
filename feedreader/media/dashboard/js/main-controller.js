@@ -125,7 +125,7 @@ app.controller('catstatController',['$http','$scope', function($http, $scope, dr
 					text: 'Browser market shares. January, 2015 to May, 2015'
 				},
 				subtitle: {
-					text: 'تعداد پست های ورودی در هر دست به مدت یک ماه'
+					text: 'تعداد پست های ورودی در هر دست '
 				},
 				plotOptions: {
 					series: {
@@ -138,7 +138,7 @@ app.controller('catstatController',['$http','$scope', function($http, $scope, dr
 
 				tooltip: {
 					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
 				},
 			},
 			series: [{
@@ -160,116 +160,65 @@ app.controller('catstatController',['$http','$scope', function($http, $scope, dr
 app.controller('adsController',['$scope','$http', function($scope, $http) {
 
 	var start_time = $( "#ads_start_value" ).val();
-	$scope.show_posts=function(){
-		$http.get("/dashboard/api/post/showAds/?date=2015-12-19&ended=0")
-		.success(function(data){
-			$scope.showPosts= data.objects;
-		});
-	};
+	var end_time = $( "#ads_end_value" ).val();
+
+	// $scope.show_posts=function(){
+	// 	$http.get("/dashboard/api/post/showAds/?date=2015-12-19&ended=0")
+	// 	.success(function(data){
+	// 		$scope.showPosts= data.objects;
+	// 	});
+	// };
 	$scope.refresh_ads=function(){
-		$http.get("/dashboard/api/ads_stats/?start="+start_time+"&chart_type=line")
+		$http.get("/dashboard/api/ads_stats/?start="+start_time+"&end="+end_time+"&chart_type=line")
 		.success(function(data){
 			var adsChartInfo= data.objects;
-			$scope.highchartsNG ={
+			$scope.highchartsNG = {
+				options: {
+					chart: {
+						type: adsChartInfo.chart_type
+					},
+					title: {
+						text: 'Browser market shares. January, 2015 to May, 2015'
+					},
+					subtitle: {
+						text: 'تعداد بلاک های '
+					},
+					plotOptions: {
+						series: {
+							cursor: 'pointer',
+							events: {
+								click: function (e) {
+									$http.get("/dashboard/api/post/showAds/?date="+e.point.x+"&ended=0")
+									.success(function(data){
+										$scope.showPosts= data.objects;
+									});
+								}
+							}
+						}
+					},
+					xAxis: { type: 'datetime' },
+					yAxis: {
+						title:{
+							text: "تعداد بلاک ها"
+						}
 
-				data: {
-					cva : adsChartInfo.data
+					},
+					tooltip: {
+						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
+					},
 				},
-
+				series: [{
+					name: 'بلاک ها',
+					colorByPoint: true,
+					data: adsChartInfo.data
+				}],
 				title: {
-					text: 'پست های پروموت شده'
+					text: ''
 				},
-
-				xAxis: {
-                tickInterval: 7 * 24 * 3600 * 1000, // one week
-                tickWidth: 0,
-                gridLineWidth: 1,
-                labels: {
-                	align: 'left',
-                	x: 3,
-                	y: -3
-                }
-            },
-
-            yAxis: [
-            { 
-            	title: {
-            		text: null
-            	},
-            	labels: {
-            		align: 'left',
-            		x: 3,
-            		y: 16,
-            		format: '{value:.,0f}'
-            	},
-            	showFirstLabel: false
-            },
-            { 
-            	linkedTo: 0,
-            	gridLineWidth: 0,
-            	opposite: true,
-            	title: {
-            		text: null
-            	},
-            	labels: {
-            		align: 'right',
-            		x: -3,
-            		y: 16,
-            		format: '{value:.,0f}'
-            	},
-            	showFirstLabel: false
-            }],
-
-            legend: {
-            	align: 'left',
-            	verticalAlign: 'top',
-            	y: 20,
-            	floating: true,
-            	borderWidth: 0
-            },
-
-            tooltip: {
-            	shared: true,
-            	crosshairs: true
-            },
-
-            plotOptions: {
-            	series: {
-            		cursor: 'pointer',
-            		point: {
-            			events: {
-            				click: function (e) {
-            					hs.htmlExpand(null, {
-            						pageOrigin: {
-            							x: e.pageX || e.clientX,
-            							y: e.pageY || e.clientY
-            						},
-            						headingText: this.series.name,
-            						maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':<br/> ' +
-            						this.y + ' visits',
-            						width: 200
-            					});
-            				}
-            			}
-            		},
-            		marker: {
-            			lineWidth: 1
-            		}
-            	}
-            },
-
-            series: [{
-            	name: 'پست های پروموت شده',
-            	data: adsChartInfo.data,
-            	lineWidth: 4,
-            	marker: {
-            		radius: 4
-            	}
-            }, {
-            	name: 'New visitors'
-            }]
-        };
-    });
+				loading: false
+			}
+		});
 };
 }]);
 
@@ -289,7 +238,7 @@ app.controller('blockCtrl',['$scope','$http', function($scope, $http) {
 						text: 'Browser market shares. January, 2015 to May, 2015'
 					},
 					subtitle: {
-						text: 'تعداد بلاک های به مدت یک ماه'
+						text: 'تعداد بلاک های '
 					},
 					plotOptions: {
 						series: {
@@ -308,13 +257,13 @@ app.controller('blockCtrl',['$scope','$http', function($scope, $http) {
 					},
 					tooltip: {
 						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
 					},
 				},
 				series: [{
 					name: 'بلاک ها',
 					colorByPoint: true,
-					data: blockChartInfo.sub_cat
+					data: blockChartInfo.data
 				}],
 				title: {
 					text: ''
@@ -341,7 +290,7 @@ app.controller('userCtrl',['$scope','$http', function($scope, $http) {
 						text: 'Browser market shares. January, 2015 to May, 2015'
 					},
 					subtitle: {
-						text: 'تعداد کاربر های به مدت یک ماه'
+						text: 'تعداد کاربر های '
 					},
 					plotOptions: {
 						series: {
@@ -360,13 +309,13 @@ app.controller('userCtrl',['$scope','$http', function($scope, $http) {
 					},
 					tooltip: {
 						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> کاربر ها به مدت یک ماه<br/>'
+						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> کاربر ها <br/>'
 					},
 				},
 				series: [{
 					name: 'کاربر ها',
 					colorByPoint: true,
-					data: userChartInfo.sub_cat
+					data: userChartInfo.data
 				}],
 				title: {
 					text: ''
@@ -395,7 +344,7 @@ app.controller('followCtrl',['$scope','$http', function($scope, $http) {
 						text: 'Browser market shares. January, 2015 to May, 2015'
 					},
 					subtitle: {
-						text: 'تعداد فالو های به مدت یک ماه'
+						text: 'تعداد فالو های '
 					},
 					plotOptions: {
 						series: {
@@ -416,7 +365,7 @@ app.controller('followCtrl',['$scope','$http', function($scope, $http) {
 
 					tooltip: {
 						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
 					},
 				},
 				series: [{
@@ -449,7 +398,7 @@ app.controller('likesCtrl',['$scope','$http', function($scope, $http) {
 						text: 'Browser market shares. January, 2015 to May, 2015'
 					},
 					subtitle: {
-						text: 'تعداد لایک های به مدت یک ماه'
+						text: 'تعداد لایک های '
 					},
 					plotOptions: {
 						series: {
@@ -476,7 +425,7 @@ app.controller('likesCtrl',['$scope','$http', function($scope, $http) {
 
 					tooltip: {
 						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
 					},
 				},
 				series: [{
@@ -490,7 +439,7 @@ app.controller('likesCtrl',['$scope','$http', function($scope, $http) {
 				loading: false
 			}
 		});
-};
+	};
 }]);
 
 app.controller('sellCtrl',['$scope','$http', function($scope, $http) {
@@ -516,7 +465,7 @@ app.controller('sellCtrl',['$scope','$http', function($scope, $http) {
 					
 				},
 				subtitle: {
-					text: 'فروش ویس به مدت یک ماه',
+					text: 'فروش ویس ',
 					style: {
 						fontSize:'16px',
 						color: '#fff'
@@ -551,7 +500,7 @@ app.controller('sellCtrl',['$scope','$http', function($scope, $http) {
 
 				tooltip: {
 					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> ویس های فروخنه شده به مدت یک ماه<br/>'
+					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> ویس های فروخنه شده <br/>'
 				},
 			},
 			series: [{
@@ -583,7 +532,7 @@ app.controller('commentCtrl',['$scope','$http', function($scope, $http) {
 						text: 'Browser market shares. January, 2015 to May, 2015'
 					},
 					subtitle: {
-						text: 'تعداد نظر های به مدت یک ماه'
+						text: 'تعداد نظر های '
 					},
 					plotOptions: {
 						series: {
@@ -610,7 +559,7 @@ app.controller('commentCtrl',['$scope','$http', function($scope, $http) {
 
 					tooltip: {
 						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست به مدت یک ماه<br/>'
+						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
 					},
 				},
 				series: [{
