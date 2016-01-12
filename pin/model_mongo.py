@@ -227,6 +227,7 @@ class MonthlyStats(Document):
     UNBLOCK = "unblock"
     VIEW = "view_pages"
     BILL = "bill"
+    ADS = "ads"
 
     date = DateTimeField()
     object_type = StringField()

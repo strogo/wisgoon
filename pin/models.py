@@ -179,6 +179,7 @@ class Ad(models.Model):
     def save(self, *args, **kwargs):
         cache.delete("no_ad")
         self.owner = self.post.user
+        MonthlyStats.log_hit(MonthlyStats.ADS)
         super(Ad, self).save(*args, **kwargs)
 
 
