@@ -122,7 +122,9 @@ def preparing_chart_points(points):
 
     point_list = []
     for point in points:
-        point_list.append([int(point.timestamp) * 1000, point.count])
+        date = str(point.date)[:10]
+        date = datetime.datetime.strptime(date, "%Y-%m-%d").strftime("%s")
+        point_list.append([int(date) * 1000, point.count])
     return point_list
 
 
@@ -273,6 +275,8 @@ def post_group_by_sub_category(count_of_posts):
 
 def get_ads(before, date, ended):
     ads_list = []
+    date = datetime.datetime\
+        .fromtimestamp(int(date)).strftime("%Y-%m-%d")
     try:
         if before:
             ads = Ad.objects\
