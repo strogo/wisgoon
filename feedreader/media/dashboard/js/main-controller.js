@@ -390,53 +390,30 @@ app.controller('likesCtrl',['$scope','$http', function($scope, $http) {
 		.success(function(data){
 			var likesChartInfo= data.objects;
 			$scope.highchartsNG = {
-				options: {
-					chart: {
-						type: likesChartInfo.chart_type
-					},
-					title: {
-						text: 'Browser market shares. January, 2015 to May, 2015'
-					},
-					subtitle: {
-						text: 'تعداد لایک های '
-					},
-					plotOptions: {
-						series: {
-							dataLabels: {
-								enabled: true,
-								format: '{point.y}'
-							}
-						}
-					},
-					xAxis: { type: 'datetime' },
-					yAxis: {
-						title:{
-							text: "تعداد لایک ها"
-						}
+				chart: {
+					type: likesChartInfo.chart_type
+				},
+				title: {
+					text: 'Browser market shares. January, 2015 to May, 2015'
+				},
+				subtitle: {
+					text: 'تعداد لایک های '
+				},
+				xAxis: { type: 'datetime' },
+				yAxis: {
+					title:{
+						text: "تعداد لایک ها"
+					}
 
-					},
-					yAxis: {
-						title:{
-							text: "تعداد لایک ها"
-						}
-
-					},
-
-
-					tooltip: {
-						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
-					},
+				},
+				tooltip: {
+					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
 				},
 				series: [{
 					name: 'لایک ها',
-					colorByPoint: true,
 					data: likesChartInfo.data
-				}],
-				title: {
-					text: ''
-				},
-				loading: false
+				}]
 			}
 		});
 	};

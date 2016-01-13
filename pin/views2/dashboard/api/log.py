@@ -37,12 +37,12 @@ def show_log(request):
 
 def search_log(request):
     string = request.GET.get("q", '')
-    before = request.GET.get("before", 0)
+    before = int(request.GET.get("before", 0))
     data = {}
     data['meta'] = {'limit': 10, 'next': '', 'previous': '', 'total_count': ''}
     result = []
 
-    logs = get_search_log(string)
+    logs = get_search_log(string, before)
     for log in logs:
         result.append(simple_log_json(log))
 
