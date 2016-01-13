@@ -213,7 +213,7 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
 			}
 
 		});
-};
+	};
 }]);
 
 app.controller('blockCtrl',['$scope','$http', function($scope, $http) {
@@ -441,7 +441,7 @@ app.controller('commentCtrl',['$scope','$http', function($scope, $http) {
 	};
 }]);
 
-app.controller('logsController',['$scope','$http', function($scope, $http ) {
+app.controller('logsController',['$scope','$http','$stateParams','$location', function($scope, $http, $stateParams,$location ) {
 	$scope.contentValue = 1;
 	$scope.actionValue = 1;
 
@@ -493,18 +493,14 @@ app.controller('logsController',['$scope','$http', function($scope, $http ) {
 			};
 		}.bind(this));
 	};
-}]);
-
-app.controller('searchController',['$scope','$stateParams','$http','$location',function($scope,$stateParams,$http,$location) {
-
 	$scope.showSearchPost = function() {
-		console.log("show searh post initialized");
-		this.bricks = [];
+		this.logs = [];
 		this.busy = false;
 		this.after = '';
 		$stateParams.s_query=this.query;
-		this.url = "/dashboard/api/user/search/?q="+$stateParams.s_query;
+		this.url = "/dashboard/api/log/search/?q="+$stateParams.s_query;
 		$scope.nextPage();
+		console.log(this.url);
 	};
 
 	$scope.nextPage = function() {
@@ -515,18 +511,14 @@ app.controller('searchController',['$scope','$stateParams','$http','$location',f
 		if (!this.query){
 			return;
 		}
-
 		$http.get(this.url).success(function(data) {
 			$location.search('q='+$stateParams.s_query );
-			this.url = data.meta.next;
-			if (!data.meta.next){
-				return;
-			}
-			var bricks = data.objects;
-			for (var i = 0; i < bricks.length; i++) {
-				this.bricks.push(bricks[i]);
-			}
-			this.busy = false;
+			$scope.nextUrl = data.meta.next;
+			$scope.prevUrl = data.meta.previous;
+			var logs = data.objects;
+			for (var i = 0; i < logs.length; i++) {
+				this.logs.push(logs[i]);
+			};
 		}.bind(this));
 	};
 }]);

@@ -429,3 +429,13 @@ table img {
 	padding: 0 !important;
 	color: #fff !important;
 }
+.skin-blue .main-header .logo {
+	background-color: #434A54 !important;
+	border-left: 1px solid #ccc;
+}
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+	background-color: #434A54 !important;
+}
+.skin-blue .sidebar-menu > li:hover > a, .skin-blue .sidebar-menu > li.active > a{
+	border-left-color: #fff !important;
+}
