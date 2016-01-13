@@ -276,7 +276,7 @@ def post_group_by_sub_category(count_of_posts):
 def get_ads(before, date, ended):
     ads_list = []
     date = datetime.datetime\
-        .fromtimestamp(int(date)).strftime("%Y-%m-%d")
+        .fromtimestamp(int(date[:10])).strftime("%Y-%m-%d")
     try:
         if before:
             ads = Ad.objects\
@@ -308,7 +308,7 @@ def simple_ad_json(ad):
     if ad.end:
         data['end'] = ad.end.strftime('%s')
     else:
-        data['end'] = ad.end
+        data['end'] = False
     data['ip_address'] = ad.ip_address
     return data
 

@@ -1,6 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 
-from pin.api6.http import return_json_data, return_not_found, return_un_auth
+from pin.api6.http import return_json_data, return_not_found, return_un_auth, return_bad_request
 from pin.api6.tools import post_item_json, get_next_url
 from pin.views2.dashboard.api.tools import post_reporter_user, get_reported_posts,\
     check_admin, ads_group_by, calculate_post_percent, cnt_post_deleted_by_user,\
@@ -95,17 +95,19 @@ def show_ads(request):
     before = request.GET.get('before', 0)
     data['meta'] = {'limit': '', 'next': '', 'total_count': ''}
 
-    if not date and not ended:
-        return return_not_found()
+    if date and ended:
 
-    data['objects'] = get_ads(before, date, ended)
+        data['objects'] = get_ads(before, date, ended)
 
-    if len(data['objects']) == 20:
-        before = int(before) + 20
-        token = request.GET.get('token', '')
-        data['meta']['next'] = get_next_url(url_name='dashboard-api-post-ads-show',
-                                            before=before, token=token)
-    return return_json_data(data)
+        if len(data['objects']) == 20:
+            before = int(before) + 20
+            token = request.GET.get('token', '')
+            data['meta']['next'] = get_next_url(url_name='dashboard-api-post-ads-show',
+                                                before=before,
+                                                token=token)
+        return return_json_data(data)
+    else:
+        return return_bad_request()
 
 
 def post_of_category(request):
