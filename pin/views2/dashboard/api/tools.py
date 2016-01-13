@@ -377,7 +377,7 @@ def get_logs(content_type, action, before):
         data['user_id__in'] = admin_users
 
         logs = Log.objects\
-            .filter(**data)[before:(before + 1) * 20]
+            .filter(**data)[before:before + 10]
     except:
         logs = []
     return logs
@@ -397,8 +397,8 @@ def get_ads_point(start):
     return ads
 
 
-def get_search_log(string):
+def get_search_log(string, before):
     logs = Log.objects.filter(Q(user__id__iexact=string) |
                               Q(owner__iexact=string) |
-                              Q(object_id__iexact=string))
+                              Q(object_id__iexact=string))[before: before + 10]
     return logs
