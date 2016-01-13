@@ -122,7 +122,7 @@ app.controller('catstatController',['$http','$scope', function($http, $scope, dr
 					type: 'pie'
 				},
 				title: {
-					text: 'Browser market shares. January, 2015 to May, 2015'
+					text: ''
 				},
 				subtitle: {
 					text: 'تعداد پست های ورودی در هر دست '
@@ -175,13 +175,13 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
 			$scope.highchartsNG = {
 				options: {
 					chart: {
-						type: adsChartInfo.chart_type
+						type: 'line'
 					},
 					title: {
-						text: 'Browser market shares. January, 2015 to May, 2015'
+						text: ''
 					},
 					subtitle: {
-						text: 'تعداد بلاک های '
+						text: 'تعداد پست های ورودی در هر دست '
 					},
 					plotOptions: {
 						series: {
@@ -196,28 +196,22 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
 							}
 						}
 					},
-					xAxis: { type: 'datetime' },
-					yAxis: {
-						title:{
-							text: "تعداد بلاک ها"
-						}
 
-					},
 					tooltip: {
 						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
 						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
 					},
 				},
 				series: [{
-					name: 'بلاک ها',
-					colorByPoint: true,
 					data: adsChartInfo.data
 				}],
+
 				title: {
 					text: ''
 				},
 				loading: false
 			}
+
 		});
 };
 }]);
@@ -230,45 +224,30 @@ app.controller('blockCtrl',['$scope','$http', function($scope, $http) {
 		.success(function(data){
 			var blockChartInfo= data.objects;
 			$scope.highchartsNG = {
-				options: {
-					chart: {
-						type: blockChartInfo.chart_type
-					},
-					title: {
-						text: 'Browser market shares. January, 2015 to May, 2015'
-					},
-					subtitle: {
-						text: 'تعداد بلاک های '
-					},
-					plotOptions: {
-						series: {
-							dataLabels: {
-								enabled: true,
-								format: '{point.name}: {point.y}'
-							}
-						}
-					},
-					xAxis: { type: 'datetime' },
-					yAxis: {
-						title:{
-							text: "تعداد بلاک ها"
-						}
-
-					},
-					tooltip: {
-						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
-					},
+				chart: {
+					type: blockChartInfo.chart_type
 				},
-				series: [{
-					name: 'بلاک ها',
-					colorByPoint: true,
-					data: blockChartInfo.data
-				}],
 				title: {
 					text: ''
 				},
-				loading: false
+				subtitle: {
+					text: 'تعداد بلاک های '
+				},
+				xAxis: { type: 'datetime' },
+				yAxis: {
+					title:{
+						text: "تعداد بلاک ها"
+					}
+
+				},
+				tooltip: {
+					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
+				},
+				series: [{
+					name: 'بلاک ها',
+					data: blockChartInfo.data
+				}]
 			}
 		});
 	};
@@ -282,45 +261,30 @@ app.controller('userCtrl',['$scope','$http', function($scope, $http) {
 		.success(function(data){
 			var userChartInfo= data.objects;
 			$scope.highchartsNG = {
-				options: {
-					chart: {
-						type: userChartInfo.chart_type
-					},
-					title: {
-						text: 'Browser market shares. January, 2015 to May, 2015'
-					},
-					subtitle: {
-						text: 'تعداد کاربر های '
-					},
-					plotOptions: {
-						series: {
-							dataLabels: {
-								enabled: true,
-								format: '{point.name}: {point.y}'
-							}
-						}
-					},
-					xAxis: { type: 'datetime' },
-					yAxis: {
-						title:{
-							text: "تعداد کاربر ها"
-						}
-
-					},
-					tooltip: {
-						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> کاربر ها <br/>'
-					},
+				chart: {
+					type: userChartInfo.chart_type
 				},
-				series: [{
-					name: 'کاربر ها',
-					colorByPoint: true,
-					data: userChartInfo.data
-				}],
 				title: {
 					text: ''
 				},
-				loading: false
+				subtitle: {
+					text: 'تعداد کاربر های '
+				},
+				xAxis: { type: 'datetime' },
+				yAxis: {
+					title:{
+						text: "تعداد کاربر ها"
+					}
+
+				},
+				tooltip: {
+					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
+				},
+				series: [{
+					name: 'کاربر ها',
+					data: userChartInfo.data
+				}]
 			}
 		});
 	};
@@ -336,47 +300,30 @@ app.controller('followCtrl',['$scope','$http', function($scope, $http) {
 		.success(function(data){
 			var folowChartInfo= data.objects;
 			$scope.highchartsNG = {
-				options: {
-					chart: {
-						type: folowChartInfo.chart_type
-					},
-					title: {
-						text: 'Browser market shares. January, 2015 to May, 2015'
-					},
-					subtitle: {
-						text: 'تعداد فالو های '
-					},
-					plotOptions: {
-						series: {
-							dataLabels: {
-								enabled: true,
-								format: '{point.y}'
-							}
-						}
-					},
-					xAxis: { type: 'datetime' },
-					yAxis: {
-						title:{
-							text: "تعداد فالوها"
-						}
-
-					},
-
-
-					tooltip: {
-						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
-					},
+				chart: {
+					type: folowChartInfo.chart_type
 				},
-				series: [{
-					name: 'فالو ها',
-					colorByPoint: true,
-					data: folowChartInfo.data
-				}],
 				title: {
 					text: ''
 				},
-				loading: false
+				subtitle: {
+					text: 'تعداد فالو های '
+				},
+				xAxis: { type: 'datetime' },
+				yAxis: {
+					title:{
+						text: "تعداد فالو ها"
+					}
+
+				},
+				tooltip: {
+					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
+				},
+				series: [{
+					name: 'فالو ها',
+					data: folowChartInfo.data
+				}]
 			}
 		});
 	};
@@ -394,7 +341,7 @@ app.controller('likesCtrl',['$scope','$http', function($scope, $http) {
 					type: likesChartInfo.chart_type
 				},
 				title: {
-					text: 'Browser market shares. January, 2015 to May, 2015'
+					text: ''
 				},
 				subtitle: {
 					text: 'تعداد لایک های '
@@ -420,77 +367,41 @@ app.controller('likesCtrl',['$scope','$http', function($scope, $http) {
 }]);
 
 app.controller('sellCtrl',['$scope','$http', function($scope, $http) {
-	var start_time = $( "#sell_start_value" ).val();
-	var end_time = $( "#sell_end_value" ).val();
-	$http.get("/dashboard/api/bill_stats/?start="+start_time+"&end="+end_time+"&chart_type=area")
-	.success(function(data){
-		var sellChartInfo= data.objects;
-		$scope.highchartsNG = {
-			options: {
+	$scope.refresh_sells=function(){
+		var start_time = $( "#sell_start_value" ).val();
+		var end_time = $( "#sell_end_value" ).val();
+		$http.get("/dashboard/api/bill_stats/?start="+start_time+"&end="+end_time+"&chart_type=area")
+		.success(function(data){
+			var sellChartInfo= data.objects;
+			$scope.highchartsNG = {
 				chart: {
-					type: sellChartInfo.chart_type,
-					backgroundColor: "transparent",
-					colors:['#fff'],
-					height: 290
+					backgroundColor: '#7adddd',
+					type: sellChartInfo.chart_type
 				},
 				title: {
-					text: 'Browser market shares. January, 2015 to May, 2015',
-					style: {
-						fontSize:'16px',
-						color: '#fff'
-					}
-					
+					text: ''
 				},
 				subtitle: {
-					text: 'فروش ویس ',
-					style: {
-						fontSize:'16px',
-						color: '#fff'
-					}
-				},
-				plotOptions: {
-					series: {
-						dataLabels: {
-							enabled: true,
-							format: '{point.y}'
-						}
-					}
+					text: ' فروش های '
 				},
 				xAxis: { type: 'datetime' },
 				yAxis: {
 					title:{
-						text: "فروش ویس"
+						text: "تعداد فروش ها"
 					}
 
 				},
-				yAxis: {
-					title:{
-						text: "فروش ویس",
-						style: {
-							fontSize:'16px',
-							color: '#fff'
-						}
-					}
-
-				},
-
-
 				tooltip: {
 					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> ویس های فروخنه شده <br/>'
+					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
 				},
-			},
-			series: [{
-				name: 'فروش',
-				data: sellChartInfo.data
-			}],
-
-			title: {
-				text: ''
-			},
-			loading: false
-		}
-	});
+				series: [{
+					name: 'فروش ها',
+					data: sellChartInfo.data
+				}]
+			}
+		});
+	};
 }]);
 
 app.controller('commentCtrl',['$scope','$http', function($scope, $http) {
@@ -501,53 +412,30 @@ app.controller('commentCtrl',['$scope','$http', function($scope, $http) {
 		.success(function(data){
 			var cmChartInfo= data.objects;
 			$scope.highchartsNG = {
-				options: {
-					chart: {
-						type: cmChartInfo.chart_type
-					},
-					title: {
-						text: 'Browser market shares. January, 2015 to May, 2015'
-					},
-					subtitle: {
-						text: 'تعداد نظر های '
-					},
-					plotOptions: {
-						series: {
-							dataLabels: {
-								enabled: true,
-								format: '{point.y}'
-							}
-						}
-					},
-					xAxis: { type: 'datetime' },
-					yAxis: {
-						title:{
-							text: "تعداد نظر ها"
-						}
-
-					},
-					yAxis: {
-						title:{
-							text: "تعداد نظرات"
-						}
-
-					},
-
-
-					tooltip: {
-						headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-						pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
-					},
+				chart: {
+					type: cmChartInfo.chart_type
 				},
-				series: [{
-					name: 'نظر ها',
-					colorByPoint: true,
-					data: cmChartInfo.data
-				}],
 				title: {
 					text: ''
 				},
-				loading: false
+				subtitle: {
+					text: 'تعداد نظرات های '
+				},
+				xAxis: { type: 'datetime' },
+				yAxis: {
+					title:{
+						text: "تعداد نظرات ها"
+					}
+
+				},
+				tooltip: {
+					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
+				},
+				series: [{
+					name: 'نظرات ها',
+					data: cmChartInfo.data
+				}]
 			}
 		});
 	};
