@@ -11,7 +11,7 @@ from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from pin.api_tools import abs_url, media_abs_url
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
-from pin.models import Post, Follow, Comments
+from pin.models import Post, Follow, Comments, PhoneData
 from pin.models_redis import LikesRedis
 from pin.tools import create_filename
 from cache_layer import PostCacheLayer
@@ -323,6 +323,18 @@ def get_profile_data(profile, user_id):
     data['credit'] = profile.credit
     data['cnt_follower'] = profile.cnt_follower
     data['cnt_following'] = profile.cnt_following
+    data['status'] = profile.user.is_active
+    data['score'] = profile.score
+    data['jens'] = profile.jens if profile.jens else '0'
+    data['email'] = profile.user.email
+    data['date_joined'] = str(profile.user.date_joined.strftime("%s"))
+    try:
+        data['imei'] = profile.user.phone.imei
+        data['users_imei'] = get_user_with_imei(profile.user.phone.imei)
+    except:
+        data['imei'] = ''
+        data['users_imei'] = []
+
     return data
 
 
@@ -376,3 +388,11 @@ def ad_item_json(ad):
     ad_dict['end'] = str(ad.end)
     ad_dict['id'] = ad.id
     return ad_dict
+
+
+def get_user_with_imei(imei):
+    phone_data = PhoneData.objects.filetr(imei=imei)
+    users_info = []
+    for data in phone_data:
+        users_info.append(get_simple_user_object(data.user))
+    return users_info
