@@ -387,32 +387,33 @@ table img {
 	color: #444 !important;
 }
 .box-tools input {
-  border: 1px solid rgba(0,192,239,0.2);
-  border-radius: 5px;
-  margin-left: 10px;
-  padding: 3px 5px;
-  width: 100px;
-  padding-right: 15px;
+	border: 1px solid rgba(0,192,239,0.2);
+	border-radius: 5px;
+	margin-left: 10px;
+	padding: 3px 5px;
+	width: 100px;
+	padding-right: 15px;
+	color: #000;
 }
 .box-tools label {
-  font-size: 11px;
-  font-weight: normal;
-  padding-left: 5px;
-  position: relative;
-  top: -2px;
+	font-size: 11px;
+	font-weight: normal;
+	padding-left: 5px;
+	position: relative;
+	top: -2px;
 }
 
 .btn-next {
-  transform: rotate(180deg);
+	transform: rotate(180deg);
 }
 .btn-prev {
-  transform: rotate(-180deg);
+	transform: rotate(-180deg);
 }
 .cell {
-  border-bottom: 1px solid #ddd;
-  margin: 0 10px 0 34px;
-  padding-bottom: 10px;
-  text-align: center;
+	border-bottom: 1px solid #ddd;
+	margin: 0 10px 0 34px;
+	padding-bottom: 10px;
+	text-align: center;
 }
 .box-header i {
 	padding-left: 5px;
@@ -423,4 +424,18 @@ table img {
 .fa-refresh {
 	padding: 0 0 0 20px !important;
 	color: #00c0ef !important;
+}
+.cell .fa-refresh {
+	padding: 0 !important;
+	color: #fff !important;
+}
+.skin-blue .main-header .logo {
+	background-color: #434A54 !important;
+	border-left: 1px solid #ccc;
+}
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+	background-color: #434A54 !important;
+}
+.skin-blue .sidebar-menu > li:hover > a, .skin-blue .sidebar-menu > li.active > a{
+	border-left-color: #fff !important;
 }
