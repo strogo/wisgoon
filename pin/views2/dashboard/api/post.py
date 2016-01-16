@@ -1,7 +1,9 @@
 from django.views.decorators.csrf import csrf_exempt
 
-from pin.api6.http import return_json_data, return_not_found, return_un_auth, return_bad_request
-from pin.api6.tools import post_item_json, get_next_url
+from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
+    return_bad_request
+from pin.api6.tools import post_item_json, get_next_url, get_simple_user_object,\
+    get_profile_data
 from pin.views2.dashboard.api.tools import post_reporter_user, get_reported_posts,\
     check_admin, ads_group_by, calculate_post_percent, cnt_post_deleted_by_user,\
     cnt_post_deleted_by_admin, get_ads, delete_posts, undo_report
@@ -25,9 +27,8 @@ def reported(request):
         post_item = post_item_json(post)
         post_item['reporter'], post_item['reporter_scores'] = post_reporter_user(post.id)
         post_item['cnt_report'] = post.report
-        post_item['user']['score'] = post.user.profile.score
-        post_item['user']['status'] = post.user.is_active
-        post_item['user']['banned'] = post.user.profile.banned
+        post_item['user'] = get_simple_user_object(post.user.id)
+        post_item['user']['profile'] = get_profile_data(post.user.profile, post.user.id)
         post_item['user']['cnt_deleted'] = cnt_post_deleted_by_user(post.user.id)
         post_item['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(post.user.id)
         post_reporter_list.append(post_item)
