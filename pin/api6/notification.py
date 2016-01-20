@@ -1,7 +1,10 @@
-from pin.tools import AuthCache
+# -*- coding: utf-8 -*-
 from pin.api6.http import return_json_data, return_un_auth, return_bad_request
+from pin.api_tools import media_abs_url
+from pin.tools import AuthCache
 from pin.model_mongo import NotifCount, Notif
-from pin.api6.tools import get_list_post, get_objects_list, get_simple_user_object, get_next_url
+from pin.api6.tools import get_list_post, get_objects_list, get_simple_user_object,\
+    get_next_url
 
 
 def notif_count(request):
@@ -52,6 +55,7 @@ def notif(request):
             data_extra['actor'] = get_simple_user_object(notif.last_actor)
             data_extra['owner'] = get_simple_user_object(notif.owner)
             data_extra['date'] = notif.date.strftime("%s")
+            data_extra['text'] = "تصویر شمارا پسندید."
             try:
                 posts = get_list_post([notif.post])
                 post_object = get_objects_list(posts, cur_user_id=current_user, r=request)[0]
@@ -67,6 +71,7 @@ def notif(request):
             data_extra['owner'] = get_simple_user_object(notif.owner)
             data_extra['type'] = Notif.FOLLOW
             data_extra['id'] = str(notif.id)
+            data_extra['text'] = "شما را دنبال می کند."
             data_extra['date'] = notif.date.strftime("%s")
             notifs_list.append(data_extra)
 
@@ -75,6 +80,7 @@ def notif(request):
             data_extra['owner'] = get_simple_user_object(notif.owner)
             data_extra['id'] = str(notif.id)
             data_extra['type'] = Notif.COMMENT
+            data_extra['text'] = "برای تصویر شما نظر داد"
             data_extra['date'] = notif.date.strftime("%s")
             try:
                 posts = get_list_post([notif.post])
@@ -89,6 +95,7 @@ def notif(request):
             data_extra['owner'] = get_simple_user_object(notif.owner)
             data_extra['type'] = Notif.DELETE_POST
             data_extra['id'] = str(notif.id)
+            data_extra['post_image'] = media_abs_url(notif.post_image)
             data_extra['date'] = notif.date.strftime("%s")
             notifs_list.append(data_extra)
 

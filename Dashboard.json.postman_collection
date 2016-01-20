@@ -59,7 +59,10 @@
 			"name": "User",
 			"description": "",
 			"order": [
-				"0abaa31f-9445-c086-865e-a55b141172cc"
+				"0abaa31f-9445-c086-865e-a55b141172cc",
+				"f9bcf7e6-ad88-04a3-bfc8-1936cdf71111",
+				"02cbe6ae-b388-93e6-a238-2cc0e721627d",
+				"5d345e8e-8ea8-5633-2329-69558a322a76"
 			],
 			"owner": 0
 		}
@@ -70,38 +73,57 @@
 	"public": false,
 	"requests": [
 		{
-			"id": "0abaa31f-9445-c086-865e-a55b141172cc",
+			"id": "02cbe6ae-b388-93e6-a238-2cc0e721627d",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/dashboard/api/user/search/?token=1234&q=root",
+			"url": "http://127.0.0.1:8000/dashboard/api/user/bannedProfile/?token=1234",
 			"pathVariables": {},
 			"preRequestScript": "",
-			"method": "GET",
+			"method": "POST",
 			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
 			"data": [
 				{
-					"key": "post_ids",
-					"value": "5",
+					"key": "user_id",
+					"value": "2",
 					"type": "text",
 					"enabled": true
 				},
 				{
-					"key": "post_ids",
-					"value": "6",
+					"key": "description",
+					"value": "\"jhdjhdjhsjdhs\"",
 					"type": "text",
 					"enabled": true
 				}
 			],
 			"dataMode": "params",
-			"name": "Search User",
+			"name": "Banned Profile",
 			"description": "",
 			"descriptionFormat": "html",
-			"time": 1450616167319,
+			"time": 1453193825154,
 			"version": 2,
 			"responses": [],
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"folder": "ef250837-d36d-a918-727a-baf1590cbe96"
+		},
+		{
+			"id": "0abaa31f-9445-c086-865e-a55b141172cc",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/user/search/?token=1234&q=root",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1452949736429,
+			"name": "Search User",
+			"description": "",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"responses": []
 		},
 		{
 			"id": "49b141e2-2f62-3a3c-7ad1-fbd3087358b2",
@@ -163,6 +185,52 @@
 			"description": "",
 			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
 			"responses": []
+		},
+		{
+			"id": "5d345e8e-8ea8-5633-2329-69558a322a76",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/user/bannedImei/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [
+				{
+					"key": "user_id",
+					"value": "2",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "description",
+					"value": "\"jhdjhdjhsjdhs\"",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "imei",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "status",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Banned Imei",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1453193877189,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "ef250837-d36d-a918-727a-baf1590cbe96"
 		},
 		{
 			"id": "6d304398-b95a-5344-9236-ae1ca041d1d4",
@@ -490,6 +558,34 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"folder": "39fcf8ac-f1db-1283-08d4-c830270d8ca9"
+		},
+		{
+			"id": "f9bcf7e6-ad88-04a3-bfc8-1936cdf71111",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/user/changeStatus/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [
+				{
+					"key": "user_id",
+					"value": "2",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Active Deactive User",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1453192288912,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "ef250837-d36d-a918-727a-baf1590cbe96"
 		}
 	]
 }
