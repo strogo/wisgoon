@@ -16,7 +16,7 @@ def send_tick(doc):
 def like_act(post, actor):
     t_date = timezone.now()
     doc = {
-        "@timestamp": t_date,
+        "@timestamp": str(t_date),
         "ip": "79.1.14.87",
         "type": "like",
         "actor": actor,
