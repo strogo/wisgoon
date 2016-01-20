@@ -397,3 +397,5 @@ CELERY_ROUTES.update({
 
 # format of avatar cache name by user_id
 AVATAR_CACHE_KEY = "dad:avatar:{}"
+
+ES_HOST = "localhost"

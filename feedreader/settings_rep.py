@@ -29,6 +29,9 @@ CELERY_ROUTES = {
     'wisgoon.pin.activity': {
         'queue': 'wisgoon.pin.activity'
     },
+    'wisgoon.analytics.tick': {
+        'queue': 'wisgoon.analytics.tick'
+    },
     'wisgoon.pin.add_to_storage': {
         'queue': 'add_storage_%s' % INSTANCE_NAME,
     },

@@ -2,9 +2,17 @@ import os
 import json
 import paramiko
 
+from elasticsearch import Elasticsearch
 from feedreader.celery import app
 from django.conf import settings
 from django.core.cache import cache
+
+es = Elasticsearch([settings.ES_HOST])
+
+
+@app.task(name="wisgoon.analytics.tick")
+def tick(doc):
+    es.index(index="wisgoon-analytics", doc_type='log', body=doc)
 
 
 @app.task(name="wisgoon.pin.activity")
