@@ -89,7 +89,7 @@
 				<a href="{{MEDIA_URL}}{{post.image}}" title="دانلود" class="wis_btn green_o pull-left" data-toggle="tooltip" data-placement="bottom">
 					<span class="download_icon"></span>
 				</a>
-				{% if user.is_superuser %}
+				{% if user.is_superuser or request.user.id == post.user_id %}
 				<!-- delete -->
 				<a href="{% url "pin-item-delete" post.id%}" class="wis_btn pull-left red_o delpost user-action-btn" title="حذف" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-trash-o"></i></a>
 
@@ -187,6 +187,10 @@
 		<div class="only_mobile_view">
 			{% include "pin2/mobil_ads.html" %}
 		</div>
+
+        {% if not DEBUG %}
+        {% include "pin2/tabliq/_468x60.html" %}
+        {% endif %}
 
 		{% if user.is_authenticated and user.is_active %}
 		<div id="submit_comment" class="box">
