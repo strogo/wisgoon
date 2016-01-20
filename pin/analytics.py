@@ -22,5 +22,6 @@ def like_act(post, actor):
         "actor": actor,
         "@message": "vahid like post {}".format(post),
     }
+    print doc
 
-    send_tick(doc)
+    # send_tick(doc)
