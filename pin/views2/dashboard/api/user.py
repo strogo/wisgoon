@@ -31,13 +31,13 @@ def search_user(request):
         .filter(content__contains=query)[before:before + 20]
 
     for profile in profiles:
-        profile = profile.object
+        user = profile.object.user
         details = {}
 
-        details['user'] = get_simple_user_object(profile.user.id)
-        details['profile'] = get_profile_data(profile, profile.user.id)
-        details['user']['cnt_deleted'] = cnt_post_deleted_by_user(profile.user.id)
-        details['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(profile.user.id)
+        details['user'] = get_simple_user_object(user.id)
+        details['profile'] = get_profile_data(user.profile, user.id)
+        details['user']['cnt_deleted'] = cnt_post_deleted_by_user(user.id)
+        details['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
         data['objects'].append(details)
 
         if data['objects']:
@@ -103,8 +103,10 @@ def banned_profile(request):
                              user_id=user.id,
                              text="%s || %s" % (user.username, description),
                              ip_address=get_user_ip(request))
-        return return_json_data({'status': True,
-                                 'message': "Successfully Change Profile banned."})
+        data = {'status': True, 'message': "Successfully Change Profile banned."}
+        data['user'] = get_simple_user_object(user.id)
+        data['profile'] = get_profile_data(user.profile, user.id)
+        return return_json_data(data)
     else:
         return return_bad_request()
 

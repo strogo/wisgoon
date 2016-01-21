@@ -314,6 +314,7 @@ def get_objects_list(posts, cur_user_id=None, r=None):
 
 def get_profile_data(profile, user_id):
     update_follower_following(profile, user_id)
+    imei = profile.user.phone.imei
     data = {}
     data['name'] = profile.name
     data['score'] = profile.score
@@ -329,10 +330,10 @@ def get_profile_data(profile, user_id):
     data['jens'] = profile.jens if profile.jens else '0'
     data['email'] = profile.user.email
     data['date_joined'] = str(profile.user.date_joined.strftime("%s"))
-    try:
-        data['imei'] = profile.user.phone.imei
-        data['users_imei'] = get_user_with_imei(profile.user.phone.imei)
-    except:
+    if imei:
+        data['imei'] = str(imei)
+        data['users_imei'] = get_user_with_imei(imei)
+    else:
         data['imei'] = ''
         data['users_imei'] = []
 
@@ -392,8 +393,8 @@ def ad_item_json(ad):
 
 
 def get_user_with_imei(imei):
-    phone_data = PhoneData.objects.filetr(imei=imei)
+    phone_data = PhoneData.objects.filter(imei=imei)
     users_info = []
     for data in phone_data:
-        users_info.append(get_simple_user_object(data.user))
+        users_info.append(get_simple_user_object(data.user.id))
     return users_info
