@@ -56,22 +56,31 @@ def change_status_user(request):
         json_data = ast.literal_eval(request.body)
         user_id = int(json_data.get('user_id'))
         status = str(json_data.get('status'))
+        desc = str(json_data.get('desc'))
         user = User.objects.get(pk=user_id)
     except:
         return return_not_found()
-    # TO DO
-    # Log
+
     if user_id:
         if status == 'true':
             user.is_active = True
             message = "User Status Is True."
+            Log.active_user(user_id=request.user.id,
+                            owner=user.id,
+                            text=desc + desc,
+                            ip_address=get_user_ip(request))
         else:
             user.is_active = False
             message = "User Status Is False."
+            Log.ban_by_admin(actor=request.user,
+                             user_id=user.id,
+                             text="%s || %s" % (user.username, desc),
+                             ip_address=get_user_ip(request))
         user.save()
         data = {'status': True, 'message': message}
         data['user'] = get_simple_user_object(user.id)
         data['profile'] = get_profile_data(user.profile, user.id)
+        data['profile']['description'] = desc
         return return_json_data(data)
     else:
         return return_bad_request()
@@ -88,7 +97,6 @@ def banned_profile(request):
         description = str(json_data.get('description'))
 
         profile = Profile.objects.get(user_id=user_id)
-        user = User.objects.get(pk=user_id)
     except:
         return return_not_found()
 
@@ -96,16 +104,21 @@ def banned_profile(request):
         if status == 'true':
             profile.banned = True
             profile.save()
+            Log.active_user(user_id=request.user.id,
+                            owner=profile.user.id,
+                            text="%s || %s" % (profile.user.username, description),
+                            ip_address=get_user_ip(request))
         else:
             profile.banned = False
             profile.save()
             Log.ban_by_admin(actor=request.user,
-                             user_id=user.id,
-                             text="%s || %s" % (user.username, description),
+                             user_id=profile.user.id,
+                             text="%s || %s" % (profile.user.username, description),
                              ip_address=get_user_ip(request))
         data = {'status': True, 'message': "Successfully Change Profile banned."}
-        data['user'] = get_simple_user_object(user.id)
-        data['profile'] = get_profile_data(user.profile, user.id)
+        data['user'] = get_simple_user_object(profile.user.id)
+        data['profile'] = get_profile_data(profile, profile.user.id)
+        data['profile']['description'] = description
         return return_json_data(data)
     else:
         return return_bad_request()
