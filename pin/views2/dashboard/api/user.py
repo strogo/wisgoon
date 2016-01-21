@@ -124,66 +124,85 @@ def banned_imei(request):
     if description and imei:
         if status == 'true':
             try:
-                banneds = BannedImei.objects.filter(imei=imei)
-                for banned in banneds:
-                    banned.delete()
-                    Log.active_user(user_id=request.user,
-                                    owner=banned.user.id,
-                                    text=description,
-                                    ip_address=get_user_ip(request))
-                # TO DO
-                # Log Un Banned
+                BannedImei.objects.filter(imei=imei).delete()
+
+                desc = ''
+                owner = None
+
+                for data in phone_date:
+                    cur_user = data.user
+                    owner = cur_user.id
+                    desc += cur_user.username + ' || '
+                    cur_user.is_active = True
+                    cur_user.save()
+
+                Log.active_user(user_id=request.user.id,
+                                owner=owner,
+                                text=desc + description,
+                                ip_address=get_user_ip(request))
+                return return_json_data({'status': True,
+                                         'message': "Successfully Change Profile banned."})
+
             except:
                 return return_not_found()
         else:
-            for data in phone_date:
-                BannedImei.objects.create(imei=data.imei,
-                                          description=description,
-                                          user=data.user)
-                data.user.is_active = False
-                data.user.save()
-                Log.ban_by_imei(actor=data.user, text=data.user.username,
-                                ip_address=get_user_ip(request))
-
-
-@csrf_exempt
-def banned_user_by_imei(request):
-    if not check_admin(request):
-        return return_un_auth()
-    try:
-        json_data = ast.literal_eval(request.body)
-        imei = str(json_data.get('imei'))
-        status = str(json_data.get('status'))
-        description = str(json_data.get('description'))
-        user_id = str(json_data.get('user_id'))
-
-        phone_date = PhoneData.objects.get(imei=imei, user_id=user_id)
-    except:
-        return return_not_found()
-
-    try:
-        user = User.objects.get(id=user_id)
-    except:
-        return return_not_found()
-
-    if user_id and description and imei:
-        if status == 'true':
-            try:
-                banned = BannedImei.objects.get(imei=phone_date.imei, user=user)
-                banned.delete()
-                Log.active_user(user_id=request.user,
-                                owner=user.id,
-                                text=description,
-                                ip_address=get_user_ip(request))
-                # TO DO
-                # Log Un Banned
-            except:
-                return return_not_found()
-        else:
-            BannedImei.objects.create(imei=phone_date.imei,
+            BannedImei.objects.create(imei=imei,
                                       description=description,
-                                      user=user)
-            user.is_active = False
-            user.save()
-            Log.ban_by_imei(actor=user, text=user.username,
+                                      user=data.user)
+            desc = ''
+            owner = None
+            for data in phone_date:
+                cur_user = data.user
+                owner = cur_user.id
+                desc += cur_user.username + ' || '
+                cur_user.is_active = False
+                cur_user.save()
+
+            Log.ban_by_imei(actor=data.user,
+                            text=desc + description,
                             ip_address=get_user_ip(request))
+            return return_json_data({'status': True,
+                                     'message': "Successfully Change Profile banned."})
+
+
+# @csrf_exempt
+# def banned_user_by_imei(request):
+#     if not check_admin(request):
+#         return return_un_auth()
+#     try:
+#         json_data = ast.literal_eval(request.body)
+#         imei = str(json_data.get('imei'))
+#         status = str(json_data.get('status'))
+#         description = str(json_data.get('description'))
+#         user_id = str(json_data.get('user_id'))
+
+#         phone_date = PhoneData.objects.get(imei=imei, user_id=user_id)
+#     except:
+#         return return_not_found()
+
+#     try:
+#         user = User.objects.get(id=user_id)
+#     except:
+#         return return_not_found()
+
+#     if user_id and description and imei:
+#         if status == 'true':
+#             try:
+#                 banned = BannedImei.objects.get(imei=phone_date.imei, user=user)
+#                 banned.delete()
+#                 Log.active_user(user_id=request.user,
+#                                 owner=user.id,
+#                                 text=description,
+#                                 ip_address=get_user_ip(request))
+#                 # TO DO
+#                 # Log Un Banned
+#             except:
+#                 return return_not_found()
+#         else:
+#             BannedImei.objects.create(imei=phone_date.imei,
+#                                       description=description,
+#                                       user=user)
+#             user.is_active = False
+#             user.save()
+#             Log.ban_by_imei(actor=user, text=user.username,
+#                             ip_address=get_user_ip(request))
