@@ -9,6 +9,8 @@ from pin.api6.cache_layer import PostCacheLayer
 from models import Post
 from khayyam import JalaliDate
 
+from pin.analytics import like_act
+
 # redis set server
 rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
 # redis list server
@@ -133,6 +135,7 @@ class LikesRedis(object):
 
         from pin.model_mongo import MonthlyStats
         MonthlyStats.log_hit(object_type=MonthlyStats.LIKE)
+        like_act(post=self.postId, actor=user_id)
 
         if user_id != post_owner:
             from pin.actions import send_notif_bar

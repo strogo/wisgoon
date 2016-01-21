@@ -44,12 +44,14 @@
 </div>
 
 {% if not DEBUG %}
-{% comment %}
-{% include "pin2/tabliq_sidebar.html" %}
-{% endcomment %}
+{% include "pin2/tabliq/_300x250.html" %}
 {% endif %}
 
 {% include "pin2/mobil_ads.html" %}
+
+{% if not DEBUG %}
+{% include "pin2/tabliq/_300x100.html" %}
+{% endif %}
 
 
 {% comment %}
