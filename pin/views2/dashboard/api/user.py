@@ -70,6 +70,8 @@ def change_status_user(request):
             message = "User Status Is False."
         user.save()
         data = {'status': True, 'message': message}
+        data['user'] = get_simple_user_object(user.id)
+        data['profile'] = get_profile_data(user.profile, user.id)
         return return_json_data(data)
     else:
         return return_bad_request()

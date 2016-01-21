@@ -324,6 +324,7 @@ def get_profile_data(profile, user_id):
     data['cnt_follower'] = profile.cnt_follower
     data['cnt_following'] = profile.cnt_following
     data['status'] = profile.user.is_active
+    data['banne_profile'] = profile.banned
     data['score'] = profile.score
     data['jens'] = profile.jens if profile.jens else '0'
     data['email'] = profile.user.email
