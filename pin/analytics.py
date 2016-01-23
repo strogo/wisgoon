@@ -39,3 +39,18 @@ def comment_act(post, actor, user_ip):
     }
 
     send_tick(doc)
+
+
+def post_act(post, actor, category, user_ip="127.0.0.1"):
+    t_date = timezone.now().isoformat()
+    doc = {
+        "@timestamp": t_date,
+        "type": "post",
+        "type_number": 3,
+        "post_category": category,
+        "ip": user_ip,
+        "actor": actor,
+        "@message": "send post {}".format(post),
+    }
+
+    send_tick(doc)

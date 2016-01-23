@@ -304,6 +304,7 @@ def post_send(request):
             model.text = form.cleaned_data['description']
             model.category_id = form.cleaned_data['category']
             model.device = 2
+            model._user_ip = get_user_ip(request)
             model.save()
 
             return HttpResponse('success')

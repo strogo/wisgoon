@@ -335,6 +335,7 @@ def sendurl(request):
                 format(settings.INSTANCE_NAME, filename)
             model.timestamp = time()
             model.user = request.user
+            model._user_ip = get_user_ip(request)
             model.save()
 
             next_url = reverse('pin-item', args=[model.id])
@@ -421,6 +422,7 @@ def send(request):
                 format(settings.INSTANCE_NAME, filename)
             model.timestamp = time()
             model.user = request.user
+            model._user_ip = get_user_ip(request)
             model.save()
 
             next_url = reverse('pin-item', args=[model.id])
