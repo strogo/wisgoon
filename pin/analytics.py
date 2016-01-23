@@ -19,6 +19,7 @@ def like_act(post, actor, user_ip):
         "@timestamp": t_date,
         "action_type": "like",
         "ip": user_ip,
+        "cnt_like": 1,
         "actor": actor,
         "@message": "like post {}".format(post),
     }
@@ -33,6 +34,7 @@ def comment_act(post, actor, user_ip):
         "action_type": "comment",
         "ip": user_ip,
         "actor": actor,
+        "cnt_comment": 1,
         "@message": "comment post {}".format(post),
     }
 
@@ -47,6 +49,7 @@ def post_act(post, actor, category, user_ip="127.0.0.1"):
         "post_category": category,
         "ip": user_ip,
         "actor": actor,
+        "cnt_post": 1,
         "@message": "send post {}".format(post),
     }
 
