@@ -1437,6 +1437,7 @@ class Log(models.Model):
     BAD_POST = 4
     BAN_IMEI = 5
     BAN_ADMIN = 6
+    ACTIVE_USER = 7
     ACTIONS = (
         (DELETE, "delete"),
         (PENDING, "pending"),
@@ -1444,6 +1445,7 @@ class Log(models.Model):
         (BAD_POST, "bad post"),
         (BAN_IMEI, "ban imei"),
         (BAN_ADMIN, "ban by admin"),
+        (ACTIVE_USER, "activated")
     )
 
     user = models.ForeignKey(User)
@@ -1518,6 +1520,15 @@ class Log(models.Model):
         Log.objects.create(user_id=actor.id,
                            action=5,
                            content_type=3,
+                           text=text,
+                           ip_address=ip_address)
+
+    @classmethod
+    def active_user(cls, owner, user_id, text="", ip_address="127.0.0.1"):
+        Log.objects.create(user_id=user_id,
+                           action=cls.ACTIVE_USER,
+                           owner=owner,
+                           content_type=cls.USER,
                            text=text,
                            ip_address=ip_address)
 
