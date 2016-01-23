@@ -222,6 +222,7 @@ def post_update(request, item_id):
     if request.method == 'POST':
         form = PinDeviceUpdate(request.POST, instance=post)
         if form.is_valid():
+            form._user_ip = get_user_ip(request)
             form.save()
             return HttpResponse('success')
         else:
