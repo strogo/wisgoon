@@ -967,7 +967,7 @@ class Stream(models.Model):
     def add_post(cls, sender, instance, *args, **kwargs):
         # print "here is add post in stream"
         post = instance
-        print "user_ip:", post._user_ip
+        # print "user_ip:", post._user_ip
         post.get_image_236()
         post.get_image_500()
         post.get_image_sizes()
