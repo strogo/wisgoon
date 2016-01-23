@@ -71,7 +71,9 @@ def like(request):
 
     from models_redis import LikesRedis
     like, dislike, current_like = LikesRedis(post_id=post_id)\
-        .like_or_dislike(user_id=user.id, post_owner=post.user_id)
+        .like_or_dislike(user_id=user.id,
+                         post_owner=post.user_id,
+                         user_ip=user._ip)
 
     if like:
         return HttpResponse('+1', content_type="application/json")

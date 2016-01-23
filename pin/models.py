@@ -34,6 +34,7 @@ from pin.tasks import delete_image
 from pin.classification_tools import normalize
 from pin.api6.cache_layer import PostCacheLayer
 from pin.models_graph import FollowUser
+from pin.analytics import comment_act
 
 LIKE_TO_DEFAULT_PAGE = 10
 
@@ -1206,7 +1207,6 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
-        # from tools import check_spam
         from pin.classification import get_comment_category
         com_cat = str(get_comment_category(self.comment))
         if int(com_cat) in [2]:
@@ -1216,18 +1216,16 @@ class Comments(models.Model):
                             text=com_cat + " --- " + self.comment)
             return
 
-        if (self.user.profile.score < settings.SCORE_FOR_COMMENING):
-            return
-
         if not self.pk:
             Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
 
-        comment_cache_name = "com_%d" % int(self.object_pk_id)
+        comment_cache_name = "com_{}".format(int(self.object_pk_id))
         cache.delete(comment_cache_name)
         super(Comments, self).save(*args, **kwargs)
         if settings.TUNING_CACHE:
-            PostCacheLayer(post_id=self.object_pk.id).comment_change(self.object_pk.cnt_comment)
+            PostCacheLayer(post_id=self.object_pk.id)\
+                .comment_change(self.object_pk.cnt_comment)
 
     @classmethod
     def add_comment(cls, sender, instance, created, *args, **kwargs):
@@ -1237,6 +1235,7 @@ class Comments(models.Model):
             return None
 
         MonthlyStats.log_hit(object_type=MonthlyStats.COMMENT)
+
         comment = instance
         post = get_post_user_cache(post_id=comment.object_pk_id)
         actors_list = []
@@ -1274,6 +1273,8 @@ class Comments(models.Model):
                            actor=comment.user_id)
 
             actors_list.append(post.user_id)
+
+        comment_act(comment.object_pk_id, comment.user_id, user_ip=comment.ip_address)
 
         users = Comments.objects.filter(object_pk=post.id).values_list('user_id', flat=True)
         # for notif in Notif_mongo.objects.filter(type=2, post=post.id):

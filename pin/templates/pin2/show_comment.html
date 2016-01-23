@@ -15,7 +15,9 @@
 				<a href="{% url "pin-absuser" comment.user.username %}">{{comment.user.username}}</a> 
 			</h5>
 			<span class="cmnt_time pull-left">{% if request.user.is_superuser or request.user.id == comment.object_pk.user.id or request.user.id == comment.user.id %}
+				{% if comment.id %}
 				<a class="del-comment" rel="{{comment.id}}" href="{% url "pin-comment-delete" comment.id %}">حذف</a>
+				{% endif %}
 				{% endif %} - {{comment.submit_date|naturaltime}} <i class="time_icon"></i>
 			</span>
 		</div>
