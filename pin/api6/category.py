@@ -1,6 +1,7 @@
 from pin.tools import AuthCache
 from pin.api6.http import return_json_data, return_un_auth, return_bad_request
 from pin.api6.tools import get_int, category_get_json
+from pin.api_tools import media_abs_url
 from pin.models import Category, SubCategory
 
 
@@ -28,6 +29,7 @@ def all_category(request):
     for category in sub_categories:
         o = {
             "title": category.title,
+            "image": media_abs_url(category.image.url),
             "childs": []
         }
         for cat in Category.objects.filter(parent=category):
