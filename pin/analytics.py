@@ -9,19 +9,18 @@ def send_tick(doc):
             tick(doc=doc)
         else:
             tick.delay(doc=doc)
+        # tick.delay(doc=doc)
     except Exception, e:
         print str(e)
 
 
 def like_act(post, actor):
-    t_date = timezone.now()
+    t_date = timezone.now().isoformat()
     doc = {
-        "@timestamp": str(t_date),
-        "ip": "79.1.14.87",
+        "@timestamp": t_date,
         "type": "like",
         "actor": actor,
         "@message": "vahid like post {}".format(post),
     }
-    print doc
 
-    # send_tick(doc)
+    send_tick(doc)
