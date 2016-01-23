@@ -17,7 +17,7 @@ def like_act(post, actor, user_ip):
     t_date = timezone.now().isoformat()
     doc = {
         "@timestamp": t_date,
-        "type": "like",
+        "action_type": "like",
         "type_number": 1,
         "ip": user_ip,
         "actor": actor,
@@ -31,7 +31,7 @@ def comment_act(post, actor, user_ip):
     t_date = timezone.now().isoformat()
     doc = {
         "@timestamp": t_date,
-        "type": "comment",
+        "action_type": "comment",
         "type_number": 2,
         "ip": user_ip,
         "actor": actor,
@@ -45,7 +45,7 @@ def post_act(post, actor, category, user_ip="127.0.0.1"):
     t_date = timezone.now().isoformat()
     doc = {
         "@timestamp": t_date,
-        "type": "post",
+        "action_type": "post",
         "type_number": 3,
         "post_category": category,
         "ip": user_ip,
