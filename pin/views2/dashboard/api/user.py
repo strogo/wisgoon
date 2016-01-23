@@ -1,5 +1,3 @@
-import ast
-
 from django.contrib.auth.models import User
 
 from haystack.query import SearchQuerySet
@@ -52,17 +50,17 @@ def change_status_user(request):
 
     if not check_admin(request):
         return return_un_auth()
+
     try:
-        json_data = ast.literal_eval(request.body)
-        user_id = int(json_data.get('user_id'))
-        status = str(json_data.get('status'))
-        desc = str(json_data.get('desc'))
+        user_id = int(request.POST.get('user_id', False))
+        status = str(request.POST.get('status', "False"))
+        desc = str(request.POST.get('description', ""))
         user = User.objects.get(pk=user_id)
     except:
         return return_not_found()
 
     if user_id:
-        if status == 'true':
+        if status == 'True':
             user.is_active = True
             message = "User Status Is True."
             Log.active_user(user_id=request.user.id,
@@ -80,7 +78,6 @@ def change_status_user(request):
         data = {'status': True, 'message': message}
         data['user'] = get_simple_user_object(user.id)
         data['profile'] = get_profile_data(user.profile, user.id)
-        data['profile']['description'] = desc
         return return_json_data(data)
     else:
         return return_bad_request()
@@ -90,18 +87,17 @@ def change_status_user(request):
 def banned_profile(request):
     if not check_admin(request):
         return return_un_auth()
-    try:
-        json_data = ast.literal_eval(request.body)
-        user_id = int(json_data.get('user_id'))
-        status = str(json_data.get('status'))
-        description = str(json_data.get('description'))
 
+    try:
+        user_id = int(request.POST.get('user_id', False))
+        status = str(request.POST.get('status', "False"))
+        description = str(request.POST.get('description', ""))
         profile = Profile.objects.get(user_id=user_id)
     except:
         return return_not_found()
 
-    if user_id and description:
-        if status == 'true':
+    if user_id:
+        if status == 'True':
             profile.banned = True
             profile.save()
             Log.active_user(user_id=request.user.id,
@@ -129,17 +125,16 @@ def banned_imei(request):
     if not check_admin(request):
         return return_un_auth()
     try:
-        json_data = ast.literal_eval(request.body)
-        imei = str(json_data.get('imei'))
-        status = str(json_data.get('status'))
-        description = str(json_data.get('description'))
+        imei = str(request.POST.get('imei', False))
+        status = str(request.POST.get('status', "False"))
+        description = str(request.POST.get('description', ""))
 
         phone_date = PhoneData.objects.filter(imei=imei)
     except:
         return return_not_found()
 
     if description and imei:
-        if status == 'true':
+        if status == 'True':
             try:
                 BannedImei.objects.filter(imei=imei).delete()
 

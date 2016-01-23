@@ -11,10 +11,11 @@ from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from pin.api_tools import abs_url, media_abs_url
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
-from pin.models import Post, Follow, Comments, PhoneData
+from pin.models import Post, Follow, Comments, PhoneData, BannedImei, Log
 from pin.models_redis import LikesRedis
 from pin.tools import create_filename
 from cache_layer import PostCacheLayer
+import khayyam
 
 
 def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
@@ -150,6 +151,8 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
                                                     kwargs={
                                                         'user_id': current_user
                                                     }))
+    user_info['permalink'] = abs_url(reverse("pin-absuser",
+                                             kwargs={"user_name": user_info['username']}))
     if user_id_from_token:
         user_info['follow_by_user'] = Follow.objects\
             .filter(follower_id=user_id_from_token, following_id=current_user)\
@@ -314,28 +317,48 @@ def get_objects_list(posts, cur_user_id=None, r=None):
 
 def get_profile_data(profile, user_id):
     update_follower_following(profile, user_id)
-    imei = profile.user.phone.imei
     data = {}
     data['name'] = profile.name
     data['score'] = profile.score
     data['cnt_post'] = profile.cnt_post
     data['cnt_like'] = profile.cnt_like
-    data['is_active'] = profile.user.is_active
+    data['is_active'] = str(profile.user.is_active)
     data['credit'] = profile.credit
     data['cnt_follower'] = profile.cnt_follower
     data['cnt_following'] = profile.cnt_following
-    data['status'] = profile.user.is_active
-    data['banne_profile'] = profile.banned
+    data['banne_profile'] = str(profile.banned)
     data['score'] = profile.score
     data['jens'] = profile.jens if profile.jens else '0'
     data['email'] = profile.user.email
-    data['date_joined'] = str(profile.user.date_joined.strftime("%s"))
+    data['date_joined'] = khayyam.JalaliDate.from_date(profile.user.date_joined)\
+        .strftime("%Y/%m/%d")
+
+    try:
+        imei = profile.user.phone.imei
+    except:
+        imei = None
+
     if imei:
         data['imei'] = str(imei)
         data['users_imei'] = get_user_with_imei(imei)
+        if not profile.user.is_active:
+            try:
+                banned = BannedImei.objects.get(imei=imei)
+                data['description'] = str(banned.description)
+                data['imei_status'] = "False"
+            except:
+                data['description'] = ""
+                data['imei_status'] = ""
+        else:
+            data['description'] = ""
+            data['imei_status'] = "True"
     else:
         data['imei'] = ''
         data['users_imei'] = []
+        log = Log.objects.filter(object_id=profile.user.id, content_type=Log.USER)\
+            .latest('id')
+        data['description'] = str(log.text)
+        data['imei_status'] = "True"
 
     return data
 
