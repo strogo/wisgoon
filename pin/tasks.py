@@ -9,7 +9,10 @@ from django.core.cache import cache
 
 ES_INDEX = "wa0.1.6"
 
-es = Elasticsearch([settings.ES_HOST])
+try:
+    es = Elasticsearch([settings.ES_HOST])
+except Exception, e:
+    print str(e)
 
 mapping = {
     "log": {
@@ -29,8 +32,11 @@ mapping = {
     }
 }
 
-es.indices.create(ES_INDEX, ignore=400)
-es.indices.put_mapping(index=ES_INDEX, doc_type="log", ignore=400, body=mapping)
+try:
+    es.indices.create(ES_INDEX, ignore=400)
+    es.indices.put_mapping(index=ES_INDEX, doc_type="log", ignore=400, body=mapping)
+except Exception, e:
+    print str(e)
 # es.indices.create(index=ES_INDEX, ignore=400, body=mapping)
 
 
