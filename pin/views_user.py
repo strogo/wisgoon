@@ -608,7 +608,7 @@ def notif_user(request):
 def notif_following(request):
     notif_data = ActivityRedis(user_id=request.user.id).get_activity()
     # return HttpResponse(json.dumps(notif_data))
-    return render(request, 'pin/notif_user_following.html', {
+    return render(request, 'pin2/notif_user_following.html', {
         'notif': notif_data
     })
 

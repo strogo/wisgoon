@@ -19,11 +19,32 @@
 	{% include "base/analytics.html"%}
 </head>
 <body>
+	<div class="only_mobile_view">
+		<div class="top_download">
+			<p class="pa10">
+				<span class="mabo10">نرم‌افزار اندروید ویسگون</span><br>
+				<a class="wis_btn green ma0 mato10" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">دانلود از بازار</a>
+				<a class="wis_btn red ma0 mato10" href="http://static.wisgoon.com/media/app/latest.apk">دانلود مستقیم</a>
+				<span class="fa fa-times pull-left close_ad" style="padding:16px 15px 0"></span>
+			</p>
+			<a class="app_btn" target="_blank" title="دانلود نرم افزار موبایل" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">
+			</a>
+			<div class="clear"></div>
+		</div>
+	</div>
+
 	<div id="pagetop"></div>
 	{% include "pin2/nav.html" %}
 	{% include "pin2/cats.html" %}
 
-	{% if not DEBUG %}
+	{% comment %}
+	<div id="fix_nav">
+		{% include "pin2/nav.html" %}
+		{% include "pin2/cats.html" %}
+	</div>
+	{% endcomment %}
+
+	{% if DISPLAY_AD %}
 	<div class="tabliq-block" style="text-align:center">
 		{% include "base/tabliq.html" %}
 	</div>
