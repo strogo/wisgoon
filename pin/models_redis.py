@@ -29,8 +29,10 @@ class NotificationRedis(object):
     def set_notif(self, ntype, post, actor, seen=False, post_image=None):
         notif_str = "{}:{}:{}:{}:{}"\
             .format(ntype, post, actor, seen, post_image)
-        notificationRedis.lpush(self.KEY_PREFIX, notif_str)
-        notificationRedis.ltrim(self.KEY_PREFIX, 0, 100)
+        np = notificationRedis.pipeline()
+        np.lpush(self.KEY_PREFIX, notif_str)
+        np.ltrim(self.KEY_PREFIX, 0, 100)
+        np.execute()
 
 
 class ActivityRedis(object):
