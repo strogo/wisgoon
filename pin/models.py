@@ -993,7 +993,7 @@ class Stream(models.Model):
                 Post.add_to_stream(post=post)
 
             post_act(post=post.id, actor=user.id,
-                     category=post.category_id, user_ip=post._user_ip)
+                     category=post.category.title, user_ip=post._user_ip)
 
 
 class Likes(models.Model):

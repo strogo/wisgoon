@@ -188,6 +188,8 @@ def get_user_ip(request):
         ip = x_forwarded_for
     else:
         ip = request.META.get('REMOTE_ADDR', None)
+    if isinstance(ip, list):
+        ip = ip[0]
     return ip
     # return request.META.get('REMOTE_ADDR', None)
 
