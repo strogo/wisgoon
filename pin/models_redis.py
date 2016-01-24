@@ -17,6 +17,20 @@ rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
 rListServer = redis.Redis(settings.REDIS_DB_2, db=4)
 leaderBoardServer = redis.Redis(settings.REDIS_DB_2, db=0)
 activityServer = redis.Redis(settings.REDIS_DB_3)
+notificationRedis = redis.Redis(settings.REDIS_DB_4)
+
+
+class NotificationRedis(object):
+    KEY_PREFIX = "n:01:{}"
+
+    def __init__(self, user_id):
+        self.KEY_PREFIX = self.KEY_PREFIX.format(user_id)
+
+    def set_notif(self, ntype, post, actor, seen=False, post_image=None):
+        notif_str = "{}:{}:{}:{}:{}"\
+            .format(ntype, post, actor, seen, post_image)
+        notificationRedis.lpush(self.KEY_PREFIX, notif_str)
+        notificationRedis.ltrim(self.KEY_PREFIX, 0, 100)
 
 
 class ActivityRedis(object):
