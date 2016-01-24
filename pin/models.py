@@ -34,6 +34,7 @@ from pin.tasks import delete_image
 from pin.classification_tools import normalize
 from pin.api6.cache_layer import PostCacheLayer
 from pin.models_graph import FollowUser
+from pin.analytics import comment_act, post_act
 
 LIKE_TO_DEFAULT_PAGE = 10
 
@@ -966,6 +967,7 @@ class Stream(models.Model):
     def add_post(cls, sender, instance, *args, **kwargs):
         # print "here is add post in stream"
         post = instance
+        # print "user_ip:", post._user_ip
         post.get_image_236()
         post.get_image_500()
         post.get_image_sizes()
@@ -989,6 +991,9 @@ class Stream(models.Model):
 
             if post.status == Post.APPROVED and post.accept_for_stream():
                 Post.add_to_stream(post=post)
+
+            post_act(post=post.id, actor=user.id,
+                     category=post.category.title, user_ip=post._user_ip)
 
 
 class Likes(models.Model):
@@ -1206,7 +1211,6 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
-        # from tools import check_spam
         from pin.classification import get_comment_category
         com_cat = str(get_comment_category(self.comment))
         if int(com_cat) in [2]:
@@ -1216,18 +1220,16 @@ class Comments(models.Model):
                             text=com_cat + " --- " + self.comment)
             return
 
-        if (self.user.profile.score < settings.SCORE_FOR_COMMENING):
-            return
-
         if not self.pk:
             Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
 
-        comment_cache_name = "com_%d" % int(self.object_pk_id)
+        comment_cache_name = "com_{}".format(int(self.object_pk_id))
         cache.delete(comment_cache_name)
         super(Comments, self).save(*args, **kwargs)
         if settings.TUNING_CACHE:
-            PostCacheLayer(post_id=self.object_pk.id).comment_change(self.object_pk.cnt_comment)
+            PostCacheLayer(post_id=self.object_pk.id)\
+                .comment_change(self.object_pk.cnt_comment)
 
     @classmethod
     def add_comment(cls, sender, instance, created, *args, **kwargs):
@@ -1237,6 +1239,7 @@ class Comments(models.Model):
             return None
 
         MonthlyStats.log_hit(object_type=MonthlyStats.COMMENT)
+
         comment = instance
         post = get_post_user_cache(post_id=comment.object_pk_id)
         actors_list = []
@@ -1274,6 +1277,8 @@ class Comments(models.Model):
                            actor=comment.user_id)
 
             actors_list.append(post.user_id)
+
+        comment_act(comment.object_pk_id, comment.user_id, user_ip=comment.ip_address)
 
         users = Comments.objects.filter(object_pk=post.id).values_list('user_id', flat=True)
         # for notif in Notif_mongo.objects.filter(type=2, post=post.id):
@@ -1437,6 +1442,7 @@ class Log(models.Model):
     BAD_POST = 4
     BAN_IMEI = 5
     BAN_ADMIN = 6
+    ACTIVE_USER = 7
     ACTIONS = (
         (DELETE, "delete"),
         (PENDING, "pending"),
@@ -1444,6 +1450,7 @@ class Log(models.Model):
         (BAD_POST, "bad post"),
         (BAN_IMEI, "ban imei"),
         (BAN_ADMIN, "ban by admin"),
+        (ACTIVE_USER, "activated")
     )
 
     user = models.ForeignKey(User)
@@ -1518,6 +1525,15 @@ class Log(models.Model):
         Log.objects.create(user_id=actor.id,
                            action=5,
                            content_type=3,
+                           text=text,
+                           ip_address=ip_address)
+
+    @classmethod
+    def active_user(cls, owner, user_id, text="", ip_address="127.0.0.1"):
+        Log.objects.create(user_id=user_id,
+                           action=cls.ACTIVE_USER,
+                           owner=owner,
+                           content_type=cls.USER,
                            text=text,
                            ip_address=ip_address)
 

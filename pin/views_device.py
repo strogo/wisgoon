@@ -71,7 +71,9 @@ def like(request):
 
     from models_redis import LikesRedis
     like, dislike, current_like = LikesRedis(post_id=post_id)\
-        .like_or_dislike(user_id=user.id, post_owner=post.user_id)
+        .like_or_dislike(user_id=user.id,
+                         post_owner=post.user_id,
+                         user_ip=user._ip)
 
     if like:
         return HttpResponse('+1', content_type="application/json")
@@ -220,6 +222,7 @@ def post_update(request, item_id):
     if request.method == 'POST':
         form = PinDeviceUpdate(request.POST, instance=post)
         if form.is_valid():
+            form._user_ip = get_user_ip(request)
             form.save()
             return HttpResponse('success')
         else:
@@ -302,6 +305,7 @@ def post_send(request):
             model.text = form.cleaned_data['description']
             model.category_id = form.cleaned_data['category']
             model.device = 2
+            model._user_ip = get_user_ip(request)
             model.save()
 
             return HttpResponse('success')

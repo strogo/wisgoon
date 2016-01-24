@@ -172,7 +172,9 @@ def like(request, item_id):
 
     from models_redis import LikesRedis
     like, dislike, current_like = LikesRedis(post_id=item_id)\
-        .like_or_dislike(user_id=request.user.id, post_owner=post.user_id)
+        .like_or_dislike(user_id=request.user.id,
+                         post_owner=post.user_id,
+                         user_ip=get_user_ip(request))
 
     if like:
         user_act = 1
@@ -291,11 +293,13 @@ def send_comment(request):
     if request.method == 'POST':
         text = request.POST.get('text', None)
         post = request.POST.get('post', None)
+
         if text and post:
             post = get_object_or_404(Post, pk=post)
             if check_block(user_id=post.user_id, blocked_id=request.user.id):
                 if not is_police(request, flat=True):
                     return HttpResponseRedirect('/')
+
             comment = Comments.objects.create(object_pk_id=post.id,
                                               comment=text,
                                               user=request.user,
@@ -331,6 +335,7 @@ def sendurl(request):
                 format(settings.INSTANCE_NAME, filename)
             model.timestamp = time()
             model.user = request.user
+            model._user_ip = get_user_ip(request)
             model.save()
 
             next_url = reverse('pin-item', args=[model.id])
@@ -417,6 +422,7 @@ def send(request):
                 format(settings.INSTANCE_NAME, filename)
             model.timestamp = time()
             model.user = request.user
+            model._user_ip = get_user_ip(request)
             model.save()
 
             next_url = reverse('pin-item', args=[model.id])

@@ -56,6 +56,9 @@ REDIS_DB_NUMBER_2 = 10
 
 REDIS_DB_3 = 'wisgoon.db.3'
 
+REDIS_DB_4 = 'localhost'
+
+
 MONGO_DB = "wisgoon"
 MONGO_DB_HOST = "wisgoon.mongo.db"
 
@@ -108,8 +111,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    # 'johnny.middleware.LocalStoreClearMiddleware',
-    # 'johnny.middleware.QueryCacheMiddleware',
+    'johnny.middleware.LocalStoreClearMiddleware',
+    'johnny.middleware.QueryCacheMiddleware',
     'pin.middleware.UrlRedirectMiddleware',
     'pin.middleware.XsSharing',
     # 'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
@@ -236,7 +239,7 @@ CACHES = {
         BACKEND='django.core.cache.backends.memcached.MemcachedCache',
         LOCATION=['127.0.0.1:11211'],
         # LOCATION=['79.127.125.104:11211'],
-        # JOHNNY_CACHE=False,
+        JOHNNY_CACHE=True,
     ),
     'cache_layer': dict(
         # BACKEND='johnny.backends.memcached.MemcachedCache',
@@ -397,3 +400,5 @@ CELERY_ROUTES.update({
 
 # format of avatar cache name by user_id
 AVATAR_CACHE_KEY = "dad:avatar:{}"
+
+ES_HOST = "localhost"

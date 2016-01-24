@@ -9,12 +9,30 @@ from pin.api6.cache_layer import PostCacheLayer
 from models import Post
 from khayyam import JalaliDate
 
+from pin.analytics import like_act
+
 # redis set server
 rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
 # redis list server
 rListServer = redis.Redis(settings.REDIS_DB_2, db=4)
 leaderBoardServer = redis.Redis(settings.REDIS_DB_2, db=0)
 activityServer = redis.Redis(settings.REDIS_DB_3)
+notificationRedis = redis.Redis(settings.REDIS_DB_4)
+
+
+class NotificationRedis(object):
+    KEY_PREFIX = "n:01:{}"
+
+    def __init__(self, user_id):
+        self.KEY_PREFIX = self.KEY_PREFIX.format(user_id)
+
+    def set_notif(self, ntype, post, actor, seen=False, post_image=None):
+        notif_str = "{}:{}:{}:{}:{}"\
+            .format(ntype, post, actor, seen, post_image)
+        np = notificationRedis.pipeline()
+        np.lpush(self.KEY_PREFIX, notif_str)
+        np.ltrim(self.KEY_PREFIX, 0, 100)
+        np.execute()
 
 
 class ActivityRedis(object):
@@ -113,7 +131,7 @@ class LikesRedis(object):
         from pin.model_mongo import MonthlyStats
         MonthlyStats.log_hit(object_type=MonthlyStats.DISLIKE)
 
-    def like(self, user_id, post_owner):
+    def like(self, user_id, post_owner, user_ip):
         rSetServer.sadd(self.keyNameSet, str(user_id))
 
         Post.objects.filter(pk=int(self.postId))\
@@ -134,22 +152,25 @@ class LikesRedis(object):
         from pin.model_mongo import MonthlyStats
         MonthlyStats.log_hit(object_type=MonthlyStats.LIKE)
 
+        like_act(post=self.postId, actor=user_id, user_ip=user_ip)
+
         if user_id != post_owner:
             from pin.actions import send_notif_bar
             send_notif_bar(user=post_owner, type=1, post=self.postId,
                            actor=user_id)
 
-    def like_or_dislike(self, user_id, post_owner):
+    def like_or_dislike(self, user_id, post_owner, user_ip="127.0.0.1"):
         if self.user_liked(user_id=user_id):
             self.dislike(user_id=user_id)
             leaderBoardServer.zincrby(self.KEY_LEADERBORD, post_owner, -10)
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
             return False, True, self.cntlike()
         else:
-            # if int(user_id) == 1:
             from pin.tasks import activity
             activity.delay(act_type=1, who=user_id, post_id=self.postId)
-            self.like(user_id=user_id, post_owner=post_owner)
+
+            self.like(user_id=user_id, post_owner=post_owner, user_ip=user_ip)
+
             leaderBoardServer.zincrby(self.KEY_LEADERBORD, post_owner, 10)
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
             return True, False, self.cntlike()
