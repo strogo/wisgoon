@@ -60,7 +60,7 @@ def change_status_user(request):
         return return_not_found()
 
     if user_id:
-        if status == 'True':
+        if status:
             user.is_active = True
             message = "User Status Is True."
             Log.active_user(user_id=request.user.id,
@@ -97,7 +97,7 @@ def banned_profile(request):
         return return_not_found()
 
     if user_id:
-        if status == 'True':
+        if status:
             profile.banned = True
             profile.save()
             Log.active_user(user_id=request.user.id,
@@ -134,7 +134,7 @@ def banned_imei(request):
         return return_not_found()
 
     if description and imei:
-        if status == 'True':
+        if status:
             try:
                 BannedImei.objects.filter(imei=imei).delete()
 
