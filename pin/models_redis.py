@@ -22,17 +22,24 @@ notificationRedis = redis.Redis(settings.REDIS_DB_4)
 
 class NotificationRedis(object):
     KEY_PREFIX = "n:01:{}"
+    KEY_PREFIX_CNT = "nc:01:{}"
 
     def __init__(self, user_id):
         self.KEY_PREFIX = self.KEY_PREFIX.format(user_id)
+        self.KEY_PREFIX_CNT = self.KEY_PREFIX_CNT.format(user_id)
 
     def set_notif(self, ntype, post, actor, seen=False, post_image=None):
         notif_str = "{}:{}:{}:{}:{}"\
             .format(ntype, post, actor, seen, post_image)
+
         np = notificationRedis.pipeline()
         np.lpush(self.KEY_PREFIX, notif_str)
         np.ltrim(self.KEY_PREFIX, 0, 100)
+        np.incr(self.KEY_PREFIX_CNT)
         np.execute()
+
+    def clear_notif_count(self):
+        notificationRedis.set(self.KEY_PREFIX_CNT, 0)
 
 
 class ActivityRedis(object):

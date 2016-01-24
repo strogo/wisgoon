@@ -3,6 +3,7 @@ from pin.api6.http import return_json_data, return_un_auth, return_bad_request
 from pin.api_tools import media_abs_url
 from pin.tools import AuthCache
 from pin.model_mongo import NotifCount, Notif
+from pin.models_redis import NotificationRedis
 from pin.api6.tools import get_list_post, get_objects_list, get_simple_user_object,\
     get_next_url
 
@@ -41,6 +42,7 @@ def notif(request):
 
     try:
         NotifCount.objects.filter(owner=current_user).update(set__unread=0)
+        NotificationRedis(user_id=request.user.id).clear_notif_count()
         if before:
             notifs = Notif.objects\
                 .filter(owner=current_user, id__lt=before).order_by('-date')[:20]

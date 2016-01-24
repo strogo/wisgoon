@@ -34,6 +34,7 @@ from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2, PhoneData, Log, BannedImei
 from pin.model_mongo import Notif, UserLocation, NotifCount
 from pin.actions import send_clear_notif
+from pin.models_redis import NotificationRedis
 from pin.cacheLayer import UserDataCache, CategoryDataCache
 
 from haystack.query import SearchQuerySet
@@ -640,6 +641,7 @@ def notif(request):
         .order_by('-date')[offset:offset + limit]
 
     NotifCount.objects.filter(owner=cur_user).update(set__unread=0)
+    NotificationRedis(user_id=cur_user).clear_notif_count()
     # send_clear_notif(user_id=cur_user)
 
     # Notif.objects.filter(owner=1).order_by('-date')[100:].delete()

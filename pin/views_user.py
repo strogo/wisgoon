@@ -27,7 +27,7 @@ from pin.models import Post, Stream, Follow, Ad, Block,\
     Report, Comments, Comments_score, Category, Bills2 as Bills
 
 from pin.model_mongo import Notif, UserMeta, NotifCount
-from pin.models_redis import ActivityRedis
+from pin.models_redis import ActivityRedis, NotificationRedis
 import pin_image
 from pin.tools import create_filename, get_user_ip, get_request_pid, check_block,\
     post_after_delete, get_post_user_cache
@@ -548,6 +548,7 @@ def upload(request):
 @login_required
 def show_notify(request):
     NotifCount.objects.filter(owner=request.user.id).update(set__unread=0)
+    NotificationRedis(user_id=request.user.id).clear_notif_count()
     notif = Notif.objects.all().filter(owner=request.user.id).order_by('-date')[:20]
     nl = []
     for n in notif:
