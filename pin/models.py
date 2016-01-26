@@ -637,10 +637,6 @@ class Post(models.Model):
             if profile.score > settings.SCORE_FOR_STREAMS:
                 self.status = 1
 
-            else:
-                print self.date_lt(self.user.date_joined, 30), profile.score
-                # print "cant upload"
-
         except Profile.DoesNotExist:
             pass
 
@@ -658,15 +654,8 @@ class Post(models.Model):
 
             if Official.objects.filter(user=self.user).count():
                 self.status = 1
-                # is_official = True
-
-        else:
-            print "path does not exists", file_path
-
-        # print "self status: ", self.status
 
         self.text = normalize_tags(self.text)
-        # print "all save"
         super(Post, self).save(*args, **kwargs)
         if settings.TUNING_CACHE:
             try:

@@ -30,8 +30,26 @@
 			</div>
 
 			<div class="tags">
-				{% for tag in tags %}
-					<a href="/hashtag/{{tag}}/">{{tag}}</a>
+				{% for tag in facet_today.facet_counts.fields.tags %}
+					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
+				{% endfor %}
+			</div>
+			<hr>
+			<div class="tags">
+				{% for tag in facet_week.facet_counts.fields.tags %}
+					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
+				{% endfor %}
+			</div>
+			<hr>
+			<div class="tags">
+				{% for tag in facet_month.facet_counts.fields.tags %}
+					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
+				{% endfor %}
+			</div>
+			<hr>
+			<div class="tags">
+				{% for tag in facet_all.facet_counts.fields.tags %}
+					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
 				{% endfor %}
 			</div>
 		</form>
