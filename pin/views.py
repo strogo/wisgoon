@@ -109,6 +109,7 @@ def leaderboard(request):
 def search(request):
     row_per_page = 20
     results = []
+    posts = []
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
 
@@ -128,8 +129,13 @@ def search(request):
             'مهران_مدیری',
             'سعید_معروف']
 
-    posts = SearchQuerySet().models(Post)\
-        .filter(content__contains=query)[offset:offset + 1 * row_per_page]
+    if query:
+        posts = SearchQuerySet().models(Post)\
+            .filter(content__contains=query)[offset:offset + 1 * row_per_page]
+    else:
+        htall = SearchQuerySet().models(Post).facet('tags')
+        print htall.facet_counts()
+    print posts
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
