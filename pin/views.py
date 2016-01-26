@@ -110,10 +110,7 @@ def search(request):
     row_per_page = 20
     results = []
     posts = []
-    facet_all = []
-    facet_month = []
-    facet_week = []
-    facet_today = []
+    facets = {}
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
 
@@ -139,18 +136,18 @@ def search(request):
         posts = SearchQuerySet().models(Post)\
             .filter(content__contains=query)[offset:offset + 1 * row_per_page]
     else:
-        facet_all = SearchQuerySet().models(Post)\
+        facets['facet_all'] = SearchQuerySet().models(Post)\
             .facet('tags', limit=6)
 
-        facet_today = SearchQuerySet().models(Post)\
+        facets['facet_today'] = SearchQuerySet().models(Post)\
             .narrow("timestamp_i:[{} TO {}]".format(today_stamp, cur_time))\
             .facet('tags', limit=6)
 
-        facet_week = SearchQuerySet().models(Post)\
+        facets['facet_week'] = SearchQuerySet().models(Post)\
             .narrow("timestamp_i:[{} TO {}]".format(week_statmp, cur_time))\
             .facet('tags', limit=6)
 
-        facet_month = SearchQuerySet().models(Post)\
+        facets['facet_month'] = SearchQuerySet().models(Post)\
             .narrow("timestamp_i:[{} TO {}]".format(month_statmp, cur_time))\
             .facet('tags', limit=6)
 
@@ -170,10 +167,7 @@ def search(request):
         'tags': tags,
         'query': query,
         'offset': offset + row_per_page,
-        'facet_all': facet_all,
-        'facet_month': facet_month,
-        'facet_week': facet_week,
-        'facet_today': facet_today,
+        'facets': facets,
     })
 
 
