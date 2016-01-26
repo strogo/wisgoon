@@ -110,6 +110,10 @@ def search(request):
     row_per_page = 20
     results = []
     posts = []
+    facet_all = []
+    facet_month = []
+    facet_week = []
+    facet_today = []
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
 
