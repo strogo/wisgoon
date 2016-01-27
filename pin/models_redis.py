@@ -61,7 +61,7 @@ class NotificationRedis(object):
             o['seen'] = eval(ssplited[3])
             o['post_image'] = eval(ssplited[4])
             o['owner'] = self.user_id
-            o['date'] = int(time.time())
+            o['date'] = str(int(time.time()))
             nobjesct.append(NotifStruct(**o))
 
         return nobjesct
