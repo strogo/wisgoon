@@ -13,47 +13,45 @@
 	var next_pref = '?q={{query}}&offset=';
 </script>
 
-<!-- {% include "base/app.html" %} -->
-
 <div id="main" class="search_page">
-	{% comment %}
-	<div class="col-md-12" style="text-align:center;height:97px;">
-		{% include "base/ad-720x92.html" %}
-	</div>
-	{% endcomment %}
 	<div class="container">
 		<form rel="form" class="form-inline">
 			<div class="form-group">
 				<input type="text" class="form-control" placeholder="جستجو کنید..." name="q" value="{{query}}">
 				<span class="search_icon fa fa-search"></span>
 				<input type="submit" class="form-control" value="جستجو" >
+				<div class="clear"></div>
+				{% if facets %}
+				<div class="tags today_tags">
+					<h3>برچسب‌های برتر <span class="green">روز</span></h3>
+					{% for tag in facets.facet_today.facet_counts.fields.tags %}
+					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
+					{% endfor %}
+				</div>
+
+				<div class="tags week_tags">
+					<h3>برچسب‌های برتر <span class="green">هفته</span></h3>
+					{% for tag in facets.facet_week.facet_counts.fields.tags %}
+					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
+					{% endfor %}
+				</div>
+
+				<div class="tags month_tags">
+					<h3>برچسب‌های برتر <span class="green">ماه</span></h3>
+					{% for tag in facets.facet_month.facet_counts.fields.tags %}
+					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
+					{% endfor %}
+				</div>
+
+				<div class="tags all_tags">
+					<h3>برچسب‌های برتر <span class="green">همیشه</span></h3>
+					{% for tag in facets.facet_all.facet_counts.fields.tags %}
+					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
+					{% endfor %}
+				</div>
+				{% endif %}
 			</div>
 
-			{% if facets %}
-			<div class="tags">
-				{% for tag in facets.facet_today.facet_counts.fields.tags %}
-					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
-				{% endfor %}
-			</div>
-			<hr>
-			<div class="tags">
-				{% for tag in facets.facet_week.facet_counts.fields.tags %}
-					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
-				{% endfor %}
-			</div>
-			<hr>
-			<div class="tags">
-				{% for tag in facets.facet_month.facet_counts.fields.tags %}
-					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
-				{% endfor %}
-			</div>
-			<hr>
-			<div class="tags">
-				{% for tag in facets.facet_all.facet_counts.fields.tags %}
-					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
-				{% endfor %}
-			</div>
-			{% endif %}
 		</form>
 	</div>
 	<div class="">
