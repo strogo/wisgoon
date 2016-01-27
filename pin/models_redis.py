@@ -20,6 +20,11 @@ activityServer = redis.Redis(settings.REDIS_DB_3)
 notificationRedis = redis.Redis(settings.REDIS_DB_4)
 
 
+class NotifStruct:
+    def __init__(self, **entries):
+        self.__dict__.update(entries)
+
+
 class NotificationRedis(object):
     KEY_PREFIX = "n:01:{}"
     KEY_PREFIX_CNT = "nc:01:{}"
@@ -37,6 +42,23 @@ class NotificationRedis(object):
         np.ltrim(self.KEY_PREFIX, 0, 1000)
         np.incr(self.KEY_PREFIX_CNT)
         np.execute()
+
+    def get_notif(self, start=0, limit=20):
+        end = start + limit
+        nlist = notificationRedis.lrange(self.KEY_PREFIX, start, end)
+        nobjesct = []
+        for nl in nlist:
+            o = {}
+            ssplited = nl.split(":")
+            o['id'] = eval("{}{}{}".format(ssplited[0], ssplited[1], ssplited[2]))
+            o['type'] = eval(ssplited[0])
+            o['post'] = eval(ssplited[1])
+            o['last_actor'] = eval(ssplited[2])
+            o['seen'] = eval(ssplited[3])
+            o['post_image'] = eval(ssplited[4])
+            nobjesct.append(NotifStruct(**o))
+
+        return nobjesct
 
     def clear_notif_count(self):
         notificationRedis.set(self.KEY_PREFIX_CNT, 0)
