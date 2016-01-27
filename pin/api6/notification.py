@@ -43,12 +43,13 @@ def notif(request):
 
     try:
         # NotifCount.objects.filter(owner=current_user).update(set__unread=0)
-        NotificationRedis(user_id=request.user.id).clear_notif_count()
+        NotificationRedis(user_id=current_user).clear_notif_count()
         if before:
             notifs = Notif.objects\
                 .filter(owner=current_user, id__lt=before).order_by('-date')[:20]
         else:
-            notifs = Notif.objects.filter(owner=current_user).order_by('-date')[:20]
+            notifs = NotificationRedis(user_id=current_user).get_notif()
+            # notifs = Notif.objects.filter(owner=current_user).order_by('-date')[:20]
     except:
         notifs = []
 

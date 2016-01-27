@@ -26,10 +26,12 @@ class NotifStruct:
 
 
 class NotificationRedis(object):
+    user_id = None
     KEY_PREFIX = "n:01:{}"
     KEY_PREFIX_CNT = "nc:01:{}"
 
     def __init__(self, user_id):
+        self.user_id = int(user_id)
         self.KEY_PREFIX = self.KEY_PREFIX.format(user_id)
         self.KEY_PREFIX_CNT = self.KEY_PREFIX_CNT.format(user_id)
 
@@ -56,6 +58,7 @@ class NotificationRedis(object):
             o['last_actor'] = eval(ssplited[2])
             o['seen'] = eval(ssplited[3])
             o['post_image'] = eval(ssplited[4])
+            o['owner'] = self.user_id
             nobjesct.append(NotifStruct(**o))
 
         return nobjesct
