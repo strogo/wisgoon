@@ -47,7 +47,7 @@ def notif(request):
         if offset:
             # notifs = Notif.objects\
             #     .filter(owner=current_user, id__lt=before).order_by('-date')[:20]
-            notifs = NotificationRedis(user_id=current_user).get_notif(start=offset)
+            notifs = NotificationRedis(user_id=current_user).get_notif(start=offset+1)
         else:
             notifs = NotificationRedis(user_id=current_user).get_notif()
             # notifs = Notif.objects.filter(owner=current_user).order_by('-date')[:20]

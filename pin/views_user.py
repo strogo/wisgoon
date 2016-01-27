@@ -578,7 +578,7 @@ def notif_user(request):
     offset = int(request.GET.get('older', 0))
 
     notifications = NotificationRedis(user_id=request.user.id)\
-        .get_notif(start=offset)
+        .get_notif(start=offset + 1)
     nl = []
     for notif in notifications:
         anl = {}
