@@ -107,7 +107,6 @@ def notif(request):
     data['objects'] = notifs_list
 
     if data['objects']:
-        last_item = data['objects'][-1]['id']
         data['meta']['next'] = get_next_url(url_name='api-6-notif-notif',
-                                            token=token, offset=offset+20)
+                                            token=token, offset=offset + 20)
     return return_json_data(data)
