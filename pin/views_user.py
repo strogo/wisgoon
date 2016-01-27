@@ -575,9 +575,10 @@ def show_notify(request):
 
 @login_required
 def notif_user(request):
-    pid = request.GET.get('older', 0)
+    offset = int(request.GET.get('older', 0))
 
-    notifications = NotificationRedis(user_id=request.user.id).get_notif(start=0)
+    notifications = NotificationRedis(user_id=request.user.id)\
+        .get_notif(start=offset)
     nl = []
     for notif in notifications:
         anl = {}
@@ -596,9 +597,15 @@ def notif_user(request):
     #    print 'pois', n.po
 
     if request.is_ajax():
-        return render(request, 'pin/_notif.html', {'notif': nl})
+        return render(request, 'pin/_notif.html', {
+            'notif': nl,
+            'offset': offset + 20
+        })
     else:
-        return render(request, 'pin/notif_user.html', {'notif': nl})
+        return render(request, 'pin/notif_user.html', {
+            'notif': nl,
+            'offset': offset + 20
+        })
 
 
 @login_required
