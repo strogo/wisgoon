@@ -34,12 +34,18 @@ class NotificationRedis(object):
 
         np = notificationRedis.pipeline()
         np.lpush(self.KEY_PREFIX, notif_str)
-        np.ltrim(self.KEY_PREFIX, 0, 100)
+        np.ltrim(self.KEY_PREFIX, 0, 1000)
         np.incr(self.KEY_PREFIX_CNT)
         np.execute()
 
     def clear_notif_count(self):
         notificationRedis.set(self.KEY_PREFIX_CNT, 0)
+
+    def get_notif_count(self):
+        cnt = notificationRedis.get(self.KEY_PREFIX_CNT)
+        if not cnt:
+            cnt = 0
+        return cnt
 
 
 class ActivityRedis(object):

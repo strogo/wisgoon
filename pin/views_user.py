@@ -547,7 +547,7 @@ def upload(request):
 
 @login_required
 def show_notify(request):
-    NotifCount.objects.filter(owner=request.user.id).update(set__unread=0)
+    # NotifCount.objects.filter(owner=request.user.id).update(set__unread=0)
     NotificationRedis(user_id=request.user.id).clear_notif_count()
     notif = Notif.objects.all().filter(owner=request.user.id).order_by('-date')[:20]
     nl = []
