@@ -28,7 +28,7 @@ def notif(request):
 
     data = {}
     token = request.GET.get('token', False)
-    before = request.GET.get('before', False)
+    offset = int(request.GET.get('offset', 0))
     notifs_list = []
     data['meta'] = {'limit': 20,
                     'next': '',
@@ -44,9 +44,10 @@ def notif(request):
     try:
         # NotifCount.objects.filter(owner=current_user).update(set__unread=0)
         NotificationRedis(user_id=current_user).clear_notif_count()
-        if before:
-            notifs = Notif.objects\
-                .filter(owner=current_user, id__lt=before).order_by('-date')[:20]
+        if offset:
+            # notifs = Notif.objects\
+            #     .filter(owner=current_user, id__lt=before).order_by('-date')[:20]
+            notifs = NotificationRedis(user_id=current_user).get_notif(start=offset)
         else:
             notifs = NotificationRedis(user_id=current_user).get_notif()
             # notifs = Notif.objects.filter(owner=current_user).order_by('-date')[:20]
@@ -108,5 +109,5 @@ def notif(request):
     if data['objects']:
         last_item = data['objects'][-1]['id']
         data['meta']['next'] = get_next_url(url_name='api-6-notif-notif',
-                                            token=token, before=last_item)
+                                            token=token, offset=offset+20)
     return return_json_data(data)
