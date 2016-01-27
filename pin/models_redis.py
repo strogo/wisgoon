@@ -1,5 +1,6 @@
 import redis
-from django.utils import timezone
+import time
+
 from django.conf import settings
 from django.db.models import F
 from django.contrib.auth.models import User
@@ -60,7 +61,7 @@ class NotificationRedis(object):
             o['seen'] = eval(ssplited[3])
             o['post_image'] = eval(ssplited[4])
             o['owner'] = self.user_id
-            o['date'] = timezone.now().isoformat()
+            o['date'] = int(time.time())
             nobjesct.append(NotifStruct(**o))
 
         return nobjesct
