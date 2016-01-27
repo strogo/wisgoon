@@ -1,5 +1,6 @@
 import redis
 import time
+import datetime
 
 from django.conf import settings
 from django.db.models import F
@@ -61,7 +62,7 @@ class NotificationRedis(object):
             o['seen'] = eval(ssplited[3])
             o['post_image'] = eval(ssplited[4])
             o['owner'] = self.user_id
-            o['date'] = str(int(time.time()))
+            o['date'] = datetime.datetime.now()
             nobjesct.append(NotifStruct(**o))
 
         return nobjesct
