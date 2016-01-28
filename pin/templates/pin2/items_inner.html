@@ -184,15 +184,14 @@
 		<div class="only_mobile_view social_icons_box box">
 			{% include "pin2/_share_social.html" %}
 		</div>
-
-        {% if DISPLAY_AD %}
-        {% include "pin2/tabliq/_468x60.html" %}
-        {% endif %}
-
 		<div class="only_mobile_view">
 			{% include "pin2/mobil_ads.html" %}
 		</div>
-        
+
+        {% if not DEBUG %}
+        {% include "pin2/tabliq/_468x60.html" %}
+        {% endif %}
+
 		{% if user.is_authenticated and user.is_active %}
 		<div id="submit_comment" class="box">
 			{% include "pin2/__comment_submit.html" %}	

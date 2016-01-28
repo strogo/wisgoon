@@ -13,7 +13,7 @@ import datetime
 
 from django.core.cache import cache
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 # from django.db.models import F
 
 from tastypie.models import ApiKey
@@ -26,7 +26,7 @@ from daddy_avatar.templatetags import daddy_avatar
 from statsd import StatsClient
 
 statsd = StatsClient(host="79.127.125.104")
-
+User = get_user_model()
 user_keys = {}
 USERDATA_TIMEOUT = 300
 
@@ -188,8 +188,6 @@ def get_user_ip(request):
         ip = x_forwarded_for
     else:
         ip = request.META.get('REMOTE_ADDR', None)
-    if isinstance(ip, list):
-        ip = ip[0]
     return ip
     # return request.META.get('REMOTE_ADDR', None)
 

@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from haystack.query import SearchQuerySet
 
@@ -13,6 +13,7 @@ from pin.views2.dashboard.api.tools import check_admin, cnt_post_deleted_by_user
     cnt_post_deleted_by_admin
 from pin.models import PhoneData, BannedImei, Log
 from pin.tools import get_user_ip
+User = get_user_model()
 
 
 def search_user(request):

@@ -7,42 +7,12 @@ from feedreader.celery import app
 from django.conf import settings
 from django.core.cache import cache
 
-ES_INDEX = "wa0.1.6"
-
-try:
-    es = Elasticsearch([settings.ES_HOST])
-except Exception, e:
-    print str(e)
-
-mapping = {
-    "log": {
-        "properties": {
-            "ip": {
-                "type": "ip"
-            },
-            "post_category": {
-                "type": "string",
-                "index": "not_analyzed"
-            },
-            "action_type": {
-                "type": "string",
-                "index": "not_analyzed"
-            },
-        }
-    }
-}
-
-try:
-    es.indices.create(ES_INDEX, ignore=400)
-    es.indices.put_mapping(index=ES_INDEX, doc_type="log", ignore=400, body=mapping)
-except Exception, e:
-    print str(e)
-# es.indices.create(index=ES_INDEX, ignore=400, body=mapping)
+es = Elasticsearch([settings.ES_HOST])
 
 
 @app.task(name="wisgoon.analytics.tick")
 def tick(doc):
-    es.index(index=ES_INDEX, doc_type='log', body=doc)
+    es.index(index="wisgoon-analytics", doc_type='log', body=doc)
 
 
 @app.task(name="wisgoon.pin.activity")

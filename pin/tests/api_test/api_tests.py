@@ -3,12 +3,13 @@ import unittest
 import os
 
 from django.test import Client
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.conf import settings
 
 from tastypie.models import ApiKey
 
 from pin.models import Category, Post, Comments
+User = get_user_model()
 
 
 class AuthTestCase(unittest.TestCase):

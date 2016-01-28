@@ -1,8 +1,8 @@
 import hashlib
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.encoding import smart_str
-from django.utils.importlib import import_module
-from django.utils import simplejson
+from importlib import import_module
+import json as simplejson
 
 
 class ThumbnailError(Exception):
@@ -56,4 +56,3 @@ def get_module_class(class_path):
         raise ImproperlyConfigured(('Error importing module %s: "%s"' %
                                    (mod_name, e)))
     return getattr(mod, cls_name)
-

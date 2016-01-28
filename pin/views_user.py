@@ -11,7 +11,7 @@ from instagram.client import InstagramAPI
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
@@ -27,13 +27,14 @@ from pin.models import Post, Stream, Follow, Ad, Block,\
     Report, Comments, Comments_score, Category, Bills2 as Bills
 
 from pin.model_mongo import Notif, UserMeta, NotifCount
-from pin.models_redis import ActivityRedis, NotificationRedis
+from pin.models_redis import ActivityRedis
 import pin_image
 from pin.tools import create_filename, get_user_ip, get_request_pid, check_block,\
     post_after_delete, get_post_user_cache
 
 from suds.client import Client
 
+User = get_user_model()
 MEDIA_ROOT = settings.MEDIA_ROOT
 MEDIA_URL = settings.MEDIA_URL
 MERCHANT_ID = settings.MERCHANT_ID
@@ -548,7 +549,6 @@ def upload(request):
 @login_required
 def show_notify(request):
     NotifCount.objects.filter(owner=request.user.id).update(set__unread=0)
-    NotificationRedis(user_id=request.user.id).clear_notif_count()
     notif = Notif.objects.all().filter(owner=request.user.id).order_by('-date')[:20]
     nl = []
     for n in notif:
@@ -608,7 +608,7 @@ def notif_user(request):
 def notif_following(request):
     notif_data = ActivityRedis(user_id=request.user.id).get_activity()
     # return HttpResponse(json.dumps(notif_data))
-    return render(request, 'pin2/notif_user_following.html', {
+    return render(request, 'pin/notif_user_following.html', {
         'notif': notif_data
     })
 

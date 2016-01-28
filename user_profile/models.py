@@ -247,7 +247,7 @@ class CreditLog(models.Model):
     mode = models.IntegerField(blank=True, null=True, default=1,
                                choices=MODE_CHOICES)
     amount = models.IntegerField(default=0)
-    create_time = models.DateTimeField(auto_now_add=True, default=datetime.now)
+    create_time = models.DateTimeField(default=datetime.now())
 
 
 def create_user_profile(sender, instance, created, **kwargs):

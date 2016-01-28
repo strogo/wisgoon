@@ -6,12 +6,11 @@ import datetime
 from tastypie.resources import ModelResource
 from tastypie.paginator import Paginator
 from tastypie import fields
-from tastypie.cache import SimpleCache, NoCache
-from tastypie.models import ApiKey
+from tastypie.cache import SimpleCache
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.conf import settings
 from django.core.cache import cache
@@ -25,11 +24,11 @@ from sorl.thumbnail import get_thumbnail
 from pin.models import Post, Likes, Category, Comments,\
     App_data, Stream, Follow, Block
 from user_profile.models import Profile
-from pin.templatetags.pin_tags import get_username
 from daddy_avatar.templatetags import daddy_avatar
 
-from pin.tools import userdata_cache, AuthCache, CatCache
+from pin.tools import AuthCache
 
+User = get_user_model()
 models.signals.post_save.connect(create_api_key, sender=User)
 
 CACHE_AVATAR = 0
@@ -63,12 +62,12 @@ class AppResource(ModelResource):
 class ProfileObjectsOnlyAuthorization(Authorization):
     def read_list(self, object_list, bundle):
         # This assumes a ``QuerySet`` from ``ModelResource``.
-        #return object_list.filter(user=bundle.request.user)
+        # return object_list.filter(user=bundle.request.user)
         return object_list
 
     def read_detail(self, object_list, bundle):
         # Is the requested object owned by the user?
-        #return bundle.obj.user == bundle.request.user
+        # return bundle.obj.user == bundle.request.user
         return object_list
 
     def create_list(self, object_list, bundle):
@@ -94,11 +93,11 @@ class ProfileObjectsOnlyAuthorization(Authorization):
     def delete_list(self, object_list, bundle):
         # Sorry user, no deletes for you!
         raise Unauthorized("Sorry, no deletes.")
-        #pass
+        # pass
 
     def delete_detail(self, object_list, bundle):
         raise Unauthorized("Sorry, no deletes.")
-        #pass
+        # pass
 
 
 class ProfileResource(ModelResource):
@@ -113,9 +112,9 @@ class ProfileResource(ModelResource):
         queryset = Profile.objects.all()
         resource_name = "profile"
         paginator_class = Paginator
-        #cache = SimpleCache()
-        #authentication = ApiKeyAuthentication()
-        #authorization = ProfileObjectsOnlyAuthorization()
+        # cache = SimpleCache()
+        # authentication = ApiKeyAuthentication()
+        # authorization = ProfileObjectsOnlyAuthorization()
         filtering = {
             "user": ('exact'),
         }

@@ -7,8 +7,9 @@ from pin.models import Report, Post, Ad, Log
 from pin.api6.tools import get_simple_user_object, get_profile_data,\
     post_item_json
 from pin.tools import post_after_delete, get_user_ip
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db.models import Q
+User = get_user_model()
 
 
 def check_admin(request):

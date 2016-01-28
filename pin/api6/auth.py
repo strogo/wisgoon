@@ -2,7 +2,7 @@
 import re
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.views.decorators.csrf import csrf_exempt
@@ -23,6 +23,8 @@ from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from tastypie.models import ApiKey
 
 from haystack.query import SearchQuerySet
+
+User = get_user_model()
 
 
 def followers(request, user_id):

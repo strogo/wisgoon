@@ -16,7 +16,7 @@ from pytz import timezone
 
 from django.conf import settings
 from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.cache import cache
 from django.db.models import Q
@@ -34,13 +34,13 @@ from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2, PhoneData, Log, BannedImei
 from pin.model_mongo import Notif, UserLocation, NotifCount
 from pin.actions import send_clear_notif
-from pin.models_redis import NotificationRedis
 from pin.cacheLayer import UserDataCache, CategoryDataCache
 
 from haystack.query import SearchQuerySet
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
+User = get_user_model()
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 
@@ -641,7 +641,6 @@ def notif(request):
         .order_by('-date')[offset:offset + limit]
 
     NotifCount.objects.filter(owner=cur_user).update(set__unread=0)
-    NotificationRedis(user_id=cur_user).clear_notif_count()
     # send_clear_notif(user_id=cur_user)
 
     # Notif.objects.filter(owner=1).order_by('-date')[100:].delete()

@@ -10,7 +10,10 @@ By default username, email, token expiration time, first name and last name are
 stored in extra_data field, check OAuthBackend class for details on how to
 extend it.
 """
-from django.utils import simplejson
+try:
+    import simplejson
+except ImportError:
+    import json as simplejson
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME
 from social_auth.utils import setting, dsa_urlopen
 
