@@ -47,7 +47,7 @@ CACHES = {
     ),
     'cache_layer': dict(
         BACKEND='django.core.cache.backends.memcached.MemcachedCache',
-        LOCATION=['79.127.125.98:11211'],
+        LOCATION=['79.127.125.104:11211'],
     )
 }
 
@@ -98,8 +98,8 @@ ENABLE_CACHING = True
 SCORE_FOR_COMMENING = -5000
 SCORE_FOR_STREAMS = 10000
 
-BROKER_URL = 'amqp://guest@79.127.125.98//'
-CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.98//'
+BROKER_URL = 'amqp://guest@79.127.125.104//'
+CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.104//'
 
 NEO4J_DATABASE = "http://79.127.125.98:7474/db/data/"
 
