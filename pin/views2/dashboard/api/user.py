@@ -52,28 +52,28 @@ def change_status_user(request):
         return return_un_auth()
 
     try:
-        user_id = int(request.POST.get('user_id', False))
-        status = str(request.POST.get('status', "False"))
-        desc = str(request.POST.get('description', ""))
+        user_id = int(request.POST.get('activeId', False))
+        status = str(request.POST.get('activeStatus', False))
+        desc = str(request.POST.get('description1', ""))
         user = User.objects.get(pk=user_id)
     except:
         return return_not_found()
 
     if user_id:
-        if status:
+        if status == '1':
             user.is_active = True
             message = "User Status Is True."
-            Log.active_user(user_id=request.user.id,
-                            owner=user.id,
-                            text=desc + desc,
-                            ip_address=get_user_ip(request))
+            # Log.active_user(user_id=request.user.id,
+            #                 owner=user.id,
+            #                 text=desc + desc,
+            #                 ip_address=get_user_ip(request))
         else:
             user.is_active = False
             message = "User Status Is False."
-            Log.ban_by_admin(actor=request.user,
-                             user_id=user.id,
-                             text="%s || %s" % (user.username, desc),
-                             ip_address=get_user_ip(request))
+            # Log.ban_by_admin(actor=request.user,
+            #                  user_id=user.id,
+            #                  text="%s || %s" % (user.username, desc),
+            #                  ip_address=get_user_ip(request))
         user.save()
         data = {'status': True, 'message': message}
         data['user'] = get_simple_user_object(user.id)
@@ -89,15 +89,15 @@ def banned_profile(request):
         return return_un_auth()
 
     try:
-        user_id = int(request.POST.get('user_id', False))
-        status = str(request.POST.get('status', "False"))
-        description = str(request.POST.get('description', ""))
+        user_id = int(request.POST.get('profileBanId', False))
+        status = str(request.POST.get('profileBanstatus', False))
+        description = str(request.POST.get('description2', ""))
         profile = Profile.objects.get(user_id=user_id)
     except:
         return return_not_found()
 
     if user_id:
-        if status:
+        if status == '1':
             profile.banned = True
             profile.save()
             Log.active_user(user_id=request.user.id,
@@ -126,15 +126,15 @@ def banned_imei(request):
         return return_un_auth()
     try:
         imei = str(request.POST.get('imei', False))
-        status = str(request.POST.get('status', "False"))
-        description = str(request.POST.get('description', ""))
+        status = str(request.POST.get('status', False))
+        description = str(request.POST.get('description3', ""))
 
         phone_date = PhoneData.objects.filter(imei=imei)
     except:
         return return_not_found()
 
     if description and imei:
-        if status:
+        if status == '1':
             try:
                 BannedImei.objects.filter(imei=imei).delete()
 
@@ -170,11 +170,14 @@ def banned_imei(request):
                 cur_user.is_active = False
                 cur_user.save()
 
-            Log.ban_by_imei(actor=data.user,
-                            text=desc + description,
-                            ip_address=get_user_ip(request))
+                Log.ban_by_imei(actor=data.user,
+                                text=desc + description,
+                                ip_address=get_user_ip(request))
             return return_json_data({'status': True,
                                      'message': "Successfully Change Profile banned."})
+
+    else:
+        return return_bad_request()
 
 
 # @csrf_exempt

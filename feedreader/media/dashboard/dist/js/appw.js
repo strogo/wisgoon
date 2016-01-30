@@ -316,6 +316,7 @@ if (typeof jQuery === "undefined") {
         //Enable sidebar push menu
         if ($(window).width() > (screenSizes.sm - 1)) {
           if ($("body").hasClass('sidebar-collapse')) {
+            $('.highcharts-container').css('width', '1090px');
             $("#feed").addClass('resize');
             $('#feed').masonry();
             $("body").removeClass('sidebar-collapse').trigger('expanded.pushMenu');
@@ -332,6 +333,7 @@ if (typeof jQuery === "undefined") {
         //Handle sidebar push menu for small screens
         else {
           if ($("body").hasClass('sidebar-open')) {
+            $('.highcharts-container').css('width', '917px');
             $("body").removeClass('sidebar-open').removeClass('sidebar-collapse').trigger('collapsed.pushMenu');
           } else {
             $("body").addClass('sidebar-open').trigger('expanded.pushMenu');
@@ -749,9 +751,9 @@ $(".content-wrapper").click(function () {
   };
 }(jQuery));
 var masonryUpdate = function() {
-    setTimeout(function() {
-        $('#feed').masonry();
-    }, 500);
+  setTimeout(function() {
+    $('#feed').masonry();
+  }, 500);
 }
 $(document).on('click', masonryUpdate);
 $(document).ajaxComplete(masonryUpdate);
