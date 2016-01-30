@@ -20,6 +20,7 @@ from user_profile.models import Profile
 
 from pin.tools import userdata_cache
 from pin.tools import AuthCache
+from pin.models_redis import NotificationRedis
 
 
 register = Library()
@@ -116,11 +117,12 @@ register.tag('user_post_like', user_post_like)
 
 @register.filter
 def get_user_notify(userid):
-    try:
-        notify = NotifCount.objects.filter(owner=userid).first().unread
-    except Exception:
-        notify = 0
-    return notify
+    return NotificationRedis(user_id=userid).get_notif_count()
+    # try:
+    #     notify = NotifCount.objects.filter(owner=userid).first().unread
+    # except Exception:
+    #     notify = 0
+    # return notify
 
 
 @register.filter

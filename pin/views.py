@@ -114,28 +114,16 @@ def search(request):
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
 
-    today_stamp = get_delta_timestamp(days=0)
-    week_statmp = get_delta_timestamp(days=7)
-    month_statmp = get_delta_timestamp(days=30)
-
-    cur_time = int(time())
-
-    print today_stamp
-    print week_statmp
-    print month_statmp
-
-    tags = ['کربلا',
-            'حرم',
-            'امام',
-            'تصاویر_پس_زمینه',
-            'رضا_صادقی',
-            'مهران_مدیری',
-            'سعید_معروف']
-
     if query:
         posts = SearchQuerySet().models(Post)\
             .filter(content__contains=query)[offset:offset + 1 * row_per_page]
     else:
+        today_stamp = get_delta_timestamp(days=0)
+        week_statmp = get_delta_timestamp(days=7)
+        month_statmp = get_delta_timestamp(days=30)
+
+        cur_time = int(time())
+
         facets['facet_all'] = SearchQuerySet().models(Post)\
             .facet('tags', limit=6)
 
@@ -151,8 +139,6 @@ def search(request):
             .narrow("timestamp_i:[{} TO {}]".format(month_statmp, cur_time))\
             .facet('tags', limit=6)
 
-    # print posts
-
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
             'results': results,
@@ -164,7 +150,6 @@ def search(request):
     return render(request, 'pin2/search.html', {
         'results': results,
         'posts': posts,
-        'tags': tags,
         'query': query,
         'offset': offset + row_per_page,
         'facets': facets,
