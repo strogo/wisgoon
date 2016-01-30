@@ -8,7 +8,7 @@
 
 		<div class="follow_avatar">
 			<a href="{% url "pin-absuser" u.blocked|get_username %}">
-				<img class="img-circle" src="{{u.blocked.user.id|get_avatar}}" />
+				<img class="img-circle" src="{{u.blocked.id|get_avatar}}" />
 			</a>
 		</div>
 
@@ -21,11 +21,15 @@
 
 		<div class="action">
 			{% if u.blocked.id != request.user.id %}
-                {% if request.user.id|get_follow_status:u.blocked.id == False %}
-                    <a data-user-id="{{u.blocked.id}}" class="wis_btn green mabo10 ajax-follow" href='{% url "pin-follow" u.blocked.id 1 %}'>ایجاد دوستی <i class="fa fa-plus"></i></a>
+                {% if request.user.id|check_block:u.blocked.id %}
+                    <div class="dibl">
+                        <a href="{% url "pin-user-block" u.blocked.id %}" class="wis_btn mabo10 pa5 block_btn unblock"> <span>رفع بلاک</span> <i class="fa fa-user"></i></a>
+                    </div>
                 {% else %}
-                    <a data-user-id="{{u.blocked.id}}" class="wis_btn mabo10 red ajax-follow" href='{% url "pin-follow" u.blocked.id 0 %}'>قطع ارتباط  <i class="fa fa-times"></i></a>
-                {%endif%}
+                    <div class="dibl">
+                        <a href="{% url "pin-user-block" u.blocked.id %}" class="wis_btn mabo10 pa5 block_btn block"> <span>بلاک کاربر</span> <i class="fa fa-ban"></i></a>
+                    </div>
+                {% endif %}
             {% else %}
             	<a class="wis_btn mabo10" href='{% url "pin-absuser" u %}'>نمایش پروفایل <i class="fa fa-user"></i></a>
             {% endif %}
