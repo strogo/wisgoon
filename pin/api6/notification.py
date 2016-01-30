@@ -16,10 +16,11 @@ def notif_count(request):
             return return_un_auth()
     else:
         return return_bad_request()
-    try:
-        notif_count = NotifCount.objects.filter(owner=current_user).first().unread
-    except:
-        notif_count = 0
+    # try:
+    #     notif_count = NotifCount.objects.filter(owner=current_user).first().unread
+    # except:
+    #     notif_count = 0
+    notif_count = NotificationRedis(user_id=current_user).get_notif_count()
     return return_json_data({'status': True, 'notif_count': notif_count})
 
 
@@ -27,7 +28,7 @@ def notif(request):
 
     data = {}
     token = request.GET.get('token', False)
-    before = request.GET.get('before', False)
+    offset = int(request.GET.get('offset', 0))
     notifs_list = []
     data['meta'] = {'limit': 20,
                     'next': '',
@@ -41,13 +42,15 @@ def notif(request):
         return return_bad_request()
 
     try:
-        NotifCount.objects.filter(owner=current_user).update(set__unread=0)
-        NotificationRedis(user_id=request.user.id).clear_notif_count()
-        if before:
-            notifs = Notif.objects\
-                .filter(owner=current_user, id__lt=before).order_by('-date')[:20]
+        # NotifCount.objects.filter(owner=current_user).update(set__unread=0)
+        NotificationRedis(user_id=current_user).clear_notif_count()
+        if offset:
+            # notifs = Notif.objects\
+            #     .filter(owner=current_user, id__lt=before).order_by('-date')[:20]
+            notifs = NotificationRedis(user_id=current_user).get_notif(start=offset+1)
         else:
-            notifs = Notif.objects.filter(owner=current_user).order_by('-date')[:20]
+            notifs = NotificationRedis(user_id=current_user).get_notif()
+            # notifs = Notif.objects.filter(owner=current_user).order_by('-date')[:20]
     except:
         notifs = []
 
@@ -104,7 +107,6 @@ def notif(request):
     data['objects'] = notifs_list
 
     if data['objects']:
-        last_item = data['objects'][-1]['id']
         data['meta']['next'] = get_next_url(url_name='api-6-notif-notif',
-                                            token=token, before=last_item)
+                                            token=token, offset=offset + 20)
     return return_json_data(data)

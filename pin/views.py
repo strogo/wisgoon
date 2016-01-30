@@ -1,5 +1,5 @@
 # coding: utf-8
-from time import mktime
+from time import mktime, time
 import datetime
 import operator
 import itertools
@@ -109,27 +109,35 @@ def leaderboard(request):
 def search(request):
     row_per_page = 20
     results = []
+    posts = []
+    facets = {}
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
 
-    today_stamp = get_delta_timestamp(days=0)
-    week_statmp = get_delta_timestamp(days=7)
-    month_statmp = get_delta_timestamp(days=30)
+    if query:
+        posts = SearchQuerySet().models(Post)\
+            .filter(content__contains=query)[offset:offset + 1 * row_per_page]
+    else:
+        today_stamp = get_delta_timestamp(days=0)
+        week_statmp = get_delta_timestamp(days=7)
+        month_statmp = get_delta_timestamp(days=30)
 
-    print today_stamp
-    print week_statmp
-    print month_statmp
+        cur_time = int(time())
 
-    tags = ['کربلا',
-            'حرم',
-            'امام',
-            'تصاویر_پس_زمینه',
-            'رضا_صادقی',
-            'مهران_مدیری',
-            'سعید_معروف']
+        facets['facet_all'] = SearchQuerySet().models(Post)\
+            .facet('tags', limit=6)
 
-    posts = SearchQuerySet().models(Post)\
-        .filter(content__contains=query)[offset:offset + 1 * row_per_page]
+        facets['facet_today'] = SearchQuerySet().models(Post)\
+            .narrow("timestamp_i:[{} TO {}]".format(today_stamp, cur_time))\
+            .facet('tags', limit=6)
+
+        facets['facet_week'] = SearchQuerySet().models(Post)\
+            .narrow("timestamp_i:[{} TO {}]".format(week_statmp, cur_time))\
+            .facet('tags', limit=6)
+
+        facets['facet_month'] = SearchQuerySet().models(Post)\
+            .narrow("timestamp_i:[{} TO {}]".format(month_statmp, cur_time))\
+            .facet('tags', limit=6)
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
@@ -142,9 +150,9 @@ def search(request):
     return render(request, 'pin2/search.html', {
         'results': results,
         'posts': posts,
-        'tags': tags,
         'query': query,
         'offset': offset + row_per_page,
+        'facets': facets,
     })
 
 

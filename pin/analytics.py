@@ -4,13 +4,14 @@ from pin.tasks import tick
 
 
 def send_tick(doc):
-    try:
-        if settings.DEBUG:
-            tick(doc=doc)
-        else:
-            tick.delay(doc=doc)
-    except Exception, e:
-        print str(e)
+    pass
+    # try:
+    #     if settings.DEBUG:
+    #         tick(doc=doc)
+    #     else:
+    #         tick.delay(doc=doc)
+    # except Exception, e:
+    #     print str(e)
 
 
 def like_act(post, actor, user_ip):

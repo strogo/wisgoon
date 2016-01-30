@@ -87,11 +87,12 @@ def notif_count(request):
     if not cur_user_id:
         return HttpResponseForbidden('Token problem')
 
-    try:
-        notify = NotifCount.objects.filter(owner=cur_user_id).first().unread
-    except Exception:
-        # print str(e)
-        notify = 0
+    # try:
+    #     notify = NotifCount.objects.filter(owner=cur_user_id).first().unread
+    # except Exception:
+    #     # print str(e)
+    #     notify = 0
+    notify = NotificationRedis(user_id=cur_user_id).get_notif_count()
 
     return HttpResponse(notify, content_type="application/json")
 
@@ -640,7 +641,7 @@ def notif(request):
     notifs = Notif.objects.filter(owner=cur_user)\
         .order_by('-date')[offset:offset + limit]
 
-    NotifCount.objects.filter(owner=cur_user).update(set__unread=0)
+    # NotifCount.objects.filter(owner=cur_user).update(set__unread=0)
     NotificationRedis(user_id=cur_user).clear_notif_count()
     # send_clear_notif(user_id=cur_user)
 

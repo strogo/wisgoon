@@ -1,4 +1,7 @@
 import redis
+import time
+import datetime
+
 from django.conf import settings
 from django.db.models import F
 from django.contrib.auth.models import User
@@ -20,11 +23,18 @@ activityServer = redis.Redis(settings.REDIS_DB_3)
 notificationRedis = redis.Redis(settings.REDIS_DB_4)
 
 
+class NotifStruct:
+    def __init__(self, **entries):
+        self.__dict__.update(entries)
+
+
 class NotificationRedis(object):
+    user_id = None
     KEY_PREFIX = "n:01:{}"
     KEY_PREFIX_CNT = "nc:01:{}"
 
     def __init__(self, user_id):
+        self.user_id = int(user_id)
         self.KEY_PREFIX = self.KEY_PREFIX.format(user_id)
         self.KEY_PREFIX_CNT = self.KEY_PREFIX_CNT.format(user_id)
 
@@ -34,12 +44,37 @@ class NotificationRedis(object):
 
         np = notificationRedis.pipeline()
         np.lpush(self.KEY_PREFIX, notif_str)
-        np.ltrim(self.KEY_PREFIX, 0, 100)
+        np.ltrim(self.KEY_PREFIX, 0, 1000)
         np.incr(self.KEY_PREFIX_CNT)
         np.execute()
 
+    def get_notif(self, start=0, limit=20):
+        end = start + limit
+        nlist = notificationRedis.lrange(self.KEY_PREFIX, start, end)
+        nobjesct = []
+        for nl in nlist:
+            o = {}
+            ssplited = nl.split(":")
+            o['id'] = eval("{}{}{}".format(ssplited[0], ssplited[1], ssplited[2]))
+            o['type'] = eval(ssplited[0])
+            o['post'] = eval(ssplited[1])
+            o['last_actor'] = eval(ssplited[2])
+            o['seen'] = eval(ssplited[3])
+            o['post_image'] = eval(ssplited[4])
+            o['owner'] = self.user_id
+            o['date'] = datetime.datetime.now()
+            nobjesct.append(NotifStruct(**o))
+
+        return nobjesct
+
     def clear_notif_count(self):
         notificationRedis.set(self.KEY_PREFIX_CNT, 0)
+
+    def get_notif_count(self):
+        cnt = notificationRedis.get(self.KEY_PREFIX_CNT)
+        if not cnt:
+            cnt = 0
+        return cnt
 
 
 class ActivityRedis(object):
@@ -67,6 +102,7 @@ class ActivityRedis(object):
 
     @classmethod
     def push_to_activity(cls, act_type, who, post_id):
+        return 
         from pin.models import Follow
         flist = Follow.objects.filter(following_id=who)\
             .values_list('follower_id', flat=True)

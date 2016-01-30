@@ -29,11 +29,31 @@
 				<input type="submit" class="form-control" value="جستجو" >
 			</div>
 
+			{% if facets %}
 			<div class="tags">
-				{% for tag in tags %}
-					<a href="/hashtag/{{tag}}/">{{tag}}</a>
+				{% for tag in facets.facet_today.facet_counts.fields.tags %}
+					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
 				{% endfor %}
 			</div>
+			<hr>
+			<div class="tags">
+				{% for tag in facets.facet_week.facet_counts.fields.tags %}
+					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
+				{% endfor %}
+			</div>
+			<hr>
+			<div class="tags">
+				{% for tag in facets.facet_month.facet_counts.fields.tags %}
+					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
+				{% endfor %}
+			</div>
+			<hr>
+			<div class="tags">
+				{% for tag in facets.facet_all.facet_counts.fields.tags %}
+					<a href="/hashtag/{{tag.0}}/">{{tag.0}}</a>
+				{% endfor %}
+			</div>
+			{% endif %}
 		</form>
 	</div>
 	<div class="">

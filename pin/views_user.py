@@ -547,9 +547,11 @@ def upload(request):
 
 @login_required
 def show_notify(request):
-    NotifCount.objects.filter(owner=request.user.id).update(set__unread=0)
+    # NotifCount.objects.filter(owner=request.user.id).update(set__unread=0)
     NotificationRedis(user_id=request.user.id).clear_notif_count()
     notif = Notif.objects.all().filter(owner=request.user.id).order_by('-date')[:20]
+    notif = NotificationRedis(user_id=request.user.id)\
+        .get_notif()
     nl = []
     for n in notif:
         anl = {}
@@ -565,7 +567,7 @@ def show_notify(request):
         anl['id'] = n.post
         anl['type'] = n.type
         anl['actor'] = n.last_actor
-        anl['owner'] = n.owner
+        # anl['owner'] = n.owner
 
         nl.append(anl)
     return render(request, 'pin2/notify.html', {'notif': nl})
@@ -573,14 +575,10 @@ def show_notify(request):
 
 @login_required
 def notif_user(request):
-    pid = request.GET.get('older', 0)
-    if pid:
-        # date = datetime.datetime.fromtimestamp(timestamp)
-        notifications = Notif.objects.filter(owner=request.user.id, id__lt=pid)\
-            .order_by('-date')[:20]
-    else:
-        notifications = Notif.objects.filter(owner=request.user.id).order_by('-date')[:20]
+    offset = int(request.GET.get('older', 0))
 
+    notifications = NotificationRedis(user_id=request.user.id)\
+        .get_notif(start=offset + 1)
     nl = []
     for notif in notifications:
         anl = {}
@@ -599,9 +597,15 @@ def notif_user(request):
     #    print 'pois', n.po
 
     if request.is_ajax():
-        return render(request, 'pin/_notif.html', {'notif': nl})
+        return render(request, 'pin/_notif.html', {
+            'notif': nl,
+            'offset': offset + 20
+        })
     else:
-        return render(request, 'pin/notif_user.html', {'notif': nl})
+        return render(request, 'pin/notif_user.html', {
+            'notif': nl,
+            'offset': offset + 20
+        })
 
 
 @login_required
