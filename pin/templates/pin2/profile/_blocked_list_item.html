@@ -14,7 +14,7 @@
 
 		<div class="user_name user-username">
 			<a class="f-black" href="{% url 'pin-absuser' u.blocked %}" data-next="{{u.blocked.id}}">
-				{{u|get_username|truncatechars:30}}
+				{{u.user|get_username|truncatechars:30}}
 				<br><small>{{u.blocked.username}}</small>
 			</a>
 		</div>
