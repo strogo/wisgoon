@@ -131,7 +131,7 @@
 							</h3>
 						</div>
 						<div class="box-body">
-							<div id="world-map" style="height: 330px; width: 100%;"></div>
+							<div id="world-map" style="height: 438px; width: 100%;"></div>
 						</div>
 					</div>
 				</div>
@@ -139,7 +139,8 @@
 
 				<!-- solid sales graph -->
 				<div class="col-md-6">
-					<div class="box box-solid bg-teal-gradient">
+					<div class="box box-solid bg-teal-gradient" ng-controller="sellCtrl">
+							
 						<div class="box-header">
 							<i class="fa fa-th"></i>
 							<h3 class="box-title"> فروش</h3>
@@ -148,7 +149,7 @@
 								<button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
 							</div>
 						</div>
-						<div class="box-body border-radius-none"  ng-controller="sellCtrl">
+						<div class="box-body border-radius-none">
 							<div class="box-tools cell">
 								<label>از تاریخ :</label>
 								<input id="sell_start" type="text"/>
@@ -156,8 +157,8 @@
 								<label>تا تاریخ :</label>
 								<input id="sell_end" type="text">
 								<input id="sell_end_value" type="hidden"/>
-								<a href="" ng-click="refresh_sells()"><i class="fa fa-refresh"></i></a>
-
+								<a  href="" ng-click="refresh_sells()"><i class="fa fa-refresh"></i></a>
+								<a ng-show='loading' class="load-stat-sell"><i class="fa fa-refresh fa-spin"></i></a>
 							</div>
 							<highchart class="chart-ltr" config="highchartsNG"></highchart>
 						</div><!-- /.box-body -->
@@ -165,10 +166,20 @@
 				</div><!-- /.box -->
 				<script type="text/javascript">
 					$(document).ready(function () {
+						
+
+						var d = new Date();
+						var end_time = d.getTime();
+						var start_time = end_time-604800000;
 						$('#sell_start').pDatepicker({
+							timePicker: {
+								enabled: true
+							},
 							altField: '#sell_start_value',
 							format: 'YYYY-MM-DD'
 						});
+						$("#sell_start").pDatepicker("setDate", start_time);
+						
 						$('#sell_end').pDatepicker({
 							altField: '#sell_end_value',
 							format: 'YYYY-MM-DD'

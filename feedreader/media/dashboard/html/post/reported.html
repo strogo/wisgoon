@@ -16,8 +16,8 @@
 			<span><a href="" ng-show="select" ng-click="batchDelete()"><i class="fa fa-trash"></i></a></span>
 		</div>
 		<div class="clear"></div>
-		<div id="feed" load-images="false" class="resize" masonry reload-on-resize  infinite-scroll='postItem.nextPage()' infinite-scroll-distance='1'>
-			<div ng-show='postItem.busy'>Loading data...</div>
+		<div id="feed" load-images="false" class="resize" masonry reload-on-resize  infinite-scroll='postItem.nextPage()' infinite-scroll-distance='1' style="width:1070px;">
+			<div ng-show='postItem.busy' class="loader-post">Loading data...</div>
 			<div  class="masonry-brick" ng-repeat="brick in postItem.bricks">
 				<div class="box box-solid photo" id="br-{[{brick.id}]}" postId="{[{brick.id}]}">
 					<a href="" ng-show="select" ng-click="selectItem(brick.id)">
@@ -45,17 +45,10 @@
 					<div class="score">
 						<label><i class="fa fa-star-o"></i>امتیازات :</label> <span>{[{brick.reporter_scores}]}</span>
 					</div>
-					<div class="dropdown user-info">
-						<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					<div class="user-info">
+						<a class="btn btn-default" data-toggle="modal" data-target="#userInfo{[{brick.id}]}">
 							اطلاعات کاربر
-							<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-							<li>بن:<span>{[{brick.user.banned}]}</span></li>
-							<li>پست های حذف شده توسط ادمین:<span>{[{brick.user.cnt_admin_deleted}]}</span></li>
-							<li>امتیاز کار بر:<span>{[{brick.user.score}]}</span></li>
-							<li>پست های حذف شده توسط کاربر:<span>{[{brick.user.cnt_deleted}]}</span></li>
-						</ul>
+						</a>
 					</div>
 					<div class="box-tools">
 						<button class="undo" ng-click="undoPost(brick.id)">
@@ -65,11 +58,11 @@
 							<i class="fa fa-times"></i>
 						</button>
 					</div>
-					<div class="modal fade reporter-modal" id="reporter-modal{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-repeat="report in brick.reporter">
+					<div class="modal fade reporter-modal" id="reporter-modal{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="reporterModalLabel" ng-repeat="report in brick.reporter">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="True">&times;</span></button>
 									<h4 class="modal-title" id="myModalLabel">گزارش دهندگان</h4>
 								</div>
 								<div class="modal-body">
@@ -82,6 +75,7 @@
 											</div>
 											<div class="col-md-10 user-score">
 												<h2>{[{report.profile.score}]}</h2>
+												{[{report.profile.is_active}]}
 											</div>
 											<div class="clear"></div>
 										</div>
@@ -90,6 +84,124 @@
 							</div>
 						</div>
 					</div>	
+					<div class="modal fade userIinfoModal" id="userInfo{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="userIinfoModalLabel">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-body">
+									<div class="userIinfo">
+										<div class="col-md-8 otherInfo">
+											<h2>اطلاعات کاربر</h2>
+											<hr>
+											<div class="">
+												<ul>
+													<li>
+														<label>تعداد پست های حذف شده توسط کاربر :</label>
+														<span>{[{brick.user.cnt_deleted}]}</span>
+													</li>
+													<li>
+														<label>تعداد پست های حذف شده توسط ادمین :</label>
+														<span>{[{brick.user.cnt_admin_deleted}]}</span>
+													</li>
+													<li>
+														<label>وضعیت فعال بودن کاربر :</label>
+														<span>
+															<span ng-show="brick.user.profile.user_active == 1">کاربر فعال است.</span>
+															<span ng-show="brick.user.profile.user_active == 0">کاربر غیر فعال است.</span>
+														</span>
+														<div class="banDesc" ng-show="brick.user.profile.user_active == 0">
+															<span class="side-up"></span>
+															<div class="col-md-12 pa0">
+																<p>{[{brick.user.profile.description}]}</p>
+															</div>
+															<div class="clear"></div>
+															<span class="side-down"></span>
+														</div>
+													</li>
+													<li>
+														<label>وضعیت مسدود شدن پروفایل کاربر :</label>
+														<span>
+															<span ng-show="brick.user.profile.userBanne_profile == 0">پروفایل کاربر غیر فعال است.</span>
+															<span ng-show="brick.user.profile.userBanne_profile == 1">پروفایل کاربر فعال است.</span>
+														</span>
+														<div class="banDesc" ng-show="brick.user.profile.userBanne_profile == 0">
+															<span class="side-up"></span>
+															<div class="col-md-12 pa0">
+																<p>{[{brick.user.profile.description}]}</p>
+															</div>
+															<div class="clear"></div>
+															<span class="side-down"></span>
+														</div>
+													</li>
+													<li>
+														<label>وضعیت imei :</label>
+														<span ng-hide="brick.user.profile.imei == ''">
+															{[{brick.user.profile.imei}]}
+														</span>
+														<span ng-show="brick.user.profile.imei == ''">
+															این کاربر imei  ندارد.
+														</span>
+														
+														<div class="banDesc" ng-show="brick.user.profile.imei_status == 0">
+															<span class="side-up"></span>
+															<div class="col-md-12 pa0">
+																<p>{[{brick.user.profile.description}]}</p>
+															</div>
+															<div class="clear"></div>
+															<span class="side-down"></span>
+														</div>
+													</li>
+													<li ng-hide="brick.user.profile.users_imei == ''">
+														<label>لیست حساب ها بر اساس imei :</label>
+														<span >
+															<div class="dropdown">
+																<button class="btn btn-default dropdown-toggle" type="button" id="userImeis" data-toggle="dropdown" aria-haspopup="True" aria-expanded="True">
+																	لیست حساب های کاربری
+																	<span class="caret"></span>
+																</button>
+																<ul class="dropdown-menu" aria-labelledby="userImeis">
+																	<li ng-repeat="Uimei in resultItem.user.profile.users_imei"><a href="{[{Uimei.permalink}]}">{[{Uimei.username}]}</a></li>
+																</ul>
+															</div>
+														</span>
+													</li>
+												</ul>
+											</div>
+										</div>
+										<div class="col-md-4 rightInfo">
+											<div class="user_avatar">
+												<a href="">
+													<img ng-src="{[{brick.user.avatar}]}">
+												</a>
+											</div>
+											<h1><a href="">{[{brick.user.username}]}</a></h1>
+											<div class="sex">
+												<label>جنسیت :</label>
+												<span ng-show="brick.user.profile.jens = 'M'">مرد</span>
+												<span ng-hide="brick.user.profile.jens = 'M'">زن</span>
+											</div>
+											<div class="score">
+												<label>امتیاز :</label>
+												<span>{[{brick.user.profile.score}]}</span>
+											</div>
+											<div class="wis">
+												<label>اعتبار ویس :</label>
+												<span>{[{brick.user.profile.credit}]}</span>
+											</div>
+											<div class="joinDate">
+												<label>تاریخ عضویت :</label>
+												<span>{[{brick.user.profile.date_joined}]}</span>
+											</div>
+											<div class="email">
+												<label>ایمیل :</label>
+												<span>{[{brick.user.profile.email}]}</span>
+											</div>
+										</div>
+									</div>
+									<div class="clear"></div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

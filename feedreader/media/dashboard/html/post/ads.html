@@ -14,6 +14,9 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="box box-info">
+					<div class="loading" ng-show='loading'>
+						<div id="mySpinner"  class="loader">Loading...</div>
+					</div>
 					<div class="box-header with-border">
 						<h3 class="box-title">آگهی ها</h3>
 						<div class="box-tools pull-right">
@@ -34,6 +37,7 @@
 						</div>
 					</div><!-- /.box-body -->
 				</div>
+
 				<div class="">
 					<div class="col-md-6" ng-repeat="showPost in showPosts">
 						<div class="ads-item">
@@ -60,10 +64,19 @@
 				</div>
 				<script type="text/javascript">
 					$(document).ready(function () {
+						
+						var d = new Date();
+						var end_time = d.getTime();
+						var start_time = end_time-604800000;
 						$('#ads_start').pDatepicker({
+							timePicker: {
+								enabled: true
+							},
 							altField: '#ads_start_value',
 							format: 'YYYY-MM-DD'
 						});
+						$("#ads_start").pDatepicker("setDate", start_time);
+						
 						$('#ads_end').pDatepicker({
 							altField: '#ads_end_value',
 							format: 'YYYY-MM-DD'
