@@ -1268,7 +1268,8 @@ class Comments(models.Model):
             actors_list.append(post.user_id)
 
         comment_act(comment.object_pk_id, comment.user_id, user_ip=comment.ip_address)
-
+        if post.user_id == 11253:
+            return
         users = Comments.objects.filter(object_pk=post.id).values_list('user_id', flat=True)
         # for notif in Notif_mongo.objects.filter(type=2, post=post.id):
         for act in users:
