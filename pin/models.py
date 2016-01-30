@@ -981,8 +981,11 @@ class Stream(models.Model):
             if post.status == Post.APPROVED and post.accept_for_stream():
                 Post.add_to_stream(post=post)
 
-            post_act(post=post.id, actor=user.id,
-                     category=post.category.title, user_ip=post._user_ip)
+            try:
+                post_act(post=post.id, actor=user.id,
+                         category=post.category.title, user_ip=post._user_ip)
+            except:
+                pass
 
 
 class Likes(models.Model):

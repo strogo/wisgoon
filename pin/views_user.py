@@ -5,6 +5,7 @@ import base64
 import json
 import datetime
 import urllib
+from django.db.models import Q
 from shutil import copyfile
 
 from instagram.client import InstagramAPI
@@ -59,15 +60,12 @@ def get_insta(request):
                            redirect_uri=redirect_uri)
 
         redirect_uri = api.get_authorize_login_url(scope=scope)
-        print redirect_uri
         code = request.GET.get('code')
         if not code:
             return HttpResponseRedirect(redirect_uri)
-        print code
 
         # api = InstagramAPI(access_token=access_token)
         access_token = api.exchange_code_for_access_token(code)
-        print access_token, dir(access_token)
         insta_id = access_token[1]["id"]
         access_token = access_token[0]
         UserMeta.objects(user=int(request.user.id))\
@@ -767,3 +765,53 @@ def block_action(request, user_id):
             data = {'status': False, 'type': 'None', 'message': 'کجاااااا؟'}
 
     return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+def blocked_list(request):
+    older = request.POST.get('older', False)
+
+    if older:
+        blocked_list = Block.objects.filter(user_id=request.user.id, id__lt=older).order_by('-id')[:16]
+    else:
+        blocked_list = Block.objects.filter(user_id=request.user.id).order_by('-id')[:16]
+
+    if request.is_ajax():
+        if blocked_list.exists():
+            return render(request, 'pin2/profile/_blocked_list_item.html', {
+                'blocked_list': blocked_list,
+                'user': request.user
+            })
+        else:
+            return HttpResponse(0)
+
+    return render(request, 'pin2/profile/blocked_list.html', {
+        'blocked_list': blocked_list,
+        'profile': request.user.profile,
+        'cur_user': request.user
+    })
+
+
+@login_required
+def promotion_list(request):
+    older = request.POST.get('older', False)
+
+    if older:
+        promotion_list = Ad.objects.filter(Q(user=request.user) | Q(owner=request.user), id__lt=older).order_by('-id')[:16]
+    else:
+        promotion_list = Ad.objects.filter(Q(user=request.user) | Q(owner=request.user)).order_by('-id')[:16]
+
+    if request.is_ajax():
+        if promotion_list.exists():
+            return render(request, 'pin2/profile/_promotion_item.html', {
+                'promotion_list': promotion_list,
+                'user': request.user
+            })
+        else:
+            return HttpResponse(0)
+
+    return render(request, 'pin2/profile/promotion.html', {
+        'promotion_list': promotion_list,
+        'profile': request.user.profile,
+        'cur_user': request.user
+    })

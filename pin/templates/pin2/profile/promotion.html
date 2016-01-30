@@ -1,0 +1,26 @@
+{% extends "pin2/flat.base.profile.html"%}
+{% load pin_tags %}
+
+{% block extra_js %}
+ <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
+{% endblock extra_js %}
+
+{% block content %}
+
+<script type="text/javascript">
+var start_loading=0;
+var next_pref = '?pid=';
+</script>
+
+<!-- {% include "base/app.html" %} -->
+
+<div id="main">
+	<div class="pa20 pato0">
+		<div id="feed" class="masonry">
+			{% include "pin2/profile/_promotion_item.html"%}
+		</div>
+	</div>
+</div>
+
+{% endblock content %}

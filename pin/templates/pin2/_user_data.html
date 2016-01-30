@@ -107,43 +107,59 @@
 
             </div>
             <div class="user_avtivity">
-                <div class="col-sm-2">
+                <div class="profile_item">
                     <a href='{% url "pin-absuser" profile.user_id|get_user_name %}'>
-                        <div class="icon"><i class="fa fa-camera"></i></div>
+                        <div class="icon"><i class="fa fa-picture-o"></i></div>
                         <div class="p_label"><span>تعداد مطالب</span></div>
                         <div class="count">{{profile.cnt_post|pn}}</div>
                         <div class="clear only_mobile_view"></div>
                     </a>
                 </div>
-                <div class="col-sm-2">
-                    <div class="icon"><i class="fa fa-star"></i></div>
+                <div class="profile_item">
+                    <div class="icon"><i class="fa fa-star-o"></i></div>
                     <div class="p_label"><span>امتیاز</span></div>
                     <div class="count">{{profile.score|pn}}</div>
                     <div class="clear only_mobile_view"></div>
                 </div>
-                <div class="col-sm-2">
+                <div class="profile_item">
                     <a href="{% url "pin-absuser-followers" profile.user.username %}">
-                        <div class="icon"><i class="fa fa-users"></i></div>
+                        <div class="icon"><i class="fa fa-odnoklassniki"></i></div>
                         <div class="p_label"><span>دنبال‌کنندگان</span></div>
                         <div class="count">{{profile.get_cnt_followers|pn}}</div>
                         <div class="clear only_mobile_view"></div>
                     </a>
                 </div>
-                <div class="col-sm-2">
+                <div class="profile_item">
                     <a href="{% url "pin-absuser-following" profile.user.username %}">
-                        <div class="icon"><i class="fa fa-user"></i></div>
+                        <div class="icon"><i class="fa fa-odnoklassniki-square"></i></div>
                         <div class="p_label"><span>دنبال‌‌شوندگان</span></div>
                         <div class="count">{{profile.get_cnt_following|pn}}</div>
                         <div class="clear only_mobile_view"></div>
                     </a>
                 </div>
-                <div class="col-sm-2">
+                <div class="profile_item">
                     <a href="{% url "pin-absuser-like" profile.user.username %}">
-                        <div class="icon"><i class="fa fa-heart"></i></div>
+                        <div class="icon"><i class="fa fa-heart-o"></i></div>
                         <div class="p_label"><span>مورد‌ علاقه</span></div>
                         <div class="clear only_mobile_view"></div>
                     </a>
                 </div>
+                {% if request.user.is_authenticated and profile.user_id == request.user.id %}
+                <div class="profile_item">
+                    <a href="{% url "blocked-list" %}">
+                        <div class="icon"><i class="fa fa-ban"></i></div>
+                        <div class="p_label"><span>کاربران بلاک شده</span></div>
+                        <div class="clear only_mobile_view"></div>
+                    </a>
+                </div>
+                <div class="profile_item">
+                    <a href="{% url "promotion-list" %}">
+                        <div class="icon"><i class="fa fa-diamond"></i></div>
+                        <div class="p_label"><span>تصاویر ویژه شما</span></div>
+                        <div class="clear only_mobile_view"></div>
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </div>
         <div class="clear"></div>

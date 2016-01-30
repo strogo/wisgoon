@@ -1,0 +1,29 @@
+{% spaceless %}
+
+{% for item in promotion_list %}
+
+		{% if item.post.get_image_236 %}
+		{% comment %}
+			
+			{% if not request.user.is_authenticated %}
+				{% include "pin2/__items_base_not_login.html" %}
+			{% else %}
+		{% endcomment %}
+				{% include "pin2/profile/_promotion_item_inner.html" %}
+		{% comment %}
+			{% endif %}
+		{% endcomment %}
+
+		{% endif %}
+
+		{% comment %}
+		{% if offset %}
+			<span data-next="{{offset}}" ></span>
+		{%else%}
+			<span data-next="{{item.id}}" ></span>
+		{%endif%}
+		{% endcomment %}
+		
+{%endfor%}
+
+{% endspaceless %}
