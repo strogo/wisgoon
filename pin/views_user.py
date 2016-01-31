@@ -212,7 +212,7 @@ def report(request, pin_id):
         msg = u'شما قبلا این مطلب را گزارش داده اید.'
 
     if request.is_ajax():
-        data = {'status': status, 'msg': msg}
+        data = {'status': status, 'message': msg}
         return HttpResponse(json.dumps(data), content_type='application/json')
     else:
         return HttpResponseRedirect(reverse('pin-item', args=[post.id]))

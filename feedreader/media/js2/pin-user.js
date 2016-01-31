@@ -143,8 +143,25 @@ $('body').on('click', '#pin_form .sub_btn', function(event) {
             });
         });
     }
-
 });
+
+$('body').on('click', '.del-comment', function(){
+    var obj = $(this);
+    var row_name = "comment_row_" + $(obj).attr("rel");
+    var req_url = obj.attr('href');
+    $.ajax({
+        url: req_url,
+        success: function(resp) {
+            if (resp.status){
+                $("#"+row_name).remove();
+            }
+            alertify.success('دیدکاه با موفقیت حذف شد');
+        }
+    });
+    
+    return false;
+});
+
 
 $('#pin_form').ajaxForm({
     beforeSend: function() {
@@ -276,6 +293,7 @@ $("body").on('click', ".delpost", function(){
                     $(parent_to_del).remove();
                     feedobj.masonry('reload');
                 }
+                alertify.success('تصویر با موفقیت حذف شد');
             }
         });
     }
@@ -300,21 +318,21 @@ $( "body" ).on('click', ".noppost", function(){
     return false;
 });
 
-$("body").on('click', '.btn_report',function(){
+$("body").on('click', '.btn_report, .report-btn',function(){
     if (confirm('آیا این مطلب غیر اخلاقی است و می خواهید گزارش کنید؟')){
         var obj = $(this);
         obj.addClass('disabled');
-        var like_url=obj.attr('href');
+        var u=obj.attr('href');
         $.ajax({
-            url: like_url,
-            success: function(html) {
-                var res = jQuery.parseJSON(html);
-                obj.removeClass('disabled');
-                if (res[0].status){
-                    obj.addClass('btn-danger');
+            url: u,
+            success: function(resp) {
+                if (resp.status){
+                    alertify.success(resp.message);                    
+                }else{
+                    alertify.error(resp.message);
                 }
+                $('.dropdown').dropdown('toggle');
                 
-                alert(res[0].msg);
             }
         });
     }
