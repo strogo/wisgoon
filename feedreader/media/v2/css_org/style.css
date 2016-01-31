@@ -2649,16 +2649,20 @@ div.comment div div.row:hover .del-comment{
 	margin: 6px 10px;
 	display: inline-block;
 }
-.page_404 {
-	background: url("../images/404.jpg") no-repeat scroll center -110px;
+.error_page{
 	display: block;
 	margin: 0 auto;
 	width: 1000px;
 	height: 716px;
 	position: relative;
 }
-
-.page_404 .text_404 {
+.error_page.page_404 {
+	background: url("../images/404.jpg") no-repeat scroll center -110px;
+}
+.error_page.page_500 {
+	background: url("../images/500.jpg") no-repeat scroll center -110px;
+}
+.error_page .error_text {
 	top: 408px;
 	left: 0;
 	margin: 0 auto;
@@ -2696,7 +2700,7 @@ div.comment div div.row:hover .del-comment{
 	.top-search {
 		width: 250px;
 	}
-	.page_404{
+	.error_page{
 		width: 100%;
 	}
 
