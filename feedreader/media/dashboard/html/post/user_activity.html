@@ -10,7 +10,7 @@
     <div class="clear"></div>
   </section>
 
-  <section class="content">
+  <section class="content user-activity">
 
     <div class="box box-info" ng-controller="followCtrl">
       <div class="box-header with-border">
@@ -23,6 +23,7 @@
           <input id="follow_end" type="text">
           <input id="follow_end_value" type="hidden"/>
           <a href="" ng-click="refresh_follows()"><i class="fa fa-refresh"></i></a>
+          <a ng-show='loading' class="load-stat-activity"><i class="fa fa-refresh fa-spin"></i></a>
           <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
           <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
@@ -45,6 +46,7 @@
           <input id="block_end" type="text">
           <input id="block_end_value" type="hidden"/>
           <a href="" ng-click="refresh_blocks()"><i class="fa fa-refresh"></i></a>
+          <a ng-show='loading' class="load-stat-activity"><i class="fa fa-refresh fa-spin"></i></a>
           <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
           <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
@@ -67,6 +69,7 @@
           <input id="like_end" type="text">
           <input id="like_end_value" type="hidden"/>
           <a href="" ng-click="refresh_likes()"><i class="fa fa-refresh"></i></a>
+          <a ng-show='loading' class="load-stat-activity"><i class="fa fa-refresh fa-spin"></i></a>
           <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
           <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
@@ -89,6 +92,7 @@
           <input id="comment_end" type="text">
           <input id="comment_end_value" type="hidden"/>
           <a href="" ng-click="refresh_comments()"><i class="fa fa-refresh"></i></a>
+          <a ng-show='loading' class="load-stat-activity"><i class="fa fa-refresh fa-spin"></i></a>
           <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
           <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
@@ -111,6 +115,7 @@
         <input id="user_end" type="text">
         <input id="user_end_value" type="hidden"/>
         <a href="" ng-click="refresh_users()"><i class="fa fa-refresh"></i></a>
+        <a ng-show='loading' class="load-stat-activity"><i class="fa fa-refresh fa-spin"></i></a>
         <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
         <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
       </div>
@@ -124,47 +129,77 @@
 
   <script type="text/javascript">
     $(document).ready(function () {
+      var d = new Date();
+      var end_time = d.getTime();
+      var start_time = end_time-604800000;
     //user
     $('#user_start').pDatepicker({
-      altField: '#user_start_value',
-      format: 'YYYY-MM-DD'
-    });
+     timePicker: {
+      enabled: true
+    },
+    altField: '#user_start_value',
+    format: 'YYYY-MM-DD'
+  });
+    $("#user_start").pDatepicker("setDate", start_time);
+    
     $('#user_end').pDatepicker({
       altField: '#user_end_value',
       format: 'YYYY-MM-DD'
     });
     //comment
     $('#comment_start').pDatepicker({
-      altField: '#comment_start_value',
-      format: 'YYYY-MM-DD'
-    });
+     timePicker: {
+      enabled: true
+    },
+    altField: '#comment_start_value',
+    format: 'YYYY-MM-DD'
+  });
+    $("#comment_start").pDatepicker("setDate", start_time);
+
     $('#comment_end').pDatepicker({
       altField: '#comment_end_value',
       format: 'YYYY-MM-DD'
     });
      //like
      $('#like_start').pDatepicker({
+      timePicker: {
+        enabled: true
+      },
       altField: '#like_start_value',
       format: 'YYYY-MM-DD'
     });
+
+     $("#like_start").pDatepicker("setDate", start_time);
+
      $('#like_end').pDatepicker({
+      endDate: end_time,
       altField: '#like_end_value',
       format: 'YYYY-MM-DD'
     });
     //block
     $('#block_start').pDatepicker({
-      altField: '#block_start_value',
-      format: 'YYYY-MM-DD'
-    });
+     timePicker: {
+      enabled: true
+    },
+    altField: '#block_start_value',
+    format: 'YYYY-MM-DD'
+  });
+    $("#block_start").pDatepicker("setDate", start_time);
+
     $('#block_end').pDatepicker({
       altField: '#block_end_value',
       format: 'YYYY-MM-DD'
     });
       //follow
       $('#follow_start').pDatepicker({
-        altField: '#follow_start_value',
-        format: 'YYYY-MM-DD',
-      });
+       timePicker: {
+        enabled: true
+      },
+      altField: '#follow_start_value',
+      format: 'YYYY-MM-DD',
+    });
+      $("#follow_start").pDatepicker("setDate", start_time);
+
       $('#follow_end').pDatepicker({
         altField: '#follow_end_value',
         format: 'YYYY-MM-DD',

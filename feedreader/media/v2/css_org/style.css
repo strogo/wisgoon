@@ -474,8 +474,11 @@ a, a:link, a:hover, a:visited {
 
 
 /****** main ************/
-.red{color: red;}
-.green{color: green;}
+.red{color: #FF002A;}
+.red_t{color: #FF002A !important;}
+.green{color: #3CB100;}
+.green_t{color: #3CB100 !important;}
+.orange_t{color: #EA6100 !important;}
 #main {
 	margin-bottom: 15px;
 }
@@ -542,6 +545,17 @@ a, a:link, a:hover, a:visited {
 	border-radius: 10px 10px 0 0;
 	/*margin-top: 10px;*/
 	width: 236px;
+}
+.feed-item.promote .img-content img{
+	border-radius: 0;
+}
+.feed-item.promote .promotion_data {
+	font-size: 13px;
+	padding: 10px;
+	text-align: right;
+}
+.feed-item.promote .promotion_data .p_item {
+	color: #888;
 }
 .feed-item.activity_box .img-content img{
 	border-radius: 0;
@@ -2347,14 +2361,17 @@ div.comment div div.row:hover .del-comment{
 .user_stat_config .ajax-follow i{
 	padding: 0;
 }
-.user_avtivity > div{
+.user_avtivity .profile_item {
 	text-align: center;
-	width: 20%;
+	flex: 1;
 	color: #424A55;
 	border-left: 1px solid #d0d9e2;
 }
-.user_avtivity > div.col-sm-2:last-child{
+.user_avtivity .profile_item:last-child{
 	border: 0;
+}
+.user_avtivity .profile_item > *{
+	width: 100%;
 }
 .user_avtivity div.icon{
 	font-size: 22px;
@@ -2618,14 +2635,36 @@ div.comment div div.row:hover .del-comment{
 	color: #434A54;
 }
 
-.search_page .tags{
+.search_page form .tags{
 	margin: 30px auto;
-	width: 80%;
+	width: 450px;
 }
-.search_page .tags a{
+.search_page form .tags > h3 {
+	border-bottom: 1px solid #ddd;
+	padding-bottom: 10px;
+}
+.search_page form .tags a{
 	border-bottom: 1px solid #9099A5;
 	color: #434A54;
-	margin: 10px;
+	margin: 6px 10px;
+	display: inline-block;
+}
+.page_404 {
+	background: url("../images/404.jpg") no-repeat scroll center -110px;
+	display: block;
+	margin: 0 auto;
+	width: 1000px;
+	height: 716px;
+	position: relative;
+}
+
+.page_404 .text_404 {
+	top: 408px;
+	left: 0;
+	margin: 0 auto;
+	position: absolute;
+	right: 0;
+	text-align: center;
 }
 .tabliq *{
 	text-align: center !important;
@@ -2656,6 +2695,9 @@ div.comment div div.row:hover .del-comment{
 	}
 	.top-search {
 		width: 250px;
+	}
+	.page_404{
+		width: 100%;
 	}
 
 }

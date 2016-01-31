@@ -1,0 +1,54 @@
+{% extends "pin2/flat.base.profile.html"%}
+{% load humanize %}
+{% load pin_tags %}
+{% load daddy_avatar%}
+
+
+{% block extra_js %}
+<script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
+{% endblock extra_js %}
+
+{% block title%} - کاربرانی که بلاک کرده‌اید{% endblock title%}
+
+{%block pin-ex-nav%}
+<li class="nav-right active">
+    <a href="{% url "pin-user" user_id %}"><h1>کاربرانی که بلاک کرده‌اید</h1></a>
+</li>
+{%endblock pin-ex-nav%}
+
+{% block content %}
+
+<script type="text/javascript">
+    var start_loading=0;
+    var disable_masonry=1;
+</script>
+
+
+{% if blocked_list|length > 0 %}
+<div id="follower-box">
+    {% include "pin2/profile/_blocked_list_item.html" %}
+</div>
+{% else %}
+<div class="container">
+    <h4 class="box pa10 tace col-md-12">شما کسی را بلاک نکرده اید <i class="fa fa-smile-o"></i></h4>
+</div>
+{% endif %}
+
+{% if blocked_list|length > 15 %}
+<center>
+    <a href="{% url 'pin-absuser-following' user.username %}" class="wis_btn mabo50 mato50 load-follow">
+        بیشتر
+        <img src="{{MEDIA_URL}}v2/images/loading-img.gif" alt=" بیشتر " />
+    </a>
+</center>
+{% endif %}
+
+
+
+
+{% include "pin/pin_scripts.html" %}
+
+{% endblock content %}
+
+{% block js %} {% endblock js %}

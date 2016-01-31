@@ -9,167 +9,172 @@
     </h1>
     <div class="clear"></div>
   </section>
-  <section class="content" ng-controller="logsController">
+  <section class="content">
     <div class="row">
       <div class="col-xs-12 logs">
         <div class="select">
-          <form name="searchForm" ng-submit="showSearchPost()">
+          <form name="searchForm" ng-submit="showSearchLog()">
             <input type="text" placeholder="جست و جو ..." ng-model="query"><button type="submit"><i class="fa fa-search"></i></button>
+            <label>{[{statusSearch}]}</label>
           </form>
           <span class="tables-pagination pull-left">
             <a ng-click="next_page()" pagination="{[{nextUrl}]}" ng-disabled="pagination == null">
-            <i class="fa fa-angle-right"></i></a>
-            <a ng-click="prev_page()" pagination="{[{pervUrl}]}" ng-disabled="pagination == null">
-            <i class="fa fa-angle-left"></i></a>
-          </span>
+              <i class="fa fa-angle-right"></i></a>
+              <a ng-click="prev_page()" pagination="{[{pervUrl}]}" ng-disabled="pagination == null">
+                <i class="fa fa-angle-left"></i></a>
+              </span>
+            </div>
+            <div class="filter">
+              <div class="box">
+               <div class="box-header with-border">
+                <h3 class="box-title">
+                  <a href="" data-widget="collapse"><i class="fa fa-bars"></i> فیلترها </a>
+                </h3>
+              </div>
+              <div class="box-body">
+                <form name="myForm" ng-submit="submitForm()">
+                 <div class="col-md-3">
+                  <div class="title">
+                   <h6>بر اساس content type</h6>
+                 </div>
+                 <div>
+                  <div class="by-content-type">
+                    <ul>
+                      <li>
+                        <label>
+                          <input type="radio" name="by-content" ng-model="contentValue" value="">همه
+                        </label>
+                      </li>
+                      <li>
+                        <label>
+                          <input type="radio" name="by-content" ng-model="contentValue" value="1">post
+                        </label>
+                      </li>
+                      <li>
+                        <label>
+                          <input type="radio" name="by-content" ng-model="contentValue" value="2">comment
+                        </label>
+                      </li>
+                      <li>
+                        <label>
+                          <input type="radio" name="by-content" ng-model="contentValue" value="3">user
+                        </label>
+                      </li>
+                      <li>
+                        <label>
+                          <input type="radio" name="by-content" ng-model="contentValue" value="4">comment test
+                        </label>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="title">
+                  <h6> بر اساس actions </h6>
+                </div>
+                <div >
+                  <div class="actions">
+                    <ul>
+                      <li>
+                        <label>
+                          <input type="radio" name="by-action" ng-model="actionValue" value="">همه
+                        </label>
+                      </li>
+                      <li>
+                        <label ng-show="contentValue == '1' || contentValue == '2'">
+                          <input type="radio" name="by-action" ng-model="actionValue" value="1" >delete
+                        </label>
+                      </li>
+                      <li>
+                        <label ng-show="contentValue == '1'">
+                          <input type="radio" name="by-action" ng-model="actionValue" value="2" >pending
+                        </label>
+                      </li>
+                      <li>
+                        <label ng-show="contentValue == '2'">
+                          <input type="radio" name="by-action" ng-model="actionValue" value="3" >bad comment
+                        </label>
+                      </li>
+                      <li>
+                        <label ng-show="contentValue == '1'">
+                          <input type="radio" name="by-action" ng-model="actionValue" value="4">bad post
+                        </label>
+                      </li>
+                      <li>
+                        <label ng-show="contentValue == '3'">
+                          <input type="radio" name="by-action" ng-model="actionValue" value="5">ban imei
+                        </label>
+                      </li>
+                      <li>
+                        <label ng-show="contentValue == '3'">
+                          <input type="radio" name="by-action" ng-model="actionValue" value="6">ban by admin 
+                        </label>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3"></div>
+              <div class="col-md-3"></div>
+              <div class="col-md-12 submit">
+                <button type="submit" >دریافت اطلاعات</button>
+                
+              </div>
+            </form>
+          </div>
         </div>
-        <div class="filter">
-          <div class="box">
-           <div class="box-header with-border">
-            <h3 class="box-title">
-              <a href="" data-widget="collapse"><i class="fa fa-bars"></i> فیلترها </a>
-            </h3>
-          </div>
-          <div class="box-body">
-            <form name="myForm" ng-submit="submitForm()">
-             <div class="col-md-3">
-              <div class="title">
-               <h6>بر اساس content type</h6>
-             </div>
-             <div>
-              <div class="by-content-type">
-                <ul>
-                  <li>
-                    <label>
-                      <input type="radio" name="by-content" ng-model="contentValue" value="">همه
-                    </label>
-                  </li>
-                  <li>
-                    <label>
-                      <input type="radio" name="by-content" ng-model="contentValue" value="1">post
-                    </label>
-                  </li>
-                  <li>
-                    <label>
-                      <input type="radio" name="by-content" ng-model="contentValue" value="2">comment
-                    </label>
-                  </li>
-                  <li>
-                    <label>
-                      <input type="radio" name="by-content" ng-model="contentValue" value="3">user
-                    </label>
-                  </li>
-                  <li>
-                    <label>
-                      <input type="radio" name="by-content" ng-model="contentValue" value="4">comment test
-                    </label>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="title">
-              <h6> بر اساس actions </h6>
-            </div>
-            <div >
-              <div class="actions">
-                <ul>
-                  <li>
-                    <label>
-                    <input type="radio" name="by-action" ng-model="actionValue" value="">همه
-                    </label>
-                  </li>
-                  <li>
-                    <label ng-show="contentValue == '1' || contentValue == '2'">
-                      <input type="radio" name="by-action" ng-model="actionValue" value="1" >delete
-                    </label>
-                  </li>
-                  <li>
-                    <label ng-show="contentValue == '1'">
-                      <input type="radio" name="by-action" ng-model="actionValue" value="2" >pending
-                    </label>
-                  </li>
-                  <li>
-                    <label ng-show="contentValue == '2'">
-                      <input type="radio" name="by-action" ng-model="actionValue" value="3" >bad comment
-                    </label>
-                  </li>
-                  <li>
-                    <label ng-show="contentValue == '1'">
-                      <input type="radio" name="by-action" ng-model="actionValue" value="4">bad post
-                    </label>
-                  </li>
-                  <li>
-                    <label ng-show="contentValue == '3'">
-                      <input type="radio" name="by-action" ng-model="actionValue" value="5">ban imei
-                    </label>
-                  </li>
-                  <li>
-                    <label ng-show="contentValue == '3'">
-                      <input type="radio" name="by-action" ng-model="actionValue" value="6">ban by admin 
-                    </label>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3"></div>
-          <div class="col-md-3"></div>
-          <div class="col-md-12 submit">
-            <button type="submit" >دریافت اطلاعات</button>
-          </div>
-        </form>
+      </div>
+      <div class="loader-button" ng-show='loading'>
+        <div id="mySpinner"  class="loader">Loading...</div>
+      </div>
+      <div class="box">
+       <div class="box-header with-border">
+        <h3 class="box-title">
+          لاگ ها
+        </h3>
+        <div class="box-tools pull-right">
+          <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
+      </div>
+      <div class="box-body">
+        <table id="example2" class="table table-bordered ">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="action-toggle" ></th>
+              <th>ID</th>
+              <th>User</th>
+              <th>Owner</th>
+              <th>user id</th>
+              <th>action</th>
+              <th>object id</th>
+              <th>content type</th>
+              <th>get thumbnail</th>
+              <th>creat time</th>
+              <th>ip address</th>
+              <th>text</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="log in logs">
+              <td><input type="checkbox" id="action-toggle" ></td>
+              <td>{[{log.id}]}</td>
+              <td>{[{log.user.username}]}</td>
+              <td>{[{log.owner.id}]}</td>
+              <td> {[{log.user.id}]}</td>
+              <td>{[{log.action}]}</td>
+              <td>{[{log.object_id}]}</td>
+              <td>{[{log.content_type}]}</td>
+              <td><img ng-src="{[{log.post_image}]}"></td>
+              <td>{[{log.create_time}]}</td>
+              <td>{[{log.ip_address}]}</td>
+              <td style="width: 150px;">{[{log.text}]}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
-  <div class="box">
-   <div class="box-header with-border">
-    <h3 class="box-title">
-      لاگ ها
-    </h3>
-    <div class="box-tools pull-right">
-      <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-    </div>
-  </div>
-  <div class="box-body">
-    <table id="example2" class="table table-bordered ">
-      <thead>
-        <tr>
-          <th><input type="checkbox" id="action-toggle" ></th>
-          <th>ID</th>
-          <th>User</th>
-          <th>Owner</th>
-          <th>user id</th>
-          <th>action</th>
-          <th>object id</th>
-          <th>content type</th>
-          <th>get thumbnail</th>
-          <th>creat time</th>
-          <th>ip address</th>
-          <th>text</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="log in logs">
-          <td><input type="checkbox" id="action-toggle" ></td>
-          <td>{[{log.id}]}</td>
-          <td>{[{log.user.username}]}</td>
-          <td>{[{log.owner.id}]}</td>
-          <td> {[{log.user.id}]}</td>
-          <td>{[{log.action}]}</td>
-          <td>{[{log.object_id}]}</td>
-          <td>{[{log.content_type}]}</td>
-          <td><img ng-src="{[{log.post_image}]}"></td>
-          <td>{[{log.create_time}]}</td>
-          <td>{[{log.ip_address}]}</td>
-          <td style="width: 150px;">{[{log.text}]}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-</div>
 </div>
 </section>
 </div>

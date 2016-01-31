@@ -981,8 +981,11 @@ class Stream(models.Model):
             if post.status == Post.APPROVED and post.accept_for_stream():
                 Post.add_to_stream(post=post)
 
-            post_act(post=post.id, actor=user.id,
-                     category=post.category.title, user_ip=post._user_ip)
+            try:
+                post_act(post=post.id, actor=user.id,
+                         category=post.category.title, user_ip=post._user_ip)
+            except:
+                pass
 
 
 class Likes(models.Model):
@@ -1268,7 +1271,8 @@ class Comments(models.Model):
             actors_list.append(post.user_id)
 
         comment_act(comment.object_pk_id, comment.user_id, user_ip=comment.ip_address)
-
+        if post.user_id == 11253:
+            return
         users = Comments.objects.filter(object_pk=post.id).values_list('user_id', flat=True)
         # for notif in Notif_mongo.objects.filter(type=2, post=post.id):
         for act in users:

@@ -52,9 +52,9 @@ def change_status_user(request):
         return return_un_auth()
 
     try:
-        user_id = int(request.POST.get('user_id', False))
-        status = str(request.POST.get('status', "False"))
-        desc = str(request.POST.get('description', ""))
+        user_id = int(request.POST.get('activeId', False))
+        status = str(request.POST.get('activeStatus', False))
+        desc = str(request.POST.get('description1', ""))
         user = User.objects.get(pk=user_id)
         token = request.GET.get('token', False)
         if token:
@@ -67,7 +67,7 @@ def change_status_user(request):
         return return_not_found()
 
     if user_id:
-        if status:
+        if status == '1':
             user.is_active = True
             message = "User Status Is True."
             Log.active_user(user_id=current_user.id,
@@ -81,6 +81,7 @@ def change_status_user(request):
                              user_id=user.id,
                              text="%s || %s" % (user.username, desc),
                              ip_address=get_user_ip(request))
+
         user.save()
         data = {'status': True, 'message': message}
         data['user'] = get_simple_user_object(user.id)
@@ -96,9 +97,9 @@ def banned_profile(request):
         return return_un_auth()
 
     try:
-        user_id = int(request.POST.get('user_id', False))
-        status = str(request.POST.get('status', "False"))
-        description = str(request.POST.get('description', ""))
+        user_id = int(request.POST.get('profileBanId', False))
+        status = str(request.POST.get('profileBanstatus', False))
+        description = str(request.POST.get('description2', ""))
         profile = Profile.objects.get(user_id=user_id)
         token = request.GET.get('token', False)
         if token:
@@ -111,7 +112,7 @@ def banned_profile(request):
         return return_not_found()
 
     if user_id:
-        if status:
+        if status == '1':
             profile.banned = True
             profile.save()
             Log.active_user(user_id=current_user.id,
@@ -139,9 +140,9 @@ def banned_imei(request):
     if not check_admin(request):
         return return_un_auth()
     try:
+        status = str(request.POST.get('status', False))
+        description = str(request.POST.get('description3', ""))
         imei = str(request.POST.get('imei', False))
-        status = str(request.POST.get('status', "False"))
-        description = str(request.POST.get('description', ""))
         token = request.GET.get('token', False)
         if token:
             current_user = AuthCache.user_from_token(token=token)
@@ -155,7 +156,7 @@ def banned_imei(request):
         return return_not_found()
 
     if description and imei:
-        if status:
+        if status == '1':
             try:
                 BannedImei.objects.filter(imei=imei).delete()
 
@@ -196,6 +197,8 @@ def banned_imei(request):
                             ip_address=get_user_ip(request))
             return return_json_data({'status': True,
                                      'message': "Successfully Change Profile banned."})
+    else:
+        return return_bad_request()
 
 
 # @csrf_exempt

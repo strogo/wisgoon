@@ -91,6 +91,8 @@ urlpatterns += patterns('pin.views_user',
     url(r'^verify_payment/(?P<bill_id>\w+)/$', 'verify_payment', name="pin-verify-payment"),
     url(r'^save/as/ads/(?P<post_id>\w+)/$', 'save_as_ads', name="pin-save-as-ads"),
     url(r'^user/action/(?P<user_id>\d+)/$', 'block_action', name="pin-user-block"),
+    url(r'^blocked/$', 'blocked_list', name="blocked-list"),
+    url(r'^promotion/$', 'promotion_list', name="promotion-list"),
 )
 
 urlpatterns += patterns('pin.views_backbone',
