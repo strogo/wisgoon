@@ -3,37 +3,48 @@
 
 {% block content %}
 
-<div class="panel panel-default">
-	<div class="panel-heading">عضویت در ویسگون
-	</div>
-	<div class="panel-body">
-
-<div class="col-md-12">
-	<div class="col-md-6">
-		<!-- {% include "registration/social.html"%} -->
-		<div class="clearfix"></div>
+<div class="login wis_form box ofh mato50">
+	<div class="form_box">
 		<form method="post" class="form">
-		{% csrf_token %}
-		{% for f in form %}
-		<!-- {{form.as_p}} -->
-			<div class="form-group">
+			{% csrf_token %}
+			{% for f in form %}
+			<div class="form-group with_icon">
 				<label for="{{f.id}}" class="control-label">{{f.label}}</label>
 				<div class="">
-					{% render_field f class+="form-control ltr" placeholder=f.label %}
+					{% render_field f class+="form-control tale wis_input" placeholder=f.label %}
 					<span id="helpBlock" class="help-block">{{f.errors.0}}</span>
 				</div>
+				<span class="icon {{f.name}}"></span>
 			</div>
-		{% endfor %}
+			{% endfor %}
 
-		<div class="form-actions">
-			<input type="submit" class="btn btn-primary" value="تکمیل عضویت">
-		</div>
+			<p>
+				<a href="/accounts/password/reset/">رمز عبور خود را فراموش کرده اید؟</a>
+			</p>
+			<p>
+				<a href="/accounts/register/">اگر ثبت‌نام نکرده‌اید اینجا کلیک کنید</a>
+			</p>
+			
+			<div class="tace">
+				<input type="submit" value="تکمیل عضویت" class="wis_btn orange mato50 mabo50 w50">
+			</div>
 		</form>
 	</div>
-	<div class="col-md-6">
-		{% include "pin2/mobil_ads.html" %}
+
+	<div class="logo_box">
+		<div class="wis_new_logo w100">
+			<img src="{{MEDIA_URL}}v2/images/new_logo.png" alt="">
+
+			<div class="download_app mato20 mabo50">
+				<p>دانلود نرم‌افزار اندروید</p>
+				<a class="wis_btn green" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">دانلود از بازار</a>
+				<a class="wis_btn orange" href="http://static.wisgoon.com/media/app/latest.apk">دانلود مستقیم</a>
+
+			</div>
+		</div>
 	</div>
+	<div class="clear"></div>
 
 </div>
-</div>
+
 {% endblock %}

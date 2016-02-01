@@ -322,6 +322,7 @@ def get_profile_data(profile, user_id):
     data['score'] = profile.score
     data['cnt_post'] = profile.cnt_post
     data['cnt_like'] = profile.cnt_like
+    data['is_active'] = profile.user.is_active
     if profile.user.is_active:
         data['user_active'] = 1
     else:
@@ -329,6 +330,7 @@ def get_profile_data(profile, user_id):
     data['credit'] = profile.credit
     data['cnt_follower'] = profile.cnt_follower
     data['cnt_following'] = profile.cnt_following
+    data['banned'] = profile.banned
     if profile.banned:
         data['userBanne_profile'] = 1
     else:

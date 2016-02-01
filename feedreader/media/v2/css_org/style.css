@@ -23,6 +23,8 @@ a:hover {color:#257399;}
 h1,h2,h3,h4,h5,h6{font-weight: 800;}
 hr{border-color: #d0d9e2 !important;}
 .w100{width: 100% !important;}
+.w50{width: 50% !important;}
+.w30{width: 30% !important;}
 .flle{float: left !important;}
 .flri{float: right !important;}
 .h-line{
@@ -93,6 +95,7 @@ hr{border-color: #d0d9e2 !important;}
 .pofi{position: fixed !important;}
 .poab{position: absolute !important;}
 .poin{position: initial !important;}
+.ofh{overflow: hidden !important;}
 *[disabled]{
 	cursor: not-allowed !important;
 }
@@ -2547,25 +2550,53 @@ div.comment div div.row:hover .del-comment{
 .modal_buttons .action_btn:hover{
 	background-position: bottom;
 }
+.wis_input,
 .modal_form .form-group textarea,
 .select2-container--default .select2-selection--single,
 .modal_form .form-group input{
 	background: #e5e5e5 !important;
 	border: none !important;
 	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2) inset;
+	position: relative;
 }
+.wis_input:focus,
 .modal_form .form-group textarea:focus,
 .modal_form .form-group input:focus{
 	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4) inset;
 	background: #f5f5f5 !important;
 }
-
 .modal_form .form-group textarea{
 	resize: none;
 }
+.wis_input,
 .modal_form .form-group input{
-	height: 27px;
+	height: 36px;
 }
+
+.form-group.with_icon{
+	position: relative;
+}
+.form-group.with_icon span.icon{
+	width: 22px;
+	height: 22px;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	display: block;
+	margin: 7px;
+}
+.form-group.with_icon span.icon.username{
+	background: url("../images/user.png") no-repeat;
+}
+.form-group.with_icon span.icon.email{
+	background: url("../images/email.png") no-repeat;
+}
+.form-group.with_icon span.icon.password1,
+.form-group.with_icon span.icon.password2,
+.form-group.with_icon span.icon.password{
+	background: url("../images/password.png") no-repeat;
+}
+
 .modal-header {
 	border-bottom: 1px solid #e5e5e5;
 	min-height: 16.43px;
@@ -2649,16 +2680,20 @@ div.comment div div.row:hover .del-comment{
 	margin: 6px 10px;
 	display: inline-block;
 }
-.page_404 {
-	background: url("../images/404.jpg") no-repeat scroll center -110px;
+.error_page{
 	display: block;
 	margin: 0 auto;
 	width: 1000px;
 	height: 716px;
 	position: relative;
 }
-
-.page_404 .text_404 {
+.error_page.page_404 {
+	background: url("../images/404.jpg") no-repeat scroll center -110px;
+}
+.error_page.page_500 {
+	background: url("../images/500.jpg") no-repeat scroll center -110px;
+}
+.error_page .error_text {
 	top: 408px;
 	left: 0;
 	margin: 0 auto;
@@ -2668,6 +2703,35 @@ div.comment div div.row:hover .del-comment{
 }
 .tabliq *{
 	text-align: center !important;
+}
+
+.wis_form{}
+
+.wis_form.login,
+.wis_form.logout{
+	width: 760px;
+	margin: 0 auto;
+	display: flex;
+}
+.wis_form.login form,
+.wis_form.logout form{
+	width: 100%;
+}
+.wis_form.login .form_box,
+.wis_form.logout .form_box{
+	/*width: 65%;*/
+	/*float: right;*/
+	display: flex;
+	flex: 3;
+	padding: 25px 30px;
+}
+.wis_form.login .logo_box,
+.wis_form.logout .logo_box{
+	display: flex;
+	color: #fff;
+	flex: 2;
+	background: #434A54;
+	text-align: center;
 }
 
 @media (max-width: 1200px) {
@@ -2696,7 +2760,7 @@ div.comment div div.row:hover .del-comment{
 	.top-search {
 		width: 250px;
 	}
-	.page_404{
+	.error_page{
 		width: 100%;
 	}
 
