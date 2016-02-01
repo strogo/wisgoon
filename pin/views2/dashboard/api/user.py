@@ -28,6 +28,7 @@ def search_user(request):
     profiles = SearchQuerySet().models(Profile)\
         .filter(content__contains=query)[before:before + 20]
 
+    print profiles
     for profile in profiles:
         user = profile.object.user
         details = {}
@@ -56,13 +57,13 @@ def change_status_user(request):
         status = str(request.POST.get('activeStatus', False))
         desc = str(request.POST.get('description1', ""))
         user = User.objects.get(pk=user_id)
-        token = request.GET.get('token', False)
-        if token:
-            current_user = AuthCache.user_from_token(token=token)
-            if not current_user:
-                return return_un_auth()
-        else:
-            return return_bad_request()
+        # token = request.GET.get('token', False)
+        # if token:
+        #     current_user = AuthCache.user_from_token(token=token)
+        #     if not current_user:
+        #         return return_un_auth()
+        # else:
+        #     return return_bad_request()
     except:
         return return_not_found()
 
@@ -70,14 +71,14 @@ def change_status_user(request):
         if status == '1':
             user.is_active = True
             message = "User Status Is True."
-            Log.active_user(user_id=current_user.id,
+            Log.active_user(user_id=request.user.id,
                             owner=user.id,
                             text=desc + desc,
                             ip_address=get_user_ip(request))
         else:
             user.is_active = False
             message = "User Status Is False."
-            Log.ban_by_admin(actor=current_user,
+            Log.ban_by_admin(actor=request.user,
                              user_id=user.id,
                              text="%s || %s" % (user.username, desc),
                              ip_address=get_user_ip(request))
@@ -101,13 +102,13 @@ def banned_profile(request):
         status = str(request.POST.get('profileBanstatus', False))
         description = str(request.POST.get('description2', ""))
         profile = Profile.objects.get(user_id=user_id)
-        token = request.GET.get('token', False)
-        if token:
-            current_user = AuthCache.user_from_token(token=token)
-            if not current_user:
-                return return_un_auth()
-        else:
-            return return_bad_request()
+        # token = request.GET.get('token', False)
+        # if token:
+        #     current_user = AuthCache.user_from_token(token=token)
+        #     if not current_user:
+        #         return return_un_auth()
+        # else:
+        #     return return_bad_request()
     except:
         return return_not_found()
 
@@ -115,14 +116,14 @@ def banned_profile(request):
         if status == '1':
             profile.banned = True
             profile.save()
-            Log.active_user(user_id=current_user.id,
+            Log.active_user(user_id=request.user.id,
                             owner=profile.user.id,
                             text="%s || %s" % (profile.user.username, description),
                             ip_address=get_user_ip(request))
         else:
             profile.banned = False
             profile.save()
-            Log.ban_by_admin(actor=current_user,
+            Log.ban_by_admin(actor=request.user,
                              user_id=profile.user.id,
                              text="%s || %s" % (profile.user.username, description),
                              ip_address=get_user_ip(request))
@@ -143,18 +144,18 @@ def banned_imei(request):
         status = str(request.POST.get('status', False))
         description = str(request.POST.get('description3', ""))
         imei = str(request.POST.get('imei', False))
-        token = request.GET.get('token', False)
-        if token:
-            current_user = AuthCache.user_from_token(token=token)
-            if not current_user:
-                return return_un_auth()
-        else:
-            return return_bad_request()
+        # token = request.GET.get('token', False)
+        # if token:
+        #     current_user = AuthCache.user_from_token(token=token)
+        #     if not current_user:
+        #         return return_un_auth()
+        # else:
+        #     return return_bad_request()
 
         phone_date = PhoneData.objects.filter(imei=imei)
     except:
         return return_not_found()
-
+    print description, imei
     if description and imei:
         if status == '1':
             try:
@@ -170,7 +171,7 @@ def banned_imei(request):
                     cur_user.is_active = True
                     cur_user.save()
 
-                Log.active_user(user_id=current_user.id,
+                Log.active_user(user_id=request.user.id,
                                 owner=owner,
                                 text=desc + description,
                                 ip_address=get_user_ip(request))
@@ -182,7 +183,7 @@ def banned_imei(request):
         else:
             BannedImei.objects.create(imei=imei,
                                       description=description,
-                                      user=current_user)
+                                      user=request.user)
             desc = ''
             owner = None
             for data in phone_date:
@@ -192,7 +193,7 @@ def banned_imei(request):
                 cur_user.is_active = False
                 cur_user.save()
 
-            Log.ban_by_imei(actor=current_user,
+            Log.ban_by_imei(actor=request.user,
                             text=desc + description,
                             ip_address=get_user_ip(request))
             return return_json_data({'status': True,
