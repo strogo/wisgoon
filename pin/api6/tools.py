@@ -330,6 +330,7 @@ def get_profile_data(profile, user_id):
     data['credit'] = profile.credit
     data['cnt_follower'] = profile.cnt_follower
     data['cnt_following'] = profile.cnt_following
+    data['banned'] = profile.banned
     if profile.banned:
         data['userBanne_profile'] = 1
     else:
