@@ -1,5 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 
+from pin.models import Post
+
 from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
     return_bad_request
 from pin.api6.tools import post_item_json, get_next_url, get_simple_user_object,\
@@ -13,13 +15,19 @@ def reported(request):
     if not check_admin(request):
         return return_un_auth()
 
+    offset = int(request.GET.get('offset', 0))
     post_reporter_list = []
-    data = {}
-    data['meta'] = {'limit': 20,
-                    'next': '',
-                    'total_count': ''}
+    data = {
+        'meta': {
+            'limit': 20,
+            'next': '',
+            'total_count': '',
+        },
+    }
+    
+    reported_posts = Post.objects\
+        .filter(report__gte=1)[offset: (offset + 1) + 20]
 
-    reported_posts = get_reported_posts(request)
     if not reported_posts:
         return return_not_found()
 
@@ -28,20 +36,20 @@ def reported(request):
     for post in reported_posts:
         post_item = post_item_json(post)
         post_item['reporter'], post_item['reporter_scores'] = post_reporter_user(post.id)
-        # post_item['cnt_report'] = post.report
-        # post_item['user'] = get_simple_user_object(post.user.id)
-        # post_item['user']['profile'] = get_profile_data(post.user.profile, post.user.id)
-        # post_item['user']['cnt_deleted'] = cnt_post_deleted_by_user(post.user.id)
-        # post_item['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(post.user.id)
+        post_item['cnt_report'] = post.report
+        post_item['user'] = get_simple_user_object(post.user.id)
+        post_item['user']['profile'] = get_profile_data(post.user.profile, post.user.id)
+        post_item['user']['cnt_deleted'] = cnt_post_deleted_by_user(post.user.id)
+        post_item['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(post.user.id)
         post_reporter_list.append(post_item)
 
     data['objects'] = post_reporter_list
 
-    if len(post_reporter_list) == 20:
-        before = int(request.GET.get('before', 0)) + 20
-        token = request.GET.get('token', '')
-        data['meta']['next'] = get_next_url(url_name='dashboard-api-post-reported',
-                                            before=before, token=token)
+    
+    offset = int(request.GET.get('offset', 0)) + 20
+    token = request.GET.get('token', '')
+    data['meta']['next'] = get_next_url(url_name='dashboard-api-post-reported',
+                                        offset=offset, token=token)
     return return_json_data(data)
 
 
