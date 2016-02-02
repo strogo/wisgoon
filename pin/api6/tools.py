@@ -343,34 +343,37 @@ def get_profile_data(profile, user_id):
     data['date_joined'] = khayyam.JalaliDate(profile.user.date_joined)\
         .strftime("%Y/%m/%d")
 
-    try:
-        imei = profile.user.phone.imei
-    except:
-        imei = None
 
-    if imei:
-        data['imei'] = str(imei)
-        data['users_imei'] = get_user_with_imei(imei)
-        if not profile.user.is_active:
-            try:
-                banned = BannedImei.objects.get(imei=imei)
-                data['description'] = str(banned.description)
-                data['imei_status'] = 0
-            except:
-                data['description'] = ""
-                data['imei_status'] = ""
-        else:
-            data['description'] = ""
-            data['imei_status'] = 1
-    else:
-        data['imei'] = ''
-        data['users_imei'] = []
-        log = Log.objects.filter(object_id=profile.user.id, content_type=Log.USER).order_by('-id')[:1]
-        if log:
-            data['description'] = str(log[0].text)
-        else:
-            data['description'] = ""
-        data['imei_status'] = 0
+    data['imei'] = ''
+
+    # try:
+    #     imei = profile.user.phone.imei
+    # except:
+    #     imei = None
+
+    # if imei:
+    #     data['imei'] = str(imei)
+    #     data['users_imei'] = get_user_with_imei(imei)
+    #     if not profile.user.is_active:
+    #         try:
+    #             banned = BannedImei.objects.get(imei=imei)
+    #             data['description'] = str(banned.description)
+    #             data['imei_status'] = 0
+    #         except:
+    #             data['description'] = ""
+    #             data['imei_status'] = ""
+    #     else:
+    #         data['description'] = ""
+    #         data['imei_status'] = 1
+    # else:
+    #     data['imei'] = ''
+    #     data['users_imei'] = []
+    #     log = Log.objects.filter(object_id=profile.user.id, content_type=Log.USER).order_by('-id')[:1]
+    #     if log:
+    #         data['description'] = str(log[0].text)
+    #     else:
+    #         data['description'] = ""
+    #     data['imei_status'] = 0
 
 
     return data
