@@ -79,12 +79,14 @@ class NotificationRedis(object):
 
 class ActivityRedis(object):
     KEY_PREFIX_LIST = "act:1.0:{}"
+    USER_ID = None
 
     LIKE = 1
     COMMENT = 2
     FOLLOW = 3
 
     def __init__(self, user_id):
+        self.USER_ID = user_id
         self.KEY_PREFIX_LIST = self.KEY_PREFIX_LIST.format(user_id)
 
     def get_activity(self):
@@ -94,7 +96,7 @@ class ActivityRedis(object):
         for actd in act_data:
             act_type, actor, object_id = actd.split(":")
             o = {}
-            o['object'] = post_item_json(int(object_id))
+            o['object'] = post_item_json(int(object_id), self.USER_ID)
             o['actor'] = get_simple_user_object(int(actor))
             o['act_type'] = int(act_type)
             jdata.append(o)
