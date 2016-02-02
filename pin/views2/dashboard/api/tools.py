@@ -161,11 +161,11 @@ def get_reported_posts(request):
     before = request.GET.get('before', 0)
     try:
         if before:
-            reported_posts = Post.objects.filter(report__gte=1)\
-                .order_by('-id')[before: (before + 1) * 20]
+            reported_posts = Post.objects\
+                .filter(report__gte=1)[before: (before + 1) * 20]
         else:
-            reported_posts = Post.objects.filter(report__gte=1)\
-                .order_by('-id')[:20]
+            reported_posts = Post.objects\
+                .filter(report__gte=1)[:20]
     except:
         reported_posts = []
     return reported_posts
