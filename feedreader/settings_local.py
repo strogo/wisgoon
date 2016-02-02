@@ -111,7 +111,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'johnny.middleware.LocalStoreClearMiddleware',
     'johnny.middleware.QueryCacheMiddleware',
     'pin.middleware.UrlRedirectMiddleware',
@@ -148,6 +148,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'pin.context_processors.subs',
     'pin.context_processors.global_values',
     'pin.context_processors.static_version',
+    'pin.context_processors.static_cdn',
 )
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -403,3 +404,5 @@ CELERY_ROUTES.update({
 AVATAR_CACHE_KEY = "dad:avatar:{}"
 
 ES_HOST = "localhost"
+
+STATIC_CDN = MEDIA_URL

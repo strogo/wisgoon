@@ -105,3 +105,5 @@ NEO4J_DATABASE = "http://79.127.125.98:7474/db/data/"
 
 ES_HOST = "79.127.125.98"
 REDIS_DB_4 = '79.127.125.99'
+
+STATIC_CDN = "http://static.wisgoon.com/media/"

@@ -17,6 +17,8 @@ r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 def static_version(request):
     return {'STATIC_VERSION': settings.STATIC_VERSION}
 
+def static_cdn(request):
+    return {'STATIC_CDN': settings.STATIC_CDN}
 
 def pin_form(request):
     return {'pin_form': PinForm}
