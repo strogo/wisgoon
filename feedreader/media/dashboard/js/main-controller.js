@@ -182,7 +182,7 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 		}).success(function(data){
 			$scope.banDatas=data;
 			if ($scope.banDatas.status) {
-				if ($scope.banDatas.profile.user_active) {
+				if ($scope.banDatas.profile.userBanne_profile) {
 					$('.banDatasText').text('پروفایل کاربر فعال است.');
 				}else{
 					$('.banDatasText').text('پروفایل کاربر غیر فعال است.');

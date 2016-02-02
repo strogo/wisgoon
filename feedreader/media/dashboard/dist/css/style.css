@@ -834,7 +834,6 @@ table img {
 	color: #434a54;
 }
 .resultItems {
-	border-top: 1px solid #ccc;
 	margin: 30px 20px;
 	padding-top: 15px;
 }
@@ -868,4 +867,7 @@ table img {
   font-size: 26px;
   position: relative;
   right: -2px;
+}
+.searchUser hr {
+	border-color: #ccc !important;
 }

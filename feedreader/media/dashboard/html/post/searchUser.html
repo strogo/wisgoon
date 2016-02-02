@@ -24,6 +24,7 @@
         <div style="text-align: center">
           {[{statusSearch}]}
         </div>
+        <hr>
         <div class="resultItems" ng-repeat="resultItem in resultItems">
           <div class="col-md-3 pa0" id="{[{resultItem.id}]}">
             <div class="resultItem">
@@ -119,13 +120,13 @@
                       </li>
                       <li>
                         <label>وضعیت imei :</label>
-                        <span class="banImeiTextactiveDatasText" ng-hide="resultItem.profile.imei = ''">
+                        <span class="banImeiTextactiveDatasText" ng-hide="resultItem.profile.imei == ''">
                           {[{resultItem.profile.imei}]}
                         </span>
-                        <span class="banImeiText" ng-show="resultItem.profile.imei = ''">
+                        <span class="banImeiText" ng-show="resultItem.profile.imei == ''">
                           این کاربر imei  ندارد.
                         </span>
-                         <div class="banDesc">
+                         <div class="banDesc" ng-hide="resultItem.profile.imei == ''">
                               <span class="side-up"></span>
                               <form name="activeForm" novalidate ng-submit="banImei()" ng-controller="searchController">
                                 <div class="col-md-10 pa0">

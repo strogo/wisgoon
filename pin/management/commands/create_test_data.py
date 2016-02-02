@@ -25,16 +25,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # Create Users
-        # create_users(self)
+        create_users(self)
 
         # Create Profile
-        # create_profile(self)
+        create_profile(self)
 
         # Create Category
-        # create_category(self)
+        create_category(self)
 
         # Create Post
-        # create_post(self)
+        create_post(self)
 
         # Create Like an Comments
         create_like_comment(self)
