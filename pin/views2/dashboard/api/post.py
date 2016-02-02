@@ -35,12 +35,12 @@ def reported(request):
 
     for post in reported_posts:
         post_item = post_item_json(post)
-        post_item['reporter'], post_item['reporter_scores'] = post_reporter_user(post.id)
-        post_item['cnt_report'] = post.report
-        post_item['user'] = get_simple_user_object(post.user.id)
-        post_item['user']['profile'] = get_profile_data(post.user.profile, post.user.id)
-        post_item['user']['cnt_deleted'] = cnt_post_deleted_by_user(post.user.id)
-        post_item['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(post.user.id)
+        # post_item['reporter'], post_item['reporter_scores'] = post_reporter_user(post.id)
+        # post_item['cnt_report'] = post.report
+        # post_item['user'] = get_simple_user_object(post.user.id)
+        # post_item['user']['profile'] = get_profile_data(post.user.profile, post.user.id)
+        # post_item['user']['cnt_deleted'] = cnt_post_deleted_by_user(post.user.id)
+        # post_item['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(post.user.id)
         post_reporter_list.append(post_item)
 
     data['objects'] = post_reporter_list
