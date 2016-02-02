@@ -23,6 +23,8 @@ def reported(request):
     if not reported_posts:
         return return_not_found()
 
+    return return_json_data(data)
+
     for post in reported_posts:
         post_item = post_item_json(post)
         post_item['reporter'], post_item['reporter_scores'] = post_reporter_user(post.id)
