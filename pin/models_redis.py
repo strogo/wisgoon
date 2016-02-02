@@ -121,6 +121,7 @@ class LikesRedis(object):
     KEY_PREFIX_SET = "p:l:"
     KEY_PREFIX_LIST = "l:l:"
     KEY_LEADERBORD = "-".join(str(JalaliDate.today()).split("-")[:2])
+    KEY_LEADERBORD_GROUPS = "%s-{}" % KEY_LEADERBORD 
 
     postId = 0
     postOwner = 0
@@ -204,21 +205,36 @@ class LikesRedis(object):
             send_notif_bar(user=post_owner, type=1, post=self.postId,
                            actor=user_id)
 
-    def like_or_dislike(self, user_id, post_owner, user_ip="127.0.0.1"):
+    def like_or_dislike(self, user_id, post_owner, user_ip="127.0.0.1", category=1):
+        leader_category = self.KEY_LEADERBORD_GROUPS.format(category)
+        lbs = leaderBoardServer.pipeline()
         if self.user_liked(user_id=user_id):
             self.dislike(user_id=user_id)
-            leaderBoardServer.zincrby(self.KEY_LEADERBORD, post_owner, -10)
+            lbs.zincrby(self.KEY_LEADERBORD, post_owner, -10)
+            lbs.zincrby(leader_category, post_owner, -10)
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
-            return False, True, self.cntlike()
+            liked = False
+            disliked = True
+
         else:
             from pin.tasks import activity
             activity.delay(act_type=1, who=user_id, post_id=self.postId)
 
             self.like(user_id=user_id, post_owner=post_owner, user_ip=user_ip)
 
-            leaderBoardServer.zincrby(self.KEY_LEADERBORD, post_owner, 10)
+            lbs.zincrby(self.KEY_LEADERBORD, post_owner, 10)
+            lbs.zincrby(leader_category, post_owner, 10)
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
-            return True, False, self.cntlike()
+            liked = True
+            disliked = False
+        
+        lbs.execute()
+
+        return liked, disliked, self.cntlike()
 
     def get_leaderboards(self):
         return leaderBoardServer.zrevrange(self.KEY_LEADERBORD, 0, 23, withscores=True)
+
+    def get_leaderboards_groups(self, category):
+        leader_category = self.KEY_LEADERBORD_GROUPS.format(category)
+        return leaderBoardServer.zrevrange(leader_category, 0, 3, withscores=True)

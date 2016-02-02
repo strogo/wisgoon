@@ -21,7 +21,9 @@ def like_post(request, item_id):
         return return_not_found()
 
     like, dislike, current_like = LikesRedis(post_id=item_id)\
-        .like_or_dislike(user_id=current_user, post_owner=post.user_id)
+        .like_or_dislike(user_id=current_user,
+                         post_owner=post.user_id,
+                         category=post.category_id)
 
     if like:
         user_act = 1

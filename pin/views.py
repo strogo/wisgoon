@@ -802,20 +802,32 @@ def topuser(request):
 
 
 def topgroupuser(request):
-    tc = cache.get("topgroupuser")
-    if not tc:
-        cats = Category.objects.all()
-        for cat in cats:
-            cat.tops = Post.objects.values('user_id')\
-                .filter(category_id=cat.id)\
-                .annotate(sum_like=Sum('cnt_like'))\
-                .order_by('-sum_like')[:4]
-            for ut in cat.tops:
-                ut['user'] = User.objects.get(pk=ut['user_id'])
+    # tc = cache.get("topgroupuser")
+    # if not tc:
+    cats = Category.objects.all()
+    for cat in cats:
+        cat.tops = []
+        leaders = LikesRedis().get_leaderboards_groups(category=cat.id)
+        leaders_list = []
+        for leader in leaders:
+            o = {}
+            user_id = int(leader[0])
+            user_score = leader[1]
+            o['sum_like'] = int(user_score)
+            u = User.objects.get(id=user_id)
+            o['user'] = u
+            cat.tops.append(o)
 
-        cache.set("topgroupuser", cats, 86400)
-    else:
-        cats = tc
+            # cat.tops = Post.objects.values('user_id')\
+            #     .filter(category_id=cat.id)\
+            #     .annotate(sum_like=Sum('cnt_like'))\
+            #     .order_by('-sum_like')[:4]
+            # for ut in cat.tops:
+            #     ut['user'] = User.objects.get(pk=ut['user_id'])
+
+        # cache.set("topgroupuser", cats, 86400)
+    # else:
+        # cats = tc
 
     return render(request, 'pin2/topgroupuser.html', {'cats': cats})
 

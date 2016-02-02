@@ -50,13 +50,12 @@ CARBON_PORT = 2003
 
 
 def get_post_user_cache(post_id):
-    cache_str = "post_user_%d" % int(post_id)
+    cache_str = "p:u:02%d" % int(post_id)
     cache_data = cache.get(cache_str)
     if cache_data:
-        # print "get from cached data"
         return cache_data
     try:
-        post = Post.objects.only('user').get(pk=post_id)
+        post = Post.objects.only('user', 'category').get(pk=post_id)
         cache.set(cache_str, post, 86400)
         return post
     except Post.DoesNotExist:

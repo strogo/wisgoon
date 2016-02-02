@@ -73,7 +73,8 @@ def like(request):
     like, dislike, current_like = LikesRedis(post_id=post_id)\
         .like_or_dislike(user_id=user.id,
                          post_owner=post.user_id,
-                         user_ip=user._ip)
+                         user_ip=user._ip,
+                         category=post.category_id)
 
     if like:
         return HttpResponse('+1', content_type="application/json")

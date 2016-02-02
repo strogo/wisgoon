@@ -172,7 +172,8 @@ def like(request, item_id):
     like, dislike, current_like = LikesRedis(post_id=item_id)\
         .like_or_dislike(user_id=request.user.id,
                          post_owner=post.user_id,
-                         user_ip=get_user_ip(request))
+                         user_ip=get_user_ip(request),
+                         category=post.category_id)
 
     if like:
         user_act = 1
