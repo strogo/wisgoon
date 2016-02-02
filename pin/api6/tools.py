@@ -214,10 +214,12 @@ def post_item_json(post, cur_user_id=None, r=None):
             cache_post['like_with_user'] = LikesRedis(post_id=post.id)\
                 .user_liked(user_id=cur_user_id)
         # print "get post data item json from cache"
+        cache_post['cache'] = "Hit"
         return cache_post
 
     pi = {}  # post item
 
+    pi ['cache'] = "Miss"
     pi['id'] = post.id
     pi['text'] = post.text
     pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
