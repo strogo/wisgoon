@@ -1,12 +1,12 @@
 {% load compress %}
 {% load daddy_avatar %}
 
-<script type="text/javascript" src="{{MEDIA_URL}}v2/js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}v2/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}v2/js/webui.min.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}v2/js/alertify.min.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}v2/js/caman.full.min.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+<script type="text/javascript" src="{{STATIC_CDN}}v2/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="{{STATIC_CDN}}v2/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{STATIC_CDN}}v2/js/webui.min.js"></script>
+<script type="text/javascript" src="{{STATIC_CDN}}v2/js/alertify.min.js"></script>
+<script type="text/javascript" src="{{STATIC_CDN}}v2/js/caman.full.min.js"></script>
+<script type="text/javascript" src="{{STATIC_CDN}}js/jquery.masonry.min.js"></script>
 
 {% include "pin2/__from_image_modal.html" %}
 {% include "pin2/__from_url_modal.html" %}
@@ -51,19 +51,19 @@
 <script type="text/javascript" src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
 
-<script type="text/javascript" src="{{MEDIA_URL}}v2/js/js-cookie.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}js2/all.js?ver={{STATIC_VERSION}}"></script>
+<script type="text/javascript" src="{{STATIC_CDN}}v2/js/js-cookie.js"></script>
+<script type="text/javascript" src="{{STATIC_CDN}}js2/all.js?ver={{STATIC_VERSION}}"></script>
 {% if user.is_authenticated %}
 <script type="text/javascript">
 	var profile_url = '{% url "pin-absuser" request.user %}';
 	var profile_avatar = '{{request.user|get_avatar:41}}';
 </script>
-<script type="text/javascript" src="{{MEDIA_URL}}v2/js/jquery.form.min.js"></script>
-<script type="text/javascript" src="{{MEDIA_URL}}js2/pin-user.js?ver={{STATIC_VERSION}}"></script>
+<script type="text/javascript" src="{{STATIC_CDN}}v2/js/jquery.form.min.js"></script>
+<script type="text/javascript" src="{{STATIC_CDN}}js2/pin-user.js?ver={{STATIC_VERSION}}"></script>
 {% endif %}
 
 {% if user.is_superuser %}
-<script type="text/javascript" src="{{MEDIA_URL}}js/pin-admin.js?ver={{STATIC_VERSION}}"></script>
+<script type="text/javascript" src="{{STATIC_CDN}}js/pin-admin.js?ver={{STATIC_VERSION}}"></script>
 {% endif %}
 {% comment %}
 <script>var _AWFP_user = 1377550367;</script>
