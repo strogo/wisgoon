@@ -343,8 +343,8 @@ table img {
 	bottom: 20px;
 }
 .tables-pagination a {
-	border-color: #ccc !important;
-	color: #ccc !important;
+	border-color: #999 !important;
+	color: #999 !important;
 	margin-right: 0px !important;
 	margin-left: 5px;
 }
@@ -934,4 +934,7 @@ table img {
 }
 .main-header .sidebar-toggle {
 	color: #fff !important;
+}
+.user-panel {
+  margin-bottom: 20px !important;
 }

@@ -108,86 +108,81 @@
 					</div><!-- /.info-box-content -->
 				</div><!-- /.info-box -->
 			</div><!-- /.col -->
-		</div><!-- /.row -->
-		<!-- Main row -->
-		<div class="row">
+		</div>
+		<!-- <div class="row">
+			  <section class="col-md-12 connectedSortable">
 
-			<!-- right col (We are only adding the ID to make the widgets sortable)-->
-			<section class="col-md-12 connectedSortable">
-
-				<!-- Map box -->
-				<div class="col-md-6 hidden-xs">
-					<div class="box box-solid bg-light-blue-gradient">
-						<div class="box-header">
-							<!-- tools box -->
-							<div class="pull-left box-tools">
-								<button class="btn btn-primary btn-sm daterange pull-left" data-toggle="tooltip" title="Date range"><i class="fa fa-calendar"></i></button>
-								<button class="btn btn-primary btn-sm pull-left" data-widget="collapse" data-toggle="tooltip" title="Collapse" style="margin-right: 5px;"><i class="fa fa-minus"></i></button>
-							</div><!-- /. tools -->
-
-							<i class="fa fa-map-marker"></i>
-							<h3 class="box-title">
-								بازدیدها
-							</h3>
+			
+			<div class="col-md-6 hidden-xs">
+				<div class="box box-solid bg-light-blue-gradient">
+					<div class="box-header">
+						<div class="pull-left box-tools">
+							<button class="btn btn-primary btn-sm daterange pull-left" data-toggle="tooltip" title="Date range"><i class="fa fa-calendar"></i></button>
+							<button class="btn btn-primary btn-sm pull-left" data-widget="collapse" data-toggle="tooltip" title="Collapse" style="margin-right: 5px;"><i class="fa fa-minus"></i></button>
 						</div>
-						<div class="box-body">
-							<div id="world-map" style="height: 438px; width: 100%;"></div>
-						</div>
+
+						<i class="fa fa-map-marker"></i>
+						<h3 class="box-title">
+							بازدیدها
+						</h3>
+					</div>
+					<div class="box-body">
+						<div id="world-map" style="height: 438px; width: 100%;"></div>
 					</div>
 				</div>
-				<!-- /.box -->
+			</div>
 
-				<!-- solid sales graph -->
-				<div class="col-md-6">
-					<div class="box box-solid bg-teal-gradient" ng-controller="sellCtrl">
-							
-						<div class="box-header hidden-xs">
-							<i class="fa fa-th"></i>
-							<h3 class="box-title"> فروش</h3>
-							<div class="box-tools pull-left">
-								<button class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
-								<button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
-							</div>
+			<div class="col-md-6">
+				<div class="box box-solid bg-teal-gradient" ng-controller="sellCtrl">
+
+					<div class="box-header hidden-xs">
+						<i class="fa fa-th"></i>
+						<h3 class="box-title"> فروش</h3>
+						<div class="box-tools pull-left">
+							<button class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+							<button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
 						</div>
-						<div class="box-body border-radius-none">
-							<div class="box-tools cell">
-								<label>از تاریخ :</label>
-								<input id="sell_start" type="text"/>
-								<input id="sell_start_value" type="hidden"/>
-								<label>تا تاریخ :</label>
-								<input id="sell_end" type="text">
-								<input id="sell_end_value" type="hidden"/>
-								<a  href="" ng-click="refresh_sells()"><i class="fa fa-refresh"></i></a>
-								<a ng-show='loading' class="load-stat-sell"><i class="fa fa-refresh fa-spin"></i></a>
-							</div>
-							<highchart class="chart-ltr" config="highchartsNG"></highchart>
-						</div><!-- /.box-body -->
 					</div>
-				</div><!-- /.box -->
-				<script type="text/javascript">
-					$(document).ready(function () {
-						
+					<div class="box-body border-radius-none">
+						<div class="box-tools cell">
+							<label>از تاریخ :</label>
+							<input id="sell_start" type="text"/>
+							<input id="sell_start_value" type="hidden"/>
+							<label>تا تاریخ :</label>
+							<input id="sell_end" type="text">
+							<input id="sell_end_value" type="hidden"/>
+							<a  href="" ng-click="refresh_sells()"><i class="fa fa-refresh"></i></a>
+							<a ng-show='loading' class="load-stat-sell"><i class="fa fa-refresh fa-spin"></i></a>
+						</div>
+						<highchart class="chart-ltr" config="highchartsNG"></highchart>
+					</div>
+				</div>
+			</div>
+			<script type="text/javascript">
+				$(document).ready(function () {
 
-						var d = new Date();
-						var end_time = d.getTime();
-						var start_time = end_time-604800000;
-						$('#sell_start').pDatepicker({
-							timePicker: {
-								enabled: true
-							},
-							altField: '#sell_start_value',
-							format: 'YYYY-MM-DD'
-						});
-						$("#sell_start").pDatepicker("setDate", start_time);
-						
-						$('#sell_end').pDatepicker({
-							altField: '#sell_end_value',
-							format: 'YYYY-MM-DD'
-						});
+
+					var d = new Date();
+					var end_time = d.getTime();
+					var start_time = end_time-604800000;
+					$('#sell_start').pDatepicker({
+						timePicker: {
+							enabled: true
+						},
+						altField: '#sell_start_value',
+						format: 'YYYY-MM-DD'
 					});
-				</script>
-			</section><!-- right col -->
-		</div><!-- /.row (main row) -->
+					$("#sell_start").pDatepicker("setDate", start_time);
 
-	</section><!-- /.content -->
+					$('#sell_end').pDatepicker({
+						altField: '#sell_end_value',
+						format: 'YYYY-MM-DD'
+					});
+				});
+			</script>
+			</section> 
+	</div>
+	--> 
+
+</section>
 </div>

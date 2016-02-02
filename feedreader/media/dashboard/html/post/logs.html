@@ -19,9 +19,9 @@
           </form>
           <span class="tables-pagination pull-left">
             <a ng-click="next_page()" pagination="{[{nextUrl}]}" ng-disabled="pagination == null">
-              <i class="fa fa-angle-right"></i></a>
+              بعدی</a>
               <a ng-click="prev_page()" pagination="{[{pervUrl}]}" ng-disabled="pagination == null">
-                <i class="fa fa-angle-left"></i></a>
+                قبلی</a>
               </span>
             </div>
             <div class="filter">
@@ -35,7 +35,7 @@
                 <form name="myForm" ng-submit="submitForm()">
                  <div class="col-md-3">
                   <div class="title">
-                   <h6>بر اساس content type</h6>
+                   <h6>بر اساس نوع محتوای</h6>
                  </div>
                  <div>
                   <div class="by-content-type">
@@ -47,22 +47,22 @@
                       </li>
                       <li>
                         <label>
-                          <input type="radio" name="by-content" ng-model="contentValue" value="1">post
+                          <input type="radio" name="by-content" ng-model="contentValue" value="1">پست
                         </label>
                       </li>
                       <li>
                         <label>
-                          <input type="radio" name="by-content" ng-model="contentValue" value="2">comment
+                          <input type="radio" name="by-content" ng-model="contentValue" value="2">نظرات
                         </label>
                       </li>
                       <li>
                         <label>
-                          <input type="radio" name="by-content" ng-model="contentValue" value="3">user
+                          <input type="radio" name="by-content" ng-model="contentValue" value="3">کاربر
                         </label>
                       </li>
                       <li>
                         <label>
-                          <input type="radio" name="by-content" ng-model="contentValue" value="4">comment test
+                          <input type="radio" name="by-content" ng-model="contentValue" value="4">کامنت تست
                         </label>
                       </li>
                     </ul>
@@ -71,7 +71,7 @@
               </div>
               <div class="col-md-3">
                 <div class="title">
-                  <h6> بر اساس actions </h6>
+                  <h6> بر اساس عمل </h6>
                 </div>
                 <div >
                   <div class="actions">
@@ -83,32 +83,32 @@
                       </li>
                       <li>
                         <label ng-show="contentValue == '1' || contentValue == '2'">
-                          <input type="radio" name="by-action" ng-model="actionValue" value="1" >delete
+                          <input type="radio" name="by-action" ng-model="actionValue" value="1" >حذف
                         </label>
                       </li>
                       <li>
                         <label ng-show="contentValue == '1'">
-                          <input type="radio" name="by-action" ng-model="actionValue" value="2" >pending
+                          <input type="radio" name="by-action" ng-model="actionValue" value="2" >در انتظار
                         </label>
                       </li>
                       <li>
                         <label ng-show="contentValue == '2'">
-                          <input type="radio" name="by-action" ng-model="actionValue" value="3" >bad comment
+                          <input type="radio" name="by-action" ng-model="actionValue" value="3" >نظرات spam
                         </label>
                       </li>
                       <li>
                         <label ng-show="contentValue == '1'">
-                          <input type="radio" name="by-action" ng-model="actionValue" value="4">bad post
+                          <input type="radio" name="by-action" ng-model="actionValue" value="4">پست های spam
                         </label>
                       </li>
                       <li>
                         <label ng-show="contentValue == '3'">
-                          <input type="radio" name="by-action" ng-model="actionValue" value="5">ban imei
+                          <input type="radio" name="by-action" ng-model="actionValue" value="5">مسدود imei
                         </label>
                       </li>
                       <li>
                         <label ng-show="contentValue == '3'">
-                          <input type="radio" name="by-action" ng-model="actionValue" value="6">ban by admin 
+                          <input type="radio" name="by-action" ng-model="actionValue" value="6">مسدود شده توسط ادمین
                         </label>
                       </li>
                     </ul>
@@ -126,7 +126,7 @@
         </div>
       </div>
       <div class="loader-button" ng-show='loading'>
-        <div id="mySpinner"  class="loader">Loading...</div>
+        <div id="mySpinner"  class="loader">منتظر بمانید...</div>
       </div>
       <div class="box">
        <div class="box-header with-border">
@@ -142,17 +142,17 @@
           <thead>
             <tr>
               <th class="hidden-xs"><input type="checkbox" id="action-toggle" ></th>
-              <th class="hidden-xs">ID</th>
-              <th>User</th>
-              <th>Owner</th>
-              <th class="hidden-xs">user id</th>
-              <th>action</th>
-              <th class="hidden-xs">object id</th>
-              <th class="hidden-xs">content type</th>
-              <th>get thumbnail</th>
-              <th class="hidden-xs">creat time</th>
-              <th class="hidden-xs">ip address</th>
-              <th class="hidden-xs">text</th>
+              <th class="hidden-xs">شناسه</th>
+              <th>کاربر</th>
+              <th>صاحب پست</th>
+              <th class="hidden-xs">شناسه کاربر</th>
+              <th>عمل</th>
+              <th class="hidden-xs">شناسه پست</th>
+              <th class="hidden-xs">نوع محتوا</th>
+              <th>تصویر</th>
+              <th class="hidden-xs">زمان انتشار</th>
+              <th class="hidden-xs">ip آدرس</th>
+              <th style="width: 150px;" class="hidden-xs">متن</th>
             </tr>
           </thead>
           <tbody>

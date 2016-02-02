@@ -6,18 +6,18 @@
 	<title>wisgoon Dashboard</title>
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 	<link rel="stylesheet" href="{{STATIC_CDN}}v2/css/bootstrap.min.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}v2/css/font-awesome.min.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/css/ionicons.min.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/css/AdminLTE.min.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/css/style.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/css/skins/_all-skins.min.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/datatables/dataTables.bootstrap.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/css/persian-datepicker-0.4.5.min.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/fonts/fonts-fa.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}v2/css/bootstrap-rtl.min.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/dist/css/AdminLTE.css">
-	<link rel="stylesheet" href="{{MEDIA_URL}}dashboard/build/less/sidebar.less">
+	<link rel="stylesheet" href="{{STATIC_CDN}}v2/css/font-awesome.min.css">
+	<link rel="stylesheet" href="{{STATIC_CDN}}dashboard/dist/css/ionicons.min.css">
+	<link rel="stylesheet" href="{{STATIC_CDN}}dashboard/dist/css/AdminLTE.min.css">
+	<link rel="stylesheet" href="{{STATIC_CDN}}dashboard/dist/css/style.css">
+	<link rel="stylesheet" href="{{STATIC_CDN}}dashboard/dist/css/skins/_all-skins.min.css">
+	<link rel="stylesheet" href="{{STATIC_CDN}}dashboard/plugins/datatables/dataTables.bootstrap.css">
+	<link rel="stylesheet" href="{{STATIC_CDN}}dashboard/dist/css/persian-datepicker-0.4.5.min.css">
+	<link rel="stylesheet" href="{{STATIC_CDN}}dashboard/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+	<link rel="stylesheet" href="{{STATIC_CDN}}dashboard/dist/fonts/fonts-fa.css">
+	<link rel="stylesheet" href="{{STATIC_CDN}}v2/css/bootstrap-rtl.min.css">
+	<link rel="stylesheet" href="{{STATIC_CDN}}dashboard/dist/css/AdminLTE.css">
+	<link rel="stylesheet" href="{{STATIC_CDN}}dashboard/build/less/sidebar.less">
 
 
 </head>
@@ -27,7 +27,7 @@
 		user_username="{{request.user.username}}";
 		user_id="{{request.user.id}}";
 		user_token="{{request.user.token}}";
-		user_avatar="{{MEDIA_URL}}{{request.user.profile.avatar}}";
+		user_avatar="{{STATIC_CDN}}{{request.user.profile.avatar}}";
 	</script>
 	<div class="wrapper">
 		<div ng-include src="'/media/dashboard/html/_header.html'"></div>
@@ -35,42 +35,42 @@
 		<div ui-view></div>
 	</div>
 	<!-- npm node_modules  -->
-	<script src="{{MEDIA_URL}}angular/js/node_modules/jquery.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/jquery.bridget.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/get-style-property.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/get-size.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/EventEmitter.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/eventie.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/doc-ready.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/matches-selector.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/utils.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/item.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/outlayer.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/masonry.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/imagesloaded.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/angular.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/angular-masonry.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/node_modules/angular-ui-router.min.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/jquery.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/jquery.bridget.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/get-style-property.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/get-size.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/EventEmitter.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/eventie.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/doc-ready.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/matches-selector.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/utils.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/item.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/outlayer.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/masonry.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/imagesloaded.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/angular.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/angular-masonry.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/angular-ui-router.min.js"></script>
 
 
-	<script src="{{MEDIA_URL}}dashboard/dist/js/jquery-ui.min.js"></script>
+	<script src="{{STATIC_CDN}}dashboard/dist/js/jquery-ui.min.js"></script>
 	<script>
 		$.widget.bridge('uibutton', $.ui.button);
 	</script>
-	<script src="{{MEDIA_URL}}dashboard/bootstrap/js/bootstrap.min.js"></script>
-	<script src="{{MEDIA_URL}}dashboard/plugins/knob/jquery.knob.js"></script>
-	<script src="{{MEDIA_URL}}dashboard/plugins/persian-datepicker-0.4.5.min.js"></script>
-	<script src="{{MEDIA_URL}}dashboard/plugins/persian-date.js"></script>
-	<script src="{{MEDIA_URL}}dashboard/plugins/pwt-date.js"></script>
-	<script src="{{MEDIA_URL}}dashboard/dist/js/appw.js"></script>
+	<script src="{{STATIC_CDN}}dashboard/bootstrap/js/bootstrap.min.js"></script>
+	<script src="{{STATIC_CDN}}dashboard/plugins/knob/jquery.knob.js"></script>
+	<script src="{{STATIC_CDN}}dashboard/plugins/persian-datepicker-0.4.5.min.js"></script>
+	<script src="{{STATIC_CDN}}dashboard/plugins/persian-date.js"></script>
+	<script src="{{STATIC_CDN}}dashboard/plugins/pwt-date.js"></script>
+	<script src="{{STATIC_CDN}}dashboard/dist/js/appw.js"></script>
 	<!-- end npm angular/js/node_modules -->
-	<script src="{{MEDIA_URL}}dashboard/js/app.js?q=1"></script>
-	<script src="{{MEDIA_URL}}dashboard/js/main-controller.js?q=1"></script>
-	<script src="{{MEDIA_URL}}angular/js/ng-infinite-scroll.min.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/highcharts-ng.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/highstock.src.js"></script>
-	<script src="{{MEDIA_URL}}angular/js/drilldown.js"></script>
-	<script src="{{MEDIA_URL}}dashboard/dist/js/angular-spinners.min.js"></script>
+	<script src="{{STATIC_CDN}}dashboard/js/app.js?q=1"></script>
+	<script src="{{STATIC_CDN}}dashboard/js/main-controller.js?q=1"></script>
+	<script src="{{STATIC_CDN}}angular/js/ng-infinite-scroll.min.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/highcharts-ng.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/highstock.src.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/drilldown.js"></script>
+	<script src="{{STATIC_CDN}}dashboard/dist/js/angular-spinners.min.js"></script>
 	
 
 </body>
