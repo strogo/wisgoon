@@ -365,7 +365,7 @@ def get_profile_data(profile, user_id):
         data['users_imei'] = []
         log = Log.objects.filter(object_id=profile.user.id, content_type=Log.USER).order_by('-id')[:1]
         if log:
-            data['description'] = str(log.text)
+            data['description'] = str(log[0].text)
         else:
             data['description'] = ""
         data['imei_status'] = 0

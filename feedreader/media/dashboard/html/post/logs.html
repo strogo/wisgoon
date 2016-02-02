@@ -141,34 +141,34 @@
         <table id="example2" class="table table-bordered ">
           <thead>
             <tr>
-              <th><input type="checkbox" id="action-toggle" ></th>
-              <th>ID</th>
+              <th class="hidden-xs"><input type="checkbox" id="action-toggle" ></th>
+              <th class="hidden-xs">ID</th>
               <th>User</th>
               <th>Owner</th>
-              <th>user id</th>
+              <th class="hidden-xs">user id</th>
               <th>action</th>
-              <th>object id</th>
-              <th>content type</th>
+              <th class="hidden-xs">object id</th>
+              <th class="hidden-xs">content type</th>
               <th>get thumbnail</th>
-              <th>creat time</th>
-              <th>ip address</th>
-              <th>text</th>
+              <th class="hidden-xs">creat time</th>
+              <th class="hidden-xs">ip address</th>
+              <th class="hidden-xs">text</th>
             </tr>
           </thead>
           <tbody>
             <tr ng-repeat="log in logs">
-              <td><input type="checkbox" id="action-toggle" ></td>
-              <td>{[{log.id}]}</td>
-              <td>{[{log.user.username}]}</td>
+              <td class="hidden-xs"><input type="checkbox" id="action-toggle" ></td>
+              <td class="hidden-xs">{[{log.id}]}</td>
+              <td><a href="{[{log.user.permalink}]}">{[{log.user.username}]}</a></td>
               <td>{[{log.owner.id}]}</td>
-              <td> {[{log.user.id}]}</td>
+              <td class="hidden-xs"> {[{log.user.id}]}</td>
               <td>{[{log.action}]}</td>
-              <td>{[{log.object_id}]}</td>
-              <td>{[{log.content_type}]}</td>
-              <td><img ng-src="{[{log.post_image}]}"></td>
-              <td>{[{log.create_time}]}</td>
-              <td>{[{log.ip_address}]}</td>
-              <td style="width: 150px;">{[{log.text}]}</td>
+              <td class="hidden-xs">{[{log.object_id}]}</td>
+              <td class="hidden-xs">{[{log.content_type}]}</td>
+              <td style="width: 60px;"><img ng-src="{[{log.post_image}]}"></td>
+              <td class="hidden-xs">{[{log.create_time}]}</td>
+              <td class="hidden-xs">{[{log.ip_address}]}</td>
+              <td style="width: 150px;" class="hidden-xs">{[{log.text}]}</td>
             </tr>
           </tbody>
         </table>

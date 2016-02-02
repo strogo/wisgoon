@@ -14,7 +14,7 @@
 
     <div class="box box-info" ng-controller="followCtrl">
       <div class="box-header with-border">
-        <h3 class="box-title">فالورها</h3>
+        <h3 class="box-title hidden-xs">فالورها</h3>
         <div class="box-tools pull-right">
           <label>از تاریخ :</label>
           <input id="follow_start" type="text"/>
@@ -22,10 +22,10 @@
           <label>تا تاریخ :</label>
           <input id="follow_end" type="text">
           <input id="follow_end_value" type="hidden"/>
-          <a href="" ng-click="refresh_follows()"><i class="fa fa-refresh"></i></a>
+          <a class="xs-setting" href="" ng-click="refresh_follows()"><i class="fa fa-refresh"></i></a>
           <a ng-show='loading' class="load-stat-activity"><i class="fa fa-refresh fa-spin"></i></a>
-          <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-          <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          <button class="btn btn-box-tool hidden-xs" data-widget="collapse"><i class="fa fa-minus"></i></button>
+          <button class="btn btn-box-tool hidden-xs" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
       </div>
       <div class="box-body">
@@ -37,7 +37,7 @@
 
     <div class="box box-info" ng-controller="blockCtrl">
       <div class="box-header with-border">
-        <h3 class="box-title">بلاک ها</h3>
+        <h3 class="box-title hidden-xs">بلاک ها</h3>
         <div class="box-tools pull-right">
           <label>از تاریخ :</label>
           <input id="block_start" type="text"/>
@@ -45,10 +45,10 @@
           <label>تا تاریخ :</label>
           <input id="block_end" type="text">
           <input id="block_end_value" type="hidden"/>
-          <a href="" ng-click="refresh_blocks()"><i class="fa fa-refresh"></i></a>
+          <a class="xs-setting" href="" ng-click="refresh_blocks()"><i class="fa fa-refresh"></i></a>
           <a ng-show='loading' class="load-stat-activity"><i class="fa fa-refresh fa-spin"></i></a>
-          <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-          <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          <button class="btn btn-box-tool hidden-xs" data-widget="collapse"><i class="fa fa-minus"></i></button>
+          <button class="btn btn-box-tool hidden-xs" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
       </div>
       <div class="box-body">
@@ -60,7 +60,7 @@
 
     <div class="box box-info" ng-controller="likesCtrl">
       <div class="box-header with-border">
-        <h3 class="box-title">لایک ها</h3>
+        <h3 class="box-title hidden-xs">لایک ها</h3>
         <div class="box-tools pull-right">
           <label>از تاریخ :</label>
           <input id="like_start" type="text"/>
@@ -68,10 +68,10 @@
           <label>تا تاریخ :</label>
           <input id="like_end" type="text">
           <input id="like_end_value" type="hidden"/>
-          <a href="" ng-click="refresh_likes()"><i class="fa fa-refresh"></i></a>
+          <a class="xs-setting" href="" ng-click="refresh_likes()"><i class="fa fa-refresh"></i></a>
           <a ng-show='loading' class="load-stat-activity"><i class="fa fa-refresh fa-spin"></i></a>
-          <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-          <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          <button class="btn btn-box-tool hidden-xs" data-widget="collapse"><i class="fa fa-minus"></i></button>
+          <button class="btn btn-box-tool hidden-xs" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
       </div>
       <div class="box-body">
@@ -83,7 +83,7 @@
 
     <div class="box box-info" ng-controller="commentCtrl">
       <div class="box-header with-border">
-        <h3 class="box-title">نظرات</h3>
+        <h3 class="box-title hidden-xs">نظرات</h3>
         <div class="box-tools pull-right">
           <label>از تاریخ :</label>
           <input id="comment_start" type="text"/>
@@ -91,10 +91,10 @@
           <label>تا تاریخ :</label>
           <input id="comment_end" type="text">
           <input id="comment_end_value" type="hidden"/>
-          <a href="" ng-click="refresh_comments()"><i class="fa fa-refresh"></i></a>
+          <a class="xs-setting" href="" ng-click="refresh_comments()"><i class="fa fa-refresh"></i></a>
           <a ng-show='loading' class="load-stat-activity"><i class="fa fa-refresh fa-spin"></i></a>
-          <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-          <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+          <button class="btn btn-box-tool hidden-xs" data-widget="collapse"><i class="fa fa-minus"></i></button>
+          <button class="btn btn-box-tool hidden-xs" data-widget="remove"><i class="fa fa-times"></i></button>
         </div>
       </div>
       <div class="box-body">
@@ -106,7 +106,7 @@
 
   <div class="box box-info" ng-controller="userCtrl">
     <div class="box-header with-border">
-      <h3 class="box-title">کاربران</h3>
+      <h3 class="box-title hidden-xs">کاربران</h3>
       <div class="box-tools pull-right">
         <label>از تاریخ :</label>
         <input id="user_start" type="text"/>
@@ -114,10 +114,10 @@
         <label>تا تاریخ :</label>
         <input id="user_end" type="text">
         <input id="user_end_value" type="hidden"/>
-        <a href="" ng-click="refresh_users()"><i class="fa fa-refresh"></i></a>
+        <a class="xs-setting" href="" ng-click="refresh_users()"><i class="fa fa-refresh"></i></a>
         <a ng-show='loading' class="load-stat-activity"><i class="fa fa-refresh fa-spin"></i></a>
-        <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-        <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+        <button class="btn btn-box-tool hidden-xs" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        <button class="btn btn-box-tool hidden-xs" data-widget="remove"><i class="fa fa-times"></i></button>
       </div>
     </div>
     <div class="box-body">

@@ -63,19 +63,18 @@
 							<div class="modal-content">
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="True">&times;</span></button>
-									<h4 class="modal-title" id="myModalLabel">گزارش دهندگان</h4>
+									<h4 class="modal-title hidden-xs" id="myModalLabel">گزارش دهندگان</h4>
 								</div>
 								<div class="modal-body">
 									<div class="reporters">
 										<div class="reporter-item" ng-repeat="report in brick.reporter">
-											<div class="col-md-2">
+											<div class="col-md-2 col-xs-4">
 												<a href="">
 													<img ng-src="{[{report.detail.avatar}]}" title="user avatar">
 												</a>
 											</div>
-											<div class="col-md-10 user-score">
+											<div class="col-md-10 col-xs-8 user-score">
 												<h2>{[{report.profile.score}]}</h2>
-												{[{report.profile.is_active}]}
 											</div>
 											<div class="clear"></div>
 										</div>
@@ -87,9 +86,12 @@
 					<div class="modal fade userIinfoModal" id="userInfo{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="userIinfoModalLabel">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
+								<div class="modal-header hidden-md hidden-lg">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								</div>
 								<div class="modal-body">
 									<div class="userIinfo">
-										<div class="col-md-8 otherInfo">
+										<div class="col-md-8 col-xs-12 otherInfo">
 											<h2>اطلاعات کاربر</h2>
 											<hr>
 											<div class="">
@@ -105,31 +107,33 @@
 													<li>
 														<label>وضعیت فعال بودن کاربر :</label>
 														<span>
-															<span ng-show="brick.user.profile.user_active == 1">کاربر فعال است.</span>
-															<span ng-show="brick.user.profile.user_active == 0">کاربر غیر فعال است.</span>
+															<span ng-show="brick.user.profile.user_active == 1">فعال</span>
+															<span ng-show="brick.user.profile.user_active == 0">غیر فعال</span>
 														</span>
 														<div class="banDesc" ng-show="brick.user.profile.user_active == 0">
-															<span class="side-up"></span>
+															<span class="side-up hidden-xs"></span>
 															<div class="col-md-12 pa0">
 																<p>{[{brick.user.profile.description}]}</p>
+																<p ng-show="brick.user.profile.description== ''">توضیحات ندارد</p>
 															</div>
 															<div class="clear"></div>
-															<span class="side-down"></span>
+															<span class="side-down hidden-xs"></span>
 														</div>
 													</li>
 													<li>
 														<label>وضعیت مسدود شدن پروفایل کاربر :</label>
 														<span>
-															<span ng-show="brick.user.profile.userBanne_profile == 0">پروفایل کاربر غیر فعال است.</span>
-															<span ng-show="brick.user.profile.userBanne_profile == 1">پروفایل کاربر فعال است.</span>
+															<span ng-show="brick.user.profile.userBanne_profile == 0">غیر فعال</span>
+															<span ng-show="brick.user.profile.userBanne_profile == 1">فعال</span>
 														</span>
 														<div class="banDesc" ng-show="brick.user.profile.userBanne_profile == 0">
-															<span class="side-up"></span>
+															<span class="side-up hidden-xs"></span>
 															<div class="col-md-12 pa0">
 																<p>{[{brick.user.profile.description}]}</p>
+																<p ng-show="brick.user.profile.description== ''">توضیحات ندارد</p>
 															</div>
 															<div class="clear"></div>
-															<span class="side-down"></span>
+															<span class="side-down hidden-xs"></span>
 														</div>
 													</li>
 													<li>
@@ -138,16 +142,17 @@
 															{[{brick.user.profile.imei}]}
 														</span>
 														<span ng-show="brick.user.profile.imei == ''">
-															این کاربر imei  ندارد.
+															imei  ندارد.
 														</span>
 														
 														<div class="banDesc" ng-show="brick.user.profile.imei_status == 0">
-															<span class="side-up"></span>
+															<span class="side-up hidden-xs"></span>
 															<div class="col-md-12 pa0">
 																<p>{[{brick.user.profile.description}]}</p>
+																<p ng-show="brick.user.profile.description== ''">توضیحات ندارد</p>
 															</div>
 															<div class="clear"></div>
-															<span class="side-down"></span>
+															<span class="side-down hidden-xs"></span>
 														</div>
 													</li>
 													<li ng-hide="brick.user.profile.users_imei == ''">
@@ -167,7 +172,7 @@
 												</ul>
 											</div>
 										</div>
-										<div class="col-md-4 rightInfo">
+										<div class="col-md-4 col-xs-12 hidden-xs rightInfo">
 											<div class="user_avatar">
 												<a href="">
 													<img ng-src="{[{brick.user.avatar}]}">

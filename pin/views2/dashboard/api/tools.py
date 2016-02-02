@@ -149,6 +149,7 @@ def post_reporter_user(post_id):
     for reporter in reporters:
         user['detail'] = get_simple_user_object(reporter.user.id,
                                                 reporter.post.user.id)
+        print reporter.user
         user['profile'] = get_profile_data(reporter.user.profile,
                                            reporter.user.id)
         score += reporter.user.profile.score
