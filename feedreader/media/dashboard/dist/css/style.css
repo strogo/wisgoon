@@ -457,7 +457,7 @@ table img {
 
 /********************* start loading    ***********************/
 .loader-post {
-	z-index: 1000000;
+	z-index: 100;
 	font-size: 50px;
 	text-indent: -9999em;
 	overflow: hidden;
@@ -845,12 +845,12 @@ table img {
 	height: 25px;
 }
 .input-group-addon {
-  float: right;
-  height: 45px;
-  position: relative;
-  top: 45px;
-  width: 50px;
-  z-index: 10;
+	float: right;
+	height: 45px;
+	position: relative;
+	top: 45px;
+	width: 50px;
+	z-index: 10;
 }
 .searchForm input {
 	padding-right: 60px !important;
@@ -864,10 +864,74 @@ table img {
 	cursor: pointer !important;
 }
 .searchForm .ion-ios-search-strong {
-  font-size: 26px;
-  position: relative;
-  right: -2px;
+	font-size: 26px;
+	position: relative;
+	right: -2px;
 }
 .searchUser hr {
 	border-color: #ccc !important;
+}
+
+.box-header {
+	height: 45px;
+}
+@media screen and (max-width: 480px) {
+	.datepicker-plot-area {
+		left: 90px !important;
+		
+	}
+	.xs-setting{
+		bottom: 3px;
+		position: absolute;
+		right: -32px;
+	}
+	.box-tools input {
+		padding: 3px 10px 3px 5px;
+		width: 92px;
+	}
+	.resize {
+		width: 85% !important;
+	}
+	.userIinfoModal .modal-dialog {
+		width: 100% !important;
+	}
+	.close {
+		bottom: 10px;
+		float: right !important;
+		position: relative;
+	}
+	.banDesc {
+		width: 352px;
+	}
+	.select input {
+		width: 275px;
+		margin-bottom: 20px;
+	}
+	.cell {
+		margin: 0 !important;
+	}
+	.cell input{
+		font-size: 11px;
+		width: 85px;
+	}
+	.box-tools input {
+		margin-left: 0 !important;
+	}
+	.sidebar-menu li > a > .fa-angle-left {
+		margin-top:0px !important;
+	}
+	.logo-lg {
+		float: left;
+	}
+	.sidebar-toggle {
+		bottom: 45px;
+		position: relative;
+	}
+	.main-sidebar, .left-side{
+		padding-top: 55px !important;
+	}
+
+}
+.main-header .sidebar-toggle {
+	color: #fff !important;
 }

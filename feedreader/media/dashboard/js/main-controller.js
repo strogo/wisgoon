@@ -163,9 +163,9 @@ app.controller('activeUserController',function($scope,$http,$location) {
 			$scope.activeDatas=data;
 			if ($scope.activeDatas.status) {
 				if ($scope.activeDatas.profile.user_active) {
-					$('.activeDatasText').text('کاربر فعال است.');
+					$('.activeDatasText').text('فعال');
 				}else{
-					$('.activeDatasText').text('کاربر غیر فعال است.');
+					$('.activeDatasText').text('غیر فعال');
 				}
 			};
 		});
@@ -183,9 +183,9 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 			$scope.banDatas=data;
 			if ($scope.banDatas.status) {
 				if ($scope.banDatas.profile.userBanne_profile) {
-					$('.banDatasText').text('پروفایل کاربر فعال است.');
+					$('.banDatasText').text('فعال');
 				}else{
-					$('.banDatasText').text('پروفایل کاربر غیر فعال است.');
+					$('.banDatasText').text('غیر فعال');
 				}
 			};
 		});
@@ -202,9 +202,9 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 			$scope.banImeiDatas=data;
 			if ($scope.banImeiDatas.status) {
 				if ($scope.banImeiDatas.profile.user_active) {
-					$('.banImeiText').text('imei کاربر فعال است.');
+					$('.banImeiText').text('imei فعال');
 				}else{
-					$('.banImeiText').text('imei کاربر غیر فعال است.');
+					$('.banImeiText').text('imei غیر فعال');
 				}
 			};
 		});
@@ -212,7 +212,7 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 
 	$scope.showSearchUser = function() {
 		$scope.statusSearch= " ";
-		$scope.imei_text= "این کاربر imei ندارد.";
+		$scope.imei_text= "imei ندارد.";
 		this.resultItems = [];
 		$stateParams.s_query=this.query;
 		this.url = "/dashboard/api/user/search/?q="+$stateParams.s_query;
