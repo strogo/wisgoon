@@ -272,12 +272,13 @@ def delete(request, item_id):
 
 @login_required
 def nop(request, item_id):
+    """Image has no problem."""
     try:
         post = Post.objects.get(pk=item_id)
         if request.user.is_superuser:
             post.report = 0
             post.save()
-            porn_feedback.delay(post_image=post.get_image_236()['url'])
+            porn_feedback.delay(post_image=post.get_image_500()['url'])
             if request.is_ajax():
                 return HttpResponse('1')
             return HttpResponseRedirect('/')
