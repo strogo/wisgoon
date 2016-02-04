@@ -1,56 +1,80 @@
 from django.views.decorators.csrf import csrf_exempt
 
-from pin.models import Post
-
-from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
-    return_bad_request
-from pin.api6.tools import post_item_json, get_next_url, get_simple_user_object,\
-    get_profile_data
-from pin.views2.dashboard.api.tools import post_reporter_user, get_reported_posts,\
-    check_admin, ads_group_by, calculate_post_percent, cnt_post_deleted_by_user,\
-    cnt_post_deleted_by_admin, get_ads, delete_posts, undo_report
+from pin.api6.http import (return_bad_request, return_json_data,
+                           return_not_found, return_un_auth)
+from pin.api6.tools import (get_next_url, get_profile_data,
+                            get_simple_user_object,
+                            post_item_json)
+from pin.models import Post, Report
+from pin.views2.dashboard.api.tools import (ads_group_by, calculate_post_percent,
+                                            check_admin, cnt_post_deleted_by_admin,
+                                            cnt_post_deleted_by_user,
+                                            delete_posts, get_ads,
+                                            post_reporter_user, undo_report
+                                            )
+from user_profile.models import Profile
 
 
 def reported(request):
     if not check_admin(request):
         return return_un_auth()
 
-    offset = int(request.GET.get('offset', 0))
+    before = int(request.GET.get('before', 0))
     post_reporter_list = []
-    data = {
-        'meta': {
-            'limit': 20,
-            'next': '',
-            'total_count': '',
-        },
-    }
-    
-    reported_posts = Post.objects\
-        .filter(report__gte=1)[offset: (offset + 1) + 20]
+    data = {}
+    data['meta'] = {'limit': 20,
+                    'next': '',
+                    'total_count': ''}
 
+    reported_posts = Post.objects.filter(report__gte=1)\
+        .order_by('-id')[before: (before + 1) * 20]
     if not reported_posts:
         return return_not_found()
 
-    # return return_json_data(data)
-
     for post in reported_posts:
         post_item = post_item_json(post)
-        # post_item['reporter'], post_item['reporter_scores'] = post_reporter_user(post.id)
-        # post_item['cnt_report'] = post.report
-        # post_item['user'] = get_simple_user_object(post.user.id)
-        # post_item['user']['profile'] = get_profile_data(post.user.profile, post.user.id)
+        post_item['cnt_report'] = post.report
         # post_item['user']['cnt_deleted'] = cnt_post_deleted_by_user(post.user.id)
         # post_item['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(post.user.id)
         post_reporter_list.append(post_item)
 
     data['objects'] = post_reporter_list
 
-    
-    offset = int(request.GET.get('offset', 0)) + 20
-    token = request.GET.get('token', '')
-    data['meta']['next'] = get_next_url(url_name='dashboard-api-post-reported',
-                                        offset=offset, token=token)
+    if len(post_reporter_list) == 20:
+        token = request.GET.get('token', '')
+        data['meta']['next'] = get_next_url(url_name='dashboard-api-post-reported',
+                                            before=before + 20, token=token)
     return return_json_data(data)
+
+
+def post_reporter_user(request, post_id):
+    if not check_admin(request):
+        return return_un_auth()
+    reporters = Report.objects.filter(post_id=post_id)
+    user_list = []
+    users = {}
+    score = 0
+    for reporter in reporters:
+        users['reporter'] = get_simple_user_object(reporter.user.id)
+        users['reporter']['score'] = reporter.user.profile.score
+        score += reporter.user.profile.score
+        user_list.append(users)
+    users['reporter_scores'] = score
+    return return_json_data(users)
+
+
+def post_user_details(request, user_id):
+    if not check_admin(request):
+        return return_un_auth()
+    user = {}
+    try:
+        profile = Profile.objects.get(user_id=user_id)
+    except:
+        return return_not_found()
+    user['profie'] = get_profile_data(profile, user_id)
+    user['cnt_deleted'] = cnt_post_deleted_by_user(user_id)
+    user['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user_id)
+    return return_json_data(user)
 
 
 def enable_ads(request):

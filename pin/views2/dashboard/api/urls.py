@@ -36,6 +36,10 @@ urlpatterns += patterns('pin.views2.dashboard.api.post',
                             name='dashboard-api-post-delete'),
                         url(r'post/report/undo/', 'post_undo',
                             name='dashboard-api-post-undo_report'),
+                        url(r'post/reporters/(?P<post_id>\d+)/', 'post_reporter_user',
+                            name='dashboard-api-post-reporters'),
+                        url(r'post/user/(?P<user_id>\d+)', 'post_user_details',
+                            name='dashboard-api-post-user'),
                         )
 
 

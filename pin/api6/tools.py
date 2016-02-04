@@ -340,9 +340,8 @@ def get_profile_data(profile, user_id):
     data['score'] = profile.score
     data['jens'] = profile.jens if profile.jens else '0'
     data['email'] = profile.user.email
-    data['date_joined'] = khayyam.JalaliDate(profile.user.date_joined)\
-        .strftime("%Y/%m/%d")
-
+    date_joined = profile.user.date_joined
+    data['date_joined'] = khayyam.JalaliDate.from_date(date_joined).strftime("%Y/%m/%d")
 
     data['imei'] = ''
 
