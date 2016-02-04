@@ -277,7 +277,7 @@ def nop(request, item_id):
         if request.user.is_superuser:
             post.report = 0
             post.save()
-            porn_feedback(post_image=post.get_image_236()['url'])
+            porn_feedback.delay(post_image=post.get_image_236()['url'])
             if request.is_ajax():
                 return HttpResponse('1')
             return HttpResponseRedirect('/')
