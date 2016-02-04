@@ -33,6 +33,8 @@ import pin_image
 from pin.tools import create_filename, get_user_ip, get_request_pid, check_block,\
     post_after_delete, get_post_user_cache
 
+from pin.tasks import porn_feedback
+
 from suds.client import Client
 
 MEDIA_ROOT = settings.MEDIA_ROOT
@@ -275,6 +277,7 @@ def nop(request, item_id):
         if request.user.is_superuser:
             post.report = 0
             post.save()
+            porn_feedback(post_image=post.get_image_236()['url'])
             if request.is_ajax():
                 return HttpResponse('1')
             return HttpResponseRedirect('/')

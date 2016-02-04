@@ -130,12 +130,9 @@ def check_porn(post_id):
         post = Post.objects.get(id=post_id)
     except Post.DoesNotExist:
         return "post does not exists"
-    # print post.get_image_500()
     img_url = post.get_image_500()['url']
-    # print img_url
     r = requests.get(img_url)
-    # print r
-    # print r.content
+
     try:
         res = requests.post("https://188.75.73.226:1509/analyzer",
                             auth=HTTPBasicAuth('wisgoon94', 'Ghavi!394YUASTTH'),
@@ -149,8 +146,32 @@ def check_porn(post_id):
         if float(res.content) > 0.7:
             post.report = post.report + 10
             post.save()
-        print d
         publish.single("wisgoon/check/porn", json.dumps(d), hostname="mosq.wisgoon.com", qos=2)
+    except Exception, e:
+        print str(e)
+
+
+@app.task(name="wisgoon.pin.porn_feedback")
+def porn_feedback(post_image, status="neg"):
+    """Check porn feedback."""
+    import socket
+    import requests
+    from requests.auth import HTTPBasicAuth
+    socket.setdefaulttimeout(10)
+
+    img_url = post_image
+    r = requests.get(img_url)
+
+    rurl = "https://188.75.73.226:1509/feedback/{}".format(status)
+    print rurl
+    auth = HTTPBasicAuth('wisgoon94', 'Ghavi!394YUASTTH')
+
+    try:
+        res = requests.post(rurl, auth=auth, verify=False, data=r.content)
+
+        print res.content
+        print "callback"
+
     except Exception, e:
         print str(e)
 
