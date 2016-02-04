@@ -23,6 +23,7 @@ urlpatterns += patterns('pin.api6.post',
                         url(r'post/search/$', 'search', name='api-6-post-search'),
                         url(r'post/report/(?P<item_id>\d+)/$', 'report', name='api-6-post-report'),
                         url(r'post/edit/(?P<item_id>\d+)/$', 'edit', name='api-6-post-edit'),
+                        url(r'post/delete/(?P<item_id>\d+)/$', 'delete', name='api-6-post-delete'),
                         url(r'post/send/$', 'send', name='api-6-post-send'),
                         url(r'post/user/(?P<user_id>\d+)/$', 'user_post', name='api-6-post-user'),
                         url(r'post/related/(?P<item_id>\d+)/$', 'related_post', name='api-6-post-related'),
@@ -34,6 +35,10 @@ urlpatterns += patterns('pin.api6.comment',
                         url(r'comment/showComments/post/(?P<item_id>\d+)/', 'comment_post', name='api-6-comment-post'),
                         url(r'comment/add/post/(?P<item_id>\d+)/$', 'add_comment', name='api-6-comment-add'),
                         url(r'comment/delete/(?P<comment_id>\d+)/$', 'delete_comment', name='api-6-comment-delete'),
+                        )
+
+urlpatterns += patterns('pin.api6.app',
+                        url(r'app/latest/$', 'latest', name='api-6-app-latest'),
                         )
 
 urlpatterns += patterns('pin.api6.like',

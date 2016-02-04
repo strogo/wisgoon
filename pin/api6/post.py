@@ -11,7 +11,8 @@ from pin.api6.http import return_json_data, return_bad_request,\
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json
 from pin.models import Post, Report, Ad
-from pin.tools import AuthCache
+from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
+    post_after_delete
 
 
 def latest(request):
@@ -439,3 +440,34 @@ def hashtag(request, tag_name):
         return return_json_data(data)
     else:
         return return_bad_request()
+
+
+@csrf_exempt
+def delete(request, item_id):
+    """Delete post."""
+    # Get User From Token
+    token = request.GET.get('token', False)
+    if token:
+        user = AuthCache.user_from_token(token=token)
+        if not user:
+            return return_un_auth()
+    else:
+        return return_bad_request(message=_("token error"))
+
+    try:
+        post = get_post_user_cache(post_id=item_id)
+        if post.user_id == user.id:
+            post_after_delete(post=post, user=user,
+                              ip_address=get_user_ip(request))
+            post.delete()
+            return return_json_data({
+                'status': True,
+                'message': _('post deleted')
+            })
+    except Post.DoesNotExist:
+        return return_json_data({
+            'status': False,
+            'message': _('post not exists or not yours')
+        })
+
+    return return_bad_request()
