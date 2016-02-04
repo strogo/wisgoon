@@ -7,10 +7,7 @@
 		<a class="pin-item-link" href="{% url 'pin-item' item.id%}{% if related %}?from={{post.id}}{%endif%}">
 			<img src="{{ item.get_image_236.url }}" width="236" height="{{ item.get_image_236.h }}" alt="{{item.text|remove_newlines|truncatewords:35}}">
 		</a>
-
-		<div class="img-shadow"></div>
 	</div>
-
 	
 	<div class="clearfix"></div>
 
