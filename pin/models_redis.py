@@ -103,7 +103,7 @@ class ActivityRedis(object):
 
     def get_activity(self):
         from pin.api6.tools import post_item_json, get_simple_user_object
-        act_data = activityServer.lrange(self.KEY_PREFIX_LIST, 0, -1)
+        act_data = activityServer.lrange(self.KEY_PREFIX_LIST, 0, 50)
         jdata = []
         for actd in act_data:
             act_type, actor, object_id = actd.split(":")
