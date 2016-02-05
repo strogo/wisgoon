@@ -230,7 +230,10 @@ class LikesRedis(object):
 
         else:
             from pin.tasks import activity
-            activity.delay(act_type=1, who=user_id, post_id=self.postId)
+            if settings.DEBUG:
+                activity(act_type=1, who=user_id, post_id=self.postId)
+            else:
+                activity.delay(act_type=1, who=user_id, post_id=self.postId)
 
             self.like(user_id=user_id, post_owner=post_owner, user_ip=user_ip)
 
