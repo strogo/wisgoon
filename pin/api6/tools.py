@@ -314,7 +314,6 @@ def post_item_json_flat(post, cur_user_id=None, r=None):
         del cache_post['last_comments']
         del cache_post['user']
         del cache_post['tags']
-        del cache_post['category']
         return cache_post
 
     pi = {}  # post item
@@ -384,6 +383,8 @@ def post_item_json_flat(post, cur_user_id=None, r=None):
         pi['images']['original']['url'] = media_abs_url(post.image, check_photos=True)
     except Exception as e:
         print str(e)
+
+    pi['category'] = category_get_json(cat_id=post.category_id)
 
     return pi
 
