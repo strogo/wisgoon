@@ -5,7 +5,7 @@ from pin.tools import AuthCache
 from pin.model_mongo import NotifCount, Notif
 from pin.models_redis import NotificationRedis
 from pin.api6.tools import get_list_post, get_objects_list, get_simple_user_object,\
-    get_next_url, post_item_json, post_item_json_flat
+    get_next_url, post_item_json
 
 
 def notif_count(request):
@@ -68,7 +68,7 @@ def notif(request):
         if notif.type == Notif.LIKE:
             data_extra['text'] = "تصویر شمارا پسندید."
             try:
-                post_object = post_item_json_flat(notif.post, current_user, request)
+                post_object = post_item_json(notif.post, current_user, request)
             except:
                 post_object = {}
             data_extra['post'] = post_object
@@ -82,7 +82,7 @@ def notif(request):
             data_extra['type'] = Notif.COMMENT
             data_extra['text'] = "برای تصویر شما نظر داد"
             try:
-                post_object = post_item_json_flat(notif.post, current_user, request)
+                post_object = post_item_json(notif.post, current_user, request)
             except IndexError:
                 post_object = {}
             data_extra['post'] = post_object
