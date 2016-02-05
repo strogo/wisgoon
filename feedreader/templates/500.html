@@ -1,11 +1,35 @@
-{% extends "pin2/flat.base.html" %}
-
-{% block content %}
-<div class="error_page page_500">
-    <!-- <div class="title_500"><h2>متاسفیم! <i class="fa fa-frown-o"></i></h2> </div> -->
-    <div class="error_text">
-    <h3>سایت در حال به‌روزرسانی ست.</h3>
-    <p>از صبر شما سپاسگذاریم.</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wisgoon :: Comming soon!</title>
+    <style type="text/css">
+        .error_page{
+            display: block;
+            margin: 0 auto;
+            width: 1000px;
+            height: 716px;
+            position: relative;
+        }
+        .error_page.page_500 {
+            background: url("http://static.wisgoon.com/media/v2/images/500.jpg") no-repeat scroll center -110px;
+        }
+        .error_page .error_text {
+            top: 408px;
+            left: 0;
+            margin: 0 auto;
+            position: absolute;
+            right: 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="error_page page_500">
+        <!-- <div class="title_500"><h2>متاسفیم! <i class="fa fa-frown-o"></i></h2> </div> -->
+        <div class="error_text">
+            <h3>سایت در حال به‌روزرسانی ست.</h3>
+            <p>از صبر شما سپاسگذاریم.</p>
+        </div>
     </div>
-</div>
-{% endblock content %}
+</body>
+</html>
