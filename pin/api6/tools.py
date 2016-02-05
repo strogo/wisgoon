@@ -312,7 +312,6 @@ def post_item_json_flat(post, cur_user_id=None, r=None):
         cache_post['cache'] = "Hit"
         del cache_post['last_likers']
         del cache_post['last_comments']
-        del cache_post['user']
         del cache_post['tags']
         return cache_post
 
@@ -324,6 +323,8 @@ def post_item_json_flat(post, cur_user_id=None, r=None):
     pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
     pi['timestamp'] = post.timestamp
     pi['show_in_default'] = post.show_in_default
+
+    pi['user'] = get_simple_user_object(post.user_id)
 
     try:
         pi['url'] = post.url
