@@ -106,12 +106,15 @@ class ActivityRedis(object):
         act_data = activityServer.lrange(self.KEY_PREFIX_LIST, 0, 50)
         jdata = []
         for actd in act_data:
-            act_type, actor, object_id = actd.split(":")
-            o = {}
-            o['object'] = post_item_json(int(object_id), self.USER_ID)
-            o['actor'] = get_simple_user_object(int(actor))
-            o['act_type'] = int(act_type)
-            jdata.append(o)
+            try:
+                act_type, actor, object_id = actd.split(":")
+                o = {}
+                o['object'] = post_item_json(int(object_id), self.USER_ID)
+                o['actor'] = get_simple_user_object(int(actor))
+                o['act_type'] = int(act_type)
+                jdata.append(o)
+            except:
+                pass
         return jdata
 
     @classmethod
