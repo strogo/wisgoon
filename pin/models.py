@@ -85,11 +85,15 @@ class CommentClassification(models.Model):
 class SubCategory(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/scategory/')
+    image_device = models.ImageField(default='', upload_to='pin/scategory/')
 
     def __unicode__(self):
         return self.title
 
     def admin_image(self):
+        return '<img src="/media/%s" />' % self.image
+
+    def admin_image_device(self):
         return '<img src="/media/%s" />' % self.image
 
     admin_image.allow_tags = True
