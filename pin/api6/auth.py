@@ -16,7 +16,7 @@ from pin.api6.tools import get_next_url, get_simple_user_object, get_int, get_pr
     update_follower_following, post_item_json
 
 from user_profile.models import Profile
-from user_profile.forms import ProfileForm
+from user_profile.forms import ProfileForm2
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
@@ -324,7 +324,7 @@ def update_profile(request):
 
     profile, create = Profile.objects.get_or_create(user=current_user)
 
-    form = ProfileForm(request.POST, request.FILES, instance=profile)
+    form = ProfileForm2(request.POST, request.FILES, instance=profile)
     if form.is_valid():
         form.save()
         update_follower_following(profile, current_user)

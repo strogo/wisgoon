@@ -26,6 +26,18 @@ def avatar_file_name(instance, filename):
     return '/'.join([avatars_prefix, str(d.year), str(d.month), str(d.day), str(filestr)])
 
 
+def cover_file_name(instance, filename):
+    new_filename = str(time.time()).replace('.', '')
+    fileext = os.path.splitext(filename)[1]
+    if not fileext:
+        fileext = '.jpg'
+
+    filestr = new_filename + fileext
+    d = datetime.now()
+    avatars_prefix = "covers/%s" % settings.INSTANCE_NAME
+    return '/'.join([avatars_prefix, str(d.year), str(d.month), str(d.day), str(filestr)])
+
+
 class Profile(models.Model):
 
     AVATAR_OLD_STYLE = 0
@@ -45,6 +57,8 @@ class Profile(models.Model):
     trusted_by = models.ForeignKey(User, related_name='trusted_by',
                                    default=None, null=True, blank=True)
     avatar = models.ImageField(upload_to=avatar_file_name, default=None,
+                               null=True, blank=True)
+    cover = models.ImageField(upload_to=cover_file_name, default=None,
                                null=True, blank=True)
     jens = models.CharField(max_length=2,
                             choices=(('M', 'مذکر'), ('F', 'مونث')),
