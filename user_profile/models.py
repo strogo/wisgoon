@@ -59,7 +59,7 @@ class Profile(models.Model):
     avatar = models.ImageField(upload_to=avatar_file_name, default=None,
                                null=True, blank=True)
     cover = models.ImageField(upload_to=cover_file_name, default=None,
-                               null=True, blank=True)
+                              null=True, blank=True)
     jens = models.CharField(max_length=2,
                             choices=(('M', 'مذکر'), ('F', 'مونث')),
                             default='M')
