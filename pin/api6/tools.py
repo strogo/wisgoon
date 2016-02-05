@@ -219,7 +219,7 @@ def post_item_json(post, cur_user_id=None, r=None):
 
     pi = {}  # post item
 
-    pi ['cache'] = "Miss"
+    pi['cache'] = "Miss"
     pi['id'] = post.id
     pi['text'] = post.text
     pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment

@@ -552,7 +552,7 @@ def upload(request):
 def show_notify(request):
     # NotifCount.objects.filter(owner=request.user.id).update(set__unread=0)
     NotificationRedis(user_id=request.user.id).clear_notif_count()
-    notif = Notif.objects.all().filter(owner=request.user.id).order_by('-date')[:20]
+    # notif = Notif.objects.all().filter(owner=request.user.id).order_by('-date')[:20]
     notif = NotificationRedis(user_id=request.user.id)\
         .get_notif()
     nl = []
@@ -581,7 +581,7 @@ def notif_user(request):
     offset = int(request.GET.get('older', 0))
 
     notifications = NotificationRedis(user_id=request.user.id)\
-        .get_notif(start=offset + 1)
+        .get_notif(start=offset)
     nl = []
     for notif in notifications:
         anl = {}

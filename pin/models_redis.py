@@ -39,8 +39,8 @@ class NotificationRedis(object):
         self.KEY_PREFIX_CNT = self.KEY_PREFIX_CNT.format(user_id)
 
     def set_notif(self, ntype, post, actor, seen=False, post_image=None):
-        notif_str = "{}:{}:{}:{}:{}"\
-            .format(ntype, post, actor, seen, post_image)
+        notif_str = "{}:{}:{}:{}:{}:{}"\
+            .format(ntype, post, actor, seen, post_image, int(time.time()))
 
         np = notificationRedis.pipeline()
         np.lpush(self.KEY_PREFIX, notif_str)
@@ -55,14 +55,17 @@ class NotificationRedis(object):
         for nl in nlist:
             o = {}
             ssplited = nl.split(":")
-            o['id'] = eval("{}{}{}".format(ssplited[0], ssplited[1], ssplited[2]))
+            o['id'] = eval("{}{}{}".format(ssplited[1], ssplited[2], ssplited[0]))
             o['type'] = eval(ssplited[0])
             o['post'] = eval(ssplited[1])
             o['last_actor'] = eval(ssplited[2])
             o['seen'] = eval(ssplited[3])
             o['post_image'] = eval(ssplited[4])
             o['owner'] = self.user_id
-            o['date'] = datetime.datetime.now()
+            try:
+                o['date'] = eval(ssplited[5])
+            except:
+                o['date'] = datetime.datetime.now()
             nobjesct.append(NotifStruct(**o))
 
         return nobjesct
