@@ -432,6 +432,7 @@ def get_profile_data(profile, user_id, enable_imei=False):
     data['score'] = profile.score
     data['jens'] = profile.jens if profile.jens else '0'
     data['email'] = profile.user.email
+    data['bio'] = profile.bio
     date_joined = profile.user.date_joined
     data['date_joined'] = khayyam.JalaliDate(date_joined).strftime("%Y/%m/%d")
 
