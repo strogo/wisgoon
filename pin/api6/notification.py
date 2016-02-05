@@ -57,7 +57,7 @@ def notif(request):
     for notif in notifs:
         data_extra = {}
         data_extra['id'] = str(notif.id)
-        data_extra['actor'] = get_simple_user_object(notif.last_actor)
+        data_extra['actor'] = get_simple_user_object(notif.last_actor, current_user)
         data_extra['owner'] = get_simple_user_object(notif.owner)
 
         if isinstance(notif.date, int):
