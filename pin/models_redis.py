@@ -56,6 +56,9 @@ class NotificationRedis(object):
             o = {}
             ssplited = nl.split(":")
             post_id = eval(ssplited[1])
+            notif_type = eval(ssplited[0])
+            if notif_type == 4:
+                continue
             if not post_id:
                 post_id = 0
             if post_id > 0:
