@@ -935,10 +935,13 @@ class Follow(models.Model):
             # print "new follow"
             # print cls, sender, instance, args, kwargs
             # print "instance follow:", instance.follower.id
-            Notif_mongo.objects.create(owner=instance.following.id, type=10,
-                                       last_actor=instance.follower.id,
-                                       date=datetime.now,
-                                       seen=False)
+            # Notif_mongo.objects.create(owner=instance.following.id, type=10,
+            #                            last_actor=instance.follower.id,
+            #                            date=datetime.now,
+            #                            seen=False)
+            from pin.actions import send_notif_bar
+            send_notif_bar(user=instance.following.id, type=10, post=None,
+                           actor=instance.follower.id)
             MonthlyStats.log_hit(MonthlyStats.FOLLOW)
             FollowUser.get_or_create(instance.follower, instance.following, "follow")
 

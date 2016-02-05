@@ -25,7 +25,7 @@ def notif_count(request):
 
 
 def notif(request):
-
+    """List of user notification."""
     data = {}
     token = request.GET.get('token', False)
     offset = int(request.GET.get('offset', 0))

@@ -564,7 +564,7 @@ def show_notify(request):
             if n.type == 4:
                 anl['po'] = n.post_image
             elif n.type == 10:
-                anl['po'] = n.last_actors
+                anl['po'] = n.last_actor
             else:
                 continue
         anl['id'] = n.post
@@ -588,7 +588,12 @@ def notif_user(request):
         try:
             anl['po'] = Post.objects.only('image').get(pk=notif.post)
         except Post.DoesNotExist:
-            continue
+            if notif.type == 4:
+                anl['po'] = notif.post_image
+            elif notif.type == 10:
+                anl['po'] = notif.last_actor
+            else:
+                continue
         anl['id'] = notif.post
         anl['type'] = notif.type
         anl['actor'] = notif.last_actor
