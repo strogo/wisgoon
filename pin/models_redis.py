@@ -58,7 +58,7 @@ class NotificationRedis(object):
             post_id = eval(ssplited[1])
             if not post_id:
                 post_id = 0
-            o['id'] = int(eval("{}{}{}".format(post_id, ssplited[2], ssplited[0])))
+            o['id'] = eval("{}{}{}".format(post_id, ssplited[2], ssplited[0]))
             o['type'] = eval(ssplited[0])
             o['post'] = eval(ssplited[1])
             o['last_actor'] = eval(ssplited[2])
