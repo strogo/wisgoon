@@ -343,9 +343,8 @@ def get_profile_data(profile, user_id, enable_imei=False):
     date_joined = profile.user.date_joined
     data['date_joined'] = khayyam.JalaliDate(date_joined).strftime("%Y/%m/%d")
 
-    data['imei'] = ''
-
     if enable_imei:
+        data['imei'] = ''
         try:
             imei = profile.user.phone.imei
         except:
