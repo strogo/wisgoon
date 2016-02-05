@@ -61,9 +61,9 @@ def notif(request):
         data_extra['owner'] = get_simple_user_object(notif.owner)
 
         if isinstance(notif.date, int):
-            data_extra['date'] = notif.date
+            data_extra['date'] = int(notif.date)
         else:
-            data_extra['date'] = notif.date.strftime("%s")
+            data_extra['date'] = int(notif.date.strftime("%s"))
 
         if notif.type == Notif.LIKE:
             data_extra['text'] = "تصویر شمارا پسندید."
