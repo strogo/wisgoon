@@ -426,7 +426,7 @@ def get_profile_data(profile, user_id, enable_imei=False):
     data['cnt_following'] = profile.cnt_following
     data['banned'] = profile.banned
     if profile.cover:
-        data['cover'] = profile.cover.url
+        data['cover'] = media_abs_url(profile.cover.url)
     else:
         data['cover'] = ""
     if profile.banned:
