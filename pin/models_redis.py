@@ -116,7 +116,6 @@ class ActivityRedis(object):
 
     @classmethod
     def push_to_activity(cls, act_type, who, post_id):
-        return 
         from pin.models import Follow
         flist = Follow.objects.filter(following_id=who)\
             .values_list('follower_id', flat=True)
@@ -133,7 +132,7 @@ class LikesRedis(object):
     KEY_PREFIX_SET = "p:l:"
     KEY_PREFIX_LIST = "l:l:"
     KEY_LEADERBORD = "-".join(str(JalaliDate.today()).split("-")[:2])
-    KEY_LEADERBORD_GROUPS = "%s-{}" % KEY_LEADERBORD 
+    KEY_LEADERBORD_GROUPS = "%s-{}" % KEY_LEADERBORD
 
     postId = 0
     postOwner = 0
@@ -242,7 +241,7 @@ class LikesRedis(object):
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
             liked = True
             disliked = False
-        
+
         lbs.execute()
 
         return liked, disliked, self.cntlike()
