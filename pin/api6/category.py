@@ -32,6 +32,10 @@ def all_category(request):
             "image": media_abs_url(category.image.url),
             "childs": []
         }
+        try:
+            o["image_device"] = media_abs_url(category.image_device.url)
+        except:
+            o["image_device"] = ""
         for cat in Category.objects.filter(parent=category):
             o['childs'].append(category_get_json(cat.id))
 
