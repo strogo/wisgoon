@@ -94,9 +94,10 @@ class SubCategory(models.Model):
         return '<img src="/media/%s" />' % self.image
 
     def admin_image_device(self):
-        return '<img src="/media/%s" />' % self.image
+        return '<img src="/media/%s" />' % self.image_device
 
     admin_image.allow_tags = True
+    admin_image_device.allow_tags = True
 
 
 class Ad(models.Model):

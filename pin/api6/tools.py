@@ -298,6 +298,96 @@ def post_item_json(post, cur_user_id=None, r=None):
     return pi
 
 
+def post_item_json_flat(post, cur_user_id=None, r=None):
+    if isinstance(post, int):
+        post = Post.objects.get(id=post)
+
+    cp = PostCacheLayer(post_id=post.id)
+    cache_post = cp.get()
+    if cache_post:
+        if cur_user_id:
+            cache_post['like_with_user'] = LikesRedis(post_id=post.id)\
+                .user_liked(user_id=cur_user_id)
+        # print "get post data item json from cache"
+        cache_post['cache'] = "Hit"
+        del cache_post['last_likers']
+        del cache_post['last_comments']
+        del cache_post['user']
+        del cache_post['tags']
+        del cache_post['category']
+        return cache_post
+
+    pi = {}  # post item
+
+    pi['cache'] = "Miss"
+    pi['id'] = post.id
+    pi['text'] = post.text
+    pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
+    pi['timestamp'] = post.timestamp
+    pi['show_in_default'] = post.show_in_default
+
+    try:
+        pi['url'] = post.url
+    except Exception, e:
+        print str(e)
+        if r:
+            print r.get_full_path()
+        pi['url'] = None
+    pi['cnt_like'] = post.cnt_like
+    pi['like_with_user'] = False
+    pi['status'] = post.status
+
+    try:
+        pi['is_ad'] = False  # post.is_ad
+    except Exception, e:
+        # print str(e)
+        pi['is_ad'] = False
+
+    pi['permalink'] = {}
+
+    pi['permalink']['api'] = abs_url(reverse("api-6-post-item",
+                                     kwargs={"item_id": post.id}))
+
+    pi['permalink']['web'] = abs_url(reverse("pin-item",
+                                     kwargs={"item_id": post.id}),
+                                     api=False)
+
+    if cur_user_id:
+        pi['like_with_user'] = LikesRedis(post_id=post.id)\
+            .user_liked(user_id=cur_user_id)
+
+    pi['images'] = {}
+    try:
+        p_500 = post.get_image_500(api=True)
+
+        p_500['url'] = media_abs_url(p_500['url'], check_photos=True)
+        p_500['height'] = int(p_500['hw'].split("x")[0])
+        p_500['width'] = int(p_500['hw'].split("x")[1])
+
+        del(p_500['hw'])
+        del(p_500['h'])
+
+        pi['images']['low_resolution'] = p_500
+
+        p_236 = post.get_image_236(api=True)
+
+        p_236['url'] = media_abs_url(p_236['url'], check_photos=True)
+        p_236['height'] = int(p_236['hw'].split("x")[0])
+        p_236['width'] = int(p_236['hw'].split("x")[1])
+        del(p_236['hw'])
+        del(p_236['h'])
+
+        pi['images']['thumbnail'] = p_236
+
+        p_original = post.get_image_sizes()
+        pi['images']['original'] = p_original
+        pi['images']['original']['url'] = media_abs_url(post.image, check_photos=True)
+    except Exception as e:
+        print str(e)
+
+    return pi
+
+
 def get_objects_list(posts, cur_user_id=None, r=None):
 
     objects_list = []
