@@ -27,7 +27,8 @@
 				"26ccb119-f96a-5844-c9d6-563cad4f29ab",
 				"d418c5bc-9921-0894-51b9-b5dad627e0c9",
 				"26c74d30-554b-3d76-c42b-1d62a21424ad",
-				"59de64c5-435f-088b-c043-f12363ee469b"
+				"59de64c5-435f-088b-c043-f12363ee469b",
+				"97bdee19-4e7c-e2c9-7df5-5baa01b3c622"
 			],
 			"owner": 0
 		},
@@ -879,6 +880,46 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"folder": "8c76a689-2b82-6bad-9e4e-7723ee97efa8"
+		},
+		{
+			"id": "97bdee19-4e7c-e2c9-7df5-5baa01b3c622",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/password/change/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "64faee03-3311-d8c9-2a6a-7130ce4b455d",
+			"data": [
+				{
+					"key": "password",
+					"value": "11",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "re_password",
+					"value": "11",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "old_password",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Change password",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1454710746135,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "2e5113f4-5796-abf1-dfa6-aca170b51b44"
 		},
 		{
 			"id": "9e964565-9b07-9a19-3764-4f5d9733ffbf",

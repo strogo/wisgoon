@@ -437,3 +437,56 @@ def user_like(request, user_id):
                                             before=post_list[-1]['id'],
                                             url_args={"user_id": user_id})
     return return_json_data(data)
+
+
+@csrf_exempt
+def password_change(request):
+    user = None
+    token = request.GET.get('token', '')
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token:
+        return return_un_auth()
+
+    password = request.POST.get('password', '')
+    re_password = request.POST.get('re_password', '')
+    old_password = request.POST.get('old_password', '')
+
+    if not password or not re_password or not old_password:
+        return return_json_data({
+            "status": False,
+            'message': _('Error in parameters')
+        })
+
+    if password != re_password:
+        return return_json_data({
+            "status": False,
+            'message': _('password dismatched')
+        })
+
+    u = authenticate(username=user.username, password=old_password)
+    if u:
+        if not u.is_active:
+            return return_json_data({
+                "status": False,
+                'message': _('password dismatched')
+            })
+    else:
+        return return_json_data({
+            "status": False,
+            'message': _('Incorrect password.')
+        })
+
+    if password == re_password:
+        user.set_password(password)
+        user.save()
+        return return_json_data({
+            "status": True,
+            'message': _('Password changed')
+        })
+
+    return return_json_data({
+        "status": False,
+        'message': _('Error in parameters')
+    })
