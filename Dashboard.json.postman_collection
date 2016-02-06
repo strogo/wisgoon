@@ -64,7 +64,9 @@
 				"0abaa31f-9445-c086-865e-a55b141172cc",
 				"f9bcf7e6-ad88-04a3-bfc8-1936cdf71111",
 				"02cbe6ae-b388-93e6-a238-2cc0e721627d",
-				"5d345e8e-8ea8-5633-2329-69558a322a76"
+				"5d345e8e-8ea8-5633-2329-69558a322a76",
+				"7a918a49-8316-7d7f-caa2-8022925be85a",
+				"7248fce4-2168-1043-57fb-7453c5ded964"
 			],
 			"owner": 0
 		}
@@ -298,6 +300,27 @@
 			"folder": "39fcf8ac-f1db-1283-08d4-c830270d8ca9"
 		},
 		{
+			"id": "7248fce4-2168-1043-57fb-7453c5ded964",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/user/details/1/?token=1234&q=googooli",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [],
+			"dataMode": "params",
+			"name": "Search User Details",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1454754058565,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "ef250837-d36d-a918-727a-baf1590cbe96"
+		},
+		{
 			"id": "7752e0cd-c6e9-6bf6-de6d-7e89120fff42",
 			"headers": "",
 			"url": "http://127.0.0.1:8000/dashboard/api/home/?token=1234",
@@ -317,6 +340,27 @@
 			"responses": []
 		},
 		{
+			"id": "7a918a49-8316-7d7f-caa2-8022925be85a",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/dashboard/api/user/details/1/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"data": [],
+			"dataMode": "params",
+			"name": " User Details",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1454748556943,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "ef250837-d36d-a918-727a-baf1590cbe96"
+		},
+		{
 			"id": "7d4b7664-5970-2eb2-d517-e6ba3a8b6934",
 			"headers": "",
 			"url": "http://127.0.0.1:8000/dashboard/api/post/user/1/?token=1234",
@@ -326,7 +370,7 @@
 			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
 			"data": [],
 			"dataMode": "params",
-			"name": "Post user",
+			"name": "Post user details",
 			"description": "",
 			"descriptionFormat": "html",
 			"time": 1454590220201,

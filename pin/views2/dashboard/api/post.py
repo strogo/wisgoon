@@ -90,7 +90,7 @@ def post_user_details(request, user_id):
         profile = Profile.objects.get(user_id=user_id)
     except:
         return return_not_found()
-    user['profie'] = get_profile_data(profile, user_id)
+    user['profile'] = get_profile_data(profile, user_id, enable_imei=True)
     user['cnt_deleted'] = cnt_post_deleted_by_user(user_id)
     user['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user_id)
     return return_json_data(user)
