@@ -7,14 +7,11 @@
 {% endblock extra_js %}
 
 {% block content %}
-<div class="container">
-    
-	<div id="feed" class="container mato20">
+<div id="feed" class="container mato20 mabo50">
     {% for item in notif %}
     {% include "pin2/__items_base_v6_notif.html"%}
     {% endfor %}
 
-	</div>
 </div>
 
 {% include "pin/pin_scripts.html" %}
