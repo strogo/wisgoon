@@ -437,8 +437,8 @@ def get_profile_data(profile, user_id, enable_imei=False):
     data['jens'] = profile.jens if profile.jens else '0'
     data['email'] = profile.user.email
     data['bio'] = profile.bio
-    data['date_joined'] = khayyam.JalaliDate\
-        .from_date(profile.user.date_joined).strftime("%Y/%m/%d")
+    data['date_joined'] = khayyam.JalaliDate(profile.user.date_joined)\
+        .strftime("%Y/%m/%d")
 
     if enable_imei:
         data['imei'] = ''
