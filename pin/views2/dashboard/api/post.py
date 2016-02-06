@@ -16,6 +16,7 @@ from user_profile.models import Profile
 
 
 def reported(request):
+    from django.db.models import Sum
     if not check_admin(request):
         return return_un_auth()
 
@@ -32,10 +33,14 @@ def reported(request):
         return return_not_found()
 
     for post in reported_posts:
+        reporter_ids = Report.objects.values_list('id', flat=True)\
+            .filter(post_id=post.id)
+        total_scores = Profile.objects.filter(user_id__in=reporter_ids)\
+            .aggregate(scores=Sum('score'))
+
         post_item = post_item_json(post)
         post_item['cnt_report'] = post.report
-        # post_item['user']['cnt_deleted'] = cnt_post_deleted_by_user(post.user.id)
-        # post_item['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(post.user.id)
+        post_item['total_scores'] = total_scores['scores']
         post_reporter_list.append(post_item)
 
     data['objects'] = post_reporter_list
@@ -50,17 +55,31 @@ def reported(request):
 def post_reporter_user(request, post_id):
     if not check_admin(request):
         return return_un_auth()
-    reporters = Report.objects.filter(post_id=post_id)
     user_list = []
     users = {}
-    score = 0
+    data = {}
+    limit = 5
+    token = request.GET.get('token', '')
+    before = int(request.GET.get("before", 0))
+    data['meta'] = {'limit': limit,
+                    'next': '',
+                    'total_count': ''}
+
+    reporters = Report.objects.filter(post_id=post_id)\
+        .order_by('-id')[before: before + limit]
+
     for reporter in reporters:
         users['reporter'] = get_simple_user_object(reporter.user.id)
         users['reporter']['score'] = reporter.user.profile.score
-        score += reporter.user.profile.score
         user_list.append(users)
-    users['reporter_scores'] = score
-    return return_json_data(users)
+
+    data['objects'] = users
+
+    data['meta']['next'] = get_next_url(url_name='dashboard-api-post-reporters',
+                                        before=before + limit, token=token,
+                                        url_args={'post_id': post_id})
+
+    return return_json_data(data)
 
 
 def post_user_details(request, user_id):
