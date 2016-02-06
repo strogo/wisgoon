@@ -910,13 +910,17 @@ def absuser(request, user_name=None):
     else:
         if request.user.id:
             follow_status = Follow.objects.filter(follower=request.user.id,
-                                                  following=user.id).count()
+                                                  following=user.id).exists()
+            following_status = Follow.objects.filter(following=request.user.id,
+                                                     follower=user.id).exists()
         else:
             follow_status = 0
+            following_status = 0
 
         return render(request, 'pin2/user.html', {
             'latest_items': latest_items,
             'follow_status': follow_status,
+            'following_status': following_status,
             'ban_by_admin': ban_by_admin,
             'user_id': int(user_id),
             'profile': profile,
