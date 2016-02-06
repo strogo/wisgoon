@@ -1281,7 +1281,22 @@ class Comments(models.Model):
         comment_act(comment.object_pk_id, comment.user_id, user_ip=comment.ip_address)
         if post.user_id == 11253:
             return
-        users = Comments.objects.filter(object_pk=post.id).values_list('user_id', flat=True)
+
+        mention = re.compile(ur'(?i)(?<=\@)\w+', re.UNICODE)
+        mentions = mention.findall(comment.comment)
+        if mentions:
+            for username in mentions:
+                try:
+                    u = User.objects.only('id').get(username=username)
+                except User.DoesNotExist:
+                    continue
+                if u.id != comment.user_id:
+                    send_notif_bar(user=u.id, type=2, post=post.id,
+                                   actor=comment.user_id)
+            return
+
+        users = Comments.objects.filter(object_pk=post.id)\
+            .values_list('user_id', flat=True)
         # for notif in Notif_mongo.objects.filter(type=2, post=post.id):
         for act in users:
             if act in actors_list:
