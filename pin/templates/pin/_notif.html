@@ -6,11 +6,13 @@
 {% spaceless %}
 {% for item in notif %}
 <div class="notif-item">
+	{% if item.type != 10 %}
 	<div class="notif-img pull-left">
 		<a class="pin-item-link" style="float:right" href="{% url "pin-item" item.id%}">
 			<img src="{{item.po.get_image_236.url }}" class="img img-circle" style="width:40px;height:40px;" />
 		</a>
 	</div>
+	{% endif %}
 
 	<div class="notif-actors col-md-2 col-sm-2 col-xs-2 pull-right">
 		<div>
@@ -29,7 +31,7 @@
 		{% elif item.type == 4 %}
 		<i class="icon-remove"></i>
 		{% elif item.type == 10 %}
-		<i class="icon-user"></i>
+		<i class="icon-user"></i> شما را دنبال می کند
 		{% endif %}
 	</div>
 	{% if offset %}

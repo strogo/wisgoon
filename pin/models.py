@@ -85,6 +85,7 @@ class CommentClassification(models.Model):
 class SubCategory(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/scategory/')
+    image_device = models.ImageField(default='', upload_to='pin/scategory/')
 
     def __unicode__(self):
         return self.title
@@ -92,7 +93,11 @@ class SubCategory(models.Model):
     def admin_image(self):
         return '<img src="/media/%s" />' % self.image
 
+    def admin_image_device(self):
+        return '<img src="/media/%s" />' % self.image_device
+
     admin_image.allow_tags = True
+    admin_image_device.allow_tags = True
 
 
 class Ad(models.Model):
@@ -935,10 +940,13 @@ class Follow(models.Model):
             # print "new follow"
             # print cls, sender, instance, args, kwargs
             # print "instance follow:", instance.follower.id
-            Notif_mongo.objects.create(owner=instance.following.id, type=10,
-                                       last_actor=instance.follower.id,
-                                       date=datetime.now,
-                                       seen=False)
+            # Notif_mongo.objects.create(owner=instance.following.id, type=10,
+            #                            last_actor=instance.follower.id,
+            #                            date=datetime.now,
+            #                            seen=False)
+            from pin.actions import send_notif_bar
+            send_notif_bar(user=instance.following.id, type=10, post=None,
+                           actor=instance.follower.id)
             MonthlyStats.log_hit(MonthlyStats.FOLLOW)
             FollowUser.get_or_create(instance.follower, instance.following, "follow")
 

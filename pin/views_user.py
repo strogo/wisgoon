@@ -272,12 +272,13 @@ def delete(request, item_id):
 
 @login_required
 def nop(request, item_id):
+    """Image has no problem."""
     try:
         post = Post.objects.get(pk=item_id)
         if request.user.is_superuser:
             post.report = 0
             post.save()
-            porn_feedback.delay(post_image=post.get_image_236()['url'])
+            porn_feedback.delay(post_image=post.get_image_500()['url'])
             if request.is_ajax():
                 return HttpResponse('1')
             return HttpResponseRedirect('/')
@@ -551,7 +552,7 @@ def upload(request):
 def show_notify(request):
     # NotifCount.objects.filter(owner=request.user.id).update(set__unread=0)
     NotificationRedis(user_id=request.user.id).clear_notif_count()
-    notif = Notif.objects.all().filter(owner=request.user.id).order_by('-date')[:20]
+    # notif = Notif.objects.all().filter(owner=request.user.id).order_by('-date')[:20]
     notif = NotificationRedis(user_id=request.user.id)\
         .get_notif()
     nl = []
@@ -563,7 +564,7 @@ def show_notify(request):
             if n.type == 4:
                 anl['po'] = n.post_image
             elif n.type == 10:
-                anl['po'] = n.last_actors
+                anl['po'] = n.last_actor
             else:
                 continue
         anl['id'] = n.post
@@ -580,14 +581,19 @@ def notif_user(request):
     offset = int(request.GET.get('older', 0))
 
     notifications = NotificationRedis(user_id=request.user.id)\
-        .get_notif(start=offset + 1)
+        .get_notif(start=offset)
     nl = []
     for notif in notifications:
         anl = {}
         try:
             anl['po'] = Post.objects.only('image').get(pk=notif.post)
         except Post.DoesNotExist:
-            continue
+            if notif.type == 4:
+                anl['po'] = notif.post_image
+            elif notif.type == 10:
+                anl['po'] = notif.last_actor
+            else:
+                continue
         anl['id'] = notif.post
         anl['type'] = notif.type
         anl['actor'] = notif.last_actor

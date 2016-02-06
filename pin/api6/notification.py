@@ -5,7 +5,7 @@ from pin.tools import AuthCache
 from pin.model_mongo import NotifCount, Notif
 from pin.models_redis import NotificationRedis
 from pin.api6.tools import get_list_post, get_objects_list, get_simple_user_object,\
-    get_next_url
+    get_next_url, post_item_json
 
 
 def notif_count(request):
@@ -25,7 +25,7 @@ def notif_count(request):
 
 
 def notif(request):
-
+    """List of user notification."""
     data = {}
     token = request.GET.get('token', False)
     offset = int(request.GET.get('offset', 0))
@@ -56,53 +56,42 @@ def notif(request):
 
     for notif in notifs:
         data_extra = {}
+        data_extra['id'] = str(notif.id)
+        data_extra['actor'] = get_simple_user_object(notif.last_actor, current_user)
+        data_extra['owner'] = get_simple_user_object(notif.owner)
+
+        if isinstance(notif.date, int):
+            data_extra['date'] = int(notif.date)
+        else:
+            data_extra['date'] = int(notif.date.strftime("%s"))
+
         if notif.type == Notif.LIKE:
-            data_extra['actor'] = get_simple_user_object(notif.last_actor)
-            data_extra['owner'] = get_simple_user_object(notif.owner)
-            data_extra['date'] = notif.date.strftime("%s")
             data_extra['text'] = "تصویر شمارا پسندید."
             try:
-                posts = get_list_post([notif.post])
-                post_object = get_objects_list(posts, cur_user_id=current_user, r=request)[0]
-            except IndexError:
+                post_object = post_item_json(notif.post, current_user, request)
+            except:
                 post_object = {}
             data_extra['post'] = post_object
             data_extra['type'] = Notif.LIKE
-            data_extra['id'] = str(notif.id)
-            notifs_list.append(data_extra)
 
         elif notif.type == Notif.FOLLOW:
-            data_extra['actor'] = get_simple_user_object(notif.last_actor, current_user)
-            data_extra['owner'] = get_simple_user_object(notif.owner)
             data_extra['type'] = Notif.FOLLOW
-            data_extra['id'] = str(notif.id)
             data_extra['text'] = "شما را دنبال می کند."
-            data_extra['date'] = notif.date.strftime("%s")
-            notifs_list.append(data_extra)
 
         elif notif.type == Notif.COMMENT:
-            data_extra['actor'] = get_simple_user_object(notif.last_actor)
-            data_extra['owner'] = get_simple_user_object(notif.owner)
-            data_extra['id'] = str(notif.id)
             data_extra['type'] = Notif.COMMENT
             data_extra['text'] = "برای تصویر شما نظر داد"
-            data_extra['date'] = notif.date.strftime("%s")
             try:
-                posts = get_list_post([notif.post])
-                post_object = get_objects_list(posts, cur_user_id=current_user, r=request)[0]
+                post_object = post_item_json(notif.post, current_user, request)
             except IndexError:
                 post_object = {}
             data_extra['post'] = post_object
-            notifs_list.append(data_extra)
 
         else:
-            data_extra['actor'] = get_simple_user_object(notif.last_actor)
-            data_extra['owner'] = get_simple_user_object(notif.owner)
             data_extra['type'] = Notif.DELETE_POST
-            data_extra['id'] = str(notif.id)
             data_extra['post_image'] = media_abs_url(notif.post_image)
-            data_extra['date'] = notif.date.strftime("%s")
-            notifs_list.append(data_extra)
+
+        notifs_list.append(data_extra)
 
     data['objects'] = notifs_list
 

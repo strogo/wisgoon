@@ -39,8 +39,8 @@ class NotificationRedis(object):
         self.KEY_PREFIX_CNT = self.KEY_PREFIX_CNT.format(user_id)
 
     def set_notif(self, ntype, post, actor, seen=False, post_image=None):
-        notif_str = "{}:{}:{}:{}:{}"\
-            .format(ntype, post, actor, seen, post_image)
+        notif_str = "{}:{}:{}:{}:{}:{}"\
+            .format(ntype, post, actor, seen, post_image, int(time.time()))
 
         np = notificationRedis.pipeline()
         np.lpush(self.KEY_PREFIX, notif_str)
@@ -55,14 +55,26 @@ class NotificationRedis(object):
         for nl in nlist:
             o = {}
             ssplited = nl.split(":")
-            o['id'] = eval("{}{}{}".format(ssplited[0], ssplited[1], ssplited[2]))
+            post_id = eval(ssplited[1])
+            notif_type = eval(ssplited[0])
+            if notif_type == 4:
+                continue
+            if not post_id:
+                post_id = 0
+            if post_id > 0:
+                o['id'] = eval("{}{}{}".format(post_id, ssplited[2], ssplited[0]))
+            else:
+                o['id'] = eval("{}{}".format(ssplited[2], ssplited[0]))
             o['type'] = eval(ssplited[0])
             o['post'] = eval(ssplited[1])
             o['last_actor'] = eval(ssplited[2])
             o['seen'] = eval(ssplited[3])
             o['post_image'] = eval(ssplited[4])
             o['owner'] = self.user_id
-            o['date'] = datetime.datetime.now()
+            try:
+                o['date'] = eval(ssplited[5])
+            except:
+                o['date'] = datetime.datetime.now()
             nobjesct.append(NotifStruct(**o))
 
         return nobjesct
@@ -91,20 +103,22 @@ class ActivityRedis(object):
 
     def get_activity(self):
         from pin.api6.tools import post_item_json, get_simple_user_object
-        act_data = activityServer.lrange(self.KEY_PREFIX_LIST, 0, -1)
+        act_data = activityServer.lrange(self.KEY_PREFIX_LIST, 0, 50)
         jdata = []
         for actd in act_data:
-            act_type, actor, object_id = actd.split(":")
-            o = {}
-            o['object'] = post_item_json(int(object_id), self.USER_ID)
-            o['actor'] = get_simple_user_object(int(actor))
-            o['act_type'] = int(act_type)
-            jdata.append(o)
+            try:
+                act_type, actor, object_id = actd.split(":")
+                o = {}
+                o['object'] = post_item_json(int(object_id), self.USER_ID)
+                o['actor'] = get_simple_user_object(int(actor))
+                o['act_type'] = int(act_type)
+                jdata.append(o)
+            except:
+                pass
         return jdata
 
     @classmethod
     def push_to_activity(cls, act_type, who, post_id):
-        return 
         from pin.models import Follow
         flist = Follow.objects.filter(following_id=who)\
             .values_list('follower_id', flat=True)
@@ -121,7 +135,7 @@ class LikesRedis(object):
     KEY_PREFIX_SET = "p:l:"
     KEY_PREFIX_LIST = "l:l:"
     KEY_LEADERBORD = "-".join(str(JalaliDate.today()).split("-")[:2])
-    KEY_LEADERBORD_GROUPS = "%s-{}" % KEY_LEADERBORD 
+    KEY_LEADERBORD_GROUPS = "%s-{}" % KEY_LEADERBORD
 
     postId = 0
     postOwner = 0
@@ -218,7 +232,10 @@ class LikesRedis(object):
 
         else:
             from pin.tasks import activity
-            activity.delay(act_type=1, who=user_id, post_id=self.postId)
+            if settings.DEBUG:
+                activity(act_type=1, who=user_id, post_id=self.postId)
+            else:
+                activity.delay(act_type=1, who=user_id, post_id=self.postId)
 
             self.like(user_id=user_id, post_owner=post_owner, user_ip=user_ip)
 
@@ -227,7 +244,7 @@ class LikesRedis(object):
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
             liked = True
             disliked = False
-        
+
         lbs.execute()
 
         return liked, disliked, self.cntlike()

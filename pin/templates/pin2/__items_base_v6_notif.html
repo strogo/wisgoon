@@ -1,0 +1,145 @@
+{% load daddy_avatar %}
+{% load pin_tags %}
+
+<div class="feed-item masonry-brick activity_box">
+	<div class="avatar-box actor">
+		<div class="avatar post-avatar">
+			<a href="{% url 'pin-absuser' item.actor.username %}">
+				<img src="{{item.actor.avatar}}" style="display: inline;" > 
+			</a>
+		</div>
+
+
+		<div class="username">
+			<a href="{% url 'pin-absuser' item.actor.username %}" data-toggle="tooltip" data-placement="bottom" title="{{item.actor.username}}">
+				{{item.actor.username|truncatechars:"18"}}
+			</a>
+			<div class="pore">
+			{% if item.act_type == 1 %}
+			<i class="fa fa-heart"></i> این تصویر را پسندید
+			{% elif item.act_type == 2 %}
+			در مورد این عکس نظر داد
+			{% endif %}
+			</div>
+		</div>	
+
+	</div>
+
+
+	<div class="img-content">
+		<a class="pin-item-link" href="{% url 'pin-item' item.object.id%}{% if related %}?from={{post.id}}{%endif%}">
+			<img src="{{ item.object.images.thumbnail.url }}" width="236" height="{{ item.object.images.thumbnail.height }}" alt="{{item.object.text|remove_newlines|truncatewords:35}}">
+		</a>
+
+	</div>
+
+	
+	<div class="clearfix"></div>
+
+	<div class="post-action">
+		<div class="btn-box likes {% if item.object.like_with_user %} user-liked {% endif %} {% if user.is_superuser %}col-sm-4{% else %}col-sm-6{% endif %}">
+			{% if user.is_authenticated %}
+			<a href="{% url 'pin-item-like' item.object.id %}" class="btn_like">
+				<span class="count">{{item.object.cnt_like|pn}}</span>
+				<span class="like_icon"></span>
+			</a>
+			{% else %}
+			<a href="javascript:;" class="login_required">
+				<span class="count">{{item.object.cnt_like|pn}}</span>
+				<span class="like_icon"></span>
+			</a>
+			{% endif %}
+
+		</div>
+		<div class="btn-box {% if user.is_superuser %}col-sm-4{% else %}col-sm-6{% endif %} comment">
+			<a href="{% url 'pin-item' item.object.id%}{% if related %}?from={{post.id}}{%endif%}">
+				<span class="cnt-like">{{item.object.cnt_comment|pn}}</span>
+				<span class="cmnt_icon"></span>
+			</a>
+		</div>
+
+		{% if user.is_superuser %}
+		<div class="col-sm-2">
+			{% if item.object.show_in_default %}
+
+			<a href="{% url 'pin-item-goto-index' item.object.id 0%}" class="item-to-index pa10 user-action-btn" data-toggle="tooltip" data-placement="bottom" title="حذف از صفحه اول">
+				<i class="fa fa-times red"></i>
+			</a>
+			{% else %}
+			<a href="{% url 'pin-item-goto-index' item.object.id 1%}" class="item-to-index pa10 f-black user-action-btn" data-toggle="tooltip" data-placement="bottom" title="ارسال به صفحه اول"> 
+				<i class="fa fa-check green"></i>
+			</a>
+			{% endif %}
+		</div>
+		<div class="col-sm-2">
+			<a href="{% url 'pin-item-delete' item.object.id%}" class="delpost user-action-btn" data-toggle="tooltip" data-placement="bottom" title="حذف تصویر">
+				<i class="fa fa-trash red"></i>
+			</a>
+		</div>
+		{% endif %}
+		<div class="clearfix"></div>
+
+	</div>
+
+	<div class="clearfix"></div>
+	{% if item.object.text.strip|length > 0 %}
+	<div class="description">
+		<p>{{item.object.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:30}}</p>
+	</div>
+	{% endif %}
+
+	{% if item.object.tags %}
+	<div class="tags">
+		{% for t in item.object.tags %}
+		<a href="{{t.permalink.web}}">#{{t.title}}</a>
+		{% endfor %}
+	</div>
+	{% endif %}
+
+	<div class="clear"></div>
+	<div class="avatar-box">
+		<div class="avatar post-avatar">
+			<a href="{% url 'pin-absuser' item.object.user.username %}">
+				<img src="{{item.object.user.avatar}}" style="display: inline;" > 
+			</a>
+		</div>
+		<span class=''>
+			
+		</span>
+
+		{% if user.is_authenticated %}
+		<div class="dropdown three-dot">
+			<a class="dropdown-toggle dl" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<img src="{{MEDIA_URL}}v2/images/3dot.png" alt="">
+			</a>
+			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+				<li>
+					<a href="{% url "pin-save-as-ads" item.object.id %}">ویژه کردن عکس <i class="fa fa-bullhorn"></i></a>
+				</li>
+
+				{% if user.id == item.object.user.id or user.is_superuser %}
+				<li>
+					<a href="{% url 'pin-item-edit' item.object.id %}" class="" data-toggle="modal" data-target="#postModal"> 
+						ویرایش <i class="fa fa-pencil"></i>
+					</a>
+				</li>
+
+				<li><a href="{% url 'pin-item-delete' item.object.id%}" class=" delpost user-action-btn" title="حذف تصویر">حذف <i class="fa fa-trash-o"></i></a></li>
+				{% endif %}
+
+				<li>
+					<a class="report-btn" alt="{{user.id}}/{{item.object.user.id}}" href="{% url "report_pin" item.object.id%}"> گزارش تخلف <i class="fa fa-exclamation-triangle"></i> </a>
+				</li>
+			</ul>
+		</div>
+		{% endif %}
+
+
+		<div class="username">
+			<a href="{% url 'pin-absuser' item.object.user.username %}" data-toggle="tooltip" data-placement="bottom" title="{{item.object.user.username}}">
+				{{item.object.user.username|truncatechars:"18"}}
+			</a>
+		</div>	
+
+	</div>
+</div>

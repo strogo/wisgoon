@@ -8,20 +8,14 @@
 
 {% block content %}
 <div class="container">
-    <div id="profile" class="row row-fluid">
-       <div id="feed" class="container mato20">
-        {% for item in notif %}
-        {% include "pin2/__items_base_v6_notif.html"%}
-        {% endfor %}
-    </div>
+    
+	<div id="feed" class="container mato20">
+    {% for item in notif %}
+    {% include "pin2/__items_base_v6_notif.html"%}
+    {% endfor %}
+
+	</div>
 </div>
-</div>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 
 {% include "pin/pin_scripts.html" %}
 

@@ -219,7 +219,7 @@ def post_item_json(post, cur_user_id=None, r=None):
 
     pi = {}  # post item
 
-    pi ['cache'] = "Miss"
+    pi['cache'] = "Miss"
     pi['id'] = post.id
     pi['text'] = post.text
     pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
@@ -298,6 +298,98 @@ def post_item_json(post, cur_user_id=None, r=None):
     return pi
 
 
+def post_item_json_flat(post, cur_user_id=None, r=None):
+    if isinstance(post, int):
+        post = Post.objects.get(id=post)
+
+    cp = PostCacheLayer(post_id=post.id)
+    cache_post = cp.get()
+    if cache_post:
+        if cur_user_id:
+            cache_post['like_with_user'] = LikesRedis(post_id=post.id)\
+                .user_liked(user_id=cur_user_id)
+        # print "get post data item json from cache"
+        cache_post['cache'] = "Hit"
+        del cache_post['last_likers']
+        del cache_post['last_comments']
+        del cache_post['tags']
+        return cache_post
+
+    pi = {}  # post item
+
+    pi['cache'] = "Miss"
+    pi['id'] = post.id
+    pi['text'] = post.text
+    pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
+    pi['timestamp'] = post.timestamp
+    pi['show_in_default'] = post.show_in_default
+
+    pi['user'] = get_simple_user_object(post.user_id)
+
+    try:
+        pi['url'] = post.url
+    except Exception, e:
+        print str(e)
+        if r:
+            print r.get_full_path()
+        pi['url'] = None
+    pi['cnt_like'] = post.cnt_like
+    pi['like_with_user'] = False
+    pi['status'] = post.status
+
+    try:
+        pi['is_ad'] = False  # post.is_ad
+    except Exception, e:
+        # print str(e)
+        pi['is_ad'] = False
+
+    pi['permalink'] = {}
+
+    pi['permalink']['api'] = abs_url(reverse("api-6-post-item",
+                                     kwargs={"item_id": post.id}))
+
+    pi['permalink']['web'] = abs_url(reverse("pin-item",
+                                     kwargs={"item_id": post.id}),
+                                     api=False)
+
+    if cur_user_id:
+        pi['like_with_user'] = LikesRedis(post_id=post.id)\
+            .user_liked(user_id=cur_user_id)
+
+    pi['images'] = {}
+    try:
+        p_500 = post.get_image_500(api=True)
+
+        p_500['url'] = media_abs_url(p_500['url'], check_photos=True)
+        p_500['height'] = int(p_500['hw'].split("x")[0])
+        p_500['width'] = int(p_500['hw'].split("x")[1])
+
+        del(p_500['hw'])
+        del(p_500['h'])
+
+        pi['images']['low_resolution'] = p_500
+
+        p_236 = post.get_image_236(api=True)
+
+        p_236['url'] = media_abs_url(p_236['url'], check_photos=True)
+        p_236['height'] = int(p_236['hw'].split("x")[0])
+        p_236['width'] = int(p_236['hw'].split("x")[1])
+        del(p_236['hw'])
+        del(p_236['h'])
+
+        pi['images']['thumbnail'] = p_236
+
+        p_original = post.get_image_sizes()
+        pi['images']['original'] = p_original
+        pi['images']['original']['url'] = media_abs_url(post.image, check_photos=True)
+    except Exception as e:
+        print str(e)
+
+    pi['category'] = category_get_json(cat_id=post.category_id)
+
+    return pi
+
+
 def get_objects_list(posts, cur_user_id=None, r=None):
 
     objects_list = []
@@ -317,7 +409,7 @@ def get_objects_list(posts, cur_user_id=None, r=None):
     return objects_list
 
 
-def get_profile_data(profile, user_id):
+def get_profile_data(profile, user_id, enable_imei=False):
     update_follower_following(profile, user_id)
     data = {}
     data['name'] = profile.name
@@ -333,6 +425,10 @@ def get_profile_data(profile, user_id):
     data['cnt_follower'] = profile.cnt_follower
     data['cnt_following'] = profile.cnt_following
     data['banned'] = profile.banned
+    if profile.cover:
+        data['cover'] = media_abs_url(profile.cover.url, check_photos=True)
+    else:
+        data['cover'] = ""
     if profile.banned:
         data['userBanne_profile'] = 1
     else:
@@ -340,40 +436,40 @@ def get_profile_data(profile, user_id):
     data['score'] = profile.score
     data['jens'] = profile.jens if profile.jens else '0'
     data['email'] = profile.user.email
+    data['bio'] = profile.bio
     date_joined = profile.user.date_joined
-    data['date_joined'] = khayyam.JalaliDate.from_date(date_joined).strftime("%Y/%m/%d")
+    data['date_joined'] = khayyam.JalaliDate(date_joined).strftime("%Y/%m/%d")
 
-    data['imei'] = ''
-
-    try:
-        imei = profile.user.phone.imei
-    except:
-        imei = None
-
-    if imei:
-        data['imei'] = str(imei)
-        data['users_imei'] = get_user_with_imei(imei)
-        if not profile.user.is_active:
-            try:
-                banned = BannedImei.objects.get(imei=imei)
-                data['description'] = str(banned.description)
-                data['imei_status'] = 0
-            except:
-                data['description'] = ""
-                data['imei_status'] = ""
-        else:
-            data['description'] = ""
-            data['imei_status'] = 1
-    else:
+    if enable_imei:
         data['imei'] = ''
-        data['users_imei'] = []
-        log = Log.objects.filter(object_id=profile.user.id, content_type=Log.USER).order_by('-id')[:1]
-        if log:
-            data['description'] = str(log[0].text)
-        else:
-            data['description'] = ""
-        data['imei_status'] = 0
+        try:
+            imei = profile.user.phone.imei
+        except:
+            imei = None
 
+        if imei:
+            data['imei'] = str(imei)
+            data['users_imei'] = get_user_with_imei(imei)
+            if not profile.user.is_active:
+                try:
+                    banned = BannedImei.objects.get(imei=imei)
+                    data['description'] = str(banned.description)
+                    data['imei_status'] = 0
+                except:
+                    data['description'] = ""
+                    data['imei_status'] = ""
+            else:
+                data['description'] = ""
+                data['imei_status'] = 1
+        else:
+            data['imei'] = ''
+            data['users_imei'] = []
+            log = Log.objects.filter(object_id=profile.user.id, content_type=Log.USER).order_by('-id')[:1]
+            if log:
+                data['description'] = str(log[0].text)
+            else:
+                data['description'] = ""
+            data['imei_status'] = 0
 
     return data
 

@@ -2,6 +2,7 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns('pin.api6.auth',
                        url(r'auth/register/$', 'register', name='api-6-auth-register'),
+                       url(r'auth/password/change/$', 'password_change', name='api-6-auth-password-change'),
                        url(r'auth/login/$', 'login', name='api-6-auth-login'),
                        url(r'auth/logout/$', 'logout', name='api-6-auth-logout'),
                        url(r'auth/follow/$', 'follow', name='api-6-auth-follow'),
