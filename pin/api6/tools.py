@@ -462,7 +462,6 @@ def get_profile_data(profile, user_id):
     #         else:
     #             data['description'] = ""
     #         data['imei_status'] = 0
-
     return data
 
 
