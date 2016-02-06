@@ -2,10 +2,10 @@ from django.views.decorators.csrf import csrf_exempt
 
 from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
-from pin.api6.tools import (get_next_url, get_profile_data,
-                            get_simple_user_object,
+from pin.api6.tools import (get_next_url, get_simple_user_object,
                             post_item_json)
 from pin.models import Post, Report
+from pin.views2.dashboard.api.tools import get_profile_data
 from pin.views2.dashboard.api.tools import (ads_group_by, calculate_post_percent,
                                             check_admin, cnt_post_deleted_by_admin,
                                             cnt_post_deleted_by_user,
@@ -90,7 +90,7 @@ def post_user_details(request, user_id):
         profile = Profile.objects.get(user_id=user_id)
     except:
         return return_not_found()
-    user['profile'] = get_profile_data(profile, user_id, enable_imei=True)
+    user['profile'] = get_profile_data(profile, enable_imei=True)
     user['cnt_deleted'] = cnt_post_deleted_by_user(user_id)
     user['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user_id)
     return return_json_data(user)

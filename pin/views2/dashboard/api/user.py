@@ -1,20 +1,22 @@
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 
 from haystack.query import SearchQuerySet
 
 from user_profile.models import Profile
 
-from django.views.decorators.csrf import csrf_exempt
-
-from pin.api6.tools import get_next_url, get_simple_user_object, get_profile_data
+from pin.tools import get_user_ip
+from pin.api_tools import media_abs_url
+from pin.models import PhoneData, BannedImei, Log
+from pin.views2.dashboard.api.tools import get_profile_data
+from pin.api6.tools import get_next_url, get_simple_user_object
 from pin.api6.http import return_json_data, return_un_auth, return_not_found,\
     return_bad_request
 from pin.views2.dashboard.api.tools import check_admin, cnt_post_deleted_by_user,\
     cnt_post_deleted_by_admin
-from pin.models import PhoneData, BannedImei, Log
-from pin.tools import get_user_ip
-from pin.api_tools import media_abs_url
+
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
+
 
 def search_user(request):
     if not check_admin(request):
@@ -58,7 +60,7 @@ def user_details(request, user_id):
     except:
         return return_not_found()
 
-    details['profile'] = get_profile_data(user.profile, user.id, enable_imei=True)
+    details['profile'] = get_profile_data(user.profile, enable_imei=True)
     details['cnt_deleted'] = cnt_post_deleted_by_user(user.id)
     details['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
 
@@ -100,7 +102,7 @@ def change_status_user(request):
         user.save()
         data = {'status': True, 'message': message}
         data['user'] = get_simple_user_object(user.id)
-        data['profile'] = get_profile_data(user.profile, user.id)
+        data['profile'] = get_profile_data(user.profile)
         return return_json_data(data)
     else:
         return return_bad_request()
@@ -136,7 +138,7 @@ def banned_profile(request):
                              ip_address=get_user_ip(request))
         data = {'status': True, 'message': "Successfully Change Profile banned."}
         data['user'] = get_simple_user_object(profile.user.id)
-        data['profile'] = get_profile_data(profile, profile.user.id)
+        data['profile'] = get_profile_data(profile)
         data['profile']['description'] = description
         return return_json_data(data)
     else:
