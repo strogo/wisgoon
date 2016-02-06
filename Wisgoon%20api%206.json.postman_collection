@@ -49,7 +49,8 @@
 			"order": [
 				"35c37887-c2cc-9cd0-76f7-d3460cce0ea4",
 				"50b12226-2687-8167-cedb-e7b3b9d283fa",
-				"47aa8d68-4667-9129-a8fc-ac37381fc6b3"
+				"47aa8d68-4667-9129-a8fc-ac37381fc6b3",
+				"e909bd4e-eba0-32d4-0feb-26f6061565be"
 			],
 			"owner": 0,
 			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff"
@@ -1166,6 +1167,27 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"folder": "2e5113f4-5796-abf1-dfa6-aca170b51b44"
+		},
+		{
+			"id": "e909bd4e-eba0-32d4-0feb-26f6061565be",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/comment/report/6/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "64faee03-3311-d8c9-2a6a-7130ce4b455d",
+			"data": [],
+			"dataMode": "params",
+			"name": "Report",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1454775476959,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "71c89b9d-eac3-5c99-e054-75916805307e"
 		},
 		{
 			"id": "fbd44fac-8930-288b-9378-38b79134abf2",

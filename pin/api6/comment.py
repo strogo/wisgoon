@@ -86,3 +86,32 @@ def delete_comment(request, comment_id):
         data = {'status': False,
                 'message': _('Access Denied Comment')}
     return return_json_data(data)
+
+
+@csrf_exempt
+def report(request, comment_id):
+    token = request.GET.get('token', '')
+    if token:
+        current_user = AuthCache.id_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
+
+    if comment_id and Comments.objects.filter(pk=comment_id).exists():
+        Comments.objects.filter(pk=comment_id).update(reported=True)
+        data = {
+            'status': True,
+            'message': _('Comment reported'),
+            'comment_id': comment_id
+        }
+        return return_json_data(data)
+    else:
+        data = {
+            'status': False,
+            'message': _('Comment not exists'),
+            'comment_id': comment_id
+        }
+        return return_json_data(data)
+
+    return return_bad_request()
