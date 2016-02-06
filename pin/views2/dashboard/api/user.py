@@ -12,8 +12,9 @@ from pin.api6.http import return_json_data, return_un_auth, return_not_found,\
 from pin.views2.dashboard.api.tools import check_admin, cnt_post_deleted_by_user,\
     cnt_post_deleted_by_admin
 from pin.models import PhoneData, BannedImei, Log
-from pin.tools import get_user_ip, AuthCache
-
+from pin.tools import get_user_ip
+from pin.api_tools import media_abs_url
+from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
 def search_user(request):
     if not check_admin(request):
@@ -32,10 +33,9 @@ def search_user(request):
         user = profile.object.user
         details = {}
 
-        details['user'] = get_simple_user_object(user.id)
-        # details['profile'] = get_profile_data(user.profile, user.id)
-        # details['user']['cnt_deleted'] = cnt_post_deleted_by_user(user.id)
-        # details['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
+        details['username'] = user.username
+        details['avatar'] = media_abs_url(get_avatar(user.id, size=64))
+        details['id'] = user.id
         data['objects'].append(details)
 
         if data['objects']:
@@ -48,17 +48,22 @@ def search_user(request):
 def user_details(request, user_id):
     if not check_admin(request):
         return return_un_auth()
+
     details = {}
     data = {}
     data['meta'] = {'limit': 20, 'next': ""}
+
     try:
         user = User.objects.get(id=user_id)
     except:
         return return_not_found()
+
     details['profile'] = get_profile_data(user.profile, user.id)
     details['cnt_deleted'] = cnt_post_deleted_by_user(user.id)
     details['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
+
     data['objects'] = details
+
     return return_json_data(data)
 
 
@@ -73,13 +78,6 @@ def change_status_user(request):
         status = str(request.POST.get('activeStatus', False))
         desc = str(request.POST.get('description1', ""))
         user = User.objects.get(pk=user_id)
-        # token = request.GET.get('token', False)
-        # if token:
-        #     current_user = AuthCache.user_from_token(token=token)
-        #     if not current_user:
-        #         return return_un_auth()
-        # else:
-        #     return return_bad_request()
     except:
         return return_not_found()
 
@@ -118,13 +116,6 @@ def banned_profile(request):
         status = str(request.POST.get('profileBanstatus', False))
         description = str(request.POST.get('description2', ""))
         profile = Profile.objects.get(user_id=user_id)
-        # token = request.GET.get('token', False)
-        # if token:
-        #     current_user = AuthCache.user_from_token(token=token)
-        #     if not current_user:
-        #         return return_un_auth()
-        # else:
-        #     return return_bad_request()
     except:
         return return_not_found()
 
@@ -160,14 +151,6 @@ def banned_imei(request):
         status = str(request.POST.get('status', False))
         description = str(request.POST.get('description3', ""))
         imei = str(request.POST.get('imei', False))
-        # token = request.GET.get('token', False)
-        # if token:
-        #     current_user = AuthCache.user_from_token(token=token)
-        #     if not current_user:
-        #         return return_un_auth()
-        # else:
-        #     return return_bad_request()
-
         phone_date = PhoneData.objects.filter(imei=imei)
     except:
         return return_not_found()
@@ -216,46 +199,3 @@ def banned_imei(request):
                                      'message': "Successfully Change Profile banned."})
     else:
         return return_bad_request()
-
-
-# @csrf_exempt
-# def banned_user_by_imei(request):
-#     if not check_admin(request):
-#         return return_un_auth()
-#     try:
-#         json_data = ast.literal_eval(request.body)
-#         imei = str(json_data.get('imei'))
-#         status = str(json_data.get('status'))
-#         description = str(json_data.get('description'))
-#         user_id = str(json_data.get('user_id'))
-
-#         phone_date = PhoneData.objects.get(imei=imei, user_id=user_id)
-#     except:
-#         return return_not_found()
-
-#     try:
-#         user = User.objects.get(id=user_id)
-#     except:
-#         return return_not_found()
-
-#     if user_id and description and imei:
-#         if status == 'true':
-#             try:
-#                 banned = BannedImei.objects.get(imei=phone_date.imei, user=user)
-#                 banned.delete()
-#                 Log.active_user(user_id=request.user,
-#                                 owner=user.id,
-#                                 text=description,
-#                                 ip_address=get_user_ip(request))
-#                 # TO DO
-#                 # Log Un Banned
-#             except:
-#                 return return_not_found()
-#         else:
-#             BannedImei.objects.create(imei=phone_date.imei,
-#                                       description=description,
-#                                       user=user)
-#             user.is_active = False
-#             user.save()
-#             Log.ban_by_imei(actor=user, text=user.username,
-#                             ip_address=get_user_ip(request))
