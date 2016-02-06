@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wisgoon 6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-06 23:19+0330\n"
-"PO-Revision-Date: 2016-02-06 23:08+0330\n"
+"POT-Creation-Date: 2016-02-07 00:03+0330\n"
+"PO-Revision-Date: 2016-02-07 00:03+0330\n"
 "Last-Translator: vahid <vchakoshy@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: FA\n"
@@ -69,7 +69,7 @@ msgstr "خطا در ساخت کاربر"
 msgid "User created successfully"
 msgstr "کاربر با موفقیت ساخته شد"
 
-#: api6/auth.py:296 api6/comment.py:53
+#: api6/auth.py:296 api6/comment.py:54
 msgid "This User Has Blocked You"
 msgstr "این کاربر شما را بلاک کرده است"
 
@@ -85,33 +85,42 @@ msgstr "کلمه عبور صحیح نیست"
 msgid "Password changed"
 msgstr "رمز عبور تغییر کرد"
 
-#: api6/comment.py:48
+#: api6/comment.py:49
 msgid "Please Enter Your Comment"
 msgstr "نظر خود را وارد کنید"
 
-#: api6/comment.py:62
+#: api6/comment.py:63
 msgid "Unsuccessfully Create Comment."
 msgstr "ثبت کامنت ناموفق بود"
 
-#: api6/comment.py:83
+#: api6/comment.py:84
 msgid "Successfully Delete Comment"
 msgstr "کامنت حذف گردید"
 
-#: api6/comment.py:87
+#: api6/comment.py:88
 msgid "Access Denied Comment"
 msgstr ""
 
-#: api6/comment.py:105
+#: api6/comment.py:106
 msgid "Comment reported"
 msgstr "نظر گزارش شد"
 
-#: api6/comment.py:112
+#: api6/comment.py:113
 msgid "Comment not exists"
 msgstr "نظر وجود ندارد"
 
 #: api6/http.py:10
 msgid "Bad request"
 msgstr "خطا در درخواست"
+
+#: api6/http.py:20
+#, fuzzy
+msgid "Not found"
+msgstr "مطلب یافت نشد"
+
+#: api6/http.py:30
+msgid "authentication failed"
+msgstr "هویت سنجی ناموفق بود"
 
 #: api6/post.py:227
 msgid "Successfully Add Report."
