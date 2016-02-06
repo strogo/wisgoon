@@ -28,21 +28,37 @@ def search_user(request):
     profiles = SearchQuerySet().models(Profile)\
         .filter(content__contains=query)[before:before + 20]
 
-    print profiles
     for profile in profiles:
         user = profile.object.user
         details = {}
 
         details['user'] = get_simple_user_object(user.id)
-        details['profile'] = get_profile_data(user.profile, user.id)
-        details['user']['cnt_deleted'] = cnt_post_deleted_by_user(user.id)
-        details['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
+        # details['profile'] = get_profile_data(user.profile, user.id)
+        # details['user']['cnt_deleted'] = cnt_post_deleted_by_user(user.id)
+        # details['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
         data['objects'].append(details)
 
         if data['objects']:
             data['meta']['next'] = get_next_url(url_name='api-6-post-search',
                                                 token=token,
                                                 before=before + 20)
+    return return_json_data(data)
+
+
+def user_details(request, user_id):
+    if not check_admin(request):
+        return return_un_auth()
+    details = {}
+    data = {}
+    data['meta'] = {'limit': 20, 'next': ""}
+    try:
+        user = User.objects.get(id=user_id)
+    except:
+        return return_not_found()
+    details['profile'] = get_profile_data(user.profile, user.id)
+    details['cnt_deleted'] = cnt_post_deleted_by_user(user.id)
+    details['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
+    data['objects'] = details
     return return_json_data(data)
 
 
