@@ -1290,7 +1290,7 @@ class Comments(models.Model):
                     u = User.objects.only('id').get(username=username)
                 except User.DoesNotExist:
                     continue
-                if u.id != comment.user_id:
+                if u.id != comment.user_id and u.id != post.user_id:
                     send_notif_bar(user=u.id, type=2, post=post.id,
                                    actor=comment.user_id)
             return
