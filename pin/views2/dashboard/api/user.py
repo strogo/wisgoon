@@ -58,7 +58,7 @@ def user_details(request, user_id):
     except:
         return return_not_found()
 
-    details['profile'] = get_profile_data(user.profile, user.id)
+    details['profile'] = get_profile_data(user.profile, user.id, enable_imei=True)
     details['cnt_deleted'] = cnt_post_deleted_by_user(user.id)
     details['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
 
