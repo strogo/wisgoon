@@ -1,0 +1,159 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Wisgoon 6\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-02-06 23:19+0330\n"
+"PO-Revision-Date: 2016-02-06 23:08+0330\n"
+"Last-Translator: vahid <vchakoshy@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: FA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+
+#: models.py:263
+msgid "Text"
+msgstr "متن"
+
+#: api6/auth.py:124
+msgid "User followed"
+msgstr "کاربر دنبال شد"
+
+#: api6/auth.py:154
+msgid "User unfollowed"
+msgstr "کاربر دنبال نمی شود"
+
+#: api6/auth.py:170 api6/auth.py:218
+msgid "Application token problem"
+msgstr ""
+
+#: api6/auth.py:184
+msgid "Login successfully"
+msgstr "با موفقیت وارد شدید"
+
+#: api6/auth.py:196
+msgid "User is not active"
+msgstr "کاربر فعال نمی باشد"
+
+#: api6/auth.py:202
+msgid "Username or password not valid"
+msgstr "نام کاربری یا کلمه عبور معتبر نمی باشد"
+
+#: api6/auth.py:225 api6/auth.py:459 api6/auth.py:491
+msgid "Error in parameters"
+msgstr "خطا در پارامترهای ارسالی"
+
+#: api6/auth.py:232
+msgid "Username bad characters"
+msgstr "نام کاربری حاوی کاراکترهای غیر مجاز است"
+
+#: api6/auth.py:240
+msgid "Username already exists"
+msgstr "نام کاربری وجود دارد"
+
+#: api6/auth.py:248
+msgid "Email already exists"
+msgstr "ایمیل وجود دارد"
+
+#: api6/auth.py:259 api6/auth.py:272
+msgid "Error in user creation"
+msgstr "خطا در ساخت کاربر"
+
+#: api6/auth.py:266
+msgid "User created successfully"
+msgstr "کاربر با موفقیت ساخته شد"
+
+#: api6/auth.py:296 api6/comment.py:53
+msgid "This User Has Blocked You"
+msgstr "این کاربر شما را بلاک کرده است"
+
+#: api6/auth.py:465 api6/auth.py:473
+msgid "password dismatched"
+msgstr "پسورد ها مشابه نیستند"
+
+#: api6/auth.py:478
+msgid "Incorrect password."
+msgstr "کلمه عبور صحیح نیست"
+
+#: api6/auth.py:486
+msgid "Password changed"
+msgstr "رمز عبور تغییر کرد"
+
+#: api6/comment.py:48
+msgid "Please Enter Your Comment"
+msgstr "نظر خود را وارد کنید"
+
+#: api6/comment.py:62
+msgid "Unsuccessfully Create Comment."
+msgstr "ثبت کامنت ناموفق بود"
+
+#: api6/comment.py:83
+msgid "Successfully Delete Comment"
+msgstr "کامنت حذف گردید"
+
+#: api6/comment.py:87
+msgid "Access Denied Comment"
+msgstr ""
+
+#: api6/comment.py:105
+msgid "Comment reported"
+msgstr "نظر گزارش شد"
+
+#: api6/comment.py:112
+msgid "Comment not exists"
+msgstr "نظر وجود ندارد"
+
+#: api6/http.py:10
+msgid "Bad request"
+msgstr "خطا در درخواست"
+
+#: api6/post.py:227
+msgid "Successfully Add Report."
+msgstr "گزارش با موفقیت ثبت شد"
+
+#: api6/post.py:230
+msgid "Your Report Already Exists."
+msgstr "قبلا گزارش شده"
+
+#: api6/post.py:273
+msgid "Successfully Updated"
+msgstr "با موفقیت به روزرسانی شد"
+
+#: api6/post.py:280
+msgid "Access Denied"
+msgstr "عدم وجود دسترسی"
+
+#: api6/post.py:306
+msgid "Post Not Found"
+msgstr "مطلب یافت نشد"
+
+#: api6/post.py:310
+msgid "Your article has been sent."
+msgstr ""
+
+#: api6/post.py:312
+msgid ""
+"Your article has been sent and displayed on the site after confirmation "
+msgstr ""
+
+#: api6/post.py:455
+msgid "token error"
+msgstr "خطا در توکن"
+
+#: api6/post.py:465
+msgid "post deleted"
+msgstr "مطلب حذف گردید"
+
+#: api6/post.py:470
+msgid "post not exists or not yours"
+msgstr "مطلب وجود ندارد و یا متعلق به شما نیست"
+
+#: api6/tools.py:116
+msgid "Successfully Send Post"
+msgstr "مطلب با موفقیت ارسال شد"

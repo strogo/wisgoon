@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
+# from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext as _
 
 from pin.tools import AuthCache
