@@ -409,7 +409,7 @@ def get_objects_list(posts, cur_user_id=None, r=None):
     return objects_list
 
 
-def get_profile_data(profile, user_id, enable_imei=False):
+def get_profile_data(profile, user_id):
     update_follower_following(profile, user_id)
     data = {}
     data['name'] = profile.name
@@ -417,10 +417,6 @@ def get_profile_data(profile, user_id, enable_imei=False):
     data['cnt_post'] = profile.cnt_post
     data['cnt_like'] = profile.cnt_like
     data['is_active'] = profile.user.is_active
-    if profile.user.is_active:
-        data['user_active'] = 1
-    else:
-        data['user_active'] = 0
     data['credit'] = profile.credit
     data['cnt_follower'] = profile.cnt_follower
     data['cnt_following'] = profile.cnt_following
@@ -429,10 +425,6 @@ def get_profile_data(profile, user_id, enable_imei=False):
         data['cover'] = media_abs_url(profile.cover.url, check_photos=True)
     else:
         data['cover'] = ""
-    if profile.banned:
-        data['userBanne_profile'] = 1
-    else:
-        data['userBanne_profile'] = 0
     data['score'] = profile.score
     data['jens'] = profile.jens if profile.jens else '0'
     data['email'] = profile.user.email
@@ -440,37 +432,36 @@ def get_profile_data(profile, user_id, enable_imei=False):
     data['date_joined'] = khayyam.JalaliDate(profile.user.date_joined)\
         .strftime("%Y/%m/%d")
 
-    if enable_imei:
-        data['imei'] = ''
-        try:
-            imei = profile.user.phone.imei
-        except:
-            imei = None
+    # if enable_imei:
+    #     data['imei'] = ''
+    #     try:
+    #         imei = profile.user.phone.imei
+    #     except:
+    #         imei = None
 
-        if imei:
-            data['imei'] = str(imei)
-            data['users_imei'] = get_user_with_imei(imei)
-            if not profile.user.is_active:
-                try:
-                    banned = BannedImei.objects.get(imei=imei)
-                    data['description'] = str(banned.description)
-                    data['imei_status'] = 0
-                except:
-                    data['description'] = ""
-                    data['imei_status'] = ""
-            else:
-                data['description'] = ""
-                data['imei_status'] = 1
-        else:
-            data['imei'] = ''
-            data['users_imei'] = []
-            log = Log.objects.filter(object_id=profile.user.id, content_type=Log.USER).order_by('-id')[:1]
-            if log:
-                data['description'] = str(log[0].text)
-            else:
-                data['description'] = ""
-            data['imei_status'] = 0
-
+    #     if imei:
+    #         data['imei'] = str(imei)
+    #         data['users_imei'] = get_user_with_imei(imei)
+    #         if not profile.user.is_active:
+    #             try:
+    #                 banned = BannedImei.objects.get(imei=imei)
+    #                 data['description'] = str(banned.description)
+    #                 data['imei_status'] = 0
+    #             except:
+    #                 data['description'] = ""
+    #                 data['imei_status'] = ""
+    #         else:
+    #             data['description'] = ""
+    #             data['imei_status'] = 1
+    #     else:
+    #         data['imei'] = ''
+    #         data['users_imei'] = []
+    #         log = Log.objects.filter(object_id=profile.user.id, content_type=Log.USER).order_by('-id')[:1]
+    #         if log:
+    #             data['description'] = str(log[0].text)
+    #         else:
+    #             data['description'] = ""
+    #         data['imei_status'] = 0
     return data
 
 

@@ -1,14 +1,15 @@
 import datetime
+import khayyam
 
 from django.db.models import Count
-
-from pin.model_mongo import MonthlyStats
-from pin.models import Report, Post, Ad, Log
-from pin.api6.tools import get_simple_user_object, get_profile_data,\
-    post_item_json
-from pin.tools import post_after_delete, get_user_ip
 from django.contrib.auth.models import User
 from django.db.models import Q
+
+from pin.model_mongo import MonthlyStats
+from pin.models import Report, Post, Ad, Log, BannedImei
+from pin.tools import post_after_delete, get_user_ip
+from pin.api6.tools import get_simple_user_object,\
+    post_item_json, get_user_with_imei
 
 
 def check_admin(request):
@@ -150,8 +151,7 @@ def post_reporter_user(post_id):
         user['detail'] = get_simple_user_object(reporter.user.id,
                                                 reporter.post.user.id)
         print reporter.user
-        user['profile'] = get_profile_data(reporter.user.profile,
-                                           reporter.user.id)
+        user['profile'] = get_profile_data(reporter.user.profile)
         score += reporter.user.profile.score
         user_list.append(user)
     return user_list, score
@@ -234,7 +234,9 @@ def post_group_by_category():
     post_list = []
     data = {}
 
-    post_of_cat = Post.objects.values('category__title', 'category__parent', 'category__parent__title')\
+    post_of_cat = Post.objects.values('category__title',
+                                      'category__parent',
+                                      'category__parent__title')\
         .annotate(cnt_post=Count('category')).order_by('-id')
 
     for post in post_of_cat:
@@ -403,3 +405,54 @@ def get_search_log(string, before):
                               Q(owner__iexact=string) |
                               Q(object_id__iexact=string))[before: before + 10]
     return logs
+
+
+def get_profile_data(profile, enable_imei=False):
+    data = {}
+    data['name'] = profile.name
+    data['score'] = profile.score
+    data['user_active'] = 1 if profile.user.is_active else 0
+    data['credit'] = profile.credit
+    data['userBanne_profile'] = 1 if profile.banned else 0
+    data['jens'] = profile.jens
+    data['email'] = profile.user.email
+    data['date_joined'] = khayyam.JalaliDate(profile.user.date_joined)\
+        .strftime("%Y/%m/%d")
+
+    if enable_imei:
+        data['imei'] = ''
+        try:
+            imei = profile.user.phone.imei
+        except:
+            imei = None
+
+        if imei:
+            data['imei'] = str(imei)
+            data['users_imei'] = get_user_with_imei(imei)
+
+            if profile.user.is_active:
+                data['imei_status'] = 1
+                data['description'] = ''
+            else:
+                try:
+                    banned = BannedImei.objects.get(imei=imei)
+                except:
+                    banned = None
+
+                if banned:
+                    data['imei_status'] = 0
+                    data['description'] = str(banned.description)
+                else:
+                    data['imei_status'] = 1
+
+                    log = Log.objects.filter(object_id=profile.user.id,
+                                             content_type=Log.USER)\
+                        .order_by('-id')[:1]
+
+                    data['description'] = str(log[0].text)
+
+        else:
+            data['imei'] = ''
+            data['users_imei'] = ''
+
+    return data
