@@ -1088,7 +1088,19 @@ def tag(request, keyword):
 
 
 def policy(request):
-    return render(request, 'pin2/policy.html', {'page': 'policy'})
+    return render(request, 'pin2/statics/policy.html', {'page': 'policy'})
+
+
+def policy_for_mobile(request):
+    return render(request, 'pin2/statics/policy_for_mobile.html')
+
+
+def about_us(request):
+    return render(request, 'pin2/statics/about_us.html', {'page': 'about_us'})
+
+
+def about_us_for_mobile(request):
+    return render(request, 'pin2/statics/about_us_for_mobile.html')
 
 
 def stats(request):
@@ -1108,7 +1120,7 @@ def stats(request):
 
 
 def feedback(request):
-    return render(request, 'pin2/feedback.html', {'page': 'feedback'})
+    return render(request, 'pin2/statics/feedback.html', {'page': 'feedback'})
 
 
 def check_p(request):

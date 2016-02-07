@@ -1,4 +1,7 @@
 <div class="col-xs-12">
+    <div class="footer-box {% if page == 'about_us' %}active{% endif %}">
+        <a href="{% url 'about_us' %}">درباره ما</a>
+    </div>
     <div class="footer-box {% if page == 'policy' %}active{% endif %}">
         <a href="{% url 'policy' %}">قوانین سایت</a>
     </div>

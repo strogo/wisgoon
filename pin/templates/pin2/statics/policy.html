@@ -1,0 +1,25 @@
+{% extends "pin2/flat.base.html" %}
+
+{%block title%} - قوانین {%endblock title%}
+
+{% block content %}
+
+<div id="main">
+	<div class="container">
+		<div class="footer-detail col-md-12">
+			<div class="col-md-3 col-sm-3 col-xs-12">	
+				{% include "pin2/statics/_staticpages_sidebar.html" %}
+			</div>
+			<div class="col-md-9 col-sm-9 col-md-12">
+				<div class=" content static policy">
+					{% include "pin2/statics/_policy_content.html" %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<br />
+	<br />
+</div>
+<div class="clear"></div>
+{% endblock content%}
