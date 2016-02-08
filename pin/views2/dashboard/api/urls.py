@@ -63,4 +63,6 @@ urlpatterns += patterns('pin.views2.dashboard.api.user',
                             name='dashboard-api-user-bannedImei'),
                         url(r'user/details/(?P<user_id>\d+)', 'user_details',
                             name='dashboard-api-user-details'),
+                        url(r'user/imei/(?P<imei>\w+)', 'get_user_with_imei',
+                            name='dashboard-api-user-imei'),
                         )

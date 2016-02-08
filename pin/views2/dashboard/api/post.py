@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Count, Sum
 
 from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
@@ -13,12 +14,11 @@ from pin.views2.dashboard.api.tools import (ads_group_by,
                                             undo_report
                                             )
 from user_profile.models import Profile
+
 from haystack.query import SearchQuerySet
-from django.db.models import Count
 
 
 def reported(request):
-    from django.db.models import Sum
     if not check_admin(request):
         return return_un_auth()
 
@@ -37,6 +37,7 @@ def reported(request):
     for post in reported_posts:
         reporter_ids = Report.objects.values_list('id', flat=True)\
             .filter(post_id=post.id)
+
         total_scores = Profile.objects.filter(user_id__in=reporter_ids)\
             .aggregate(scores=Sum('score'))
 
@@ -147,13 +148,12 @@ def show_ads(request):
 
     data = {}
     date = request.GET.get('date', False)
-    ended = request.GET.get('ended', False)
     before = request.GET.get('before', 0)
     data['meta'] = {'limit': '', 'next': '', 'total_count': ''}
 
-    if date and ended:
+    if date:
 
-        data['objects'] = get_ads(before, date, ended)
+        data['objects'] = get_ads(before, date)
 
         if len(data['objects']) == 20:
             before = int(before) + 20
@@ -164,18 +164,6 @@ def show_ads(request):
         return return_json_data(data)
     else:
         return return_bad_request()
-
-
-# def post_of_category(request):
-#     if not check_admin(request):
-#         return return_un_auth()
-#     data = {}
-#     data['meta'] = {'limit': '',
-#                     'next': '',
-#                     'total_count': ''}
-#     data['objects'] = {}
-#     data['objects']['drill_down'], data['objects']['sub_cat'], data['meta']['total_count'] = calculate_post_percent()
-#     return return_json_data(data)
 
 
 def post_of_category(request, cat_name):

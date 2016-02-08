@@ -156,7 +156,7 @@ def banned_imei(request):
         phone_date = PhoneData.objects.filter(imei=imei)
     except:
         return return_not_found()
-    print description, imei
+
     if description and imei:
         if status == '1':
             try:
@@ -201,3 +201,22 @@ def banned_imei(request):
                                      'message': "Successfully Change Profile banned."})
     else:
         return return_bad_request()
+
+
+def get_user_with_imei(request, imei):
+    if not check_admin(request):
+        return return_un_auth()
+
+    users = []
+    data = {}
+    data['meta'] = {'limit': '',
+                    'next': '',
+                    'total_count': ''}
+
+    phone_data = PhoneData.objects.filter(imei=imei)
+
+    for data in phone_data:
+        users.append(get_simple_user_object(data.user.id))
+
+    data['objects'] = users
+    return users

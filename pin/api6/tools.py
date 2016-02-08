@@ -11,7 +11,7 @@ from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from pin.api_tools import abs_url, media_abs_url
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
-from pin.models import Post, Follow, Comments, PhoneData, BannedImei, Log
+from pin.models import Post, Follow, Comments
 from pin.models_redis import LikesRedis
 from pin.tools import create_filename
 from cache_layer import PostCacheLayer
@@ -515,11 +515,3 @@ def ad_item_json(ad):
     ad_dict['end'] = str(ad.end)
     ad_dict['id'] = ad.id
     return ad_dict
-
-
-def get_user_with_imei(imei):
-    phone_data = PhoneData.objects.filter(imei=imei)
-    users_info = []
-    for data in phone_data:
-        users_info.append(get_simple_user_object(data.user.id))
-    return users_info

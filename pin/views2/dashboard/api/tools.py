@@ -9,7 +9,7 @@ from pin.model_mongo import MonthlyStats
 from pin.models import Post, Ad, Log, BannedImei
 from pin.tools import post_after_delete, get_user_ip
 from pin.api6.tools import get_simple_user_object,\
-    post_item_json, get_user_with_imei
+    post_item_json
 
 
 def check_admin(request):
@@ -199,18 +199,16 @@ def cnt_post_deleted_by_admin(user_id):
     return cnt_log
 
 
-def get_ads(before, date, ended):
+def get_ads(before, date):
     ads_list = []
     date = datetime.datetime\
         .fromtimestamp(int(date[:10])).strftime("%Y-%m-%d")
     try:
         if before:
             ads = Ad.objects\
-                .filter(start__startswith=str(date),
-                        ended=ended)[before: (before + 1) * 20]
+                .filter(start__startswith=str(date))[before: (before + 1) * 20]
         else:
-            ads = Ad.objects.filter(start__startswith=str(date),
-                                    ended=ended)[:20]
+            ads = Ad.objects.filter(start__startswith=str(date))[:20]
     except:
         ads = []
 
@@ -344,6 +342,10 @@ def get_profile_data(profile, enable_imei=False):
 
     if enable_imei:
         data['imei'] = ''
+        data['imei_status'] = ''
+        data['imei_description'] = ''
+        data['description'] = ''
+
         try:
             imei = profile.user.phone.imei
         except:
@@ -351,12 +353,9 @@ def get_profile_data(profile, enable_imei=False):
 
         if imei:
             data['imei'] = str(imei)
-            data['users_imei'] = get_user_with_imei(imei)
+            data['imei_status'] = 1
 
-            if profile.user.is_active:
-                data['imei_status'] = 1
-                data['description'] = ''
-            else:
+            if not profile.user.is_active or profile.banned or not profile.user.is_active:
                 try:
                     banned = BannedImei.objects.get(imei=imei)
                 except:
@@ -364,18 +363,11 @@ def get_profile_data(profile, enable_imei=False):
 
                 if banned:
                     data['imei_status'] = 0
-                    data['description'] = str(banned.description)
+                    data['imei_description'] = str(banned.description)
                 else:
-                    data['imei_status'] = 1
 
                     log = Log.objects.filter(object_id=profile.user.id,
-                                             content_type=Log.USER)\
-                        .order_by('-id')[:1]
-
+                                             content_type=Log.USER).order_by('-id')[:1]
                     data['description'] = str(log[0].text)
-
-        else:
-            data['imei'] = ''
-            data['users_imei'] = ''
 
     return data
