@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 
 from pin.model_mongo import MonthlyStats
-from pin.models import Report, Post, Ad, Log, BannedImei
+from pin.models import Post, Ad, Log, BannedImei
 from pin.tools import post_after_delete, get_user_ip
 from pin.api6.tools import get_simple_user_object,\
     post_item_json, get_user_with_imei
@@ -142,21 +142,6 @@ def get_monthly_stats_points(start_date, end_date, obj_type):
     return points
 
 
-def post_reporter_user(post_id):
-    reporters = Report.objects.filter(post_id=post_id)
-    user_list = []
-    user = {}
-    score = 0
-    for reporter in reporters:
-        user['detail'] = get_simple_user_object(reporter.user.id,
-                                                reporter.post.user.id)
-        print reporter.user
-        user['profile'] = get_profile_data(reporter.user.profile)
-        score += reporter.user.profile.score
-        user_list.append(user)
-    return user_list, score
-
-
 def get_reported_posts(request):
     before = request.GET.get('before', 0)
     try:
@@ -195,14 +180,6 @@ def range_date(start, end):
     return start_date, end_date
 
 
-# TO DO
-def calculate_post_percent():
-    first_step = []
-    drilldown, count_of_posts = post_group_by_category()
-    first_step = post_group_by_sub_category(count_of_posts)
-    return drilldown, first_step, count_of_posts
-
-
 def ads_group_by(group_by, ended):
     ads = Ad.objects.values(group_by).annotate(cnt_ad=Count(group_by))\
         .filter(ended=ended).order_by('-id')
@@ -220,60 +197,6 @@ def cnt_post_deleted_by_admin(user_id):
         .filter(content_type=Log.POST, owner=user_id)\
         .exclude(user=user_id).count()
     return cnt_log
-
-# def post_group_by():
-#     posts = Post.objects\
-#         .values('category', 'category__title', 'category__parent',
-#                 'category__parent__title')\
-#         .annotate(cnt_post=Count('category')).order_by('-id')
-#     return posts
-
-
-def post_group_by_category():
-    count_of_posts = 0
-    post_list = []
-    data = {}
-
-    post_of_cat = Post.objects.values('category__title',
-                                      'category__parent',
-                                      'category__parent__title')\
-        .annotate(cnt_post=Count('category')).order_by('-id')
-
-    for post in post_of_cat:
-        count_of_posts += post['cnt_post']
-
-    for cat in post_of_cat:
-        percent = (cat['cnt_post'] * 100) / count_of_posts
-        exist_key = data.get(cat['category__parent__title'], False)
-
-        if not exist_key:
-            data.update(
-                {cat['category__parent__title']: {'name': cat['category__parent__title'],
-                                                  'data': [[cat['category__title'], percent]]}})
-        else:
-            data[cat['category__parent__title']]['data'].append([cat['category__title'], percent])
-
-    post_list.append(data)
-    return post_list, count_of_posts
-
-
-def post_group_by_sub_category(count_of_posts):
-    data = []
-    post_of_sub_cat = Post.objects\
-        .values('category__parent__title')\
-        .annotate(cnt_post=Count('category__parent')).order_by('-id')
-
-    for post in post_of_sub_cat:
-        post['y'] = (post['cnt_post'] * 100) / count_of_posts
-        post['name'] = post['category__parent__title']
-        post['drilldown'] = post['category__parent__title']
-        try:
-            del post['cnt_post']
-            del post['category__parent__title']
-        except KeyError:
-            pass
-        data.append(post)
-    return data
 
 
 def get_ads(before, date, ended):

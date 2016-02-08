@@ -4,15 +4,17 @@ from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
 from pin.api6.tools import (get_next_url, get_simple_user_object,
                             post_item_json)
-from pin.models import Post, Report
+from pin.models import Post, Report, Category
 from pin.views2.dashboard.api.tools import get_profile_data
-from pin.views2.dashboard.api.tools import (ads_group_by, calculate_post_percent,
+from pin.views2.dashboard.api.tools import (ads_group_by,
                                             check_admin, cnt_post_deleted_by_admin,
                                             cnt_post_deleted_by_user,
                                             delete_posts, get_ads,
-                                            post_reporter_user, undo_report
+                                            undo_report
                                             )
 from user_profile.models import Profile
+from haystack.query import SearchQuerySet
+from django.db.models import Count
 
 
 def reported(request):
@@ -164,7 +166,20 @@ def show_ads(request):
         return return_bad_request()
 
 
-def post_of_category(request):
+# def post_of_category(request):
+#     if not check_admin(request):
+#         return return_un_auth()
+#     data = {}
+#     data['meta'] = {'limit': '',
+#                     'next': '',
+#                     'total_count': ''}
+#     data['objects'] = {}
+#     data['objects']['drill_down'], data['objects']['sub_cat'], data['meta']['total_count'] = calculate_post_percent()
+#     return return_json_data(data)
+
+
+def post_of_category(request, cat_name):
+
     if not check_admin(request):
         return return_un_auth()
     data = {}
@@ -172,7 +187,53 @@ def post_of_category(request):
                     'next': '',
                     'total_count': ''}
     data['objects'] = {}
-    data['objects']['drill_down'], data['objects']['sub_cat'], data['meta']['total_count'] = calculate_post_percent()
+    cat_list = []
+
+    categories = dict(Category.objects.filter(parent__title=cat_name)
+                      .values_list('id', 'title'))
+
+    post_of_cat = SearchQuerySet().models(Post)\
+        .filter(category_i__in=categories.keys()).facet('category_i').facet_counts()
+
+    count_of_posts = SearchQuerySet().models(Post).facet('category_i').count()
+    print categories
+    for key, value in post_of_cat['fields']['category_i']:
+        if int(key) in categories:
+            percent = (value * 100) / count_of_posts
+            cat_list.append({categories[int(key)]: percent})
+
+    data['objects'] = {"name": cat_name, "data": cat_list}
+
+    return return_json_data(data)
+
+
+def post_of_sub_category(request):
+    post = {}
+    post_list = []
+    data = {}
+    data['meta'] = {'limit': '',
+                    'next': '',
+                    'total_count': ''}
+    data['objects'] = {}
+
+    post_of_sub_cat = Post.objects\
+        .values('category__parent__title')\
+        .annotate(cnt_post=Count('category__parent')).order_by('-id')
+
+    count_of_posts = SearchQuerySet().models(Post).facet('category_i').count()
+
+    for post in post_of_sub_cat:
+        post['y'] = (post['cnt_post'] * 100) / count_of_posts
+        post['name'] = post['category__parent__title']
+        # post['drilldown'] = post['category__parent__title']
+        try:
+            del post['cnt_post']
+            del post['category__parent__title']
+        except KeyError:
+            pass
+        post_list.append(post)
+
+    data['objects'] = post_list
     return return_json_data(data)
 
 
