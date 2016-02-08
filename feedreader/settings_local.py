@@ -9,10 +9,17 @@ THUMBNAIL_DEBUG = True
 DISPLAY_AD = False
 TEMPLATE_DEBUG = DEBUG
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
-STATIC_VERSION = '5.8.2'
+STATIC_VERSION = '5.8.4'
+
 SITE_ROOT = os.path.dirname(__file__)
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
 ADMINS = (
     ('bugs', 'bugs@wisgoon.com'),
+)
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'conf/locale'),
 )
 
 CASSANDRA_DB = '127.0.0.1'
@@ -68,10 +75,17 @@ GOOGLE_REDIRECT_SESSION_VAR = 'google_contacts_redirect'
 GOOGLE_REDIRECT_BASE_URL = 'http://localhost:8000'
 EMAIL_HOST = "mail.wisgoon.com"
 TIME_ZONE = 'Asia/Tehran'
-LANGUAGE_CODE = 'fa-ir'
+LANGUAGE_CODE = 'fa'
 SITE_ID = 1
+
 USE_I18N = True
 USE_L10N = True
+
+LANGUAGES = [
+    ('fa', ('Farsi')),
+    ('en', ('English')),
+]
+
 USE_TZ = True
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 MEDIA_URL = '/media/'
@@ -106,8 +120,9 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

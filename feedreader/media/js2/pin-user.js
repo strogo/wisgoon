@@ -331,8 +331,7 @@ $("body").on('click', '.btn_report, .report-btn',function(){
                 }else{
                     alertify.error(resp.message);
                 }
-                $('.dropdown').dropdown('toggle');
-                
+                $('body').click();                
             }
         });
     }

@@ -36,6 +36,7 @@ urlpatterns += patterns('pin.api6.comment',
                         url(r'comment/showComments/post/(?P<item_id>\d+)/', 'comment_post', name='api-6-comment-post'),
                         url(r'comment/add/post/(?P<item_id>\d+)/$', 'add_comment', name='api-6-comment-add'),
                         url(r'comment/delete/(?P<comment_id>\d+)/$', 'delete_comment', name='api-6-comment-delete'),
+                        url(r'comment/report/(?P<comment_id>\d+)/$', 'report', name='api-6-comment-report'),
                         )
 
 urlpatterns += patterns('pin.api6.app',

@@ -17,6 +17,9 @@
                     <li class="{% if page == 'following' %} active{% endif %}">
                         <a href="{% url 'pin-following' %}">مطالب دوستان</a>
                     </li>
+                    <li class="{% if page == 'follow_notif' %} active{% endif %}">
+                        <a href="{% url 'pin-notif-user-following' %}">فعالیت دوستان</a>
+                    </li>
                     <li class="{% if page == 'user_like' %} active{% endif %}">
                         <a href="{% url 'pin-absuser-like' user %}">مطالب مورد علاقه</a>
                     </li>

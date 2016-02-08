@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>{{SITE_NAME_FA}} {% block title%}{% endblock title%}</title>
+	<meta name="description" content="{%block description%}{{SITE_DESC}}{%endblock%}" />
+	
+	<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/fonts.css?ver={{STATIC_VERSION}}">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/bootstrap-rtl.min.css">
+
+	<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/style.css?ver={{STATIC_VERSION}}">
+
+	<style type="text/css">
+		body{
+			padding: 0 !important;
+			text-align: justify;
+		}
+	</style>
+	{% include "base/analytics.html"%}
+</head>
+<body>
+	{% block content %}{% endblock content%}
+</body>
+</html>

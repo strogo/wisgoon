@@ -910,13 +910,17 @@ def absuser(request, user_name=None):
     else:
         if request.user.id:
             follow_status = Follow.objects.filter(follower=request.user.id,
-                                                  following=user.id).count()
+                                                  following=user.id).exists()
+            following_status = Follow.objects.filter(following=request.user.id,
+                                                     follower=user.id).exists()
         else:
             follow_status = 0
+            following_status = 0
 
         return render(request, 'pin2/user.html', {
             'latest_items': latest_items,
             'follow_status': follow_status,
+            'following_status': following_status,
             'ban_by_admin': ban_by_admin,
             'user_id': int(user_id),
             'profile': profile,
@@ -1084,7 +1088,19 @@ def tag(request, keyword):
 
 
 def policy(request):
-    return render(request, 'pin2/policy.html', {'page': 'policy'})
+    return render(request, 'pin2/statics/policy.html', {'page': 'policy'})
+
+
+def policy_for_mobile(request):
+    return render(request, 'pin2/statics/policy_for_mobile.html')
+
+
+def about_us(request):
+    return render(request, 'pin2/statics/about_us.html', {'page': 'about_us'})
+
+
+def about_us_for_mobile(request):
+    return render(request, 'pin2/statics/about_us_for_mobile.html')
 
 
 def stats(request):
@@ -1104,7 +1120,7 @@ def stats(request):
 
 
 def feedback(request):
-    return render(request, 'pin2/feedback.html', {'page': 'feedback'})
+    return render(request, 'pin2/statics/feedback.html', {'page': 'feedback'})
 
 
 def check_p(request):

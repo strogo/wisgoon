@@ -20,6 +20,9 @@ urlpatterns = patterns('',
     url(r'^pages/', include('django.contrib.flatpages.urls')),
     url(r'^api/', include(user_resource.urls)),
     url(r'^policy/', 'pin.views.policy', name='policy'),
+    url(r'^policy_for_mobile/', 'pin.views.policy_for_mobile', name='policy_for_mobile'),
+    url(r'^about_us/', 'pin.views.about_us', name='about_us'),
+    url(r'^about_us_for_mobile/', 'pin.views.about_us_for_mobile', name='about_us_for_mobile'),
     url(r'^stats/', 'pin.views.stats', name='stats'),
     url(r'^captcha/', include('captcha.urls')),
     url(r'^blog/', include('blog.urls')),
@@ -35,7 +38,7 @@ urlpatterns += patterns('pin.views',
     url(r'^latest/$', 'latest_redis', name='pin-latest'),
     url(r'^page/(?P<label>.*)/$', 'result', name='pin-result'),
     # url(r'^recent/$', 'latest_redis', name='pin-latest'),
-    
+
     url(r'^rp/$', 'rp', name='rp'),
 
     url(r'^feedback/$', 'feedback', name='pin-feedback'),

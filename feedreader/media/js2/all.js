@@ -134,6 +134,7 @@ $(".popnotify").bind('click', function(){
             .done(function(d) {
                 el.unbind('click').popover({
                     content: d,
+                    trigger: 'focus',
                     title: "test",
                     placement:'bottom',
                     html:true
