@@ -26,6 +26,7 @@ feedreader/*media*/cache2/
 /src/
 /docs/
 /env/
+/upgrade/
 /wisgoon.sublime-*
 /index.csv
 /reports/

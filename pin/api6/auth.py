@@ -349,16 +349,17 @@ def user_search(request):
     data['meta'] = {'limit': 20, 'next': ""}
     data['objects'] = []
 
-    if query and token:
+    if query:
         current_user = AuthCache.id_from_token(token=token)
-        if not current_user:
-            return return_un_auth()
 
         results = SearchQuerySet().models(Profile)\
             .filter(content__contains=query)[before:before + row_per_page]
+
         for result in results:
-            result = result.object
+            result = result.object.user
             o = {}
+            if not current_user:
+                o['user'] = get_simple_user_object(result.id)
             o['user'] = get_simple_user_object(result.id, current_user)
             # o['id'] = result.id
             # o['avatar'] = get_avatar(result.user, 100)
