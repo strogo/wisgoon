@@ -33,7 +33,6 @@ class Profile(models.Model):
     AVATAT_MIGRATED = 2
 
     name = models.CharField(max_length=250, verbose_name='نام')
-    name1 = models.CharField(max_length=250, verbose_name='dنام')
     location = models.CharField(max_length=250, verbose_name='موقعیت',
                                 blank=True)
     website = models.URLField(verbose_name='وب سایت', blank=True)
