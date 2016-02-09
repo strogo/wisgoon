@@ -155,14 +155,14 @@ def search(request):
                     'next': "",
                     'total_count': 1000}
 
-    before = int(request.GET.get('before', 0))
+    offset = int(request.GET.get('offset', 0))
     token = request.GET.get('token', None)
 
     if token:
         cur_user = AuthCache.id_from_token(token=token)
 
     posts = SearchQuerySet().models(Post)\
-        .filter(content__contains=query)[before:before + limit]
+        .filter(content__contains=query)[offset:offset + limit]
 
     idis = []
     for pmlt in posts:
@@ -174,7 +174,7 @@ def search(request):
                                        r=request)
 
     data['meta']['next'] = get_next_url(url_name='api-6-post-search',
-                                        token=token, offset=before + limit,
+                                        token=token, offset=offset + limit,
                                         q=query)
 
     return return_json_data(data)
