@@ -165,7 +165,7 @@ INSTALLED_APPS = [
     'pin',
     # 'haystack',
     'sorl.thumbnail',
-    'social_auth',
+    # 'social_auth',
     'daddy_avatar',
     'contactus',
     'compressor',
