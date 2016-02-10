@@ -38,8 +38,8 @@ def search_user(request):
 
     results = SearchQuerySet().models(Profile).filter(sq)[before:before + 20]
 
-    for profile in results:
-        user = profile.object.user
+    for result in results:
+        user = result.object.user
         details = {}
 
         details['username'] = user.username
@@ -94,17 +94,17 @@ def change_status_user(request):
         if status == '1':
             user.is_active = True
             message = "User Status Is True."
-            Log.active_user(user_id=request.user.id,
-                            owner=user.id,
-                            text=desc + desc,
-                            ip_address=get_user_ip(request))
+            # Log.active_user(user_id=request.user.id,
+            #                 owner=user.id,
+            #                 text=desc + desc,
+            #                 ip_address=get_user_ip(request))
         else:
             user.is_active = False
             message = "User Status Is False."
-            Log.ban_by_admin(actor=request.user,
-                             user_id=user.id,
-                             text="%s || %s" % (user.username, desc),
-                             ip_address=get_user_ip(request))
+            # Log.ban_by_admin(actor=request.user,
+            #                  user_id=user.id,
+            #                  text="%s || %s" % (user.username, desc),
+            #                  ip_address=get_user_ip(request))
 
         user.save()
         data = {'status': True, 'message': message}
@@ -132,17 +132,17 @@ def banned_profile(request):
         if status == '1':
             profile.banned = True
             profile.save()
-            Log.active_user(user_id=request.user.id,
-                            owner=profile.user.id,
-                            text="%s || %s" % (profile.user.username, description),
-                            ip_address=get_user_ip(request))
+            # Log.active_user(user_id=request.user.id,
+            #                 owner=profile.user.id,
+            #                 text="%s || %s" % (profile.user.username, description),
+            #                 ip_address=get_user_ip(request))
         else:
             profile.banned = False
             profile.save()
-            Log.ban_by_admin(actor=request.user,
-                             user_id=profile.user.id,
-                             text="%s || %s" % (profile.user.username, description),
-                             ip_address=get_user_ip(request))
+            # Log.ban_by_admin(actor=request.user,
+            #                  user_id=profile.user.id,
+            #                  text="%s || %s" % (profile.user.username, description),
+            #                  ip_address=get_user_ip(request))
         data = {'status': True, 'message': "Successfully Change Profile banned."}
         data['user'] = get_simple_user_object(profile.user.id)
         data['profile'] = get_profile_data(profile)
@@ -184,7 +184,7 @@ def banned_imei(request):
                                 text=desc + description,
                                 ip_address=get_user_ip(request))
                 return return_json_data({'status': True,
-                                         'message': "Successfully Change Profile banned."})
+                                         'message': "Successfully banned Imei."})
 
             except:
                 return return_not_found()
@@ -205,7 +205,7 @@ def banned_imei(request):
                             text=desc + description,
                             ip_address=get_user_ip(request))
             return return_json_data({'status': True,
-                                     'message': "Successfully Change Profile banned."})
+                                     'message': "Successfully banned Imei."})
     else:
         return return_bad_request()
 
