@@ -23,6 +23,8 @@ from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from tastypie.models import ApiKey
 
 from haystack.query import SearchQuerySet
+from haystack.query import SQ
+from haystack.query import Raw
 
 
 def followers(request, user_id):
@@ -352,8 +354,14 @@ def user_search(request):
     if query:
         current_user = AuthCache.id_from_token(token=token)
 
+        words = query.split()
+        sq = SQ()
+        for w in words:
+            sq.add(SQ(text__contains=Raw("%s*" % w)), SQ.OR)
+            sq.add(SQ(text__contains=Raw(w)), SQ.OR)
+
         results = SearchQuerySet().models(Profile)\
-            .filter(content__contains=query)[before:before + row_per_page]
+            .filter(sq)[before:before + row_per_page]
 
         for result in results:
             result = result.object.user
@@ -361,19 +369,6 @@ def user_search(request):
             if not current_user:
                 o['user'] = get_simple_user_object(result.id)
             o['user'] = get_simple_user_object(result.id, current_user)
-            # o['id'] = result.id
-            # o['avatar'] = get_avatar(result.user, 100)
-            # o['username'] = result.user.username
-            # try:
-            #     o['name'] = result.name
-            # except:
-            #     o['name'] = ""
-
-            # if current_user:
-            #     o['follow_by_user'] = Follow\
-            #         .get_follow_status(follower=current_user, following=result.id)
-            # else:
-            #     o['follow_by_user'] = False
 
             data['objects'].append(o)
 

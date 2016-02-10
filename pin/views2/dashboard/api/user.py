@@ -2,8 +2,8 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
 from haystack.query import SearchQuerySet
-
-from user_profile.models import Profile
+from haystack.query import SQ
+from haystack.query import Raw
 
 from pin.tools import get_user_ip
 from pin.api_tools import media_abs_url
@@ -12,8 +12,10 @@ from pin.views2.dashboard.api.tools import get_profile_data
 from pin.api6.tools import get_next_url, get_simple_user_object
 from pin.api6.http import return_json_data, return_un_auth, return_not_found,\
     return_bad_request
-from pin.views2.dashboard.api.tools import check_admin, cnt_post_deleted_by_user,\
-    cnt_post_deleted_by_admin
+from pin.views2.dashboard.api.tools import check_admin,\
+    cnt_post_deleted_by_user, cnt_post_deleted_by_admin
+
+from user_profile.models import Profile
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
@@ -28,10 +30,15 @@ def search_user(request):
     data['meta'] = {'limit': 20, 'next': ""}
     data['objects'] = []
 
-    profiles = SearchQuerySet().models(Profile)\
-        .filter(content__contains=query)[before:before + 20]
+    words = query.split()
+    sq = SQ()
+    for w in words:
+        sq.add(SQ(text__contains=Raw("%s*" % w)), SQ.OR)
+        sq.add(SQ(text__contains=Raw(w)), SQ.OR)
 
-    for profile in profiles:
+    results = SearchQuerySet().models(Profile).filter(sq)[before:before + 20]
+
+    for profile in results:
         user = profile.object.user
         details = {}
 
