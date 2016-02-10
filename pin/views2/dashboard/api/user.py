@@ -2,8 +2,8 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
 from haystack.query import SearchQuerySet
-
-from user_profile.models import Profile
+from haystack.query import SQ
+from haystack.query import Raw
 
 from pin.tools import get_user_ip
 from pin.api_tools import media_abs_url
@@ -12,8 +12,10 @@ from pin.views2.dashboard.api.tools import get_profile_data
 from pin.api6.tools import get_next_url, get_simple_user_object
 from pin.api6.http import return_json_data, return_un_auth, return_not_found,\
     return_bad_request
-from pin.views2.dashboard.api.tools import check_admin, cnt_post_deleted_by_user,\
-    cnt_post_deleted_by_admin
+from pin.views2.dashboard.api.tools import check_admin,\
+    cnt_post_deleted_by_user, cnt_post_deleted_by_admin
+
+from user_profile.models import Profile
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
@@ -28,11 +30,16 @@ def search_user(request):
     data['meta'] = {'limit': 20, 'next': ""}
     data['objects'] = []
 
-    profiles = SearchQuerySet().models(Profile)\
-        .filter(content__contains=query)[before:before + 20]
+    words = query.split()
+    sq = SQ()
+    for w in words:
+        sq.add(SQ(text__contains=Raw("%s*" % w)), SQ.OR)
+        sq.add(SQ(text__contains=Raw(w)), SQ.OR)
 
-    for profile in profiles:
-        user = profile.object.user
+    results = SearchQuerySet().models(Profile).filter(sq)[before:before + 20]
+
+    for result in results:
+        user = result.object.user
         details = {}
 
         details['username'] = user.username
@@ -87,17 +94,17 @@ def change_status_user(request):
         if status == '1':
             user.is_active = True
             message = "User Status Is True."
-            Log.active_user(user_id=request.user.id,
-                            owner=user.id,
-                            text=desc + desc,
-                            ip_address=get_user_ip(request))
+            # Log.active_user(user_id=request.user.id,
+            #                 owner=user.id,
+            #                 text=desc + desc,
+            #                 ip_address=get_user_ip(request))
         else:
             user.is_active = False
             message = "User Status Is False."
-            Log.ban_by_admin(actor=request.user,
-                             user_id=user.id,
-                             text="%s || %s" % (user.username, desc),
-                             ip_address=get_user_ip(request))
+            # Log.ban_by_admin(actor=request.user,
+            #                  user_id=user.id,
+            #                  text="%s || %s" % (user.username, desc),
+            #                  ip_address=get_user_ip(request))
 
         user.save()
         data = {'status': True, 'message': message}
@@ -125,17 +132,17 @@ def banned_profile(request):
         if status == '1':
             profile.banned = True
             profile.save()
-            Log.active_user(user_id=request.user.id,
-                            owner=profile.user.id,
-                            text="%s || %s" % (profile.user.username, description),
-                            ip_address=get_user_ip(request))
+            # Log.active_user(user_id=request.user.id,
+            #                 owner=profile.user.id,
+            #                 text="%s || %s" % (profile.user.username, description),
+            #                 ip_address=get_user_ip(request))
         else:
             profile.banned = False
             profile.save()
-            Log.ban_by_admin(actor=request.user,
-                             user_id=profile.user.id,
-                             text="%s || %s" % (profile.user.username, description),
-                             ip_address=get_user_ip(request))
+            # Log.ban_by_admin(actor=request.user,
+            #                  user_id=profile.user.id,
+            #                  text="%s || %s" % (profile.user.username, description),
+            #                  ip_address=get_user_ip(request))
         data = {'status': True, 'message': "Successfully Change Profile banned."}
         data['user'] = get_simple_user_object(profile.user.id)
         data['profile'] = get_profile_data(profile)
@@ -177,7 +184,7 @@ def banned_imei(request):
                                 text=desc + description,
                                 ip_address=get_user_ip(request))
                 return return_json_data({'status': True,
-                                         'message': "Successfully Change Profile banned."})
+                                         'message': "Successfully banned Imei."})
 
             except:
                 return return_not_found()
@@ -198,7 +205,7 @@ def banned_imei(request):
                             text=desc + description,
                             ip_address=get_user_ip(request))
             return return_json_data({'status': True,
-                                     'message': "Successfully Change Profile banned."})
+                                     'message': "Successfully banned Imei."})
     else:
         return return_bad_request()
 
