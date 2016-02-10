@@ -134,8 +134,7 @@ $(".popnotify").bind('click', function(){
             .done(function(d) {
                 el.unbind('click').popover({
                     content: d,
-                    trigger: 'focus',
-                    title: "test",
+                    title: "notifications",
                     placement:'bottom',
                     html:true
                 }).popover('show');
@@ -149,7 +148,7 @@ $(".popnotify").bind('click', function(){
         }else{
             el.unbind('click').popover({
                 content: notifCache, 
-                title: "test",
+                title: "notifications",
                 placement:'bottom',
                 html:true
             }).popover('show');    

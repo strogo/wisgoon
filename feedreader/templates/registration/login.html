@@ -6,6 +6,18 @@
 {% block content %}
 
 <div class="login wis_form box ofh mato50">
+	<div class="logo_box">
+		<div class="wis_new_logo w100">
+			<img src="{{MEDIA_URL}}v2/images/new_logo.png" alt="">
+
+			<div class="download_app mato20 mabo50">
+				<p>دانلود نرم‌افزار اندروید</p>
+				<a class="wis_btn green" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">دانلود از بازار</a>
+				<a class="wis_btn orange" href="http://static.wisgoon.com/media/app/latest.apk">دانلود مستقیم</a>
+
+			</div>
+		</div>
+	</div>
 	<div class="form_box">
 		<form method="post" class="form" >
 			{% csrf_token %}
@@ -30,19 +42,6 @@
 				<input type="submit" value="ورود" class="wis_btn orange mato50 mabo50 w50">
 			</div>
 		</form>
-	</div>
-
-	<div class="logo_box">
-		<div class="wis_new_logo w100">
-			<img src="{{MEDIA_URL}}v2/images/new_logo.png" alt="">
-
-			<div class="download_app mato20 mabo50">
-				<p>دانلود نرم‌افزار اندروید</p>
-				<a class="wis_btn green" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">دانلود از بازار</a>
-				<a class="wis_btn orange" href="http://static.wisgoon.com/media/app/latest.apk">دانلود مستقیم</a>
-
-			</div>
-		</div>
 	</div>
 	<div class="clear"></div>
 

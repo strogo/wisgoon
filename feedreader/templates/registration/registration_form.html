@@ -4,6 +4,19 @@
 {% block content %}
 
 <div class="login wis_form box ofh mato50">
+	<div class="logo_box">
+		<div class="wis_new_logo w100">
+			<img src="{{MEDIA_URL}}v2/images/new_logo.png" alt="">
+
+			<div class="download_app mato20 mabo50">
+				<p>دانلود نرم‌افزار اندروید</p>
+				<a class="wis_btn green" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">دانلود از بازار</a>
+				<a class="wis_btn orange" href="http://static.wisgoon.com/media/app/latest.apk">دانلود مستقیم</a>
+
+			</div>
+		</div>
+	</div>
+
 	<div class="form_box">
 		<form method="post" class="form">
 			{% csrf_token %}
@@ -22,7 +35,7 @@
 				<a href="/accounts/password/reset/">رمز عبور خود را فراموش کرده اید؟</a>
 			</p>
 			<p>
-				<a href="/accounts/register/">اگر ثبت‌نام نکرده‌اید اینجا کلیک کنید</a>
+				<a href="/accounts/login/">اگر ثبت‌نام کرده‌اید وارد شوید</a>
 			</p>
 			
 			<div class="tace">
@@ -31,18 +44,7 @@
 		</form>
 	</div>
 
-	<div class="logo_box">
-		<div class="wis_new_logo w100">
-			<img src="{{MEDIA_URL}}v2/images/new_logo.png" alt="">
-
-			<div class="download_app mato20 mabo50">
-				<p>دانلود نرم‌افزار اندروید</p>
-				<a class="wis_btn green" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">دانلود از بازار</a>
-				<a class="wis_btn orange" href="http://static.wisgoon.com/media/app/latest.apk">دانلود مستقیم</a>
-
-			</div>
-		</div>
-	</div>
+	
 	<div class="clear"></div>
 
 </div>

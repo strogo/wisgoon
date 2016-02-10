@@ -2725,6 +2725,7 @@ div.comment div div.row:hover .del-comment{
 	width: 760px;
 	margin: 0 auto;
 	display: flex;
+	flex-direction: row-reverse;
 }
 .wis_form.login form,
 .wis_form.logout form{
@@ -2732,8 +2733,6 @@ div.comment div div.row:hover .del-comment{
 }
 .wis_form.login .form_box,
 .wis_form.logout .form_box{
-	/*width: 65%;*/
-	/*float: right;*/
 	display: flex;
 	flex: 3;
 	padding: 25px 30px;
@@ -2785,6 +2784,20 @@ div.comment div div.row:hover .del-comment{
 }
 
 @media (max-width: 768px) {
+	.wis_form.login,
+	.wis_form.logout{
+		display: block;
+		width: 400px;
+	}
+	.wis_form.login .form_box,
+	.wis_form.logout .form_box{
+		width: 100%;
+	}
+	.wis_form.login .logo_box,
+	.wis_form.logout .logo_box{
+		width: 100%;
+	}
+
 	.notif_page #feed .notif-item,
 	.notif_page #feed{
 		width: 100% !important;
@@ -3031,6 +3044,12 @@ div.comment div div.row:hover .del-comment{
 	}
 	.modal_image{
 		padding: 0;
+	}
+}
+@media (max-width: 400px) {
+	.wis_form.login,
+	.wis_form.logout{
+		width: 100%;
 	}
 }
 @media (max-width: 320px) {
