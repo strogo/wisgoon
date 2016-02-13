@@ -34,13 +34,13 @@ from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2, PhoneData, Log, BannedImei
 from pin.model_mongo import Notif, UserLocation, NotifCount
 from pin.actions import send_clear_notif
-from pin.models_redis import NotificationRedis
 from pin.cacheLayer import UserDataCache, CategoryDataCache
 
 from haystack.query import SearchQuerySet
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
+User = get_user_model()
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 

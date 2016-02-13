@@ -6,7 +6,10 @@ from datetime import datetime
 from urllib import urlencode
 
 from django.contrib.auth import authenticate
-from django.utils import simplejson
+try:
+    import simplejson
+except ImportError:
+    import json as simplejson
 
 from social_auth.backends import SocialAuthBackend, BaseAuth, USERNAME
 from social_auth.utils import log, setting, dsa_urlopen

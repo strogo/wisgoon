@@ -6,7 +6,7 @@ from calverter import Calverter
 from urlparse import urlparse
 import khayyam
 from django import template
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.template import Library
@@ -22,7 +22,7 @@ from pin.tools import userdata_cache
 from pin.tools import AuthCache
 from pin.models_redis import NotificationRedis
 
-
+User = get_user_model()
 register = Library()
 
 

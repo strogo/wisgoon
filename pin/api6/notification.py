@@ -3,7 +3,6 @@ from pin.api6.http import return_json_data, return_un_auth, return_bad_request
 from pin.api_tools import media_abs_url
 from pin.tools import AuthCache
 from pin.model_mongo import NotifCount, Notif
-from pin.models_redis import NotificationRedis
 from pin.api6.tools import get_list_post, get_objects_list, get_simple_user_object,\
     get_next_url, post_item_json
 

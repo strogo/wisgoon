@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
-import unittest
+import TestCase
 import os
 
 from django.test import Client
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.conf import settings
 
 from tastypie.models import ApiKey
 
 from pin.models import Category, Post, Comments
-User = get_user_model()
 
 
-class AuthTestCase(unittest.TestCase):
+class AuthTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
@@ -89,7 +88,7 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class CategoryTestCase(unittest.TestCase):
+class CategoryTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
@@ -111,7 +110,7 @@ class CategoryTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class CommentTestCase(unittest.TestCase):
+class CommentTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
@@ -146,7 +145,7 @@ class CommentTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class LikeTestcase(unittest.TestCase):
+class LikeTestcase(TestCase):
 
     def setUp(self):
         self.client = Client()
@@ -172,7 +171,7 @@ class LikeTestcase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class NotifTestCase(unittest.TestCase):
+class NotifTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
@@ -194,7 +193,7 @@ class NotifTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class PostTestCase(unittest.TestCase):
+class PostTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
@@ -278,5 +277,5 @@ class PostTestCase(unittest.TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     TestCase.main()

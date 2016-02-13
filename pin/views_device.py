@@ -5,7 +5,7 @@ import time
 from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import F, Sum
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseForbidden,\
     HttpResponseBadRequest, HttpResponseNotFound
@@ -20,6 +20,7 @@ from pin.tools import create_filename, AuthCache, check_block,\
     log_act, post_after_delete, get_user_ip, get_post_user_cache
 from pin.context_processors import is_police
 
+User = get_user_model()
 MEDIA_ROOT = settings.MEDIA_ROOT
 
 

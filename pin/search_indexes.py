@@ -3,9 +3,10 @@ import re
 from haystack import indexes
 from pin.models import Post, Comments
 from user_profile.models import Profile
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from pin.preprocessing import normalize_tags
+User = get_user_model()
 
 
 class CommentIndex(indexes.SearchIndex, indexes.Indexable):

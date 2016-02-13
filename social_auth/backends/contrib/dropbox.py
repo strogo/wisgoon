@@ -8,7 +8,10 @@ given by Dropbox application registration process.
 By default account id and token expiration time are stored in extra_data
 field, check OAuthBackend class for details on how to extend it.
 """
-from django.utils import simplejson
+try:
+    import simplejson
+except ImportError:
+    import json as simplejson
 
 from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME

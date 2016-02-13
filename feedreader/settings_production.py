@@ -4,7 +4,6 @@ from settings_local import *
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
-DISPLAY_AD = True
 
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
