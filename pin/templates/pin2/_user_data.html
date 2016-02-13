@@ -16,7 +16,7 @@
                         <h2>
                             <a href='{% url "pin-absuser" profile.user_id|get_user_name %}'>{{profile.name}}</a>
                         </h2>
-                        <small>{{profile.user.username}}</small>
+                        <small>{{profile.user.username}}</small> {% if following_status %}<small class="badge">  شما را دنبال می کند</small>{% endif %}
                         <p>{{profile.bio|linebreaksbr}}</p>
                     </div>
                     <div class="clear"></div>
