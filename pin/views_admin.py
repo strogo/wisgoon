@@ -3,7 +3,7 @@ import json
 import redis
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
 from django.http import HttpResponseRedirect, HttpResponseForbidden,\
@@ -18,6 +18,7 @@ from pin.tools import get_user_ip
 from pin.context_processors import is_police
 from model_mongo import Ads, FixedAds
 
+User = get_user_model()
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 

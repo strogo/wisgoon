@@ -144,9 +144,9 @@ class PostTestCase(unittest.TestCase):
                            category=self.cat,
                            user=self.vahid)
         # add report post
-        self.report1, created = Report.objects.create(user_id=self.amir.id,
+        self.report1, created = Report.objects.create(user_id=self.vahid.id,
                                                       post=self.post1)
-        self.report2, created = Report.objects.create(user_id=self.vahid.id,
+        self.report2, created = Report.objects.create(user_id=self.amir.id,
                                                       post=self.post2)
 
     @override_settings(DEBUG=True)

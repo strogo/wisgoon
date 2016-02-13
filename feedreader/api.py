@@ -1,21 +1,22 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from tastypie.http import HttpUnauthorized, HttpForbidden
-from tastypie.resources import ModelResource
-from tastypie.utils.urls import trailing_slash
 from django.conf.urls import url
 from django.conf import settings
 
 from tastypie.models import ApiKey
 import hashlib
 
+from tastypie.http import HttpUnauthorized, HttpForbidden
+from tastypie.resources import ModelResource
+from tastypie.utils.urls import trailing_slash
+
 from daddy_avatar.templatetags import daddy_avatar
+
+# User = get_user_model()
 
 
 class UserResource(ModelResource):
     class Meta:
-    #    queryset = User.objects.all()
-    #    fields = ['first_name', 'last_name', 'email']
         allowed_methods = ['get', 'post']
         resource_name = 'user'
 

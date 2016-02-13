@@ -5,7 +5,7 @@ import operator
 import itertools
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
@@ -17,21 +17,22 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.models import Post, Follow, Likes, Category, Comments, Report,\
     Results
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
-    get_user_meta, get_user_ip, log_act, get_delta_timestamp
+    get_user_ip, get_delta_timestamp
 
 from pin.context_processors import is_police
 
-from pin.model_mongo import Ads, PendingPosts
+from pin.model_mongo import Ads
 from pin.models_redis import LikesRedis
 
 from pin.api6.tools import post_item_json
 
-from daddy_avatar.templatetags import daddy_avatar
+# from daddy_avatar.templatetags import daddy_avatar
 from user_profile.models import Profile
-from taggit.models import Tag, TaggedItem
+# from taggit.models import Tag, TaggedItem
 
 from haystack.query import SearchQuerySet
 
+User = get_user_model()
 MEDIA_ROOT = settings.MEDIA_ROOT
 REPORT_TYPE = settings.REPORT_TYPE
 
@@ -1043,48 +1044,48 @@ def get_comments(request, post_id):
     })
 
 
-def tag(request, keyword):
-    row_per_page = 20
+# def tag(request, keyword):
+#     row_per_page = 20
 
-    tag = get_object_or_404(Tag, slug=keyword)
-    content_type = ContentType.objects.get_for_model(Post)
-    tag_items = TaggedItem.objects.filter(tag_id=tag.id,
-                                          content_type=content_type)
+#     tag = get_object_or_404(Tag, slug=keyword)
+#     content_type = ContentType.objects.get_for_model(Post)
+#     tag_items = TaggedItem.objects.filter(tag_id=tag.id,
+#                                           content_type=content_type)
 
-    paginator = Paginator(tag_items, row_per_page)
+#     paginator = Paginator(tag_items, row_per_page)
 
-    try:
-        offset = int(request.GET.get('older', 1))
-    except ValueError:
-        offset = 1
+#     try:
+#         offset = int(request.GET.get('older', 1))
+#     except ValueError:
+#         offset = 1
 
-    try:
-        tag_items = paginator.page(offset)
-    except PageNotAnInteger:
-        tag_items = paginator.page(1)
-    except EmptyPage:
-        return HttpResponse(0)
+#     try:
+#         tag_items = paginator.page(offset)
+#     except PageNotAnInteger:
+#         tag_items = paginator.page(1)
+#     except EmptyPage:
+#         return HttpResponse(0)
 
-    s = []
-    for t in tag_items:
-        s.append(t.object_id)
+#     s = []
+#     for t in tag_items:
+#         s.append(t.object_id)
 
-    if tag_items.has_next() is False:
-        tag_items.next_page_number = -1
-    latest_items = Post.objects.filter(id__in=s).all()
+#     if tag_items.has_next() is False:
+#         tag_items.next_page_number = -1
+#     latest_items = Post.objects.filter(id__in=s).all()
 
-    if request.is_ajax():
-        if latest_items.exists():
-            return render(request, 'pin/_items.html',
-                          {'latest_items': latest_items,
-                           'offset': tag_items.next_page_number})
-        else:
-            return HttpResponse(0)
-    else:
-        return render(request, 'pin/tag.html',
-                      {'latest_items': latest_items,
-                       'tag': tag,
-                       'offset': tag_items.next_page_number})
+#     if request.is_ajax():
+#         if latest_items.exists():
+#             return render(request, 'pin/_items.html',
+#                           {'latest_items': latest_items,
+#                            'offset': tag_items.next_page_number})
+#         else:
+#             return HttpResponse(0)
+#     else:
+#         return render(request, 'pin/tag.html',
+#                       {'latest_items': latest_items,
+#                        'tag': tag,
+#                        'offset': tag_items.next_page_number})
 
 
 def policy(request):

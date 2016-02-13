@@ -1,8 +1,7 @@
 from pin.tools import AuthCache
 from pin.api6.http import return_json_data, return_un_auth, return_bad_request
 from pin.api6.tools import get_int, category_get_json
-from pin.api_tools import media_abs_url
-from pin.models import Category, SubCategory
+from pin.models import Category
 
 
 def show_category(request, cat_id):
@@ -23,6 +22,7 @@ def show_category(request, cat_id):
 def all_category(request):
     data = {}
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
+    token = request.GET.get('token', '')
     category_list = []
 
     sub_categories = SubCategory.objects.all()

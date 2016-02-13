@@ -28,7 +28,7 @@ from pin.models import Post, Stream, Follow, Ad, Block,\
     Report, Comments, Comments_score, Category, Bills2 as Bills
 
 from pin.model_mongo import Notif, UserMeta, NotifCount
-from pin.models_redis import ActivityRedis, NotificationRedis
+from pin.models_redis import ActivityRedis
 import pin_image
 from pin.tools import create_filename, get_user_ip, get_request_pid, check_block,\
     post_after_delete, get_post_user_cache
@@ -37,6 +37,7 @@ from pin.tasks import porn_feedback
 
 from suds.client import Client
 
+User = get_user_model()
 MEDIA_ROOT = settings.MEDIA_ROOT
 MEDIA_URL = settings.MEDIA_URL
 MERCHANT_ID = settings.MERCHANT_ID

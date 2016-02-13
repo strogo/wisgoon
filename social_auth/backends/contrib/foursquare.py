@@ -1,6 +1,9 @@
 from urllib import urlencode
 
-from django.utils import simplejson
+try:
+    import simplejson
+except ImportError:
+    import json as simplejson
 
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
 from social_auth.utils import dsa_urlopen

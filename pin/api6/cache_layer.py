@@ -1,6 +1,6 @@
-from django.core.cache import get_cache
+from django.core.cache import caches
 
-cache = get_cache('cache_layer')
+cache = caches['cache_layer']
 
 
 class PostCacheLayer(object):

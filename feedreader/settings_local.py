@@ -126,9 +126,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'johnny.middleware.LocalStoreClearMiddleware',
-    'johnny.middleware.QueryCacheMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'johnny.middleware.LocalStoreClearMiddleware',
+    # 'johnny.middleware.QueryCacheMiddleware',
     'pin.middleware.UrlRedirectMiddleware',
     'pin.middleware.XsSharing',
     # 'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
@@ -140,7 +140,7 @@ WSGI_APPLICATION = 'feedreader.wsgi.application'
 TEMPLATE_DIRS = (
     os.path.join(SITE_ROOT, 'templates'),
 )
-TEMPLATE_CONTEXT_PROCESSORS = (
+TEMPLATE_CONTEXT_PROCESSORS = [
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
@@ -163,9 +163,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'pin.context_processors.subs',
     'pin.context_processors.global_values',
     'pin.context_processors.static_version',
-    'pin.context_processors.static_cdn',
-)
-INSTALLED_APPS = (
+]
+
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -179,13 +179,14 @@ INSTALLED_APPS = (
     # 'easy_thumbnails',
     # 'image_cropping',
     # 'feedreader',
+    # 'south',
+    # 'django.contrib.comments',
     'blog',
-    'pin',
     'registration',
-    'south',
+    'pin',
+    # 'haystack',
     'sorl.thumbnail',
     # 'social_auth',
-    'django.contrib.comments',
     'daddy_avatar',
     'contactus',
     'compressor',
@@ -198,7 +199,7 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'ckeditor',
     'shop',
-)
+]
 
 HAYSTACK_CONNECTIONS = {
     'default': {
@@ -209,7 +210,7 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
-AUTHENTICATION_BACKENDS = (
+AUTHENTICATION_BACKENDS = [
     # 'social_auth.backends.twitter.TwitterBackend',
     # 'social_auth.backends.facebook.FacebookBackend',
     # 'social_auth.backends.google.GoogleOAuthBackend',
@@ -218,7 +219,7 @@ AUTHENTICATION_BACKENDS = (
     # 'social_auth.backends.yahoo.YahooBackend',
     # 'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
-)
+]
 
 CKEDITOR_UPLOAD_PATH = "ckeditor_uploads/"
 CKEDITOR_CONFIGS = {
@@ -256,7 +257,7 @@ CACHES = {
         BACKEND='django.core.cache.backends.memcached.MemcachedCache',
         LOCATION=['127.0.0.1:11211'],
         # LOCATION=['79.127.125.104:11211'],
-        JOHNNY_CACHE=True,
+        # JOHNNY_CACHE=False,
     ),
     'cache_layer': dict(
         # BACKEND='johnny.backends.memcached.MemcachedCache',

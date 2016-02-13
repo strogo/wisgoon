@@ -11,7 +11,10 @@ Then setup your application according manual and use information from
 registration mail to set settings values.
 """
 from django.conf import settings
-from django.utils import simplejson
+try:
+    import simplejson
+except ImportError:
+    import json as simplejson
 
 from urllib import urlencode, unquote
 from urllib2 import Request

@@ -23,10 +23,6 @@ def send_notif_bar(user, type, post, actor, seen=False, post_image=None):
             notif_send.delay(user, type, post, actor, seen=False,
                              post_image=post_image)
         else:
-            from pin.models_redis import NotificationRedis
-            NotificationRedis(user_id=user).set_notif(type, post, actor,
-                                                      seen=False,
-                                                      post_image=post_image)
             notif_send(user, type, post, actor, seen=False,
                        post_image=post_image)
     except Exception, e:

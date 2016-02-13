@@ -7,7 +7,7 @@ import hashlib
 
 from rss.models import Subscribe, Feed, Likes
 from pin.models import Likes as pin_likes
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.template.base import TemplateSyntaxError
 from django import template
 from django.utils.text import normalize_newlines
