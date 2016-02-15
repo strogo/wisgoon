@@ -35,7 +35,7 @@ class UserResource(ModelResource):
 
     def register(self, request, **kwargs):
         self.method_check(request, allowed=['post'])
-        data = self.deserialize(request, request.raw_post_data,
+        data = self.deserialize(request, request.body,
                                 format=request.META.get('CONTENT_TYPE',
                                                         'application/json'))
 
@@ -82,7 +82,7 @@ class UserResource(ModelResource):
     def login(self, request, **kwargs):
         self.method_check(request, allowed=['post'])
         data = self.deserialize(request,
-                                request.raw_post_data,
+                                request.body,
                                 format=request.META.get('CONTENT_TYPE',
                                                         'application/json'))
 
