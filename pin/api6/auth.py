@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import re
+import hashlib
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -8,8 +9,8 @@ from django.contrib.auth import logout as auth_logout
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
-from pin.models import Follow, Block, Likes
-from pin.tools import AuthCache
+from pin.models import Follow, Block, Likes, BannedImei, Log, PhoneData
+from pin.tools import AuthCache, get_user_ip
 from pin.api6.http import return_bad_request, return_json_data, return_un_auth,\
     return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object, get_int, get_profile_data,\
@@ -487,4 +488,67 @@ def password_change(request):
     return return_json_data({
         "status": False,
         'message': _('Error in parameters')
+    })
+
+
+def get_phone_data(request):
+    os = request.POST.get("os", "")
+    app_version = request.POST.get("app_version", "")
+    google_token = request.POST.get("google_token", "")
+    token = request.POST.get("user_wisgoon_token", None)
+    imei = request.POST.get("imei", "")
+    android_version = request.POST.get("android_version", "")
+    phone_serial = request.POST.get("phone_serial", "")
+    phone_model = request.POST.get("phone_model", "")\
+        .encode('ascii', 'ignore').decode('ascii')
+
+    if not token:
+        return return_un_auth()
+
+    user = AuthCache.user_from_token(token=token)
+
+    if not user:
+        return return_un_auth(message=_("user not found"))
+
+    if imei:
+        if BannedImei.objects.filter(imei=imei).exists():
+            u = User.objects.get(pk=user.id)
+            if u.is_active:
+                u.is_active = False
+                u.save()
+
+                Log.ban_by_imei(actor=user, text=u.username,
+                                ip_address=get_user_ip(request))
+
+    try:
+        upd = PhoneData.objects.only("hash_data").get(user=user)
+        pfields = upd.get_need_fields()
+
+        h_str = '%'.join([str(locals()[f]) for f in pfields])
+
+        hash_str = hashlib.md5(h_str).hexdigest()
+
+        if hash_str == upd.hash_data:
+            return return_json_data({
+                "status": True,
+                'message': _('updated')
+            })
+
+    except PhoneData.DoesNotExist:
+        return return_bad_request(message=_("phone does not exist"))
+
+    upd, created = PhoneData.objects.get_or_create(user=user)
+    upd.imei = imei
+    upd.os = os
+    upd.phone_model = phone_model
+    upd.phone_serial = phone_serial
+    upd.android_version = android_version
+    upd.app_version = app_version
+    upd.google_token = google_token
+    upd.logged_out = False
+    upd.save()
+
+    return return_json_data({
+        "status": True,
+        'message': _('accepted')
     })

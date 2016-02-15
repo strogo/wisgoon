@@ -1,16 +1,9 @@
-# import os
 from datetime import datetime
-# from celery import Celery
-
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'feedreader.settings')
-
-# app = Celery('tasks', broker='amqp://guest@79.127.125.146//')
-# app.conf.CELERY_TASK_SERIALIZER = 'json'
-# app.conf.CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 
 from django.db.models import F
 
 from pin.model_mongo import Notif, MonthlyStats, NotifCount
+from pin.models_redis import NotificationRedis
 from pin.models import Post, Follow
 
 from user_profile.models import Profile
@@ -24,6 +17,9 @@ def notif_send(user_id, type, post, actor_id, seen=False, post_image=None):
                          last_actor=actor_id,
                          date=datetime.now,
                          post_image=post_image)
+
+    NotificationRedis(user_id=user_id)\
+        .set_notif(ntype=type, post=post, actor=actor_id)
 
     return "hello notif"
 
