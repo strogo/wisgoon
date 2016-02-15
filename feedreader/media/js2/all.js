@@ -1,31 +1,40 @@
+function alert_show(msg, status) {
+    $('.alert_show').remove();
+    $('body').append('<div class="alert alert_show ' + status + '">' + msg + '</div>');
+    setTimeout(function() {
+        $('.alert_show').slideUp();
+    }, 3000);
+    setTimeout(function() {
+        $('.alert_show').remove();
+    }, 4000);
+}
 function pn(no){
-    var n = no + '';n = n.replace(/1/g, '۱');n = n.replace(/2/g, '۲');n = n.replace(/3/g, '۳');n = n.replace(/4/g, '۴');n = n.replace(/5/g, '۵');n = n.replace(/6/g, '۶');n = n.replace(/7/g, '۷');n = n.replace(/8/g, '۸');n = n.replace(/9/g, '۹');n = n.replace(/0/g, '۰');return n;
+    var n = no + '';
+    n = n.replace(/1/g, '۱');
+    n = n.replace(/2/g, '۲');
+    n = n.replace(/3/g, '۳');
+    n = n.replace(/4/g, '۴');
+    n = n.replace(/5/g, '۵');
+    n = n.replace(/6/g, '۶');
+    n = n.replace(/7/g, '۷');
+    n = n.replace(/8/g, '۸');
+    n = n.replace(/9/g, '۹');
+    n = n.replace(/0/g, '۰');
+    return n;
 }
 function en(no){
-    var n = no + '';n = n.replace(/۱/g, '1');n = n.replace(/۲/g, '2');n = n.replace(/۳/g, '3');n = n.replace(/۴/g, '4');n = n.replace(/۵/g, '5');n = n.replace(/۶/g, '6');n = n.replace(/۷/g, '7');n = n.replace(/۸/g, '8');n = n.replace(/۹/g, '9');n = n.replace(/۰/g, '0');return n;
-}
-
-function loading(el){
-    el.append('<div class="cover_disable"><div class="loading_b"></div></div>');
-    el.find('.loading_b').css({
-        top: (el.height() - 8) / 2 +'px',
-        left: (el.width() - 16) / 2 +'px'
-    });
-    var i = 0;
-    $('.loading_b').css('background-position', '0px 0px');
-    setInterval(function(){
-        if (i < 944) {
-            i += 16;
-            $('.loading_b').css('background-position', '0px -'+i+'px');
-        }else{
-            i = 0;
-        }
-    }, 140);
-}
-
-function loading_rm(el){
-    // console.log(el);
-    el.find('.cover_disable').remove();
+    var n = no + '';
+    n = n.replace(/۱/g, '1');
+    n = n.replace(/۲/g, '2');
+    n = n.replace(/۳/g, '3');
+    n = n.replace(/۴/g, '4');
+    n = n.replace(/۵/g, '5');
+    n = n.replace(/۶/g, '6');
+    n = n.replace(/۷/g, '7');
+    n = n.replace(/۸/g, '8');
+    n = n.replace(/۹/g, '9');
+    n = n.replace(/۰/g, '0');
+    return n;
 }
 
 var feedobj = $('#feed');
@@ -70,14 +79,13 @@ function load_posts(page) {
     feedobj.masonry('reload');
 }
 
+
 $(window).scroll(function() {
     var sc = $(window).scrollTop();
     if (sc > 300) {
         $('.gotop').css('display', 'block');
-        // $('#fix_nav').show();
     }else{
         $('.gotop').css('display', 'none');
-        // $('#fix_nav').hide();
     }
 
     loadingobj = $('.footer-loading-box');
@@ -111,6 +119,7 @@ function readURL(input, img_id) {
 var isVisible = false;
 var clickedAway = false;
 var notifCache=false;
+
 
 $('.tooltips').tooltip();
 $('body').on('click', '#ScrollToTop', function(event) {
@@ -183,7 +192,26 @@ function live_content(){
     });
 }
 
-
+$('body').on('click', '.del-comment', function(event) {
+    event.preventDefault();
+    var t = $(this);
+    var href = t.attr('href');
+    $.ajax({
+        url: href,
+    })
+    .done(function(res) {
+        if (res.status === true) {
+            alertify.success(res.message);
+            t.parents('.cmnt_item').slideUp('fast');
+        }else{
+            alertify.error("خطا در حذف دیدگاه");
+        }
+    })
+    .fail(function() {
+        alertify.error("خطا در حذف دیدگاه");
+    });
+    return false;
+});
 
 $('.topuser-thumb').webuiPopover('destroy').webuiPopover({
     trigger: 'hover',
@@ -271,6 +299,37 @@ $(function () {
     });
 
 
+    $('body').on('click', '.ajax-follow', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        var href = t.attr('href');
+
+        $.ajax({
+            url: href,
+            async: false
+        })
+        .done(function(response) {
+            if (response.status) {
+                alertify.success(response.message);
+                t.attr('href', '/pin/follow/' + t.data('user-id') + '/0/');
+                t.html('قطع ارتباط <i class="fa fa-times"></i>').removeClass('green').addClass('red');
+            } else {
+                alertify.success(response.message);
+                t.attr('href', '/pin/follow/' + t.data('user-id') + '/1/');
+                t.html('ایجاد دوستی  <i class="fa fa-plus"></i>').removeClass('red').addClass('green');
+            }
+            if (t.parents('.follow_box')) {
+                t.parents('.follow_box').find('.follower_count strong').text(pn(response.count));
+            };
+        })
+        .fail(function(response) {
+            console.log("error");
+        })
+        .always(function() {
+            console.log("complete");
+        });
+    });
+
     //
     $('[data-toggle="tooltip"]').tooltip();
     $('.menu-box ul li.parent').attr('data-content', '');
@@ -296,6 +355,26 @@ $(function () {
     $('body').on('click', '.menu-box .colse-menu-btn', function(event) {
         event.preventDefault();
         $('.menu-box').hide('fast');
+    });
+
+    $('body').on('click', '.report-btn', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        t.append('<span class="loading-img"></span>');
+        $.ajax({
+            url: t.attr('href'),
+        })
+        .done(function(d) {
+            if (d.status) {
+                alertify.success(d.msg);
+            }else{
+                alertify.error(d.msg);
+            }
+        })
+        .fail(function(d) {
+            alertify.error("خطا! با مدیریت تماس بگیرید");
+        });
+        return false;
     });
 
     $('body').on('click', '.resp-menu', function(event) {
@@ -363,30 +442,10 @@ $(function () {
         window.location.href = $(this).attr('href');
     });
 
-    var l = $('body > .container-fluid .cats > ul > li');
-    l.each(function(index, el) {
-        $(this).width(100/l.length+'%');
-    });
-    // var l = $('body #fix_nav > .container-fluid .cats > ul > li');
-    // l.each(function(index, el) {
-    //     $(this).width(100/l.length+'%');
-    // });
-    $('body').on('click', '.only_mobile_view .fa-times', function(event) {
-        event.preventDefault();
-        $(this).parents(".only_mobile_view").remove();
-        $('body').css('padding-top', "0 !important");
-        $('body').append("<style type='text/css'>@media (max-width: 768px) {body{padding-top:0 !important;}}</style>");
-        var date = new Date();
-        date.setTime(date.getTime() + (60 * 60 * 1000));
-        Cookies.set('no_download', 1, { expires : date });
-    });
+    var l = $('.cats > ul > li');
+    l.width(100/l.length+'%');
 
-    var no_download = Cookies.get('no_download');
-
-    if (no_download) {
-        $('.top_download').parent().remove();
-        $('body').append("<style type='text/css'>@media (max-width: 768px) {body{padding-top:0 !important;}}</style>");
-    };
 });
 
 live_content();
+

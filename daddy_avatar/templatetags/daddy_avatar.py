@@ -3,11 +3,12 @@ import os
 from django.template import Library
 from django.core.cache import cache
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from user_profile.models import Profile
 
 register = Library()
+User = get_user_model()
 
 
 @register.filter

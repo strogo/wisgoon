@@ -15,7 +15,8 @@ class UserDataCache(object):
         ce = cache.get(keyname)
         if ce:
             return ce
-        from django.contrib.auth.models import User
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
         try:
             u = User.objects.only('username').get(id=user_id)
             username = u.username

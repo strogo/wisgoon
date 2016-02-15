@@ -20,6 +20,7 @@ rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
 rListServer = redis.Redis(settings.REDIS_DB_2, db=4)
 leaderBoardServer = redis.Redis(settings.REDIS_DB_2, db=0)
 activityServer = redis.Redis(settings.REDIS_DB_3)
+
 notificationRedis = redis.Redis(settings.REDIS_DB_4)
 
 

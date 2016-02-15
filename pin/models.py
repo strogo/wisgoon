@@ -13,7 +13,6 @@ from datetime import datetime, timedelta
 from time import mktime
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.validators import URLValidator
@@ -25,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from sorl.thumbnail import get_thumbnail
 
-from taggit.models import Tag
+# from taggit.models import Tag
 
 from model_mongo import Notif as Notif_mongo, MonthlyStats
 from preprocessing import normalize_tags
@@ -37,7 +36,6 @@ from pin.models_graph import FollowUser
 from pin.analytics import comment_act, post_act
 
 LIKE_TO_DEFAULT_PAGE = 10
-
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 r_server4 = redis.Redis(settings.REDIS_DB_2, db=4)
 
@@ -120,16 +118,17 @@ class Ad(models.Model):
         TYPE_15000_USER: 5000,
     }
 
-    user = models.ForeignKey(User)
-    owner = models.ForeignKey(User, related_name='owner',
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='owner',
                               blank=True, null=True)
     ended = models.BooleanField(default=False, db_index=True)
     cnt_view = models.IntegerField(default=0)
     post = models.ForeignKey("Post")
     ads_type = models.IntegerField(default=TYPE_1000_USER)
-    start = models.DateTimeField(auto_now_add=True, auto_now=True)
+    # start = models.DateTimeField(auto_now_add=True, auto_now=True)
+    start = models.DateTimeField(auto_now=True)
     end = models.DateTimeField(blank=True, null=True)
-    ip_address = models.IPAddressField(default="127.0.0.1")
+    ip_address = models.GenericIPAddressField(default="127.0.0.1")
 
     def get_cnt_view(self):
         cache_key = "ad_%d" % self.id
@@ -265,7 +264,7 @@ class Post(models.Model):
     create_date = models.DateField(auto_now_add=True)
     create = models.DateTimeField(auto_now_add=True)
     timestamp = models.IntegerField(db_index=True, default=1347546432)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     like = models.IntegerField(default=0)
     url = models.CharField(blank=True, max_length=2000,
                            validators=[URLValidator()])
@@ -878,10 +877,10 @@ class Bills2(models.Model):
     trans_id = models.CharField(max_length=250, blank=True,
                                 null=True, db_index=True)
 
-    create_date = models.DateField(auto_now_add=True, default=datetime.now)
-    create_time = models.DateTimeField(auto_now_add=True, default=datetime.now)
+    create_date = models.DateField(default=datetime.now)
+    create_time = models.DateTimeField(default=datetime.now)
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     # def __init__(self):
     #     if Bills2.objects.all().count() == 0:
@@ -896,8 +895,8 @@ class Bills2(models.Model):
 
 
 class Follow(models.Model):
-    follower = models.ForeignKey(User, related_name='follower')
-    following = models.ForeignKey(User, related_name='following')
+    follower = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='follower')
+    following = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='following')
 
     @classmethod
     def get_follow_status(cls, follower, following):
@@ -952,8 +951,8 @@ class Follow(models.Model):
 
 
 class Stream(models.Model):
-    following = models.ForeignKey(User, related_name='stream_following')
-    user = models.ForeignKey(User, related_name='user')
+    following = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='stream_following')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user')
     post = models.ForeignKey(Post)
     date = models.IntegerField(default=0)
 
@@ -996,10 +995,11 @@ class Stream(models.Model):
                 pass
 
 
+
 class Likes(models.Model):
-    user = models.ForeignKey(User, related_name='pin_post_user_like')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='pin_post_user_like')
     post = models.ForeignKey(Post, related_name="post_item")
-    ip = models.IPAddressField(default='127.0.0.1')
+    ip = models.GenericIPAddressField(default='127.0.0.1')
 
     class Meta:
         unique_together = (("post", "user"),)
@@ -1130,8 +1130,8 @@ class Notifbar(models.Model):
     )
 
     post = models.ForeignKey(Post)
-    actor = models.ForeignKey(User, related_name="actor_id")
-    user = models.ForeignKey(User, related_name="post_user_id")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor_id")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="post_user_id")
     seen = models.BooleanField(default=False)
     type = models.IntegerField(default=1, choices=TYPES)
     date = models.DateTimeField(auto_now_add=True)
@@ -1150,8 +1150,8 @@ class Notif(models.Model):
     )
 
     post = models.ForeignKey(Post)
-    # sender = models.ForeignKey(User, related_name="sender")
-    user = models.ForeignKey(User, related_name="user_id")
+    # sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="sender")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_id")
     text = models.CharField(max_length=500)
     seen = models.BooleanField(default=False)
     type = models.IntegerField(default=1, choices=TYPES)
@@ -1160,7 +1160,7 @@ class Notif(models.Model):
 
 class Notif_actors(models.Model):
     notif = models.ForeignKey(Notif, related_name="notif")
-    actor = models.ForeignKey(User, related_name="actor")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor")
 
 
 class App_data(models.Model):
@@ -1188,12 +1188,12 @@ class Comments(models.Model):
 
     comment = models.TextField()
     submit_date = models.DateTimeField(auto_now_add=True)
-    ip_address = models.IPAddressField(default='127.0.0.1', db_index=True)
+    ip_address = models.GenericIPAddressField(default='127.0.0.1', db_index=True)
     is_public = models.BooleanField(default=False, db_index=True)
     reported = models.BooleanField(default=False, db_index=True)
 
     object_pk = models.ForeignKey(Post, related_name='comment_post')
-    user = models.ForeignKey(User, related_name='comment_sender')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comment_sender')
     score = models.IntegerField(default=0, blank=True, )
 
     def __unicode__(self):
@@ -1330,12 +1330,12 @@ class Comments(models.Model):
 
 class Comments_score(models.Model):
     comment = models.ForeignKey(Comments)
-    user = models.ForeignKey(User, related_name='comment_like_user')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comment_like_user')
     score = models.IntegerField(default=0, blank=True)
 
 
 class Report(models.Model):
-    user = models.ForeignKey(User, related_name='report_user')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='report_user')
     post = models.ForeignKey(Post, related_name='report_post')
 
     class Meta:
@@ -1343,8 +1343,8 @@ class Report(models.Model):
 
 
 class Block(models.Model):
-    user = models.ForeignKey(User, related_name='blocker')
-    blocked = models.ForeignKey(User, related_name='blocked')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='blocker')
+    blocked = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='blocked')
 
     @classmethod
     def block_user(cls, user_id, blocked_id):
@@ -1368,7 +1368,7 @@ class Block(models.Model):
 
 
 class PhoneData(models.Model):
-    user = models.OneToOneField(User, related_name="phone",
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name="phone",
                                 null=True, blank=True)
     imei = models.CharField(max_length=50)
     os = models.CharField(max_length=50)
@@ -1406,8 +1406,8 @@ class PhoneData(models.Model):
 class InstaAccount(models.Model):
     insta_id = models.IntegerField()
     cat = models.ForeignKey(Category)
-    user = models.ForeignKey(User)
-    lc = models.DateTimeField(auto_now_add=True, default=datetime.now())
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    lc = models.DateTimeField(default=datetime.now())
 
 
 class PostMetaData(models.Model):
@@ -1434,9 +1434,10 @@ class PostMetaData(models.Model):
 
 class BannedImei(models.Model):
     imei = models.CharField(max_length=50, db_index=True)
-    create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
+    # create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
+    create_time = models.DateTimeField(auto_now=True)
     description = models.TextField(default="")
-    user = models.ForeignKey(User, default=1)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
 
 
 class Log(models.Model):
@@ -1469,15 +1470,15 @@ class Log(models.Model):
         (ACTIVE_USER, "activated")
     )
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     action = models.IntegerField(default=1, choices=ACTIONS, db_index=True)
     object_id = models.IntegerField(default=0, db_index=True)
     content_type = models.IntegerField(default=1, choices=TYPES, db_index=True)
-    ip_address = models.IPAddressField(default='127.0.0.1', db_index=True)
+    ip_address = models.GenericIPAddressField(default='127.0.0.1', db_index=True)
     owner = models.IntegerField(default=0)
     text = models.TextField(default="", blank=True, null=True)
 
-    create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
+    create_time = models.DateTimeField(default=datetime.now())
 
     post_image = models.CharField(max_length=250, blank=True, null=True)
 
@@ -1578,13 +1579,13 @@ class Results(models.Model):
 
 
 class Official(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     mode = models.IntegerField(choices=((1, 'sp1'), (2, 'sp2')), default='1')
 
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
 # post_delete.connect(Likes.user_unlike_post, sender=Likes)
-post_save.connect(Post.change_tag_slug, sender=Tag)
+# post_save.connect(Post.change_tag_slug, sender=Tag)
 post_save.connect(Comments.add_comment, sender=Comments)
 post_save.connect(Follow.new_follow, sender=Follow)
 # post_delete.connect(Follow.un_follow, sender=Follow)

@@ -4,7 +4,6 @@ from settings_local import *
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
-DISPLAY_AD = True
 
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
@@ -104,6 +103,7 @@ CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.98//'
 NEO4J_DATABASE = "http://79.127.125.98:7474/db/data/"
 
 ES_HOST = "79.127.125.98"
+
 REDIS_DB_4 = '79.127.125.99'
 REDIS_DB_3 = '79.127.125.98'
 

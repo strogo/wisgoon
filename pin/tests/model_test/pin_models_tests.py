@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from pin.models import *
-import unittest
+from django.contrib.auth.models import User
+from pin.models import (Category, Post, Ad, Follow, Likes, Notifbar, Notif,
+                        Comments, Comments_score, Report)
+from django.test import TestCase
 from user_profile.models import Profile
 from django.core.cache import cache
 
 
-class SubCategoryTestCase(unittest.TestCase):
+class SubCategoryTestCase(TestCase):
 
     def setUp(self):
         self.cat, created = Category.objects.get_or_create(title='sport',
@@ -23,7 +25,7 @@ class SubCategoryTestCase(unittest.TestCase):
         self.assertEqual(self.cat.title, 'social')
 
 
-class AdTestCase(unittest.TestCase):
+class AdTestCase(TestCase):
 
     def setUp(self):
         self.user, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
@@ -50,7 +52,7 @@ class AdTestCase(unittest.TestCase):
         self.assertEqual(self.ad.owner, self.post.user)
 
 
-class CategoryTestCase(unittest.TestCase):
+class CategoryTestCase(TestCase):
 
     def setUp(self):
         self.user, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
@@ -67,7 +69,7 @@ class CategoryTestCase(unittest.TestCase):
     #     self.assertEqual(Ad.get_json(self.cat.id), '')
 
 
-class PostTestCase(unittest.TestCase):
+class PostTestCase(TestCase):
 
     def setUp(self):
         self.user, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
@@ -142,7 +144,7 @@ class PostTestCase(unittest.TestCase):
         self.assertIsNotNone(Post.last_likes())
 
 
-class FollowTestCase(unittest.TestCase):
+class FollowTestCase(TestCase):
 
     def setUp(self):
         self.amir, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
@@ -161,7 +163,7 @@ class FollowTestCase(unittest.TestCase):
         self.assertEqual(self.delete, None)
 
 
-class LikesTestCase(unittest.TestCase):
+class LikesTestCase(TestCase):
 
     def setUp(self):
         self.user, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
@@ -184,7 +186,7 @@ class LikesTestCase(unittest.TestCase):
         self.assertEqual(self.delete, None)
 
 
-class NotifbarTestCase(unittest.TestCase):
+class NotifbarTestCase(TestCase):
 
     def setUp(self):
         self.amir, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
@@ -203,7 +205,7 @@ class NotifbarTestCase(unittest.TestCase):
         self.assertIsInstance(self.notif, Notifbar)
 
 
-class NotifTestCase(unittest.TestCase):
+class NotifTestCase(TestCase):
 
     def setUp(self):
         self.amir, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
@@ -222,7 +224,7 @@ class NotifTestCase(unittest.TestCase):
         self.assertIsInstance(self.notif, Notif)
 
 
-class CommentsTestCase(unittest.TestCase):
+class CommentsTestCase(TestCase):
 
     def setUp(self):
         self.amir, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
@@ -253,7 +255,7 @@ class CommentsTestCase(unittest.TestCase):
         self.assertEqual(self.delete, None)
 
 
-class CommentsScoreTestCase(unittest.TestCase):
+class CommentsScoreTestCase(TestCase):
 
     def setUp(self):
         self.amir, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
@@ -274,7 +276,7 @@ class CommentsScoreTestCase(unittest.TestCase):
         self.assertIsInstance(self.score, Comments_score)
 
 
-class ClassReportTestCase(unittest.TestCase):
+class ClassReportTestCase(TestCase):
 
     def setUp(self):
         self.amir, created = User.objects.get_or_create(username='amir', email='a.ab@yahoo.com', password='1')
@@ -293,5 +295,5 @@ class ClassReportTestCase(unittest.TestCase):
         self.report = Report(user=self.vahid, post=self.post)
         self.assertIsInstance(self.report, Report)
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     TestCase.main()

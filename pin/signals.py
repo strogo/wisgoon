@@ -1,8 +1,7 @@
 from django.db import models
-# from django.db.models.loading import get_model
+
 from haystack import signals
 
-# from models import Channel, Video
 from pin.models import Post
 from user_profile.models import Profile
 

@@ -19,7 +19,10 @@ import time
 from urllib import urlencode
 from urllib2 import HTTPError
 
-from django.utils import simplejson
+try:
+    import simplejson
+except ImportError:
+    import json as simplejson
 from django.contrib.auth import authenticate
 
 from social_auth.backends import BaseOAuth2, OAuthBackend, USERNAME
