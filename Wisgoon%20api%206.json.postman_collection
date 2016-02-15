@@ -28,7 +28,8 @@
 				"d418c5bc-9921-0894-51b9-b5dad627e0c9",
 				"26c74d30-554b-3d76-c42b-1d62a21424ad",
 				"59de64c5-435f-088b-c043-f12363ee469b",
-				"97bdee19-4e7c-e2c9-7df5-5baa01b3c622"
+				"97bdee19-4e7c-e2c9-7df5-5baa01b3c622",
+				"f8130bdb-3e5a-69ef-efd9-82621418562f"
 			],
 			"owner": 0
 		},
@@ -1188,6 +1189,76 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"folder": "71c89b9d-eac3-5c99-e054-75916805307e"
+		},
+		{
+			"id": "f8130bdb-3e5a-69ef-efd9-82621418562f",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/get/phone/data/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "64faee03-3311-d8c9-2a6a-7130ce4b455d",
+			"data": [
+				{
+					"key": "os",
+					"value": "android",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "app_version",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "google_token",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "user_wisgoon_token",
+					"value": "1234",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "imei",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "android_version",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "phone_serial",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "phone_model",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "get phone data",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1455560579079,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "2e5113f4-5796-abf1-dfa6-aca170b51b44"
 		},
 		{
 			"id": "fbd44fac-8930-288b-9378-38b79134abf2",

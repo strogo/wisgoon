@@ -491,7 +491,10 @@ def password_change(request):
     })
 
 
+@csrf_exempt
 def get_phone_data(request):
+    if request.method != "POST":
+        return return_bad_request()
     os = request.POST.get("os", "")
     app_version = request.POST.get("app_version", "")
     google_token = request.POST.get("google_token", "")
@@ -535,7 +538,7 @@ def get_phone_data(request):
             })
 
     except PhoneData.DoesNotExist:
-        return return_bad_request(message=_("phone does not exist"))
+        pass
 
     upd, created = PhoneData.objects.get_or_create(user=user)
     upd.imei = imei
