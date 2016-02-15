@@ -100,20 +100,22 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 )
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
+MIDDLEWARE_CLASSES = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'johnny.middleware.LocalStoreClearMiddleware',
     # 'johnny.middleware.QueryCacheMiddleware',
     'pin.middleware.UrlRedirectMiddleware',
     'pin.middleware.XsSharing',
     # 'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     # 'django_cprofile_middleware.middleware.ProfilerMiddleware',
-)
+]
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 ROOT_URLCONF = 'feedreader.urls_local'
 WSGI_APPLICATION = 'feedreader.wsgi.application'
@@ -146,6 +148,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 ]
 
 INSTALLED_APPS = [
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -155,29 +158,29 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.humanize',
     'django.contrib.flatpages',
+    'blog.apps.BlogConfig',
+    'registration',
+    'pin.apps.PinConfig',
+    'sorl.thumbnail',
+    'daddy_avatar',
+    'contactus',
+    'compressor',
+    'user_profile.apps.UserProfileConfig',
+    'captcha',
+    'tastypie',
+    'debug_toolbar',
+    'widget_tweaks',
+    'ckeditor',
+    'shop.apps.ShopConfig',
+    'haystack',
+    # 'social_auth',
+    # 'taggit',
+    # 'devserver',
     # 'easy_thumbnails',
     # 'image_cropping',
     # 'feedreader',
     # 'south',
     # 'django.contrib.comments',
-    'blog',
-    'registration',
-    'pin',
-    # 'haystack',
-    'sorl.thumbnail',
-    # 'social_auth',
-    'daddy_avatar',
-    'contactus',
-    'compressor',
-    # 'taggit',
-    'user_profile',
-    'captcha',
-    'tastypie',
-    # 'devserver',
-    'debug_toolbar',
-    'widget_tweaks',
-    'ckeditor',
-    'shop',
 ]
 
 HAYSTACK_CONNECTIONS = {
