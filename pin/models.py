@@ -14,6 +14,7 @@ from time import mktime
 
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.validators import URLValidator
 from django.core.urlresolvers import reverse
