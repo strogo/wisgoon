@@ -1,19 +1,22 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 from mongoengine import *
 connect('rss')
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from urlparse import urlparse
+User = get_user_model()
+
 
 class Category(models.Model):
     name = models.CharField(max_length=1000)
     en_title = models.CharField(max_length=1000)
     image = models.ImageField(upload_to='rss/category')
     order = models.IntegerField(default=0)
-    
+
     def __unicode__(self):
         return self.name
+
 
 class Feed(models.Model):
     url = models.URLField()
@@ -27,7 +30,7 @@ class Feed(models.Model):
     lock = models.BooleanField(default=False)
 
     category = models.ForeignKey(Category, default=None, blank=True, null=True)
-    
+
     def __unicode__(self):
         if not self.title:
             o = urlparse(self.url)
@@ -37,10 +40,11 @@ class Feed(models.Model):
                 return self.url
         else:
             return self.title
-    
+
     @models.permalink
     def get_absolute_url(self):
         return ('rss-feed', [str(self.id)])
+
 
 class ItemExtra(Document):
     item_id = IntField()

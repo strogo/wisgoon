@@ -416,7 +416,7 @@ def get_profile_data(profile, user_id):
     data['score'] = profile.score
     data['cnt_post'] = profile.cnt_post
     data['cnt_like'] = profile.cnt_like
-    data['is_active'] = profile.user.is_active
+    data['is_active'] = str(profile.user.is_active)
     data['credit'] = profile.credit
     data['cnt_follower'] = profile.cnt_follower
     data['cnt_following'] = profile.cnt_following

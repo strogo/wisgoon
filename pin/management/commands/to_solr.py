@@ -1,12 +1,13 @@
-#from __future__ import print_function
 import pysolr
 
 from django.core.management.base import BaseCommand
 from django.core.cache import cache
-from django.contrib.auth.models import User
-from django.conf import settings
+from django.contrib.auth import get_user_model
+# from django.conf import settings
 
 from user_profile.models import Profile
+
+User = get_user_model()
 
 
 class Command(BaseCommand):
@@ -31,7 +32,7 @@ class Command(BaseCommand):
                     "username_t": u['username'],
                     "score_i": p['score'],
                 }
-                
+
             except Profile.DoesNotExist:
                 row = {
                     "id": u['id'],
@@ -48,10 +49,5 @@ class Command(BaseCommand):
         else:
             cache.delete('cur_solr_user_id')
             print "none"
-            
+
         solr.add(all_rows)
-
-        
-        
-
-        

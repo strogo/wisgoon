@@ -38,7 +38,7 @@ urlpatterns = patterns('pin.views',
     url(r'^user/(?P<user_id>\d+)/(?P<user_name>\w+)/$', 'user', name='pin-user-new'),
 
     url(r'^com/posts/(?P<post_id>\d+)/', 'get_comments', name='pin-get-comments'),
-    url(r'^tag/(.*)/', 'tag', name="pin-tag"),
+    # url(r'^tag/(.*)/', 'tag', name="pin-tag"),
     url(r'^editor/choices/feed/', EditorPinFeed(), name="pin-latest-feed"),
 
     url(r'^popular/(?P<interval>\w+)/$', 'popular', name='pin-popular-offset'),
@@ -141,7 +141,7 @@ urlpatterns += patterns('pin.views_device',
 )
 
 urlpatterns += patterns('',
-    url(r'^comments/', include('django.contrib.comments.urls')),
+    # url(r'^comments/', include('django.contrib.comments.urls')),
     url(r'^api/post/(?P<item_id>\d+)/$', 'pin.views2_api.post_item', name="post_api_item"),
     url(r'^api/post/(?P<post_id>\d+)/details/', 'pin.views2_api.post_details', name="post_api_details"),
     url(r'^api/post/', 'pin.views2_api.post', name="post_api"),

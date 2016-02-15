@@ -6,6 +6,7 @@ import json
 from django.test import Client
 from django.contrib.auth.models import User
 from django.test.utils import override_settings
+
 # from django.conf import settings
 
 from tastypie.models import ApiKey
@@ -51,6 +52,7 @@ class HomeTestCase(unittest.TestCase):
                            category=self.cat,
                            user=self.vahid)
         # follow user
+
         self.follow1 = Follow.objects.create(follower=self.amir,
                                              following=self.vahid)
         self.follow2 = Follow.objects.create(follower=self.vahid,

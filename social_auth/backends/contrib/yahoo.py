@@ -18,7 +18,10 @@ Throws:
 AuthUnknownError - if user data retrieval fails (guid or profile)
 """
 
-from django.utils import simplejson
+try:
+    import simplejson
+except ImportError:
+    import json as simplejson
 
 from social_auth.utils import setting
 from social_auth.backends import ConsumerBasedOAuth, OAuthBackend, USERNAME

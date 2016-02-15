@@ -8,6 +8,7 @@
 <script type="text/javascript" src="{{STATIC_CDN}}v2/js/caman.full.min.js"></script>
 <script type="text/javascript" src="{{STATIC_CDN}}js/jquery.masonry.min.js"></script>
 
+
 {% include "pin2/__from_image_modal.html" %}
 {% include "pin2/__from_url_modal.html" %}
 
@@ -53,6 +54,7 @@
 
 <script type="text/javascript" src="{{STATIC_CDN}}v2/js/js-cookie.js"></script>
 <script type="text/javascript" src="{{STATIC_CDN}}js2/all.js?ver={{STATIC_VERSION}}"></script>
+
 {% if user.is_authenticated %}
 <script type="text/javascript">
 	var profile_url = '{% url "pin-absuser" request.user %}';

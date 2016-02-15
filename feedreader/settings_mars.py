@@ -16,6 +16,18 @@ DATABASES = {
     },
 }
 
+CACHES = {
+    'default': dict(
+        BACKEND='django.core.cache.backends.memcached.MemcachedCache',
+        LOCATION=['79.127.125.99:11211'],
+        KEY_PREFIX='19'
+    ),
+    'cache_layer': dict(
+        BACKEND='django.core.cache.backends.memcached.MemcachedCache',
+        LOCATION=['79.127.125.98:11211'],
+    )
+}
+
 CELERY_ROUTES = {
     'wisgoon.pin.post_to_followers': {
         'queue': 'wisgoon.push.to.followers'

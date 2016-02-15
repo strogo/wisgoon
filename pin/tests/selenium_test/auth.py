@@ -1,7 +1,8 @@
 # coding: utf-8
 from django.test import LiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class MySeleniumTests(LiveServerTestCase):

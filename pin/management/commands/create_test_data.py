@@ -5,7 +5,7 @@ import csv
 import sys
 
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.conf import settings
 
 from tastypie.models import ApiKey
@@ -20,6 +20,7 @@ default_text = u'لورم ایپسوم متن ساختگی با تولید سا�
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+User = get_user_model()
 
 class Command(BaseCommand):
     def handle(self, *args, **options):

@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -25,7 +25,7 @@ class Product(models.Model):
     price = models.IntegerField(default=0)
     in_stock = models.BooleanField(default=True)
 
-    mode = models.IntegerField(choices=MODES, max_length=30, default=NORMAL)
+    mode = models.IntegerField(choices=MODES, default=NORMAL)
 
     category = models.ForeignKey(Category)
 

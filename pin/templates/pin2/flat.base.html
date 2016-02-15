@@ -19,20 +19,14 @@
 	{% include "base/analytics.html"%}
 </head>
 <body>
+
 	{% include "pin2/includes/_top_mob_download.html" %}
 
 	<div id="pagetop"></div>
 	{% include "pin2/nav.html" %}
 	{% include "pin2/cats.html" %}
 
-	{% comment %}
-	<div id="fix_nav">
-		{% include "pin2/nav.html" %}
-		{% include "pin2/cats.html" %}
-	</div>
-	{% endcomment %}
-
-	{% if DISPLAY_AD %}
+	{% if not DEBUG %}
 	<div class="tabliq-block" style="text-align:center">
 		{% include "base/tabliq.html" %}
 	</div>
