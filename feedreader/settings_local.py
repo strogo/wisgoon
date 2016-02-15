@@ -188,7 +188,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'ckeditor',
     'shop.apps.ShopConfig',
-    # 'haystack',
+    'haystack',
     # 'social_auth',
     # 'taggit',
     # 'devserver',

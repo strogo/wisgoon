@@ -33,6 +33,7 @@ from pin.tools import AuthCache, get_user_ip, log_act, get_new_access_token,\
 from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2, PhoneData, Log, BannedImei
 from pin.model_mongo import Notif, UserLocation, NotifCount
+from pin.models_redis import NotificationRedis
 from pin.actions import send_clear_notif
 from pin.cacheLayer import UserDataCache, CategoryDataCache
 
