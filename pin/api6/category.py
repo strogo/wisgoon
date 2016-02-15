@@ -23,6 +23,7 @@ def show_category(request, cat_id):
 def all_category(request):
     data = {}
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
+    token = request.GET.get('token', '')
     category_list = []
 
     sub_categories = SubCategory.objects.all()
