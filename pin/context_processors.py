@@ -43,7 +43,7 @@ def today_stats(request):
     ma = {}
     for mm in m:
         ma[mm.object_type] = mm.count
-    print ma
+    # print ma
 
     cache.set("today_stats", ma, 60)
 
