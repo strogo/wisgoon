@@ -4,6 +4,7 @@ from pin.tasks import tick
 
 
 def send_tick(doc):
+    return
     # pass
     try:
         if settings.DEBUG:
