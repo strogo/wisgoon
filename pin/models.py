@@ -1384,9 +1384,12 @@ class PhoneData(models.Model):
 
     def get_need_fields(self):
         fields = self._meta.get_all_field_names()
-        fields.remove(u'id')
-        fields.remove('hash_data')
-        fields.remove('logged_out')
+        try:
+            fields.remove(u'id')
+            fields.remove('hash_data')
+            fields.remove('logged_out')
+        except:
+            pass
         return fields
 
     def get_hash_data(self):
