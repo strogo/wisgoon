@@ -36,7 +36,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wisgoon',
+        'NAME': 'feedreader',
         'USER': 'root',
         'PASSWORD': 'somaye',
         'HOST': 'wisgoon.db',
@@ -44,7 +44,7 @@ DATABASES = {
     },
     'slave': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wisgoon',
+        'NAME': 'feedreader',
         'USER': 'root',
         'PASSWORD': 'somaye',
         'HOST': 'wisgoon.db',
@@ -61,6 +61,7 @@ REDIS_DB_2 = 'wisgoon.db.2'
 REDIS_DB_NUMBER_2 = 10
 
 REDIS_DB_3 = 'wisgoon.db.3'
+REDIS_DB_4 = 'localhost'
 
 MONGO_DB = "wisgoon"
 MONGO_DB_HOST = "wisgoon.mongo.db"
@@ -161,7 +162,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'pin.context_processors.global_values',
     'pin.context_processors.static_version',
     'pin.context_processors.static_cdn',
-)
+]
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -187,7 +188,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'ckeditor',
     'shop.apps.ShopConfig',
-    'haystack',
+    # 'haystack',
     # 'social_auth',
     # 'taggit',
     # 'devserver',
