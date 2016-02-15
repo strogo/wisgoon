@@ -37,7 +37,7 @@ from pin.tasks import porn_feedback
 
 from suds.client import Client
 
-User = get_user_model()
+# User = get_user_model()
 MEDIA_ROOT = settings.MEDIA_ROOT
 MEDIA_URL = settings.MEDIA_URL
 MERCHANT_ID = settings.MERCHANT_ID
