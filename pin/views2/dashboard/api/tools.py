@@ -8,7 +8,7 @@ from django.db.models import Q
 from pin.model_mongo import MonthlyStats
 from pin.models import Post, Ad, Log, BannedImei
 from pin.tools import post_after_delete, get_user_ip
-
+from pin.api6.http import return_json_data
 from pin.api6.tools import get_simple_user_object,\
     post_item_json
 
@@ -172,8 +172,9 @@ def range_date(start, end):
 
         if start_date > end_date:
             start_date, end_date = end_date, start_date
-    except Exception as e:
-        print str(e), "Dashboard tools api range_date error."
+    except:
+        return return_json_data({'status': False,
+                                 'message': 'Enter Timestamp'})
     # min_date = datetime.datetime.combine(start_date.date(),
     #                                      start_date.time.min)
     # max_date = datetime.datetime.combine(end_date.date(),
@@ -372,3 +373,5 @@ def get_profile_data(profile, enable_imei=False):
                     data['description'] = str(log[0].text)
 
     return data
+
+
