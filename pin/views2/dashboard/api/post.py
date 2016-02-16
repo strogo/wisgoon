@@ -1,11 +1,11 @@
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Count, Sum
+from django.db.models import Sum
 
 from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
 from pin.api6.tools import (get_next_url, get_simple_user_object,
                             post_item_json)
-from pin.models import Post, Report, Category
+from pin.models import Post, Report, Category, SubCategory
 from pin.views2.dashboard.api.tools import get_profile_data
 from pin.views2.dashboard.api.tools import (ads_group_by,
                                             check_admin, cnt_post_deleted_by_admin,
@@ -178,16 +178,15 @@ def post_of_category(request, cat_name):
     cat_list = []
     start_date = request.GET.get("start_date", False)
     end_date = request.GET.get("end_date", False)
-    if not start_date or end_date:
+    if not start_date or not end_date:
         return return_bad_request()
 
     categories = dict(Category.objects.filter(parent__title=cat_name)
                       .values_list('id', 'title'))
 
     post_of_cat = SearchQuerySet().models(Post)\
-        .filter(category_i__in=categories.keys(),
-                timestamp_i__lte=str(start_date),
-                timestamp_i__gte=str(end_date))\
+        .filter(category_i__in=categories.keys())\
+        .narrow("timestamp_i:[{} TO {}]".format(str(start_date), str(end_date)))\
         .facet('category_i').facet_counts()
 
     count_of_posts = SearchQuerySet().models(Post).facet('category_i').count()
@@ -202,8 +201,6 @@ def post_of_category(request, cat_name):
 
 
 def post_of_sub_category(request):
-    post = {}
-    post_list = []
     data = {}
     data['meta'] = {'limit': '',
                     'next': '',
@@ -211,29 +208,37 @@ def post_of_sub_category(request):
     data['objects'] = {}
     start_date = request.GET.get("start_date", False)
     end_date = request.GET.get("end_date", False)
-    if not start_date or end_date:
-        return return_bad_request()
+    # if not start_date or not end_date:
+    #     return return_bad_request()
 
-    post_of_sub_cat = Post.objects\
-        .values('category__parent__title')\
-        .filter(timestamp__lte=str(start_date),
-                timestamp__gte=str(end_date))\
-        .annotate(cnt_post=Count('category__parent')).order_by('-id')
+    cat_lvl1 = SubCategory.objects.all()
+    categories = {}
+    result = []
+
+    for cat in cat_lvl1:
+        categories[cat.title] = ''
+
+    for cat in cat_lvl1:
+        child = Category.objects\
+            .filter(parent=cat).values('title', 'id')
+        categories[cat.title] = list(child)
+
+    post_of_cat = SearchQuerySet().models(Post)\
+        .narrow("timestamp_i:[{} TO {}]".format(str(start_date), str(end_date)))\
+        .facet('category_i').facet_counts()
 
     count_of_posts = SearchQuerySet().models(Post).facet('category_i').count()
+    if post_of_cat:
+        cat_cnt_post = dict(post_of_cat['fields']['category_i'])
+        for cat in categories:
+            a = 0
+            for c in categories[cat]:
+                c['cnt_post'] = cat_cnt_post.get(str(c['id']), 0)
+                a += int(c['cnt_post'])
+            percentage = (a * 100) / count_of_posts
+            result.append({"name": cat, "y": percentage})
 
-    for post in post_of_sub_cat:
-        post['y'] = (post['cnt_post'] * 100) / count_of_posts
-        post['name'] = post['category__parent__title']
-        # post['drilldown'] = post['category__parent__title']
-        try:
-            del post['cnt_post']
-            del post['category__parent__title']
-        except KeyError:
-            pass
-        post_list.append(post)
-
-    data['objects'] = post_list
+    data['objects'] = result
     return return_json_data(data)
 
 
