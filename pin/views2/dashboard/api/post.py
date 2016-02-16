@@ -176,15 +176,21 @@ def post_of_category(request, cat_name):
                     'total_count': ''}
     data['objects'] = {}
     cat_list = []
+    start_date = request.GET.get("start_date", False)
+    end_date = request.GET.get("end_date", False)
+    if not start_date or end_date:
+        return return_bad_request()
 
     categories = dict(Category.objects.filter(parent__title=cat_name)
                       .values_list('id', 'title'))
 
     post_of_cat = SearchQuerySet().models(Post)\
-        .filter(category_i__in=categories.keys()).facet('category_i').facet_counts()
+        .filter(category_i__in=categories.keys(),
+                timestamp_i__lte=str(start_date),
+                timestamp_i__gte=str(end_date))\
+        .facet('category_i').facet_counts()
 
     count_of_posts = SearchQuerySet().models(Post).facet('category_i').count()
-    print categories
     for key, value in post_of_cat['fields']['category_i']:
         if int(key) in categories:
             percent = (value * 100) / count_of_posts
@@ -203,9 +209,15 @@ def post_of_sub_category(request):
                     'next': '',
                     'total_count': ''}
     data['objects'] = {}
+    start_date = request.GET.get("start_date", False)
+    end_date = request.GET.get("end_date", False)
+    if not start_date or end_date:
+        return return_bad_request()
 
     post_of_sub_cat = Post.objects\
         .values('category__parent__title')\
+        .filter(timestamp__lte=str(start_date),
+                timestamp__gte=str(end_date))\
         .annotate(cnt_post=Count('category__parent')).order_by('-id')
 
     count_of_posts = SearchQuerySet().models(Post).facet('category_i').count()
