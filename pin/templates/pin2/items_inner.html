@@ -63,173 +63,177 @@
 </script>
 
 <div class="post-page mato20">
-	<div class="post-content">
-		<div class="box post_item_inner">
-			<!--  buttons-->
-			<div class="post-top-nav {% if user.is_authenticated%} {% user_post_like post.id %}{% endif %}">
-				{% if user.is_authenticated %}
-				<a href="{% url "pin-item-like" post.id %}" class="wis_btn red_o pull-right{% user_post_like item.id %} btn_like">
-					<span class="count">{{post.cnt_like|pn}}</span>
-					<span class="like_icon"></span>
-				</a>
-				{% else %}
-				<a href="javascript:;" class="wis_btn red_o login_required pull-right">
-					<span class="count">{{post.cnt_like|pn}}</span>
-					<span class="like_icon"></span>
-				</a>
-				{% endif %}
+    <div class="post-content">
+        <div class="box post_item_inner">
+            <!--  buttons-->
+            <div class="post-top-nav {% if user.is_authenticated%} {% user_post_like post.id %}{% endif %}">
+                {% if user.is_authenticated %}
+                <a href="{% url "pin-item-like" post.id %}" class="wis_btn red_o pull-right{% user_post_like item.id %} btn_like">
+                    <span class="count">{{post.cnt_like|pn}}</span>
+                    <span class="like_icon"></span>
+                </a>
+                {% else %}
+                <a href="javascript:;" class="wis_btn red_o login_required pull-right">
+                    <span class="count">{{post.cnt_like|pn}}</span>
+                    <span class="like_icon"></span>
+                </a>
+                {% endif %}
 
-				<a href="{% url "pin-save-as-ads" post.id %}" class="wis_btn orange_o pull-right">
-					ویژه کنید <span class="promote_icon"></span>
-				</a>
+                <a href="{% url "pin-save-as-ads" post.id %}" class="wis_btn orange_o pull-right">
+                    ویژه کنید <span class="promote_icon"></span>
+                </a>
+                
+                {% if user.is_authenticated %}
+                <a class="wis_btn orange_o pull-left btn_report" title="گزارش تخلف" href="{% url "report_pin" post.id%}" data-toggle="tooltip" data-placement="bottom">
+                    <span class="report_icon"></span>
+                </a>
+                {% endif %}
 
-				<a class="wis_btn orange_o pull-left btn_report" title="گزارش تخلف" href="{% url "report_pin" post.id%}" data-toggle="tooltip" data-placement="bottom">
-					<span class="report_icon"></span>
-				</a>
-				<a href="{{MEDIA_URL}}{{post.image}}" title="دانلود" class="wis_btn green_o pull-left" data-toggle="tooltip" data-placement="bottom">
-					<span class="download_icon"></span>
-				</a>
-				{% if user.is_superuser or request.user.id == post.user_id %}
-				<!-- delete -->
-				<a href="{% url "pin-item-delete" post.id%}" class="wis_btn pull-left red_o delpost user-action-btn" title="حذف" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-trash-o"></i></a>
+                <a href="{{MEDIA_URL}}{{post.image}}" title="دانلود" class="wis_btn green_o pull-left" data-toggle="tooltip" data-placement="bottom">
+                    <span class="download_icon"></span>
+                </a>
+                {% if user.is_superuser or request.user.id == post.user_id %}
+                <!-- delete -->
+                <a href="{% url "pin-item-delete" post.id%}" class="wis_btn pull-left red_o delpost user-action-btn" title="حذف" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-trash-o"></i></a>
 
-				<!-- edit -->
-				<a href="{% url "pin-item-edit" post.id %}" class="wis_btn pull-left red_o user-action-btn" title="ویرایش" data-toggle="modal" data-target="#postModal"><i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="bottom"></i></a>
+                <!-- edit -->
+                <a href="{% url "pin-item-edit" post.id %}" class="wis_btn pull-left red_o user-action-btn" title="ویرایش" data-toggle="modal" data-target="#postModal"><i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="bottom"></i></a>
 
-				{% endif %}
-				<div class="clear"></div>
-			</div>
-			
+                {% endif %}
+                <div class="clear"></div>
+            </div>
+            
 
-			<!-- img -->
-			<div class="post-img">
-				<a href="{{media_prefix}}{{MEDIA_URL}}{{post.image}}" >
-					<img src="{{ post.get_image_500.url }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
-				</a>
-			</div>
-			<!-- text -->
-			<div class="post-text">
-				<h1 class="post-text">
-					{{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
-				</h1>
-				{% if post.get_pages %}
-				
-				<div class="mato20">
-					<h5 class="mabo10">تصاویر بیشتر در این زمینه:</h5>
-					{% for page in post.get_pages %}
-					{{page|safe}}
-					{% endfor %}
-				</div>
-				{% endif %}
+            <!-- img -->
+            <div class="post-img">
+                <a href="{{media_prefix}}{{MEDIA_URL}}{{post.image}}" >
+                    <img src="{{ post.get_image_500.url }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
+                </a>
+            </div>
+            <!-- text -->
+            <div class="post-text">
+                <h1 class="post-text">
+                    {{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
+                </h1>
+                {% if post.get_pages %}
+                
+                <div class="mato20">
+                    <h5 class="mabo10">تصاویر بیشتر در این زمینه:</h5>
+                    {% for page in post.get_pages %}
+                    {{page|safe}}
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-				<div class="post_footer mato20">
-					<div class="time pull-left">
-						<a href="{{post.get_absolute_url}}">{{post.create|date_filter}} <i class="time_icon"></i></a>
-					</div>
-					<div class="cat pull-left">
-						<h2>
-							<a href="/category/{{post.category.id}}/">{{post.category}} <i class="cat_icon"></i></a>
-						</h2>
-					</div>
-					<div class="clear"></div>
-				</div>
-			</div>
-			<!-- tags -->
-			{% if post.get_tags %}
-			<div class="post-tags">
-				{% for t in post.get_tags %}
-				<a href="/hashtag/{{t}}/">#{{t}}</a>
-				{% endfor %}
-				<div class="clear"></div>
-			</div>
-			{% endif %}
+                <div class="post_footer mato20">
+                    <div class="time pull-left">
+                        <a href="{{post.get_absolute_url}}">{{post.create|date_filter}} <i class="time_icon"></i></a>
+                    </div>
+                    <div class="cat pull-left">
+                        <h2>
+                            <a href="/category/{{post.category.id}}/">{{post.category}} <i class="cat_icon"></i></a>
+                        </h2>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <!-- tags -->
+            {% if post.get_tags %}
+            <div class="post-tags">
+                {% for t in post.get_tags %}
+                <a href="/hashtag/{{t}}/">#{{t}}</a>
+                {% endfor %}
+                <div class="clear"></div>
+            </div>
+            {% endif %}
 
-			<div class="post_activity">
-				<div class="activity_btn">
-					<div class="btn-box comment">
-						<a href="#submit_comment">
-							<span class="cnt-like">{{post.cnt_comments|pn}}</span>
-							<span class="cmnt_icon"></span>
-						</a>
-					</div>
-					<div class="btn-box likes{% if user.is_authenticated%} {% user_post_like post.id %}{% endif %}">
-						{% if user.is_authenticated %}
-						<a href="{% url "pin-item-like" post.id %}" class="btn_like">
-							<span class="count">{{post.cnt_like|pn}}</span>
-							<span class="like_icon"></span>
-						</a>
-						{% else %}
-						<a href="javascript:;" class="login_required">
-							<span class="count">{{post.cnt_like|pn}}</span>
-							<span class="like_icon"></span>
-						</a>
-						{% endif %}
+            <div class="post_activity">
+                <div class="activity_btn">
+                    <div class="btn-box comment">
+                        <a href="#submit_comment">
+                            <span class="cnt-like">{{post.cnt_comments|pn}}</span>
+                            <span class="cmnt_icon"></span>
+                        </a>
+                    </div>
+                    <div class="btn-box likes{% if user.is_authenticated%} {% user_post_like post.id %}{% endif %}">
+                        {% if user.is_authenticated %}
+                        <a href="{% url "pin-item-like" post.id %}" class="btn_like">
+                            <span class="count">{{post.cnt_like|pn}}</span>
+                            <span class="like_icon"></span>
+                        </a>
+                        {% else %}
+                        <a href="javascript:;" class="login_required">
+                            <span class="count">{{post.cnt_like|pn}}</span>
+                            <span class="like_icon"></span>
+                        </a>
+                        {% endif %}
 
-					</div>
-					<div class="clear"></div>
-				</div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
 
-				<div class="liker_avatars">
-					{% for liker in post.likes %}
-					<a href="{% url "pin-absuser" liker.username %}" {% if liker.id == request.user.id %}class="my_avatar"{% endif %}>
-						<img src="{{liker|get_avatar:50}}">
-					</a>
-					{% endfor %}
-				</div>
-				<div class="clear"></div>
+                <div class="liker_avatars">
+                    {% for liker in post.likes %}
+                    <a href="{% url "pin-absuser" liker.username %}" {% if liker.id == request.user.id %}class="my_avatar"{% endif %}>
+                        <img src="{{liker|get_avatar:50}}">
+                    </a>
+                    {% endfor %}
+                </div>
+                <div class="clear"></div>
 
-			</div>
-		</div>
+            </div>
+        </div>
 
-		<div class="only_mobile_view social_icons_box box">
-			{% include "pin2/_share_social.html" %}
-		</div>
-		<div class="only_mobile_view">
-			{% include "pin2/mobil_ads.html" %}
-		</div>
+        <div class="only_mobile_view social_icons_box box">
+            {% include "pin2/_share_social.html" %}
+        </div>
 
-        {% if not DEBUG %}
+        {% if DISPLAY_AD %}
         {% include "pin2/tabliq/_468x60.html" %}
         {% endif %}
 
-		{% if user.is_authenticated and user.is_active %}
-		<div id="submit_comment" class="box">
-			{% include "pin2/__comment_submit.html" %}	
-			<div class="clear"></div>
-		</div>
-		{% endif %}
+        <div class="only_mobile_view">
+            {% include "pin2/mobil_ads.html" %}
+        </div>
+        
+        {% if user.is_authenticated and user.is_active %}
+        <div id="submit_comment" class="box">
+            {% include "pin2/__comment_submit.html" %}  
+            <div class="clear"></div>
+        </div>
+        {% endif %}
 
-		<div id="comments" class="box">
-			<div class="col-md-12 col-sm-12 col-xs-12 pa0">
+        <div id="comments" class="box">
+            <div class="col-md-12 col-sm-12 col-xs-12 pa0">
 
-				<div id="comments_box" class="pa10">
-					{% if post.cnt_comment < 1 %}
-					<div class="no-comment">هنوز دیدگاهی ثبت نشده است</div>
-					{% endif %}
-				</div>
+                <div id="comments_box" class="pa10">
+                    {% if post.cnt_comment < 1 %}
+                    <div class="no-comment">هنوز دیدگاهی ثبت نشده است</div>
+                    {% endif %}
+                </div>
 
-				<div id="load-more" class="">
-					{% if post.cnt_comment > 10 %}
-					<span class="fa fa-angle-down"></span>
-					{% endif %}
-					<div class="{% if post.cnt_comment < 10 %}nob{% endif %}" id="comment_load_more">
-						{% if post.cnt_comment > 10 %}
-						<div class="txt">ادامه‌ی دیدگاه ها</div>
-						{% endif %}
-						<div class="loader" style="">
-							<img width="30" class="loading-img" alt="Loading..." src="/media/v2/images/big-loader.gif">
-						</div>
-					</div>
-				</div>
+                <div id="load-more" class="">
+                    {% if post.cnt_comment > 10 %}
+                    <span class="fa fa-angle-down"></span>
+                    {% endif %}
+                    <div class="{% if post.cnt_comment < 10 %}nob{% endif %}" id="comment_load_more">
+                        {% if post.cnt_comment > 10 %}
+                        <div class="txt">ادامه‌ی دیدگاه ها</div>
+                        {% endif %}
+                        <div class="loader" style="">
+                            <img width="30" class="loading-img" alt="Loading..." src="/media/v2/images/big-loader.gif">
+                        </div>
+                    </div>
+                </div>
 
-			</div>
+            </div>
 
-			<div class="clear"></div>
-		</div>
+            <div class="clear"></div>
+        </div>
 
-	</div>
-	<div class="post-sidebar">
-		{% include "pin2/_pin_sidebar.html" %}
-	</div>
+    </div>
+    <div class="post-sidebar">
+        {% include "pin2/_pin_sidebar.html" %}
+    </div>
 
 </div>
