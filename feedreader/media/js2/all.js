@@ -349,31 +349,10 @@ $(function () {
 
         }
     });
-    //
 
     $('body').on('click', '.menu-box .colse-menu-btn', function(event) {
         event.preventDefault();
         $('.menu-box').hide('fast');
-    });
-
-    $('body').on('click', '.report-btn', function(event) {
-        event.preventDefault();
-        var t = $(this);
-        t.append('<span class="loading-img"></span>');
-        $.ajax({
-            url: t.attr('href'),
-        })
-        .done(function(d) {
-            if (d.status) {
-                alertify.success(d.msg);
-            }else{
-                alertify.error(d.msg);
-            }
-        })
-        .fail(function(d) {
-            alertify.error("خطا! با مدیریت تماس بگیرید");
-        });
-        return false;
     });
 
     $('body').on('click', '.resp-menu', function(event) {
@@ -405,7 +384,14 @@ $(function () {
                 $('#wis_navbar > ul > li').removeClass('open');
                 $('#wis_navbar > ul > li > ul').stop(true, false).slideUp('fast');
                 t.addClass('open');
-                t.children('ul').stop(true, false).slideDown('fast');
+                if (t.hasClass('cats')) {
+                    t.children('ul').stop(true, false).slideDown('fast').css('display', 'flex');
+                }else{
+                    t.children('ul').stop(true, false).slideDown('fast').css({
+                        display: 'flex',
+                        flexDirection: 'column'
+                    });
+                }
             }
         }else{
             window.location.href = $(this).children('a').attr('href');
@@ -443,6 +429,28 @@ $(function () {
 
     var l = $('.cats > ul > li');
     l.width(100/l.length+'%');
+
+    var l = $('body > .container-fluid .cats > ul > li');
+    l.each(function(index, el) {
+        $(this).width(100/l.length+'%');
+    });
+
+    $('body').on('click', '.only_mobile_view .fa-times', function(event) {
+        event.preventDefault();
+        $(this).parents(".only_mobile_view").remove();
+        $('body').css('padding-top', "0 !important");
+        $('body').append("<style type='text/css'>@media (max-width: 768px) {body{padding-top:0 !important;}}</style>");
+        var date = new Date();
+        date.setTime(date.getTime() + (60 * 60 * 1000));
+        Cookies.set('no_download', 1, { expires : date });
+    });
+
+    var no_download = Cookies.get('no_download');
+
+    if (no_download) {
+        $('.top_download').parent().remove();
+        $('body').append("<style type='text/css'>@media (max-width: 768px) {body{padding-top:0 !important;}}</style>");
+    };
 
 });
 
