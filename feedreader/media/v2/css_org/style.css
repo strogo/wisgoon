@@ -343,7 +343,7 @@ hr{border-color: #d0d9e2 !important;}
 }
 a, a:link, a:hover, a:visited {
 	/*color: #fff;*/
-
+	
 }
 /* notification */
 .notification{
@@ -376,7 +376,7 @@ a, a:link, a:hover, a:visited {
 /* end notification */
 .setting-dropdown{
 	left: auto !important;
-	
+
 }
 .setting{
 	position: relative;
@@ -448,7 +448,7 @@ a, a:link, a:hover, a:visited {
 	border-left: 2px solid #fffff9;	
 }
 .cat-border-right{
-	
+
 	border-right: 1px solid #cfd7e1;
 }
 /****** end top categories ************/
@@ -550,7 +550,7 @@ a, a:link, a:hover, a:visited {
 	color: #656d78;
 	text-align: center;
 	font-size: 13px;
-
+	
 }
 .feed-item .avatar-box{
 	/*border-top: 1px solid #d5d7e4;*/
@@ -663,7 +663,7 @@ span.cmnt_icon,
 	padding: 10px;
 	text-align: right;
 	overflow: hidden;
-
+	
 }
 .post-tags a,
 .feed-item .tags a{
@@ -772,7 +772,7 @@ a.btn.btn-primary {
 }
 .sidebar .profile .avatar{
 	padding: 10px 1px;
-	
+
 }
 .sidebar .profile .avatar img{
 	border-radius: 80px 80px 0;
@@ -782,8 +782,8 @@ a.btn.btn-primary {
 	border-bottom: 1px solid #e2e4e7;
 	padding: 5px 0;
 	text-align: left;
-	
 
+	
 }
 .sidebar .profile .username a{
 	color: #656d78;
@@ -1125,8 +1125,18 @@ a.btn.btn-primary {
 }
 
 .post-content #comments .cmnt_item .cmnt_text{
-	width: 440px;
+	width: 420px;
 	float: right;
+	overflow: hidden;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	-ms-word-break: break-all;
+	word-break: break-all;
+	word-break: break-word;
+	-ms-hyphens: auto;
+	-moz-hyphens: auto;
+	-webkit-hyphens: auto;
+	hyphens: auto;
 	padding: 0 10px;
 }
 .post-content #comments .cmnt_item .username a{
@@ -1158,6 +1168,7 @@ i.time_icon,
 .post-content #comments .cmnt_item .cmnt_text .txt{
 	text-align: right;
 	direction: rtl;
+	overflow: hidden;
 }
 
 
@@ -2118,7 +2129,7 @@ div.comment div div.row:hover .del-comment{
 	display: block !important;
 }
 .nav_user_avatar .dropdown-menu li a{
-
+	
 }
 .nav_user_avatar .dropdown-menu li a:hover{
 	color: #FFAF00 !important;
@@ -2151,18 +2162,33 @@ div.comment div div.row:hover .del-comment{
 #wis_navbar a{
 	color: #434A54;
 }
+#wis_navbar > ul{
+	display: flex;
+}
 #wis_navbar ul{
 	padding: 0;
 	margin: 0;
 }
 #wis_navbar > ul > li{
 	background: url(../images/separator.png) no-repeat right center;
-	float: right;
+	font-size: 12px;
+	text-align: center;
+	flex: 1;
 	list-style: none;
+}
+#wis_navbar > ul > li:last-child:after{
+	background: url("../images/separator.png") no-repeat scroll right center;
+	content: "";
+	display: block;
+	height: 22px;
+	left: 0;
+	position: absolute;
+	top: 13px;
+	width: 1px;
 }
 #wis_navbar > ul > li > a{
 	display: block;
-	padding: 15px;
+	padding: 15px 0;
 }
 #wis_navbar > ul > li:hover{
 }
@@ -2193,6 +2219,7 @@ div.comment div div.row:hover .del-comment{
 #wis_navbar > ul > li.cats > ul{
 	left: 0;
 	right: 0;
+	display: none;
 }
 #wis_navbar > ul > li > ul{
 	display: none;
@@ -2202,7 +2229,7 @@ div.comment div div.row:hover .del-comment{
 	border: 1px solid #ccc;
 }
 #wis_navbar > ul > li.cats > ul > li{
-	float: right;
+	flex: 1;
 }
 
 #wis_navbar > ul > li > ul {
@@ -2318,6 +2345,11 @@ div.comment div div.row:hover .del-comment{
 /* profile */
 .profile_header{
 	color: 
+}
+.profile_header .user_stats .badge{
+	background-color: #E9E9E9;
+	font-size: 10px;
+	color: #999;
 }
 .profile_header .user_stats h2{
 	margin-bottom: 0;
@@ -2749,7 +2781,7 @@ div.comment div div.row:hover .del-comment{
 	.error_page{
 		width: 100%;
 	}
-
+	
 }
 @media (max-width: 838px) {
 	.navbar-header img {
@@ -2758,6 +2790,17 @@ div.comment div div.row:hover .del-comment{
 }
 
 @media (max-width: 768px) {
+	.top_download .pa10{
+		margin: 0 !important;
+		background: #EA6100;
+	}
+	.top_download .fa-times.close_ad{
+		padding: 16px 15px 0;
+		margin-top: -16px !important;
+		color: #fff;
+		font-size: 20px;
+		cursor: pointer;
+	}
 	.wis_form.login,
 	.wis_form.logout{
 		display: block;
@@ -2771,7 +2814,7 @@ div.comment div div.row:hover .del-comment{
 	.wis_form.logout .logo_box{
 		width: 100%;
 	}
-
+	
 	.notif_page #feed .notif-item,
 	.notif_page #feed{
 		width: 100% !important;
@@ -2865,7 +2908,7 @@ div.comment div div.row:hover .del-comment{
 	.post-content #submit_comment .avatar {
 		float: initial;
 	}
-
+	
 	.post-sidebar {
 		float: initial;
 		width: 100%;
@@ -2880,12 +2923,7 @@ div.comment div div.row:hover .del-comment{
 	.only_mobile_view{
 		display: block;
 	}
-	.only_mobile_view .box:first-child{
-		margin-top: 30px !important;
-	}
-	.only_mobile_view .box:last-child{
-		margin-top: 45px !important;
-	}
+
 	.post-sidebar .user-posts{
 		max-height: initial;
 	}
@@ -2902,7 +2940,7 @@ div.comment div div.row:hover .del-comment{
 	.post-sidebar .user-posts .user-post-item img{
 		height: auto !important;
 	}
-
+	
 	.mohrama-eleman {
 		float: right;
 		right: 0;
@@ -2910,7 +2948,7 @@ div.comment div div.row:hover .del-comment{
 	.top-search{
 		margin:0;
 	}
-
+	
 	.mohrama-eleman,
 	#wis_navbar,
 	.navbar-toggle{
@@ -2923,7 +2961,7 @@ div.comment div div.row:hover .del-comment{
 	iframe{
 		width: 100% !important;
 	}
-
+	
 }
 
 @media (max-width: 600px) {

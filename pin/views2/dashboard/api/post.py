@@ -1,11 +1,13 @@
-from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Sum
+from __future__ import division
 
+from django.db.models import Sum
+from django.views.decorators.csrf import csrf_exempt
+
+from pin.models import Post, Report, Category, SubCategory
 from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
 from pin.api6.tools import (get_next_url, get_simple_user_object,
                             post_item_json)
-from pin.models import Post, Report, Category, SubCategory
 from pin.views2.dashboard.api.tools import get_profile_data
 from pin.views2.dashboard.api.tools import (ads_group_by,
                                             check_admin, cnt_post_deleted_by_admin,
@@ -193,7 +195,7 @@ def post_of_category(request, cat_name):
     for key, value in post_of_cat['fields']['category_i']:
         if int(key) in categories:
             percent = (value * 100) / count_of_posts
-            cat_list.append({categories[int(key)]: percent})
+            cat_list.append({"name": categories[int(key)], "y": percent})
 
     data['objects'] = {"name": cat_name, "data": cat_list}
 
@@ -208,34 +210,37 @@ def post_of_sub_category(request):
     data['objects'] = {}
     start_date = request.GET.get("start_date", False)
     end_date = request.GET.get("end_date", False)
-    # if not start_date or not end_date:
-    #     return return_bad_request()
+    if not start_date or not end_date:
+        return return_bad_request()
 
     cat_lvl1 = SubCategory.objects.all()
     categories = {}
     result = []
 
     for cat in cat_lvl1:
-        categories[cat.title] = ''
-
-    for cat in cat_lvl1:
         child = Category.objects\
             .filter(parent=cat).values('title', 'id')
         categories[cat.title] = list(child)
 
-    post_of_cat = SearchQuerySet().models(Post)\
-        .narrow("timestamp_i:[{} TO {}]".format(str(start_date)[:10], str(end_date)[:10]))\
-        .facet('category_i').facet_counts()
 
-    count_of_posts = SearchQuerySet().models(Post).facet('category_i').count()
+    query = SearchQuerySet().models(Post)\
+        .narrow("timestamp_i:[{} TO {}]".format(str(start_date), str(end_date)))\
+        .facet('category_i')
+
+    post_of_cat = query.facet_counts()
+    count_of_posts = query.count()
+
     if post_of_cat:
         cat_cnt_post = dict(post_of_cat['fields']['category_i'])
+
         for cat in categories:
-            a = 0
-            for c in categories[cat]:
-                c['cnt_post'] = cat_cnt_post.get(str(c['id']), 0)
-                a += int(c['cnt_post'])
-            percentage = (a * 100) / count_of_posts
+            sum_of_post = 0
+
+            for value in categories[cat]:
+                value['cnt_post'] = cat_cnt_post.get(str(value['id']), 0)
+                sum_of_post += int(value['cnt_post'])
+
+            percentage = (sum_of_post * 100) / count_of_posts
             result.append({"name": cat, "y": percentage})
 
     data['objects'] = result
