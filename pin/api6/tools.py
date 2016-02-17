@@ -5,6 +5,7 @@ from time import time
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
+from django.utils.timezone import localtime
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
@@ -491,7 +492,8 @@ def comment_item_json(comment):
     comment_dict['id'] = comment.id
     comment_dict['comment'] = comment.comment
     comment_dict['user'] = get_simple_user_object(comment.user.id)
-    comment_dict['date'] = int(comment.submit_date.strftime("%s"))
+    d = localtime(comment.submit_date)
+    comment_dict['date'] = int(d.strftime("%s"))
     return comment_dict
 
 

@@ -1,5 +1,12 @@
 {% load daddy_avatar %}
 {% load pin_tags %}
+
+{% if DISPLAY_AD %}
+<div class="only_mobile_view">
+{% include "pin2/tabliq/_300x250.html" %}
+</div>
+{% endif %}
+
 <div class="profile box">
 	<div class="user-detail">
 		<div class="avatar">
@@ -43,11 +50,25 @@
 
 </div>
 
-{% if not DEBUG %}
+{% if DISPLAY_AD %}
+<div class="only_web">
 {% include "pin2/tabliq/_300x250.html" %}
+</div>
 {% endif %}
 
 {% include "pin2/mobil_ads.html" %}
+
+<div class="only_mobile_view">
+	<div class="mato50"></div>
+</div>
+
+{% comment %}
+    
+{% if DISPLAY_AD %}
+{% include "pin2/tabliq/_300x100.html" %}
+{% endif %}
+
+{% endcomment %}
 
 {% comment %}
 <br />
