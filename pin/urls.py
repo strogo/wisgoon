@@ -179,11 +179,9 @@ urlpatterns += patterns('',
     url(r'^api/plus/get/data/$', 'pin.views2_api.get_plus_data', name="api-get-phone-data"),
     url(r'^api/logout/$', 'pin.views2_api.logout', name="api-logout"),
 
-    url(r'^api/password/reset_mobile/$',
-                    'pin.views2_api.password_reset',
-                    name='api_password_reset'),
+    url(r'^api/password/reset_mobile/$', 'pin.views2_api.password_reset',
+        name='api_password_reset'),
 
-    url(r'^api/password/change_mobile/$',
-                    'pin.views2_api.change_password',
-                    name='password_change_mobile'),
+    url(r'^api/password/change_mobile/$', 'pin.views2_api.change_password',
+        name='password_change_mobile'),
 )
