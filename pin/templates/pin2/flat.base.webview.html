@@ -19,6 +19,12 @@
 			padding: 0 !important;
 			text-align: justify;
 		}
+		@media (max-width: 768px) {
+			.only_web, img, a{
+				display: none !important;
+				height: 0 !important;
+			}
+		}
 	</style>
 	{% include "base/analytics.html"%}
 </head>
