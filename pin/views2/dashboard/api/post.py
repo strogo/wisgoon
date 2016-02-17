@@ -186,7 +186,7 @@ def post_of_category(request, cat_name):
 
     post_of_cat = SearchQuerySet().models(Post)\
         .filter(category_i__in=categories.keys())\
-        .narrow("timestamp_i:[{} TO {}]".format(str(start_date), str(end_date)))\
+        .narrow("timestamp_i:[{} TO {}]".format(str(start_date)[:10], str(end_date)[:10]))\
         .facet('category_i').facet_counts()
 
     count_of_posts = SearchQuerySet().models(Post).facet('category_i').count()
@@ -224,7 +224,7 @@ def post_of_sub_category(request):
         categories[cat.title] = list(child)
 
     post_of_cat = SearchQuerySet().models(Post)\
-        .narrow("timestamp_i:[{} TO {}]".format(str(start_date), str(end_date)))\
+        .narrow("timestamp_i:[{} TO {}]".format(str(start_date)[:10], str(end_date)[:10]))\
         .facet('category_i').facet_counts()
 
     count_of_posts = SearchQuerySet().models(Post).facet('category_i').count()
