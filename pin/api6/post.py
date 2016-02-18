@@ -325,11 +325,11 @@ def user_post(request, user_id):
         .filter(user=user_id).order_by('-id')[before:before + 20]
 
     token = request.GET.get('token', False)
-    current_user = None
+    current_user_id = None
     if token:
-        current_user = AuthCache.user_from_token(token=token)
+        current_user_id = AuthCache.id_from_token(token=token)
 
-    data['objects'] = get_objects_list(user_posts, current_user.id)
+    data['objects'] = get_objects_list(user_posts, current_user_id)
 
     last_item = before + 20
     data['meta']['next'] = get_next_url(url_name='api-6-post-user',
