@@ -2,18 +2,28 @@ from django.conf.urls import patterns, url
 
 urlpatterns = patterns('pin.api6.auth',
                        url(r'auth/register/$', 'register', name='api-6-auth-register'),
-                       url(r'auth/password/change/$', 'password_change', name='api-6-auth-password-change'),
+                       url(r'auth/password/change/$', 'password_change',
+                           name='api-6-auth-password-change'),
                        url(r'auth/login/$', 'login', name='api-6-auth-login'),
-                       url(r'auth/get/phone/data/$', 'get_phone_data', name='api-6-auth-get-phone-data'),
+                       url(r'auth/get/phone/data/$', 'get_phone_data',
+                           name='api-6-auth-get-phone-data'),
                        url(r'auth/logout/$', 'logout', name='api-6-auth-logout'),
                        url(r'auth/follow/$', 'follow', name='api-6-auth-follow'),
                        url(r'auth/unfollow/$', 'unfollow', name='api-6-auth-unfollow'),
-                       url(r'auth/followers/(?P<user_id>\d+)/$', 'followers', name='api-6-auth-followers'),
-                       url(r'auth/following/(?P<user_id>\d+)/$', 'following', name='api-6-auth-following'),
-                       url(r'auth/user/(?P<user_id>\d+)/$', 'profile', name='api-6-auth-profile'),
-                       url(r'auth/user/update/$', 'update_profile', name='api-6-auth-profile-update'),
-                       url(r'auth/user/search/$', 'user_search', name='api-6-auth-user-search'),
-                       url(r'auth/user/(?P<user_id>\d+)/likes/$', 'user_like', name='api-6-auth-user-like')
+                       url(r'auth/followers/(?P<user_id>\d+)/$', 'followers',
+                           name='api-6-auth-followers'),
+                       url(r'auth/following/(?P<user_id>\d+)/$', 'following',
+                           name='api-6-auth-following'),
+                       url(r'auth/user/(?P<user_id>\d+)/$', 'profile',
+                           name='api-6-auth-profile'),
+                       url(r'auth/user/update/$', 'update_profile',
+                           name='api-6-auth-profile-update'),
+                       url(r'auth/user/search/$', 'user_search',
+                           name='api-6-auth-user-search'),
+                       url(r'auth/user/(?P<user_id>\d+)/likes/$', 'user_like',
+                           name='api-6-auth-user-like'),
+                       url(r'^auth/user/inc/credit/$', 'inc_credit',
+                           name="api-6-user-inc-credit")
                        )
 
 urlpatterns += patterns('pin.api6.post',
@@ -40,15 +50,19 @@ urlpatterns += patterns('pin.api6.post',
                             name='api-6-post-hashtag'),
                         url(r'^post/promotion/prices/$', 'promotion_prices',
                             name="api-6-promotion-prices"),
-                        url(r'^post/promotion/(?P<post_id>\d+)/$', 'promote_post',
-                            name="api-6-promote-post"),
+                        url(r'^post/promotion/(?P<post_id>\d+)/$', 'post_promote',
+                            name="api-6-post-promote"),
                         )
 
 urlpatterns += patterns('pin.api6.comment',
-                        url(r'comment/showComments/post/(?P<item_id>\d+)/', 'comment_post', name='api-6-comment-post'),
-                        url(r'comment/add/post/(?P<item_id>\d+)/$', 'add_comment', name='api-6-comment-add'),
-                        url(r'comment/delete/(?P<comment_id>\d+)/$', 'delete_comment', name='api-6-comment-delete'),
-                        url(r'comment/report/(?P<comment_id>\d+)/$', 'report', name='api-6-comment-report'),
+                        url(r'comment/showComments/post/(?P<item_id>\d+)/', 'comment_post',
+                            name='api-6-comment-post'),
+                        url(r'comment/add/post/(?P<item_id>\d+)/$', 'add_comment',
+                            name='api-6-comment-add'),
+                        url(r'comment/delete/(?P<comment_id>\d+)/$', 'delete_comment',
+                            name='api-6-comment-delete'),
+                        url(r'comment/report/(?P<comment_id>\d+)/$', 'report',
+                            name='api-6-comment-report'),
                         )
 
 urlpatterns += patterns('pin.api6.app',
@@ -56,8 +70,10 @@ urlpatterns += patterns('pin.api6.app',
                         )
 
 urlpatterns += patterns('pin.api6.like',
-                        url(r'like/post/(?P<item_id>\d+)/$', 'like_post', name='api-6-like-post'),
-                        url(r'like/likers/post/(?P<item_id>\d+)/$', 'post_likers', name='api-6-likers-post'),
+                        url(r'like/post/(?P<item_id>\d+)/$', 'like_post',
+                            name='api-6-like-post'),
+                        url(r'like/likers/post/(?P<item_id>\d+)/$', 'post_likers',
+                            name='api-6-likers-post'),
                         )
 
 urlpatterns += patterns('pin.api6.notification',
@@ -70,14 +86,7 @@ urlpatterns += patterns('pin.api6.urlsMap',
                         )
 
 urlpatterns += patterns('pin.api6.category',
-                        url(r'category/(?P<cat_id>\d+)/$', 'show_category', name='api-6-category'),
+                        url(r'category/(?P<cat_id>\d+)/$', 'show_category',
+                            name='api-6-category'),
                         url(r'category/all/$', 'all_category', name='api-6-categoreis'),
                         )
-
-
-
-
- #    url(r'^api/user/credit/$', 'pin.views2_api.user_credit', name="api-user-credit"),
- #    url(r'^api/user/inc/credit/$', 'pin.views2_api.inc_credit', name="api-user-inc-credit"),
-
- #    

@@ -503,7 +503,7 @@ def promotion_prices(request):
 
 
 @csrf_exempt
-def promote_post(request, post_id):
+def post_promote(request, post_id):
     try:
         Post.objects.get(id=int(post_id))
     except Exception, Post.DoesNotExist:

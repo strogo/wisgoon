@@ -1,16 +1,22 @@
 # -*- coding:utf-8 -*-
 import re
 import hashlib
+import urllib2
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
-from pin.models import Follow, Block, Likes, BannedImei, Log, PhoneData
-from pin.tools import AuthCache, get_user_ip
+from pin.models import Follow, Block, Likes, BannedImei, Log, PhoneData, Bills2
+from pin.tools import AuthCache, get_user_ip, get_new_access_token
 from pin.api6.http import return_bad_request, return_json_data, return_un_auth,\
     return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object, get_int, get_profile_data,\
@@ -26,8 +32,6 @@ from tastypie.models import ApiKey
 from haystack.query import SearchQuerySet
 from haystack.query import SQ
 from haystack.query import Raw
-
-User = get_user_model()
 
 
 def followers(request, user_id):
@@ -555,3 +559,111 @@ def get_phone_data(request):
         "status": True,
         'message': _('accepted')
     })
+
+
+PACKS = {
+    "wisgoon_pack_1": {
+        "price": 650,
+        "wis": 500
+    },
+    "wisgoon_pack_2": {
+        "price": 1300,
+        "wis": 1000
+    },
+    "wisgoon_pack_3": {
+        "price": 2600,
+        "wis": 2000
+    },
+    "wisgoon_pack_4": {
+        "price": 6500,
+        "wis": 5000
+    },
+}
+
+
+def inc_credit(request):
+    user = None
+    token = request.GET.get('token', '')
+    price = int(request.GET.get('price', 0))
+    baz_token = request.GET.get("baz_token", "")
+    package_name = request.GET.get("package", "")
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    # print user, token, baz_token, package_name
+
+    if not user or not token or not baz_token or not package_name:
+        return return_not_found(message="default values erros")
+
+    if package_name not in PACKS:
+        return return_not_found(message="package error")
+
+    if PACKS[package_name]['price'] != price:
+        return return_json_data({'status': False,
+                                 'message': 'price error'})
+
+    # if PACKS[package_name]['price'] == price:
+    if Bills2.objects.filter(trans_id=str(baz_token),
+                             status=Bills2.COMPLETED).count() > 0:
+        b = Bills2()
+        b.trans_id = str(baz_token)
+        b.user = user
+        b.amount = PACKS[package_name]['price']
+        b.status = Bills2.FAKERY
+        b.save()
+        return return_not_found(message="bazzar token error")
+    else:
+        access_token = get_new_access_token()
+        url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=%s" % (package_name, baz_token, access_token)
+        try:
+            u = urllib2.urlopen(url).read()
+            j = json.loads(u)
+
+            if len(j) == 0:
+                b = Bills2()
+                b.trans_id = str(baz_token)
+                b.user = user
+                b.amount = PACKS[package_name]['price']
+                b.status = Bills2.NOT_VALID
+                b.save()
+                return return_json_data({'status': False,
+                                         'message': 'ex price error'})
+
+            purchase_state = j.get('purchaseState', None)
+            if purchase_state is None:
+                return return_json_data({'status': False,
+                                         'message': 'ex price error'})
+
+            if purchase_state == 0:
+                b = Bills2()
+                b.trans_id = str(baz_token)
+                b.user = user
+                b.amount = PACKS[package_name]['price']
+                b.status = Bills2.COMPLETED
+                b.save()
+
+                p = user.profile
+                p.inc_credit(amount=PACKS[package_name]['wis'])
+            else:
+                b = Bills2()
+                b.trans_id = str(baz_token)
+                b.user = user
+                b.amount = PACKS[package_name]['price']
+                b.status = Bills2.NOT_VALID
+                b.save()
+                return return_json_data({'status': False,
+                                        'message': 'ex price error'})
+        except Exception:
+            b = Bills2()
+            b.trans_id = str(baz_token)
+            b.user = user
+            b.amount = PACKS[package_name]['price']
+            b.status = Bills2.VALIDATE_ERROR
+            b.save()
+            return return_json_data({'status': False,
+                                    'message': 'ex price error'})
+
+        return return_json_data({'status': True,
+                                'message': 'success full'})
+
+    return return_json_data({'status': False, 'message': 'failed'})
