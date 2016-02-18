@@ -21,16 +21,27 @@ urlpatterns += patterns('pin.api6.post',
                         url(r'post/choices/$', 'choices', name='api-6-post-choices'),
                         url(r'post/friends/$', 'friends', name='api-6-post-friends'),
                         url(r'post/category/(?P<category_id>\d+)/$', 'category', name='api-6-post-category'),
-                        url(r'post/item/(?P<item_id>\d+)/$', 'item', name='api-6-post-item'),
+                        url(r'post/item/(?P<item_id>\d+)/$', 'item',
+                            name='api-6-post-item'),
                         url(r'post/search/$', 'search', name='api-6-post-search'),
-                        url(r'post/report/(?P<item_id>\d+)/$', 'report', name='api-6-post-report'),
-                        url(r'post/edit/(?P<item_id>\d+)/$', 'edit', name='api-6-post-edit'),
-                        url(r'post/delete/(?P<item_id>\d+)/$', 'delete', name='api-6-post-delete'),
+                        url(r'post/report/(?P<item_id>\d+)/$', 'report',
+                            name='api-6-post-report'),
+                        url(r'post/edit/(?P<item_id>\d+)/$', 'edit',
+                            name='api-6-post-edit'),
+                        url(r'post/delete/(?P<item_id>\d+)/$', 'delete',
+                            name='api-6-post-delete'),
                         url(r'post/send/$', 'send', name='api-6-post-send'),
-                        url(r'post/user/(?P<user_id>\d+)/$', 'user_post', name='api-6-post-user'),
-                        url(r'post/related/(?P<item_id>\d+)/$', 'related_post', name='api-6-post-related'),
+                        url(r'post/user/(?P<user_id>\d+)/$', 'user_post',
+                            name='api-6-post-user'),
+                        url(r'post/related/(?P<item_id>\d+)/$', 'related_post',
+                            name='api-6-post-related'),
                         url(r'post/promoted/$', 'promoted', name='api-6-post-promoted'),
-                        url(r'post/hashtag/(?P<tag_name>.*)/$', 'hashtag', name='api-6-post-hashtag'),
+                        url(r'post/hashtag/(?P<tag_name>.*)/$', 'hashtag',
+                            name='api-6-post-hashtag'),
+                        url(r'^post/promotion/prices/$', 'promotion_prices',
+                            name="api-6-promotion-prices"),
+                        url(r'^post/promotion/(?P<post_id>\d+)/$', 'promote_post',
+                            name="api-6-promote-post"),
                         )
 
 urlpatterns += patterns('pin.api6.comment',
@@ -62,3 +73,11 @@ urlpatterns += patterns('pin.api6.category',
                         url(r'category/(?P<cat_id>\d+)/$', 'show_category', name='api-6-category'),
                         url(r'category/all/$', 'all_category', name='api-6-categoreis'),
                         )
+
+
+
+
+ #    url(r'^api/user/credit/$', 'pin.views2_api.user_credit', name="api-user-credit"),
+ #    url(r'^api/user/inc/credit/$', 'pin.views2_api.inc_credit', name="api-user-inc-credit"),
+
+ #    
