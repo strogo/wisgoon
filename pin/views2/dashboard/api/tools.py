@@ -210,6 +210,7 @@ def get_ads(before, date):
             ads = Ad.objects\
                 .filter(start__startswith=str(date))[before: (before + 1) * 20]
         else:
+            print date
             ads = Ad.objects.filter(start__startswith=str(date))[:20]
     except:
         ads = []

@@ -28,25 +28,18 @@
 					</a>
 					<div class="user">
 						<div class="clear"></div>
-						<a href=""><img ng-src="{[{brick.user.avatar}]}"></a>
+						<a href="{[{brick.user.permalink}]}"><img ng-src="{[{brick.user.avatar}]}"></a>
 					</div>
 					<div class="report-count">
-						<a href=""  data-toggle="modal" data-target="#reporter-modal{[{brick.id}]}">
+						<a ng-click="reporters(brick.id)" href=""  data-toggle="modal" data-target="#reporter-modal{[{brick.id}]}">
 							<h5><span class="fa fa-flag-o"></span>{[{brick.cnt_report}]} گزارش تخلف</h5>
 						</a>
 					</div>
-					<div class="reporters">
-						<ul>
-							<li ng-repeat="report in brick.reporter">
-								<img ng-src="{[{report.detail.avatar}]}" title="user avatar">
-							</li>
-						</ul>
-					</div>
 					<div class="score">
-						<label><i class="fa fa-star-o"></i>امتیازات :</label> <span>{[{brick.reporter_scores}]}</span>
+						<label><i class="fa fa-star-o"></i>امتیازات :</label> <span>{[{brick.total_scores}]}</span>
 					</div>
 					<div class="user-info">
-						<a class="btn btn-default" data-toggle="modal" data-target="#userInfo{[{brick.id}]}">
+						<a class="btn btn-default" data-toggle="modal" data-target="#userInfo{[{brick.id}]}" ng-click="userInfo(brick.id)">
 							اطلاعات کاربر
 						</a>
 					</div>
@@ -58,7 +51,7 @@
 							<i class="fa fa-times"></i>
 						</button>
 					</div>
-					<div class="modal fade reporter-modal" id="reporter-modal{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="reporterModalLabel" ng-repeat="report in brick.reporter">
+					<div class="modal fade reporter-modal" id="reporter-modal{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="reporterModalLabel">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<div class="modal-header">
@@ -67,14 +60,14 @@
 								</div>
 								<div class="modal-body">
 									<div class="reporters">
-										<div class="reporter-item" ng-repeat="report in brick.reporter">
+										<div class="reporter-item" ng-repeat="report in reporterData">
 											<div class="col-md-2 col-xs-4">
-												<a href="">
-													<img ng-src="{[{report.detail.avatar}]}" title="user avatar">
+												<a href="{[{report.permalink}]}">
+													<img ng-src="{[{report.avatar}]}" title="user avatar">
 												</a>
 											</div>
 											<div class="col-md-10 col-xs-8 user-score">
-												<h2>{[{report.profile.score}]}</h2>
+												<h2>{[{report.score}]}</h2>
 											</div>
 											<div class="clear"></div>
 										</div>
@@ -84,7 +77,7 @@
 						</div>
 					</div>	
 					<div class="modal fade userIinfoModal" id="userInfo{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="userIinfoModalLabel">
-						<div class="modal-dialog" role="document">
+						<div class="modal-dialog" role="document" >
 							<div class="modal-content">
 								<div class="modal-header hidden-md hidden-lg">
 									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -98,23 +91,23 @@
 												<ul>
 													<li>
 														<label>تعداد پست های حذف شده توسط کاربر :</label>
-														<span>{[{brick.user.cnt_deleted}]}</span>
+														<span>{[{userData.cnt_deleted}]}</span>
 													</li>
 													<li>
 														<label>تعداد پست های حذف شده توسط ادمین :</label>
-														<span>{[{brick.user.cnt_admin_deleted}]}</span>
+														<span>{[{userData.cnt_admin_deleted}]}</span>
 													</li>
 													<li>
 														<label>وضعیت فعال بودن کاربر :</label>
 														<span>
-															<span ng-show="brick.user.profile.user_active == 1">فعال</span>
-															<span ng-show="brick.user.profile.user_active == 0">غیر فعال</span>
+															<span ng-show="userData.profile.user_active == 1">فعال</span>
+															<span ng-show="userData.profile.user_active == 0">غیر فعال</span>
 														</span>
-														<div class="banDesc" ng-show="brick.user.profile.user_active == 0">
+														<div class="banDesc" ng-show="userData.profile.user_active == 0">
 															<span class="side-up hidden-xs"></span>
 															<div class="col-md-12 pa0">
-																<p>{[{brick.user.profile.description}]}</p>
-																<p ng-show="brick.user.profile.description== ''">توضیحات ندارد</p>
+																<p>{[{userData.profile.description}]}</p>
+																<p ng-show="userData.profile.description== ''">توضیحات ندارد</p>
 															</div>
 															<div class="clear"></div>
 															<span class="side-down hidden-xs"></span>
@@ -123,14 +116,14 @@
 													<li>
 														<label>وضعیت مسدود شدن پروفایل کاربر :</label>
 														<span>
-															<span ng-show="brick.user.profile.userBanne_profile == 0">غیر فعال</span>
-															<span ng-show="brick.user.profile.userBanne_profile == 1">فعال</span>
+															<span ng-show="userData.profile.userBanne_profile == 0">غیر فعال</span>
+															<span ng-show="userData.profile.userBanne_profile == 1">فعال</span>
 														</span>
-														<div class="banDesc" ng-show="brick.user.profile.userBanne_profile == 0">
+														<div class="banDesc" ng-show="userData.profile.userBanne_profile == 0">
 															<span class="side-up hidden-xs"></span>
 															<div class="col-md-12 pa0">
-																<p>{[{brick.user.profile.description}]}</p>
-																<p ng-show="brick.user.profile.description== ''">توضیحات ندارد</p>
+																<p>{[{userData.profile.description}]}</p>
+																<p ng-show="userData.profile.description== ''">توضیحات ندارد</p>
 															</div>
 															<div class="clear"></div>
 															<span class="side-down hidden-xs"></span>
@@ -138,24 +131,24 @@
 													</li>
 													<li>
 														<label>وضعیت imei :</label>
-														<span ng-hide="brick.user.profile.imei == ''">
-															{[{brick.user.profile.imei}]}
+														<span ng-hide="userData.profile.imei == ''">
+															{[{userData.profile.imei}]}
 														</span>
-														<span ng-show="brick.user.profile.imei == ''">
+														<span ng-show="userData.profile.imei == ''">
 															imei  ندارد.
 														</span>
 														
-														<div class="banDesc" ng-show="brick.user.profile.imei_status == 0">
+														<div class="banDesc" ng-hide="userData.profile.imei == ''">
 															<span class="side-up hidden-xs"></span>
 															<div class="col-md-12 pa0">
-																<p>{[{brick.user.profile.description}]}</p>
-																<p ng-show="brick.user.profile.description== ''">توضیحات ندارد</p>
+																<p>{[{userData.profile.description}]}</p>
+																<p ng-show="userData.profile.description == ''">توضیحات ندارد</p>
 															</div>
 															<div class="clear"></div>
 															<span class="side-down hidden-xs"></span>
 														</div>
 													</li>
-													<li ng-hide="brick.user.profile.users_imei == ''">
+													<li ng-hide="userData.profile.imei == ''">
 														<label>لیست حساب ها بر اساس imei :</label>
 														<span >
 															<div class="dropdown">
@@ -164,7 +157,7 @@
 																	<span class="caret"></span>
 																</button>
 																<ul class="dropdown-menu" aria-labelledby="userImeis">
-																	<li ng-repeat="Uimei in resultItem.user.profile.users_imei"><a href="{[{Uimei.permalink}]}">{[{Uimei.username}]}</a></li>
+																	<li ng-repeat="Uimei in resultItem.profile.users_imei"><a href="{[{Uimei.permalink}]}">{[{Uimei.username}]}</a></li>
 																</ul>
 															</div>
 														</span>
@@ -181,24 +174,25 @@
 											<h1><a href="">{[{brick.user.username}]}</a></h1>
 											<div class="sex">
 												<label>جنسیت :</label>
-												<span ng-show="brick.user.profile.jens = 'M'">مرد</span>
-												<span ng-hide="brick.user.profile.jens = 'M'">زن</span>
+												<span ng-show="userData.profile.jens == 'M'">مرد</span>
+												<span ng-show="userData.profile.jens 
+												!= 'M'">زن</span>
 											</div>
 											<div class="score">
 												<label>امتیاز :</label>
-												<span>{[{brick.user.profile.score}]}</span>
+												<span>{[{userData.profile.score}]}</span>
 											</div>
 											<div class="wis">
 												<label>اعتبار ویس :</label>
-												<span>{[{brick.user.profile.credit}]}</span>
+												<span>{[{userData.profile.credit}]}</span>
 											</div>
 											<div class="joinDate">
 												<label>تاریخ عضویت :</label>
-												<span>{[{brick.user.profile.date_joined}]}</span>
+												<span>{[{userData.profile.date_joined}]}</span>
 											</div>
 											<div class="email">
 												<label>ایمیل :</label>
-												<span>{[{brick.user.profile.email}]}</span>
+												<span>{[{userData.profile.email}]}</span>
 											</div>
 										</div>
 									</div>

@@ -13,12 +13,48 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="box">
+					<div class="box-header with-border">
+						<h3 class="box-title hidden-xs">آگهی ها</h3>
+						<div class="box-tools pull-right">
+							<label>از تاریخ :</label>
+							<input id="cat_start" type="text"/>
+							<input id="cat_start_value" type="hidden"/>
+							<label>تا تاریخ :</label>
+							<input id="cat_end" type="text"/>
+							<input id="cat_end_value" type="hidden"/>
+							<a href="" ng-click="refresh_cat()"><i class="fa fa-refresh"></i></a>
+							<button class="btn btn-box-tool hidden-xs" data-widget="collapse"><i class="fa fa-minus"></i></button>
+							<button class="btn btn-box-tool hidden-xs" data-widget="remove"><i class="fa fa-times"></i></button>
+						</div>
+					</div>
 					<div class="box-body">
-					 <highchart class="chart-ltr" config="highchartsNG"></highchart>
+						<div id="container" style="height: 400px"></div>
+						<button ng-click="iniChart()">بازگشت</button>
 					</div>
 				</div>
 			</div>
 		</div>
+				<script type="text/javascript">
+					$(document).ready(function () {
+						
+						var d = new Date();
+						var end_time = d.getTime();
+						var start_time = end_time-604800000;
+						$('#cat_start').pDatepicker({
+							timePicker: {
+								enabled: true
+							},
+							altField: '#cat_start_value',
+							format: 'YYYY-MM-DD'
+						});
+						$("#cat_start").pDatepicker("setDate", start_time);
+						
+						$('#cat_end').pDatepicker({
+							altField: '#cat_end_value',
+							format: 'YYYY-MM-DD'
+						});
+					});
+				</script>
 	</section>
 </div>
 

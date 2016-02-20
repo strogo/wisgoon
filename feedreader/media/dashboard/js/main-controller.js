@@ -50,7 +50,21 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 			data    : 'post_ids='+ cmId,
 			url     : '/dashboard/api/post/report/undo/',
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-		})
+		});
+		$( "[postId='"+cmId+"']").remove();
+	};
+
+	$scope.reporters = function(cmId) {
+
+		$http.get('/dashboard/api/post/reporters/'+cmId+'/').success(function(data){
+			$scope.reporterData=data.objects;
+		});
+	};
+	$scope.userInfo = function(cmId) {
+
+		$http.get('/dashboard/api/post/user/'+cmId+'/').success(function(data){
+			$scope.userData = data;
+		});
 	};
 
 	var reported = function() {
@@ -68,10 +82,6 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 			var bricks = data.objects;
 			for (var i = 0; i < bricks.length; i++) {
 				this.bricks.push(bricks[i]);
-				console.log(bricks[i].user.username);
-				console.log(bricks[i].user.profile.user_active);
-				console.log(bricks[i].user.profile.userBanne_profile);
-
 			};
 
 			this.busy = false;
@@ -93,64 +103,77 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 }]);
 
 app.controller('catstatController',['$http','$scope', function($http, $scope, drilldown) {
+	$scope.refresh_cat=function(){
+		var start_time = $( "#cat_start_value" ).val();
+		var end_time = $( "#cat_end_value" ).val();
+		$http.get("/dashboard/api/post/subcategory/chart/?start_date="+start_time+"&end_date="+end_time)
+		.success(function(data){
+			var chartInfo= data.objects;
 
-	$http.get("/dashboard/api/post/category/chart/")
-	.success(function(data){
-		var chartInfo= data.objects;
-		var pointList= [];
-		for (var i=0; i<9; i++) {
-			pointList.push({'name':chartInfo.drill_down[0][chartInfo.sub_cat[i].name].name,
-				'data':chartInfo.drill_down[0][chartInfo.sub_cat[i].name].data});
-		};
-		var b = [];
-		for (var i=0; i<9; i++) {	
-			var a = {
-				name: pointList[i].name,
-				id: pointList[i].name,
-				data: pointList[i].data
-			}
-			b.push(a);
-		};
-		console.log(b[1].data);
-		$scope.highchartsNG = {
-			options: {
+			$('#container').highcharts({
 				chart: {
 					type: 'pie'
 				},
-				title: {
-					text: ''
+
+				xAxis: {
+					type: 'category'
 				},
-				subtitle: {
-					text: 'تعداد پست های ورودی در هر دست '
+
+				legend: {
+					enabled: true
 				},
+
 				plotOptions: {
-					series: {
+					pie: {
+						allowPointSelect: true,
+						cursor: 'pointer',
 						dataLabels: {
-							enabled: true,
-							format: '{point.name}: {point.y}'
+							enabled: false
+						},
+						showInLegend: true
+					},
+					series: {
+						borderWidth: 0,
+						dataLabels: {
+							enabled: true
+						},
+						point: {
+							events: {
+								click: function(event) {
+									var chart = this.series.chart;
+									var name = this.name;
+									$http.get("/dashboard/api/post/category/chart/"+name+"/?start_date="+start_time+"&end_date="+end_time)
+									.success(function(data){
+										swapSeries(chart,name,data);
+
+									});
+								}
+							}
 						}
 					}
 				},
 
-				tooltip: {
-					headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-					pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> پست <br/>'
-				},
-			},
-			series: [{
-				name: 'دسته بندی اصلی',
-				colorByPoint: true,
-				data: chartInfo.sub_cat
-			}],
-			drilldown: {
-				series: b
-			},
-			title: {
-				text: ''
-			},
-			loading: false
-		}
-	});
+				series: [{
+					name: "دسته بندی",
+					colorByPoint: true,
+					data: chartInfo
+				}]
+			});
+			var swapSeries = function (chart, name, data) {
+				chart.series[0].remove();
+				chart.addSeries({
+					data: data.objects,
+					name: name,
+					colorByPoint: true
+				});
+			}
+
+			$scope.iniChart=function(){
+				$scope.refresh_cat();
+			};
+		});
+};
+$scope.refresh_cat();
 }]);
 app.controller('activeUserController',function($scope,$http,$location) {
 	$scope.activeUser = function() {
@@ -241,7 +264,12 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 			$scope.loading = false;
 		});
 	};
+	$scope.getInfo = function(cmId) {
 
+		$http.get('/dashboard/api/user/details/'+cmId+'/').success(function(data){
+			$scope.searchInfo = data.objects;
+		});
+	};
 });
 
 app.controller('adsController',['$scope','$http', function($scope, $http) {
@@ -265,7 +293,7 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
 							events: {
 								click: function (event) {
 									$scope.loading = true;
-									$http.get("/dashboard/api/post/showAds/?date="+event.point.x+"&ended=0")
+									$http.get("/dashboard/api/post/showAds/?date="+event.point.x)
 									.success(function(data){
 										$scope.showPosts= data.objects;
 									}).finally(function () {

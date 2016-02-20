@@ -197,7 +197,7 @@ def post_of_category(request, cat_name):
             percent = (value * 100) / count_of_posts
             cat_list.append({"name": categories[int(key)], "y": percent})
 
-    data['objects'] = {"name": cat_name, "data": cat_list}
+    data['objects'] = cat_list
 
     return return_json_data(data)
 
@@ -224,13 +224,12 @@ def post_of_sub_category(request):
 
 
     query = SearchQuerySet().models(Post)\
-        .narrow("timestamp_i:[{} TO {}]".format(str(start_date), str(end_date)))\
+        .narrow("timestamp_i:[{} TO {}]".format(str(start_date)[:10], str(end_date)[:10]))\
         .facet('category_i')
 
     post_of_cat = query.facet_counts()
     count_of_posts = query.count()
-
-    if post_of_cat:
+    if post_of_cat or count_of_posts != 0:
         cat_cnt_post = dict(post_of_cat['fields']['category_i'])
 
         for cat in categories:

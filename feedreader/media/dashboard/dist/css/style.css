@@ -938,3 +938,6 @@ table img {
 .user-panel {
   margin-bottom: 20px !important;
 }
+#container {
+	direction: ltr!important;
+}
