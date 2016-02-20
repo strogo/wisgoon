@@ -52,7 +52,7 @@ class PostCacheLayer(object):
         if not self.data:
             return
         from tools import get_last_comments
-        self.data['cnt_comment'] = cnt_comment - 1
+        self.data['cnt_comment'] = cnt_comment
         self.data['last_comments'] = get_last_comments(post_id=self.POST_ID)
         self.set(self.data)
 
