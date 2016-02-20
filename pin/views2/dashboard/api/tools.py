@@ -374,5 +374,3 @@ def get_profile_data(profile, enable_imei=False):
                     data['description'] = str(log[0].text)
 
     return data
-
-

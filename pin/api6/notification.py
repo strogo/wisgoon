@@ -2,9 +2,9 @@
 from pin.api6.http import return_json_data, return_un_auth, return_bad_request
 from pin.api_tools import media_abs_url
 from pin.tools import AuthCache
-from pin.model_mongo import NotifCount, Notif
+from pin.model_mongo import Notif
 from pin.models_redis import NotificationRedis
-from pin.api6.tools import get_list_post, get_objects_list, get_simple_user_object,\
+from pin.api6.tools import get_simple_user_object,\
     get_next_url, post_item_json
 
 
@@ -43,7 +43,7 @@ def notif(request):
 
     NotificationRedis(user_id=current_user).clear_notif_count()
     if offset:
-        notifs = NotificationRedis(user_id=current_user).get_notif(start=offset+1)
+        notifs = NotificationRedis(user_id=current_user).get_notif(start=offset + 1)
     else:
         notifs = NotificationRedis(user_id=current_user).get_notif()
 

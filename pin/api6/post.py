@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from haystack.query import SearchQuerySet
 
 from django.conf import settings
@@ -324,11 +325,11 @@ def user_post(request, user_id):
         .filter(user=user_id).order_by('-id')[before:before + 20]
 
     token = request.GET.get('token', False)
-    current_user = None
+    current_user_id = None
     if token:
-        current_user = AuthCache.user_from_token(token=token)
+        current_user_id = AuthCache.id_from_token(token=token)
 
-    data['objects'] = get_objects_list(user_posts, current_user)
+    data['objects'] = get_objects_list(user_posts, current_user_id)
 
     last_item = before + 20
     data['meta']['next'] = get_next_url(url_name='api-6-post-user',
@@ -471,3 +472,82 @@ def delete(request, item_id):
         })
 
     return return_bad_request()
+
+
+def promotion_prices(request):
+    data = {
+        "meta": {'limit': '',
+                 'next': '',
+                 'total_count': ''
+                 },
+        "objects": [
+            {
+                "price": 500,
+                "visitors": 1000
+            },
+            {
+                "price": 1000,
+                "visitors": 3000
+            },
+            {
+                "price": 2000,
+                "visitors": 6000,
+            },
+            {
+                "price": 5000,
+                "visitors": 15000
+            }
+        ]
+    }
+    return return_json_data(data)
+
+
+@csrf_exempt
+def post_promote(request, post_id):
+    try:
+        Post.objects.get(id=int(post_id))
+    except Exception, Post.DoesNotExist:
+        return return_not_found()
+
+    user = None
+    token = request.GET.get('token', '')
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token:
+        return return_un_auth()
+
+    profile = user.profile
+
+    if request.method == "POST":
+        mode = int(request.POST.get('mode', 0))
+        if mode == 0:
+            return return_bad_request()
+
+        try:
+            mode_price = Ad.TYPE_PRICES[mode]
+        except KeyError:
+            return return_json_data({"status": False,
+                                     "message": u"عدد وارد شده اشتباه است."})
+
+        if profile.credit >= int(mode_price):
+            try:
+                Ad.objects.get(post=int(post_id), ended=False)
+                return return_json_data({"status": False,
+                                         "message": u"این پست قبلا آگهی شده است"})
+            except Exception, Ad.DoesNotExist:
+                profile.dec_credit(amount=int(mode_price))
+                Ad.objects.create(user_id=user.id,
+                                  post_id=int(post_id),
+                                  ads_type=mode,
+                                  start=datetime.now(),
+                                  ip_address=get_user_ip(request))
+                return return_json_data({'status': True,
+                                        'message': u'مطلب مورد نظر شما با موفقیت آگهی شد.'})
+
+        else:
+            return return_json_data({'status': False,
+                                     'message': u'موجودی حساب شما برای آگهی دادن کافی نیست.'})
+
+    return return_json_data({'status': False, 'message': 'error in data'})

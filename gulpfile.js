@@ -5,15 +5,11 @@ var minifyCss   = require('gulp-minify-css');
 var reload      = browserSync.reload;
 
 
-gulp.task('templates', function() {
-    return gulp.src('./pin/templates/**/*.html')
-    .pipe(browserSync.stream());
-});
+// gulp.task('templates', function() {
+//     return gulp.src('./pin/templates/**/*.html')
+//     .pipe(browserSync.stream());
+// });
 
-gulp.task('css', function() {
-    return gulp.src("./feedreader/media/v2/css")
-    .pipe(browserSync.stream());
-});
 
 gulp.task('minify-css', function() {
     return gulp.src('./feedreader/media/v2/css_org/*.css')
@@ -21,25 +17,30 @@ gulp.task('minify-css', function() {
     .pipe(gulp.dest('./feedreader/media/v2/css'));
 });
 
-gulp.task('sass', function () {
-    gulp.src('./feedreader/media/v2/scss/*.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./feedreader/media/v2/css'));
+gulp.task('css', function() {
+    return gulp.src("./feedreader/media/v2/css")
+    .pipe(browserSync.stream());
 });
+// gulp.task('sass', function () {
+//     gulp.src('./feedreader/media/v2/scss/*.scss')
+//     .pipe(sass().on('error', sass.logError))
+//     .pipe(gulp.dest('./feedreader/media/v2/css'));
+// });
 
-gulp.task('sass:watch', function () {
-    gulp.watch('./feedreader/media/v2/scss/*.scss', ['sass']);
-});
+// gulp.task('sass:watch', function () {
+//     gulp.watch('./feedreader/media/v2/scss/*.scss', ['sass']);
+// });
 
-gulp.task('default', ['sass', 'minify-css', 'css', 'templates'], function() {
+// gulp.task('default', ['sass', 'css', 'minify-css', 'templates'], function() {
+gulp.task('default', ['css', 'minify-css'], function() {
 
     browserSync.init({
         proxy: "0.0.0.0:8000"
     });
 
     gulp.watch("./feedreader/media/v2/css_org/*.css", ['minify-css', 'css']);
-    // gulp.watch("./feedreader/media/v2/css/*.css", ['css']);
-    gulp.watch("./pin/templates/**/*.html", ['templates']);
+    gulp.watch("./feedreader/media/v2/css/*.css", ['css']);
+    // gulp.watch("./pin/templates/**/*.html", ['templates']);
 
 });
 
