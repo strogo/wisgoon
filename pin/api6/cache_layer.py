@@ -45,7 +45,7 @@ class PostCacheLayer(object):
             return
         from tools import get_last_comments
         self.data['last_comments'] = get_last_comments(post_id=self.POST_ID)
-        self.data['cnt_comment'] = cnt_comment + 1
+        self.data['cnt_comment'] = cnt_comment
         self.set(self.data)
 
     def delete_comment(self, cnt_comment):
