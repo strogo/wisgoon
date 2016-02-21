@@ -253,7 +253,7 @@ def hashtag(request, tag_name):
     results = []
     query = tag_name
 
-    if query in [u'عروس', u'عاشقانه']:
+    if query in [u'عروس', u'عاشقانه'] and not request.user.is_authenticated():
         return render(request, 'pin2/samandehi.html')
 
     offset = int(request.GET.get('offset', 0))
