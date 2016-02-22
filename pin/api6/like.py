@@ -1,3 +1,5 @@
+from django.views.decorators.csrf import csrf_exempt
+
 from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
     return_bad_request
 from pin.api6.tools import get_int, get_simple_user_object, get_next_url
@@ -35,7 +37,7 @@ def like_post(request, item_id):
     data = {'cnt_like': current_like, 'user_act': user_act, 'user': user}
     return return_json_data(data)
 
-
+@csrf_exempt
 def like_item(request):
     token = request.POST.get('token', False)
     item_id = int(request.POST.get('item_id', 0))
