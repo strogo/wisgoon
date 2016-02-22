@@ -361,7 +361,8 @@ def related_post(request, item_id):
     for pmlt in mlt:
         idis.append(pmlt.pk)
 
-    post.mlt = Post.objects.filter(id__in=idis).only(*Post.NEED_KEYS_WEB)
+    post.mlt = Post.objects.values_list('id', flat=True)\
+        .filter(id__in=idis)
 
     data['objects'] = get_objects_list(post.mlt, current_user)
     return return_json_data(data)
