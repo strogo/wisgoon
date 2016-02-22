@@ -1,4 +1,5 @@
 {% load daddy_avatar %}
+{% load cache %}
 {% load pin_tags %}
 <ul>
 	<li class="pa15">
@@ -94,6 +95,7 @@
 		</ul>
 	</li>
 
+	{% cache 86400 groupsbar %}
 	<li class="parent">
 		<a class=""  href="javascript:;"> گروه ها</a>
 		<ul class="">
@@ -110,6 +112,7 @@
 
 		</ul>
 	</li>
+	{% endcache %}
 
 	<li class="parent">
 		<a href="javascript:;">برترین کاربران</a>

@@ -19,9 +19,6 @@ from user_profile.models import Profile
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
-from pin.models import PhoneData, BannedImei, Log
-from pin.tools import get_user_ip
-
 
 def search_user(request):
     if not check_admin(request):
@@ -42,6 +39,7 @@ def search_user(request):
     results = SearchQuerySet().models(Profile).filter(sq)[before:before + 20]
 
     for result in results:
+        print result.object, "salaaaaaaaaaaaaaaam"
         user = result.object.user
         details = {}
 

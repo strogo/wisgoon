@@ -186,16 +186,19 @@ def post_of_category(request, cat_name):
     categories = dict(Category.objects.filter(parent__title=cat_name)
                       .values_list('id', 'title'))
 
-    post_of_cat = SearchQuerySet().models(Post)\
+    query = SearchQuerySet().models(Post)\
         .filter(category_i__in=categories.keys())\
         .narrow("timestamp_i:[{} TO {}]".format(str(start_date)[:10], str(end_date)[:10]))\
-        .facet('category_i').facet_counts()
+        .facet('category_i')
 
-    count_of_posts = SearchQuerySet().models(Post).facet('category_i').count()
-    for key, value in post_of_cat['fields']['category_i']:
-        if int(key) in categories:
-            percent = (value * 100) / count_of_posts
-            cat_list.append({"name": categories[int(key)], "y": percent})
+    post_of_cat = query.facet_counts()
+    count_of_posts = query.count()
+
+    if post_of_cat or count_of_posts != 0:
+        for key, value in post_of_cat['fields']['category_i']:
+            if int(key) in categories:
+                percent = (value * 100) / count_of_posts
+                cat_list.append({"name": categories[int(key)], "y": percent})
 
     data['objects'] = cat_list
 
@@ -222,13 +225,13 @@ def post_of_sub_category(request):
             .filter(parent=cat).values('title', 'id')
         categories[cat.title] = list(child)
 
-
     query = SearchQuerySet().models(Post)\
         .narrow("timestamp_i:[{} TO {}]".format(str(start_date)[:10], str(end_date)[:10]))\
         .facet('category_i')
 
     post_of_cat = query.facet_counts()
     count_of_posts = query.count()
+
     if post_of_cat or count_of_posts != 0:
         cat_cnt_post = dict(post_of_cat['fields']['category_i'])
 
