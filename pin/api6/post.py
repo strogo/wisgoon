@@ -169,7 +169,7 @@ def search(request):
     for pmlt in posts:
         idis.append(pmlt.pk)
 
-    posts = Post.objects.filter(id__in=idis).only(*Post.NEED_KEYS_WEB)
+    posts = Post.objects.values_list('id', flat=True).filter(id__in=idis)
 
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
