@@ -195,10 +195,8 @@ class LikesRedis(object):
     def like(self, user_id, post_owner, user_ip):
         rSetServer.sadd(self.keyNameSet, str(user_id))
 
-        Post.objects.filter(pk=int(self.postId))\
-            .update(cnt_like=F('cnt_like') + 1)
-
         p = rListServer.pipeline()
+        p.lrem(self.keyNameList, user_id)
         p.lpush(self.keyNameList, user_id)
         # Store user_last_likes
         user_last_likes = "{}_{}".\
@@ -207,6 +205,9 @@ class LikesRedis(object):
         p.lpush(user_last_likes, self.postId)
         p.ltrim(user_last_likes, 0, 1000)
         p.execute()
+
+        Post.objects.filter(pk=int(self.postId))\
+            .update(cnt_like=F('cnt_like') + 1)
 
         Profile.after_like(user_id=post_owner)
 
@@ -232,13 +233,13 @@ class LikesRedis(object):
             disliked = True
 
         else:
+            self.like(user_id=user_id, post_owner=post_owner, user_ip=user_ip)
+
             from pin.tasks import activity
             if settings.DEBUG:
                 activity(act_type=1, who=user_id, post_id=self.postId)
             else:
                 activity.delay(act_type=1, who=user_id, post_id=self.postId)
-
-            self.like(user_id=user_id, post_owner=post_owner, user_ip=user_ip)
 
             lbs.zincrby(self.KEY_LEADERBORD, post_owner, 10)
             lbs.zincrby(leader_category, post_owner, 10)
