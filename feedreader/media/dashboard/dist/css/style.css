@@ -639,7 +639,7 @@ table img {
 	background: -o-radial-gradient(50% 50%, circle cover, #62616a 0%, #333327 100%);/* Opera 11.10+ */
 	background: -ms-radial-gradient(50% 50%, circle cover, #62616a 0%, #333327 100%);/* IE10+ */
 	background: radial-gradient(50% 50%, circle cover, #62616a 0%, #333327 100%);/* W3C */
-	padding: 40px 5px 172px;
+	padding: 40px 5px 207px;
 }
 .modal-body {
 	padding: 0;
@@ -940,4 +940,7 @@ table img {
 }
 #container {
 	direction: ltr!important;
+}
+.resultItems > div {
+	margin-bottom: 15px;
 }

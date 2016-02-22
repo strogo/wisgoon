@@ -114,7 +114,9 @@ app.controller('catstatController',['$http','$scope', function($http, $scope, dr
 				chart: {
 					type: 'pie'
 				},
-
+				title: {
+					text: 'دسته بندی ها '
+				},
 				xAxis: {
 					type: 'category'
 				},
@@ -268,6 +270,8 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 
 		$http.get('/dashboard/api/user/details/'+cmId+'/').success(function(data){
 			$scope.searchInfo = data.objects;
+		}).finally(function () {
+			$scope.loading = false;
 		});
 	};
 });

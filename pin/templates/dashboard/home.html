@@ -27,7 +27,7 @@
 		user_username="{{request.user.username}}";
 		user_id="{{request.user.id}}";
 		user_token="{{request.user.token}}";
-		user_avatar="{{STATIC_CDN}}{{request.user.profile.avatar}}";
+		user_avatar="{{MEDIA_URL}}{{request.user.profile.avatar}}";
 	</script>
 	<div class="wrapper">
 		<div ng-include src="'/media/dashboard/html/_header.html'"></div>
