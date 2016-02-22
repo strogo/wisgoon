@@ -321,7 +321,7 @@ def user_post(request, user_id):
                     'next': "",
                     'total_count': 1000}
 
-    user_posts = Post.objects.only(*Post.NEED_KEYS_WEB)\
+    user_posts = Post.objects.values_list('id', flat=True)\
         .filter(user=user_id).order_by('-id')[before:before + 20]
 
     token = request.GET.get('token', False)

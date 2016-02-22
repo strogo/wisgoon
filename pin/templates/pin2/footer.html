@@ -1,4 +1,5 @@
 {% load compress %}
+{% load cache %}
 {% load daddy_avatar %}
 
 <script type="text/javascript" src="{{STATIC_CDN}}v2/js/jquery-1.11.1.min.js"></script>
@@ -8,9 +9,10 @@
 <script type="text/javascript" src="{{STATIC_CDN}}v2/js/caman.full.min.js"></script>
 <script type="text/javascript" src="{{STATIC_CDN}}js/jquery.masonry.min.js"></script>
 
-
+{% cache 86400 footermodals %}
 {% include "pin2/__from_image_modal.html" %}
 {% include "pin2/__from_url_modal.html" %}
+{% endcache %}
 
 <div class="modal fade" id="postModal">
 	<div class="modal-dialog modal-lg">

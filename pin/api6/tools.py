@@ -128,10 +128,7 @@ def get_list_post(pl, from_model='latest'):
     arp = []
 
     for pll in pl:
-        try:
-            arp.append(Post.objects.only(*Post.NEED_KEYS2).get(id=pll))
-        except Exception:
-            pass
+        arp.append(int(pll))
 
     posts = arp
     return posts
@@ -204,23 +201,25 @@ def get_post_tags(post):
     return tags
 
 
-def post_item_json(post, cur_user_id=None, r=None):
-    if isinstance(post, int):
-        try:
-            post = Post.objects.get(id=post)
-        except Exception, e:
-            post = None
+def post_item_json(post_id, cur_user_id=None, r=None):
+    post_id = int(post_id)
+
     pi = {}  # post item
-    if post:
-        cp = PostCacheLayer(post_id=post.id)
+    if post_id:
+        cp = PostCacheLayer(post_id=post_id)
         cache_post = cp.get()
         if cache_post:
             if cur_user_id:
-                cache_post['like_with_user'] = LikesRedis(post_id=post.id)\
+                cache_post['like_with_user'] = LikesRedis(post_id=post_id)\
                     .user_liked(user_id=cur_user_id)
             # print "get post data item json from cache"
             cache_post['cache'] = "Hit"
             return cache_post
+
+        try:
+            post = Post.objects.get(id=post_id)
+        except Post.DoesNotExist:
+            return None
 
         pi['cache'] = "Miss"
         pi['id'] = post.id
@@ -400,14 +399,9 @@ def get_objects_list(posts, cur_user_id=None, r=None):
         if not post:
             continue
 
-        try:
-            if post.is_pending():
-                continue
-        except Post.DoesNotExist:
-            continue
-
         post_item = post_item_json(post, cur_user_id, r)
-        objects_list.append(post_item)
+        if post_item:
+            objects_list.append(post_item)
 
     return objects_list
 
