@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.utils.translation import ugettext_lazy as _
 
 from user_profile.forms import ProfileForm
 from user_profile.models import Profile
@@ -35,25 +36,25 @@ def d_change(request):
     token = request.GET.get('token', '')
 
     if not token:
-        return HttpResponse('error in user validation')
+        return HttpResponse(_('There is not token'))
     try:
         api = ApiKey.objects.get(key=token)
         user = api.user
     except ApiKey.DoesNotExist:
-        return HttpResponse('error in user validation')
+        return HttpResponse(_('error in user validation'))
 
     profile, created = Profile.objects.get_or_create(user=user)
 
     if request.method == "POST":
         if not user.is_active:
-            return HttpResponse('user not active')
+            return HttpResponse(_('user is inactive'))
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            return HttpResponse('profile saved')
+            return HttpResponse(_('profile has saved'))
         else:
-            return HttpResponse('form not valid')
+            return HttpResponse(_('form not valid'))
     else:
-        return HttpResponse('request method != POST')
+        return HttpResponse(_('request method is not POST'))
 
-    return HttpResponse('error in data')
+    return HttpResponse(_('error in data'))

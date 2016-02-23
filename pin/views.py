@@ -60,7 +60,7 @@ def home(request):
             # arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
             last_id = pll
         except Exception, e:
-            print str(e)
+            print str(e), "pin views line 63"
             pass
 
     if arp:

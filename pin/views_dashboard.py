@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect,\
     HttpResponseBadRequest, Http404
 from django.shortcuts import render
+from django.utils.translation import ugettext_lazy as _
 
 from models import Post
 
@@ -18,7 +19,7 @@ def is_admin(user):
 
 def home(request):
     if not is_admin(request.user):
-        return HttpResponseForbidden('cant access')
+        return HttpResponseForbidden(_('You do not have permission to view this page'))
     post_pending = Post.objects.filter(status=0).count()
     return render(request, 'dashboard/home.html', {"post_pending": post_pending})
 
@@ -30,7 +31,7 @@ def get_from_db():
 def photos(request):
 
     if not is_admin(request.user):
-        return HttpResponseForbidden('cant access')
+        return HttpResponseForbidden(_("You do not have permission to view this page"))
 
     pendings = r_server.smembers('pending_photos')
     if not pendings:
@@ -48,7 +49,7 @@ def photos(request):
 
 def photos_accept(request, post_id):
     if not is_admin(request.user):
-        return HttpResponseForbidden('cant access')
+        return HttpResponseForbidden(_("You do not have permission to view this page"))
     post = Post.objects.get(id=post_id)
     post.approve()
 
@@ -59,7 +60,7 @@ def photos_accept(request, post_id):
 
 def photos_delete(request, post_id):
     if not is_admin(request.user):
-        return HttpResponseForbidden('cant access')
+        return HttpResponseForbidden(_("You do not have permission to view this page"))
 
     post = Post.objects.get(id=post_id)
     post.delete()

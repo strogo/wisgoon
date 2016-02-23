@@ -254,8 +254,8 @@ class Post(models.Model):
                      'show_in_default', 'timestamp', 'report']
 
     STATUS_CHOICES = (
-        (PENDING, _('Waiting for Confirmation')),
-        (APPROVED, _('Accepted'))
+        (PENDING, _('Pending')),
+        (APPROVED, _('Accepted')),
         (FAULT, _('Violation')),
     )
 

@@ -225,7 +225,7 @@ class AuthCache(MyCache):
             try:
                 user = User.objects.only('username').get(pk=user_id)
             except User.DoesNotExist:
-                print "not exists tools line 154: ", user_id
+                print "not exists tools line 228: ", user_id
                 return "noname"
 
         try:

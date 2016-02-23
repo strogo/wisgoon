@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,8 +29,8 @@
     <div class="error_page page_500">
         <!-- <div class="title_500"><h2>متاسفیم! <i class="fa fa-frown-o"></i></h2> </div> -->
         <div class="error_text">
-            <h3>سایت در حال به‌روزرسانی ست</h3>
-            <p>از صبر شما سپاسگذاریم</p>
+            <h3>{% trans "Site is being updated!" %}</h3>
+            <p>{% trans "We appreciate your patience." %}</p>
         </div>
     </div>
 </body>
