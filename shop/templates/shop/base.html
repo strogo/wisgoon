@@ -16,6 +16,8 @@
 	<link rel="stylesheet" type="text/css" href="/media/shop/css/fonts.css">
 	<link rel="stylesheet" type="text/css" href="/media/shop/css/style.css?ver=0.0.2">
 
+	{% block header-css %}{% endblock header-css %}
+
 </head>
 <body>
 	<div>
@@ -57,7 +59,7 @@
 			<div class="container">
 				<div class="col-md-4">
 					ایمیل پشتیبانی:
-					<a href="">info@wisgoon.com</a>
+					<img src="{{STATIC_CDN}}v2/images/info-mail.png" alt="">
 				</div>
 				<div class="col-md-4">
 
@@ -68,10 +70,9 @@
 			</div>	
 		</div>
 	</footer>
-	<script type="text/javascript" src="/media/shop/js/jquery-1.11.1.min.js"></script>
-	<script type="text/javascript" src="/media/shop/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="/media/shop/js/masonry.min.js"></script>
-	{% block footer-script %}
-	{% endblock%}
+	<script type="text/javascript" src="{{STATIC_CDN}}shop/js/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_CDN}}shop/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_CDN}}shop/js/masonry.min.js"></script>
+	{% block footer-script %}{% endblock %}
 </body>
 </html>
