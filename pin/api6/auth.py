@@ -302,8 +302,7 @@ def profile(request, user_id):
 
     if current_user:
         if Block.objects.filter(user_id=current_user, blocked_id=user_id).count():
-            return return_json_data({
-                "status": False,
+            return return_not_found({
                 'message': _('This User Has Blocked You')
             })
 
