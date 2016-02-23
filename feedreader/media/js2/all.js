@@ -191,27 +191,6 @@ function live_content(){
     });
 }
 
-$('body').on('click', '.del-comment', function(event) {
-    event.preventDefault();
-    var t = $(this);
-    var href = t.attr('href');
-    $.ajax({
-        url: href,
-    })
-    .done(function(res) {
-        if (res.status === true) {
-            alertify.success(res.message);
-            t.parents('.cmnt_item').slideUp('fast');
-        }else{
-            alertify.error("خطا در حذف دیدگاه");
-        }
-    })
-    .fail(function() {
-        alertify.error("خطا در حذف دیدگاه");
-    });
-    return false;
-});
-
 $('.topuser-thumb').webuiPopover('destroy').webuiPopover({
     trigger: 'hover',
     width: 300,

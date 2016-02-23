@@ -8,7 +8,10 @@ from shop.forms import ReciversForm
 
 
 def home(request):
-    return render(request, 'shop/home.html')
+    products = Product.objects.filter(in_home=True).order_by('sort')
+    return render(request, 'shop/home.html', {
+        'products': products
+    })
 
 
 def product(request, product_id):
@@ -65,8 +68,14 @@ def address(request):
             model = form.save(commit=False)
             model.user = request.user
             model.save()
+            return HttpResponseRedirect(reverse('shop-confirm'))
     else:
         form = ReciversForm()
     return render(request, 'shop/address.html', {
         'form': form,
     })
+
+
+@login_required
+def confirm(request):
+    return render(request, 'shop/confirm.html')

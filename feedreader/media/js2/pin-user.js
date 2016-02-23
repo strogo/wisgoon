@@ -153,9 +153,9 @@ $('body').on('click', '.del-comment', function(){
         url: req_url,
         success: function(resp) {
             if (resp.status){
-                $("#"+row_name).remove();
+                $("#"+row_name).slideUp('fast');
             }
-            alertify.success('دیدکاه با موفقیت حذف شد');
+            alertify.success(resp.message);
         }
     });
     
