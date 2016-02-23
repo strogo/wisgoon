@@ -39,7 +39,6 @@ def search_user(request):
     results = SearchQuerySet().models(Profile).filter(sq)[before:before + 20]
 
     for result in results:
-        print result.object, "salaaaaaaaaaaaaaaam"
         user = result.object.user
         details = {}
 

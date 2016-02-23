@@ -337,7 +337,7 @@ def update_profile(request):
     if form.is_valid():
         form.save()
         update_follower_following(profile, current_user)
-        msg = 'Your Profile Was Updated'
+        msg = _('Your Profile Was Updated')
         status = True
     else:
         msg = form.errors
@@ -389,7 +389,7 @@ def user_search(request):
 
 def logout(request):
     auth_logout(request)
-    return return_json_data({'status': True, 'message': 'Successfully Logout'})
+    return return_json_data({'status': True, 'message': _('Successfully Logout')})
 
 
 def user_like(request, user_id):
@@ -581,89 +581,89 @@ PACKS = {
 }
 
 
-def inc_credit(request):
-    user = None
-    token = request.GET.get('token', '')
-    price = int(request.GET.get('price', 0))
-    baz_token = request.GET.get("baz_token", "")
-    package_name = request.GET.get("package", "")
-    if token:
-        user = AuthCache.user_from_token(token=token)
+# def inc_credit(request):
+#     user = None
+#     token = request.GET.get('token', '')
+#     price = int(request.GET.get('price', 0))
+#     baz_token = request.GET.get("baz_token", "")
+#     package_name = request.GET.get("package", "")
+#     if token:
+#         user = AuthCache.user_from_token(token=token)
 
-    # print user, token, baz_token, package_name
+#     # print user, token, baz_token, package_name
 
-    if not user or not token or not baz_token or not package_name:
-        return return_not_found(message="default values erros")
+#     if not user or not token or not baz_token or not package_name:
+#         return return_not_found(message=_("The parameters entered is incorrect"))
 
-    if package_name not in PACKS:
-        return return_not_found(message="package error")
+#     if package_name not in PACKS:
+#         return return_not_found(message=_("Select a package is not correct"))
 
-    if PACKS[package_name]['price'] != price:
-        return return_json_data({'status': False,
-                                 'message': 'price error'})
+#     if PACKS[package_name]['price'] != price:
+#         return return_json_data({'status': False,
+#                                  'message': _('Price is not right')})
 
-    # if PACKS[package_name]['price'] == price:
-    if Bills2.objects.filter(trans_id=str(baz_token),
-                             status=Bills2.COMPLETED).count() > 0:
-        b = Bills2()
-        b.trans_id = str(baz_token)
-        b.user = user
-        b.amount = PACKS[package_name]['price']
-        b.status = Bills2.FAKERY
-        b.save()
-        return return_not_found(message="bazzar token error")
-    else:
-        access_token = get_new_access_token()
-        url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=%s" % (package_name, baz_token, access_token)
-        try:
-            u = urllib2.urlopen(url).read()
-            j = json.loads(u)
+#     # if PACKS[package_name]['price'] == price:
+#     if Bills2.objects.filter(trans_id=str(baz_token),
+#                              status=Bills2.COMPLETED).count() > 0:
+#         b = Bills2()
+#         b.trans_id = str(baz_token)
+#         b.user = user
+#         b.amount = PACKS[package_name]['price']
+#         b.status = Bills2.FAKERY
+#         b.save()
+#         return return_not_found(message=_("bazzar token not right"))
+#     else:
+#         access_token = get_new_access_token()
+#         url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=%s" % (package_name, baz_token, access_token)
+#         try:
+#             u = urllib2.urlopen(url).read()
+#             j = json.loads(u)
 
-            if len(j) == 0:
-                b = Bills2()
-                b.trans_id = str(baz_token)
-                b.user = user
-                b.amount = PACKS[package_name]['price']
-                b.status = Bills2.NOT_VALID
-                b.save()
-                return return_json_data({'status': False,
-                                         'message': 'ex price error'})
+#             if len(j) == 0:
+#                 b = Bills2()
+#                 b.trans_id = str(baz_token)
+#                 b.user = user
+#                 b.amount = PACKS[package_name]['price']
+#                 b.status = Bills2.NOT_VALID
+#                 b.save()
+#                 return return_json_data({'status': False,
+#                                          'message': 'ex price error'})
 
-            purchase_state = j.get('purchaseState', None)
-            if purchase_state is None:
-                return return_json_data({'status': False,
-                                         'message': 'ex price error'})
+#             purchase_state = j.get('purchaseState', None)
+#             if purchase_state is None:
+#                 return return_json_data({'status': False,
+#                                          'message': 'ex price error'})
 
-            if purchase_state == 0:
-                b = Bills2()
-                b.trans_id = str(baz_token)
-                b.user = user
-                b.amount = PACKS[package_name]['price']
-                b.status = Bills2.COMPLETED
-                b.save()
+#             if purchase_state == 0:
+#                 b = Bills2()
+#                 b.trans_id = str(baz_token)
+#                 b.user = user
+#                 b.amount = PACKS[package_name]['price']
+#                 b.status = Bills2.COMPLETED
+#                 b.save()
 
-                p = user.profile
-                p.inc_credit(amount=PACKS[package_name]['wis'])
-            else:
-                b = Bills2()
-                b.trans_id = str(baz_token)
-                b.user = user
-                b.amount = PACKS[package_name]['price']
-                b.status = Bills2.NOT_VALID
-                b.save()
-                return return_json_data({'status': False,
-                                        'message': 'ex price error'})
-        except Exception:
-            b = Bills2()
-            b.trans_id = str(baz_token)
-            b.user = user
-            b.amount = PACKS[package_name]['price']
-            b.status = Bills2.VALIDATE_ERROR
-            b.save()
-            return return_json_data({'status': False,
-                                    'message': 'ex price error'})
+#                 p = user.profile
+#                 p.inc_credit(amount=PACKS[package_name]['wis'])
+#             else:
+#                 b = Bills2()
+#                 b.trans_id = str(baz_token)
+#                 b.user = user
+#                 b.amount = PACKS[package_name]['price']
+#                 b.status = Bills2.NOT_VALID
+#                 b.save()
+#                 return return_json_data({'status': False,
+#                                         'message': 'ex price error'})
+#         except Exception:
+#             b = Bills2()
+#             b.trans_id = str(baz_token)
+#             b.user = user
+#             b.amount = PACKS[package_name]['price']
+#             b.status = Bills2.VALIDATE_ERROR
+#             b.save()
+#             return return_json_data({'status': False,
+#                                     'message': 'ex price error'})
 
-        return return_json_data({'status': True,
-                                'message': 'success full'})
+#         return return_json_data({'status': True,
+#                                 'message': _('Increased Credit was Successful.')})
 
-    return return_json_data({'status': False, 'message': 'failed'})
+#     return return_json_data({'status': False, 'message': 'failed'})

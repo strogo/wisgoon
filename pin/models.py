@@ -176,7 +176,7 @@ class Ad(models.Model):
                 try:
                     cache.incr(cache_key)
                 except Exception, e:
-                    print str(e), "get add"
+                    print str(e), "Pin Model line 179"
 
             return ad
 
@@ -254,14 +254,14 @@ class Post(models.Model):
                      'show_in_default', 'timestamp', 'report']
 
     STATUS_CHOICES = (
-        (PENDING, 'منتظر تایید'),
-        (APPROVED, 'تایید شده'),
-        (FAULT, 'تخلف'),
+        (PENDING, _('Waiting for Confirmation')),
+        (APPROVED, _('Accepted'))
+        (FAULT, _('Violation')),
     )
 
     # title = models.CharField(max_length=250, blank=True)
     text = models.TextField(blank=True, verbose_name=_('Text'))
-    image = models.CharField(max_length=500, verbose_name='تصویر')
+    image = models.CharField(max_length=500, verbose_name=_('Picture'))
     create_date = models.DateField(auto_now_add=True)
     create = models.DateTimeField(auto_now_add=True)
     timestamp = models.IntegerField(db_index=True, default=1347546432)
@@ -270,17 +270,17 @@ class Post(models.Model):
     url = models.CharField(blank=True, max_length=2000,
                            validators=[URLValidator()])
     status = models.IntegerField(default=PENDING, blank=True,
-                                 verbose_name="وضعیت",
+                                 verbose_name=_("Status"),
                                  choices=STATUS_CHOICES)
     device = models.IntegerField(default=1, blank=True)
     hash = models.CharField(max_length=32, blank=True, db_index=True)
     actions = models.IntegerField(default=1, blank=True)
     is_ads = models.BooleanField(default=False, blank=True,
-                                 verbose_name="آگهی")
+                                 verbose_name=_("Advertisement"))
     view = models.IntegerField(default=0, db_index=True)
     show_in_default = models.BooleanField(default=False, blank=True,
                                           db_index=True,
-                                          verbose_name='نمایش در خانه')
+                                          verbose_name=_("Show in Home"))
 
     report = models.IntegerField(default=0, db_index=True)
     cnt_comment = models.IntegerField(default=0, blank=True)
@@ -290,7 +290,7 @@ class Post(models.Model):
     height = models.IntegerField(default=-1, blank=True)
     width = models.IntegerField(default=-1, blank=True)
 
-    category = models.ForeignKey(Category, default=1, verbose_name='گروه')
+    category = models.ForeignKey(Category, default=1, verbose_name=_('Category'))
     objects = models.Manager()
     # accepted = AcceptedManager()
 
@@ -570,7 +570,7 @@ class Post(models.Model):
 
         # print "this is add to stream"
         if not post.accept_for_stream():
-            print "post not accepted for streams"
+            print _("Post was not Accepted for Streams")
             return
         latest_stream = settings.STREAM_LATEST
         r_server.lrem(latest_stream, post.id)
@@ -630,7 +630,7 @@ class Post(models.Model):
                 if img.size[0] < 236:
                     return False
             except Exception, e:
-                print str(e), "models accept for stream"
+                print str(e), _("Models was Accepted for Stream")
 
         return True
 
@@ -865,11 +865,11 @@ class Bills2(models.Model):
     NOT_VALID = 4
 
     STATUS_CHOICES = (
-        (COMPLETED, 'Completed'),
-        (UNCOMPLETED, 'Uncompleted'),
-        (FAKERY, 'Fakery'),
-        (VALIDATE_ERROR, 'validate error'),
-        (NOT_VALID, 'not valid'),
+        (COMPLETED, _('Completed')),
+        (UNCOMPLETED, _('Uncompleted')),
+        (FAKERY, _('Fakery')),
+        (VALIDATE_ERROR, _('validate error')),
+        (NOT_VALID, _('not valid')),
     )
 
     status = models.IntegerField(blank=True, null=True, default=0,
@@ -1124,10 +1124,10 @@ class Notifbar(models.Model):
     APPROVE = 3
     FAULT = 4
     TYPES = (
-        (LIKE, 'like'),
-        (COMMENT, 'comment'),
-        (APPROVE, 'approve'),
-        (FAULT, 'fault')
+        (LIKE, _('like')),
+        (COMMENT, _('comment')),
+        (APPROVE, _('approve')),
+        (FAULT, _('fault'))
     )
 
     post = models.ForeignKey(Post)
@@ -1144,10 +1144,10 @@ class Notif(models.Model):
     APPROVE = 3
     FAULT = 4
     TYPES = (
-        (LIKE, 'like'),
-        (COMMENT, 'comment'),
-        (APPROVE, 'approve'),
-        (FAULT, 'fault')
+        (LIKE, _('like')),
+        (COMMENT, _('comment')),
+        (APPROVE, _('approve')),
+        (FAULT, _('fault'))
     )
 
     post = models.ForeignKey(Post)
@@ -1324,7 +1324,7 @@ class Comments(models.Model):
 
     def admin_link(self):
         u = self.get_absolute_url()
-        return '<a href="%s" target="_blank">مشاهده</a>' % (u)
+        return '<a href="{}" target="_blank">{}</a>'.format(u, _('Seeing'))
 
     admin_link.allow_tags = True
 
@@ -1421,9 +1421,9 @@ class PostMetaData(models.Model):
     REDIS_CHANGE_SERVER = 4
 
     STATUS = (
-        (CREATED, 'created'),
-        (FULL_IMAGE_CREATE, 'full image create'),
-        (ERROR_IN_ORIGINAL, 'error in original image'),
+        (CREATED, _('created')),
+        (FULL_IMAGE_CREATE, _('full image create')),
+        (ERROR_IN_ORIGINAL, _('error in original image')),
         (REDIS_CHANGE_SERVER, 'redis server change'),
     )
 
@@ -1451,10 +1451,10 @@ class Log(models.Model):
     COMMENT_TEST = 4
 
     TYPES = (
-        (POST, "post"),
-        (COMMENT, "comment"),
-        (USER, "user"),
-        (COMMENT_TEST, 'comment test'),
+        (POST, _("post")),
+        (COMMENT, _("comment")),
+        (USER, _("user")),
+        (COMMENT_TEST, _("comment test")),
     )
 
     DELETE = 1
@@ -1465,13 +1465,13 @@ class Log(models.Model):
     BAN_ADMIN = 6
     ACTIVE_USER = 7
     ACTIONS = (
-        (DELETE, "delete"),
-        (PENDING, "pending"),
-        (BAD_COMMENT, "bad comment"),
-        (BAD_POST, "bad post"),
-        (BAN_IMEI, "ban imei"),
-        (BAN_ADMIN, "ban by admin"),
-        (ACTIVE_USER, "activated")
+        (DELETE, _("delete")),
+        (PENDING, _("pending")),
+        (BAD_COMMENT, _("bad comment")),
+        (BAD_POST, _("bad post")),
+        (BAN_IMEI, _("ban imei")),
+        (BAN_ADMIN, _("ban by admin")),
+        (ACTIVE_USER, _("activated"))
     )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
