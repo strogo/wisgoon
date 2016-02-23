@@ -12,7 +12,7 @@ from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from pin.api_tools import abs_url, media_abs_url
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
-from pin.models import Post, Follow, Comments
+from pin.models import Post, Follow, Comments, Block
 from pin.models_redis import LikesRedis
 from pin.tools import create_filename
 from cache_layer import PostCacheLayer
@@ -154,6 +154,10 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
     if user_id_from_token:
         user_info['follow_by_user'] = Follow.objects\
             .filter(follower_id=user_id_from_token, following_id=current_user)\
+            .exists()
+
+        user_info['block_by_user'] = Block.objects\
+            .filter(user_id=user_id_from_token, blocked_id=current_user)\
             .exists()
 
     return user_info
@@ -424,7 +428,6 @@ def get_profile_data(profile, user_id):
         data['cover'] = ""
     data['score'] = profile.score
     data['jens'] = profile.jens if profile.jens else '0'
-    data['email'] = profile.user.email
     data['bio'] = profile.bio
     data['date_joined'] = khayyam.JalaliDate(profile.user.date_joined)\
         .strftime("%Y/%m/%d")
