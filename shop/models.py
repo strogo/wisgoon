@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 
 
 class Category(models.Model):
@@ -16,8 +18,8 @@ class Product(models.Model):
     SPECIAL = 2
 
     MODES = (
-        (NORMAL, "normal"),
-        (SPECIAL, "special"),
+        (NORMAL, _("normal")),
+        (SPECIAL, _("special")),
     )
     title = models.CharField(max_length=250)
     title_en = models.CharField(max_length=250, blank=True, default="")
@@ -70,11 +72,11 @@ class Order(models.Model):
     RECIVED = 5
 
     STATUS = (
-        (CHECKING, u"در حال بررسی"),
-        (ACCEPTED, u"تایید شد"),
-        (PREPAIRING, u"در حال آماده سازی"),
-        (SENT, u"ارسال گردید"),
-        (RECIVED, u"به دست مشتری رسید"),
+        (CHECKING, _("Pending")),
+        (ACCEPTED, _("Accepted")),
+        (PREPAIRING, _("Preparation")),
+        (SENT, _("Sent")),
+        (RECIVED, _("Recived")),
     )
 
     product = models.ForeignKey(Product)

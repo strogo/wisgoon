@@ -57,10 +57,11 @@ def add_comment(request, item_id):
                                           user_id=get_int(current_user))
         comment_data = comment_item_json(comment)
         comment_data['status'] = True
-        comment_data['message'] = 'Successfully Create Comment.'
+        comment_data['message'] = _('Successfully was Create Comment.')
         return return_json_data(comment_data)
     except:
-        return return_json_data({'status': False, 'message': _('Unsuccessfully Create Comment.')})
+        return return_json_data({'status': False,
+                                 'message': _('Unsuccessfully was Create Comment.')})
 
 
 def delete_comment(request, comment_id):
@@ -81,11 +82,11 @@ def delete_comment(request, comment_id):
         comment_id = comment.id
         comment.delete()
         data = {'status': True,
-                'message': _('Successfully Delete Comment'),
+                'message': _('Successfully Removed Comment'),
                 'comment_id': comment_id}
     else:
         data = {'status': False,
-                'message': _('Access Denied Comment')}
+                'message': _('Access Denied')}
     return return_json_data(data)
 
 

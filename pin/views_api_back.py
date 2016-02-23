@@ -10,6 +10,7 @@ from django.db.models.fields.files import FieldFile
 from django.core.cache import cache
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from pin.models import Post
 
@@ -69,7 +70,7 @@ class DaddyResource(object):
             else:
                 self.previous_page = None
         except InvalidPage:
-            raise Http404("Sorry, no results on that page.")
+            raise Http404(_("Sorry, no results on that page."))
 
         return page
 
@@ -103,7 +104,6 @@ class ToneResource(DaddyResource):
 
     def get_json(self):
         if self.cached_list:
-            print "getting data from cache"
             return self.cached_list
 
         data = {}

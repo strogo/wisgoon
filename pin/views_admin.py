@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden,\
 
 from django.shortcuts import get_object_or_404, render
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 from user_profile.models import Profile
 
 from pin.models import Post, Comments, Log
@@ -31,7 +32,7 @@ def is_admin(user):
 
 def ads_admin(request):
     if not is_admin(request.user):
-        return HttpResponseForbidden('cant access')
+        return HttpResponseForbidden(_("You do not have permission to view this page"))
 
     ads = Ads.objects\
         .only('user', 'post', 'cnt_view', 'ads_type', 'ended', 'start', 'end')\
@@ -59,7 +60,7 @@ def pending_post(request, post, status=1):
 
 def change_level(request, user_id, level):
     if not is_admin(request.user):
-        return HttpResponseForbidden('cant access')
+        return HttpResponseForbidden(_("You do not have permission to view this page"))
 
     Profile.objects.filter(user_id=user_id).update(level=level)
 
@@ -68,7 +69,7 @@ def change_level(request, user_id, level):
 
 def ads_fixed_admin(request):
     if not is_admin(request.user):
-        return HttpResponseForbidden('cant access')
+        return HttpResponseForbidden(_("You do not have permission to view this page"))
 
     delete = request.GET.get('delete', None)
     if delete:
@@ -100,7 +101,7 @@ def ads_fixed_admin(request):
 
 def activate_user(request, user_id, status):
     if not is_admin(request.user):
-        return HttpResponseForbidden('cant access')
+        return HttpResponseForbidden(_("You do not have permission to view this page"))
 
     status = bool(int(status))
     user = User.objects.get(pk=user_id)
@@ -117,7 +118,7 @@ def activate_user(request, user_id, status):
 
 def post_accept(request, user_id, status):
     if not is_admin(request.user):
-        return HttpResponseForbidden('cant access')
+        return HttpResponseForbidden(_("You do not have permission to view this page"))
 
     status = bool(int(status))
     Profile.objects.filter(user_id=user_id).update(post_accept_admin=status)
@@ -184,7 +185,7 @@ def comment_delete(request, id):
 
     comment.delete()
     if request.is_ajax():
-        data = {'status': True, 'message': 'دیدگاه حذف شد'}
+        data = {'status': True, 'message': _("Comment removed")}
         return HttpResponse(json.dumps(data), content_type="application/json")
     return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
 
@@ -192,7 +193,7 @@ def comment_delete(request, id):
 @login_required
 def comment_approve(request, id):
     if not request.user.is_superuser:
-        return HttpResponse('error in authentication')
+        return HttpResponse(_('error in authentication'))
 
     comment = get_object_or_404(Comments, pk=id)
     comment.is_public = True
@@ -204,7 +205,7 @@ def comment_approve(request, id):
 @login_required
 def comment_unapprove(request, id):
     if not request.user.is_superuser:
-        return HttpResponse('error in authentication')
+        return HttpResponse(_('error in authentication'))
 
     comment = get_object_or_404(Comments, pk=id)
     comment.is_public = False
