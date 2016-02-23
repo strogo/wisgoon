@@ -4,6 +4,7 @@ from httplib import HTTPSConnection
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import resolve
 from django.shortcuts import render
+from django.utils.translation import ugettext_lazy as _
 
 
 def buggy(request):
@@ -95,7 +96,7 @@ def send_mail(request):
     from django.core.mail import EmailMultiAlternatives
 
     subject, from_email, to = 'hello', 'info@wisgoon.com', 'vchakoshy@gmail.com'
-    text_content = 'shoma yek payame jadid darid.'
+    text_content = _('You have a new message')
     html_content = '<p>This is an <strong>important</strong> message.</p>'
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
     msg.attach_alternative(html_content, "text/html")

@@ -1,3 +1,5 @@
+{% load daddy_avatar %}
+{% load pin_tags %}
 <!DOCTYPE html>
 <html lang="fa">
 <head>
@@ -12,7 +14,7 @@
 	<link rel="stylesheet" type="text/css" href="/media/shop/css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="/media/shop/css/font-awesome-animation.min.css">
 	<link rel="stylesheet" type="text/css" href="/media/shop/css/fonts.css">
-	<link rel="stylesheet" type="text/css" href="/media/shop/css/style.css?ver=0.0.1">
+	<link rel="stylesheet" type="text/css" href="/media/shop/css/style.css?ver=0.0.2">
 
 </head>
 <body>
@@ -27,31 +29,45 @@
 					</div>
 					<div class="col-md-8 col-sm-7 hidden-xs" ></div>
 					<div class="col-md-2 user col-xs-6 col-sm-3">
-						<img src="/media/shop/images/avatar.jpg">
-						<a href="{% url "shop-cart" %}"><span>سبد خرید</span></a>
+						<div class="nav_user_avatar">
+							<a aria-expanded="true" data-toggle="dropdown" href="javascript:;">
+								<img class="nav-avatar" src="{{request.user|get_avatar:41}}">
+							</a>
+							<ul class="dropdown-menu setting-dropdown hidden-xs" role="menu" aria-labelledby="dropdownMenuDivider" style="right: 80px;">
+								<li role="presentation" class="setting-border-bottom">
+									<a href="{% url "pin-home" %}">بازگشت به ویسگون</a>
+								</li>
+							</ul>
+						</div>
+
+						<a class="cart_btn" href="{% url "shop-cart" %}"><span>سبد خرید</span></a>
 					</div>
 				</div>
 			</div>
 		</nav>
-{% block content %} {% endblock content%}
-
-		<footer>
-			<div class="footer">
-				<div class="container">
-					<div class="col-md-4">
-						ایمیل پشتیبانی:
-						<a href="">info@wisgoon.com</a>
-					</div>
-					<div class="col-md-4">
-
-					</div>
-					<div class="col-md-4">
-						طراحی و توسعه توسط  <a href="">گروه نرم افزاری رخ</a>
-					</div>
-				</div>	
+		<div class="main">
+			<div class="container">
+				{% block content %} {% endblock content%}
 			</div>
-		</footer>
+		</div>
+		<div class="clear"></div>
 	</div>
+	<footer>
+		<div class="footer">
+			<div class="container">
+				<div class="col-md-4">
+					ایمیل پشتیبانی:
+					<a href="">info@wisgoon.com</a>
+				</div>
+				<div class="col-md-4">
+
+				</div>
+				<div class="col-md-4">
+					طراحی و توسعه توسط  <a href="">گروه نرم افزاری رخ</a>
+				</div>
+			</div>	
+		</div>
+	</footer>
 	<script type="text/javascript" src="/media/shop/js/jquery-1.11.1.min.js"></script>
 	<script type="text/javascript" src="/media/shop/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="/media/shop/js/masonry.min.js"></script>

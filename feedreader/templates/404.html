@@ -1,11 +1,13 @@
 {% extends "pin2/flat.base.html" %}
+{% load i18n %}
 
 {% block content %}
 <div class="error_page page_404">
     <!-- <div class="title_404"><h2>متاسفیم! <i class="fa fa-frown-o"></i></h2> </div> -->
     <div class="error_text">
-    <h3>متاسفانه صفحه مورد نظر شما پیدا نشد!</h3>
-    اگر به دنبال چیزی هستید از بخش <a class="orange_t" href="/search/">جستجو</a> شروع کنید.
+    <h3>{% trans "Apologies, but I could not find any results for that search term" %}.</h3>
+    {% trans "If you are looking for something, try again" %} 
+    <a class="orange_t" href="/search/">{% trans "search"%}</a> {% trans "page" %}.
     </div>
 </div>
 {% endblock content %}

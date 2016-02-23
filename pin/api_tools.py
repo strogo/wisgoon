@@ -124,14 +124,13 @@ def get_list_post(pl, from_model='latest'):
 
     posts = get_cache(cache_pl)  # cache.get(cache_pl)
     if posts:
-        print "get list from cache"
         return posts
 
     for pll in pl:
         try:
             arp.append(Post.objects.only(*Post.NEED_KEYS2).get(id=pll))
         except Exception, e:
-            print str(e), 'line 182', pll
+            print str(e), 'line 133', pll
             # r_server.lrem(from_model, str(pll))
 
     posts = arp

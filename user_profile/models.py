@@ -1,7 +1,9 @@
 # coding: utf-8
 import os
 import time
+
 from PIL import Image, ImageOps
+
 from datetime import datetime
 
 from django.conf import settings
@@ -10,6 +12,8 @@ from django.db import models
 from django.db.models import F
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.utils.translation import ugettext_lazy as _
+
 from pin.model_mongo import MonthlyStats
 from pin.models_graph import UserGraph
 
@@ -44,11 +48,11 @@ class Profile(models.Model):
     AVATAR_NEW_STYLE = 1
     AVATAT_MIGRATED = 2
 
-    name = models.CharField(max_length=250, verbose_name='نام')
-    location = models.CharField(max_length=250, verbose_name='موقعیت',
+    name = models.CharField(max_length=250, verbose_name=_("Name"))
+    location = models.CharField(max_length=250, verbose_name=_("Location"),
                                 blank=True)
-    website = models.URLField(verbose_name='وب سایت', blank=True)
-    bio = models.TextField(verbose_name='توضیحات', blank=True)
+    website = models.URLField(verbose_name=_('Website'), blank=True)
+    bio = models.TextField(verbose_name=_('Biography'), blank=True)
     cnt_post = models.IntegerField(default=0)
     cnt_like = models.IntegerField(default=0)
     score = models.IntegerField(default=0, db_index=True)
@@ -61,7 +65,7 @@ class Profile(models.Model):
     cover = models.ImageField(upload_to=cover_file_name, default=None,
                               null=True, blank=True)
     jens = models.CharField(max_length=2,
-                            choices=(('M', 'مذکر'), ('F', 'مونث')),
+                            choices=(('M', _('Male')), ('F', _('Female'))),
                             default='M')
     user = models.OneToOneField(User)
 
@@ -114,9 +118,9 @@ class Profile(models.Model):
 
     def get_level_string(self):
         if self.level == 1:
-            return u'عادی'
+            return _('Normal')
         elif self.level == 2:
-            return u'پلیس'
+            return _('Cop')
 
         self.level = 1
         self.save()
@@ -252,8 +256,8 @@ class CreditLog(models.Model):
     DECREMENT = 2
 
     MODE_CHOICES = (
-        (INCREMENT, 'Increment'),
-        (DECREMENT, 'Decrement'),
+        (INCREMENT, _('Increment')),
+        (DECREMENT, _('Decrement')),
     )
 
     # profile = models.ForeignKey(Profile, related_name="user_credit_log")

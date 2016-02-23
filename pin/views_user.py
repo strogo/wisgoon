@@ -16,10 +16,11 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
-from django.http import HttpResponse, HttpResponseRedirect,\
-    HttpResponseBadRequest, Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.translation import ugettext_lazy as _
+from django.http import HttpResponse, HttpResponseRedirect,\
+    HttpResponseBadRequest, Http404
 
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
@@ -138,7 +139,7 @@ def follow(request, following, action):
     if int(action) == 0 and follow:
         follow.delete()
         Stream.objects.filter(following=following, user=request.user).delete()
-        message = 'ارتباط شما با موفقیت قطع شد'
+        message = _('Your connection was successfully shut down')
         status = False
     elif created:
         # posts = Post.objects.only('timestamp').filter(user=following)\
@@ -150,7 +151,7 @@ def follow(request, following, action):
         #                                               date=post.timestamp,
         #                                               following=following)
         # print "post", post.id, s, created
-        message = 'ارتباط شما با موفقیت برقرار شد'
+        message = _('Your connection successfully established.')
         status = True
 
     if request.is_ajax():
@@ -209,10 +210,10 @@ def report(request, pin_id):
         post.report = post.report + 1
         post.save()
         status = True
-        msg = u'گزارش شما ثبت شد.'
+        msg = _('Your report was saved.')
     else:
         status = False
-        msg = u'شما قبلا این مطلب را گزارش داده اید.'
+        msg = _("You 've already reported this matter.")
 
     if request.is_ajax():
         data = {'status': status, 'message': msg}
@@ -226,7 +227,7 @@ def comment_score(request, comment_id, score):
     score = int(score)
     scores = [1, 0]
     if score not in scores:
-        return HttpResponse('error in scores')
+        return HttpResponse(_('There is error in scores.'))
 
     if score == 0:
         score = -1
@@ -416,7 +417,7 @@ def send(request):
             try:
                 copyfile(image_o, image_on)
             except IOError:
-                msg = 'خطا در ارسال تصویر.'
+                msg = _("Error sending the image.")
                 messages.add_message(request, messages.WARNING, msg)
 
                 return HttpResponseRedirect('/pin/')
@@ -468,7 +469,7 @@ def edit(request, post_id):
             if form.is_valid():
                 form.save()
                 if request.is_ajax():
-                    return HttpResponse('با موفقیت به روزرسانی شد.')
+                    return HttpResponse(_('Successfully updated.'))
                 else:
                     return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
         else:
@@ -513,13 +514,13 @@ def upload(request):
             try:
                 filename = request.GET['qqfile']
             except KeyError:
-                return HttpResponseBadRequest("AJAX request not valid")
+                return HttpResponseBadRequest(_("AJAX request not valid"))
         else:
             is_raw = False
             if len(request.FILES) == 1:
                 upload = request.FILES.values()[0]
             else:
-                raise Http404("Bad Upload")
+                raise Http404(_("Bad Upload"))
             filename = upload.name
 
         filename = create_filename(filename)
@@ -665,7 +666,7 @@ def inc_credit(request):
 
         url = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'
         client = Client(url)
-        desc = u'پرداخت صورتحساب'
+        desc = _("bill payment")
 
         data = {'MerchantID': MERCHANT_ID,
                 'Amount': amount,
@@ -680,7 +681,7 @@ def inc_credit(request):
             url = 'https://www.zarinpal.com/pg/StartPay/%s' % str(result['Authority'])
             return HttpResponseRedirect(url)
         else:
-            messages.error(request, 'خطا هنگام وصل به سرور بانک')
+            messages.error(request, _('Error when connecting to the database server'))
             return HttpResponseRedirect(reverse('pin-inc-credit'))
     return render(request, 'pin2/inc_credit.html', {
 
@@ -710,14 +711,17 @@ def verify_payment(request, bill_id):
             # UserMeta.objects(user=bill.user).update(inc__credit=bill.amount)
             p = bill.user.profile
             p.inc_credit(amount=bill.amount)
-            messages.success(request, 'پرداخت با موفقیت انجام شد. کد رهگیری شما %s' % str(result['RefID']))
+            message = "Payment was successful. Your tracking code %s" % str(result['RefID'])
+            messages.success(request, _(message))
 
             from pin.model_mongo import MonthlyStats
             MonthlyStats.log_hit(object_type=MonthlyStats.BILL)
 
             return HttpResponseRedirect(reverse('pin-inc-credit'))
         else:
-            messages.error(request, 'پرداخت نا موفق، در صورت کسر از حساب شما بانک مبلغ را برگشت خواهد داد.')
+            message = 'Payment unsuccessful , the amount deducted from your account the bank returns .'
+            messages.error(request,
+                           _(message))
             return HttpResponseRedirect(reverse('pin-inc-credit'))
 
     else:
@@ -737,7 +741,7 @@ def save_as_ads(request, post_id):
         if profile.credit >= int(mode_price):
             try:
                 Ad.objects.get(post=int(post_id), ended=False)
-                messages.error(request, u"این پست قبلا آگهی شده است")
+                messages.error(request, _("This post has been advertised"))
             except Exception, Ad.DoesNotExist:
                 profile.dec_credit(amount=int(mode_price))
 
@@ -750,11 +754,11 @@ def save_as_ads(request, post_id):
                 # profile.credit = int(profile.credit) - int(mode_price)
                 # profile.save()
                 messages.success(request,
-                                 u'مطلب مورد نظر شما با موفقیت آگهی شد.')
+                                 _("Post of you was advertised successfully ."))
 
         else:
             messages.error(request,
-                           u"موجودی حساب شما برای آگهی دادن کافی نیست.")
+                           _("Your account credit is not enough for advertise "))
 
     return render(request, 'pin2/save_as_ads.html', {
         'post': p,
@@ -769,16 +773,19 @@ def block_action(request, user_id):
     action = request.GET.get('action', False)
 
     if not action:
-        data = {'status': False, 'type': 'None', 'message': 'کجاااااا؟'}
+        data = {'status': False, 'type': 'None', 'message': _('There is no action')}
     else:
         if action == "block":
             Block.block_user(user_id=user.id, blocked_id=user_id)
-            data = {'status': True, 'type': 'block', 'message': 'این کاربر با موفقیت بلاک شد'}
+            data = {'status': True, 'type': 'block',
+                    'message': _('This user was blocked successfully')}
         elif action == "unblock":
             Block.unblock_user(user_id=user.id, blocked_id=user_id)
-            data = {'status': True, 'type': 'unblock', 'message': 'این کاربر با موفقیت رفع بلاک شد'}
+            data = {'status': True, 'type': 'unblock',
+                    'message': _('This user was unblocked successfully')}
         else:
-            data = {'status': False, 'type': 'None', 'message': 'کجاااااا؟'}
+            data = {'status': False, 'type': 'None',
+                    'message':_('The data entered is not valid')}
 
     return HttpResponse(json.dumps(data), content_type="application/json")
 

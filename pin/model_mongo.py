@@ -167,9 +167,9 @@ class UserMeta(Document):
 
     def get_level_string(self):
         if self.level == 1:
-            return u'عادی'
+            return _("Normal")
         elif self.level == 2:
-            return u'پلیس'
+            return _("Cop")
 
     def is_police(self):
         if self.level == 2:

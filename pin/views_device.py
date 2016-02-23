@@ -5,22 +5,21 @@ import time
 from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
 from django.db.models import F, Sum
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponse, HttpResponseForbidden,\
     HttpResponseBadRequest, HttpResponseNotFound
 
 from tastypie.models import ApiKey
 
+from pin.forms import PinDirectForm, PinDeviceUpdate
+from pin.context_processors import is_police
 from pin.models import Post, Comments, Comments_score,\
     Follow, Stream, Report
-
-from pin.forms import PinDirectForm, PinDeviceUpdate
 from pin.tools import create_filename, AuthCache, check_block,\
     log_act, post_after_delete, get_user_ip, get_post_user_cache
-from pin.context_processors import is_police
 
-User = get_user_model()
 MEDIA_ROOT = settings.MEDIA_ROOT
 
 
@@ -53,16 +52,16 @@ def like(request):
     user = check_auth(request)
 
     if not user:
-        return HttpResponseForbidden('error in user validation',
+        return HttpResponseForbidden(_('error in user validation'),
                                      content_type="application/json")
 
     if request.method != "POST":
-        return HttpResponseBadRequest('error in parameters',
+        return HttpResponseBadRequest(_('error in entered parameters'),
                                       content_type="application/json")
 
     post_id = int(request.POST.get('post_id', None))
     if not post_id:
-        return HttpResponseBadRequest('erro in post id',
+        return HttpResponseBadRequest(_('There is no post id'),
                                       content_type="application/json")
     try:
         post = get_post_user_cache(post_id=post_id)
@@ -90,7 +89,7 @@ def post_comment(request):
     log_act("wisgoon.api.post.commenting.count")
     user = check_auth(request)
     if not user:
-        return HttpResponseForbidden('error in user validation',
+        return HttpResponseForbidden(_('error in user validation'),
                                      content_type="application/json")
 
     data = request.POST.copy()
@@ -100,7 +99,7 @@ def post_comment(request):
         return HttpResponse(0, content_type="application/json")
 
     if user.profile.score < settings.SCORE_FOR_COMMENING:
-        return HttpResponse(u"امتباز شما باید بالای 5000 باشد.",
+        return HttpResponse(_("You should be rated above 5000"),
                             content_type="application/json")
 
     try:
@@ -123,11 +122,11 @@ def post_comment(request):
 def post_report(request):
     user = check_auth(request)
     if not user:
-        return HttpResponseForbidden('error in user validation')
+        return HttpResponseForbidden(_('error in user validation'))
 
     post_id = request.POST.get('post_id', None)
     if not post_id:
-        return HttpResponseForbidden('error in params')
+        return HttpResponseForbidden(_('error in entered params'))
 
     if post_id and Post.objects.filter(pk=post_id).exists():
         r, created = Report.objects.get_or_create(user_id=user.id,
@@ -137,7 +136,7 @@ def post_report(request):
 
         return HttpResponse(1)
     else:
-        return HttpResponseNotFound('post not found')
+        return HttpResponseNotFound(_('post not found'))
 
     return HttpResponseBadRequest(0)
 
@@ -146,13 +145,13 @@ def post_report(request):
 def comment_report(request, comment_id):
     user = check_auth(request)
     if not user:
-        return HttpResponseForbidden('error in user validation')
+        return HttpResponseForbidden(_('error in user validation'))
 
     if comment_id and Comments.objects.filter(pk=comment_id).exists():
         Comments.objects.filter(pk=comment_id).update(reported=True)
         return HttpResponse(1)
     else:
-        return HttpResponseNotFound('post not found')
+        return HttpResponseNotFound(_('post not found'))
 
     return HttpResponseBadRequest(0)
 
@@ -161,12 +160,12 @@ def comment_report(request, comment_id):
 def comment_score(request, comment_id, score):
     user = check_auth(request)
     if not user:
-        return HttpResponseForbidden('error in user validation')
+        return HttpResponseForbidden(_('error in user validation'))
 
     score = int(score)
     scores = [1, 0]
     if score not in scores:
-        return HttpResponseBadRequest('error in scores')
+        return HttpResponseBadRequest(_('There is no score'))
 
     if score == 0:
         score = -1
@@ -186,16 +185,16 @@ def comment_score(request, comment_id, score):
         return HttpResponse(sum_score['score__sum'])
 
     except Comments.DoesNotExist:
-        return HttpResponseNotFound('comment not found')
+        return HttpResponseNotFound(_('comment not found'))
 
-    return HttpResponseBadRequest('error')
+    return HttpResponseBadRequest('error in scores')
 
 
 @csrf_exempt
 def post_delete(request, item_id):
     user = check_auth(request)
     if not user:
-        return HttpResponseForbidden('error in user validation')
+        return HttpResponseForbidden(_('error in user validation'))
 
     try:
         post = get_post_user_cache(post_id=item_id)
@@ -205,41 +204,41 @@ def post_delete(request, item_id):
             post.delete()
             return HttpResponse('1')
     except Post.DoesNotExist:
-        return HttpResponseNotFound('post not exists or not yours')
+        return HttpResponseNotFound(_('post not exists or not yours'))
 
-    return HttpResponseBadRequest('bad request')
+    return HttpResponseBadRequest(_('bad request'))
 
 
 @csrf_exempt
 def post_update(request, item_id):
     user = check_auth(request)
     if not user:
-        return HttpResponseForbidden('error in user validation')
+        return HttpResponseForbidden(_('error in user validation'))
 
     try:
         post = Post.objects.get(pk=int(item_id), user=user)
     except Post.DoesNotExist:
-        return HttpResponseNotFound('post not found or not yours')
+        return HttpResponseNotFound(_('post not found or not yours'))
 
     if request.method == 'POST':
         form = PinDeviceUpdate(request.POST, instance=post)
         if form.is_valid():
             form._user_ip = get_user_ip(request)
             form.save()
-            return HttpResponse('success')
+            return HttpResponse(_('successfully updated post'))
         else:
-            return HttpResponseBadRequest('error in form')
+            return HttpResponseBadRequest(_('error in update post form'))
 
-    return HttpResponseBadRequest('bad request')
+    return HttpResponseBadRequest(_('bad request'))
 
 
 def follow(request, following, action):
     user = check_auth(request)
     if not user:
-        return HttpResponseForbidden('error in user validation')
+        return HttpResponseForbidden(_('error in user validation'))
 
     if int(following) == user.id:
-        return HttpResponseForbidden('not need following himself')
+        return HttpResponseForbidden(_('not need following himself'))
 
     try:
         following = User.objects.get(pk=int(following))
@@ -267,7 +266,7 @@ def follow(request, following, action):
             #                        following=following)
 
     except User.DoesNotExist:
-        return HttpResponse('User does not exists')
+        return HttpResponse(_('User does not exists'))
 
     return HttpResponse('1')
 
@@ -277,17 +276,16 @@ def post_send(request):
     user = check_auth(request)
 
     if not user:
-        print 'error in user validation'
-        return HttpResponseForbidden('error in user validation')
+        return HttpResponseForbidden(_('error in user validation'))
 
     if request.method != 'POST':
-        return HttpResponseBadRequest('bad request post')
+        return HttpResponseBadRequest(_('bad request post'))
 
     try:
         form = PinDirectForm(request.POST, request.FILES)
     except IOError:
         print "ioerror"
-        return HttpResponseBadRequest('bad request')
+        return HttpResponseBadRequest(_('bad request'))
 
     if form.is_valid():
         upload = request.FILES.values()[0]
@@ -310,14 +308,14 @@ def post_send(request):
             model._user_ip = get_user_ip(request)
             model.save()
 
-            return HttpResponse('success')
+            return HttpResponse(_('successfully upload post'))
         except IOError, e:
             print str(e), MEDIA_ROOT
-            return HttpResponseBadRequest('error')
+            return HttpResponseBadRequest(_('error'))
 
-        return HttpResponseBadRequest('bad request in form')
+        return HttpResponseBadRequest(_('bad request in form'))
     else:
         print form.errors
-        HttpResponseBadRequest('error in form validation')
+        HttpResponseBadRequest(_('error in form validation'))
 
-    return HttpResponseBadRequest('bad request')
+    return HttpResponseBadRequest(_('bad request'))
