@@ -276,4 +276,10 @@ def create_user_profile(sender, instance, created, **kwargs):
         except Exception as e:
             print str(e)
 
+        try:
+            instance.is_active = True
+            instance.save()
+        except Exception, e:
+            pass
+
 post_save.connect(create_user_profile, sender=User)
