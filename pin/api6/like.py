@@ -1,3 +1,5 @@
+from django.views.decorators.csrf import csrf_exempt
+
 from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
     return_bad_request
 from pin.api6.tools import get_int, get_simple_user_object, get_next_url
@@ -8,6 +10,37 @@ from pin.tools import AuthCache, get_post_user_cache
 
 def like_post(request, item_id):
     token = request.GET.get('token', False)
+    if token:
+        current_user = AuthCache.id_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
+
+    try:
+        post = get_post_user_cache(post_id=get_int(item_id))
+    except Post.DoesNotExist:
+        return return_not_found()
+
+    like, dislike, current_like = LikesRedis(post_id=item_id)\
+        .like_or_dislike(user_id=current_user,
+                         post_owner=post.user_id,
+                         category=post.category_id)
+
+    if like:
+        user_act = 1
+        user = get_simple_user_object(current_user, post.user_id)
+    elif dislike:
+        user_act = -1
+        user = {}
+
+    data = {'cnt_like': current_like, 'user_act': user_act, 'user': user}
+    return return_json_data(data)
+
+@csrf_exempt
+def like_item(request):
+    token = request.POST.get('token', False)
+    item_id = int(request.POST.get('item_id', 0))
     if token:
         current_user = AuthCache.id_from_token(token=token)
         if not current_user:

@@ -55,7 +55,7 @@ def home(request):
     for pll in pl:
         try:
             post_id = int(pll)
-            post_item = post_item_json(post=post_id, cur_user_id=request.user.id)
+            post_item = post_item_json(post_id=post_id, cur_user_id=request.user.id)
             arp.append(post_item)
             # arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
             last_id = pll
@@ -253,7 +253,7 @@ def hashtag(request, tag_name):
     results = []
     query = tag_name
 
-    if query in [u'عروس', u'عاشقانه']:
+    if query in [u'عروس', u'عاشقانه'] and not request.user.is_authenticated():
         return render(request, 'pin2/samandehi.html')
 
     offset = int(request.GET.get('offset', 0))
@@ -569,9 +569,14 @@ def latest_redis(request):
 
     for pll in pl:
         try:
-            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
+            pll_id = int(pll)
+            arp.append(post_item_json(post_id=pll_id,
+                                      cur_user_id=request.user.id))
+            # arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
             last_id = pll
-        except:
+        except Exception, e:
+            raise
+            print str(e)
             pass
 
     if arp and last_id:
@@ -581,7 +586,7 @@ def latest_redis(request):
 
     if request.is_ajax():
         if arp:
-            response_data = render(request, 'pin2/_items_2.html', {
+            response_data = render(request, 'pin2/_items_2_v6.html', {
                 'latest_items': arp,
                 'next_url': next_url,
             })

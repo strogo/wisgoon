@@ -72,6 +72,8 @@ urlpatterns += patterns('pin.api6.app',
 urlpatterns += patterns('pin.api6.like',
                         url(r'like/post/(?P<item_id>\d+)/$', 'like_post',
                             name='api-6-like-post'),
+                        url(r'like/item/$', 'like_item',
+                            name='api-6-like-item'),
                         url(r'like/likers/post/(?P<item_id>\d+)/$', 'post_likers',
                             name='api-6-likers-post'),
                         )

@@ -34,6 +34,7 @@ from pin.tools import create_filename, get_user_ip, get_request_pid, check_block
     post_after_delete, get_post_user_cache
 
 from pin.tasks import porn_feedback
+from pin.api6.tools import post_item_json
 
 from suds.client import Client
 
@@ -91,10 +92,8 @@ def following(request):
 
     arp = []
     for pll in pl:
-        try:
-            arp.append(Post.objects.get(id=pll))
-        except:
-            pass
+        pll_id = int(pll)
+        arp.append(post_item_json(pll_id, cur_user_id=request.user.id))
 
     latest_items = arp
 
@@ -103,7 +102,7 @@ def following(request):
     if request.is_ajax():
         if latest_items:
             return render(request,
-                          'pin2/_items_2.html',
+                          'pin2/_items_2_v6.html',
                           {'latest_items': sorted_objects})
         else:
             return HttpResponse(0)
