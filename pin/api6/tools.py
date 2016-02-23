@@ -144,6 +144,7 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
     user_info['username'] = UserDataCache.get_user_name(current_user)
     user_info['related'] = {}
     user_info['follow_by_user'] = False
+    user_info['block_by_user'] = False
 
     user_info['related']['posts'] = abs_url(reverse('api-6-post-user',
                                                     kwargs={
