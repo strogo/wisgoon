@@ -39,8 +39,8 @@ def get_from_insta(insta_user_id, cat, user_id, cnt=5):
                 model.image = media.get_standard_resolution_url()
 
                 image_url = model.image
-                filename = image_url.split('/')[-1]
-                filename = create_filename(filename)
+                # filename = image_url.split('/')[-1]
+                filename = create_filename('1.jpg')
                 image_on = "%s/pin/%s/images/o/%s" % (MEDIA_ROOT, settings.INSTANCE_NAME, filename)
 
                 # image_url = image_url.replace("https://", "http://")
