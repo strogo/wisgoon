@@ -371,6 +371,7 @@ def a_sendurl(request):
 
 @login_required
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
+@csrf_exempt
 def send(request):
     fpath = None
     filename = None

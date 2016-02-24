@@ -301,7 +301,7 @@ def profile(request, user_id):
             return return_un_auth()
 
     if current_user:
-        if Block.objects.filter(user_id=current_user, blocked_id=user_id).count():
+        if Block.objects.filter(user_id=user_id, blocked_id=current_user).count():
             return return_not_found({
                 'message': _('This User Has Blocked You')
             })
