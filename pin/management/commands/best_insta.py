@@ -43,7 +43,7 @@ def get_from_insta(insta_user_id, cat, user_id, cnt=5):
                 filename = create_filename(filename)
                 image_on = "%s/pin/%s/images/o/%s" % (MEDIA_ROOT, settings.INSTANCE_NAME, filename)
 
-                image_url = image_url.replace("https://", "http://")
+                # image_url = image_url.replace("https://", "http://")
                 print image_url
 
                 response = requests.get(image_url, stream=True)
