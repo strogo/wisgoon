@@ -1,108 +1,65 @@
 {% extends "shop/base.html" %}
 {% load thumbnail %}
+
+{% block header-css %}
+<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/owl.carousel.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/owl.theme.css" />
+{% endblock header-css %}
+
 {% block content %}
 <div class="main">
 	<div class="container">
 		<div class="product">
 			<div class="col-md-5 col-xs-12 product-info">
-				<h1>
-					{{product.title}}
-				</h1>
-				<span class="price">
-					{{product.price}} تومان
-				</span>
+				<h1>{{product.title}}</h1>
+				<h3 class="price"> {{product.price}} تومان </h3>
+				{% if user.is_superuser %}
+				<a href="/admin/shop/product/{{product.id}}" class="btn btn-success btn-xs">ویرایش</a>
+				{% endif %}
 				<hr/>
 				<div class="add-card">
 					<form method="post" action="{% url "shop-cart-add-product" %}">
 						{% csrf_token%}
-						<input type="text" name="quantity" value="1">
+						<input type="number" name="quantity" value="1">
 						<input type="hidden" name="product_id" value="{{product.id}}">
-						<button class="btn btn-primary" type="submit">افزودن به سبد خرید</button>
+						<button class="shop_btn" type="submit">افزودن به سبد خرید</button>
 					</form>
 				</div>
-				<p>{{product.description}}</p>
+				<hr/>
+				<div class="product-desc">
+					{{product.description}}
+				</div>
 			</div>
 			<div class="col-md-5 col-xs-12 product-img ">
-				{% thumbnail product.images.all.0.image "445x346" as img %}
-					<img src="{{img.url}}">
-				{% endthumbnail %}
+				<div id="pslider" class="owl-carousel">
+					{% for i in product.images.all %}
+					{% thumbnail i.image "450x450" as img %}
+					<div class="item"><img src="{{img.url}}" alt="{{product.title}}"></div>
+					{% endthumbnail %}
+					{% endfor %}
+				</div>
 			</div>
+
 			<div class="clear"></div>
 		</div>
 	</div>
-	<!--
-	<div class="related">
-		<div class="container">
-			<div class="col-md-3 col-xs-12 col-sm-3  product-img">
-				<a class="photo-item" href=""><img src="images/mug6.jpg"></a>
-				<div class="xs-info">
-					<span>ماگ طرح کوهستان</span>
-					<span class="title">۲۰,۰۰۰ تومان</span>
-				</div>
-				<div class="info hidden-xs hidden-sm">
-					<div class="blur-back">
-						<a href="">
-							<a href=""><img src="images/bag.png"></a>
-							<h6>مبل کلاسیک طوسی رنگ </h6>
-							<span class="price">۲۰۰,۰۰۰ تومان</span>
-							<i class="fa fa-long-arrow-right"></i>
-						</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-3 col-xs-12 col-sm-3  product-img">
-				<a class="photo-item" href=""><img src="images/mug3.jpg"></a>
-				<div class="xs-info">
-					<span>ماگ طرح کوهستان</span>
-					<span class="title">۲۰,۰۰۰ تومان</span>
-				</div>
-				<div class="info hidden-xs hidden-sm">
-					<div class="blur-back">
-						<a href="">
-							<a href=""><img src="images/bag.png"></a>
-							<h6>مبل کلاسیک طوسی رنگ </h6>
-							<span class="price">۲۰۰,۰۰۰ تومان</span>
-							<i class="fa fa-long-arrow-right"></i>
-						</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-3 col-xs-12 col-sm-3  product-img">
-				<a class="photo-item" href=""><img src="images/mug4.jpg"></a>
-				<div class="xs-info">
-					<span>ماگ طرح کوهستان</span>
-					<span class="title">۲۰,۰۰۰ تومان</span>
-				</div>
-				<div class="info hidden-xs hidden-sm">
-					<div class="blur-back">
-						<a href="">
-							<a href=""><img src="images/bag.png"></a>
-							<h6>مبل کلاسیک طوسی رنگ </h6>
-							<span class="price">۲۰۰,۰۰۰ تومان</span>
-							<i class="fa fa-long-arrow-right"></i>
-						</a>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-3 col-xs-12 col-sm-3  product-img">
-				<a class="photo-item" href=""><img src="images/mug5.jpg"></a>
-				<div class="xs-info">
-					<span>ماگ طرح کوهستان</span>
-					<span class="title">۲۰,۰۰۰ تومان</span>
-				</div>
-				<div class="info hidden-xs hidden-sm">
-					<div class="blur-back">
-						<a href="">
-							<a href=""><img src="images/bag.png"></a>
-							<h6>مبل کلاسیک طوسی رنگ </h6>
-							<span class="price">۲۰۰,۰۰۰ تومان</span>
-							<i class="fa fa-long-arrow-right"></i>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	-->
+	
 </div>
 {% endblock content %}
+
+{% block footer-script %}
+<script type="text/javascript" src="{{STATIC_CDN}}v2/js/owl.carousel.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+
+	$("#pslider").owlCarousel({
+		navigation : true, 
+		slideSpeed : 300,
+		paginationSpeed : 400,
+		singleItem:true,
+		navigationText: ['قبلی', 'بعدی']
+	});
+
+});
+</script>
+{% endblock%}

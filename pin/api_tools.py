@@ -66,6 +66,8 @@ def media_abs_url(url, check_photos=False):
             new_url = new_url.replace("www.wisgoon.com", "saturn.wisgoon.com")
         elif "jupiter" in new_url:
             new_url = new_url.replace("www.wisgoon.com", "jupiter.wisgoon.com")
+        elif "mars" in new_url:
+            new_url = new_url.replace("www.wisgoon.com", "mars.wisgoon.com")
 
     return new_url
 

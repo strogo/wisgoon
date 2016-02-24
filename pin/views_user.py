@@ -18,7 +18,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Sum
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect,\
     HttpResponseBadRequest, Http404
 
@@ -371,6 +371,7 @@ def a_sendurl(request):
 
 @login_required
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
+@csrf_exempt
 def send(request):
     fpath = None
     filename = None

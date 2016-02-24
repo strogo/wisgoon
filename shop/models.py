@@ -14,20 +14,26 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    NORMAL = 1
-    SPECIAL = 2
+    X1 = 1
+    X2 = 2
+    H2 = 3
+    X2H2 = 4
 
     MODES = (
-        (NORMAL, _("normal")),
-        (SPECIAL, _("special")),
+        (X1, "normal"),
+        (X2, "x2"),
+        (H2, "H2"),
+        (X2H2, "X2H2"),
     )
     title = models.CharField(max_length=250)
     title_en = models.CharField(max_length=250, blank=True, default="")
     description = models.TextField()
     price = models.IntegerField(default=0)
     in_stock = models.BooleanField(default=True)
+    in_home = models.BooleanField(default=False)
+    sort = models.IntegerField(default=0)
 
-    mode = models.IntegerField(choices=MODES, default=NORMAL)
+    mode = models.IntegerField(choices=MODES, default=X1)
 
     category = models.ForeignKey(Category)
 
@@ -59,7 +65,7 @@ class Recivers(models.Model):
     full_name = models.CharField(max_length=300)
     address = models.TextField()
     phone = models.CharField(max_length=50)
-    postal_code = models.CharField(max_length=100, blank=True)
+    postal_code = models.CharField(max_length=100)
 
     user = models.ForeignKey(User)
 

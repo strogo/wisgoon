@@ -22,6 +22,12 @@ urlpatterns = patterns('pin.api6.auth',
                            name='api-6-auth-user-search'),
                        url(r'auth/user/(?P<user_id>\d+)/likes/$', 'user_like',
                            name='api-6-auth-user-like'),
+                       url(r'^auth/block/user/(?P<user_id>\d+)/', 'block_user',
+                           name="api-block"),
+                       url(r'^auth/unblock/user/(?P<user_id>\d+)/', 'unblock_user',
+                           name="api-block"),
+                       url(r'^auth/password/reset/', 'password_reset',
+                           name="api-password-reset"),
                        # url(r'^auth/user/inc/credit/$', 'inc_credit',
                        #     name="api-6-user-inc-credit")
                        )

@@ -1,0 +1,24 @@
+<a href="{% url "shop-product" product.id %}">
+    <div class="grid-item x2h2">
+        <div class="photo-item">
+            {% for img in product.images.all %}
+            {% if img.primary %}
+            <img src="{{MEDIA_URL}}{{img.image}}" alt="">
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="xs-info">
+            <span>{{product.title}}</span>
+            <span class="title">{{product.price}} تومان</span>
+        </div>
+        <div class="info hidden-xs hidden-sm">
+            <img src="/media/shop/images/bag.png">
+            <div class="blur-back">
+                <h3>{{product.title}}</h3>
+                <span class="price">{{product.price}} تومان</span>
+                <i class="fa fa-long-arrow-left"></i>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</a>

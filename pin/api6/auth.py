@@ -9,9 +9,11 @@ except ImportError:
     import json
 
 from django.conf import settings
+from django.contrib.auth import authenticate, login as auth_login,\
+    logout as auth_logout
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login as auth_login
-from django.contrib.auth import logout as auth_logout
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
@@ -299,9 +301,8 @@ def profile(request, user_id):
             return return_un_auth()
 
     if current_user:
-        if Block.objects.filter(user_id=current_user, blocked_id=user_id).count():
-            return return_json_data({
-                "status": False,
+        if Block.objects.filter(user_id=user_id, blocked_id=current_user).count():
+            return return_not_found({
                 'message': _('This User Has Blocked You')
             })
 
@@ -667,3 +668,65 @@ PACKS = {
 #                                 'message': _('Increased Credit was Successful.')})
 
 #     return return_json_data({'status': False, 'message': 'failed'})
+
+
+@csrf_exempt
+def block_user(request, user_id):
+    # TODO implement checking user_id
+    user = None
+    token = request.POST.get('token', '')
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token:
+        return return_un_auth()
+
+    Block.block_user(user_id=user.id, blocked_id=user_id)
+    data = {
+        'success': True,
+        'message': _('User blocked')
+    }
+    return return_json_data(data)
+
+
+@csrf_exempt
+def unblock_user(request, user_id):
+    # TODO implement checking user_id
+    user = None
+    token = request.POST.get('token', '')
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token:
+        return return_un_auth()
+
+    Block.unblock_user(user_id=user.id, blocked_id=user_id)
+    data = {
+        'success': True,
+        'message': _('User unblocked')
+    }
+    return return_json_data(data)
+
+
+@csrf_exempt
+def password_reset(request):
+    if request.method == "POST":
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            opts = {
+                'use_https': request.is_secure(),
+                'token_generator': default_token_generator,
+                'from_email': 'info@wisgoon.com',
+                'email_template_name': 'registration/password_reset_email.html',
+                'subject_template_name': 'registration/password_reset_subject.txt',
+                'request': request,
+            }
+
+            form.save(**opts)
+            data = {
+                'success': True,
+                'message': _('Email sent')
+            }
+            return return_json_data(data)
+
+    return return_bad_request()

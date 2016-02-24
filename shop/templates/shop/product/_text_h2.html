@@ -1,0 +1,27 @@
+{% load thumbnail %}
+<div class="grid-item grid-item--width2 grid-item--height4">
+    <div class="photo-item">
+        <a href="#product/">
+            {% for img in product.images.all %}
+            {% if img.primary %}
+            <img src="{{MEDIA_URL}}{{img.image}}" alt="">
+            {% endif %}
+            {% endfor %}
+        </a>
+    </div>
+    <div class="xs-info">
+        <span>{{product.id}}-{{product.title}}</span>
+        <span class="title">{{product.price}} تومان</span>
+    </div>
+    <a href="{% url "shop-product" 5 %}">
+        <div class="info hidden-xs hidden-sm">
+            <img src="/media/shop/images/bag.png">
+            <div class="blur-back">
+                <h6>{{product.id}}-{{product.title}}</h6>
+                <span class="price">{{product.price}} تومان</span>
+                <i class="fa fa-long-arrow-right"></i>
+            </div>
+        </div>
+    </a>
+    <div class="clear"></div>
+</div>

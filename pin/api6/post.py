@@ -423,10 +423,7 @@ def hashtag(request, tag_name):
         posts = []
         for p in results:
             try:
-                pp = Post.objects\
-                    .only(*Post.NEED_KEYS2)\
-                    .get(id=p.object.id)
-
+                pp = int(p.object.id)
                 posts.append(pp)
             except:
                 pass

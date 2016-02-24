@@ -1,227 +1,38 @@
 {% extends "shop/base.html" %}
 {% block content %}
-		<div class="main">
-			<div class="container">
-				<div id="feed" class="content grid">
-					<div class="grid-sizer"></div>
-					<div class="grid-item"></div>
-					<div class="grid-item grid-item--width2 grid-item--height4">
-						<div class="photo-item">
-							<a href="#product/">
-								<img src="/media/shop/images/t3.jpg">
-							</a>
-						</div>
-						<div class="xs-info">
-							<span>ماگ طرح کوهستان</span>
-							<span class="title">۲۰,۰۰۰ تومان</span>
-						</div>
-						<a href="{% url "shop-product" 5 %}">
-						<div class="info hidden-xs hidden-sm">
-								<img src="/media/shop/images/bag.png">
-								<div class="blur-back">
-									<h6>مبل کلاسیک طوسی رنگ </h6>
-									<span class="price">۲۰۰,۰۰۰ تومان</span>
-									<i class="fa fa-long-arrow-right"></i>
-								</div>
-						</div>
-						</a>
-					</div>
-					<div class="grid-item grid-item--width2 grid-item--height4 text-bg hidden-xs hidden-sm">
-						<h3>  با سلام، به <strong>فروشگاه اینترنتی ویسگون</strong> خوش امدید.
-							با خرید هر یک از محصولات ما ویسگونی بشید.
-						</h3>
-						<div class="col-md-6 hidden-xs hidden-sm ads pa0 box1">
-							<div>
-								<img src="/media/shop/images/kk.png">
-							</div>
-							<div>
-								<h4>خرید مطمین در ویسگون شاپ</h4>
-								<p>پرداخت راحت و امن</p>
-							</div>
-						</div>
-						<div class="col-md-6 hidden-xs hidden-sm ads pa0 box2">
-							<div>
-								<img src="/media/shop/images/llle.png">
-							</div>
-							<div>
-								<h4>تظمین کیفیت کالا</h4>
-								<p>ارسال سریع </p>
-							</div>
-						</div>
-					</div>
+<div id="feed" class="content grid">
 
+	{% for product in products %}
 
-					<div class="grid-item grid-item--width3 grid-item--height3">
-						<div class="photo-item">
-							<img src="/media/shop/images/mug7.jpg">
-						</div>
-						<div class="xs-info">
-							<span>ماگ طرح کوهستان</span>
-							<span class="title">۲۰,۰۰۰ تومان</span>
-						</div>
-						<div class="info-mini hidden-xs hidden-sm">
-							<a href="">
-								<a href=""><img src="/media/shop/images/bag.png"></a>
-								<div class="blur-back">
-									<h6>مبل کلاسیک طوسی رنگ </h6>
-									<span class="price">۲۰۰,۰۰۰ تومان</span>
-									<i class="fa fa-long-arrow-right"></i>
-								</div>
-							</a>
-						</div>
-					</div>
+		{% if product.images.first %}
 
-					<div class="grid-item grid-item--width3 grid-item--height3 grid-item--height3 text text-bg hidden-xs hidden-sm">
-						<h4> با خرید ماگ و تی شرت از این فروشگاه ویسگونی بشید :)</h4>
-					</div>
-					<div class="grid-item grid-item--width2 grid-item--height4">
-						<div class="photo-item">
-							<img src="/media/shop/images/t1.jpg">
-						</div>	
-						<div class="xs-info">
-							<span>ماگ طرح کوهستان</span>
-							<span class="title">۲۰,۰۰۰ تومان</span>
-						</div>
-						<div class="info hidden-xs hidden-sm">
-							<a href="">
-								<a href=""><img src="/media/shop/images/bag.png"></a>
-								<div class="blur-back">
-									<h6>مبل کلاسیک طوسی رنگ </h6>
-									<span class="price">۲۰۰,۰۰۰ تومان</span>
-									<i class="fa fa-long-arrow-right"></i>
-								</div>
-							</a>
-						</div>
-					</div>
+			{% if product.mode == 1 %}
+				{% include "shop/product/_product_normal.html" %}
+			{% elif product.mode == 2 %}
+				{% include "shop/product/_product_x2.html" %}
+			{% elif product.mode == 3 %}
+				{% include "shop/product/_product_h2.html" %}
+			{% elif product.mode == 4 %}
+				{% include "shop/product/_product_x2h2.html" %}
+			{% endif %}
 
-					<div class="grid-item grid-item--width3 grid-item--height3">
-						<div class="photo-item">
-							<img src="/media/shop/images/mug3.jpg">
-						</div>
-						<div class="xs-info">
-							<span>ماگ طرح کوهستان</span>
-							<span class="title">۲۰,۰۰۰ تومان</span>
-						</div>
-						<div class="info-mini hidden-xs hidden-sm">
-							<a href="">
-								<a href=""><img src="/media/shop/images/bag.png"></a>
-								<div class="blur-back">
-									<h6>مبل کلاسیک طوسی رنگ </h6>
-									<span class="price">۲۰۰,۰۰۰ تومان</span>
-									<i class="fa fa-long-arrow-right"></i>
-								</div>
-							</a>
-						</div>
-					</div>
+		{% else %}
 
-					<div class="grid-item grid-item--width3 grid-item--height3">
-						
-						<div class="photo-item">
-							<img src="/media/shop/images/mug4.jpg">
-						</div>
-						<div class="xs-info">
-							<span>ماگ طرح کوهستان</span>
-							<span class="title">۲۰,۰۰۰ تومان</span>
-						</div>
-						<div class="info-mini hidden-xs hidden-sm">
-							<a href="">
-								<a href=""><img src="/media/shop/images/bag.png"></a>
-								<div class="blur-back">
-									<h6>مبل کلاسیک طوسی رنگ </h6>
-									<span class="price">۲۰۰,۰۰۰ تومان</span>
-									<i class="fa fa-long-arrow-right"></i>
-								</div>
-							</a>
-						</div>
-					</div>
+			{% if product.mode == 1 %}
+				{% include "shop/product/_text_normal.html" %}
+			{% elif product.mode == 2 %}
+				{% include "shop/product/_text_x2.html" %}
+			{% elif product.mode == 3 %}
+				{% include "shop/product/_text_h2.html" %}
+			{% elif product.mode == 4 %}
+				{% include "shop/product/_text_x2h2.html" %}
+			{% endif %}
 
-					<div class="grid-item grid-item--width3 grid-item--height3">
-						<div class="photo-item">
-							<img src="/media/shop/images/mug5.jpg">
-						</div>
-						<div class="xs-info">
-							<span>ماگ طرح کوهستان</span>
-							<span class="title">۲۰,۰۰۰ تومان</span>
-						</div>
-						<div class="info-mini hidden-xs hidden-sm">
-							<a href="">
-								<a href=""><img src="/media/shop/images/bag.png"></a>
-								<div class="blur-back">
-									<h6>مبل کلاسیک طوسی رنگ </h6>
-									<span class="price">۲۰۰,۰۰۰ تومان</span>
-									<i class="fa fa-long-arrow-right"></i>
-								</div>
-							</a>
-						</div>
-					</div>
+		{% endif %}
 
-					<div class="grid-item grid-item--width3 grid-item--height3">
-						<div class="photo-item">
-							<img src="/media/shop/images/mug6.jpg">
-						</div>
-						<div class="xs-info">
-							<span>ماگ طرح کوهستان</span>
-							<span class="title">۲۰,۰۰۰ تومان</span>
-						</div>
-						<div class="info-mini hidden-xs hidden-sm">
-							<a href="">
-								<a href=""><img src="/media/shop/images/bag.png"></a>
-								<div class="blur-back">
-									<h6>مبل کلاسیک طوسی رنگ </h6>
-									<span class="price">۲۰۰,۰۰۰ تومان</span>
-									<i class="fa fa-long-arrow-right"></i>
-								</div>
-							</a>
-						</div>
-					</div>
+	{% endfor %}
 
-					<div class="grid-item grid-item--width2 grid-item--height4">
-						<div class="photo-item">
-							<img src="/media/shop/images/t3.jpg">
-						</div>	
-						<div class="xs-info">
-							<span>ماگ طرح کوهستان</span>
-							<span class="title">۲۰,۰۰۰ تومان</span>
-						</div>			
-						<div class="info hidden-xs hidden-sm">
-							<a href="">
-								<a href=""><img src="/media/shop/images/bag.png"></a>
-								<div class="blur-back">
-									<h6>مبل کلاسیک طوسی رنگ </h6>
-									<span class="price">۲۰۰,۰۰۰ تومان</span>
-									<i class="fa fa-long-arrow-right"></i>
-								</div>
-							</a>
-						</div>
-					</div>
-
-					<div class="grid-item grid-item--width3 grid-item--height3">
-						<div class="photo-item">
-							<img src="/media/shop/images/t2.jpg">
-						</div>
-						<div class="xs-info">
-							<span>ماگ طرح کوهستان</span>
-							<span class="title">۲۰,۰۰۰ تومان</span>
-						</div>
-						<div class="info-mini hidden-xs hidden-sm">
-							<a href="">
-								<a href=""><img src="/media/shop/images/bag.png"></a>
-								<div class="blur-back">
-									<h6>مبل کلاسیک طوسی رنگ </h6>
-									<span class="price">۲۰۰,۰۰۰ تومان</span>
-									<i class="fa fa-long-arrow-right"></i>
-								</div>
-							</a>
-						</div>
-					</div>
-					
-					<div class="grid-item grid-item--width3 grid-item--height3 grid-item--height3 text text-bg hidden-xs hidden-sm">
-						<h4> با خرید ماگ و تی شرت از این فروشگاه ویسگونی بشید :)</h4>
-					</div>
-
-				</div>
-			</div>
-		</div>
+</div>
 {% endblock content %}
 
 {% block footer-script %}
@@ -230,8 +41,9 @@
 
 		$('.grid').masonry({
 			itemSelector: '.grid-item',
-			columnWidth: '.grid-sizer',
-			percentPosition: true
+			columnWidth: 285,
+			percentPosition: true,
+
 		});
 
 	});		

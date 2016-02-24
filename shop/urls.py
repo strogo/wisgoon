@@ -7,4 +7,5 @@ urlpatterns = patterns('shop.views',
     url(r'^cart/remove/product/(?P<product_id>\d+)/$', 'cart_remove_product', name='shop-cart-remove-product'),
     url(r'^cart/$', 'cart', name='shop-cart'),
     url(r'^address/info/$', 'address', name='shop-address'),
+    url(r'^confirm/$', 'confirm', name='shop-confirm'),
 )

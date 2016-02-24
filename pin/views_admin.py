@@ -11,7 +11,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden,\
 
 from django.shortcuts import get_object_or_404, render
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from user_profile.models import Profile
 
 from pin.models import Post, Comments, Log

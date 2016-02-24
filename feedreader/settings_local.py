@@ -9,7 +9,7 @@ THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DISPLAY_AD = True
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
-STATIC_VERSION = '5.8.7'
+STATIC_VERSION = '5.8.8'
 
 SITE_ROOT = os.path.dirname(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
