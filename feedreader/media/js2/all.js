@@ -276,38 +276,6 @@ $(function () {
         return false;
     });
 
-
-    $('body').on('click', '.ajax-follow', function(event) {
-        event.preventDefault();
-        var t = $(this);
-        var href = t.attr('href');
-
-        $.ajax({
-            url: href,
-            async: false
-        })
-        .done(function(response) {
-            if (response.status) {
-                alertify.success(response.message);
-                t.attr('href', '/pin/follow/' + t.data('user-id') + '/0/');
-                t.html('قطع ارتباط <i class="fa fa-times"></i>').removeClass('green').addClass('red');
-            } else {
-                alertify.success(response.message);
-                t.attr('href', '/pin/follow/' + t.data('user-id') + '/1/');
-                t.html('ایجاد دوستی  <i class="fa fa-plus"></i>').removeClass('red').addClass('green');
-            }
-            if (t.parents('.follow_box')) {
-                t.parents('.follow_box').find('.follower_count strong').text(pn(response.count));
-            };
-        })
-        .fail(function(response) {
-            console.log("error");
-        })
-        .always(function() {
-            console.log("complete");
-        });
-    });
-
     //
     $('[data-toggle="tooltip"]').tooltip();
     $('.menu-box ul li.parent').attr('data-content', '');
@@ -345,11 +313,13 @@ $(function () {
     $('body').on('mouseleave', '#wis_navbar', function(event) {
         $(".marker").hide();
     });
+    
     $('body').on('mouseenter', '#wis_navbar > ul > li', function(event) {
         event.preventDefault();
         var t = $(this);
         marker(t);
     });
+
     $('body').on('click', '#wis_navbar > ul > li', function(event) {
         event.preventDefault();
         var t = $(this);
