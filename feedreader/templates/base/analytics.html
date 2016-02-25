@@ -17,4 +17,12 @@ function ana_ajax(url){
 }
 
 </script>
+{% else %}
+<script type="text/javascript">
+
+function ana_ajax(url){
+  //_gaq.push(['_trackPageview', url]);
+}
+
+</script>
 {% endif %}
