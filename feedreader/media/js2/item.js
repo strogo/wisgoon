@@ -35,7 +35,19 @@ function load_comments(){
     .always(function(d) {
         l.find('.loader').css('display', 'none');
         l.find('.txt').css('display', 'block');
+        cmnt_loaded = true;
     });
+}
+
+function sticky_sidebar(){
+    setTimeout(function(){
+        pp = $('#related_posts').offset().top;
+        pr = pp - $('.post-sidebar').height();
+        $(".post-page .post-sidebar").scrollToFixed({
+            marginTop:15, 
+            limit:  pr
+        });
+    }, 2000);
 }
 
 load_comments();
@@ -57,10 +69,10 @@ $(function () {
             isAnimated: false,
             isFitWidth: true,
         });
-
         feedobj.masonry('reload');
-        
     });
+
+    
 
     var frm = $("#add-comment-form");
     frm.submit(function(e) {

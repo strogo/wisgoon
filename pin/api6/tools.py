@@ -429,6 +429,7 @@ def get_profile_data(profile, user_id):
         data['cover'] = ""
     data['score'] = profile.score
     data['jens'] = profile.jens if profile.jens else '0'
+    # data['email'] = profile.user.email
     data['bio'] = profile.bio
     data['date_joined'] = khayyam.JalaliDate(profile.user.date_joined)\
         .strftime("%Y/%m/%d")

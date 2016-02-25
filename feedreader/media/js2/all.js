@@ -53,6 +53,7 @@ if (disable_masonry==0){
 }
 
 var next_pref = next_pref || '?older=';
+var start_loading;
 
 function load_posts(page) {
     $('.footer-loading-box').show(0);
