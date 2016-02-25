@@ -111,7 +111,7 @@ def save_post(request, user):
             model.timestamp = time()
             model.text = form.cleaned_data['description']
             model.category_id = form.cleaned_data['category']
-            model.device = 2
+            model.device = Post.DEVICE_MOBILE_6
             model.save()
             status = True
             msg = _("Successfully Send Post")

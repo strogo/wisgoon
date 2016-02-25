@@ -1127,7 +1127,3 @@ def stats(request):
 
 def feedback(request):
     return render(request, 'pin2/statics/feedback.html', {'page': 'feedback'})
-
-
-def check_p(request):
-    return render(request, 'pin2/check_p.html')

@@ -212,3 +212,11 @@ def comment_unapprove(request, id):
     comment.save()
 
     return HttpResponseRedirect(reverse('pin-item', args=[comment.object_pk.id]))
+
+
+@login_required
+def check_p(request):
+    if not request.user.is_superuser:
+        return HttpResponse(_('error in authentication'))
+
+    return render(request, 'pin2/check_p.html')

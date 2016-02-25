@@ -51,7 +51,6 @@ urlpatterns = patterns('pin.views',
     #url(r'^test_page', 'test_page', name='google_contacts_login'),
     url(r'^category_back/(?P<cat_id>\d+)', 'category_back', name='pin-category_back'),
     url(r'^category/(?P<cat_id>\d+)', 'category_redis', name='pin-category'),
-    url(r'^check_p/$', 'check_p', name='pin-check-p'),
     #url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     #not stables
 
@@ -125,6 +124,7 @@ urlpatterns += patterns('pin.views_admin',
     url(r'^comment/delete/(?P<id>\d+)', 'comment_delete', name="pin-comment-delete"),
     url(r'^comment/approve/(?P<id>\d+)', 'comment_approve', name="pin-comment-approve"),
     url(r'^comment/unapprove/(?P<id>\d+)', 'comment_unapprove', name="pin-comment-unapprove"),
+    url(r'^check_p/$', 'check_p', name='pin-check-p'),
 )
 
 urlpatterns += patterns('pin.views_device',
