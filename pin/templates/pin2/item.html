@@ -25,7 +25,7 @@ mlt: {{mlt.0.object.id}}
 	<div class="container">
 		{% include "pin2/items_inner.html" %}
 	</div>
-	<div class="pa20">
+	<div class="pa20" id="related_posts">
 		<div id="feed" class="masonry">
 			<a href="{{related_url}}"> مطالب مرتبط </a>
 		</div>
@@ -36,6 +36,7 @@ mlt: {{mlt.0.object.id}}
 {% endblock content%}
 
 {% block footer_ex_js %}
+<script type="text/javascript" src="{{STATIC_CDN}}v2/js/sticky.js?ver=1"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}js2/item.js?ver={{STATIC_VERSION}}"></script>
 <script type="text/javascript">
     $(function () {
@@ -73,17 +74,16 @@ mlt: {{mlt.0.object.id}}
                 $('.user-post-items').masonry('reloadItems');
             });
             $('.user-posts').css('display', 'block');
-
             $container.masonry();
-
-            console.log("success");
         })
         .fail(function(d) {
             alertify.error("خطا در نمایش تصاویر کاربر");
         }).always(function() {
             $('.post-loading').hide('fast');
+            sticky_sidebar();
         });
 
     });
 </script>
+
 {% endblock footer_ex_js %}
