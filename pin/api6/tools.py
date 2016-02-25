@@ -138,9 +138,9 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
     user_info = {}
     user_info['id'] = current_user
     if avatar == 64:
-        user_info['avatar'] = media_abs_url(get_avatar(current_user, size=64))
+        user_info['avatar'] = media_abs_url(get_avatar(current_user, size=64), check_photos=True)
     else:
-        user_info['avatar'] = media_abs_url(get_avatar(current_user))
+        user_info['avatar'] = media_abs_url(get_avatar(current_user), check_photos=True)
     user_info['username'] = UserDataCache.get_user_name(current_user)
     user_info['related'] = {}
     user_info['follow_by_user'] = False

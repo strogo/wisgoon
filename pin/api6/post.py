@@ -11,7 +11,7 @@ from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json
-from pin.models import Post, Report, Ad
+from pin.models import Post, Report, Ad, Block
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
 
@@ -325,11 +325,17 @@ def user_post(request, user_id):
         .filter(user=user_id).order_by('-id')[before:before + 20]
 
     token = request.GET.get('token', False)
-    current_user_id = None
+    current_user = None
     if token:
-        current_user_id = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.id_from_token(token=token)
 
-    data['objects'] = get_objects_list(user_posts, current_user_id)
+    if current_user:
+        if Block.objects.filter(user_id=user_id, blocked_id=current_user).count():
+            return return_not_found({
+                'message': _('This User Has Blocked You')
+            })
+
+    data['objects'] = get_objects_list(user_posts, current_user)
 
     last_item = before + 20
     data['meta']['next'] = get_next_url(url_name='api-6-post-user',

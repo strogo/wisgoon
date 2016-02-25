@@ -297,8 +297,6 @@ def profile(request, user_id):
 
     if token:
         current_user = AuthCache.id_from_token(token=token)
-        if not current_user:
-            return return_un_auth()
 
     if current_user:
         if Block.objects.filter(user_id=user_id, blocked_id=current_user).count():
