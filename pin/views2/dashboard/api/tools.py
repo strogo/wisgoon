@@ -304,7 +304,7 @@ def get_logs(content_type, action, before):
         data['user_id__in'] = admin_users
 
         logs = Log.objects\
-            .filter(**data)[before:before + 10]
+            .filter(**data).order_by('-id')[before:before + 10]
     except:
         logs = []
     return logs
@@ -325,9 +325,10 @@ def get_ads_point(start):
 
 
 def get_search_log(string, before):
-    logs = Log.objects.filter(Q(user__id__iexact=string) |
+    logs = Log.objects.filter(Q(user__username__iexact=string) |
                               Q(owner__iexact=string) |
-                              Q(object_id__iexact=string))[before: before + 10]
+                              Q(object_id__iexact=string))\
+        .order_by('-id')[before: before + 10]
     return logs
 
 
