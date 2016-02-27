@@ -401,7 +401,7 @@ def promoted(request):
     data['objects'] = objects
 
     last_item = before + 20
-    data['meta']['next'] = get_next_url(url_name='api-6-post-user',
+    data['meta']['next'] = get_next_url(url_name='api-6-post-promoted',
                                         before=last_item
                                         )
     return return_json_data(data)
