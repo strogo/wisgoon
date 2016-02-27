@@ -510,9 +510,9 @@ def ad_item_json(ad):
     ad_dict = {}
     ad_dict['post'] = post_item_json(ad.post.id)
     ad_dict['cnt_view'] = ad.get_cnt_view()
-    ad_dict['user'] = ad.user.id
+    ad_dict['user'] = get_simple_user_object(ad.user.id)
     ad_dict['ended'] = ad.ended
-    ad_dict['owner'] = ad.owner.id
+    ad_dict['owner'] = get_simple_user_object(ad.owner.id)
     ad_dict['ads_type'] = ad.ads_type
     ad_dict['start'] = str(ad.start)
     ad_dict['end'] = str(ad.end)
