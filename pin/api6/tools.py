@@ -508,7 +508,7 @@ def comment_objects_list(comments):
 
 def ad_item_json(ad):
     ad_dict = {}
-    ad_dict['post'] = post_item_json(ad.post)
+    ad_dict['post'] = post_item_json(ad.post.id)
     ad_dict['cnt_view'] = ad.get_cnt_view()
     ad_dict['user'] = ad.user.id
     ad_dict['ended'] = ad.ended
