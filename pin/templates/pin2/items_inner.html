@@ -178,6 +178,28 @@
                         <img src="{{liker|get_avatar:50}}">
                     </a>
                     {% endfor %}
+
+                    {% if post.cnt_like > 6 %}
+                    <a data-toggle="modal" data-target="#likers_modal"><span class="likers_popup"><img src="{{MEDIA_URL}}v2/images/3dot-h.png" width="25" height="8" alt=""></span></a>
+
+                    <div class="modal fade" id="likers_modal" tabindex="-1" role="dialog" aria-labelledby="likers_modal_label">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="likers_modal_label">لیست لایک کننده‌ها</h4>
+                                </div>
+                                <div class="modal-body">
+                                    
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% endif %}
                 </div>
                 <div class="clear"></div>
 

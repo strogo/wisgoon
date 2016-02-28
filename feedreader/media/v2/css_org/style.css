@@ -1029,6 +1029,14 @@ a.btn.btn-primary {
 	font-size: 13px;
 	padding: 20px 10px 10px;
 	text-align: right;
+	overflow: hidden;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-word;
+	-ms-hyphens: auto;
+	-moz-hyphens: auto;
+	-webkit-hyphens: auto;
+	hyphens: auto;
 }
 .post-content .post-tags{
 	background: #F5F5F5;
@@ -2748,6 +2756,15 @@ div.comment div div.row:hover .del-comment{
 	flex: 2;
 	background: #434A54;
 	text-align: center;
+}
+
+.likers_popup {
+	margin-right: 5px;
+	cursor: pointer;
+}
+.likers_popup img {
+	width: 25px !important;
+	height: 8px;
 }
 
 @media (max-width: 1200px) {

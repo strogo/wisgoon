@@ -1,5 +1,6 @@
 # coding: utf-8
 from time import mktime, time
+import json
 import datetime
 import operator
 import itertools
@@ -992,7 +993,7 @@ def item(request, item_id):
     # pl = Likes.objects.filter(post_id=post.id)[:12]
     from models_redis import LikesRedis
     post.likes = LikesRedis(post_id=post.id)\
-        .get_likes(offset=0, limit=7, as_user_object=True)
+        .get_likes(offset=0, limit=6, as_user_object=True)
 
     # s = SearchQuerySet().models(Post).more_like_this(post)
     # print "seems with:", post.id, s[:5]
@@ -1018,6 +1019,23 @@ def item(request, item_id):
             cache.set("page_v1_%s" % item_id, d, 300)
 
         return d
+
+
+def post_likers(request, post_id, offset):
+    from models_redis import LikesRedis
+    likers = LikesRedis(post_id=int(post_id))\
+        .get_likes(offset=int(offset), limit=10, as_user_object=True)
+
+    print '\n-----------------\n'
+    print likers
+    print '\n-----------------\n'
+    if request.is_ajax():
+        data = {
+            'status': True,
+            'likers': likers
+        }
+        return HttpResponse(json.dumps(data), content_type='application/json')
+    # else:
 
 
 def item_related(request, item_id):
