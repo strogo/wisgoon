@@ -7,7 +7,7 @@
 	<div class="promotion_data">
 		<div class="p_item">ارسال کننده: <strong><a href="{% url "pin-absuser" item.owner %}">{{item.owner}}</a></strong></div>
 		<div class="p_item">ویژه کننده: <strong><a href="{% url "pin-absuser" item.user %}">{{item.user}}</a></strong></div>
-		<div class="p_item">تعداد نمایش: <strong>{{item.cnt_view}}</strong></div>
+		<div class="p_item">تعداد نمایش: <strong>{{item.get_cnt_view}}</strong></div>
 		<div class="p_item">شروع: <br> <strong>{{item.start|naturaltime}}</strong></div>
 		<div class="p_item">پایان: <br> 
 			<strong>
