@@ -355,13 +355,21 @@ def absuser_following(request, user_namefg):
         else:
             return HttpResponse(0)
     else:
-        follow_status = Follow.objects\
-            .filter(follower=request.user.id, following=user_id).count()
+        if request.user.id:
+            follow_status = Follow.objects.filter(follower=request.user.id,
+                                                  following=user.id).exists()
+            following_status = Follow.objects.filter(following=request.user.id,
+                                                     follower=user.id).exists()
+        else:
+            follow_status = 0
+            following_status = 0
+
         return render(request, 'pin2/user_following.html', {
             'user_items': following,
             'page': 'user_following',
             'profile': profile,
             'follow_status': follow_status,
+            'following_status': following_status,
             'user_id': user_id,
             'user': user
 
@@ -435,14 +443,23 @@ def absuser_followers(request, user_namefl):
         else:
             return HttpResponse(0)
     else:
-        follow_status = Follow.objects\
-            .filter(follower=request.user.id, following=user_id).count()
+
+        if request.user.id:
+            follow_status = Follow.objects.filter(follower=request.user.id,
+                                                  following=user.id).exists()
+            following_status = Follow.objects.filter(following=request.user.id,
+                                                     follower=user.id).exists()
+        else:
+            follow_status = 0
+            following_status = 0
+
         return render(request, 'pin2/user_followers.html', {
             'user_items': friends,
             'user_id': int(user_id),
             'page': 'user_follower',
             'profile': profile,
             'follow_status': follow_status,
+            'following_status': following_status,
             'user': user
         })
 
