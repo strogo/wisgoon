@@ -1023,19 +1023,22 @@ def item(request, item_id):
 
 def post_likers(request, post_id, offset):
     from models_redis import LikesRedis
+    from pin.api6.tools import get_simple_user_object
     likers = LikesRedis(post_id=int(post_id))\
-        .get_likes(offset=int(offset), limit=10, as_user_object=True)
+        .get_likes(offset=int(offset), limit=10)
 
-    print '\n-----------------\n'
-    print likers
-    print '\n-----------------\n'
-    if request.is_ajax():
-        data = {
-            'status': True,
-            'likers': likers
+    likers_list = []
+    for u in likers:
+        u = {
+            'user': get_simple_user_object(u, request.user.id)
         }
-        return HttpResponse(json.dumps(data), content_type='application/json')
-    # else:
+        likers_list.append(u)
+    data = {
+        'status': True,
+        'likers': likers_list
+    }
+
+    return HttpResponse(json.dumps(data), content_type='application/json')
 
 
 def item_related(request, item_id):
