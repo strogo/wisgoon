@@ -307,15 +307,20 @@ def post_send(request):
             model.device = 2
             model._user_ip = get_user_ip(request)
             model.save()
+            return HttpResponse('success')
 
             return HttpResponse(_('successfully upload post'))
         except IOError, e:
             print str(e), MEDIA_ROOT
+            return HttpResponseBadRequest('error')
             return HttpResponseBadRequest(_('error'))
 
+        return HttpResponseBadRequest('bad request in form')
         return HttpResponseBadRequest(_('bad request in form'))
     else:
         print form.errors
+        HttpResponseBadRequest('error in form validation')
         HttpResponseBadRequest(_('error in form validation'))
 
+    return HttpResponseBadRequest('bad request')
     return HttpResponseBadRequest(_('bad request'))
