@@ -100,7 +100,7 @@ def post_likers(request, item_id):
     for user in likers:
         try:
             u = {
-                'user': get_simple_user_object(user, current_user)
+                'user': get_simple_user_object(int(user), current_user)
             }
             likers_list.append(u)
         except Exception as e:
