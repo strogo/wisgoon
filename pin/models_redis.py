@@ -177,7 +177,7 @@ class LikesRedis(object):
         self.cntLike = rListServer.llen(self.keyNameList)
         return self.cntLike
 
-    def dislike(self, user_id):
+    def dislike(self, user_id, post_owner):
         rListServer.lrem(self.keyNameList, user_id)
         rSetServer.srem(self.keyNameSet, str(user_id))
         Post.objects.filter(pk=int(self.postId))\
@@ -187,7 +187,7 @@ class LikesRedis(object):
             format(settings.USER_LAST_LIKES, int(user_id))
         rListServer.lrem(user_last_likes, self.postId)
 
-        Profile.after_dislike(user_id=user_id)
+        Profile.after_dislike(user_id=post_owner)
 
         from pin.model_mongo import MonthlyStats
         MonthlyStats.log_hit(object_type=MonthlyStats.DISLIKE)
@@ -225,7 +225,7 @@ class LikesRedis(object):
         leader_category = self.KEY_LEADERBORD_GROUPS.format(category)
         lbs = leaderBoardServer.pipeline()
         if self.user_liked(user_id=user_id):
-            self.dislike(user_id=user_id)
+            self.dislike(user_id=user_id, post_owner=post_owner)
             lbs.zincrby(self.KEY_LEADERBORD, post_owner, -10)
             lbs.zincrby(leader_category, post_owner, -10)
             PostCacheLayer(post_id=self.postId).like_change(self.cntlike())
