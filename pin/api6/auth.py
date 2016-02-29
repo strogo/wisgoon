@@ -580,6 +580,7 @@ PACKS = {
 }
 
 
+@csrf_exempt
 def inc_credit(request):
     user = None
     token = request.GET.get('token', '')
