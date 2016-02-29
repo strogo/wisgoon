@@ -625,12 +625,12 @@ def inc_credit(request):
                 b.status = Bills2.NOT_VALID
                 b.save()
                 return return_json_data({'status': False,
-                                         'message': 'ex price error'})
+                                         'message': 'Not valid purchase data'})
 
             purchase_state = j.get('purchaseState', None)
             if purchase_state is None:
                 return return_json_data({'status': False,
-                                         'message': 'ex price error'})
+                                         'message': 'purchase state error request'})
 
             if purchase_state == 0:
                 b = Bills2()
@@ -650,7 +650,7 @@ def inc_credit(request):
                 b.status = Bills2.NOT_VALID
                 b.save()
                 return return_json_data({'status': False,
-                                        'message': 'ex price error'})
+                                        'message': 'not valid purchase state'})
         except Exception:
             b = Bills2()
             b.trans_id = str(baz_token)
@@ -659,7 +659,7 @@ def inc_credit(request):
             b.status = Bills2.VALIDATE_ERROR
             b.save()
             return return_json_data({'status': False,
-                                    'message': 'ex price error'})
+                                    'message': 'validation error, we correct it later'})
 
         return return_json_data({'status': True,
                                 'message': _('Increased Credit was Successful.')})
