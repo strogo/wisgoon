@@ -28,8 +28,8 @@ urlpatterns = patterns('pin.api6.auth',
                            name="api-block"),
                        url(r'^auth/password/reset/', 'password_reset',
                            name="api-password-reset"),
-                       # url(r'^auth/user/inc/credit/$', 'inc_credit',
-                       #     name="api-6-user-inc-credit")
+                       url(r'^auth/user/inc/credit/$', 'inc_credit',
+                           name="api-6-user-inc-credit"),
                        )
 
 urlpatterns += patterns('pin.api6.post',
