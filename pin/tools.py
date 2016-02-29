@@ -420,6 +420,32 @@ def get_new_access_token():
     return None
 
 
+def get_new_access_token2():
+    new_access_token = cache.get("new_access_token")
+    if new_access_token:
+        print "get access token from cache"
+        return new_access_token
+    print "refresh_token"
+    import requests
+    import ast
+    d = {
+        'grant_type': 'refresh_token',
+        'client_secret': 'WxGrwBJUEG5nZQASZzc0Y0C3G1FAtdtB6ZCMrzLpWBVu1hdG4PE1i6pnZ3TN',
+        'client_id': 'yiV49s0y9TqSFF7NEsorfytBTyeBdvEaHGnyn8xC',
+        'refresh_token': 'z8F0OyByBlgLK6pHKG4j6YxMbyoJLi'
+    }
+
+    r = requests.post("https://pardakht.cafebazaar.ir/devapi/v2/auth/token/",
+                      data=d)
+    if r:
+        new_data = ast.literal_eval(r.text)
+        new_access_token = new_data['access_token']
+        cache.set("new_access_token", new_access_token, 3600)
+        return new_access_token
+
+    return None
+
+
 def revalidate_bazaar(bill):
     if Bills2.objects.filter(trans_id=bill.trans_id,
                              status=Bills2.COMPLETED).count() > 0:

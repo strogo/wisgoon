@@ -18,7 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
 from pin.models import Follow, Block, Likes, BannedImei, Log, PhoneData, Bills2
-from pin.tools import AuthCache, get_user_ip, get_new_access_token
+from pin.tools import AuthCache, get_user_ip, get_new_access_token, get_new_access_token2
 from pin.api6.http import return_bad_request, return_json_data, return_un_auth,\
     return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object, get_int, get_profile_data,\
@@ -611,8 +611,8 @@ def inc_credit(request):
         b.save()
         return return_not_found(message=_("bazzar token not right"))
     else:
-        access_token = get_new_access_token()
-        url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=%s" % (package_name, baz_token, access_token)
+        access_token = get_new_access_token2()
+        url = "https://pardakht.cafebazaar.ir/api/validate/com.wisgoon.android/inapp/%s/purchases/%s/?access_token=%s" % (package_name, baz_token, access_token)
         try:
             u = urllib2.urlopen(url).read()
             j = json.loads(u)
