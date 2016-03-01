@@ -2,17 +2,20 @@ import os
 import json
 import paramiko
 
-from elasticsearch import Elasticsearch
+from influxdb import InfluxDBClient
+
 from feedreader.celery import app
 from django.conf import settings
 from django.core.cache import cache
 
-es = Elasticsearch([settings.ES_HOST])
+client = InfluxDBClient(settings.INFLUX_HOST, 8086, 'root', 'root', 'wisgoon')
+client.create_database('wisgoon')
 
 
 @app.task(name="wisgoon.analytics.tick")
 def tick(doc):
-    es.index(index="wisgoon-analytics", doc_type='log', body=doc)
+    client.write_points(doc)
+    # es.index(index="wisgoon-analytics", doc_type='log', body=doc)
 
 
 @app.task(name="wisgoon.pin.activity")
