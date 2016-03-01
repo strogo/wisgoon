@@ -20,7 +20,8 @@ def like_act(post, actor, user_ip):
 
     json_body = [
         {
-            "measurement": "action_like",
+            "measurement": "actions",
+            "type": "like",
             "time": t_date,
             "fields": {
                 "value": 1
@@ -31,32 +32,36 @@ def like_act(post, actor, user_ip):
     send_tick(json_body)
 
 
-def comment_act(post, actor, user_ip):
-    return
+def comment_act(post, actor, user_ip="127.0.0.1"):
     t_date = timezone.now().isoformat()
-    doc = {
-        "@timestamp": t_date,
-        "action_type": "comment",
-        "type_number": 2,
-        "ip": user_ip,
-        "actor": actor,
-        "@message": "comment post {}".format(post),
-    }
+    json_body = [
+        {
+            "measurement": "actions",
+            "type": "comment",
+            "time": t_date,
+            "ip": user_ip,
+            "fields": {
+                "value": 1
+            }
+        }
+    ]
 
-    send_tick(doc)
+    send_tick(json_body)
 
 
 def post_act(post, actor, category, user_ip="127.0.0.1"):
-    return
     t_date = timezone.now().isoformat()
-    doc = {
-        "@timestamp": t_date,
-        "action_type": "post",
-        "type_number": 3,
-        "post_category": category,
-        "ip": user_ip,
-        "actor": actor,
-        "@message": "send post {}".format(post),
-    }
+    json_body = [
+        {
+            "measurement": "actions",
+            "type": "post",
+            "post_category": category,
+            "ip": user_ip,
+            "time": t_date,
+            "fields": {
+                "value": 1
+            }
+        }
+    ]
 
-    send_tick(doc)
+    send_tick(json_body)
