@@ -1030,7 +1030,7 @@ def post_likers(request, post_id, offset):
     likers_list = []
     for u in likers:
         u = {
-            'user': get_simple_user_object(u, request.user.id)
+            'user': get_simple_user_object(int(u), request.user.id)
         }
         likers_list.append(u)
     data = {

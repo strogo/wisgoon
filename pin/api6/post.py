@@ -480,10 +480,6 @@ def delete(request, item_id):
 
 def promotion_prices(request):
     data = {
-        "meta": {'limit': '',
-                 'next': '',
-                 'total_count': ''
-                 },
         "objects": [
             {
                 "price": 500,
