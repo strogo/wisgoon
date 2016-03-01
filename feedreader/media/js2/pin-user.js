@@ -347,9 +347,11 @@ $('body').on('click', '.btn_like',function(){
         if (obj.parent().hasClass('user-liked')) {
             $('.post_item_inner').find('a.btn_like').parent().removeClass('user-liked');
             $('.liker_avatars').find('.my_avatar').remove();
+            $('.liker_avatars .lik').last().show();
             $('.post_item_inner').find('a.btn_like').children('span.count').text(pn(n - 1));
         }else{
             $('.post_item_inner').find('a.btn_like').parent().addClass('user-liked');
+            $('.liker_avatars .lik').last().hide();
             $('.liker_avatars').prepend('<a href="'+profile_url+'" class="my_avatar"><img src="'+profile_avatar+'" /></a>');
             $('.post_item_inner').find('a.btn_like').children('span.count').text(pn(n + 1));
         }

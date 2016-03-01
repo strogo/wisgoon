@@ -553,6 +553,7 @@ def rp(request):
             p.reporters = Report.objects.select_related()\
                 .filter(post_id=p.id)
         return render(request, 'pin2/rp.html', {
+            'page': 'rp',
             'rps': posts
         })
     else:

@@ -37,6 +37,7 @@ urlpatterns = patterns('pin.views',
     url(r'^user/(?P<user_id>\d+)/$', 'user', name='pin-user'),
     url(r'^user/(?P<user_id>\d+)/(?P<user_name>\w+)/$', 'user', name='pin-user-new'),
     url(r'^likers/(?P<post_id>\d+)/(?P<offset>\d+)/$', 'post_likers', name='pin-likers'),
+    url(r'^likers/(?P<post_id>\d+)/$', 'post_likers', name='pin-likers'),
 
     url(r'^com/posts/(?P<post_id>\d+)/', 'get_comments', name='pin-get-comments'),
     # url(r'^tag/(.*)/', 'tag', name="pin-tag"),
@@ -46,7 +47,7 @@ urlpatterns = patterns('pin.views',
     url(r'^popular/', 'popular', name="pin-popular"),
     url(r'^topuser/$', 'topuser', name='pin-topuser'),
     url(r'^top-group-user/$', 'topgroupuser', name='pin-topgroupuser'),
-    
+
     #url(r'^mylike/', 'mylike', name='pin-mylike'),
     #url(r'^send_mail', 'send_mail', name='pin-sendmail'),
     #url(r'^test_page', 'test_page', name='google_contacts_login'),

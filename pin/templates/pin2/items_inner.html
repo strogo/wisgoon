@@ -4,61 +4,61 @@
 {% load humanize %}
 
 <script type="application/ld+json">
-{
-  "@context" : "http://schema.org",
-  "@type" : "Article",
-  "headline": "{{post.text|striptags|remove_newlines|truncatechars:108|addslashes}}",
-  "author" : {
-    "@type" : "Person",
-    "name" : "{{post.user.username}}"
-  },
-  "mainEntityOfPage":{
-    "@type":"WebPage",
-    "@id":"http://wisgoon.com/pin"
-  },
-  "datePublished" : {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
-  "dateModified": {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
-  "image": {
-    "@type": "ImageObject",
-    "url": "{{media_prefix}}{{MEDIA_URL}}{{post.image}}",
-    "height": {{post.height}},
-    "width": {{post.width}}
-  },
-  "articleSection" : "{{post.category.title}}",
-  "articleBody" : "{{post.text|striptags|remove_newlines|addslashes}}",
-  "publisher": {
-    "@type": "Organization",
-    "name": "Wisgoon",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "http://static.wisgoon.com/media/v2/images/logo_moharam.png",
-      "width": 216,
-      "height": 44
-    }
+    {
+      "@context" : "http://schema.org",
+      "@type" : "Article",
+      "headline": "{{post.text|striptags|remove_newlines|truncatechars:108|addslashes}}",
+      "author" : {
+        "@type" : "Person",
+        "name" : "{{post.user.username}}"
+    },
+    "mainEntityOfPage":{
+        "@type":"WebPage",
+        "@id":"http://wisgoon.com/pin"
+    },
+    "datePublished" : {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
+    "dateModified": {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
+    "image": {
+        "@type": "ImageObject",
+        "url": "{{media_prefix}}{{MEDIA_URL}}{{post.image}}",
+        "height": {{post.height}},
+        "width": {{post.width}}
+    },
+    "articleSection" : "{{post.category.title}}",
+    "articleBody" : "{{post.text|striptags|remove_newlines|addslashes}}",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Wisgoon",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "http://static.wisgoon.com/media/v2/images/logo_moharam.png",
+          "width": 216,
+          "height": 44
+      }
   }
 }
 </script>
 
 <script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [{
-    "@type": "ListItem",
-    "position": 1,
-    "item": {
-      "@id": "http://wisgoon.com/pin/",
-      "name": "Pin"
-    }
-    
+    {
+      "@context": "http://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "http://wisgoon.com/pin/",
+          "name": "Pin"
+      }
+
   },{
     "@type": "ListItem",
     "position": 2,
     "item": {
       "@id": "http://wisgoon.com/category/{{post.category_id}}/",
       "name": "{{post.category}}"
-    }
-  }]
+  }
+}]
 }
 </script>
 
@@ -190,7 +190,13 @@
                                     <h4 class="modal-title" id="likers_modal_label">لیست لایک کننده‌ها</h4>
                                 </div>
                                 <div class="modal-body">
-                                    
+                                    <div class="likers_box"></div>
+                                    <div class="likers_loading">
+                                        <img src="{{MEDIA_URL}}v2/images/wis_loading.gif" alt="">
+                                    </div>
+                                    <div class="likers_loading_more" data-offset="0" data-status="enable">
+                                        <a href="">بیشتر</a>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>

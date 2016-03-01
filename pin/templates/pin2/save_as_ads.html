@@ -3,21 +3,41 @@
 
 {% block content %}
 
-<div class="panel panel-default">
-	<div class="panel-heading">ویژه کردن مطلب
+<div class="box mato50">
+	<h3 class="pa20">ویژه کردن پست شماره <strong class="red">{{post.id|pn}}</strong></h3>
+	<div class="promote_content">
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+				<li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+				<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
+				<li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="home">...</div>
+				<div role="tabpanel" class="tab-pane" id="profile">...</div>
+				<div role="tabpanel" class="tab-pane" id="messages">...</div>
+				<div role="tabpanel" class="tab-pane" id="settings">...</div>
+			</div>
+		</div>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+		</div>
 	</div>
 	<div class="panel-body">
 		<div class="col-md-12">
 			<p>موجودی حساب شما: {{user_meta.credit}} ویس </p>
 		</div>
 		<div class="col-md-6">
-		<form method="post" class="form">
-			{% csrf_token %}
-			<div class="form-group">
-				<select name="mode" class="form-control">
-					{% for type, price in Ads.TYPE_PRICES.items %}
-					<option value="{{type}}">نمایش به {{Ads.MAX_TYPES|keyvalue:type}} کاربر - {{price}} ویس</option>
-					{% endfor %}
+			<form method="post" class="form">
+				{% csrf_token %}
+				<div class="form-group">
+					<select name="mode" class="form-control">
+						{% for type, price in Ads.TYPE_PRICES.items %}
+						<option value="{{type}}">نمایش به {{Ads.MAX_TYPES|keyvalue:type}} کاربر - {{price}} ویس</option>
+						{% endfor %}
 					<!-- <option value="500">نمایش به 2,000 کاربر - 500 تومان</option>
 					<option value="1000">نمایش به 4,000 کاربر - 1000 تومان</option> -->
 				</select>
@@ -27,10 +47,10 @@
 			</div>
 		</form>
 		
-		</div>
+	</div>
 
-		<div class="col-md-6">
-		<p>ویژه کردن پست شماره {{post.id}}</p>
+	<div class="col-md-6">
+		<p></p>
 		<p>با ویژه کردن این پست امکان مشاهده مطلب مورد نظر برای تعداد بیشتری از کاربران ممکن می شود.</p>
 		<!-- <hr> -->
 		<!-- <table class="table">
@@ -47,8 +67,8 @@
 
 			</tr>
 		</table> -->
-		</div>
 	</div>
+</div>
 
 </div>
 

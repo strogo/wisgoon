@@ -37,6 +37,90 @@ function en(no){
     return n;
 }
 
+function cEl(tag, op){
+    if(typeof(tag) === 'undefined' && tag === ""){
+        t = 'div';
+    }else{
+        t = tag;
+    }
+    var el = document.createElement(t);
+    if(typeof(op) !== 'undefined'){
+        for(var key in op) {
+            if (key === "text") {
+                el.appendChild(document.createTextNode(op["text"]));
+            }else{
+                el.setAttribute(key, op[key]);
+            }
+        }
+    }
+    return el;
+}
+
+function liker_html(user){
+    user = user.user;
+    var row = cEl('div', {"class": "liker_row"});
+    var avatar = cEl('div', {"class": "avatar"});
+    var avatar_a = cEl('a', {'href': user.permalink});
+    var avatar_img = cEl('img', {'src': user.avatar});
+
+    avatar_a.appendChild(avatar_img);
+    avatar.appendChild(avatar_a);
+    row.appendChild(avatar);
+
+    var username = cEl("div", {'class': 'username'});
+    var username_a = cEl("a", {
+        'href': user.permalink,
+        'data-user-id': user.id,
+        'text': user.username
+    });
+
+    username.appendChild(username_a);
+    row.appendChild(username);
+
+    var follow = cEl("div", {'class': 'follow_status'});
+    if (user.block_by_user) {
+        cl = 'block';
+    }else{
+        if (user.follow_by_user) {
+            cl = 'follow';
+            href = '/pin/follow/'+user.id+'/0/';
+        }else{
+            cl = 'no_follow';
+            href = '/pin/follow/'+user.id+'/1/';
+        }
+    }
+    var follow_a = cEl("a", {
+        'class': cl + ' follow_btn',
+        'href': href,
+        'data-user-id': user.id,
+    });
+
+    var follow_i = cEl("i");
+
+    follow_a.appendChild(follow_i);
+    follow.appendChild(follow_a);
+    row.appendChild(follow);
+
+    var clear = cEl("div", {'class': 'clear'});
+    row.appendChild(clear);
+
+    return row;
+}
+
+function sticky_sidebar(s){
+    if (typeof(s) == "undefined") {
+        s = 2000;
+    };
+    setTimeout(function(){
+        pp = $('#related_posts').offset().top;
+        pr = pp - $('.post-sidebar').height();
+        $(".post-page .post-sidebar").scrollToFixed({
+            marginTop:15, 
+            limit:  pr
+        });
+    }, s);
+}
+
 var feedobj = $('#feed');
 var loadingobj ;
 var a_url = a_url || "";

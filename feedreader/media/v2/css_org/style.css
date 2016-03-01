@@ -2762,9 +2762,70 @@ div.comment div div.row:hover .del-comment{
 	margin-right: 5px;
 	cursor: pointer;
 }
+#likers_modal .modal-header{
+	text-align: center;
+	padding-top: 15px;
+}
+#likers_modal .modal-body{
+	padding: 0;
+}
+#likers_modal .modal-body .likers_loading{
+	text-align: center;
+}
+#likers_modal .likers_box{
+	height: 500px;
+    overflow-y: scroll;
+}
+#likers_modal * .disabled *,
+#likers_modal * .disabled{
+	cursor: not-allowed;
+	color: #ccc;
+}
 .likers_popup img {
 	width: 25px !important;
 	height: 8px;
+}
+.liker_row {
+	border-bottom: 1px solid #eee;
+	padding: 5px 20px;
+	display: block;
+	width: 100%;
+}
+.liker_row:last-child{
+	border-bottom: none;
+}
+.liker_row:hover{
+	background: #f9f9f9;
+}
+.liker_row .username,
+.liker_row .avatar{
+	float: right;
+	margin-left: 10px;
+}
+.liker_row .follow_status{
+	float: left;
+}
+.liker_row .follow_status a{
+	width: 22px;
+	height: 22px;
+	display: block;
+	background: url(../images/user-follow.png) no-repeat;
+	margin-top: 5px;
+}
+.liker_row .follow_status a.follow{
+	background-position: bottom;
+}
+.liker_row .follow_status a.no_follow{
+	background-position: top;
+}
+.liker_row .username > a {
+	display: block;
+	padding-top: 6px;
+}
+.likers_loading_more {
+	border-top: 1px solid #eee;
+	padding: 9px;
+	text-align: center;
 }
 
 @media (max-width: 1200px) {

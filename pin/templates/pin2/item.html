@@ -83,24 +83,85 @@ mlt: {{mlt.0.object.id}}
             sticky_sidebar();
         });
 
+        
+
+        function display_likers(json){
+            likers = json.likers;
+            for (var i = likers.length - 1; i >= 0; i--) {
+                $('#likers_modal .modal-body .likers_box').append(liker_html(likers[i]));
+            };
+        }
+
         $('#likers_modal').on('show.bs.modal', function (e) {
-            console.log('aaaaa');
+            var modal = $(this);
+            var t = $('.likers_loading_more');
             $.ajax({
                 url: '{% url "pin-likers" post.id 0 %}',
             })
             .done(function(d) {
-                console.log(d);
-                console.log("success");
+                display_likers(d);
+                t.data('offset', parseInt(t.data('offset') + 10));
             })
             .fail(function(d) {
-                console.log(d);
-                console.log("error");
+                alertify.error('خطا! با مدیریت تماس بگیرید.');
+                modal.hide();
+            })
+            .always(function() {
+                modal.find('.likers_loading').hide();
+            });
+        });
+
+        $('body').on('click', '.likers_loading_more', function(event) {
+            event.preventDefault();
+            var t = $(this);
+            if (t.data('status') === "disabled") {
+                return false;
+            };
+            var offset = $('.likers_loading_more').data('offset');
+            $.ajax({
+                url: '{% url "pin-likers" post.id %}'+offset+'/',
+            })
+            .done(function(d) {
+                display_likers(d);
+                if (d.likers.length < 10) {
+                    t.data('status', 'disabled').addClass('disabled');
+                }else{
+                    t.data('offset', parseInt($('.likers_loading_more').data('offset') + 10));
+                }
+            })
+            .fail(function(d) {
+                alertify.error('خطا! با مدیریت تماس بگیرید.');
+                $('#likers_modal').hide();
+            })
+            .always(function() {
+                $('#likers_modal').find('.likers_loading').hide();
+            });
+        });
+
+        $('body').on('click', '#likers_modal .follow_btn', function(event) {
+            event.preventDefault();
+            t = $(this);
+            $.ajax({
+                url: t.attr('href'),
+            })
+            .done(function(d) {
+                if (d.status) {
+                    t.removeClass('no_follow').addClass('follow').attr('href', '/pin/follow/'+t.data('user-id')+'/0/');
+                }else{
+                    t.removeClass('follow').addClass('no_follow').attr('href', '/pin/follow/'+t.data('user-id')+'/1/');
+                }
+                alertify.success(d.message);
+            })
+            .fail(function() {
+                alertify.error('خطا! با مدیریت تماس بگیرید');
             })
             .always(function() {
                 console.log("complete");
             });
 
-        })
+            return false;
+
+        });
 
     });
 </script>
