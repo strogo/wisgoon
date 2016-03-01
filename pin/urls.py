@@ -37,7 +37,7 @@ urlpatterns = patterns('pin.views',
     url(r'^user/(?P<user_id>\d+)/$', 'user', name='pin-user'),
     url(r'^user/(?P<user_id>\d+)/(?P<user_name>\w+)/$', 'user', name='pin-user-new'),
     url(r'^likers/(?P<post_id>\d+)/(?P<offset>\d+)/$', 'post_likers', name='pin-likers'),
-    # url(r'^likers/(?P<post_id>\d+)/$', 'post_likers', name='pin-likers'),
+    url(r'^likers/(?P<post_id>\d+)/$', 'post_likers', name='pin-likers'),
 
     url(r'^com/posts/(?P<post_id>\d+)/', 'get_comments', name='pin-get-comments'),
     # url(r'^tag/(.*)/', 'tag', name="pin-tag"),
