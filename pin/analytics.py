@@ -21,7 +21,9 @@ def like_act(post, actor, user_ip):
     json_body = [
         {
             "measurement": "actions",
-            "type": "like",
+            "tags": {
+                "type": "like",
+            },
             "time": t_date,
             "fields": {
                 "value": 1
@@ -37,9 +39,10 @@ def comment_act(post, actor, user_ip="127.0.0.1"):
     json_body = [
         {
             "measurement": "actions",
-            "type": "comment",
+            "tags": {
+                "type": "comment",
+            },
             "time": t_date,
-            "ip": user_ip,
             "fields": {
                 "value": 1
             }
@@ -54,9 +57,10 @@ def post_act(post, actor, category, user_ip="127.0.0.1"):
     json_body = [
         {
             "measurement": "actions",
-            "type": "post",
-            "post_category": category,
-            "ip": user_ip,
+            "tags": {
+                "type": "post",
+                "post_category": category,
+            },
             "time": t_date,
             "fields": {
                 "value": 1
