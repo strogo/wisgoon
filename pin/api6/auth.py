@@ -721,7 +721,7 @@ def password_reset(request):
 
             form.save(**opts)
             data = {
-                'success': True,
+                'status': True,
                 'message': _('Email sent')
             }
             return return_json_data(data)
