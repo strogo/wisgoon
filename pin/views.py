@@ -1022,7 +1022,7 @@ def item(request, item_id):
         return d
 
 
-def post_likers(request, post_id, offset):
+def post_likers(request, post_id, offset=0):
     from models_redis import LikesRedis
     from pin.api6.tools import get_simple_user_object
     likers = LikesRedis(post_id=int(post_id))\
