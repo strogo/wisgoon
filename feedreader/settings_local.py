@@ -419,5 +419,6 @@ CELERY_ROUTES.update({
 AVATAR_CACHE_KEY = "dad:avatar:{}"
 
 ES_HOST = "localhost"
+INFLUX_HOST = "localhost"
 
 STATIC_CDN = MEDIA_URL

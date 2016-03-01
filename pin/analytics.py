@@ -4,7 +4,7 @@ from pin.tasks import tick
 
 
 def send_tick(doc):
-    return
+    # return
     # pass
     try:
         if settings.DEBUG:
@@ -17,19 +17,22 @@ def send_tick(doc):
 
 def like_act(post, actor, user_ip):
     t_date = timezone.now().isoformat()
-    doc = {
-        "@timestamp": t_date,
-        "action_type": "like",
-        "type_number": 1,
-        "ip": user_ip,
-        "actor": actor,
-        "@message": "like post {}".format(post),
-    }
 
-    send_tick(doc)
+    json_body = [
+        {
+            "measurement": "action_like",
+            "time": t_date,
+            "fields": {
+                "value": 1
+            }
+        }
+    ]
+
+    send_tick(json_body)
 
 
 def comment_act(post, actor, user_ip):
+    return
     t_date = timezone.now().isoformat()
     doc = {
         "@timestamp": t_date,
@@ -44,6 +47,7 @@ def comment_act(post, actor, user_ip):
 
 
 def post_act(post, actor, category, user_ip="127.0.0.1"):
+    return
     t_date = timezone.now().isoformat()
     doc = {
         "@timestamp": t_date,
