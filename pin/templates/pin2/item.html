@@ -83,7 +83,7 @@ mlt: {{mlt.0.object.id}}
             sticky_sidebar();
         });
 
-        
+        var auth_user = {% if request.user.is_authenticated %}true{% else %}false{% endif %};
 
         function display_likers(json){
             likers = json.likers;

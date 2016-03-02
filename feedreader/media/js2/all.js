@@ -56,7 +56,7 @@ function cEl(tag, op){
     return el;
 }
 
-function liker_html(user){
+function liker_html(user, auth_user){
     user = user.user;
     var row = cEl('div', {"class": "liker_row"});
     var avatar = cEl('div', {"class": "avatar"});
@@ -99,7 +99,9 @@ function liker_html(user){
 
     follow_a.appendChild(follow_i);
     follow.appendChild(follow_a);
-    row.appendChild(follow);
+    if (auth_user) {
+        row.appendChild(follow);
+    };
 
     var clear = cEl("div", {'class': 'clear'});
     row.appendChild(clear);
