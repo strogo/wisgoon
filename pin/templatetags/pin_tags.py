@@ -124,6 +124,26 @@ def get_user_notify(userid):
     #     notify = 0
     # return notify
 
+@register.filter
+def get_image(post_id):
+    from pin.api6.cache_layer import PostCacheLayer
+    from pin.models import Post
+    from pin.api_tools import media_abs_url
+    p_236 = None
+    if post_id:
+        cp = PostCacheLayer(post_id=post_id)
+        cache_post = cp.get()
+        if cache_post:
+            p_236 = cache_post['images']['thumbnail']['url']
+
+        try:
+            post = Post.objects.get(id=post_id)      
+            p_236 = post.get_image_236()
+            p_236 = media_abs_url(p_236['url'], check_photos=True)
+        except Post.DoesNotExist:
+            p_236 = None
+    return p_236
+
 
 @register.filter
 def get_user_name(user_id):
