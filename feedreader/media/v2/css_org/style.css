@@ -2917,10 +2917,10 @@ div.comment div div.row:hover .del-comment{
 	flex-direction: row;
 }
 .pro_box_text{
-	flex: 16;
+	flex: 37;
 }
 .pro_box_thumb{
-	flex: 4;
+	flex: 10;
 	margin-right: 10px;
 }
 .pro_box_thumb img{
