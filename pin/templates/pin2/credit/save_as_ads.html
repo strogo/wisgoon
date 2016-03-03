@@ -1,0 +1,84 @@
+{% extends "pin2/flat.base.box.html"%}
+{% load pin_tags %}
+
+{% block content %}
+
+<div class="box mato50">
+{% comment %}
+{{post.get_image_236.url}}
+{% endcomment %}
+	<div class="promote_content" data-current="{{user_meta.credit}}">
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<div class="tab-content pa20 pato50 mabo20">
+				<div role="tabpanel" class="tab-pane active" id="wis1">
+					<div class="wis_pro_type type_1"></div>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="wis2">
+					<div class="wis_pro_type type_2"></div>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="wis3">
+					<div class="wis_pro_type type_3"></div>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="wis4">
+					<div class="wis_pro_type type_4"></div>
+				</div>
+			</div>
+			<!-- Nav tabs -->
+			<hr class="wis_pro_gap">
+			<ul class="nav nav-tabs pro_btns" role="tablist">
+				<li role="presentation" class="active">
+					<a href="#wis1" data-val="1" aria-controls="wis1" role="tab" class="wis_pro_btn" data-toggle="tab">
+						<span class="wis_pro_tab"></span>
+						۵۰۰ <br> ویس
+					</a>
+				</li>
+				<li role="presentation">
+					<a href="#wis2" data-val="2" aria-controls="wis2" role="tab" class="wis_pro_btn" data-toggle="tab">
+						<span class="wis_pro_tab"></span>
+						۱۰۰۰ <br> ویس
+					</a>
+				</li>
+				<li role="presentation">
+					<a href="#wis3" data-val="3" aria-controls="wis3" role="tab" class="wis_pro_btn" data-toggle="tab">
+						<span class="wis_pro_tab"></span>
+						۲۰۰۰ <br> ویس
+					</a>
+				</li>
+				<li role="presentation">
+					<a href="#wis4" data-val="4" aria-controls="wis4" role="tab" class="wis_pro_btn" data-toggle="tab">
+						<span class="wis_pro_tab"></span>
+						۵۰۰۰ <br> ویس
+					</a>
+				</li>
+			</ul>
+
+			<!-- Tab panes -->
+		</div>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<h3 class="pato20 pabo20">ویژه کردن پست شماره <strong class="red">{{post.id|pn}}</strong></h3>
+			
+			<div class="wis_btn mabo20">موجودی حساب شما: {{user_meta.credit}} ویس </div>
+			<a href="{% url 'pin-inc-credit' %}" class="wis_btn orange mabo20">افزایش موجودی </a>
+
+			<div class="wis_pro_content">
+				<div data-val-pro="1" class="pa10 active">با انتخاب این گزینه، تصویر شما برای <strong class="red">۵۰۰</strong> کاربر به نمایش در خواهد آمد</div>
+				<div data-val-pro="2" class="pa10">با انتخاب این گزینه، تصویر شما برای <strong class="red">۱۰۰۰</strong> کاربر به نمایش در خواهد آمد</div>
+				<div data-val-pro="3" class="pa10">با انتخاب این گزینه، تصویر شما برای <strong class="red">۲۰۰۰</strong> کاربر به نمایش در خواهد آمد</div>
+				<div data-val-pro="4" class="pa10">با انتخاب این گزینه، تصویر شما برای <strong class="red">۵۰۰۰</strong> کاربر به نمایش در خواهد آمد</div>
+			</div>
+			با ویژه کردن این پست امکان مشاهده مطلب مورد نظر برای تعداد بیشتری از کاربران ممکن می شود.
+		</div>
+	</div>
+
+	<div class="clear"></div>
+
+	<form method="post" id="pro_form" class="form pull-left pa20">
+		{% csrf_token %}
+		<input type="hidden" value="1" id="wis_pro_type" name="mode"></input>
+		<input type="submit" class="wis_btn green pull-left" value="تکمیل خرید"  style="width: 150px;">
+	</form>
+
+	<div class="clear"></div>
+</div>
+
+{% endblock content %}

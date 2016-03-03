@@ -302,6 +302,37 @@ function marker(t){
 
 
 $(function () {
+
+    $('body').on('click', '.promote_content .nav.nav-tabs li', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        i = t.find('a').attr('data-val');
+        $('.wis_pro_content > div').hide();
+        $('[data-val-pro="'+i+'"]').show();
+        $('#wis_pro_type').val(i);
+    });
+
+    $('body').on('click', '.pro_btns li', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        i = t.find('a').attr('data-val');
+        $('.wis_pro_content .wis_pro_type').hide();
+        $('.wis_pro_content .type_'+i).show();
+        $('#wis_pro_type').val(i);
+    });
+
+    $('body').on('submit', '#pro_form', function(event) {
+        event.preventDefault();
+        var c = parseInt($('.promote_content').data('current'));
+        if (c < 500) {
+            alertify.error('شما ویس کافی برای ویژه کردن این پست ندارید.<br> ابتدا حساب خود را شارژ کنید');
+        }else{
+            $(this).submit();
+        }
+        return false;
+    });
+
+
     $('body').on('click', '.upload_img_btn', function(event) {
         event.preventDefault();
         $('#id_avatar').click();

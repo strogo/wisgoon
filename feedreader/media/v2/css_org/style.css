@@ -2774,7 +2774,7 @@ div.comment div div.row:hover .del-comment{
 }
 #likers_modal .likers_box{
 	height: 500px;
-    overflow-y: scroll;
+	overflow-y: scroll;
 }
 #likers_modal * .disabled *,
 #likers_modal * .disabled{
@@ -2826,6 +2826,91 @@ div.comment div div.row:hover .del-comment{
 	border-top: 1px solid #eee;
 	padding: 9px;
 	text-align: center;
+}
+
+.promote_content .wis_pro_gap{
+	margin-bottom: -20px;
+}
+.promote_content .tab-content{
+	text-align: center;
+}
+.promote_content .nav.nav-tabs{
+	border: none !important;
+	display: flex;
+	flex-direction: row;
+}
+.promote_content .nav.nav-tabs li{
+	margin: 0 !important;
+	flex: 1;
+	text-align: center;
+}
+.promote_content li{
+	border: none;
+}
+.promote_content li a{
+	border: none !important;
+}
+.promote_content li .wis_pro_tab{
+	background: transparent url(../images/segment.png) no-repeat bottom;
+	height: 15px;
+	display: block;
+	overflow: hidden;
+	padding: 0;
+	margin-left: 5px;
+}
+.promote_content li:hover .wis_pro_tab{
+	background-position: top;
+}
+.promote_content li a:hover{
+	background-color: transparent !important;
+}
+.promote_content li.active .wis_pro_tab{
+	background-position: top;
+	background-color: transparent !important;
+}
+.promote_content .nav-tabs > li.active > a,
+.promote_content .nav-tabs > li.active > a:focus,
+.promote_content .nav-tabs > li.active > a:hover{
+	background-color: transparent !important;
+}
+.wis_pro_content > div{
+	display: none;
+}
+.wis_pro_content > div.active{
+	display: block;
+}
+
+.alert,
+.alert *{
+	color: #fff !important;
+	opacity: 1;	
+}
+.alert-error *,
+.alert-error{
+	background-color: #FF002A !important;
+}
+.alert-success *,
+.alert-success{
+	background-color: #3CB100 !important;
+}
+
+.promote_content .wis_pro_type{
+	background: transparent url(../images/users.png) no-repeat;
+	width: 380px;
+	height: 196px;
+	margin: 0 auto;
+}
+.promote_content .wis_pro_type.type_1{
+	background-position: 0 0;
+}
+.promote_content .wis_pro_type.type_2{
+	background-position: 0 -196px;
+}
+.promote_content .wis_pro_type.type_3{
+	background-position: 0 -392px;
+}
+.promote_content .wis_pro_type.type_4{
+	background-position: 0 -588px;
 }
 
 @media (max-width: 1200px) {
