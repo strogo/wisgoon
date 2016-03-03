@@ -2898,7 +2898,7 @@ div.comment div div.row:hover .del-comment{
 	background: transparent url(../images/users.png) no-repeat;
 	width: 380px;
 	height: 196px;
-	margin: 0 auto;
+	margin: 0 auto !important;
 }
 .promote_content .wis_pro_type.type_1{
 	background-position: 0 0;
