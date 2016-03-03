@@ -2912,6 +2912,20 @@ div.comment div div.row:hover .del-comment{
 .promote_content .wis_pro_type.type_4{
 	background-position: 0 -588px;
 }
+.pro_page{
+	display: flex;
+	flex-direction: row;
+}
+.pro_box_text{
+	flex: 16;
+}
+.pro_box_thumb{
+	flex: 4;
+	margin-right: 10px;
+}
+.pro_box_thumb img{
+	border-radius: 8px;
+}
 
 @media (max-width: 1200px) {
 	.top_user_boxes {
