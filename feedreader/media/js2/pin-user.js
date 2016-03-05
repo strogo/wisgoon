@@ -27,6 +27,10 @@ function add_filter_box(){
     Caman("#concentrate canvas", function(){this.concentrate();this.render();});
 }
 
+$(function() {
+
+});
+
 
 $('body').on('click', '.upload_img_btn', function(event) {
     event.preventDefault();
@@ -148,11 +152,23 @@ $('body').on('click', '#pin_form .sub_btn', function(event) {
 $('body').on('click', '.del-comment', function(){
     var obj = $(this);
     var row_name = "comment_row_" + $(obj).attr("rel");
+    h = $('#main').height();
+    bh = $("#"+row_name).height();
     var req_url = obj.attr('href');
     $.ajax({
         url: req_url,
         success: function(resp) {
             if (resp.status){
+                $('#main').css('height', h - bh);
+                // pp = $('#related_posts').offset().top;
+                // pr = pp - $('.post-sidebar').height();
+                // $(".post-page .post-sidebar").trigger('detach.ScrollToFixed');
+                // $(".post-page .post-sidebar").scrollToFixed({
+                //     marginTop:15, 
+                //     limit:  pr
+                // });
+                $(window).resize();
+                sticky_sidebar(0);
                 $("#"+row_name).slideUp('fast');
             }
             alertify.success(resp.message);

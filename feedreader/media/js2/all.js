@@ -110,17 +110,19 @@ function liker_html(user, auth_user){
 }
 
 function sticky_sidebar(s){
-    if (typeof(s) == "undefined") {
-        s = 2000;
+    if ($(window).width() > 768) {
+        if (typeof(s) == "undefined") {
+            s = 2000;
+        };
+        setTimeout(function(){
+            pp = $('#related_posts').offset().top;
+            pr = pp - $('.post-sidebar').height();
+            $(".post-page .post-sidebar").scrollToFixed({
+                marginTop:15, 
+                limit:  pr
+            });
+        }, s);
     };
-    setTimeout(function(){
-        pp = $('#related_posts').offset().top;
-        pr = pp - $('.post-sidebar').height();
-        $(".post-page .post-sidebar").scrollToFixed({
-            marginTop:15, 
-            limit:  pr
-        });
-    }, s);
 }
 
 var feedobj = $('#feed');

@@ -1,3 +1,4 @@
+{% if request.COOKIES.no_download == 1 %}
 <div class="only_mobile_view">
     <div class="top_download">
         <p class="pa10">
@@ -11,3 +12,4 @@
         <div class="clear"></div>
     </div>
 </div>
+{% endif %}
