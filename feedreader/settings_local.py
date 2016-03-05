@@ -72,12 +72,12 @@ GOOGLE_REDIRECT_SESSION_VAR = 'google_contacts_redirect'
 GOOGLE_REDIRECT_BASE_URL = 'http://localhost:8000'
 EMAIL_HOST = "mail.wisgoon.com"
 TIME_ZONE = 'Asia/Tehran'
-LANGUAGE_CODE = 'fa'
 SITE_ID = 1
 
 USE_I18N = True
 USE_L10N = True
-
+LOCALE_NAME = 'fa_IR'
+LANGUAGE_CODE = 'fa-ir'
 LANGUAGES = [
     ('fa', ('Farsi')),
     ('en', ('English')),
