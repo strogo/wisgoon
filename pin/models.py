@@ -1236,6 +1236,10 @@ class Comments(models.Model):
                             text=com_cat + " --- " + self.comment)
             return
 
+        if Block.objects.filter(user_id=self.object_pk.user_id,
+                                blocked_id=self.user_id).exists():
+            return
+
         if not self.pk:
             Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
