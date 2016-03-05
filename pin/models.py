@@ -510,6 +510,10 @@ class Post(models.Model):
         return md5.hexdigest()
 
     def delete(self, *args, **kwargs):
+        if self.report > 9:
+            from pin.tasks import porn_feedback
+            porn_feedback.delay(post_image=self.get_image_500()['url'],
+                                status='pos')
         try:
             file_path = os.path.join(settings.MEDIA_ROOT, self.image)
             delete_image.delay(file_path)
