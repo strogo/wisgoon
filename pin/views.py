@@ -540,7 +540,7 @@ def absuser_like(request, user_namel):
     if request.is_ajax():
         if latest_items:
             return render(request,
-                          'pin2/_items_2.html',
+                          'pin2/_items_2_v6.html',
                           {'latest_items': latest_items})
         else:
             return HttpResponse(0)
