@@ -684,7 +684,7 @@ def inc_credit(request):
         else:
             messages.error(request, _('Error when connecting to the database server'))
             return HttpResponseRedirect(reverse('pin-inc-credit'))
-    return render(request, 'pin2/inc_credit.html', {
+    return render(request, 'pin2/credit/inc_credit.html', {
 
     })
 
@@ -761,7 +761,7 @@ def save_as_ads(request, post_id):
             messages.error(request,
                            _("Your account credit is not enough for advertise "))
 
-    return render(request, 'pin2/save_as_ads.html', {
+    return render(request, 'pin2/credit/save_as_ads.html', {
         'post': p,
         'user_meta': profile,
         'Ads': Ad,
@@ -786,7 +786,7 @@ def block_action(request, user_id):
                     'message': _('This user was unblocked successfully')}
         else:
             data = {'status': False, 'type': 'None',
-                    'message':_('The data entered is not valid')}
+                    'message': _('The data entered is not valid')}
 
     return HttpResponse(json.dumps(data), content_type="application/json")
 

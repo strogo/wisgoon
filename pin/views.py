@@ -16,9 +16,9 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from pin.models import Post, Follow, Likes, Category, Comments, Report,\
-    Results
+    Results, Block
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
-    get_user_ip, get_delta_timestamp
+    get_user_ip, get_delta_timestamp, AuthCache
 
 from pin.context_processors import is_police
 
@@ -341,6 +341,9 @@ def absuser_following(request, user_namefg):
     profile, created = Profile.objects.get_or_create(user_id=user_id)
     older = request.POST.get('older', False)
 
+    if Block.objects.filter(user_id=user.id, blocked_id=request.user.id):
+        raise Http404
+
     if older:
         following = Follow.objects\
             .filter(follower_id=user_id, id__lt=older).order_by('-id')[:16]
@@ -426,11 +429,14 @@ def user_followers(request, user_id):
 
 @csrf_exempt
 def absuser_followers(request, user_namefl):
-
     user = get_object_or_404(User, username=user_namefl)
     user_id = user.id
     profile, created = Profile.objects.get_or_create(user_id=user_id)
     older = request.POST.get('older', False)
+
+    if Block.objects.filter(user_id=user.id, blocked_id=request.user.id):
+        raise Http404
+
     if older:
         friends = Follow.objects.filter(following_id=user_id, id__lt=older).order_by('-id')[:16]
     else:
@@ -499,19 +505,33 @@ def user_like(request, user_id):
 
 
 def absuser_like(request, user_namel):
-    user = get_object_or_404(User, username=user_namel)
+
+    try:
+        user = AuthCache.user_from_name(username=user_namel)
+    except User.DoesNotExist:
+        raise Http404
+    except Http404:
+        raise Http404
+
+    # user = get_object_or_404(User, username=user_namel)
     user_id = user.id
     profile, created = Profile.objects.get_or_create(user_id=user_id)
     if profile.banned:
         return render(request, 'pin2/samandehi.html')
 
+    if request.user.is_authenticated():
+        if Block.objects.filter(user_id=user.id, blocked_id=request.user.id).exists():
+            raise Http404
+
     pid = get_request_pid(request)
     pl = Likes.user_likes(user_id=user_id, pid=pid)
     arp = []
 
+    r_user_id = request.user.id
+
     for pll in pl:
         try:
-            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
+            arp.append(post_item_json(pll, cur_user_id=r_user_id))
         except:
             pass
 
@@ -520,7 +540,7 @@ def absuser_like(request, user_namel):
     if request.is_ajax():
         if latest_items:
             return render(request,
-                          'pin2/_items_2.html',
+                          'pin2/_items_2_v6.html',
                           {'latest_items': latest_items})
         else:
             return HttpResponse(0)
@@ -901,9 +921,12 @@ def user(request, user_id, user_name=None):
 
 def absuser(request, user_name=None):
     try:
-        user = User.objects.only('id').get(username=user_name)
+        user = AuthCache.user_from_name(username=user_name)
     except User.DoesNotExist:
         raise Http404
+
+    # if Block.objects.filter(user_id=user.id, blocked_id=request.user.id):
+    #     raise Http404
 
     user_id = user.id
 

@@ -110,17 +110,19 @@ function liker_html(user, auth_user){
 }
 
 function sticky_sidebar(s){
-    if (typeof(s) == "undefined") {
-        s = 2000;
+    if ($(window).width() > 768) {
+        if (typeof(s) == "undefined") {
+            s = 2000;
+        };
+        setTimeout(function(){
+            pp = $('#related_posts').offset().top;
+            pr = pp - $('.post-sidebar').height();
+            $(".post-page .post-sidebar").scrollToFixed({
+                marginTop:15, 
+                limit:  pr
+            });
+        }, s);
     };
-    setTimeout(function(){
-        pp = $('#related_posts').offset().top;
-        pr = pp - $('.post-sidebar').height();
-        $(".post-page .post-sidebar").scrollToFixed({
-            marginTop:15, 
-            limit:  pr
-        });
-    }, s);
 }
 
 var feedobj = $('#feed');
@@ -302,6 +304,37 @@ function marker(t){
 
 
 $(function () {
+
+    $('body').on('click', '.promote_content .nav.nav-tabs li', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        i = t.find('a').attr('data-val');
+        $('.wis_pro_content > div').hide();
+        $('[data-val-pro="'+i+'"]').show();
+        $('#wis_pro_type').val(i);
+    });
+
+    $('body').on('click', '.pro_btns li', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        i = t.find('a').attr('data-val');
+        $('.wis_pro_content .wis_pro_type').hide();
+        $('.wis_pro_content .type_'+i).show();
+        $('#wis_pro_type').val(i);
+    });
+
+    $('body').on('submit', '#pro_form', function(event) {
+        event.preventDefault();
+        var c = parseInt($('.promote_content').data('current'));
+        if (c < 500) {
+            alertify.error('شما ویس کافی برای ویژه کردن این پست ندارید.<br> ابتدا حساب خود را شارژ کنید');
+        }else{
+            $(this).submit();
+        }
+        return false;
+    });
+
+
     $('body').on('click', '.upload_img_btn', function(event) {
         event.preventDefault();
         $('#id_avatar').click();

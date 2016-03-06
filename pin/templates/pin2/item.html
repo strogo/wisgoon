@@ -88,7 +88,7 @@ mlt: {{mlt.0.object.id}}
         function display_likers(json){
             likers = json.likers;
             for (var i = likers.length - 1; i >= 0; i--) {
-                $('#likers_modal .modal-body .likers_box').append(liker_html(likers[i]));
+                $('#likers_modal .modal-body .likers_box').append(liker_html(likers[i], auth_user));
             };
         }
 

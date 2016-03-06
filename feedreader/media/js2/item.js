@@ -39,17 +39,6 @@ function load_comments(){
     });
 }
 
-function sticky_sidebar(){
-    setTimeout(function(){
-        pp = $('#related_posts').offset().top;
-        pr = pp - $('.post-sidebar').height();
-        $(".post-page .post-sidebar").scrollToFixed({
-            marginTop:15, 
-            limit:  pr
-        });
-    }, 2000);
-}
-
 load_comments();
 $("#comment_load_more").click(function(){
     load_comments();
