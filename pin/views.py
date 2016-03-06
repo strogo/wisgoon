@@ -22,6 +22,8 @@ from pin.tools import get_request_timestamp, get_request_pid, check_block,\
 
 from pin.context_processors import is_police
 
+from django_user_agents.utils import get_user_agent
+
 from pin.model_mongo import Ads
 from pin.models_redis import LikesRedis
 
@@ -1014,6 +1016,7 @@ def item(request, item_id):
             'post': post,
             'follow_status': follow_status,
             'comments_url': comments_url,
+            'page': 'item',
             'related_url': related_url,
         }, content_type="text/html")
         if enable_cacing:
