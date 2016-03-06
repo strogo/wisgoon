@@ -5,7 +5,7 @@ import csv
 import sys
 
 from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.conf import settings
 
 from tastypie.models import ApiKey
@@ -20,36 +20,38 @@ default_text = u'لورم ایپسوم متن ساختگی با تولید سا�
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-User = get_user_model()
+# User = get_user_model()
+
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # Create Users
-        create_users(self)
+        # create_users(self)
 
         # Create Profile
-        create_profile(self)
+        # create_profile(self)
 
         # Create Category
         create_category(self)
 
         # Create Post
-        create_post(self)
+        # create_post(self)
 
         # Create Like an Comments
-        create_like_comment(self)
+        # create_like_comment(self)
 
         # Create Follower
-        create_test_follow(self)
+        # create_test_follow(self)
 
 
 def create_post(self):
     cnt_post = raw_input("How many posts you want to add?")
+    user_count = User.objects.order_by('-id').count()
     cat_id = 0
     for index in range(1, int(cnt_post) + 1):
         filename = "post_%s.jpg" % str(random.randint(1, 50))
-        user_id = random.randint(1, 200)
+        user_id = random.randint(1, user_count)
         try:
             post = Post()
             post.image = "v2/test_data/images/%s" % (filename)
@@ -73,22 +75,23 @@ def create_post(self):
 
 
 def create_like_comment(self):
+    user_count = User.objects.order_by('-id').count()
     posts = Post.objects.all()
     for index, post in enumerate(posts):
 
         try:
             like_range = random.randint(0, 20)
             for a in range(like_range):
-                text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
-                user_id = random.randint(1, 200)
+                text = ''.join(default_text[random.randint(0, 100):random.randint(101, 600)])
+                user_id = random.randint(1, user_count)
                 LikesRedis(post_id=post.id)\
                     .like_or_dislike(user_id=user_id, post_owner=post.user_id)
             self.stdout.write("add %s like for post %s" % (str(like_range), str(post.id)))
 
             comment_range = random.randint(5, 20)
             for i in range(comment_range):
-                user_id = random.randint(1, 200)
-                text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
+                user_id = random.randint(1, user_count)
+                text = ''.join(default_text[random.randint(0, 100):random.randint(101, 600)])
                 comment = Comments()
                 comment.object_pk_id = post.id
                 comment.comment = text
@@ -135,6 +138,8 @@ def create_category(self):
 
 
 def create_users(self):
+    cnt_user = raw_input("How many users you want to add?")
+
     users_list = []
     media_url = settings.MEDIA_ROOT
     path = "%s/v2/test_data/auth_user.csv" % (media_url)
@@ -148,7 +153,7 @@ def create_users(self):
         self.stdout.write(str(e))
         raise
 
-    for user in users_list:
+    for user in users_list[:int(cnt_user)]:
         try:
             user = User.objects.create_user(user[0], user[1], user[2])
             ApiKey.objects.get_or_create(user=user)
@@ -160,13 +165,15 @@ def create_users(self):
 
 def create_test_follow(self):
     # cnt_follow = raw_input("How many follow you want to add?")
-    for i in range(200):
+    user_list = User.objects.order_by('-id')
+
+    for i, k in enumerate(user_list):
         loop_count = random.randint(5, 30)
 
         for user in range(loop_count):
             try:
                 Follow.objects.get_or_create(follower_id=i,
-                                             following_id=random.randint(1, 200))
+                                             following_id=random.randint(1, 50))
                 self.stdout.write("Add %s Follow for user %s" % (str(user), str(i)))
             except Exception as e:
                 self.stdout.write(str(e))
@@ -186,7 +193,7 @@ def create_profile(self):
     except Exception as e:
         self.stdout.write(str(e))
 
-    user_list = User.objects.order_by('-id')[:200]
+    user_list = User.objects.order_by('-id')
     for index, user in enumerate(user_list):
         try:
             avatar_path = "v2/test_data/images/avatar/post_%s.jpg" % str(random.randint(1, 50))
