@@ -14,6 +14,7 @@ import datetime
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.http import Http404
 # from django.db.models import F
 
 from tastypie.models import ApiKey
@@ -289,6 +290,20 @@ class AuthCache(MyCache):
             return None
 
         return None
+
+    @classmethod
+    def user_from_name(cls, username):
+        ct_str = "tuin_%s" % str(username)
+        c_token = cache.get(ct_str)
+        if c_token:
+            return c_token
+        try:
+            user = User.objects.only('id').get(username=username)
+            cache.set(ct_str, user, 86400)
+        except User.DoesNotExist:
+            raise Http404
+
+        return user
 
 
 def check_block(user_id, blocked_id):
