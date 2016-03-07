@@ -147,7 +147,7 @@ def create_users(self):
         f = open(path, 'rb')
         reader = csv.reader(f)
         for row in reader:
-            users_list.append([row[1], '1', row[4]])
+            users_list.append([row[1], 1, row[4]])
         f.close()
     except Exception as e:
         self.stdout.write(str(e))
