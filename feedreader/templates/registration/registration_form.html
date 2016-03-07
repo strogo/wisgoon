@@ -9,9 +9,9 @@
 			<img src="{{MEDIA_URL}}v2/images/new_logo.png" alt="">
 
 			<div class="download_app mato20 mabo50">
-				<p>دانلود نرم‌افزار اندروید</p>
-				<a class="wis_btn green" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">دانلود از بازار</a>
-				<a class="wis_btn orange" href="http://static.wisgoon.com/media/app/latest.apk">دانلود مستقیم</a>
+				<p>{%trans "Android software download" %}</p>
+				<a class="wis_btn green" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">{%trans "Download from bazzar"%}</a>
+				<a class="wis_btn orange" href="http://static.wisgoon.com/media/app/latest.apk">{%trans "Direct download"%}</a>
 
 			</div>
 		</div>
@@ -32,14 +32,14 @@
 			{% endfor %}
 
 			<p>
-				<a href="/accounts/password/reset/">رمز عبور خود را فراموش کرده اید؟</a>
+				<a href="/accounts/password/reset/">{%trans "Forgot your password?"%}</a>
 			</p>
 			<p>
-				<a href="/accounts/login/">اگر ثبت‌نام کرده‌اید وارد شوید</a>
+				<a href="/accounts/login/">{%trans "If you have registered ,log in"%}</a>
 			</p>
 			
 			<div class="tace">
-				<input type="submit" value="تکمیل عضویت" class="wis_btn orange mato50 mabo50 w50">
+				<input type="submit" value='{%trans "completed sign up"%}' class="wis_btn orange mato50 mabo50 w50">
 			</div>
 		</form>
 	</div>
