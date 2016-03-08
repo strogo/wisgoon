@@ -46,7 +46,7 @@ def latest(request):
     if ad:
         hot_post = int(ad.post_id)
     if hot_post:
-        posts = list(hot_post) + list(posts)
+        posts = list([hot_post]) + list(posts)
 
     data['objects'] = get_objects_list(posts,
                                        cur_user_id=cur_user,
