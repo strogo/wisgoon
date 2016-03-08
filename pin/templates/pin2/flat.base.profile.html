@@ -17,10 +17,12 @@
 		var upload_url = "{% url 'pin-upload' %}";
 	</script>
 
-
 	{% include "base/analytics.html"%}
 </head>
-<body>
+<body class="{{page}}{% if request.user_agent.is_mobile %} mobile_page{% endif %}">
+	{% if request.user_agent.is_mobile %}
+	{% include "pin2/includes/_sticky_download.html" %}
+	{% endif %}
 	<div id="main">
 		<div id="pagetop"></div>
 		{% include "pin2/nav.html" %}

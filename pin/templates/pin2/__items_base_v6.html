@@ -1,13 +1,11 @@
 {% load daddy_avatar %}
 {% load pin_tags %}
-<div class="feed-item masonry-brick">
+<div class="feed-item masonry-brick new_items">
 	<div class="img-content">
 		<a class="pin-item-link" href="{% url 'pin-item' item.id%}{% if related %}?from={{post.id}}{%endif%}">
 			<img src="{{ item.images.thumbnail.url }}" width="236" height="{{ item.images.thumbnail.height }}" alt="{{item.text|remove_newlines|truncatewords:35}}">
 		</a>
-
 	</div>
-
 	
 	<div class="clearfix"></div>
 
@@ -82,32 +80,32 @@
 			
 		</span>
 
-{% if user.is_authenticated %}
-<div class="dropdown three-dot">
-	<a class="dropdown-toggle dl" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-		<img src="{{MEDIA_URL}}v2/images/3dot.png" alt="">
-	</a>
-	<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-		<li>
-			<a href="{% url "pin-save-as-ads" item.id %}">ویژه کردن عکس <i class="fa fa-bullhorn"></i></a>
-		</li>
-
-		{% if user.id == item.user.id or user.is_superuser %}
-		<li>
-			<a href="{% url 'pin-item-edit' item.id %}" class="" data-toggle="modal" data-target="#postModal"> 
-				ویرایش <i class="fa fa-pencil"></i>
+		{% if user.is_authenticated %}
+		<div class="dropdown three-dot">
+			<a class="dropdown-toggle dl" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				<img src="{{MEDIA_URL}}v2/images/3dot.png" alt="">
 			</a>
-		</li>
+			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+				<li>
+					<a href="{% url "pin-save-as-ads" item.id %}">ویژه کردن عکس <i class="fa fa-bullhorn"></i></a>
+				</li>
 
-		<li><a href="{% url 'pin-item-delete' item.id%}" class=" delpost user-action-btn" title="حذف تصویر">حذف <i class="fa fa-trash-o"></i></a></li>
+				{% if user.id == item.user.id or user.is_superuser %}
+				<li>
+					<a href="{% url 'pin-item-edit' item.id %}" class="" data-toggle="modal" data-target="#postModal"> 
+						ویرایش <i class="fa fa-pencil"></i>
+					</a>
+				</li>
+
+				<li><a href="{% url 'pin-item-delete' item.id%}" class=" delpost user-action-btn" title="حذف تصویر">حذف <i class="fa fa-trash-o"></i></a></li>
+				{% endif %}
+
+				<li>
+					<a class="report-btn" alt="{{user.id}}/{{item.user.id}}" href="{% url "report_pin" item.id%}"> گزارش تخلف <i class="fa fa-exclamation-triangle"></i> </a>
+				</li>
+			</ul>
+		</div>
 		{% endif %}
-
-		<li>
-			<a class="report-btn" alt="{{user.id}}/{{item.user.id}}" href="{% url "report_pin" item.id%}"> گزارش تخلف <i class="fa fa-exclamation-triangle"></i> </a>
-		</li>
-	</ul>
-</div>
-{% endif %}
 
 
 		<div class="username">

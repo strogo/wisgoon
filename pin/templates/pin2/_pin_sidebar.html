@@ -2,12 +2,15 @@
 {% load pin_tags %}
 
 {% if DISPLAY_AD %}
+{% if not request.user_agent.is_mobile %}
 <div class="only_mobile_view">
-{% include "pin2/tabliq/_300x250.html" %}
+	{% include "pin2/tabliq/_300x250.html" %}
 </div>
 {% endif %}
+{% endif %}
 
-<div class="profile box">
+<div class="profile {% if not request.user_agent.is_mobile %} box {% endif %}">
+    {% if not request.user_agent.is_mobile %}
 	<div class="user-detail">
 		<div class="avatar">
 			<a href="{% url "pin-absuser" post.user_id|get_user_name %}">
@@ -31,36 +34,42 @@
 	</div>
 	<div class="clear"></div>
 	{% if post.user.id != request.user.id and user.is_authenticated %}
-		{% if follow_status == 0 %}
-		<a class="wis_btn green w100 mabo10 mato10 ajax-follow" data-user-id="{{post.user_id}}" href='{% url "pin-follow" post.user_id 1 %}'>ایجاد دوستی</a>
-		{% else %}
-		<a class="wis_btn red w100 mabo10  mato10 ajax-follow" data-user-id="{{post.user_id}}" href='{% url "pin-follow" post.user_id 0 %}'>قطع ارتباط</a>
-		{%endif%}
+	{% if follow_status == 0 %}
+	<a class="wis_btn green w100 mabo10 mato10 ajax-follow" data-user-id="{{post.user_id}}" href='{% url "pin-follow" post.user_id 1 %}'>ایجاد دوستی</a>
+	{% else %}
+	<a class="wis_btn red w100 mabo10  mato10 ajax-follow" data-user-id="{{post.user_id}}" href='{% url "pin-follow" post.user_id 0 %}'>قطع ارتباط</a>
+	{%endif%}
 	{% endif %}
+	{% endif %}
+	
 
 	<div class="clear"></div>
 
 
+    {% if not request.user_agent.is_mobile %}
 	<div class="user-posts">
+		<h3 class="only_mobile_view"> تصاویر اخیر کاربر</h3>
+
 		<div class="user-post-items"></div>
 	</div>
 	<img class="post-loading" src="{{MEDIA_URL}}v2/images/loading-img.gif" alt="">
+	{% endif %}
 
 	<div class="clear"></div>
 
 </div>
 
 {% if DISPLAY_AD %}
+{% if not request.user_agent.is_mobile %}
 <div class="only_web">
-{% include "pin2/tabliq/_300x250.html" %}
+	{% include "pin2/tabliq/_300x250.html" %}
 </div>
 {% endif %}
+{% endif %}
 
+{% if not request.user_agent.is_mobile %}
 {% include "pin2/mobil_ads.html" %}
-
-<div class="only_mobile_view">
-	<div class="mato50"></div>
-</div>
+{% endif %}
 
 {% comment %}
     
