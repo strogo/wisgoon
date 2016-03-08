@@ -1,3 +1,4 @@
+var mobile_agent = false;
 function alert_show(msg, status) {
     $('.alert_show').remove();
     $('body').append('<div class="alert alert_show ' + status + '">' + msg + '</div>');
