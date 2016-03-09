@@ -1,6 +1,8 @@
 # coding: utf-8
 import random
+import json
 # import time
+import redis
 import csv
 import sys
 import requests
@@ -15,6 +17,10 @@ from user_profile.models import Profile
 
 from pin.models import Post, Category, SubCategory, Comments, Follow
 from pin.models_redis import LikesRedis
+from pin.api6.cache_layer import PostCacheLayer
+
+r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
+
 default_text = u'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.'
 
 reload(sys)
@@ -69,8 +75,18 @@ def create_post(self):
 
             data = {'category': cat_id, 'description': text}
             result = requests.post(url, files=files, data=data)
-            print result.content
 
+            try:
+                result = json.loads(result.content)
+                post_id = result['post']['id']
+                if index % 2 == 0:
+                    Post.objects.filter(pk=post_id).update(show_in_default=True)
+                    r_server.lpush(settings.HOME_STREAM, post_id)
+                    PostCacheLayer(post_id=post_id).show_in_default_change(status=True)
+            except Exception, e:
+                self.stdout.write(str(e))
+                raise
+            print "post %s was created" % str(post_id)
         except Exception as e:
             self.stdout.write(str(e))
             raise

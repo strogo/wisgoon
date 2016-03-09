@@ -76,12 +76,12 @@ SITE_ID = 1
 
 USE_I18N = True
 USE_L10N = True
-# LOCALE_NAME = 'fa_IR'
-# LANGUAGE_CODE = 'fa-ir'
-# LANGUAGES = [
-#     ('fa', ('Farsi')),
-#     ('en', ('English')),
-# ]
+LOCALE_NAME = 'fa_IR'
+LANGUAGE_CODE = 'fa-ir'
+LANGUAGES = [
+    ('fa', ('Farsi')),
+    ('en', ('English')),
+]
 
 USE_TZ = True
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
