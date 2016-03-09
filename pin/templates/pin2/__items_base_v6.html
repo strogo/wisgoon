@@ -5,6 +5,9 @@
 		<a class="pin-item-link" href="{% url 'pin-item' item.id%}{% if related %}?from={{post.id}}{%endif%}">
 			<img src="{{ item.images.thumbnail.url }}" width="236" height="{{ item.images.thumbnail.height }}" alt="{{item.text|remove_newlines|truncatewords:35}}">
 		</a>
+		{% if item.images.thumbnail.height > 500 %}
+			<div class="expand_post">عکس بلند</div>
+		{% endif %}
 	</div>
 	
 	<div class="clearfix"></div>
