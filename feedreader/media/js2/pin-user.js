@@ -27,10 +27,6 @@ function add_filter_box(){
     Caman("#concentrate canvas", function(){this.concentrate();this.render();});
 }
 
-$(function() {
-
-});
-
 
 $('body').on('click', '.upload_img_btn', function(event) {
     event.preventDefault();
@@ -167,11 +163,14 @@ $('body').on('click', '.del-comment', function(){
                 //     marginTop:15, 
                 //     limit:  pr
                 // });
-                $(window).resize();
-                sticky_sidebar(0);
+                // $(window).resize();
+                // sticky_sidebar(0);
                 $("#"+row_name).slideUp('fast');
             }
             alertify.success(resp.message);
+        },
+        complete: function(){
+            reload_sticky();
         }
     });
     
