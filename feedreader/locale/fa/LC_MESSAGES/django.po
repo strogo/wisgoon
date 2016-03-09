@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-07 16:34+0330\n"
-"PO-Revision-Date: 2016-03-07 16:59+0330\n"
+"POT-Creation-Date: 2016-03-08 16:40+0330\n"
+"PO-Revision-Date: 2016-03-08 16:41+0330\n"
 "Last-Translator: amir <a.abbasghorbani@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -45,6 +45,10 @@ msgstr "وب سایت ما در حال بروز رسانی می باشد"
 msgid "We greatly appreciate your patience"
 msgstr " از شکیبایی شما سپاسگذاریم"
 
+#: templates/pending.html:13
+msgid "The page is not temporarily visible"
+msgstr "صفحه ی مورد نظر موقتا قابل مشاهده نیست"
+
 #: templates/registration/activation_email.txt:2
 msgid "Activate account at"
 msgstr "فعال شدن حساب کاربری در"
@@ -58,57 +62,64 @@ msgstr "این لینک به مدت %(expiration_days)s روز معتبر است
 msgid "Account activation on"
 msgstr "فعال سازی حساب کاربری در"
 
-#: templates/registration/login.html:14
+#: templates/registration/login.html:15
 #: templates/registration/registration_form.html:12
 msgid "Android software download"
 msgstr "دانلود نرم افزار اندروید"
 
-#: templates/registration/login.html:15
+#: templates/registration/login.html:16
 #: templates/registration/registration_form.html:13
 msgid "Download from bazzar"
 msgstr "دانلود از بازار"
 
-#: templates/registration/login.html:16
+#: templates/registration/login.html:17
 #: templates/registration/registration_form.html:14
 msgid "Direct download"
 msgstr "دانلود مستقیم"
 
-#: templates/registration/login.html:35
+#: templates/registration/login.html:27
+msgid "username"
+msgstr "نام کاربری"
+
+#: templates/registration/login.html:33
+#| msgid "Reset password"
+msgid "password"
+msgstr " رمز عبور"
+
+#: templates/registration/login.html:38
 #: templates/registration/registration_form.html:35
 msgid "Forgot your password?"
 msgstr "رمز عبور خود را فراموش کرده اید؟"
 
-#: templates/registration/login.html:38
+#: templates/registration/login.html:41
 msgid "If you have not registered ,click here"
 msgstr "اگر شما ثیت نام نکرده اید وارد شوید"
 
-#: templates/registration/login.html:42
+#: templates/registration/login.html:45
 msgid "log in"
 msgstr "ورود"
 
 #: templates/registration/logout.html:5
-#| msgid "log in"
-msgid "log out"
+msgid "Log out"
 msgstr "خروچ"
 
 #: templates/registration/logout.html:8
-msgid "Successfully log out site"
+msgid "successfully log out site"
 msgstr "با موفقیت از سیستم خارج شده اید."
 
-#: templates/registration/password_change_done.html:2
+#: templates/registration/password_change_done.html:3
 #: templates/registration/password_change_form.html:6
 #: templates/registration/password_change_form.html:15
 msgid "Change password"
 msgstr "تعویض رمز عبور"
 
-#: templates/registration/password_change_done.html:4
+#: templates/registration/password_change_done.html:5
 msgid "Your password has been successfully changed"
 msgstr "رمز عبور شما با موفقیت تغییر کرد."
 
 #: templates/registration/password_reset_complete.html:3
-#: templates/registration/password_reset_confirm.html:3
-#: templates/registration/password_reset_done.html:2
-msgid "Reset Password"
+#: templates/registration/password_reset_form.html:5
+msgid "Reset password"
 msgstr "بازیابی رمز عبور"
 
 #: templates/registration/password_reset_complete.html:7
@@ -117,10 +128,13 @@ msgstr "رمز عبور با موفقیت بازیابی شد."
 
 #: templates/registration/password_reset_complete.html:9
 #: templates/registration/password_reset_confirm.html:8
-#, fuzzy
-#| msgid "log in"
 msgid "Log in"
 msgstr "ورود"
+
+#: templates/registration/password_reset_confirm.html:3
+#: templates/registration/password_reset_done.html:3
+msgid "Reset Password"
+msgstr "بازیابی رمز عبور"
 
 #: templates/registration/password_reset_confirm.html:22
 msgid "Send"
@@ -130,15 +144,8 @@ msgstr "ارسال"
 msgid "Error changing password"
 msgstr "خطا در تغییر رمز عبور"
 
-#: templates/registration/password_reset_done.html:4
-#| msgid "Your password has been successfully changed"
-msgid "New password has been created."
-msgstr "رمز عبور جدید برای شما ایجاد شد."
-
-#: templates/registration/password_reset_done.html:5
-msgid ""
-"\n"
-"    New password has been created.We have send instruction into e-mail addresses that you entered for setting your passwords.you get soon.\n"
+#: templates/registration/password_reset_done.html:6
+msgid "New password has been created.We have send instruction into e-mail addresses that you entered for setting your passwords.you get soon."
 msgstr "پسورد جدید ایجاد شد.ما به نشانی پست اکترونیکی‌ای که وارد کردید دستورالعملی برای تنظیم گذرواژه‌تان فرستادیم. به زودی به شما می‌رسد."
 
 #: templates/registration/password_reset_email.html:2
@@ -165,28 +172,20 @@ msgstr "ممنون که از وب سایت ما دیدن کردید."
 msgid "The %(site_name)s team"
 msgstr "تیم %(site_name)s"
 
-#: templates/registration/password_reset_form.html:5
-msgid "Reset password"
-msgstr "بازیابی رمز عبور"
-
 #: templates/registration/password_reset_form.html:10
-msgid "Request new password"
+#: templates/registration/password_reset_form.html:26
+msgid "Generate new password"
 msgstr "درخواست رمز عبور جدید"
 
 #: templates/registration/password_reset_form.html:15
 msgid "If you have forgotten your password, enter your email to send you a new password"
 msgstr "اگر رمز عبور خود را فراموش کرده اید، ایمیل خود را برای ارسال پسورد جدید وارد نمایید."
 
-#: templates/registration/password_reset_form.html:26
-msgid "Get a new password"
-msgstr ""
-
-#: templates/registration/registration_complete.html:6
+#: templates/registration/registration_complete.html:7
 msgid "Register"
-msgstr ""
+msgstr "ثبت نام"
 
-#: templates/registration/registration_complete.html:11
-#| msgid "If you have not registered ,click here"
+#: templates/registration/registration_complete.html:12
 msgid "You have successfully registered in the site"
 msgstr "شما با موفقیت در سایت ثبت نام کرده اید."
 

@@ -1,11 +1,12 @@
 # coding: utf-8
 import random
-import time
+# import time
 import csv
 import sys
+import requests
 
 from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.conf import settings
 
 from tastypie.models import ApiKey
@@ -14,25 +15,23 @@ from user_profile.models import Profile
 
 from pin.models import Post, Category, SubCategory, Comments, Follow
 from pin.models_redis import LikesRedis
-
 default_text = u'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.'
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-User = get_user_model()
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # Create Users
-        create_users(self)
+        # create_users(self)
 
         # Create Profile
-        create_profile(self)
+        # create_profile(self)
 
         # Create Category
-        create_category(self)
+        # create_category(self)
 
         # Create Post
         create_post(self)
@@ -46,24 +45,39 @@ class Command(BaseCommand):
 
 def create_post(self):
     cnt_post = raw_input("How many posts you want to add?")
+
     cat_id = 0
+    cnt_user = User.objects.count()
+    media_url = settings.MEDIA_ROOT
+
     for index in range(1, int(cnt_post) + 1):
-        filename = "post_%s.jpg" % str(random.randint(1, 50))
-        user_id = random.randint(1, 200)
+        filename = "{}/v2/test_data/images/post_{}.jpg"\
+            .format(media_url, str(random.randint(1, 100)))
+        user_id = random.randint(1, cnt_user)
+        api_key, created = ApiKey.objects.get_or_create(user_id=user_id)
+
         try:
-            post = Post()
-            post.image = "v2/test_data/images/%s" % (filename)
-            post.user_id = user_id
-            post.timestamp = time.time()
-            post.text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
+            url = 'http://127.0.0.1:8000/api/v6/post/send/?token={}'\
+                .format(api_key.key)
+            files = {'image': open(filename, 'rb')}
+            text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
+
             if cat_id == 44:
                 cat_id = 1
             else:
                 cat_id += 1
-            post.category_id = cat_id
-            post.save()
-            self.stdout.write("post %s status: %s" % (str(post.id),
-                                                      str(post.status)))
+            print url
+            data = {'category': cat_id, 'text': text}
+            result = requests.post(url, files=files, data=data)
+            print result.content
+            # post = Post()
+            # post.image = "v2/test_data/images/%s" % (filename)
+            # post.user_id = user_id
+            # post.timestamp = time.time()
+            # post.text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
+            # post.category_id = cat_id
+            # post.save()
+            # self.stdout.write("post %s was created" % str(index))
 
         except Exception as e:
             self.stdout.write(str(e))
@@ -142,7 +156,7 @@ def create_users(self):
         f = open(path, 'rb')
         reader = csv.reader(f)
         for row in reader:
-            users_list.append([row[1], '1', row[4]])
+            users_list.append([row[1], 1, row[4]])
         f.close()
     except Exception as e:
         self.stdout.write(str(e))
@@ -189,7 +203,7 @@ def create_profile(self):
     user_list = User.objects.order_by('-id')[:200]
     for index, user in enumerate(user_list):
         try:
-            avatar_path = "v2/test_data/images/avatar/post_%s.jpg" % str(random.randint(1, 50))
+            avatar_path = "v2/test_data/images/avatar/post_%s.jpg" % str(random.randint(1, 100))
             Profile.objects.filter(user=user)\
                 .update(avatar=avatar_path, name=profile_list[index][0],
                         location=profile_list[index][1],

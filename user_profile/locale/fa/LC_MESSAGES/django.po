@@ -1,0 +1,87 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-03-08 14:00+0330\n"
+"PO-Revision-Date: 2016-03-08 14:06+0330\n"
+"Last-Translator: amir <a.abbasghorbani@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: models.py:51
+msgid "Name"
+msgstr "نام"
+
+#: models.py:52
+msgid "Location"
+msgstr "موقعیت"
+
+#: models.py:54
+msgid "Website"
+msgstr "وب سایت"
+
+#: models.py:55
+msgid "Biography"
+msgstr "بیوگرافی"
+
+#: models.py:68
+msgid "Male"
+msgstr "مذکر"
+
+#: models.py:68
+msgid "Female"
+msgstr "موتث"
+
+#: models.py:121
+msgid "Normal"
+msgstr "عادی"
+
+#: models.py:123
+msgid "Cop"
+msgstr "پلیس"
+
+#: models.py:259
+msgid "Increment"
+msgstr "افزایش"
+
+#: models.py:260
+msgid "Decrement"
+msgstr "کاهش"
+
+#: views.py:39
+msgid "There is not token"
+msgstr "توکن وجود ندارد"
+
+#: views.py:44
+msgid "error in user validation"
+msgstr "خطا در اعتبار سنجی کاربران"
+
+#: views.py:50
+msgid "user is inactive"
+msgstr "کاربر غیر فعال است"
+
+#: views.py:54
+msgid "profile has saved"
+msgstr "پروفایل ثبت شد"
+
+#: views.py:56
+msgid "form not valid"
+msgstr "فرم معتبر نیست"
+
+#: views.py:58
+msgid "request method is not POST"
+msgstr "متد شما POST نمی باشد"
+
+#: views.py:60
+msgid "error in data"
+msgstr "خطا در داده ارسالی"
+

@@ -4,6 +4,7 @@ import khayyam
 from django.db.models import Count
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
 
 from pin.model_mongo import MonthlyStats
 from pin.models import Post, Ad, Log, BannedImei
@@ -174,7 +175,7 @@ def range_date(start, end):
             start_date, end_date = end_date, start_date
     except:
         return return_json_data({'status': False,
-                                 'message': 'Enter Timestamp'})
+                                 'message': _('Enter Timestamp')})
     # min_date = datetime.datetime.combine(start_date.date(),
     #                                      start_date.time.min)
     # max_date = datetime.datetime.combine(end_date.date(),

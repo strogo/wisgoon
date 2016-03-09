@@ -1,7 +1,8 @@
 {% extends "pin2/flat.base.box.html" %}
+{% load i18n %}
 {% load widget_tweaks %}
 
-{% block title %} ورود {% endblock%}
+{% block title %} {% trans "Log in" %} {% endblock%}
 
 {% block content %}
 
@@ -11,7 +12,7 @@
 			<img src="{{MEDIA_URL}}v2/images/new_logo.png" alt="">
 
 			<div class="download_app mato20 mabo50">
-				<p>{%trans "Android software download" %}</p>
+				<p>{%trans "Android software download"%}</p>
 				<a class="wis_btn green" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">{%trans "Download from bazzar"%}</a>
 				<a class="wis_btn orange" href="http://static.wisgoon.com/media/app/latest.apk">{%trans "Direct download"%}</a>
 
@@ -23,12 +24,14 @@
 			{% csrf_token %}
 			<div class="form-group with_icon">
 				<label>{{form.username.label}}</label>
-				{% render_field form.username class+="form-control ltr wis_input" placeholder='{%trans "username" %}' %}
+				{% trans "username" as username %}
+				{% render_field form.username class+="form-control ltr wis_input" placeholder='username' %}
 				<span class="icon username"></span>
 			</div>
 			<div class="form-group with_icon">
 				<label>{{form.password.label}}</label>
-				{% render_field form.password class+="form-control ltr wis_input" placeholder='{%trans "password" %}' %}
+				{% trans "password" as password %}
+				{% render_field form.password class+="form-control ltr wis_input" placeholder='password' %}
 				<span class="icon password"></span>
 			</div>
 			<p>

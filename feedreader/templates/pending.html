@@ -1,5 +1,5 @@
 {% extends "pin2/flat.base.box.html" %}
-
+{% load i18n %}
 {% block content%}
 <div class="col-md-12">
 	<div class="row" style="">
@@ -10,7 +10,7 @@
 	<div class="panel-heading">خطا
 	</div>
 	<div class="panel-body">
-		<p>صفحه ی مورد نظر موقتا قابل مشاهده نیست</p>
+		<p>{% trans "The page is not temporarily visible" %}.</p>
 	</div>
 </div>
 </div>
