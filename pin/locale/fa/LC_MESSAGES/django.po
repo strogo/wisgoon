@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wisgoon 6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-09 20:34+0330\n"
-"PO-Revision-Date: 2016-03-09 20:35+0330\n"
+"POT-Creation-Date: 2016-03-09 20:48+0330\n"
+"PO-Revision-Date: 2016-03-09 20:52+0330\n"
 "Last-Translator: vahid <vchakoshy@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: FA\n"
@@ -474,6 +474,7 @@ msgstr "رمز عبور شما با موفقیت تغییر کرد"
 
 #: templates/registration/password_reset_complete.html:3
 #: templates/registration/password_reset_form.html:5
+#: templates/registration/password_reset_form_pin.html:5
 msgid "Reset password"
 msgstr "بازیابی رمز عبور"
 
@@ -498,7 +499,7 @@ msgstr "خطا در تغییر رمز عبور"
 msgid ""
 "New password has been created.We have send instruction into e-mail addresses "
 "that you entered for setting your passwords.you get soon."
-msgstr ""
+msgstr "رمز عبور جدید برای شما ساخته شد. لطفا ایمیل خود را چک نمایید"
 
 #: templates/registration/password_reset_email.html:2
 #, python-format
@@ -528,14 +529,19 @@ msgstr ""
 
 #: templates/registration/password_reset_form.html:10
 #: templates/registration/password_reset_form.html:26
+#: templates/registration/password_reset_form_pin.html:10
+#: templates/registration/password_reset_form_pin.html:26
 msgid "Generate new password"
 msgstr "ایجاد رمز عبور جدید"
 
 #: templates/registration/password_reset_form.html:15
+#: templates/registration/password_reset_form_pin.html:15
 msgid ""
 "If you have forgotten your password, enter your email to send you a new "
 "password"
 msgstr ""
+"اگر رمز عبور خود را فراموش کرده اید.. لطفا ایمیل خود را وارد نمایید تا رمز "
+"عبور جدیدی برای شما ارسال کنیم."
 
 #: templates/registration/registration_complete.html:7
 msgid "Register"
