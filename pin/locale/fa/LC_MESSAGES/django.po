@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wisgoon 6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-09 11:40+0330\n"
-"PO-Revision-Date: 2016-03-09 11:32+0330\n"
-"Last-Translator: amir <a.abbasghorbani@gmail.com>\n"
+"POT-Creation-Date: 2016-03-09 20:34+0330\n"
+"PO-Revision-Date: 2016-03-09 20:35+0330\n"
+"Last-Translator: vahid <vchakoshy@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: FA\n"
 "MIME-Version: 1.0\n"
@@ -41,7 +41,7 @@ msgstr "کاربر فعال نمی باشد"
 msgid "Username or password not valid"
 msgstr "نام کاربری یا کلمه عبور معتبر نمی باشد"
 
-#: api6/auth.py:236 api6/auth.py:463 api6/auth.py:495
+#: api6/auth.py:236 api6/auth.py:461 api6/auth.py:493
 msgid "Error in parameters"
 msgstr "خطا در پارامترهای ارسالی"
 
@@ -65,51 +65,71 @@ msgstr "خطا در ساخت کاربر"
 msgid "User created successfully"
 msgstr "کاربر با موفقیت ساخته شد"
 
-#: api6/auth.py:306 api6/comment.py:54 api7/auth.py:161
+#: api6/auth.py:304 api6/comment.py:54 api6/post.py:347 api7/auth.py:161
 msgid "This User Has Blocked You"
 msgstr "این کاربر شما را بلاک کرده است"
 
-#: api6/auth.py:341 api7/auth.py:194
+#: api6/auth.py:339 api7/auth.py:194
 msgid "Your Profile Was Updated"
 msgstr "پروفایل شما با موفقیت به روزرسانی گردید."
 
-#: api6/auth.py:393
+#: api6/auth.py:391
 msgid "Successfully Logout"
 msgstr "شما با موفقیت خارج شدید"
 
-#: api6/auth.py:469 api6/auth.py:477
+#: api6/auth.py:467 api6/auth.py:475
 msgid "password dismatched"
 msgstr "پسورد ها مشابه نیستند"
 
-#: api6/auth.py:482
+#: api6/auth.py:480
 msgid "Incorrect password."
 msgstr "کلمه عبور صحیح نیست"
 
-#: api6/auth.py:490
+#: api6/auth.py:488
 msgid "Password changed"
 msgstr "رمز عبور تغییر کرد"
 
-#: api6/auth.py:519
+#: api6/auth.py:517
 msgid "user not found"
 msgstr "کاربر یافت نشد"
 
-#: api6/auth.py:542
+#: api6/auth.py:540
 msgid "updated"
 msgstr "به روز رسانی گردید."
 
-#: api6/auth.py:561
+#: api6/auth.py:559
 msgid "accepted"
 msgstr "پذیرفته شد."
 
-#: api6/auth.py:687 api7/auth.py:298
+#: api6/auth.py:594
+msgid "The parameters entered is incorrect"
+msgstr "داده های وارد شده معتبر نیست"
+
+#: api6/auth.py:597
+msgid "Select a package is not correct"
+msgstr "بسته صحیح انتخاب نشده است"
+
+#: api6/auth.py:601
+msgid "Price is wrong"
+msgstr "قیمت صحیح نمی باشد"
+
+#: api6/auth.py:612
+msgid "bazzar token not right"
+msgstr "توکن بازار صحیح نیست"
+
+#: api6/auth.py:665
+msgid "Increased Credit was Successful."
+msgstr "حساب شما با موفقیت شارژ شد"
+
+#: api6/auth.py:684 api7/auth.py:298
 msgid "User blocked"
 msgstr "کاربر مسدود شده"
 
-#: api6/auth.py:706 api7/auth.py:322
+#: api6/auth.py:703 api7/auth.py:322
 msgid "User unblocked"
 msgstr "رفع انسداد کاربر"
 
-#: api6/auth.py:728
+#: api6/auth.py:725
 msgid "Email sent"
 msgstr "ایمیل ارسال شد."
 
@@ -129,7 +149,7 @@ msgstr "ثبت نظر شما ناموفق بود"
 msgid "Successfully Removed Comment"
 msgstr "نظر با موفقیت حذف گردید"
 
-#: api6/comment.py:89 api6/post.py:281
+#: api6/comment.py:89 api6/post.py:293
 msgid "Access Denied"
 msgstr "عدم وجود دسترسی"
 
@@ -153,40 +173,40 @@ msgstr "مطلب یافت نشد"
 msgid "authentication failed"
 msgstr "هویت سنجی ناموفق بود"
 
-#: api6/post.py:228
+#: api6/post.py:240
 msgid "Successfully Add Report."
 msgstr "گزارش با موفقیت ثبت شد"
 
-#: api6/post.py:231
+#: api6/post.py:243
 msgid "Your Report Already Exists."
 msgstr "قبلا گزارش شده"
 
-#: api6/post.py:274
+#: api6/post.py:286
 msgid "Successfully Updated"
 msgstr "با موفقیت به روزرسانی شد"
 
-#: api6/post.py:307
+#: api6/post.py:319
 msgid "Post Not Found"
 msgstr "مطلب یافت نشد"
 
-#: api6/post.py:311
+#: api6/post.py:323
 msgid "Your article has been sent."
 msgstr "پست شما با موفقیت ارسال شد."
 
-#: api6/post.py:313
+#: api6/post.py:325
 msgid ""
 "Your article has been sent and displayed on the site after confirmation "
 msgstr "پست شما با موفقیت ارسال شد."
 
-#: api6/post.py:454
+#: api6/post.py:472
 msgid "token error"
 msgstr "خطا در توکن"
 
-#: api6/post.py:464
+#: api6/post.py:482
 msgid "post deleted"
 msgstr "مطلب حذف گردید"
 
-#: api6/post.py:469 views_device.py:207
+#: api6/post.py:487 views_device.py:207
 msgid "post not exists or not yours"
 msgstr "مطلب وجود ندارد و یا متعلق به شما نیست"
 
@@ -214,150 +234,158 @@ msgstr "پذیرفته شد."
 msgid "Violation"
 msgstr "تخلف"
 
-#: models.py:263
+#: models.py:273
 msgid "Text"
 msgstr "متن"
 
-#: models.py:264
+#: models.py:274
 msgid "Picture"
 msgstr "تصویر"
 
-#: models.py:273
+#: models.py:283
 msgid "Status"
 msgstr "وضعیت"
 
-#: models.py:279
+#: models.py:290
 msgid "Advertisement"
 msgstr "آگهی"
 
-#: models.py:283
+#: models.py:294
 msgid "Show in Home"
 msgstr "نمایش در صفحه اصلی"
 
-#: models.py:293
+#: models.py:304
 msgid "Category"
 msgstr "دسته بندی"
 
-#: models.py:573
+#: models.py:588
 msgid "Post was not Accepted for Streams"
 msgstr "پست برای استریم مورد قبول نمی باشد"
 
-#: models.py:633
+#: models.py:648
 msgid "Models was Accepted for Stream"
 msgstr "مدل برای استریم مورد قبول می باشد"
 
-#: models.py:868
+#: models.py:883
 msgid "Completed"
 msgstr "تکمیل شده"
 
-#: models.py:869
+#: models.py:884
 msgid "Uncompleted"
 msgstr "تکمیل نشده"
 
-#: models.py:870
+#: models.py:885
 msgid "Fakery"
 msgstr "تقلب"
 
-#: models.py:871
+#: models.py:886
 msgid "validate error"
 msgstr "خطا در توکن"
 
-#: models.py:872
+#: models.py:887
 msgid "not valid"
 msgstr "نامعتبر"
 
-#: models.py:1127 models.py:1147
+#: models.py:1142 models.py:1162
 msgid "like"
 msgstr "پسندیدن"
 
-#: models.py:1128 models.py:1148 models.py:1455
+#: models.py:1143 models.py:1163 models.py:1474
 msgid "comment"
 msgstr "نظر"
 
-#: models.py:1129 models.py:1149
+#: models.py:1144 models.py:1164
 msgid "approve"
 msgstr "تایید"
 
-#: models.py:1130 models.py:1150
+#: models.py:1145 models.py:1165
 msgid "fault"
 msgstr "خطا"
 
-#: models.py:1327
+#: models.py:1346
 msgid "Seeing"
 msgstr "مشاهده"
 
-#: models.py:1424
+#: models.py:1443
 msgid "created"
 msgstr "ایجاد شده"
 
 # full image was create
-#: models.py:1425
+#: models.py:1444
 msgid "full image create"
 msgstr "تصویر کامل ایجاد شد"
 
-#: models.py:1426
+#: models.py:1445
 msgid "error in original image"
 msgstr "خطا در تصویر اصلی"
 
-#: models.py:1454
+#: models.py:1473
 msgid "post"
 msgstr "پست"
 
-#: models.py:1456
+#: models.py:1475
 msgid "user"
 msgstr "کاربر"
 
-#: models.py:1457
+#: models.py:1476
 msgid "comment test"
 msgstr "نظر آزمایشی"
 
-#: models.py:1468
+#: models.py:1487
 msgid "delete"
 msgstr "مطلب حذف گردید"
 
-#: models.py:1469
+#: models.py:1488
 msgid "pending"
 msgstr "منتظر تایید"
 
-#: models.py:1470
+#: models.py:1489
 msgid "bad comment"
 msgstr "نظر مشکل دار"
 
-#: models.py:1471
+#: models.py:1490
 msgid "bad post"
 msgstr "پست مشکل دار"
 
-#: models.py:1472
+#: models.py:1491
 msgid "ban imei"
 msgstr "مسدود شده با imei"
 
-#: models.py:1473
+#: models.py:1492
 msgid "ban by admin"
 msgstr "مسدود شده توسط ادمین"
 
-#: models.py:1474
+#: models.py:1493
 msgid "activated"
 msgstr "فعال شده"
 
-#: templates/pin2/_user_box.html:22 templates/pin2/_user_box.html.py:23
+#: templates/pin2/_user_box.html:25 templates/pin2/_user_box_xs.html:24
 msgid "Follow"
 msgstr "ایجاد ارتباط"
 
-#: templates/pin2/_user_box.html:31
+#: templates/pin2/_user_box.html:27 templates/pin2/_user_box_xs.html:26
+msgid "Unfollow"
+msgstr "ارتباط شما با موفقیت قطع شد"
+
+#: templates/pin2/_user_box.html:30
 msgid "Show Profile"
 msgstr "نمایش پروفایل"
 
-#: templates/pin2/_user_box.html:37
+#: templates/pin2/_user_box.html:36
 msgid "Posts"
 msgstr "مطالب"
 
-#: templates/pin2/_user_box.html:40
+#: templates/pin2/_user_box.html:39 templates/pin2/_user_box_xs.html:35
 msgid "Follower"
 msgstr "دنبال‌کننده"
 
-#: templates/pin2/_user_box.html:43
+#: templates/pin2/_user_box.html:42 templates/pin2/_user_box_xs.html:38
 msgid "Following"
 msgstr "دنبال‌شونده"
+
+#: templates/pin2/_user_box_xs.html:29
+msgid "Show profile"
+msgstr "نمایش پروفایل"
 
 #: templates/pin2/topuser.html:7
 msgid "Top users"
@@ -370,6 +398,160 @@ msgstr "12 کاربر برتر"
 #: templates/pin2/topuser.html:19
 msgid "Other top users"
 msgstr "سایر کاربران برتر"
+
+#: templates/registration/activation_email.txt:2
+msgid "Activate account at"
+msgstr "فعال شدن اکانت در"
+
+#: templates/registration/activation_email.txt:6
+#, python-format
+msgid " Link is valid for %(expiration_days)s days"
+msgstr ""
+
+#: templates/registration/activation_email_subject.txt:1
+msgid "Account activation on"
+msgstr "فعال سازی اکانت"
+
+#: templates/registration/login.html:5
+#: templates/registration/password_reset_complete.html:9
+#: templates/registration/password_reset_confirm.html:8
+msgid "Log in"
+msgstr "ورود"
+
+#: templates/registration/login.html:15
+#: templates/registration/registration_form.html:12
+msgid "Android software download"
+msgstr "دانلود نرم افزار اندروید"
+
+#: templates/registration/login.html:16
+#: templates/registration/registration_form.html:13
+msgid "Download from bazzar"
+msgstr "دانلود از کافه بازار"
+
+#: templates/registration/login.html:17
+#: templates/registration/registration_form.html:14
+msgid "Direct download"
+msgstr "دانلود مستقیم"
+
+#: templates/registration/login.html:27
+msgid "username"
+msgstr "نام کاربری"
+
+#: templates/registration/login.html:33
+msgid "password"
+msgstr "رمز عبور"
+
+#: templates/registration/login.html:38
+#: templates/registration/registration_form.html:35
+msgid "Forgot your password?"
+msgstr "رمز عبور خود را فراموش کرده اید؟"
+
+#: templates/registration/login.html:41
+msgid "If you have not registered ,click here"
+msgstr "اگر عضو نیستید کلیک کنید"
+
+#: templates/registration/login.html:45
+msgid "log in"
+msgstr "ورود"
+
+#: templates/registration/logout.html:5
+msgid "Log out"
+msgstr "خروج"
+
+#: templates/registration/logout.html:8
+msgid "successfully log out site"
+msgstr "با موفقیت از سایت خارج شدید"
+
+#: templates/registration/password_change_done.html:3
+#: templates/registration/password_change_form.html:6
+#: templates/registration/password_change_form.html:15
+msgid "Change password"
+msgstr "تغییر کلمه عبور"
+
+#: templates/registration/password_change_done.html:5
+msgid "Your password has been successfully changed"
+msgstr "رمز عبور شما با موفقیت تغییر کرد"
+
+#: templates/registration/password_reset_complete.html:3
+#: templates/registration/password_reset_form.html:5
+msgid "Reset password"
+msgstr "بازیابی رمز عبور"
+
+#: templates/registration/password_reset_complete.html:7
+msgid "The password was successfully reset"
+msgstr "رمز عبور شما با موفقیت بازیابی شد"
+
+#: templates/registration/password_reset_confirm.html:3
+#: templates/registration/password_reset_done.html:3
+msgid "Reset Password"
+msgstr "بازیابی رمز عبور"
+
+#: templates/registration/password_reset_confirm.html:22
+msgid "Send"
+msgstr "ارسال"
+
+#: templates/registration/password_reset_confirm.html:27
+msgid "Error changing password"
+msgstr "خطا در تغییر رمز عبور"
+
+#: templates/registration/password_reset_done.html:6
+msgid ""
+"New password has been created.We have send instruction into e-mail addresses "
+"that you entered for setting your passwords.you get soon."
+msgstr ""
+
+#: templates/registration/password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+
+#: templates/registration/password_reset_email.html:4
+#: templates/registration/password_reset_email.txt:3
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: templates/registration/password_reset_email.html:8
+#: templates/registration/password_reset_email.txt:7
+msgid "Your username, in case you've forgotten:"
+msgstr ""
+
+#: templates/registration/password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: templates/registration/password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: templates/registration/password_reset_form.html:10
+#: templates/registration/password_reset_form.html:26
+msgid "Generate new password"
+msgstr "ایجاد رمز عبور جدید"
+
+#: templates/registration/password_reset_form.html:15
+msgid ""
+"If you have forgotten your password, enter your email to send you a new "
+"password"
+msgstr ""
+
+#: templates/registration/registration_complete.html:7
+msgid "Register"
+msgstr "عضویت"
+
+#: templates/registration/registration_complete.html:12
+msgid "You have successfully registered in the site"
+msgstr "شما با موفقیت ثبت نام کردید"
+
+#: templates/registration/registration_form.html:38
+msgid "If you have registered ,log in"
+msgstr "اگر ثبت نام کرده اید وارد شوید"
+
+#: templates/registration/registration_form.html:42
+msgid "sign up"
+msgstr "عضویت"
 
 #: views2/dashboard/api/tools.py:178
 msgid "Enter Timestamp"
@@ -401,7 +583,7 @@ msgstr "شما اجازه دیدن این صفحه را ندارید"
 msgid "Comment removed"
 msgstr "نظر حذف شد"
 
-#: views_admin.py:196 views_admin.py:208
+#: views_admin.py:196 views_admin.py:208 views_admin.py:220
 msgid "error in authentication"
 msgstr "خطا در احراز هویت"
 
@@ -444,7 +626,7 @@ msgid "comment not found"
 msgstr "نظر یافت نشد"
 
 #: views_device.py:209 views_device.py:232 views_device.py:288
-#: views_device.py:321
+#: views_device.py:326
 msgid "bad request"
 msgstr "خطا در درخواست"
 
@@ -472,19 +654,19 @@ msgstr "کاربر وجود ندارد"
 msgid "bad request post"
 msgstr "خطا در درخواست پست"
 
-#: views_device.py:311
+#: views_device.py:312
 msgid "successfully upload post"
 msgstr "مطلب با موفقیت ارسال شد"
 
-#: views_device.py:314
+#: views_device.py:316
 msgid "error"
 msgstr "خطا"
 
-#: views_device.py:316
+#: views_device.py:319
 msgid "bad request in form"
 msgstr "خطا در درخواست"
 
-#: views_device.py:319
+#: views_device.py:323
 msgid "error in form validation"
 msgstr "خطا در اعتبار سنجی فرم"
 
@@ -563,6 +745,3 @@ msgstr "کاربر با موفقیت رفع انسداد شد"
 #: views_user.py:789
 msgid "The data entered is not valid"
 msgstr "داده های وارد شده معتبر نیست"
-
-#~ msgid "Unfollow"
-#~ msgstr "ارتباط شما با موفقیت قطع شد"

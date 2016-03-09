@@ -1,6 +1,9 @@
 {% extends "pin2/flat.base.box.html" %}
-{% load widget_tweaks %}
 {% load i18n %}
+{% load widget_tweaks %}
+
+{% block title %} {% trans "Log in" %} {% endblock%}
+
 {% block content %}
 
 <div class="login wis_form box ofh mato50">
@@ -9,42 +12,40 @@
 			<img src="{{MEDIA_URL}}v2/images/new_logo.png" alt="">
 
 			<div class="download_app mato20 mabo50">
-				<p>{%trans "Android software download" %}</p>
+				<p>{%trans "Android software download"%}</p>
 				<a class="wis_btn green" href="http://cafebazaar.ir/app/ir.mohsennavabi.wisgoon/?l=fa">{%trans "Download from bazzar"%}</a>
 				<a class="wis_btn orange" href="http://static.wisgoon.com/media/app/latest.apk">{%trans "Direct download"%}</a>
 
 			</div>
 		</div>
 	</div>
-
 	<div class="form_box">
-		<form method="post" class="form">
+		<form method="post" class="form" >
 			{% csrf_token %}
-			{% for f in form %}
 			<div class="form-group with_icon">
-				<label for="{{f.id}}" class="control-label">{{f.label}}</label>
-				<div class="">
-					{% render_field f class+="form-control tale wis_input" placeholder=f.label %}
-					<span id="helpBlock" class="help-block">{{f.errors.0}}</span>
-				</div>
-				<span class="icon {{f.name}}"></span>
+				<label>{{form.username.label}}</label>
+				{% trans "username" as username %}
+				{% render_field form.username class+="form-control ltr wis_input" placeholder=username %}
+				<span class="icon username"></span>
 			</div>
-			{% endfor %}
-
+			<div class="form-group with_icon">
+				<label>{{form.password.label}}</label>
+				{% trans "password" as password %}
+				{% render_field form.password class+="form-control ltr wis_input" placeholder=password %}
+				<span class="icon password"></span>
+			</div>
 			<p>
 				<a href="/accounts/password/reset/">{%trans "Forgot your password?"%}</a>
 			</p>
 			<p>
-				<a href="/accounts/login/">{%trans "If you have registered ,log in"%}</a>
+				<a href="/accounts/register/">{%trans "If you have not registered ,click here"%}</a>
 			</p>
 			
 			<div class="tace">
-				<input type="submit" value='{%trans "completed sign up"%}' class="wis_btn orange mato50 mabo50 w50">
+				<input type="submit" value='{%trans "log in"%}' class="wis_btn orange mato50 mabo50 w50">
 			</div>
 		</form>
 	</div>
-
-	
 	<div class="clear"></div>
 
 </div>
