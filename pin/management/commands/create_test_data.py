@@ -37,10 +37,10 @@ class Command(BaseCommand):
         create_post(self)
 
         # Create Like an Comments
-        create_like_comment(self)
+        # create_like_comment(self)
 
         # Create Follower
-        create_test_follow(self)
+        # create_test_follow(self)
 
 
 def create_post(self):
@@ -66,18 +66,10 @@ def create_post(self):
                 cat_id = 1
             else:
                 cat_id += 1
-            print url
-            data = {'category': cat_id, 'text': text}
+
+            data = {'category': cat_id, 'description': text}
             result = requests.post(url, files=files, data=data)
             print result.content
-            # post = Post()
-            # post.image = "v2/test_data/images/%s" % (filename)
-            # post.user_id = user_id
-            # post.timestamp = time.time()
-            # post.text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
-            # post.category_id = cat_id
-            # post.save()
-            # self.stdout.write("post %s was created" % str(index))
 
         except Exception as e:
             self.stdout.write(str(e))
@@ -88,20 +80,23 @@ def create_post(self):
 
 def create_like_comment(self):
     posts = Post.objects.all()
+    cnt_user = User.objects.count()
     for index, post in enumerate(posts):
 
         try:
             like_range = random.randint(0, 20)
+
             for a in range(like_range):
                 text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
-                user_id = random.randint(1, 200)
+                user_id = random.randint(1, cnt_user)
                 LikesRedis(post_id=post.id)\
                     .like_or_dislike(user_id=user_id, post_owner=post.user_id)
+
             self.stdout.write("add %s like for post %s" % (str(like_range), str(post.id)))
 
             comment_range = random.randint(5, 20)
             for i in range(comment_range):
-                user_id = random.randint(1, 200)
+                user_id = random.randint(1, cnt_user)
                 text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
                 comment = Comments()
                 comment.object_pk_id = post.id
@@ -149,22 +144,26 @@ def create_category(self):
 
 
 def create_users(self):
+    cnt_post = int(raw_input("How many users you want to add?"))
+
     users_list = []
     media_url = settings.MEDIA_ROOT
     path = "%s/v2/test_data/auth_user.csv" % (media_url)
+
     try:
         f = open(path, 'rb')
         reader = csv.reader(f)
         for row in reader:
-            users_list.append([row[1], 1, row[4]])
+            # row[1] = username, row[4] = email, 1 = password
+            users_list.append([row[1], row[4], 1])
         f.close()
     except Exception as e:
         self.stdout.write(str(e))
         raise
 
-    for user in users_list:
+    for user in users_list[:cnt_post]:
         try:
-            user = User.objects.create_user(user[0], user[1], user[2])
+            user = User.objects.create_user(user[0], user[1], str(user[2]))
             ApiKey.objects.get_or_create(user=user)
         except Exception as e:
             self.stdout.write(str(e))
@@ -174,13 +173,14 @@ def create_users(self):
 
 def create_test_follow(self):
     # cnt_follow = raw_input("How many follow you want to add?")
-    for i in range(200):
+    cnt_user = User.objects.count()
+    for i in range(cnt_user):
         loop_count = random.randint(5, 30)
 
         for user in range(loop_count):
             try:
                 Follow.objects.get_or_create(follower_id=i,
-                                             following_id=random.randint(1, 200))
+                                             following_id=random.randint(1, cnt_user))
                 self.stdout.write("Add %s Follow for user %s" % (str(user), str(i)))
             except Exception as e:
                 self.stdout.write(str(e))
@@ -200,7 +200,7 @@ def create_profile(self):
     except Exception as e:
         self.stdout.write(str(e))
 
-    user_list = User.objects.order_by('-id')[:200]
+    user_list = User.objects.order_by('-id')
     for index, user in enumerate(user_list):
         try:
             avatar_path = "v2/test_data/images/avatar/post_%s.jpg" % str(random.randint(1, 100))
