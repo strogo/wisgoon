@@ -7,9 +7,9 @@ DEBUG = True
 TUNING_CACHE = True
 THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-DISPLAY_AD = True
+DISPLAY_AD = False
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
-STATIC_VERSION = '5.8.8'
+STATIC_VERSION = '5.8.15'
 
 SITE_ROOT = os.path.dirname(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -419,5 +419,6 @@ CELERY_ROUTES.update({
 AVATAR_CACHE_KEY = "dad:avatar:{}"
 
 ES_HOST = "localhost"
+INFLUX_HOST = "localhost"
 
 STATIC_CDN = MEDIA_URL

@@ -4,6 +4,7 @@ from settings_local import *
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = False
+DISPLAY_AD = True
 
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
@@ -41,7 +42,7 @@ DATABASES = {
 CACHES = {
     'default': dict(
         BACKEND='django.core.cache.backends.memcached.MemcachedCache',
-        LOCATION=['79.127.125.99:11211'],
+        LOCATION=['79.127.125.98:11211'],
     ),
     'cache_layer': dict(
         BACKEND='django.core.cache.backends.memcached.MemcachedCache',
@@ -102,6 +103,7 @@ CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.99//'
 NEO4J_DATABASE = "http://79.127.125.98:7474/db/data/"
 
 ES_HOST = "79.127.125.98"
+INFLUX_HOST = "79.127.125.99"
 
 REDIS_DB_4 = '79.127.125.99'
 REDIS_DB_3 = '79.127.125.98'

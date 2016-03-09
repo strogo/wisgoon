@@ -15,6 +15,7 @@
 
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 <meta name="author" content="vchakoshy@gmail.com">
+<meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi" />
 <meta name="samandehi-secure-footprint" content="samandehi-secure-footprint:4c6b6e53726c6e365a75745472646b33684f75624953516e4951586e4d6d357a3841596a736548784c50593d">
 <meta name="samandehi" content="964726045"/>
 <meta name="google-site-verification" content="g7UVzKrh_t-OXNCc9M6SDcKP_tpeFBG4JplG0ZJflt8" />
@@ -27,8 +28,29 @@
 <link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/font-awesome-animation.min.css">
 <link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/alertify.min.css">
 <link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/webui.min.css">
-<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/fonts.css?ver={{STATIC_VERSION}}">
+<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/fonts.css">
 <link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/style.css?ver={{STATIC_VERSION}}">
+
+{% if request.user_agent.is_mobile %}
+<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/style_mobile.css?ver={{STATIC_VERSION}}">
+{% endif %}
+
 <link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/blog-style.css?ver={{STATIC_VERSION}}">
+
+{% if request.user_agent.is_mobile %}
+<script type="text/javascript">
+	var mobile_agent = true;
+	var mobile_w = window.screen.width;
+	if (mobile_w < 319) {
+		if (mobile_w < 236) {
+			var w_m = mobile_w - 20;
+		}else{
+			var w_m = 236;
+		}
+	}else{
+		var w_m = (mobile_w / 2) - 35;
+	}
+</script>
+{% endif %}
 
 {% block css %}{% endblock css %}

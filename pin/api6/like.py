@@ -71,6 +71,7 @@ def like_item(request):
 
 def post_likers(request, item_id):
     data = {}
+    current_user = None
     data['meta'] = {'limit': 20,
                     'next': '',
                     'total_count': LikesRedis(post_id=item_id).cntlike()}
@@ -91,19 +92,19 @@ def post_likers(request, item_id):
 
     if before:
         likers = LikesRedis(post_id=post.id)\
-            .get_likes(offset=get_int(before), limit=20, as_user_object=True)
+            .get_likes(offset=get_int(before), limit=20, as_user_object=False)
     else:
         likers = LikesRedis(post_id=post.id)\
-            .get_likes(offset=0, limit=20, as_user_object=True)
+            .get_likes(offset=0, limit=20, as_user_object=False)
 
-    try:
-        for user in likers:
+    for user in likers:
+        try:
             u = {
-                'user': get_simple_user_object(user.id, current_user)
+                'user': get_simple_user_object(int(user), current_user)
             }
             likers_list.append(u)
-    except Exception as e:
-        print e
+        except Exception as e:
+            print e
 
     data['objects'] = likers_list
     if data['objects']:

@@ -1,3 +1,4 @@
+var mobile_agent = false;
 function alert_show(msg, status) {
     $('.alert_show').remove();
     $('body').append('<div class="alert alert_show ' + status + '">' + msg + '</div>');
@@ -37,22 +38,143 @@ function en(no){
     return n;
 }
 
+function ms_reload(){
+    if (mobile_agent === true) {
+        var rat = w_m / 236;
+        for (var i = $('.new_items').length - 1; i >= 0; i--) {
+            var p = $('.new_items .pin-item-link img')[i];
+            $(p).width(236*rat);
+            $(p).height($(p).height()*rat);
+        };
+        $('.new_items, .new_items .img-content').css('width', w_m);
+        $('.new_items').removeClass('new_items');
+        feedobj.masonry('reload');
+    };
+}
+
+function cEl(tag, op){
+    if(typeof(tag) === 'undefined' && tag === ""){
+        t = 'div';
+    }else{
+        t = tag;
+    }
+    var el = document.createElement(t);
+    if(typeof(op) !== 'undefined'){
+        for(var key in op) {
+            if (key === "text") {
+                el.appendChild(document.createTextNode(op["text"]));
+            }else{
+                el.setAttribute(key, op[key]);
+            }
+        }
+    }
+    return el;
+}
+
+function liker_html(user, auth_user){
+    user = user.user;
+    var row = cEl('div', {"class": "liker_row"});
+    var avatar = cEl('div', {"class": "avatar"});
+    var avatar_a = cEl('a', {'href': user.permalink});
+    var avatar_img = cEl('img', {'src': user.avatar});
+
+    avatar_a.appendChild(avatar_img);
+    avatar.appendChild(avatar_a);
+    row.appendChild(avatar);
+
+    var username = cEl("div", {'class': 'username'});
+    var username_a = cEl("a", {
+        'href': user.permalink,
+        'data-user-id': user.id,
+        'text': user.username
+    });
+
+    username.appendChild(username_a);
+    row.appendChild(username);
+
+    var follow = cEl("div", {'class': 'follow_status'});
+    if (user.block_by_user) {
+        cl = 'block';
+    }else{
+        if (user.follow_by_user) {
+            cl = 'follow';
+            href = '/pin/follow/'+user.id+'/0/';
+        }else{
+            cl = 'no_follow';
+            href = '/pin/follow/'+user.id+'/1/';
+        }
+    }
+    var follow_a = cEl("a", {
+        'class': cl + ' follow_btn',
+        'href': href,
+        'data-user-id': user.id,
+    });
+
+    var follow_i = cEl("i");
+
+    follow_a.appendChild(follow_i);
+    follow.appendChild(follow_a);
+    if (auth_user) {
+        row.appendChild(follow);
+    };
+
+    var clear = cEl("div", {'class': 'clear'});
+    row.appendChild(clear);
+
+    return row;
+}
+
+function sticky_sidebar(s){
+    if ($(window).width() > 768) {
+        if (typeof(s) == "undefined") {
+            s = 2000;
+        };
+        setTimeout(function(){
+            pp = $('#related_posts').offset().top;
+            pr = pp - $('.post-sidebar').height();
+            $(".post-page .post-sidebar").scrollToFixed({
+                marginTop:15, 
+                limit:  pr
+            });
+        }, s);
+    };
+}
+
 var feedobj = $('#feed');
 var loadingobj ;
 var a_url = a_url || "";
 var extend_query = extend_query || "";
 var disable_masonry = disable_masonry || 0 ;
-if (disable_masonry==0){
-    feedobj.masonry({
-        itemSelector : '.feed-item',
-        isRTL: true,
-        isResizeBound: false,
-        isAnimated: false,
-        isFitWidth: true
+// if (window.screen.width > 550) {
+//     var cw = 236,
+// }else{
+//     var cw = 180,
+// }
+
+$(window).on("load", function() {
+    $(document).ready(function() {
+        if (mobile_agent === true) {
+            gutterWidth = 10;
+        }else{
+            gutterWidth = 0;
+        }
+        if (disable_masonry==0){
+            feedobj.masonry({
+                itemSelector : '.feed-item',
+                isRTL: true,
+                isResizeBound: false,
+                isAnimated: false,
+                gutterWidth: gutterWidth,
+                isFitWidth: true
+            });
+        }
+        ms_reload();
+        $('.gotoapp').attr('href', window.location.href);
     });
-}
+});
 
 var next_pref = next_pref || '?older=';
+var start_loading;
 
 function load_posts(page) {
     $('.footer-loading-box').show(0);
@@ -75,8 +197,9 @@ function load_posts(page) {
     })
     .always(function(d) {
         $('.footer-loading-box').hide(0);
+        ms_reload();
     });
-    feedobj.masonry('reload');
+    // feedobj.masonry('reload');
 }
 
 
@@ -215,6 +338,38 @@ function marker(t){
 
 
 $(function () {
+
+    $('body').on('click', '.promote_content .nav.nav-tabs li', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        i = t.find('a').attr('data-val');
+        $('.wis_pro_content > div').hide();
+        $('[data-val-pro="'+i+'"]').show();
+        $('#wis_pro_type').val(i);
+    });
+
+    $('body').on('click', '.pro_btns li', function(event) {
+        event.preventDefault();
+        var t = $(this);
+        i = t.find('a').attr('data-val');
+        $('.wis_pro_content .wis_pro_type').hide();
+        $('.wis_pro_content .type_'+i).show();
+        $('#wis_pro_type').val(i);
+    });
+
+    $('body').on('click', '#pro_form .promote_btn', function(event) {
+        event.preventDefault();
+        f = $('#pro_form');
+        c = parseInt($('.promote_content').data('current'));
+        if (c < 500) {
+            alertify.error('شما ویس کافی برای ویژه کردن این پست ندارید.<br> ابتدا حساب خود را شارژ کنید');
+            return false;
+        }else{
+            f.submit();
+        }
+    });
+
+
     $('body').on('click', '.upload_img_btn', function(event) {
         event.preventDefault();
         $('#id_avatar').click();
@@ -276,38 +431,6 @@ $(function () {
         return false;
     });
 
-
-    $('body').on('click', '.ajax-follow', function(event) {
-        event.preventDefault();
-        var t = $(this);
-        var href = t.attr('href');
-
-        $.ajax({
-            url: href,
-            async: false
-        })
-        .done(function(response) {
-            if (response.status) {
-                alertify.success(response.message);
-                t.attr('href', '/pin/follow/' + t.data('user-id') + '/0/');
-                t.html('قطع ارتباط <i class="fa fa-times"></i>').removeClass('green').addClass('red');
-            } else {
-                alertify.success(response.message);
-                t.attr('href', '/pin/follow/' + t.data('user-id') + '/1/');
-                t.html('ایجاد دوستی  <i class="fa fa-plus"></i>').removeClass('red').addClass('green');
-            }
-            if (t.parents('.follow_box')) {
-                t.parents('.follow_box').find('.follower_count strong').text(pn(response.count));
-            };
-        })
-        .fail(function(response) {
-            console.log("error");
-        })
-        .always(function() {
-            console.log("complete");
-        });
-    });
-
     //
     $('[data-toggle="tooltip"]').tooltip();
     $('.menu-box ul li.parent').attr('data-content', '');
@@ -345,11 +468,13 @@ $(function () {
     $('body').on('mouseleave', '#wis_navbar', function(event) {
         $(".marker").hide();
     });
+    
     $('body').on('mouseenter', '#wis_navbar > ul > li', function(event) {
         event.preventDefault();
         var t = $(this);
         marker(t);
     });
+
     $('body').on('click', '#wis_navbar > ul > li', function(event) {
         event.preventDefault();
         var t = $(this);

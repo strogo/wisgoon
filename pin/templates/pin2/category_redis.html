@@ -38,8 +38,9 @@ var next_pref = '?pid=';
 <div class="clear"></div>
 
 		<div class="category-title alert col-md-12">
-				<h1 class="pull-right">دسته بندی: <strong>{{cur_cat.title}}</strong></h1>
-				<a class="label label-danger" style="" href="{% url "pin-category-top" cur_cat.id %}">برترین های این دسته</a>
+				<h1 class="pull-right"><small>دسته بندی:</small> <strong>{{cur_cat.title}}</strong></h1>
+				<a class="wis_btn" style="" href="{% url "pin-category-top" cur_cat.id %}">برترین های این دسته</a>
+				<div class="clear"></div>
 		</div>
 	</div>
 	<div class="clearfix"></div>

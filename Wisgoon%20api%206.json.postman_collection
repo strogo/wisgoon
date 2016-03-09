@@ -32,7 +32,8 @@
 				"f8130bdb-3e5a-69ef-efd9-82621418562f",
 				"2565ffda-a1fa-5898-76ad-67ec2a774022",
 				"a9a3d16d-ab1d-b941-e633-cee10f99c2a8",
-				"bcc2b623-575c-8c71-7100-7a3a4e676179"
+				"bcc2b623-575c-8c71-7100-7a3a4e676179",
+				"ac1789ae-d1b3-af93-1cdb-6c636c7acd6f"
 			],
 			"owner": 0
 		},
@@ -1075,6 +1076,46 @@
 			"description": "",
 			"descriptionFormat": "html",
 			"time": 1456256156724,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "2e5113f4-5796-abf1-dfa6-aca170b51b44"
+		},
+		{
+			"id": "ac1789ae-d1b3-af93-1cdb-6c636c7acd6f",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/user/inc/credit/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "64faee03-3311-d8c9-2a6a-7130ce4b455d",
+			"data": [
+				{
+					"key": "price",
+					"value": "650",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "baz_token",
+					"value": "8BRRputHKV9r4gzD",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "package",
+					"value": "wis_500",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "inc credit",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1456757867694,
 			"version": 2,
 			"responses": [],
 			"tests": "",

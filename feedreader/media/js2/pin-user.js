@@ -27,6 +27,10 @@ function add_filter_box(){
     Caman("#concentrate canvas", function(){this.concentrate();this.render();});
 }
 
+$(function() {
+
+});
+
 
 $('body').on('click', '.upload_img_btn', function(event) {
     event.preventDefault();
@@ -148,11 +152,23 @@ $('body').on('click', '#pin_form .sub_btn', function(event) {
 $('body').on('click', '.del-comment', function(){
     var obj = $(this);
     var row_name = "comment_row_" + $(obj).attr("rel");
+    h = $('#main').height();
+    bh = $("#"+row_name).height();
     var req_url = obj.attr('href');
     $.ajax({
         url: req_url,
         success: function(resp) {
             if (resp.status){
+                $('#main').css('height', h - bh);
+                // pp = $('#related_posts').offset().top;
+                // pr = pp - $('.post-sidebar').height();
+                // $(".post-page .post-sidebar").trigger('detach.ScrollToFixed');
+                // $(".post-page .post-sidebar").scrollToFixed({
+                //     marginTop:15, 
+                //     limit:  pr
+                // });
+                $(window).resize();
+                sticky_sidebar(0);
                 $("#"+row_name).slideUp('fast');
             }
             alertify.success(resp.message);
@@ -347,9 +363,11 @@ $('body').on('click', '.btn_like',function(){
         if (obj.parent().hasClass('user-liked')) {
             $('.post_item_inner').find('a.btn_like').parent().removeClass('user-liked');
             $('.liker_avatars').find('.my_avatar').remove();
+            $('.liker_avatars .lik').last().show();
             $('.post_item_inner').find('a.btn_like').children('span.count').text(pn(n - 1));
         }else{
             $('.post_item_inner').find('a.btn_like').parent().addClass('user-liked');
+            $('.liker_avatars .lik').last().hide();
             $('.liker_avatars').prepend('<a href="'+profile_url+'" class="my_avatar"><img src="'+profile_avatar+'" /></a>');
             $('.post_item_inner').find('a.btn_like').children('span.count').text(pn(n + 1));
         }
@@ -426,6 +444,36 @@ $('body').on('click', '.block_btn', function(event) {
     });
     return false;
     
+});
+
+
+$('body').on('click', '.ajax-follow', function(event) {
+    // event.preventDefault();
+    var t = $(this);
+    var href = t.attr('href');
+
+    $.ajax({
+        url: href,
+        async: false
+    })
+    .done(function(response) {
+        if (response.status) {
+            alertify.success(response.message);
+            t.attr('href', '/pin/follow/' + t.data('user-id') + '/0/');
+            t.html('قطع ارتباط <i class="fa fa-times"></i>').removeClass('green').addClass('red');
+        } else {
+            alertify.success(response.message);
+            t.attr('href', '/pin/follow/' + t.data('user-id') + '/1/');
+            t.html('ایجاد دوستی  <i class="fa fa-plus"></i>').removeClass('red').addClass('green');
+        }
+        if (t.parents('.follow_box')) {
+            t.parents('.follow_box').find('.follower_count strong').text(pn(response.count));
+        };
+    })
+    .fail(function(response) {
+        alertify.error(response.message);
+    });
+    return false;
 });
 
 $('#fromImageModal, #fromUrlModal').on('show.bs.modal', function (e) {

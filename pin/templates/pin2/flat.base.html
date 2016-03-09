@@ -18,7 +18,10 @@
 
 	{% include "base/analytics.html"%}
 </head>
-<body>
+<body class="{{page}} {% if request.user_agent.is_mobile %}mobile_page{% endif %}">
+	{% if request.user_agent.is_mobile %}
+	{% include "pin2/includes/_sticky_download.html" %}
+	{% endif %}
 
 	{% include "pin2/includes/_top_mob_download.html" %}
 
@@ -26,7 +29,7 @@
 	{% include "pin2/nav.html" %}
 	{% include "pin2/cats.html" %}
 
-	{% if not DEBUG %}
+	{% if DISPLAY_AD and page != 'rp' %}
 	<div class="tabliq-block" style="text-align:center">
 		{% include "base/tabliq.html" %}
 	</div>

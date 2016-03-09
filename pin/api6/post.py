@@ -11,7 +11,7 @@ from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json
-from pin.models import Post, Report, Ad
+from pin.models import Post, Report, Ad, Block
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
 
@@ -19,6 +19,7 @@ from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
 def latest(request):
     cur_user = None
     last_item = None
+    hot_post = None
     data = {}
     data['meta'] = {'limit': 20,
                     'next': '',
@@ -35,6 +36,17 @@ def latest(request):
 
     pl = Post.latest(pid=before)
     posts = get_list_post(pl, from_model=settings.STREAM_LATEST)
+
+    if cur_user:
+        viewer_id = str(cur_user)
+    else:
+        viewer_id = str(get_user_ip(request))
+
+    ad = Ad.get_ad(user_id=viewer_id)
+    if ad:
+        hot_post = int(ad.post_id)
+    if hot_post:
+        posts = list([hot_post]) + list(posts)
 
     data['objects'] = get_objects_list(posts,
                                        cur_user_id=cur_user,
@@ -325,11 +337,17 @@ def user_post(request, user_id):
         .filter(user=user_id).order_by('-id')[before:before + 20]
 
     token = request.GET.get('token', False)
-    current_user_id = None
+    current_user = None
     if token:
-        current_user_id = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.id_from_token(token=token)
 
-    data['objects'] = get_objects_list(user_posts, current_user_id)
+    if current_user:
+        if Block.objects.filter(user_id=user_id, blocked_id=current_user).count():
+            return return_not_found({
+                'message': _('This User Has Blocked You')
+            })
+
+    data['objects'] = get_objects_list(user_posts, current_user)
 
     last_item = before + 20
     data['meta']['next'] = get_next_url(url_name='api-6-post-user',
@@ -395,7 +413,7 @@ def promoted(request):
     data['objects'] = objects
 
     last_item = before + 20
-    data['meta']['next'] = get_next_url(url_name='api-6-post-user',
+    data['meta']['next'] = get_next_url(url_name='api-6-post-promoted',
                                         before=last_item
                                         )
     return return_json_data(data)
@@ -474,10 +492,6 @@ def delete(request, item_id):
 
 def promotion_prices(request):
     data = {
-        "meta": {'limit': '',
-                 'next': '',
-                 'total_count': ''
-                 },
         "objects": [
             {
                 "price": 500,

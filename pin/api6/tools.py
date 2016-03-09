@@ -111,7 +111,7 @@ def save_post(request, user):
             model.timestamp = time()
             model.text = form.cleaned_data['description']
             model.category_id = form.cleaned_data['category']
-            model.device = 2
+            model.device = Post.DEVICE_MOBILE_6
             model.save()
             status = True
             msg = _("Successfully Send Post")
@@ -138,9 +138,9 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
     user_info = {}
     user_info['id'] = current_user
     if avatar == 64:
-        user_info['avatar'] = media_abs_url(get_avatar(current_user, size=64))
+        user_info['avatar'] = media_abs_url(get_avatar(current_user, size=64), check_photos=True)
     else:
-        user_info['avatar'] = media_abs_url(get_avatar(current_user))
+        user_info['avatar'] = media_abs_url(get_avatar(current_user), check_photos=True)
     user_info['username'] = UserDataCache.get_user_name(current_user)
     user_info['related'] = {}
     user_info['follow_by_user'] = False
@@ -508,11 +508,10 @@ def comment_objects_list(comments):
 
 def ad_item_json(ad):
     ad_dict = {}
-    ad_dict['post'] = post_item_json(ad.post)
+    ad_dict['post'] = post_item_json(ad.post.id)
     ad_dict['cnt_view'] = ad.get_cnt_view()
-    ad_dict['user'] = ad.user.id
+    ad_dict['user'] = get_simple_user_object(ad.user.id)
     ad_dict['ended'] = ad.ended
-    ad_dict['owner'] = ad.owner.id
     ad_dict['ads_type'] = ad.ads_type
     ad_dict['start'] = str(ad.start)
     ad_dict['end'] = str(ad.end)

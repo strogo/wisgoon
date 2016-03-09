@@ -4,7 +4,7 @@ from pin.tasks import tick
 
 
 def send_tick(doc):
-    return
+    # return
     # pass
     try:
         if settings.DEBUG:
@@ -17,42 +17,55 @@ def send_tick(doc):
 
 def like_act(post, actor, user_ip):
     t_date = timezone.now().isoformat()
-    doc = {
-        "@timestamp": t_date,
-        "action_type": "like",
-        "type_number": 1,
-        "ip": user_ip,
-        "actor": actor,
-        "@message": "like post {}".format(post),
-    }
 
-    send_tick(doc)
+    json_body = [
+        {
+            "measurement": "actions",
+            "tags": {
+                "type": "like",
+            },
+            "time": t_date,
+            "fields": {
+                "value": 1
+            }
+        }
+    ]
+
+    send_tick(json_body)
 
 
-def comment_act(post, actor, user_ip):
+def comment_act(post, actor, user_ip="127.0.0.1"):
     t_date = timezone.now().isoformat()
-    doc = {
-        "@timestamp": t_date,
-        "action_type": "comment",
-        "type_number": 2,
-        "ip": user_ip,
-        "actor": actor,
-        "@message": "comment post {}".format(post),
-    }
+    json_body = [
+        {
+            "measurement": "actions",
+            "tags": {
+                "type": "comment",
+            },
+            "time": t_date,
+            "fields": {
+                "value": 1
+            }
+        }
+    ]
 
-    send_tick(doc)
+    send_tick(json_body)
 
 
 def post_act(post, actor, category, user_ip="127.0.0.1"):
     t_date = timezone.now().isoformat()
-    doc = {
-        "@timestamp": t_date,
-        "action_type": "post",
-        "type_number": 3,
-        "post_category": category,
-        "ip": user_ip,
-        "actor": actor,
-        "@message": "send post {}".format(post),
-    }
+    json_body = [
+        {
+            "measurement": "actions",
+            "tags": {
+                "type": "post",
+                "post_category": category,
+            },
+            "time": t_date,
+            "fields": {
+                "value": 1
+            }
+        }
+    ]
 
-    send_tick(doc)
+    send_tick(json_body)

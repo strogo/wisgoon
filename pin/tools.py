@@ -14,6 +14,7 @@ import datetime
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.http import Http404
 # from django.db.models import F
 
 from tastypie.models import ApiKey
@@ -284,11 +285,27 @@ class AuthCache(MyCache):
         try:
             api = ApiKey.objects.only("user").get(key=token)
             u = User.objects.only("id", "is_active").get(id=api.user_id)
+            if not u.is_active:
+                return None
             return u
         except ApiKey.DoesNotExist:
             return None
 
         return None
+
+    @classmethod
+    def user_from_name(cls, username):
+        ct_str = "tuin_%s" % str(username)
+        c_token = cache.get(ct_str)
+        if c_token:
+            return c_token
+        try:
+            user = User.objects.only('id').get(username=username)
+            cache.set(ct_str, user, 86400)
+        except User.DoesNotExist:
+            raise Http404
+
+        return user
 
 
 def check_block(user_id, blocked_id):
@@ -395,6 +412,32 @@ PACKS_WITH_AMOUNT = {
 
 
 def get_new_access_token():
+    new_access_token = cache.get("new_access_token")
+    if new_access_token:
+        print "get access token from cache"
+        return new_access_token
+    print "refresh_token"
+    import requests
+    import ast
+    d = {
+        'grant_type': 'refresh_token',
+        'client_secret': 'WxGrwBJUEG5nZQASZzc0Y0C3G1FAtdtB6ZCMrzLpWBVu1hdG4PE1i6pnZ3TN',
+        'client_id': 'yiV49s0y9TqSFF7NEsorfytBTyeBdvEaHGnyn8xC',
+        'refresh_token': 'z8F0OyByBlgLK6pHKG4j6YxMbyoJLi'
+    }
+
+    r = requests.post("https://pardakht.cafebazaar.ir/devapi/v2/auth/token/",
+                      data=d)
+    if r:
+        new_data = ast.literal_eval(r.text)
+        new_access_token = new_data['access_token']
+        cache.set("new_access_token", new_access_token, 3600)
+        return new_access_token
+
+    return None
+
+
+def get_new_access_token2():
     new_access_token = cache.get("new_access_token")
     if new_access_token:
         print "get access token from cache"

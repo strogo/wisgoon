@@ -1,5 +1,6 @@
 # coding: utf-8
 from time import mktime, time
+import json
 import datetime
 import operator
 import itertools
@@ -15,11 +16,13 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from pin.models import Post, Follow, Likes, Category, Comments, Report,\
-    Results
+    Results, Block
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
-    get_user_ip, get_delta_timestamp
+    get_user_ip, get_delta_timestamp, AuthCache
 
 from pin.context_processors import is_police
+
+from django_user_agents.utils import get_user_agent
 
 from pin.model_mongo import Ads
 from pin.models_redis import LikesRedis
@@ -73,6 +76,7 @@ def home(request):
         if arp:
             response_data = render(request, 'pin2/_items_2_v6.html', {
                 'latest_items': arp,
+                'cls': 'new_items',
                 'next_url': next_url,
             })
         else:
@@ -80,6 +84,7 @@ def home(request):
     else:
         response_data = render(request, 'pin2/home_v6.html', {
             'latest_items': arp,
+            'cls': 'new_items',
             'next_url': next_url,
             'page': 'home'
         })
@@ -340,6 +345,9 @@ def absuser_following(request, user_namefg):
     profile, created = Profile.objects.get_or_create(user_id=user_id)
     older = request.POST.get('older', False)
 
+    if Block.objects.filter(user_id=user.id, blocked_id=request.user.id):
+        raise Http404
+
     if older:
         following = Follow.objects\
             .filter(follower_id=user_id, id__lt=older).order_by('-id')[:16]
@@ -355,13 +363,21 @@ def absuser_following(request, user_namefg):
         else:
             return HttpResponse(0)
     else:
-        follow_status = Follow.objects\
-            .filter(follower=request.user.id, following=user_id).count()
+        if request.user.id:
+            follow_status = Follow.objects.filter(follower=request.user.id,
+                                                  following=user.id).exists()
+            following_status = Follow.objects.filter(following=request.user.id,
+                                                     follower=user.id).exists()
+        else:
+            follow_status = 0
+            following_status = 0
+
         return render(request, 'pin2/user_following.html', {
             'user_items': following,
             'page': 'user_following',
             'profile': profile,
             'follow_status': follow_status,
+            'following_status': following_status,
             'user_id': user_id,
             'user': user
 
@@ -417,11 +433,14 @@ def user_followers(request, user_id):
 
 @csrf_exempt
 def absuser_followers(request, user_namefl):
-
     user = get_object_or_404(User, username=user_namefl)
     user_id = user.id
     profile, created = Profile.objects.get_or_create(user_id=user_id)
     older = request.POST.get('older', False)
+
+    if Block.objects.filter(user_id=user.id, blocked_id=request.user.id):
+        raise Http404
+
     if older:
         friends = Follow.objects.filter(following_id=user_id, id__lt=older).order_by('-id')[:16]
     else:
@@ -435,14 +454,23 @@ def absuser_followers(request, user_namefl):
         else:
             return HttpResponse(0)
     else:
-        follow_status = Follow.objects\
-            .filter(follower=request.user.id, following=user_id).count()
+
+        if request.user.id:
+            follow_status = Follow.objects.filter(follower=request.user.id,
+                                                  following=user.id).exists()
+            following_status = Follow.objects.filter(following=request.user.id,
+                                                     follower=user.id).exists()
+        else:
+            follow_status = 0
+            following_status = 0
+
         return render(request, 'pin2/user_followers.html', {
             'user_items': friends,
             'user_id': int(user_id),
             'page': 'user_follower',
             'profile': profile,
             'follow_status': follow_status,
+            'following_status': following_status,
             'user': user
         })
 
@@ -475,25 +503,39 @@ def user_like(request, user_id):
         return render(request, 'pin2/user__likes.html',
                       {'latest_items': latest_items,
                        'user_id': user_id,
-                       'page': "user_like",
+                       'page': "profile",
                        'profile': profile,
                        'cur_user': user})
 
 
 def absuser_like(request, user_namel):
-    user = get_object_or_404(User, username=user_namel)
+
+    try:
+        user = AuthCache.user_from_name(username=user_namel)
+    except User.DoesNotExist:
+        raise Http404
+    except Http404:
+        raise Http404
+
+    # user = get_object_or_404(User, username=user_namel)
     user_id = user.id
     profile, created = Profile.objects.get_or_create(user_id=user_id)
     if profile.banned:
         return render(request, 'pin2/samandehi.html')
 
+    if request.user.is_authenticated():
+        if Block.objects.filter(user_id=user.id, blocked_id=request.user.id).exists():
+            raise Http404
+
     pid = get_request_pid(request)
     pl = Likes.user_likes(user_id=user_id, pid=pid)
     arp = []
 
+    r_user_id = request.user.id
+
     for pll in pl:
         try:
-            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
+            arp.append(post_item_json(pll, cur_user_id=r_user_id))
         except:
             pass
 
@@ -502,19 +544,28 @@ def absuser_like(request, user_namel):
     if request.is_ajax():
         if latest_items:
             return render(request,
-                          'pin2/_items_2.html',
+                          'pin2/_items_2_v6.html',
                           {'latest_items': latest_items})
         else:
             return HttpResponse(0)
     else:
-        follow_status = Follow.objects\
-            .filter(follower=request.user.id, following=user_id).count()
+        # follow_status = Follow.objects\
+        #     .filter(follower=request.user.id, following=user_id).count()
+        if request.user.id:
+            follow_status = Follow.objects.filter(follower=request.user.id,
+                                                  following=user.id).exists()
+            following_status = Follow.objects.filter(following=request.user.id,
+                                                     follower=user.id).exists()
+        else:
+            follow_status = 0
+            following_status = 0
         return render(request, 'pin2/user__likes.html', {
             'latest_items': latest_items,
             'user_id': user_id,
             'follow_status': follow_status,
+            'following_status': following_status,
             'profile': profile,
-            'page': "user_like"
+            'page': 'profile'
         })
 
 
@@ -526,6 +577,7 @@ def rp(request):
             p.reporters = Report.objects.select_related()\
                 .filter(post_id=p.id)
         return render(request, 'pin2/rp.html', {
+            'page': 'rp',
             'rps': posts
         })
     else:
@@ -754,7 +806,7 @@ def category_redis(request, cat_id):
     else:
         return render(request,
                       'pin2/category_redis.html',
-                      {'latest_items': latest_items, 'cur_cat': cat})
+                      {'latest_items': latest_items, 'cur_cat': cat, 'page': 'category'})
 
 
 def popular(request, interval=""):
@@ -873,9 +925,12 @@ def user(request, user_id, user_name=None):
 
 def absuser(request, user_name=None):
     try:
-        user = User.objects.only('id').get(username=user_name)
+        user = AuthCache.user_from_name(username=user_name)
     except User.DoesNotExist:
         raise Http404
+
+    # if Block.objects.filter(user_id=user.id, blocked_id=request.user.id):
+    #     raise Http404
 
     user_id = user.id
 
@@ -930,6 +985,7 @@ def absuser(request, user_name=None):
             'ban_by_admin': ban_by_admin,
             'user_id': int(user_id),
             'profile': profile,
+            'page': "profile",
         })
 
 
@@ -966,7 +1022,7 @@ def item(request, item_id):
     # pl = Likes.objects.filter(post_id=post.id)[:12]
     from models_redis import LikesRedis
     post.likes = LikesRedis(post_id=post.id)\
-        .get_likes(offset=0, limit=7, as_user_object=True)
+        .get_likes(offset=0, limit=6, as_user_object=True)
 
     # s = SearchQuerySet().models(Post).more_like_this(post)
     # print "seems with:", post.id, s[:5]
@@ -986,12 +1042,33 @@ def item(request, item_id):
             'post': post,
             'follow_status': follow_status,
             'comments_url': comments_url,
+            'page': 'item',
             'related_url': related_url,
         }, content_type="text/html")
         if enable_cacing:
             cache.set("page_v1_%s" % item_id, d, 300)
 
         return d
+
+
+def post_likers(request, post_id, offset=0):
+    from models_redis import LikesRedis
+    from pin.api6.tools import get_simple_user_object
+    likers = LikesRedis(post_id=int(post_id))\
+        .get_likes(offset=int(offset), limit=10)
+
+    likers_list = []
+    for u in likers:
+        u = {
+            'user': get_simple_user_object(int(u), request.user.id)
+        }
+        likers_list.append(u)
+    data = {
+        'status': True,
+        'likers': likers_list
+    }
+
+    return HttpResponse(json.dumps(data), content_type='application/json')
 
 
 def item_related(request, item_id):
@@ -1127,7 +1204,3 @@ def stats(request):
 
 def feedback(request):
     return render(request, 'pin2/statics/feedback.html', {'page': 'feedback'})
-
-
-def check_p(request):
-    return render(request, 'pin2/check_p.html')

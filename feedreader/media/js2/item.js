@@ -35,6 +35,7 @@ function load_comments(){
     .always(function(d) {
         l.find('.loader').css('display', 'none');
         l.find('.txt').css('display', 'block');
+        cmnt_loaded = true;
     });
 }
 
@@ -57,10 +58,11 @@ $(function () {
             isAnimated: false,
             isFitWidth: true,
         });
-
-        feedobj.masonry('reload');
-        
+        ms_reload();
+        // feedobj.masonry('reload');
     });
+
+    
 
     var frm = $("#add-comment-form");
     frm.submit(function(e) {

@@ -36,6 +36,8 @@ urlpatterns = patterns('pin.views',
     url(r'^user/(?P<user_id>\d+)/followers/$', 'user_followers', name='pin-user-followers'),
     url(r'^user/(?P<user_id>\d+)/$', 'user', name='pin-user'),
     url(r'^user/(?P<user_id>\d+)/(?P<user_name>\w+)/$', 'user', name='pin-user-new'),
+    url(r'^likers/(?P<post_id>\d+)/(?P<offset>\d+)/$', 'post_likers', name='pin-likers'),
+    url(r'^likers/(?P<post_id>\d+)/$', 'post_likers', name='pin-likers'),
 
     url(r'^com/posts/(?P<post_id>\d+)/', 'get_comments', name='pin-get-comments'),
     # url(r'^tag/(.*)/', 'tag', name="pin-tag"),
@@ -45,13 +47,12 @@ urlpatterns = patterns('pin.views',
     url(r'^popular/', 'popular', name="pin-popular"),
     url(r'^topuser/$', 'topuser', name='pin-topuser'),
     url(r'^top-group-user/$', 'topgroupuser', name='pin-topgroupuser'),
-    
+
     #url(r'^mylike/', 'mylike', name='pin-mylike'),
     #url(r'^send_mail', 'send_mail', name='pin-sendmail'),
     #url(r'^test_page', 'test_page', name='google_contacts_login'),
     url(r'^category_back/(?P<cat_id>\d+)', 'category_back', name='pin-category_back'),
     url(r'^category/(?P<cat_id>\d+)', 'category_redis', name='pin-category'),
-    url(r'^check_p/$', 'check_p', name='pin-check-p'),
     #url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
     #not stables
 
@@ -125,6 +126,7 @@ urlpatterns += patterns('pin.views_admin',
     url(r'^comment/delete/(?P<id>\d+)', 'comment_delete', name="pin-comment-delete"),
     url(r'^comment/approve/(?P<id>\d+)', 'comment_approve', name="pin-comment-approve"),
     url(r'^comment/unapprove/(?P<id>\d+)', 'comment_unapprove', name="pin-comment-unapprove"),
+    url(r'^check_p/$', 'check_p', name='pin-check-p'),
 )
 
 urlpatterns += patterns('pin.views_device',

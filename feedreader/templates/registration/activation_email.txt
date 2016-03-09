@@ -3,4 +3,4 @@
 
 http://{{ site.domain }}/pin/email/activation/?key={{activation_key}}
 
-{% blocktrans %}Link is valid for {{ expiration_days }} days.{% endblocktrans %}
+{% blocktrans %} Link is valid for {{ expiration_days }} days{% endblocktrans %}.

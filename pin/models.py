@@ -259,6 +259,16 @@ class Post(models.Model):
         (FAULT, _('Violation')),
     )
 
+    DEVICE_WEB = 1
+    DEVICE_MOBILE_2 = 2
+    DEVICE_MOBILE_6 = 3
+
+    DEVICE_CHOICES = (
+        (DEVICE_WEB, "web"),
+        (DEVICE_MOBILE_2, "mobile version 2"),
+        (DEVICE_MOBILE_6, "mobile version 6"),
+    )
+
     # title = models.CharField(max_length=250, blank=True)
     text = models.TextField(blank=True, verbose_name=_('Text'))
     image = models.CharField(max_length=500, verbose_name=_('Picture'))
@@ -272,7 +282,8 @@ class Post(models.Model):
     status = models.IntegerField(default=PENDING, blank=True,
                                  verbose_name=_("Status"),
                                  choices=STATUS_CHOICES)
-    device = models.IntegerField(default=1, blank=True)
+    device = models.IntegerField(default=DEVICE_WEB, blank=True,
+                                 choices=DEVICE_CHOICES)
     hash = models.CharField(max_length=32, blank=True, db_index=True)
     actions = models.IntegerField(default=1, blank=True)
     is_ads = models.BooleanField(default=False, blank=True,
@@ -499,6 +510,10 @@ class Post(models.Model):
         return md5.hexdigest()
 
     def delete(self, *args, **kwargs):
+        if self.report > 9:
+            from pin.tasks import porn_feedback
+            porn_feedback.delay(post_image=self.get_image_500()['url'],
+                                status='pos')
         try:
             file_path = os.path.join(settings.MEDIA_ROOT, self.image)
             delete_image.delay(file_path)
@@ -1219,6 +1234,10 @@ class Comments(models.Model):
                             actor=self.user,
                             ip_address=self.ip_address,
                             text=com_cat + " --- " + self.comment)
+            return
+
+        if Block.objects.filter(user_id=self.object_pk.user_id,
+                                blocked_id=self.user_id).exists():
             return
 
         if not self.pk:

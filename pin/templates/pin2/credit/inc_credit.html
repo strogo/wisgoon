@@ -1,0 +1,89 @@
+{% extends "pin2/flat.base.box.html"%}
+{% load pin_tags %}
+
+{% block content %}
+
+<div class="box mato50">
+    <div class="promote_content">
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <div class="tab-content pa20 pato50 mabo20">
+                <div role="tabpanel" class="tab-pane active" id="wis500">
+                    <img src="{{MEDIA_URL}}v2/images/card-copper-500.png" alt="">
+                </div>
+                <div role="tabpanel" class="tab-pane" id="wis1000">
+                    <img src="{{MEDIA_URL}}v2/images/card-bronze-1000.png" alt="">
+                </div>
+                <div role="tabpanel" class="tab-pane" id="wis2000">
+                    <img src="{{MEDIA_URL}}v2/images/card-silver-2000.png" alt="">
+                </div>
+                <div role="tabpanel" class="tab-pane" id="wis5000">
+                    <img src="{{MEDIA_URL}}v2/images/card-gold-5000.png" alt="">
+                </div>
+                <div role="tabpanel" class="tab-pane" id="wis10000">
+                    <img src="{{MEDIA_URL}}v2/images/card-gold-10000.png" alt="">
+                </div>
+            </div>
+            <!-- Nav tabs -->
+            <hr class="wis_pro_gap">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#wis500" data-val="500" aria-controls="wis500" role="tab" class="wis_pro_btn" data-toggle="tab">
+                        <span class="wis_pro_tab"></span>
+                        ۵۰۰ <br> ویس
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#wis1000" data-val="1000" aria-controls="wis1000" role="tab" class="wis_pro_btn" data-toggle="tab">
+                        <span class="wis_pro_tab"></span>
+                        ۱۰۰۰ <br> ویس
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#wis2000" data-val="2000" aria-controls="wis2000" role="tab" class="wis_pro_btn" data-toggle="tab">
+                        <span class="wis_pro_tab"></span>
+                        ۲۰۰۰ <br> ویس
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#wis5000" data-val="5000" aria-controls="wis5000" role="tab" class="wis_pro_btn" data-toggle="tab">
+                        <span class="wis_pro_tab"></span>
+                        ۵۰۰۰ <br> ویس
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#wis10000" data-val="10000" aria-controls="wis10000" role="tab" class="wis_pro_btn" data-toggle="tab">
+                        <span class="wis_pro_tab"></span>
+                        ۱۰۰۰۰ <br> ویس
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <h3 class="pato20 pabo20">افزایش اعتبار</h3>
+            <p style="text-align:justify;">با خرید هر یک از بسته‌های، شما مقدار مشخصی ویس دریافت می‌کنید. ویس واحد اعتبار شخصی شما در ویسگون است. <br> اعتبار ویس کاربردهای مختلفی دارد. در حال حاضر با داشتن اعتبار ویس می‌توانید پست‌های دلخواه خود را از طریق گزینه‌ی «<i class="fa fa-bullhorn"></i> ویژه کردن» در گوشه هر پست یا در منوی نقطه‌ای هر پست <i class="fa fa-ellipsis-v"></i> آگهی کنید تا به کاربران بیشتری نمایش داده شود.</p>
+            
+            <div class="wis_pro_content">
+                <div data-val-pro="500" class="pa10 active">شما بسته <strong class="red">۵۰۰ ویسی</strong> معادل ۵۰۰ تومان را انتخاب کرده‌اید. </div>
+                <div data-val-pro="1000" class="pa10">شما بسته <strong class="red">۱۰۰۰ ویسی</strong> معادل ۱۰۰۰ تومان را انتخاب کرده‌اید. </div>
+                <div data-val-pro="2000" class="pa10">شما بسته <strong class="red">۲۰۰۰ ویسی</strong> معادل ۲۰۰۰ تومان را انتخاب کرده‌اید. </div>
+                <div data-val-pro="5000" class="pa10">شما بسته <strong class="red">۵۰۰۰ ویسی</strong> معادل ۵۰۰۰ تومان را انتخاب کرده‌اید. </div>
+                <div data-val-pro="10000" class="pa10">شما بسته <strong class="red">۱۰۰۰۰ ویسی</strong> معادل ۱۰۰۰۰ تومان را انتخاب کرده‌اید. </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="clear"></div>
+
+    <form method="post" id="pro_buy_form" class="form pull-left pa20">
+        {% csrf_token %}
+        <input type="hidden" value="500" id="wis_pro_type" name="amount"></input>
+        <input type="submit" class="wis_btn green pull-left" value="تکمیل خرید"  style="width: 150px;">
+    </form>
+
+    <div class="clear"></div>
+</div>
+
+{% endblock content %}

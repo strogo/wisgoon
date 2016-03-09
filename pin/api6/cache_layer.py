@@ -6,7 +6,7 @@ cache = caches['cache_layer']
 class PostCacheLayer(object):
     CACHE_KEY = "pcl:1.7:{}"
     POST_ID = None
-    TTL = 86400
+    TTL = 14400
     data = None
 
     def __init__(self, post_id):
