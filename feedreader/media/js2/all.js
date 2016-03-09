@@ -128,7 +128,7 @@ function liker_html(user, auth_user){
 
 function reload_sticky(){
     // $(window).resize();
-    $(".post-page .post-sidebar").scrollToFixed(
+    $(".post-page .post-sidebar").resize();
     // pp = $('#related_posts').offset().top;
     // pr = pp - $('.post-sidebar').height();
     // console.log(pr);
