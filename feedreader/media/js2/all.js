@@ -357,15 +357,16 @@ $(function () {
         $('#wis_pro_type').val(i);
     });
 
-    $('body').on('submit', '#pro_form', function(event) {
+    $('body').on('click', '#pro_form .promote_btn', function(event) {
         event.preventDefault();
-        var c = parseInt($('.promote_content').data('current'));
+        f = $('#pro_form');
+        c = parseInt($('.promote_content').data('current'));
         if (c < 500) {
             alertify.error('شما ویس کافی برای ویژه کردن این پست ندارید.<br> ابتدا حساب خود را شارژ کنید');
+            return false;
         }else{
-            $(this).submit();
+            f.submit();
         }
-        return false;
     });
 
 
