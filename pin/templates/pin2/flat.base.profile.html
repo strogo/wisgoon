@@ -23,10 +23,11 @@
 	{% if request.user_agent.is_mobile %}
 	{% include "pin2/includes/_sticky_download.html" %}
 	{% endif %}
+	
+	{% include "pin2/nav.html" %}
+	{% include "pin2/cats.html" %}
 	<div id="main">
 		<div id="pagetop"></div>
-		{% include "pin2/nav.html" %}
-		{% include "pin2/cats.html" %}
 
 		{% if DISPLAY_AD %}
 		<div class="tabliq-block" style="text-align:center">
