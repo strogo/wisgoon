@@ -48,8 +48,8 @@ function ms_reload(){
         };
         $('.new_items, .new_items .img-content').css('width', w_m);
         $('.new_items').removeClass('new_items');
-        feedobj.masonry('reload');
-    };
+    }
+    feedobj.masonry('reload');
 }
 
 function cEl(tag, op){
@@ -122,6 +122,22 @@ function liker_html(user, auth_user){
     row.appendChild(clear);
 
     return row;
+}
+
+// var sticky_ele = $.isScrollToFixed('.post-sidebar');
+
+function reload_sticky(){
+    // $(window).resize();
+    $(".post-page .post-sidebar").scrollToFixed(
+    // pp = $('#related_posts').offset().top;
+    // pr = pp - $('.post-sidebar').height();
+    // console.log(pr);
+    // $(".post-page .post-sidebar").scrollToFixed({
+    //     marginTop:15, 
+    //     limit:  pr
+    // });
+    // var c = $('.post-page .post-content').height();
+    // $('.post-page .post-content').css('height', c);
 }
 
 function sticky_sidebar(s){
