@@ -1,0 +1,199 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-03-08 16:40+0330\n"
+"PO-Revision-Date: 2016-03-08 16:41+0330\n"
+"Last-Translator: amir <a.abbasghorbani@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: templates/404.html:8
+msgid "Apologies, but I could not find any results for that search term"
+msgstr "متاسفانه نتیجه ای برای جستجو شما یافت نشد."
+
+#: templates/404.html:9
+msgid "If you are looking for something, try again"
+msgstr "اگر شما به دنبال چیزی هستید، دوباره سعی کنید."
+
+#: templates/404.html:10
+msgid "search"
+msgstr "جستجو"
+
+#: templates/404.html:10
+msgid "page"
+msgstr "صفحه"
+
+#: templates/500.html:5
+msgid "Comming soon!"
+msgstr "بزودی"
+
+#: templates/500.html:31
+msgid "Our Web Site is being Updated"
+msgstr "وب سایت ما در حال بروز رسانی می باشد"
+
+#: templates/500.html:32
+msgid "We greatly appreciate your patience"
+msgstr " از شکیبایی شما سپاسگذاریم"
+
+#: templates/pending.html:13
+msgid "The page is not temporarily visible"
+msgstr "صفحه ی مورد نظر موقتا قابل مشاهده نیست"
+
+#: templates/registration/activation_email.txt:2
+msgid "Activate account at"
+msgstr "فعال شدن حساب کاربری در"
+
+#: templates/registration/activation_email.txt:6
+#, python-format
+msgid "Link is valid for %(expiration_days)s days."
+msgstr "این لینک به مدت %(expiration_days)s روز معتبر است."
+
+#: templates/registration/activation_email_subject.txt:1
+msgid "Account activation on"
+msgstr "فعال سازی حساب کاربری در"
+
+#: templates/registration/login.html:15
+#: templates/registration/registration_form.html:12
+msgid "Android software download"
+msgstr "دانلود نرم افزار اندروید"
+
+#: templates/registration/login.html:16
+#: templates/registration/registration_form.html:13
+msgid "Download from bazzar"
+msgstr "دانلود از بازار"
+
+#: templates/registration/login.html:17
+#: templates/registration/registration_form.html:14
+msgid "Direct download"
+msgstr "دانلود مستقیم"
+
+#: templates/registration/login.html:27
+msgid "username"
+msgstr "نام کاربری"
+
+#: templates/registration/login.html:33
+#| msgid "Reset password"
+msgid "password"
+msgstr " رمز عبور"
+
+#: templates/registration/login.html:38
+#: templates/registration/registration_form.html:35
+msgid "Forgot your password?"
+msgstr "رمز عبور خود را فراموش کرده اید؟"
+
+#: templates/registration/login.html:41
+msgid "If you have not registered ,click here"
+msgstr "اگر شما ثیت نام نکرده اید وارد شوید"
+
+#: templates/registration/login.html:45
+msgid "log in"
+msgstr "ورود"
+
+#: templates/registration/logout.html:5
+msgid "Log out"
+msgstr "خروچ"
+
+#: templates/registration/logout.html:8
+msgid "successfully log out site"
+msgstr "با موفقیت از سیستم خارج شده اید."
+
+#: templates/registration/password_change_done.html:3
+#: templates/registration/password_change_form.html:6
+#: templates/registration/password_change_form.html:15
+msgid "Change password"
+msgstr "تعویض رمز عبور"
+
+#: templates/registration/password_change_done.html:5
+msgid "Your password has been successfully changed"
+msgstr "رمز عبور شما با موفقیت تغییر کرد."
+
+#: templates/registration/password_reset_complete.html:3
+#: templates/registration/password_reset_form.html:5
+msgid "Reset password"
+msgstr "بازیابی رمز عبور"
+
+#: templates/registration/password_reset_complete.html:7
+msgid "The password was successfully reset"
+msgstr "رمز عبور با موفقیت بازیابی شد."
+
+#: templates/registration/password_reset_complete.html:9
+#: templates/registration/password_reset_confirm.html:8
+msgid "Log in"
+msgstr "ورود"
+
+#: templates/registration/password_reset_confirm.html:3
+#: templates/registration/password_reset_done.html:3
+msgid "Reset Password"
+msgstr "بازیابی رمز عبور"
+
+#: templates/registration/password_reset_confirm.html:22
+msgid "Send"
+msgstr "ارسال"
+
+#: templates/registration/password_reset_confirm.html:27
+msgid "Error changing password"
+msgstr "خطا در تغییر رمز عبور"
+
+#: templates/registration/password_reset_done.html:6
+msgid "New password has been created.We have send instruction into e-mail addresses that you entered for setting your passwords.you get soon."
+msgstr "پسورد جدید ایجاد شد.ما به نشانی پست اکترونیکی‌ای که وارد کردید دستورالعملی برای تنظیم گذرواژه‌تان فرستادیم. به زودی به شما می‌رسد."
+
+#: templates/registration/password_reset_email.html:2
+#, python-format
+msgid "You're receiving this email because you requested a password reset for your user account at %(site_name)s."
+msgstr "این ایمیل بنا به درخواست شما برای تنظیم مجدد رمز عبورتان در شبکه اجتماعی %(site_name)s می باشد"
+
+#: templates/registration/password_reset_email.html:4
+#: templates/registration/password_reset_email.txt:3
+msgid "Please go to the following page and choose a new password:"
+msgstr "لطفا به صفحه زیر بروید و یک کلمه عبور جدید را انتخاب کنید:"
+
+#: templates/registration/password_reset_email.html:8
+#: templates/registration/password_reset_email.txt:7
+msgid "Your username, in case you've forgotten:"
+msgstr "نام کاربری شما در صورت فراموشی:"
+
+#: templates/registration/password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr "ممنون که از وب سایت ما دیدن کردید."
+
+#: templates/registration/password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "تیم %(site_name)s"
+
+#: templates/registration/password_reset_form.html:10
+#: templates/registration/password_reset_form.html:26
+msgid "Generate new password"
+msgstr "درخواست رمز عبور جدید"
+
+#: templates/registration/password_reset_form.html:15
+msgid "If you have forgotten your password, enter your email to send you a new password"
+msgstr "اگر رمز عبور خود را فراموش کرده اید، ایمیل خود را برای ارسال پسورد جدید وارد نمایید."
+
+#: templates/registration/registration_complete.html:7
+msgid "Register"
+msgstr "ثبت نام"
+
+#: templates/registration/registration_complete.html:12
+msgid "You have successfully registered in the site"
+msgstr "شما با موفقیت در سایت ثبت نام کرده اید."
+
+#: templates/registration/registration_form.html:38
+msgid "If you have registered ,log in"
+msgstr "اگر شما ثیت نام کرده اید وارد شوید"
+
+#: templates/registration/registration_form.html:42
+msgid "completed sign up"
+msgstr "ثبت نام کامل شده"
+

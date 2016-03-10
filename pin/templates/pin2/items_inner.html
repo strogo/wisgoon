@@ -65,6 +65,8 @@
 <div class="post-page mato20">
     <div class="post-content">
         <div class="box post_item_inner">
+
+
             <!--  buttons-->
             <div class="post-top-nav {% if user.is_authenticated%} {% user_post_like post.id %}{% endif %}">
                 {% if user.is_authenticated %}
@@ -79,30 +81,75 @@
                 </a>
                 {% endif %}
 
-                <a href="{% url "pin-save-as-ads" post.id %}" class="wis_btn orange_o pull-right">
+                {% if request.user_agent.is_mobile %}
+                <div class="dropdown three-dot">
+                    <a aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" id="three_dot" type="button" class="dropdown-toggle dl"><img alt="" src="/media/v2/images/3dot.png"></a>
+                    <ul aria-labelledby="three_dot" class="dropdown-menu">
+                        <li>
+                            <a href="{% url "pin-save-as-ads" post.id %}" class="btn_promote">
+                                ویژه کنید <span class="promote_icon"></span>
+                            </a>
+                        </li>
+                        <li>
+                            {% if user.is_authenticated %}
+                            <a class="btn_report" title="گزارش تخلف" href="{% url "report_pin" post.id%}" data-toggle="tooltip" data-placement="bottom">
+                                گزارش تخلف <span class="report_icon"></span>
+                            </a>
+                            {% endif %}
+                        </li>
+                        <li>
+                            <a href="{{MEDIA_URL}}{{post.image}}" title="دانلود" class="btn_download" data-toggle="tooltip" data-placement="bottom">
+                                دانلود تصویر <span class="download_icon"></span>
+                            </a>
+                        </li>
+
+                        {% if user.is_superuser or request.user.id == post.user_id %}
+                        <!-- delete -->
+                        <li>
+                            <a href="{% url "pin-item-delete" post.id%}" class="delpost btn_del user-action-btn" title="حذف" data-toggle="tooltip" data-placement="bottom"> حذف تصویر <i class="fa fa-trash-o"></i></a>
+                        </li>
+
+                        <!-- edit -->
+                        <li>
+                            <a href="{% url "pin-item-edit" post.id %}" class="btn_edit user-action-btn" title="ویرایش" data-toggle="modal" data-target="#postModal">
+                                ویرایش تصویر <i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="bottom"></i>
+                            </a>
+                        </li>
+
+                        {% endif %}
+
+                    </ul>
+                </div>
+
+                {% else %}
+
+                <a href="{% url "pin-save-as-ads" post.id %}" class="wis_btn orange_o btn_promote pull-right">
                     ویژه کنید <span class="promote_icon"></span>
                 </a>
-                
+
                 {% if user.is_authenticated %}
                 <a class="wis_btn orange_o pull-left btn_report" title="گزارش تخلف" href="{% url "report_pin" post.id%}" data-toggle="tooltip" data-placement="bottom">
                     <span class="report_icon"></span>
                 </a>
                 {% endif %}
 
-                <a href="{{MEDIA_URL}}{{post.image}}" title="دانلود" class="wis_btn green_o pull-left" data-toggle="tooltip" data-placement="bottom">
+                <a href="{{MEDIA_URL}}{{post.image}}" title="دانلود" class="wis_btn green_o pull-left btn_download" data-toggle="tooltip" data-placement="bottom">
                     <span class="download_icon"></span>
                 </a>
+
                 {% if user.is_superuser or request.user.id == post.user_id %}
                 <!-- delete -->
-                <a href="{% url "pin-item-delete" post.id%}" class="wis_btn pull-left red_o delpost user-action-btn" title="حذف" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-trash-o"></i></a>
+                <a href="{% url "pin-item-delete" post.id%}" class="wis_btn pull-left red_o delpost btn_del user-action-btn" title="حذف" data-toggle="tooltip" data-placement="bottom"><i class="fa fa-trash-o"></i></a>
 
                 <!-- edit -->
-                <a href="{% url "pin-item-edit" post.id %}" class="wis_btn pull-left red_o user-action-btn" title="ویرایش" data-toggle="modal" data-target="#postModal"><i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="bottom"></i></a>
+                <a href="{% url "pin-item-edit" post.id %}" class="wis_btn pull-left red_o btn_edit user-action-btn" title="ویرایش" data-toggle="modal" data-target="#postModal"><i class="fa fa-pencil-square-o" data-toggle="tooltip" data-placement="bottom"></i></a>
+                {% endif %}
 
                 {% endif %}
+
                 <div class="clear"></div>
             </div>
-            
+
 
             <!-- img -->
             <div class="post-img">
@@ -116,7 +163,7 @@
                     {{post.text|urlizetrunc:50|urlize_hashtag|safe|linebreaksbr}}
                 </h1>
                 {% if post.get_pages %}
-                
+
                 <div class="mato20">
                     <h5 class="mabo10">تصاویر بیشتر در این زمینه:</h5>
                     {% for page in post.get_pages %}
@@ -212,18 +259,59 @@
             </div>
         </div>
 
+        {% if request.user_agent.is_mobile %}
+        <div class="post-sidebar">
+            <div class="profile box">
+                <div class="user-detail">
+                    <div class="avatar">
+                        <a href="{% url "pin-absuser" post.user_id|get_user_name %}">
+                            <img src="{{post.user_id|get_avatar:65}}" />
+                        </a>
+                    </div>
+                    <div class="user-info">
+                        <div class="username">
+                            <h3>
+                                <a href="{% url "pin-absuser" post.user_id|get_user_name %}">
+                                    {{post.user.profile.name|truncatechars:"20"}}
+                                </a>
+                            </h3>
+                        </div>
+
+                        <div class="user_name">
+                            <p>{{post.user.username}}</p>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="clear"></div>
+                {% if post.user.id != request.user.id and user.is_authenticated %}
+                {% if follow_status == 0 %}
+                <a class="wis_btn green w100 mabo10 mato10 ajax-follow" data-user-id="{{post.user_id}}" href='{% url "pin-follow" post.user_id 1 %}'>ایجاد دوستی</a>
+                {% else %}
+                <a class="wis_btn red w100 mabo10  mato10 ajax-follow" data-user-id="{{post.user_id}}" href='{% url "pin-follow" post.user_id 0 %}'>قطع ارتباط</a>
+                {%endif%}
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
         <div class="only_mobile_view social_icons_box box">
             {% include "pin2/_share_social.html" %}
         </div>
 
+        {% if not request.user_agent.is_mobile %}
         {% if DISPLAY_AD %}
         {% include "pin2/tabliq/_468x60.html" %}
         {% endif %}
+        
 
         <div class="only_mobile_view">
             {% include "pin2/mobil_ads.html" %}
         </div>
-        
+        {% endif %}
+
+        <h3 class="only_mobile_view tari wis_title">ارسال دیدگاه</h3>
+
         {% if user.is_authenticated and user.is_active %}
         <div id="submit_comment" class="box">
             {% include "pin2/__comment_submit.html" %}  
@@ -232,6 +320,7 @@
         {% endif %}
 
         <div id="comments" class="box">
+
             <div class="col-md-12 col-sm-12 col-xs-12 pa0">
 
                 <div id="comments_box" class="pa10">
@@ -261,6 +350,7 @@
 
     </div>
     <div class="post-sidebar">
+        <div class="only_mobile_view wis_gap"></div>
         {% include "pin2/_pin_sidebar.html" %}
     </div>
 

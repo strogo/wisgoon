@@ -218,7 +218,7 @@ def post_update(request, item_id):
     try:
         post = Post.objects.get(pk=int(item_id), user=user)
     except Post.DoesNotExist:
-        return HttpResponseNotFound(_('post not found or not yours'))
+        return HttpResponseNotFound(_('post not found or post not yours'))
 
     if request.method == 'POST':
         form = PinDeviceUpdate(request.POST, instance=post)
@@ -266,7 +266,7 @@ def follow(request, following, action):
             #                        following=following)
 
     except User.DoesNotExist:
-        return HttpResponse(_('User does not exists'))
+        return HttpResponse(_('User does not exist'))
 
     return HttpResponse('1')
 

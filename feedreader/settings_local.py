@@ -9,7 +9,7 @@ THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DISPLAY_AD = False
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
-STATIC_VERSION = '5.8.13'
+STATIC_VERSION = '5.8.16'
 
 SITE_ROOT = os.path.dirname(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -72,12 +72,12 @@ GOOGLE_REDIRECT_SESSION_VAR = 'google_contacts_redirect'
 GOOGLE_REDIRECT_BASE_URL = 'http://localhost:8000'
 EMAIL_HOST = "mail.wisgoon.com"
 TIME_ZONE = 'Asia/Tehran'
-LANGUAGE_CODE = 'fa'
 SITE_ID = 1
 
 USE_I18N = True
 USE_L10N = True
-
+LOCALE_NAME = 'fa_IR'
+LANGUAGE_CODE = 'fa-ir'
 LANGUAGES = [
     ('fa', ('Farsi')),
     ('en', ('English')),
@@ -132,6 +132,7 @@ MIDDLEWARE_CLASSES = [
     'pin.middleware.XsSharing',
     # 'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     # 'django_cprofile_middleware.middleware.ProfilerMiddleware',
+    'django_user_agents.middleware.UserAgentMiddleware',
 ]
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 ROOT_URLCONF = 'feedreader.urls_local'
@@ -190,6 +191,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'shop.apps.ShopConfig',
     'haystack',
+    'django_user_agents',
     # 'social_auth',
     # 'taggit',
     # 'devserver',

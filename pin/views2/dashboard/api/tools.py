@@ -4,6 +4,7 @@ import khayyam
 from django.db.models import Count
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
 
 from pin.model_mongo import MonthlyStats
 from pin.models import Post, Ad, Log, BannedImei
@@ -174,7 +175,7 @@ def range_date(start, end):
             start_date, end_date = end_date, start_date
     except:
         return return_json_data({'status': False,
-                                 'message': 'Enter Timestamp'})
+                                 'message': _('Enter Timestamp')})
     # min_date = datetime.datetime.combine(start_date.date(),
     #                                      start_date.time.min)
     # max_date = datetime.datetime.combine(end_date.date(),
@@ -189,12 +190,14 @@ def ads_group_by(group_by, ended):
 
 
 def cnt_post_deleted_by_user(user_id):
+    return 0
     cnt_log = Log.objects\
         .filter(content_type=Log.POST, user=user_id, owner=user_id).count()
     return cnt_log
 
 
 def cnt_post_deleted_by_admin(user_id):
+    return 0
     cnt_log = Log.objects\
         .filter(content_type=Log.POST, owner=user_id)\
         .exclude(user=user_id).count()
@@ -229,7 +232,7 @@ def simple_ad_json(ad):
     data['owner'] = get_simple_user_object(ad.owner_id)
     data['ended'] = ad.ended
     data['cnt_view'] = ad.cnt_view
-    data['post'] = post_item_json(ad.post)
+    data['post'] = post_item_json(ad.post_id)
     data['ads_type'] = ad.ads_type
     data['start'] = ad.start.strftime('%s')
     if ad.end:

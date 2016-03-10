@@ -20,6 +20,9 @@ a:hover {color:#257399;}
 .clear{
 	clear:both !important;
 }
+body > .container-fluid {
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
 h1,h2,h3,h4,h5,h6{font-weight: 800;}
 hr{border-color: #d0d9e2 !important;}
 .w100{width: 100% !important;}
@@ -2361,9 +2364,12 @@ div.comment div div.row:hover .del-comment{
 	margin-bottom: 0;
 }
 .profile_avatar img{
-	border-radius: 50%;
 	margin-top: 20px;
+	border-radius: 50%;
 	width: 100%;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	-o-border-radius: 50%;
 }
 .profile_data .user_status{
 	min-height: 105px;
@@ -2539,7 +2545,7 @@ div.comment div div.row:hover .del-comment{
 	background: #434a54;
 	border-top: 1px solid #ddd;
 	box-shadow: 0 0 2px #000 inset;
-	padding-top: 5px;
+	padding: 5px 0;
 	text-align: center;
 	overflow: hidden;
 }
@@ -2879,7 +2885,18 @@ div.comment div div.row:hover .del-comment{
 .wis_pro_content > div.active{
 	display: block;
 }
-
+.expand_post{
+	background: rgba(255, 255, 255, 0.5) none repeat scroll 0 0;
+	bottom: 0;
+	color: #444;
+	font-size: 12px;
+	height: 30px;
+	left: 0;
+	padding: 5px;
+	position: absolute;
+	right: 0;
+	text-shadow: 0 1px 0 #fff;
+}
 .alert,
 .alert *{
 	color: #fff !important;
@@ -3004,14 +3021,10 @@ div.comment div div.row:hover .del-comment{
 		padding: 0 !important;
 	}
 	.feed-item{
-		margin: 0 10px 10px 0;
+		/*margin: 0 10px 10px 0;*/
 		width: 236px;
 	}
-	.feed-item .img-content,
-	.feed-item .img-content img{
-		width: 100%;
-		/*height: auto;*/
-	}
+
 	.post-action .col-sm-2{
 		display: inline-block;
 	}
@@ -3025,7 +3038,7 @@ div.comment div div.row:hover .del-comment{
 		width: 50%;
 	}
 	.feed-item .avatar-box .username{
-		display: none;
+		text-align: right;
 	}
 	.navbar-header{
 		width: 80%;
@@ -3213,22 +3226,36 @@ div.comment div div.row:hover .del-comment{
 	.modal_image{
 		padding: 0;
 	}
+	.feed-item{
+		margin-right: 0 !important;
+		margin-left: 0 !important;
+	}
 }
 @media (max-width: 400px) {
 	.wis_form.login,
 	.wis_form.logout{
 		width: 100%;
 	}
+	.feed-item{
+		margin-right: 0 !important;
+		margin-left: 0 !important;
+	}
+
 }
-@media (max-width: 320px) {
+@media (max-width: 319px) {
 	.menu-box{
 		width: 98% !important;
 	}
+	.feed-item{
+		margin-right: 0 !important;
+		margin-left: 0 !important;
+	}
+
 }
 @media (max-width: 230px) {
 	.feed-item{
-		margin: 0;
-		margin-bottom: 10px;
+		margin-right: 0;
+		margin-left: 0;
 		width: 100%;
 	}
 }

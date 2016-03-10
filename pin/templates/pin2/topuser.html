@@ -1,9 +1,10 @@
 {% extends "pin2/flat.base.html"%}
+{% load i18n %}
 {% load pin_tags %}
 {% load daddy_avatar %}
 {%load cache %}
 
-{%block title%} کاربران برتر {%endblock title%}
+{%block title%} {% trans "Top users" %} {%endblock title%}
 
 {% block content %}
 
@@ -11,11 +12,11 @@
     {% for u in top_user %}
 
         {% if forloop.counter == 1 %}
-        <h2 class="pa20"><i class="fa fa-diamond"></i> ۱۲ کاربر برتر سایت</h2>
+        <h2 class="pa20"><i class="fa fa-diamond"></i> {% trans "Top 12 users" %}</h2>
         <div class="clear"></div>
         {% endif %}
         {% if forloop.counter == 13 %}
-        <h3 class="pa20 mabo20"><i class="fa fa-certificate"></i> سایر کاربران برتر</h3>
+        <h3 class="pa20 mabo20"><i class="fa fa-certificate"></i> {% trans "Other top users" %}</h3>
         <div class="clear"></div>
         {% endif %}
 

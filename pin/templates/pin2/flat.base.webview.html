@@ -28,7 +28,7 @@
 	</style>
 	{% include "base/analytics.html"%}
 </head>
-<body>
+<body class="{% if request.user_agent.is_mobile %}mobile_page{% endif %}">
 	{% block content %}{% endblock content%}
 </body>
 </html>

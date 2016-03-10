@@ -22,6 +22,8 @@ from pin.tools import get_request_timestamp, get_request_pid, check_block,\
 
 from pin.context_processors import is_police
 
+from django_user_agents.utils import get_user_agent
+
 from pin.model_mongo import Ads
 from pin.models_redis import LikesRedis
 
@@ -74,6 +76,7 @@ def home(request):
         if arp:
             response_data = render(request, 'pin2/_items_2_v6.html', {
                 'latest_items': arp,
+                'cls': 'new_items',
                 'next_url': next_url,
             })
         else:
@@ -81,6 +84,7 @@ def home(request):
     else:
         response_data = render(request, 'pin2/home_v6.html', {
             'latest_items': arp,
+            'cls': 'new_items',
             'next_url': next_url,
             'page': 'home'
         })
@@ -499,7 +503,7 @@ def user_like(request, user_id):
         return render(request, 'pin2/user__likes.html',
                       {'latest_items': latest_items,
                        'user_id': user_id,
-                       'page': "user_like",
+                       'page': "profile",
                        'profile': profile,
                        'cur_user': user})
 
@@ -561,7 +565,7 @@ def absuser_like(request, user_namel):
             'follow_status': follow_status,
             'following_status': following_status,
             'profile': profile,
-            'page': "user_like"
+            'page': 'profile'
         })
 
 
@@ -802,7 +806,7 @@ def category_redis(request, cat_id):
     else:
         return render(request,
                       'pin2/category_redis.html',
-                      {'latest_items': latest_items, 'cur_cat': cat})
+                      {'latest_items': latest_items, 'cur_cat': cat, 'page': 'category'})
 
 
 def popular(request, interval=""):
@@ -981,6 +985,7 @@ def absuser(request, user_name=None):
             'ban_by_admin': ban_by_admin,
             'user_id': int(user_id),
             'profile': profile,
+            'page': "profile",
         })
 
 
@@ -1037,6 +1042,7 @@ def item(request, item_id):
             'post': post,
             'follow_status': follow_status,
             'comments_url': comments_url,
+            'page': 'item',
             'related_url': related_url,
         }, content_type="text/html")
         if enable_cacing:

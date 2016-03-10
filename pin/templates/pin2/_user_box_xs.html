@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load pin_tags %}
 {% load humanize %}
 {% load daddy_avatar %}
@@ -20,21 +21,21 @@
     <div class="action">
         {% if u.user.id != request.user.id and request.user.is_authenticated%}
         {% if request.user.id|get_follow_status:u.user.id == False %}
-        <a data-user-id="{{u.user.id}}" class="wis_btn green mabo10 ajax-follow" href='{% url "pin-follow" u.user.id 1 %}'>ایجاد دوستی <i class="fa fa-plus"></i></a>
+        <a data-user-id="{{u.user.id}}" class="wis_btn green mabo10 ajax-follow" href='{% url "pin-follow" u.user.id 1 %}'>{% trans "Follow" %} <i class="fa fa-plus"></i></a>
         {% else %}
-        <a data-user-id="{{u.user.id}}" class="wis_btn mabo10 red ajax-follow" href='{% url "pin-follow" u.user.id 0 %}'>قطع ارتباط  <i class="fa fa-times"></i></a>
+        <a data-user-id="{{u.user.id}}" class="wis_btn mabo10 red ajax-follow" href='{% url "pin-follow" u.user.id 0 %}'>{% trans "Unfollow" %}<i class="fa fa-times"></i></a>
         {%endif%}
         {% else %}
-        <a class="wis_btn mabo10" href='{% url "pin-absuser" u %}'>نمایش پروفایل <i class="fa fa-user"></i></a>
+        <a class="wis_btn mabo10" href='{% url "pin-absuser" u %}'>{% trans "Show profile" %} <i class="fa fa-user"></i></a>
         {% endif %}
     </div>
 
     <div class="follow_stats">
         <div class="col-xs-6">
-            دنبال‌کننده <br> <span class="follower_count"><strong>{{u.user.profile.cnt_followers|pn}}</strong></span>
+            {% trans "Follower" %} <br> <span class="follower_count"><strong>{{u.user.profile.cnt_followers|pn}}</strong></span>
         </div>
         <div class="col-xs-6">
-            دنبا‌ل‌شونده <br> <span class="following_count"><strong>{{u.user.profile.cnt_following|pn}}</strong></span>
+            {% trans "Following" %} <br> <span class="following_count"><strong>{{u.user.profile.cnt_following|pn}}</strong></span>
         </div>
     </div>
 </div>

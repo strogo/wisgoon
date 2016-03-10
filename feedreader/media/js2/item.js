@@ -58,7 +58,8 @@ $(function () {
             isAnimated: false,
             isFitWidth: true,
         });
-        feedobj.masonry('reload');
+        ms_reload();
+        // feedobj.masonry('reload');
     });
 
     

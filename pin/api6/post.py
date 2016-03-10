@@ -19,6 +19,7 @@ from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
 def latest(request):
     cur_user = None
     last_item = None
+    hot_post = None
     data = {}
     data['meta'] = {'limit': 20,
                     'next': '',
@@ -35,6 +36,17 @@ def latest(request):
 
     pl = Post.latest(pid=before)
     posts = get_list_post(pl, from_model=settings.STREAM_LATEST)
+
+    if cur_user:
+        viewer_id = str(cur_user)
+    else:
+        viewer_id = str(get_user_ip(request))
+
+    ad = Ad.get_ad(user_id=viewer_id)
+    if ad:
+        hot_post = int(ad.post_id)
+    if hot_post:
+        posts = list([hot_post]) + list(posts)
 
     data['objects'] = get_objects_list(posts,
                                        cur_user_id=cur_user,
