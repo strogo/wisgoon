@@ -13,7 +13,7 @@ app.controller('indexController',['$scope','$http', '$location', function($scope
 	});
 }]);
 
-app.controller('reportedController',['$http' ,'$scope', function($http, $scope, reported) {
+app.controller('reportedController',['$http' ,'$scope', function($http, $scope) {
 
 	$scope.batchDelete = function() {
 		var post_ids = [];
@@ -67,25 +67,14 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 		});
 	};
 
-	var reported = function() {
-		this.bricks = [];
-		this.busy = false;
-		this.url = "/dashboard/api/post/reported/";
+	$scope.reported = function() {
+		$scope.loading = true;
+		$http.get('/dashboard/api/post/reported/').success(function(data){
+			$scope.bricks = data.objects;
+		}).finally(function () {
+			$scope.loading = false;
+		});
 	};
-
-	reported.prototype.nextPage = function() {
-		if (this.busy || !this.url) return;
-		this.busy = true;
-
-		$http.get(this.url).success(function(data) {
-			this.url = data.meta.next;
-			var bricks = data.objects;
-			for (var i = 0; i < bricks.length; i++) {
-				this.bricks.push(bricks[i]);
-			};
-
-			this.busy = false;
-		}.bind(this));
 
 		$scope.selectItem = function(br) {
 			var id = '#br-'+br;
@@ -97,9 +86,7 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope, 
 				$(id + ' > a:first-child > span').removeClass('fa-square-o').addClass('fa-check-square-o');				
 			}
 		};
-	};
-
-	$scope.postItem = new reported();
+		$scope.reported();
 }]);
 
 app.controller('catstatController',['$http','$scope', function($http, $scope, drilldown) {
@@ -293,6 +280,7 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
 				options: { 
 					plotOptions: {
 						series: {
+							 allowPointSelect: true,
 							cursor: 'pointer',
 							events: {
 								click: function (event) {

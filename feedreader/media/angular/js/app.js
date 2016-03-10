@@ -1,4 +1,4 @@
-var app = angular.module('myApp', ['ui.router','infinite-scroll','wu.masonry']);
+var app = angular.module('myApp', ['ui.router','infinite-scroll','wu.masonry','ngMessages']);
 
 app.config(function($interpolateProvider) {
   $interpolateProvider.startSymbol('{[{');

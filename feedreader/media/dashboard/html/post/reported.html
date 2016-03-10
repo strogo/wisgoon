@@ -14,11 +14,18 @@
 		<div class="select">
 			<button class="button" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
 			<span><a href="" ng-show="select" ng-click="batchDelete()"><i class="fa fa-trash"></i></a></span>
+			<a ng-hide='loading' class="refresh" ng-click="reported()" href="">
+			<span class="fa fa-refresh"></span>
+			</a>
+			<a ng-show='loading' class="refresh-spinner" href="">
+				<span class="fa fa-refresh fa-spin"></span>
+			</a>
 		</div>
+
 		<div class="clear"></div>
-		<div id="feed" load-images="false" class="resize" masonry reload-on-resize  infinite-scroll='postItem.nextPage()' infinite-scroll-distance='1' style="width:1070px;">
-			<div ng-show='postItem.busy' class="loader-post">Loading data...</div>
-			<div  class="masonry-brick" ng-repeat="brick in postItem.bricks">
+		<div id="feed" load-images="false" class="resize" masonry reload-on-resize  style="width:1070px;">
+			<div id="mySpinner"  class="loader">Loading...</div>
+			<div  class="masonry-brick" ng-repeat="brick in bricks">
 				<div class="box box-solid photo" id="br-{[{brick.id}]}" postId="{[{brick.id}]}">
 					<a href="" ng-show="select" ng-click="selectItem(brick.id)">
 						<span ng-class="class" class="fa fa-square-o pull-left"></span>
