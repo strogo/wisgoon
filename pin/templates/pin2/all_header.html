@@ -37,9 +37,10 @@
 
 <link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/blog-style.css?ver={{STATIC_VERSION}}">
 
-{% if request.user_agent.is_mobile %}
 <script type="text/javascript">
-	var mobile_agent = true;
+	var mobile_agent;
+{% if request.user_agent.is_mobile %}
+	mobile_agent = true;
 	var mobile_w = window.screen.width;
 	if (mobile_w < 319) {
 		if (mobile_w < 236) {
@@ -50,7 +51,9 @@
 	}else{
 		var w_m = (mobile_w / 2) - 35;
 	}
-</script>
+{% else %}
+	var mobile_agent = false;
 {% endif %}
+</script>
 
 {% block css %}{% endblock css %}

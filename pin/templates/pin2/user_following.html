@@ -35,9 +35,9 @@
 
 {% if user_items|length > 15 %}
 <center>
-    <a href="{% url 'pin-absuser-following' user.username %}" class="wis_btn mabo50 mato50 load-follow">
+    <a href="{% url 'pin-absuser-following' user.username %}" class="wis_btn bg_white mabo50 mato50 load-follow">
         بیشتر
-        <img src="{{MEDIA_URL}}v2/images/loading-img.gif" alt=" بیشتر " />
+        <img src="{{MEDIA_URL}}v2/images/wis_loading.gif" alt=" بیشتر " />
     </a>
 </center>
 {% endif %}

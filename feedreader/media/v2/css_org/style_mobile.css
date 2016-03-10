@@ -14,6 +14,18 @@ body.item #main .container{
 	border-bottom: 1px solid #434A54;
 	opacity: .9;
 }
+.gotop {
+	background: #434a54 none repeat scroll 0 0;
+	border-radius: 50px;
+	bottom: 80px;
+	color: #fff !important;
+	display: none;
+	height: 50px;
+	padding: 15px 19px;
+	position: fixed;
+	right: 10px;
+	width: 50px;
+}
 body.mobile_page #main .container{
 	/*padding: 20px !important;*/
 }

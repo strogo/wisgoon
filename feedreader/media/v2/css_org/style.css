@@ -99,6 +99,7 @@ hr{border-color: #d0d9e2 !important;}
 .poab{position: absolute !important;}
 .poin{position: initial !important;}
 .ofh{overflow: hidden !important;}
+.bg_white{background: #fff !important;}
 *[disabled]{
 	cursor: not-allowed !important;
 }
