@@ -1138,7 +1138,7 @@ def search_posts(request):
 @csrf_exempt
 def password_reset(request, is_admin_site=False,
                    template_name='registration/password_reset_form.html',
-                   email_template_name='registration/password_reset_email.html',
+                   email_template_name='registration/password_reset_email_pin.html',
                    subject_template_name='registration/password_reset_subject.txt',
                    password_reset_form=PasswordResetForm,
                    token_generator=default_token_generator,
