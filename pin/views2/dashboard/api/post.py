@@ -21,6 +21,8 @@ from haystack.query import SearchQuerySet
 
 
 def reported(request):
+    from daddy_avatar.templatetags.daddy_avatar import get_avatar
+    from pin.api_tools import media_abs_url
     if not check_admin(request):
         return return_un_auth()
 
@@ -38,8 +40,13 @@ def reported(request):
         return return_not_found()
 
     for post in reported_posts:
-        # reporter_ids = Report.objects.values_list('id', flat=True)\
-        #     .filter(post_id=post.id)
+        reporter_ids = Report.objects.values_list('id', flat=True)\
+            .filter(post_id=post.id)
+
+        reporter_avatar = []
+        for reporter_id in reporter_ids:
+            reporter_avatar.append(media_abs_url(get_avatar(reporter_id, size=64),
+                                                 check_photos=True))
 
         # total_scores = Profile.objects.filter(user_id__in=reporter_ids)\
         #     .aggregate(scores=Sum('score'))
@@ -49,6 +56,7 @@ def reported(request):
         post_item = post_item_json(post.id)
         post_item['cnt_report'] = post.report
         post_item['total_scores'] = total_scores
+        post_item['reporter_avatar'] = reporter_avatar
         post_reporter_list.append(post_item)
 
     data['objects'] = post_reporter_list
@@ -61,6 +69,9 @@ def reported(request):
 
 
 def post_reporter_user(request, post_id):
+    from pin.api_tools import abs_url
+    from django.core.urlresolvers import reverse
+
     if not check_admin(request):
         return return_un_auth()
     user_list = []
@@ -79,6 +90,8 @@ def post_reporter_user(request, post_id):
     for reporter in reporters:
         users['reporter'] = get_simple_user_object(reporter.user.id)
         users['reporter']['score'] = reporter.user.profile.score
+        users['reporter']['permalink'] = abs_url(reverse("pin-absuser",
+                                                 kwargs={"user_name": users['reporter']['username']}))
         user_list.append(users)
 
     data['objects'] = users
