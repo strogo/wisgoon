@@ -32,6 +32,7 @@ def reported(request):
                     'total_count': ''}
 
     reported_posts = Post.objects.filter(report__gte=1)\
+        .only('id', 'report')\
         .order_by('-id')[before: (before + 1) * 20]
     if not reported_posts:
         return return_not_found()
@@ -43,7 +44,7 @@ def reported(request):
         total_scores = Profile.objects.filter(user_id__in=reporter_ids)\
             .aggregate(scores=Sum('score'))
 
-        post_item = post_item_json(post)
+        post_item = post_item_json(post.id)
         post_item['cnt_report'] = post.report
         post_item['total_scores'] = total_scores['scores']
         post_reporter_list.append(post_item)
