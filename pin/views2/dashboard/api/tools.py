@@ -225,15 +225,16 @@ def get_ads(before, date):
     return ads_list
 
 TYPE_ADS = {1: '1000', 2: '3000', 3: '6000', 4: '15000'}
+
+
 def simple_ad_json(ad):
     data = {}
     data['id'] = ad.id
     data['user'] = get_simple_user_object(ad.user_id)
     data['owner'] = get_simple_user_object(ad.owner_id)
-    data['ended'] = _('post promotion has been finished') if ad.ended else _('post is promoted')
     data['cnt_view'] = ad.cnt_view
     data['post'] = post_item_json(ad.post_id)
-    data['ads_type'] = ad.ads_type
+    data['ads_type'] = TYPE_ADS[ad.ads_type]
     data['start'] = khayyam.JalaliDate(ad.start).strftime("%Y/%m/%d")
     if ad.end:
         data['end'] = khayyam.JalaliDate(ad.end).strftime("%Y/%m/%d")
@@ -278,9 +279,10 @@ def undo_report(request):
     return status
 
 
-TYPES = {1: "POST", 2: "COMMENT", 3: "USER", 4:"COMMENT_TEST"}
+TYPES = {1: "POST", 2: "COMMENT", 3: "USER", 4: "COMMENT_TEST"}
 ACTIONS = {1: "DELETE", 2: "PENDING", 3: "BAD_COMMENT", 4: "BAD_POST",
            5: "BAN_IMEI", 6: "BAN_ADMIN", 7: "ACTIVE_USER"}
+
 
 def simple_log_json(obj):
     data = {}
