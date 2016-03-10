@@ -29,7 +29,7 @@ def reported(request):
     data = {}
     data['meta'] = {'limit': 20,
                     'next': '',
-                    'total_count': ''}
+                    'total_count': Post.objects.filter(report__gte=1).count()}
 
     reported_posts = Post.objects.filter(report__gte=1)\
         .only('id', 'report')\
