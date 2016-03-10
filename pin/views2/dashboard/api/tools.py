@@ -230,7 +230,7 @@ def simple_ad_json(ad):
     data['owner'] = get_simple_user_object(ad.owner_id)
     data['ended'] = ad.ended
     data['cnt_view'] = ad.cnt_view
-    data['post'] = post_item_json(ad.post)
+    data['post'] = post_item_json(ad.post_id)
     data['ads_type'] = ad.ads_type
     data['start'] = ad.start.strftime('%s')
     if ad.end:
