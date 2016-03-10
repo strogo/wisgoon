@@ -713,12 +713,12 @@ def password_reset(request):
             opts = {
                 'use_https': request.is_secure(),
                 'token_generator': default_token_generator,
-                'from_email': 'info@wisgoon.com',
-                'email_template_name': 'registration/password_reset_email.html',
+                'from_email': None,
+                'email_template_name': 'registration/password_reset_email_pin.html',
                 'subject_template_name': 'registration/password_reset_subject.txt',
                 'request': request,
+                'html_email_template_name': None
             }
-
             form.save(**opts)
             data = {
                 'status': True,
