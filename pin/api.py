@@ -10,7 +10,7 @@ from tastypie.cache import SimpleCache
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
 from django.core.cache import cache
@@ -28,7 +28,6 @@ from daddy_avatar.templatetags import daddy_avatar
 
 from pin.tools import AuthCache
 
-User = get_user_model()
 models.signals.post_save.connect(create_api_key, sender=User)
 
 CACHE_AVATAR = 0
