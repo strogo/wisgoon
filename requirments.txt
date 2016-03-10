@@ -100,3 +100,4 @@ urllib3==1.14
 wheel==0.24.0
 django-user-agents==0.3.0
 user-agents==1.0.1
+influxdb==2.12.0

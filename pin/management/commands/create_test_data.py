@@ -31,27 +31,26 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # Create Users
-        # create_users(self)
+        create_users(self)
 
         # Create Profile
-        # create_profile(self)
+        create_profile(self)
 
         # Create Category
-        # create_category(self)
+        create_category(self)
 
         # Create Post
         create_post(self)
 
         # Create Like an Comments
-        # create_like_comment(self)
+        create_like_comment(self)
 
         # Create Follower
-        # create_test_follow(self)
+        create_test_follow(self)
 
 
 def create_post(self):
     cnt_post = raw_input("How many posts you want to add?")
-
     cat_id = 0
     cnt_user = User.objects.count()
     media_url = settings.MEDIA_ROOT
@@ -103,6 +102,7 @@ def create_like_comment(self):
             like_range = random.randint(0, 20)
 
             for a in range(like_range):
+
                 text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
                 user_id = random.randint(1, cnt_user)
                 LikesRedis(post_id=post.id)\
@@ -112,6 +112,7 @@ def create_like_comment(self):
 
             comment_range = random.randint(5, 20)
             for i in range(comment_range):
+
                 user_id = random.randint(1, cnt_user)
                 text = ''.join(default_text[random.randint(0, 100):random.randint(200, 600)])
                 comment = Comments()
@@ -160,6 +161,7 @@ def create_category(self):
 
 
 def create_users(self):
+
     cnt_post = int(raw_input("How many users you want to add?"))
 
     users_list = []
@@ -191,6 +193,7 @@ def create_test_follow(self):
     # cnt_follow = raw_input("How many follow you want to add?")
     cnt_user = User.objects.count()
     for i in range(cnt_user):
+
         loop_count = random.randint(5, 30)
 
         for user in range(loop_count):

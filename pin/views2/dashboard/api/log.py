@@ -5,6 +5,7 @@ from pin.views2.dashboard.api.tools import simple_log_json, get_logs,\
 
 
 def show_log(request):
+    print request.user
     if not check_admin(request):
         return return_un_auth()
 

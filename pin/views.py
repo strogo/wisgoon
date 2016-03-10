@@ -1,4 +1,4 @@
-# coding: utf-8
+    # coding: utf-8
 from time import mktime, time
 import json
 import datetime
@@ -650,9 +650,9 @@ def latest_redis(request):
             'page': 'latest',
             'next_url': next_url,
         })
+
     if enable_cacing:
         cache.set(cache_str, response_data, 300)
-
     return response_data
 
 

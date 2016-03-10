@@ -944,3 +944,19 @@ table img {
 .resultItems > div {
 	margin-bottom: 15px;
 }
+.select .refresh {
+	float: left;
+}
+.select .fa.fa-refresh {
+  font-size: 18px;
+  position: relative;
+  top: 15px;
+  color: #ff6a00 ;
+}
+.select .refresh-spinner {
+	float: left;
+
+}
+.select .fa-spin {
+	background-color: #E9E9E9;
+}
