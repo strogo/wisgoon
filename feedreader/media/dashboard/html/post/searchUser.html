@@ -4,7 +4,7 @@
       <li><a ui-sref="home"><i class="fa fa-dashboard"></i> خانه</a></li>
       <li class="active">جست و جوی کاربر</li>
     </ol>
-    <h1>
+    <h1 class="hidden-xs">
       جست و جوی کاربر
     </h1>
     <div class="clear"></div>
@@ -58,14 +58,6 @@
                         <div class="">
                           <ul>
                             <li>
-                              <label>تعداد پست های حذف شده توسط کاربر :</label>
-                              <span>{[{searchInfo.cnt_deleted}]}</span>
-                            </li>
-                            <li>
-                              <label>تعداد پست های حذف شده توسط ادمین :</label>
-                              <span>{[{searchInfo.cnt_admin_deleted}]}</span>
-                            </li>
-                            <li>
                               <label>وضعیت فعال بودن کاربر :</label>
                               <span >
                                 <i class="activeDatasText" ng-show="searchInfo.profile.user_active == 1">کاربر فعال</i>
@@ -94,7 +86,7 @@
                              <span class="side-down hidden-xs"></span>
                            </div>
                          </li>
-                         <li>
+                         <li >
                           <label>وضعیت مسدود شدن پروفایل کاربر:</label>
                           <span>
                             <i class="banDatasText" ng-show="searchInfo.profile.userBanne_profile == 1">پروفایل فعال</i>
@@ -102,7 +94,7 @@
                           </span>
                           <div class="banDesc">
                             <span class="side-up hidden-xs"></span>
-                            <form name="activeForm" novalidate ng-submit="banProfile()" ng-controller="searchController">
+                            <form name="activeForm" novalidate ng-submit="banProfile()" ng-controller="banProfileController">
                               <div class="col-xs-9 col-md-10 pa0">
                                 <input type="text" name="description2" ng-model="formData.description2" value="{[{searchInfo.profile.description}]}" placeholder="علت غیر فعال شدن پروفایل کاربر...">
 
@@ -133,7 +125,7 @@
                       </span>
                       <div class="banDesc" ng-show="searchInfo.profile.imei != ''">
                         <span class="side-up hidden-xs"></span>
-                        <form name="activeForm" novalidate ng-submit="banImei()" ng-controller="searchController">
+                        <form name="activeForm" novalidate ng-submit="banImei()" ng-controller="banImeiController">
                           <div class="col-xs-9 col-md-10 pa0">
                             <input type="text" name="description3" ng-model="formData.description3" placeholder="علت غیر فعال شدن پروفایل کاربر...">
 

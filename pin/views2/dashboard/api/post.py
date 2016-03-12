@@ -40,13 +40,13 @@ def reported(request):
         return return_not_found()
 
     for post in reported_posts:
-        reporter_ids = Report.objects.values_list('id', flat=True)\
-            .filter(post_id=post.id)
+        # reporter_ids = Report.objects.values_list('id', flat=True)\
+        #     .filter(post_id=post.id)
 
-        reporter_avatar = []
-        for reporter_id in reporter_ids:
-            reporter_avatar.append(media_abs_url(get_avatar(reporter_id, size=64),
-                                                 check_photos=True))
+        # reporter_avatar = []
+        # for reporter_id in reporter_ids:
+        #     reporter_avatar.append(media_abs_url(get_avatar(reporter_id, size=64),
+        #                                          check_photos=True))
 
         # total_scores = Profile.objects.filter(user_id__in=reporter_ids)\
         #     .aggregate(scores=Sum('score'))
@@ -56,7 +56,7 @@ def reported(request):
         post_item = post_item_json(post.id)
         post_item['cnt_report'] = post.report
         post_item['total_scores'] = total_scores
-        post_item['reporter_avatar'] = reporter_avatar
+        # post_item['reporter_avatar'] = reporter_avatar
         post_reporter_list.append(post_item)
 
     data['objects'] = post_reporter_list

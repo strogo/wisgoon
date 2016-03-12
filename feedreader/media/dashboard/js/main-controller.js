@@ -53,13 +53,6 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope) 
 		});
 		$( "[postId='"+cmId+"']").remove();
 	};
-
-	$scope.reporters = function(cmId) {
-
-		$http.get('/dashboard/api/post/reporters/'+cmId+'/').success(function(data){
-			$scope.reporterData=data.objects;
-		});
-	};
 	$scope.userInfo = function(cmId) {
 
 		$http.get('/dashboard/api/post/user/'+cmId+'/').success(function(data){
@@ -70,29 +63,30 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope) 
 	$scope.reported = function() {
 		$scope.loading = true;
 		$http.get('/dashboard/api/post/reported/').success(function(data){
-			$scope.bricks = data.objects;
+			$scope.bricks = data;
 		}).finally(function () {
 			$scope.loading = false;
 		});
 	};
 
-		$scope.selectItem = function(br) {
-			var id = '#br-'+br;
-			if ($(id).hasClass('checked')) {
-				$(id).removeClass('checked');
-				$(id + ' > a:first-child > span').removeClass('fa-check-square-o').addClass('fa-square-o');
-			}else{
-				$(id).addClass('checked');
-				$(id + ' > a:first-child > span').removeClass('fa-square-o').addClass('fa-check-square-o');				
-			}
-		};
-		$scope.reported();
+	$scope.selectItem = function(br) {
+		var id = '#br-'+br;
+		if ($(id).hasClass('checked')) {
+			$(id).removeClass('checked');
+			$(id + ' > a:first-child > span').removeClass('fa-check-square-o').addClass('fa-square-o');
+		}else{
+			$(id).addClass('checked');
+			$(id + ' > a:first-child > span').removeClass('fa-square-o').addClass('fa-check-square-o');				
+		}
+	};
+	$scope.reported();
 }]);
 
 app.controller('catstatController',['$http','$scope', function($http, $scope, drilldown) {
 	$scope.refresh_cat=function(){
 		var start_time = $( "#cat_start_value" ).val();
 		var end_time = $( "#cat_end_value" ).val();
+		var statusSm = 0;
 		$http.get("/dashboard/api/post/subcategory/chart/?start_date="+start_time+"&end_date="+end_time)
 		.success(function(data){
 			var chartInfo= data.objects;
@@ -129,13 +123,15 @@ app.controller('catstatController',['$http','$scope', function($http, $scope, dr
 						point: {
 							events: {
 								click: function(event) {
-									var chart = this.series.chart;
-									var name = this.name;
-									$http.get("/dashboard/api/post/category/chart/"+name+"/?start_date="+start_time+"&end_date="+end_time)
-									.success(function(data){
-										swapSeries(chart,name,data);
+									if (statusSm<1) {
+										var chart = this.series.chart;
+										var name = this.name;
+										$http.get("/dashboard/api/post/category/chart/"+name+"/?start_date="+start_time+"&end_date="+end_time)
+										.success(function(data){
+											swapSeries(chart,name,data);
+										});
+									};
 
-									});
 								}
 							}
 						}
@@ -149,6 +145,8 @@ app.controller('catstatController',['$http','$scope', function($http, $scope, dr
 				}]
 			});
 			var swapSeries = function (chart, name, data) {
+				statusSm += 1;
+				console.log(statusSm);
 				chart.series[0].remove();
 				chart.addSeries({
 					data: data.objects,
@@ -183,8 +181,7 @@ app.controller('activeUserController',function($scope,$http,$location) {
 		});
 	};	
 });
-
-app.controller('searchController',function($scope,$http,$stateParams,$location) {
+app.controller('banProfileController',function($scope,$http,$location) {
 	$scope.banProfile = function() {
 		$http({
 			method  : 'POST',
@@ -201,8 +198,9 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 				}
 			};
 		});
-	};
-
+	};	
+});
+app.controller('banImeiController',function($scope,$http,$location) {
 	$scope.banImei = function() {
 
 		$http({
@@ -221,7 +219,9 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 			};
 		});
 	};
+});
 
+app.controller('searchController',function($scope,$http,$stateParams,$location) {
 	$scope.showSearchUser = function() {
 		$scope.statusSearch= " ";
 		$scope.imei_text= "imei ندارد.";
@@ -280,7 +280,7 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
 				options: { 
 					plotOptions: {
 						series: {
-							 allowPointSelect: true,
+							allowPointSelect: true,
 							cursor: 'pointer',
 							events: {
 								click: function (event) {

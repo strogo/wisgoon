@@ -40,6 +40,11 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         templateUrl: "/media/dashboard/html/post/reported.html",
         controller: "reportedController"
     })
+      .state('check_p', {
+        url: "/check_p",
+        templateUrl: "/media/dashboard/html/post/check_p.html",
+        controller: "reportedController"
+    })
      .state('permissionDenied', {
         url: "/permissionDenied",
         templateUrl: "/media/dashboard/html/permissionDenied.html",

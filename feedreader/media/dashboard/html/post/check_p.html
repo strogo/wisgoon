@@ -2,29 +2,24 @@
 	<section class="content-header">
 		<ol class="breadcrumb">
 			<li><a ui-sref="home"><i class="fa fa-dashboard"></i> خانه</a></li>
-			<li class="active">پست های گزارش شده</li>
+			<li class="active">پست های گزارش شده توسط سیستم</li>
 			<div class="clear"></div>
 		</ol>
 		<h1 class="hidden-xs">
-			پست های گزارش شده
+			پست های گزارش شده توسط سیستم
 		</h1>
 		<div class="clear"></div>
 	</section>
 	<section class="content reported">
 		<div class="select">
-			<button class="button hidden-xs" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
+			<button class="button" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
 			<span><a href="" ng-show="select" ng-click="batchDelete()"><i class="fa fa-trash"></i></a></span>
-			<span>
-				<small class="label pull-left bg-green">{[{bricks.meta.total_count}]}</small>
-			</span>
 			<a ng-hide='loading' class="refresh" ng-click="reported()" href="">
 				<span class="fa fa-refresh"></span>
 			</a>
 			<a ng-show='loading' class="refresh-spinner" href="">
 				<span class="fa fa-refresh fa-spin"></span>
 			</a>
-			<div class="clear"></div>
-			
 		</div>
 
 		<div class="clear"></div>
@@ -32,7 +27,7 @@
 			<div  ng-show='loading'>
 				<div id="mySpinner"  class="loader">Loading...</div>
 			</div>
-			<div  class="masonry-brick" ng-repeat="brick in bricks.objects">
+			<div  class="masonry-brick" ng-repeat="brick in bricks">
 				<div class="box box-solid photo" id="br-{[{brick.id}]}" postId="{[{brick.id}]}">
 					<a href="" ng-show="select" ng-click="selectItem(brick.id)">
 						<span ng-class="class" class="fa fa-square-o pull-left"></span>
@@ -48,23 +43,14 @@
 						<a href="">{[{brick.user.username}]}</a>
 					</div>
 					<div class="report-count">
-						<div class="reporter-item" ng-repeat="report in brick.reporter_avatar">
-							<a href="">
-								<img ng-src="{[{report.avatar}]}" title="user avatar">
-							</a>
-						</div>
+						<a ng-click="reporters(brick.id)" href=""  data-toggle="modal" data-target="#reporter-modal{[{brick.id}]}">
+							<h5><span class="fa fa-flag-o"></span>{[{brick.cnt_report}]} گزارش تخلف</h5>
+						</a>
 					</div>
 					<div class="user-info">
 						<a class="btn btn-default" data-toggle="modal" data-target="#userInfo{[{brick.id}]}" ng-click="userInfo(brick.id)">
 							اطلاعات کاربر
 						</a>
-					</div>
-					<div class="description" ng-init="limit = 50; moreShown = false">
-						<p>{[{brick.text | limitTo: limit}]}
-							<a ng-show="brick.text.length > limit" href ng-click="limit=brick.text.length; moreShown = true">...بیشتر
-							</a>
-						</p>
-						
 					</div>
 					<div class="box-tools">
 						<button class="undo" ng-click="undoPost(brick.id)">
@@ -74,10 +60,32 @@
 							<i class="fa fa-times"></i>
 						</button>
 					</div>
-					<div class="modal fade userIinfoModal" id="userInfo{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="userIinfoModalLabel">
-						<div class="loading" ng-show='loading'>
-							<div id="mySpinner"  class="loader">Loading...</div>
+					<div class="modal fade reporter-modal" id="reporter-modal{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="reporterModalLabel">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="True">&times;</span></button>
+									<h4 class="modal-title hidden-xs" id="myModalLabel">گزارش دهندگان</h4>
+								</div>
+								<div class="modal-body">
+									<div class="reporters">
+										<div class="reporter-item" ng-repeat="report in reporterData">
+											<div class="col-md-2 col-xs-4">
+												<a href="{[{report.permalink}]}">
+													<img ng-src="{[{report.avatar}]}" title="user avatar">
+												</a>
+											</div>
+											<div class="col-md-10 col-xs-8 user-score">
+												<h2>{[{report.score}]}</h2>
+											</div>
+											<div class="clear"></div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
+					</div>	
+					<div class="modal fade userIinfoModal" id="userInfo{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="userIinfoModalLabel">
 						<div class="modal-dialog" role="document" >
 							<div class="modal-content">
 								<div class="modal-header hidden-md hidden-lg">
@@ -98,23 +106,10 @@
 														</span>
 														<div class="banDesc" ng-show="userData.profile.user_active == 0">
 															<span class="side-up hidden-xs"></span>
-															<form name="activeForm" novalidate ng-submit="activeUser()" ng-controller="activeUserController">
-																<div class="col-xs-9 col-md-10 pa0">
-																	<input type="text" name="description1" ng-model="formData.description1" placeholder="علت بن شدن کاربر...">
-
-																	<input type="hidden" name="activeId" ng-model="formData.activeId" ng-value="formData.activeId='{[{userData.id}]}'">
-
-																</div>
-																<div class="col-xs-2 col-md-2 pa0">
-																	<select name="activeStatus" id="activeStatus" ng-model="formData.activeStatus">
-																		<option value="1">فعال</option>
-																		<option value="0">غیر فعال</option>
-																	</select>
-																</div>
-																<div class="col-md-12 pa0">
-																	<button type="submit" ng-click="submitted=true">ثبت تغییرات</button>
-																</div>
-															</form>
+															<div class="col-md-12 pa0">
+																<p>{[{userData.profile.description}]}</p>
+																<p ng-show="userData.profile.description== ''">توضیحات ندارد</p>
+															</div>
 															<div class="clear"></div>
 															<span class="side-down hidden-xs"></span>
 														</div>

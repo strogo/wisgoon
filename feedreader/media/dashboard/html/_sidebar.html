@@ -21,9 +21,14 @@
 			<!-- sidebar menu: : style can be found in sidebar.less -->
 			<ul class="sidebar-menu">
 				<li class="header">ناوبری اصلی</li>
+				<li >
+					<a ui-sref="reported">
+						<i class="fa fa-flag-o"></i> <span>گزارشات</span>
+					</a>
+				</li>
 				<li>
 					<a ui-sref="reported">
-						<i class="fa fa-flag-o"></i> <span>پستهای گزارش شده</span>
+						<i class="fa fa-flag-o"></i> <span>گزارشات سیستم</span>
 					</a>
 				</li>
 				<li>
@@ -39,13 +44,13 @@
 				<li class="treeview">
 					<a href="javascript:;">
 						<i class="fa fa-files-o"></i>
-						<span>آگهی ها</span>
-						<i class="fa fa-angle-left pull-left"></i>
+						<span>پست های ویژه شده</span>
+						<i class="fa fa-angle-left"></i>
 					</a>
 					<ul class="treeview-menu">
 						<li>
 							<a ui-sref="ads">
-								<i class="fa fa-circle-o"></i> آگهی های فعال
+								<i class="fa fa-circle-o"></i> آمار پست های ویژه شده
 							</a>
 						</li>
 					</ul>
@@ -54,7 +59,7 @@
 					<a href="javascript:;">
 						<i class="fa fa-th"></i>
 						<span>دسته بندی ها</span>
-						<i class="fa fa-angle-left pull-left"></i>
+						<i class="fa fa-angle-left"></i>
 					</a>
 					<ul class="treeview-menu">
 						<li>

@@ -35,6 +35,7 @@
 		<div ui-view></div>
 	</div>
 	<!-- npm node_modules  -->
+
 	<script src="{{STATIC_CDN}}angular/js/node_modules/jquery.js"></script>
 	<script src="{{STATIC_CDN}}angular/js/node_modules/jquery.bridget.js"></script>
 	<script src="{{STATIC_CDN}}angular/js/node_modules/get-style-property.js"></script>
@@ -52,7 +53,15 @@
 	<script src="{{STATIC_CDN}}angular/js/node_modules/angular-masonry.js"></script>
 	<script src="{{STATIC_CDN}}angular/js/node_modules/angular-ui-router.min.js"></script>
 
-
+	<script type="text/javascript">
+		$(document).ready(function() {
+			if (window.screen.width < 960) {
+				$('.main-sidebar li a').click(function(){
+					$('body').addClass('sidebar-open');
+				});
+			}
+		});
+	</script>
 	<script src="{{STATIC_CDN}}dashboard/dist/js/jquery-ui.min.js"></script>
 	<script>
 		$.widget.bridge('uibutton', $.ui.button);
@@ -71,7 +80,6 @@
 	<script src="{{STATIC_CDN}}angular/js/highstock.src.js"></script>
 	<script src="{{STATIC_CDN}}angular/js/drilldown.js"></script>
 	<script src="{{STATIC_CDN}}dashboard/dist/js/angular-spinners.min.js"></script>
-	
 
 </body>
 
