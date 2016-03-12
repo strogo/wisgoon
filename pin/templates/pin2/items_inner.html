@@ -299,12 +299,12 @@
             {% include "pin2/_share_social.html" %}
         </div>
 
-        {% if not request.user_agent.is_mobile %}
         {% if DISPLAY_AD %}
         {% include "pin2/tabliq/_468x60.html" %}
         {% endif %}
         
 
+        {% if not request.user_agent.is_mobile %}
         <div class="only_mobile_view">
             {% include "pin2/mobil_ads.html" %}
         </div>

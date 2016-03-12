@@ -31,6 +31,11 @@ mlt: {{mlt.0.object.id}}
             <a href="{{related_url}}"> مطالب مرتبط </a>
         </div>
     </div>
+    {% if DISPLAY_AD and request.user_agent.is_mobile %}
+    <div class="box" style="margin:15px 15px 60px 15px;">
+        {% include "pin2/tabliq/_300x250.html" %}
+    </div>
+    {% endif %}
 </div>
 
 <div class="clear"></div>
