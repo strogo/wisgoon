@@ -5,16 +5,17 @@ from pin.views2.dashboard.api.tools import simple_log_json, get_logs,\
 
 
 def show_log(request):
-    print request.user
     if not check_admin(request):
         return return_un_auth()
 
     data = {}
     data['meta'] = {'limit': 10, 'next': '', 'previous': '', 'total_count': ''}
+    logs_list = []
+
     content_type = request.GET.get('content_type', False)
     action = request.GET.get('action', False)
     before = int(request.GET.get('before', 0))
-    logs_list = []
+
     logs = get_logs(content_type, action, before)
     for log in logs:
         logs_list.append(simple_log_json(log))
@@ -24,6 +25,7 @@ def show_log(request):
     extra_data = {}
     extra_data['url_name'] = 'dashboard-api-log-show'
     extra_data['before'] = before - 10 if before > 0 else "0"
+
     if action:
         extra_data['action'] = action
     if content_type:

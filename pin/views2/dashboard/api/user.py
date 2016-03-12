@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from haystack.query import SearchQuerySet
 from haystack.query import SQ
@@ -95,17 +95,17 @@ def change_status_user(request):
         if status == '1':
             user.is_active = True
             message = _("User Status Is True.")
-            # Log.active_user(user_id=request.user.id,
-            #                 owner=user.id,
-            #                 text=desc + desc,
-            #                 ip_address=get_user_ip(request))
+            Log.active_user(user_id=request.user.id,
+                            owner=user.id,
+                            text=desc + desc,
+                            ip_address=get_user_ip(request))
         else:
             user.is_active = False
             message = _("User Status Is False.")
-            # Log.ban_by_admin(actor=request.user,
-            #                  user_id=user.id,
-            #                  text="%s || %s" % (user.username, desc),
-            #                  ip_address=get_user_ip(request))
+            Log.ban_by_admin(actor=request.user,
+                             user_id=user.id,
+                             text="%s || %s" % (user.username, desc),
+                             ip_address=get_user_ip(request))
 
         user.save()
         data = {'status': True, 'message': message}
@@ -134,16 +134,16 @@ def banned_profile(request):
             profile.banned = True
             profile.save()
             Log.active_user(user_id=request.user.id,
-                             owner=profile.user.id,
-                             text="%s || %s" % (profile.user.username, description),
-                             ip_address=get_user_ip(request))
+                            owner=profile.user.id,
+                            text="%s || %s" % (profile.user.username, description),
+                            ip_address=get_user_ip(request))
         else:
             profile.banned = False
             profile.save()
             Log.ban_by_admin(actor=request.user,
-                              user_id=profile.user.id,
-                              text="%s || %s" % (profile.user.username, description),
-                              ip_address=get_user_ip(request))
+                             user_id=profile.user.id,
+                             text="%s || %s" % (profile.user.username, description),
+                             ip_address=get_user_ip(request))
         data = {'status': True, 'message': _("Successfully Change Profile banned.")}
         data['user'] = get_simple_user_object(profile.user.id)
         data['profile'] = get_profile_data(profile)
