@@ -4,7 +4,7 @@ import khayyam
 from django.db.models import Count
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from pin.model_mongo import MonthlyStats
 from pin.models import Post, Ad, Log, BannedImei
@@ -224,21 +224,22 @@ def get_ads(before, date):
 
     return ads_list
 
+TYPE_ADS = {1: '1000', 2: '3000', 3: '6000', 4: '15000'}
+
 
 def simple_ad_json(ad):
     data = {}
     data['id'] = ad.id
     data['user'] = get_simple_user_object(ad.user_id)
     data['owner'] = get_simple_user_object(ad.owner_id)
-    data['ended'] = ad.ended
     data['cnt_view'] = ad.cnt_view
     data['post'] = post_item_json(ad.post_id)
-    data['ads_type'] = ad.ads_type
-    data['start'] = ad.start.strftime('%s')
+    data['ads_type'] = TYPE_ADS[ad.ads_type]
+    data['start'] = khayyam.JalaliDate(ad.start).strftime("%Y/%m/%d")
     if ad.end:
-        data['end'] = ad.end.strftime('%s')
+        data['end'] = khayyam.JalaliDate(ad.end).strftime("%Y/%m/%d")
     else:
-        data['end'] = False
+        data['end'] = '---'
     data['ip_address'] = ad.ip_address
     return data
 
@@ -278,14 +279,19 @@ def undo_report(request):
     return status
 
 
+TYPES = {1: "POST", 2: "COMMENT", 3: "USER", 4: "COMMENT_TEST"}
+ACTIONS = {1: "DELETE", 2: "PENDING", 3: "BAD_COMMENT", 4: "BAD_POST",
+           5: "BAN_IMEI", 6: "BAN_ADMIN", 7: "ACTIVE_USER"}
+
+
 def simple_log_json(obj):
     data = {}
     data['id'] = obj.id
     data['user'] = get_simple_user_object(obj.user_id)
     data['owner'] = get_simple_user_object(obj.owner)
-    data['action'] = obj.action
+    data['action'] = ACTIONS[obj.action]
     data['object_id'] = obj.object_id
-    data['content_type'] = obj.content_type
+    data['content_type'] = TYPES[obj.content_type]
     data['text'] = obj.text
     data['create_time'] = obj.create_time.strftime('%s')
     data['post_image'] = obj.post_image
