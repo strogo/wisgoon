@@ -41,7 +41,7 @@ urlpatterns += patterns('pin.views2.dashboard.api.post',
                         url(r'post/subcategory/chart/', 'post_of_sub_category',
                             name='dashboard-api-post-subcategory'),
 
-                        url(r'post/category/chart/(?P<cat_name>\w+)',
+                        url(r'post/category/chart/(?P<cat_name>.+\w)',
                             'post_of_category',
                             name='dashboard-api-post-category'),
 
@@ -90,4 +90,7 @@ urlpatterns += patterns('pin.views2.dashboard.api.user',
 
                         url(r'user/imei/(?P<imei>\w+)', 'get_user_with_imei',
                             name='dashboard-api-user-imei'),
+
+                        url(r'user/removeAvatar/(?P<user_id>\d+)', 'delete_user_avatar',
+                            name='dashboard-api-user-remove-avatar'),
                         )

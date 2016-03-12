@@ -540,10 +540,10 @@ class Post(models.Model):
 
         # send_notif_bar(user=self.user.id, type=4, post=self.id,
         #                actor=self.user.id)
-
+        post_id = self.id
         super(Post, self).delete(*args, **kwargs)
         if settings.TUNING_CACHE:
-            PostCacheLayer(post_id=self.id).delete()
+            PostCacheLayer(post_id=post_id).delete()
 
     def date_lt(self, date, how_many_days=15):
         lt_date = datetime.now() - timedelta(days=how_many_days)

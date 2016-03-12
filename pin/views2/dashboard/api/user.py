@@ -227,4 +227,20 @@ def get_user_with_imei(request, imei):
         users.append(get_simple_user_object(data.user.id))
 
     data['objects'] = users
-    return users
+    return return_json_data(data)
+
+
+def delete_user_avatar(request, user_id):
+    if not check_admin(request):
+        return return_un_auth()
+    try:
+        profile = Profile.objects.get(user_id=user_id)
+    except Exception, e:
+        print str(e), "func :dashboard/api/ delete user profile"
+        return return_not_found()
+
+    profile.avatar = None
+    profile.delete_avatar_cache()
+    profile.save()
+    data = {'status': True, 'message': _('Successfully removed.')}
+    return return_json_data(data)

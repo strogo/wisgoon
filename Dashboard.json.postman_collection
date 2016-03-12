@@ -33,8 +33,8 @@
 				"bb5211ab-8d03-6e26-df1f-779f1db41c41",
 				"e1a0c59e-5bf6-fe12-3108-8756b8714bc9",
 				"993f4dc8-4619-0a24-46c1-2fb8e4872922",
-				"6ff28bbd-d802-834d-b483-8669a8c7147c",
-				"6d304398-b95a-5344-9236-ae1ca041d1d4"
+				"6d304398-b95a-5344-9236-ae1ca041d1d4",
+				"6ff28bbd-d802-834d-b483-8669a8c7147c"
 			],
 			"owner": 0,
 			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f"
@@ -175,23 +175,21 @@
 		{
 			"id": "496f069d-d9aa-04dd-c0d8-ee26ed61c732",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/dashboard/api/post/subcategory/chart/?token=1234",
-			"pathVariables": {},
+			"url": "http://127.0.0.1:8000/dashboard/api/post/subcategory/chart/?token=1234&start_date=1424424963&end_date=1455960964",
 			"preRequestScript": "",
+			"pathVariables": {},
 			"method": "GET",
-			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
 			"data": [],
 			"dataMode": "params",
-			"name": "Post of Sub Category",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1454920808224,
 			"version": 2,
-			"responses": [],
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"folder": "727aadbe-bb22-e468-c82b-03508372a7e5"
+			"time": 1455970087975,
+			"name": "Post of Sub Category",
+			"description": "",
+			"collectionId": "d12801fd-4241-3e7a-46a6-d084c4272c1f",
+			"responses": []
 		},
 		{
 			"id": "49b141e2-2f62-3a3c-7ad1-fbd3087358b2",
