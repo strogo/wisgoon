@@ -1227,14 +1227,14 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
-        from pin.classification import get_comment_category
-        com_cat = str(get_comment_category(self.comment))
-        if int(com_cat) in [2]:
-            Log.bad_comment(post=self.object_pk,
-                            actor=self.user,
-                            ip_address=self.ip_address,
-                            text=com_cat + " --- " + self.comment)
-            return
+        # from pin.classification import get_comment_category
+        # com_cat = str(get_comment_category(self.comment))
+        # if int(com_cat) in [2]:
+        #     Log.bad_comment(post=self.object_pk,
+        #                     actor=self.user,
+        #                     ip_address=self.ip_address,
+        #                     text=com_cat + " --- " + self.comment)
+        #     return
 
         if Block.objects.filter(user_id=self.object_pk.user_id,
                                 blocked_id=self.user_id).exists():
