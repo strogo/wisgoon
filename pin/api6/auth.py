@@ -285,6 +285,15 @@ def register(request):
         return return_json_data(data)
 
 
+def profile_name(request, user_name):
+    try:
+        user = User.objects.only('id').get(username=user_name)
+    except User.DoesNotExist:
+        return return_not_found()
+
+    return profile(request, user.id)
+
+
 def profile(request, user_id):
     token = request.GET.get('token', False)
     current_user = None
