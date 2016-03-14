@@ -1,6 +1,6 @@
 from __future__ import division
 
-from django.db.models import Sum
+# from django.db.models import Sum
 from django.views.decorators.csrf import csrf_exempt
 
 from pin.models import Post, Report, Category, SubCategory
@@ -40,13 +40,13 @@ def reported(request):
         return return_not_found()
 
     for post in reported_posts:
-        # reporter_ids = Report.objects.values_list('id', flat=True)\
-        #     .filter(post_id=post.id)
+        reporter_ids = Report.objects.values_list('id', flat=True)\
+            .filter(post_id=post.id)[:5]
 
-        # reporter_avatar = []
-        # for reporter_id in reporter_ids:
-        #     reporter_avatar.append(media_abs_url(get_avatar(reporter_id, size=64),
-        #                                          check_photos=True))
+        reporter_avatar = []
+        for reporter_id in reporter_ids:
+            reporter_avatar.append(media_abs_url(get_avatar(reporter_id, size=64),
+                                                 check_photos=True))
 
         # total_scores = Profile.objects.filter(user_id__in=reporter_ids)\
         #     .aggregate(scores=Sum('score'))
@@ -166,19 +166,26 @@ def show_ads(request):
 
     data = {}
     date = request.GET.get('date', False)
-    before = request.GET.get('before', 0)
-    data['meta'] = {'limit': '', 'next': '', 'total_count': ''}
+    before = int(request.GET.get('before', 0))
+    token = request.GET.get('token', False)
+    data['meta'] = {'limit': '20', 'next': '', 'total_count': ''}
 
     if date:
+        extra_data = {}
+        if token:
+            extra_data['token'] = token
+
+        extra_data['url_name'] = 'dashboard-api-post-ads-show'
+        extra_data['date'] = date
 
         data['objects'] = get_ads(before, date)
 
-        if len(data['objects']) == 20:
-            before = int(before) + 20
-            token = request.GET.get('token', '')
-            data['meta']['next'] = get_next_url(url_name='dashboard-api-post-ads-show',
-                                                before=before,
-                                                token=token)
+        extra_data['before'] = before - 20 if before > 0 else "0"
+        data['meta']['previous'] = get_next_url(**extra_data)
+
+        extra_data['before'] = before + 20 if before > 0 else 20
+        data['meta']['next'] = get_next_url(**extra_data)
+
         return return_json_data(data)
     else:
         return return_bad_request()
