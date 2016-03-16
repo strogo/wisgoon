@@ -217,18 +217,18 @@ def get_user_with_imei(request, imei):
         return return_un_auth()
 
     users = []
-    data = {}
-    data['meta'] = {'limit': '',
-                    'next': '',
-                    'total_count': ''}
+    result = {}
+    result['meta'] = {'limit': '',
+                      'next': '',
+                      'total_count': ''}
 
     phone_data = PhoneData.objects.filter(imei=imei)
-
     for data in phone_data:
         users.append(get_simple_user_object(data.user.id))
+        print users
 
-    data['objects'] = users
-    return return_json_data(data)
+    result['objects'] = users
+    return return_json_data(result)
 
 
 def delete_user_avatar(request, user_id):
