@@ -1,14 +1,26 @@
 #!/bin/sh
 
+sleep_f(){
+	printf "Waiting for reloading uwsgi"
+	for p in {1..20}
+	do
+		printf "."
+		sleep 1
+	done
+}
+
 send(){
 	git push origin devel
 	ssh wisgoon@79.127.125.146 "cd /home/wisgoon/www/wisgoon.com/www && git merge devel && touch reload"
+	sleep_f
 
 	git push origin2 devel
 	ssh wisgoon@79.127.125.104 "cd /home/wisgoon/www/wisgoon.com/www && git merge devel && touch reload"
+	sleep_f
 
 	git push mars devel
 	ssh wisgoon@79.127.125.98 "cd /home/wisgoon/www && git merge devel && touch reload"
+	sleep_f
 
 	# git push emsham devel
 	# ssh emsham@79.127.125.104 "cd /home/emsham/www && git merge devel && touch reload"

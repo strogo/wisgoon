@@ -1,4 +1,4 @@
-    # coding: utf-8
+# coding: utf-8
 from time import mktime, time
 import json
 import datetime
@@ -121,8 +121,10 @@ def search(request):
     offset = int(request.GET.get('offset', 0))
 
     if query:
-        posts = SearchQuerySet().models(Post)\
+        post_queryset = SearchQuerySet().models(Post)\
             .filter(content__contains=query)[offset:offset + 1 * row_per_page]
+        for p in post_queryset:
+            posts.append(post_item_json(post_id=p.pk, cur_user_id=request.user.id))
     else:
         today_stamp = get_delta_timestamp(days=0)
         week_statmp = get_delta_timestamp(days=7)
@@ -256,15 +258,18 @@ def tags(request, tag_name):
 def hashtag(request, tag_name):
     row_per_page = 20
     results = []
+    posts = []
     query = tag_name
 
     if query in [u'عروس', u'عاشقانه'] and not request.user.is_authenticated():
         return render(request, 'pin2/samandehi.html')
 
     offset = int(request.GET.get('offset', 0))
-    posts = SearchQuerySet().models(Post)\
+    post_queryset = SearchQuerySet().models(Post)\
         .filter(tags=tag_name)\
         .order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
+    for p in post_queryset:
+        posts.append(post_item_json(post_id=p.pk, cur_user_id=request.user.id))
 
     tags = ['کربلا']
 
@@ -789,7 +794,10 @@ def category_redis(request, cat_id):
 
     for pll in pl:
         try:
-            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
+            # arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
+            pll_id = int(pll)
+            arp.append(post_item_json(post_id=pll_id,
+                                      cur_user_id=request.user.id))
             # arp.append(Post.objects.get(id=pll))
         except:
             pass
@@ -799,7 +807,7 @@ def category_redis(request, cat_id):
     if request.is_ajax():
         if latest_items:
             return render(request,
-                          'pin2/_items_2.html',
+                          'pin2/_items_2_v6.html',
                           {'latest_items': latest_items})
         else:
             return HttpResponse(0)

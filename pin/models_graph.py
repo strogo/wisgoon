@@ -12,14 +12,16 @@ sys.setdefaultencoding('utf8')
 try:
     graph = Graph(settings.NEO4J_DATABASE)
 except Exception as e:
-    print str(e), '1 models_graph'
+    pass
+    # print str(e), '1 models_graph'
 
 try:
     indexes = graph.schema.get_indexes("Person")
     if 'user_id' not in indexes:
         graph.schema.create_index("Person", "user_id")
 except Exception, e:
-    print str(e), '2 models_graph'
+    pass
+    # print str(e), '2 models_graph'
 
 
 class UserGraph():
@@ -32,7 +34,7 @@ class UserGraph():
             node.push()
             user_node = node
         except Exception as e:
-            print str(e), '3 models_graph'
+            # print str(e), '3 models_graph'
             user_node = False
         return user_node
 
@@ -43,7 +45,7 @@ class UserGraph():
                                   property_key="user_id",
                                   property_value=str(user_id))
         except Exception as e:
-            print str(e), '4 models_graph'
+            # print str(e), '4 models_graph'
             node = None
         return node
 
@@ -53,7 +55,7 @@ class UserGraph():
             graph.delete(node)
             status = True
         except Exception as e:
-            print str(e), '5 models_graph'
+            # print str(e), '5 models_graph'
             status = False
         return status
 
@@ -77,7 +79,7 @@ class FollowUser():
             try:
                 relation = list(graph.match(**data))
             except Exception as e:
-                print str(e), '6 models_graph'
+                # print str(e), '6 models_graph'
                 relation = None
 
         return relation, start, end
@@ -94,7 +96,7 @@ class FollowUser():
                                      end)
                 relation = graph.create_unique(query)
         except Exception as e:
-            print str(e), '7 models_graph'
+            # print str(e), '7 models_graph'
             relation = None
         return relation
 
@@ -108,7 +110,7 @@ class FollowUser():
                 graph.delete(relation)
             status = True
         except Exception as e:
-            print str(e), '8 models_graph'
+            # print str(e), '8 models_graph'
             status = False
         return status
 
