@@ -3,7 +3,7 @@ var image_selected=0;
 
 function setDataToField(){
     var c = document.getElementById("uploaded_image").childNodes[0];
-    $('#image_field').val(c.toDataURL());
+    $('#image_field').val(c.toDataURL("image/jpeg", 0.9));
 }
 
 function add_filter_box(){
@@ -67,7 +67,7 @@ $('body').on('change', '#image_upload_input', function(event) {
             ctx.drawImage(img,0,0, newWidth , newHeight);
 
             $('body').append('<img src="" alt="" id="uploaded_image_origin" style="display:none;" />')
-            $('#uploaded_image_origin').attr('src', canvas.toDataURL());
+            $('#uploaded_image_origin').attr('src', canvas.toDataURL("image/jpeg", 0.9));
             // canvas.setAttribute('id', 'rendered');
         }
         img.src = reader.result;
@@ -133,12 +133,11 @@ $('body').on('click', '#pin_form .sub_btn', function(event) {
         $('#pin_form').submit();
     }else{
         var f = $('.filter.selected').attr('id');
-        console.log('filterd');
         Caman('#origin_image', function(){
             eval('this.'+f+'()');
             this.render(function(){
                 var canv = document.getElementById('origin_image');
-                $('#image_field').val(canv.toDataURL());
+                $('#image_field').val(canv.toDataURL("image/jpeg", 0.9));
                 $('#pin_form').submit();
             });
         });
