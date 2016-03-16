@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wisgoon 6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-14 16:38+0330\n"
-"PO-Revision-Date: 2016-03-14 16:46+0330\n"
+"POT-Creation-Date: 2016-03-16 15:53+0330\n"
+"PO-Revision-Date: 2016-03-16 15:55+0330\n"
 "Last-Translator: amir <a.abbasghorbani@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: FA\n"
@@ -597,13 +597,16 @@ msgstr "کاربر غیر فعال شد"
 msgid "Successfully Change Profile banned."
 msgstr "تغییر انسداد پروفایل کاربر با موفقیت انجام شد"
 
-#: views2/dashboard/api/user.py:188
-#: views2/dashboard/api/user.py:209
+#: views2/dashboard/api/user.py:189
+#| msgid "Successfully banned Imei."
+msgid "Successfully Unbanned Imei."
+msgstr " با موفقیت رفع انسداد شد"
+
+#: views2/dashboard/api/user.py:210
 msgid "Successfully banned Imei."
 msgstr " با موفقیت مسدود شد"
 
-#: views2/dashboard/api/user.py:245
-#| msgid "Successfully Removed Comment"
+#: views2/dashboard/api/user.py:246
 msgid "Successfully removed."
 msgstr " با موفقیت حذف گردید"
 
