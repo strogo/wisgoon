@@ -1,12 +1,10 @@
 {% load daddy_avatar %}
 {% load pin_tags %}
 
-{% if DISPLAY_AD %}
-{% if not request.user_agent.is_mobile %}
+{% if DISPLAY_AD and request.user_agent.is_mobile %}
 <div class="only_mobile_view">
-	{% include "pin2/tabliq/_300x250.html" %}
+	{% include "pin2/tabliq/_468x60_2.html" %}
 </div>
-{% endif %}
 {% endif %}
 
 <div class="profile {% if not request.user_agent.is_mobile %} box {% endif %}">

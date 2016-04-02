@@ -2549,6 +2549,12 @@ div.comment div div.row:hover .del-comment{
 	text-align: center;
 	overflow: hidden;
 }
+.post-sidebar .tabliq{
+	text-align: center;
+}
+.adhere {
+	display: inline-block;
+}
 
 /* submit modal css */
 .wis_modal_icon{

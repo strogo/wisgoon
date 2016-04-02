@@ -157,6 +157,8 @@ def banned_profile(request):
 def banned_imei(request):
     if not check_admin(request):
         return return_un_auth()
+
+    phone_data = None
     try:
         status = str(request.POST.get('status', False))
         description = str(request.POST.get('description3', ""))
@@ -185,7 +187,7 @@ def banned_imei(request):
                                 text=desc + description,
                                 ip_address=get_user_ip(request))
                 return return_json_data({'status': True,
-                                         'message': _("Successfully banned Imei.")})
+                                         'message': _("Successfully Unbanned Imei.")})
 
             except:
                 return return_not_found()
@@ -201,7 +203,6 @@ def banned_imei(request):
                 desc += cur_user.username + ' || '
                 cur_user.is_active = False
                 cur_user.save()
-
             Log.ban_by_imei(actor=request.user,
                             text=desc + description,
                             ip_address=get_user_ip(request))
@@ -216,18 +217,18 @@ def get_user_with_imei(request, imei):
         return return_un_auth()
 
     users = []
-    data = {}
-    data['meta'] = {'limit': '',
-                    'next': '',
-                    'total_count': ''}
+    result = {}
+    result['meta'] = {'limit': '',
+                      'next': '',
+                      'total_count': ''}
 
     phone_data = PhoneData.objects.filter(imei=imei)
-
     for data in phone_data:
         users.append(get_simple_user_object(data.user.id))
+        print users
 
-    data['objects'] = users
-    return return_json_data(data)
+    result['objects'] = users
+    return return_json_data(result)
 
 
 def delete_user_avatar(request, user_id):
