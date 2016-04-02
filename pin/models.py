@@ -1427,7 +1427,7 @@ class PhoneData(models.Model):
 
 
 class InstaAccount(models.Model):
-    insta_id = models.IntegerField()
+    insta_id = models.BigIntegerField()
     cat = models.ForeignKey(Category)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     lc = models.DateTimeField(default=datetime.now())
