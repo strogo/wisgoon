@@ -301,7 +301,7 @@ class Post(models.Model):
     height = models.IntegerField(default=-1, blank=True)
     width = models.IntegerField(default=-1, blank=True)
 
-    category = models.ForeignKey(Category, default=1, verbose_name=_('Category'))
+    category = models.ForeignKey(Category, default=1)
     objects = models.Manager()
     # accepted = AcceptedManager()
 
@@ -1430,7 +1430,7 @@ class InstaAccount(models.Model):
     insta_id = models.BigIntegerField()
     cat = models.ForeignKey(Category)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    lc = models.DateTimeField(default=datetime.now())
+    lc = models.DateTimeField(auto_now=True)
 
 
 class PostMetaData(models.Model):
@@ -1501,7 +1501,7 @@ class Log(models.Model):
     owner = models.IntegerField(default=0)
     text = models.TextField(default="", blank=True, null=True)
 
-    create_time = models.DateTimeField(default=datetime.now())
+    create_time = models.DateTimeField(auto_now=True)
 
     post_image = models.CharField(max_length=250, blank=True, null=True)
 
