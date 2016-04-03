@@ -61,6 +61,7 @@
 	{% if item.text.strip|length > 0 %}
 	<div class="description">
 		<p>{{item.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:30}}</p>
+		<b>{{item.cnt_view}}</b>
 	</div>
 	{% endif %}
 
@@ -71,6 +72,7 @@
 		{% endfor %}
 	</div>
 	{% endif %}
+
 
 	<div class="clear"></div>
 	<div class="avatar-box">
