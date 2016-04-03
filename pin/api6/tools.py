@@ -13,7 +13,7 @@ from pin.api_tools import abs_url, media_abs_url
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
 from pin.models import Post, Follow, Comments, Block
-from pin.models_redis import LikesRedis
+from pin.models_redis import LikesRedis, PostView
 from pin.tools import create_filename
 from cache_layer import PostCacheLayer
 import khayyam
@@ -213,6 +213,8 @@ def post_item_json(post_id, cur_user_id=None, r=None):
     if post_id:
         cp = PostCacheLayer(post_id=post_id)
         cache_post = cp.get()
+        pi['cnt_view'] = PostView(post_id=post_id).get_cnt_view()
+        PostView(post_id=post_id).inc_view()
         if cache_post:
             if cur_user_id:
                 cache_post['like_with_user'] = LikesRedis(post_id=post_id)\

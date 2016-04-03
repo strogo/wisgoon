@@ -24,6 +24,20 @@ activityServer = redis.Redis(settings.REDIS_DB_3)
 notificationRedis = redis.Redis(settings.REDIS_DB_4)
 
 
+class PostView(object):
+    post_id = None
+    KEY_PREFIX = "pv:1:{}"
+
+    def __init__(self, post_id):
+        self.KEY_PREFIX = self.KEY_PREFIX.format(post_id)
+
+    def inc_view(cls):
+        notificationRedis.incr(cls.KEY_PREFIX)
+
+    def get_cnt_view(cls):
+        notificationRedis.get(cls.KEY_PREFIX)
+
+
 class NotifStruct:
     def __init__(self, **entries):
         self.__dict__.update(entries)

@@ -301,7 +301,7 @@ class Post(models.Model):
     height = models.IntegerField(default=-1, blank=True)
     width = models.IntegerField(default=-1, blank=True)
 
-    category = models.ForeignKey(Category, default=1)
+    category = models.ForeignKey(Category, default=1, verbose_name=_('Category'))
     objects = models.Manager()
     # accepted = AcceptedManager()
 
