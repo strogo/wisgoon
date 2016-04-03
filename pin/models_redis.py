@@ -35,7 +35,11 @@ class PostView(object):
         notificationRedis.incr(self.KEY_PREFIX)
 
     def get_cnt_view(self):
-        return notificationRedis.get(self.KEY_PREFIX)
+        cnt = notificationRedis.get(self.KEY_PREFIX)
+        if not cnt:
+            return 0
+        else:
+            return int(cnt)
 
 
 class NotifStruct:
