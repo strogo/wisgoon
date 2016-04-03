@@ -31,11 +31,11 @@ class PostView(object):
     def __init__(self, post_id):
         self.KEY_PREFIX = self.KEY_PREFIX.format(post_id)
 
-    def inc_view(cls):
-        notificationRedis.incr(cls.KEY_PREFIX)
+    def inc_view(self):
+        notificationRedis.incr(self.KEY_PREFIX)
 
-    def get_cnt_view(cls):
-        notificationRedis.get(cls.KEY_PREFIX)
+    def get_cnt_view(self):
+        notificationRedis.get(self.KEY_PREFIX)
 
 
 class NotifStruct:
