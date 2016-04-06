@@ -272,10 +272,23 @@ def register(request):
         return return_json_data(data)
 
     if user:
+        auth_login(request, user)
+
+        api_key, created = ApiKey.objects.get_or_create(user=user)
+
         data = {
             'status': True,
-            'message': _("User created successfully")
+            'message': _("User created successfully"),
+            'user': {
+                'token': api_key.key,
+                'id': user.id,
+                'avatar': get_avatar(user)
+            }
         }
+        # data = {
+        #     'status': True,
+        #     'message': _("User created successfully")
+        # }
         return return_json_data(data)
     else:
         data = {
