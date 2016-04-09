@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.db.models import F
 
-from pin.model_mongo import MonthlyStats
+from pin.model_mongo import MonthlyStats, NotifCount, Notif
 from pin.models_redis import NotificationRedis
 from pin.models import Post, Follow
 
@@ -11,12 +11,12 @@ from user_profile.models import Profile
 
 
 def notif_send(user_id, type, post, actor_id, seen=False, post_image=None):
-    # NotifCount.objects(owner=user_id).update_one(inc__unread=1, upsert=True)
+    NotifCount.objects(owner=user_id).update_one(inc__unread=1, upsert=True)
 
-    # Notif.objects.create(owner=user_id, type=type, post=post,
-    #                      last_actor=actor_id,
-    #                      date=datetime.now,
-    #                      post_image=post_image)
+    Notif.objects.create(owner=user_id, type=type, post=post,
+                         last_actor=actor_id,
+                         date=datetime.now,
+                         post_image=post_image)
 
     NotificationRedis(user_id=user_id)\
         .set_notif(ntype=type, post=post, actor=actor_id)
