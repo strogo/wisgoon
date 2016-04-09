@@ -138,7 +138,6 @@ class ActivityRedis(object):
 
     @classmethod
     def push_to_activity(cls, act_type, who, post_id):
-        return
         from pin.models import Follow
         flist = Follow.objects.filter(following_id=who)\
             .values_list('follower_id', flat=True)
