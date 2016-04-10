@@ -2,6 +2,7 @@ from __future__ import division
 
 # from django.db.models import Sum
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.translation import ugettext as _
 
 from pin.models import Post, Report, Category, SubCategory
 from pin.api6.http import (return_bad_request, return_json_data,
@@ -25,17 +26,32 @@ def reported(request):
     from pin.api_tools import media_abs_url
     if not check_admin(request):
         return return_un_auth()
+    # type_report1 = sys report
+    # type_report2 = user report
 
     before = int(request.GET.get('before', 0))
+    type_report = int(request.GET.get('type', 0))
+    reported_posts = None
+
+    if not type_report:
+        return return_bad_request(message=_("Enter Type Parameter"))
+
     post_reporter_list = []
     data = {}
     data['meta'] = {'limit': 20,
                     'next': '',
                     'total_count': Post.objects.filter(report__gte=1).count()}
 
-    reported_posts = Post.objects.filter(report__gte=1)\
-        .only('id', 'report')\
-        .order_by('-id')[before: (before + 1) * 20]
+    if type_report == 1:
+        reported_posts = Post.objects.filter(report__gte=30)\
+            .only('id', 'report')\
+            .order_by('-report')[before: (before + 1) * 20]
+
+    if type_report == 2:
+        reported_posts = Post.objects.filter(report__lt=30)\
+            .only('id', 'report')\
+            .order_by('-report')[before: (before + 1) * 20]
+
     if not reported_posts:
         return return_not_found()
 
@@ -91,7 +107,8 @@ def post_reporter_user(request, post_id):
         users['reporter'] = get_simple_user_object(reporter.user.id)
         users['reporter']['score'] = reporter.user.profile.score
         users['reporter']['permalink'] = abs_url(reverse("pin-absuser",
-                                                 kwargs={"user_name": users['reporter']['username']}))
+                                                 kwargs={"user_name": users['reporter']['username']}
+                                                         ))
         user_list.append(users)
 
     data['objects'] = users

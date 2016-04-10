@@ -40,13 +40,13 @@ class Command(BaseCommand):
         # create_category(self)
 
         # Create Post
-        create_post(self)
+        # create_post(self)
 
         # Create Like an Comments
-        create_like_comment(self)
+        # create_like_comment(self)
 
         # Create Follower
-        create_test_follow(self)
+        # create_test_follow(self)
 
 
 def create_post(self):
