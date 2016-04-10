@@ -6,6 +6,7 @@ from haystack.query import SearchQuerySet
 
 from django.conf import settings
 from django.db.models import Q
+from django.core.cache import cache
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
 
@@ -363,31 +364,47 @@ def user_post(request, user_id):
 
 
 def related_post(request, item_id):
-    data = {}
-    data['meta'] = {'limit': 10,
-                    'next': "",
-                    'total_count': 1000}
+    data = {
+        'meta': {
+            'limit': GLOBAL_LIMIT,
+            'next': "",
+            'total_count': 1000
+        },
+        'objects': {},
+    }
 
     token = request.GET.get('token', False)
+    offset = int(request.GET.get('offset', 0))
+
+    if offset > 100:
+        return return_json_data(data)
+
     current_user = None
     if token:
         current_user = AuthCache.user_from_token(token=token)
 
-    try:
-        post = Post.objects.get(id=item_id)
-    except Post.DoesNotExist:
-        return return_not_found()
+    cache_str = "mlt:2{}{}".format(item_id, offset)
+    mltis = cache.get(cache_str)
+    if not mltis:
+        try:
+            post = Post.objects.get(id=item_id)
+        except Post.DoesNotExist:
+            return return_not_found()
 
-    mlt = SearchQuerySet().models(Post).more_like_this(post)[:10]
+        mlt = SearchQuerySet().models(Post)\
+            .more_like_this(post)[offset:offset + GLOBAL_LIMIT]
 
-    idis = []
-    for pmlt in mlt:
-        idis.append(pmlt.pk)
+        idis = [int(pmlt.pk) for pmlt in mlt]
+        mltis = get_list_post(idis)
+        cache.set(cache_str, mltis, 3600)
 
-    post.mlt = Post.objects.values_list('id', flat=True)\
-        .filter(id__in=idis)
-
-    data['objects'] = get_objects_list(post.mlt, current_user)
+    data['objects'] = get_objects_list(mltis, current_user)
+    data['meta']['next'] = get_next_url(url_name='api-6-post-related',
+                                        token=token,
+                                        offset=offset + GLOBAL_LIMIT,
+                                        url_args={
+                                            "item_id": item_id}
+                                        )
     return return_json_data(data)
 
 
@@ -577,10 +594,10 @@ def tops(request, period):
             'days': 30
         },
         'daily': {
-            'days': 30
+            'days': 1
         },
         'weekly': {
-            'days': 30
+            'days': 7
         },
         'new': {
             'hours': 8
@@ -602,6 +619,7 @@ def tops(request, period):
         cur_user = AuthCache.id_from_token(token=token)
 
     if period in periods:
+        print "this is periods"
         dt_now = datetime.now().replace(minute=0, second=0, microsecond=0)
 
         date_from = dt_now - timedelta(**periods[period])
