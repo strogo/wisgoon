@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import time
 from datetime import datetime
+from datetime import timedelta
 from haystack.query import SearchQuerySet
 
 from django.conf import settings
@@ -563,3 +565,60 @@ def post_promote(request, post_id):
                                      'message': u'موجودی حساب شما برای آگهی دادن کافی نیست.'})
 
     return return_json_data({'status': False, 'message': 'error in data'})
+
+
+def tops(request, popular):
+    cur_user = None
+    limit = 10
+
+    data = {
+        'meta': {
+            'limit': limit,
+            'next': '',
+            'total_count': 1000
+        }
+    }
+
+    offset = int(request.GET.get('offset', 0))
+    token = request.GET.get('token', '')
+
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+
+    if popular in ['monthly', 'daily', 'weekly']:
+        date_from = None
+
+        dt_now = datetime.now()
+        dt_now = dt_now.replace(minute=0, second=0, microsecond=0)
+
+        if popular == 'monthly':
+            date_from = dt_now - timedelta(days=30)
+        elif popular == 'daily':
+            date_from = dt_now - timedelta(days=1)
+        elif popular == 'weekly':
+            date_from = dt_now - timedelta(days=7)
+
+        if date_from:
+            start_from = time.mktime(date_from.timetuple())
+            pop_posts = SearchQuerySet().models(Post)\
+                .filter(timestamp_i__gt=int(start_from))\
+                .order_by('-cnt_like_i')[offset:offset + limit]
+
+    else:
+        pop_posts = SearchQuerySet().models(Post)\
+            .order_by('-cnt_like_i')[offset:offset + limit]
+
+    idis = [int(ps.pk) for ps in pop_posts]
+    posts = get_list_post(idis)
+
+    data['objects'] = get_objects_list(posts,
+                                       cur_user_id=cur_user,
+                                       r=request)
+
+    data['meta']['next'] = get_next_url(url_name='api-6-post-tops',
+                                        token=token, offset=offset + limit,
+                                        url_args={
+                                            "popular": popular
+                                        })
+
+    return return_json_data(data)
