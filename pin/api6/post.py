@@ -18,6 +18,9 @@ from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
 
 
+GLOBAL_LIMIT = 10
+
+
 def latest(request):
     cur_user = None
     last_item = None
@@ -567,13 +570,26 @@ def post_promote(request, post_id):
     return return_json_data({'status': False, 'message': 'error in data'})
 
 
-def tops(request, popular):
+def tops(request, period):
     cur_user = None
-    limit = 10
+    periods = {
+        'monthly': {
+            'days': 30
+        },
+        'daily': {
+            'days': 30
+        },
+        'weekly': {
+            'days': 30
+        },
+        'new': {
+            'hours': 8
+        }
+    }
 
     data = {
         'meta': {
-            'limit': limit,
+            'limit': GLOBAL_LIMIT,
             'next': '',
             'total_count': 1000
         }
@@ -585,28 +601,20 @@ def tops(request, popular):
     if token:
         cur_user = AuthCache.id_from_token(token=token)
 
-    if popular in ['monthly', 'daily', 'weekly']:
-        date_from = None
+    if period in periods:
+        dt_now = datetime.now().replace(minute=0, second=0, microsecond=0)
 
-        dt_now = datetime.now()
-        dt_now = dt_now.replace(minute=0, second=0, microsecond=0)
-
-        if popular == 'monthly':
-            date_from = dt_now - timedelta(days=30)
-        elif popular == 'daily':
-            date_from = dt_now - timedelta(days=1)
-        elif popular == 'weekly':
-            date_from = dt_now - timedelta(days=7)
+        date_from = dt_now - timedelta(**periods[period])
 
         if date_from:
             start_from = time.mktime(date_from.timetuple())
             pop_posts = SearchQuerySet().models(Post)\
                 .filter(timestamp_i__gt=int(start_from))\
-                .order_by('-cnt_like_i')[offset:offset + limit]
+                .order_by('-cnt_like_i')[offset:offset + GLOBAL_LIMIT]
 
     else:
         pop_posts = SearchQuerySet().models(Post)\
-            .order_by('-cnt_like_i')[offset:offset + limit]
+            .order_by('-cnt_like_i')[offset:offset + GLOBAL_LIMIT]
 
     idis = [int(ps.pk) for ps in pop_posts]
     posts = get_list_post(idis)
@@ -616,9 +624,10 @@ def tops(request, popular):
                                        r=request)
 
     data['meta']['next'] = get_next_url(url_name='api-6-post-tops',
-                                        token=token, offset=offset + limit,
+                                        token=token,
+                                        offset=offset + GLOBAL_LIMIT,
                                         url_args={
-                                            "popular": popular
+                                            "period": period
                                         })
 
     return return_json_data(data)
