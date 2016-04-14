@@ -619,7 +619,6 @@ def tops(request, period):
         cur_user = AuthCache.id_from_token(token=token)
 
     if period in periods:
-        print "this is periods"
         dt_now = datetime.now().replace(minute=0, second=0, microsecond=0)
 
         date_from = dt_now - timedelta(**periods[period])
