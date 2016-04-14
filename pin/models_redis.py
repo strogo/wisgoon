@@ -253,11 +253,11 @@ class LikesRedis(object):
         else:
             self.like(user_id=user_id, post_owner=post_owner, user_ip=user_ip)
 
-            from pin.tasks import activity
-            if settings.DEBUG:
-                activity(act_type=1, who=user_id, post_id=self.postId)
-            else:
-                activity.delay(act_type=1, who=user_id, post_id=self.postId)
+            # from pin.tasks import activity
+            # if settings.DEBUG:
+            #     activity(act_type=1, who=user_id, post_id=self.postId)
+            # else:
+            #     activity.delay(act_type=1, who=user_id, post_id=self.postId)
 
             lbs.zincrby(self.KEY_LEADERBORD, post_owner, 10)
             lbs.zincrby(leader_category, post_owner, 10)

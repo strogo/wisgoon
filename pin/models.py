@@ -1589,6 +1589,31 @@ class Log(models.Model):
                            )
 
 
+class ReportTypes(models.Model):
+    title = models.CharField(max_length=250)
+    pririty = models.IntegerField(default=0)
+
+
+class ReportedPost(models.Model):
+    post = models.OneToOneField(Post)
+    cnt_report = models.IntegerField(default=0)
+    priority = models.IntegerField(default=0)
+
+
+class ReportedPostReporters(models.Model):
+    reported_post = models.ForeignKey(ReportedPost)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    report_type = models.ForeignKey(ReportTypes, blank=True, default=None)
+    create_time = models.DateTimeField(auto_now=True)
+
+
+class UserHistory(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    pos_report = models.IntegerField(default=0)
+    neg_report = models.IntegerField(default=0)
+    priority = models.IntegerField(default=1)
+
+
 class Results(models.Model):
     label = models.CharField(max_length=250)
     text = models.TextField()

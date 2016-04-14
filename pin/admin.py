@@ -92,7 +92,7 @@ class AdAdmin(admin.ModelAdmin):
     raw_id_fields = ("post", "user")
     list_filter = ("ads_type", "ended")
 
-    date_hierarchy = 'start'
+    # date_hierarchy = 'start'
 
     actions = ['ended', ]
 

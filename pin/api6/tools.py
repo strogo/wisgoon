@@ -93,7 +93,14 @@ def save_post(request, user):
     media_url = settings.MEDIA_ROOT
 
     model = None
-    form = PinDirectForm(request.POST, request.FILES)
+
+    try:
+        form = PinDirectForm(request.POST, request.FILES)
+    except Exception, e:
+        msg = "error in data"
+        status = False
+        return status, model, msg
+
     if form.is_valid():
         upload = request.FILES.values()[0]
         filename = create_filename(upload.name)

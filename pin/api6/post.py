@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+import time
 from datetime import datetime
+from datetime import timedelta
 from haystack.query import SearchQuerySet
 
 from django.conf import settings
 from django.db.models import Q
+from django.core.cache import cache
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
 
@@ -14,6 +17,9 @@ from pin.api6.tools import get_next_url, get_int, save_post,\
 from pin.models import Post, Report, Ad, Block
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
+
+
+GLOBAL_LIMIT = 10
 
 
 def latest(request):
@@ -358,31 +364,47 @@ def user_post(request, user_id):
 
 
 def related_post(request, item_id):
-    data = {}
-    data['meta'] = {'limit': 10,
-                    'next': "",
-                    'total_count': 1000}
+    data = {
+        'meta': {
+            'limit': GLOBAL_LIMIT,
+            'next': "",
+            'total_count': 1000
+        },
+        'objects': {},
+    }
 
     token = request.GET.get('token', False)
+    offset = int(request.GET.get('offset', 0))
+
+    if offset > 100:
+        return return_json_data(data)
+
     current_user = None
     if token:
         current_user = AuthCache.user_from_token(token=token)
 
-    try:
-        post = Post.objects.get(id=item_id)
-    except Post.DoesNotExist:
-        return return_not_found()
+    cache_str = "mlt:2{}{}".format(item_id, offset)
+    mltis = cache.get(cache_str)
+    if not mltis:
+        try:
+            post = Post.objects.get(id=item_id)
+        except Post.DoesNotExist:
+            return return_not_found()
 
-    mlt = SearchQuerySet().models(Post).more_like_this(post)[:10]
+        mlt = SearchQuerySet().models(Post)\
+            .more_like_this(post)[offset:offset + GLOBAL_LIMIT]
 
-    idis = []
-    for pmlt in mlt:
-        idis.append(pmlt.pk)
+        idis = [int(pmlt.pk) for pmlt in mlt]
+        mltis = get_list_post(idis)
+        cache.set(cache_str, mltis, 3600)
 
-    post.mlt = Post.objects.values_list('id', flat=True)\
-        .filter(id__in=idis)
-
-    data['objects'] = get_objects_list(post.mlt, current_user)
+    data['objects'] = get_objects_list(mltis, current_user)
+    data['meta']['next'] = get_next_url(url_name='api-6-post-related',
+                                        token=token,
+                                        offset=offset + GLOBAL_LIMIT,
+                                        url_args={
+                                            "item_id": item_id}
+                                        )
     return return_json_data(data)
 
 
@@ -563,3 +585,66 @@ def post_promote(request, post_id):
                                      'message': u'موجودی حساب شما برای آگهی دادن کافی نیست.'})
 
     return return_json_data({'status': False, 'message': 'error in data'})
+
+
+def tops(request, period):
+    cur_user = None
+    periods = {
+        'monthly': {
+            'days': 30
+        },
+        'daily': {
+            'days': 1
+        },
+        'weekly': {
+            'days': 7
+        },
+        'new': {
+            'hours': 8
+        }
+    }
+
+    data = {
+        'meta': {
+            'limit': GLOBAL_LIMIT,
+            'next': '',
+            'total_count': 1000
+        }
+    }
+
+    offset = int(request.GET.get('offset', 0))
+    token = request.GET.get('token', '')
+
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+
+    if period in periods:
+        dt_now = datetime.now().replace(minute=0, second=0, microsecond=0)
+
+        date_from = dt_now - timedelta(**periods[period])
+
+        if date_from:
+            start_from = time.mktime(date_from.timetuple())
+            pop_posts = SearchQuerySet().models(Post)\
+                .filter(timestamp_i__gt=int(start_from))\
+                .order_by('-cnt_like_i')[offset:offset + GLOBAL_LIMIT]
+
+    else:
+        pop_posts = SearchQuerySet().models(Post)\
+            .order_by('-cnt_like_i')[offset:offset + GLOBAL_LIMIT]
+
+    idis = [int(ps.pk) for ps in pop_posts]
+    posts = get_list_post(idis)
+
+    data['objects'] = get_objects_list(posts,
+                                       cur_user_id=cur_user,
+                                       r=request)
+
+    data['meta']['next'] = get_next_url(url_name='api-6-post-tops',
+                                        token=token,
+                                        offset=offset + GLOBAL_LIMIT,
+                                        url_args={
+                                            "period": period
+                                        })
+
+    return return_json_data(data)

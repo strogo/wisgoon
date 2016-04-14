@@ -53,7 +53,7 @@ CACHES = {
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://79.127.125.106:8080/solr',
+        'URL': 'http://79.127.125.146:8080/solr',
     },
 }
 
@@ -100,15 +100,15 @@ ENABLE_CACHING = True
 SCORE_FOR_COMMENING = -5000
 SCORE_FOR_STREAMS = 10000
 
-BROKER_URL = 'amqp://guest@79.127.125.99//'
-CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.99//'
+BROKER_URL = 'amqp://guest@79.127.125.98//'
+CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.98//'
 
 NEO4J_DATABASE = "http://79.127.125.98:7474/db/data/"
 
 ES_HOST = "79.127.125.98"
 INFLUX_HOST = "79.127.125.99"
 
-REDIS_DB_4 = '79.127.125.99'
+REDIS_DB_4 = '79.127.125.98'
 REDIS_DB_3 = '79.127.125.98'
 
 STATIC_CDN = "http://static.wisgoon.com/media/"

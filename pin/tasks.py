@@ -17,7 +17,8 @@ except Exception, e:
 
 @app.task(name="wisgoon.analytics.tick")
 def tick(doc):
-    client.write_points(doc)
+    pass
+    # client.write_points(doc)
     # es.index(index="wisgoon-analytics", doc_type='log', body=doc)
 
 
