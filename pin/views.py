@@ -1094,17 +1094,19 @@ def item_related(request, item_id):
             return cd
     try:
         post = Post.objects.get(id=item_id)
+        # post = post_item_json(post_id=item_id, cur_user_id=request.user.id)
     except Post.DoesNotExist:
         raise Http404("Post does not exist")
 
     mlt = SearchQuerySet()\
         .models(Post).more_like_this(post)[:30]
 
-    idis = []
+    related_posts = []
     for pmlt in mlt:
-        idis.append(pmlt.pk)
+        # idis.append(pmlt.pk)
+        related_posts.append(post_item_json(post_id=pmlt.pk, cur_user_id=request.user.id))
 
-    post.mlt = Post.objects.filter(id__in=idis).only(*Post.NEED_KEYS_WEB)
+    post.mlt = related_posts
 
     if request.is_ajax():
         d = render(request, 'pin2/_items_related.html', {
@@ -1212,3 +1214,21 @@ def stats(request):
 
 def feedback(request):
     return render(request, 'pin2/statics/feedback.html', {'page': 'feedback'})
+
+
+def email_register(request):
+    return render(request, 'pin2/emails/on_register.html', {
+        'page': 'feedback'
+    })
+
+
+def pass_reset(request):
+    return render(request, 'pin2/emails/on_reset_pass.html', {
+        'page': 'feedback'
+    })
+
+
+def newsletter(request):
+    return render(request, 'pin2/emails/newsletter.html', {
+        'page': 'newsletter'
+    })
