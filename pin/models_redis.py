@@ -32,9 +32,11 @@ class PostView(object):
         self.KEY_PREFIX = self.KEY_PREFIX.format(post_id)
 
     def inc_view(self):
+        return
         notificationRedis.incr(self.KEY_PREFIX)
 
     def get_cnt_view(self):
+        return
         cnt = notificationRedis.get(self.KEY_PREFIX)
         if not cnt:
             return 0

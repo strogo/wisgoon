@@ -777,7 +777,7 @@ class Post(models.Model):
                        actor=self.user.id)
 
     @classmethod
-    def home_latest(cls, pid=0):
+    def home_latest(cls, pid=0, limit=20):
         home_stream = settings.HOME_STREAM
 
         if not r_server.exists(home_stream):
@@ -786,15 +786,16 @@ class Post(models.Model):
             if hposts:
                 r_server.rpush(home_stream, *hposts)
 
-        pl = r_server.lrange(home_stream, 0, settings.LIST_LONG)
-
         if pid == 0:
-            return pl[:20]
+            pl = r_server.lrange(home_stream, 0, limit)
+            return pl[:limit]
+
+        pl = r_server.lrange(home_stream, 0, settings.LIST_LONG)
 
         if pid:
             try:
                 pid_index = pl.index(str(pid))
-                idis = pl[pid_index + 1: pid_index + 20]
+                idis = pl[pid_index + 1: pid_index + limit + 1]
                 return idis
             except ValueError:
                 return []
@@ -802,30 +803,29 @@ class Post(models.Model):
         return []
 
     @classmethod
-    def latest(cls, pid=0, cat_id=0):
+    def latest(cls, pid=0, cat_id=0, limit=20):
         if cat_id:
-            cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, cat_id)
+            cat_stream = "{}_{}".format(settings.STREAM_LATEST_CAT, cat_id)
         else:
             cat_stream = settings.STREAM_LATEST
 
         if pid == 0:
-            pl = r_server.lrange(cat_stream, 0, 20)
+            pl = r_server.lrange(cat_stream, 0, limit)
         else:
-            cache_name = "cl_%s_%s" % (cat_stream, pid)
+            cache_name = "cl_{}_{}:{}".format(cat_stream, pid, limit)
             cache_data = cache.get(cache_name)
             if cache_data:
-                # print "we have cached data", cache_data, cache_name
                 return cache_data
             pl = r_server.lrange(cat_stream, 0, -1)
 
         # print pl
         if pid == 0:
-            return pl[:20]
+            return pl[:limit]
 
         if pid:
             try:
                 pid_index = pl.index(str(pid))
-                idis = pl[pid_index + 1: pid_index + 20]
+                idis = pl[pid_index + 1: pid_index + limit + 1]
                 cache.set(cache_name, idis, 86400)
                 return idis
             except ValueError:
@@ -1587,6 +1587,33 @@ class Log(models.Model):
                            post_image=post.get_image_236()["url"],
                            ip_address=ip_address,
                            )
+
+
+class ReportTypes(models.Model):
+    title = models.CharField(max_length=250)
+    pririty = models.IntegerField(default=0)
+
+
+class ReportedPost(models.Model):
+    post = models.OneToOneField(Post)
+    cnt_report = models.IntegerField(default=0)
+    priority = models.IntegerField(default=0)
+
+
+class ReportedPostReporters(models.Model):
+    reported_post = models.ForeignKey(ReportedPost)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    report_type = models.ForeignKey(ReportTypes, blank=True, default=None)
+    create_time = models.DateTimeField(auto_now=True)
+
+
+class UserHistory(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    pos_report = models.IntegerField(default=0)
+    neg_report = models.IntegerField(default=0)
+    cnt_report = models.IntegerField(default=0)
+    admin_post_deleted = models.IntegerField(default=0)
+    priority = models.IntegerField(default=1)
 
 
 class Results(models.Model):

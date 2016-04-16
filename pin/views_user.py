@@ -215,6 +215,10 @@ def report(request, pin_id):
         status = False
         msg = _("You 've already reported this matter.")
 
+    # TODO: add new report here @hossein
+
+    # End of hosseing work
+
     if request.is_ajax():
         data = {'status': status, 'message': msg}
         return HttpResponse(json.dumps(data), content_type='application/json')

@@ -26,10 +26,13 @@ def latest(request):
     cur_user = None
     last_item = None
     hot_post = None
-    data = {}
-    data['meta'] = {'limit': 20,
-                    'next': '',
-                    'total_count': 1000}
+    data = {
+        'meta': {
+            'limit': GLOBAL_LIMIT,
+            'next': '',
+            'total_count': 1000
+        }
+    }
 
     before = request.GET.get('before', None)
     token = request.GET.get('token', '')
@@ -40,7 +43,7 @@ def latest(request):
     if not before:
         before = 0
 
-    pl = Post.latest(pid=before)
+    pl = Post.latest(pid=before, limit=GLOBAL_LIMIT)
     posts = get_list_post(pl, from_model=settings.STREAM_LATEST)
 
     if cur_user:
@@ -137,10 +140,13 @@ def category(request, category_id):
 
 def choices(request):
     cur_user = None
-    data = {}
-    data['meta'] = {'limit': 20,
-                    'next': "",
-                    'total_count': 1000}
+    data = {
+        'meta': {
+            'limit': GLOBAL_LIMIT,
+            'next': "",
+            'total_count': 1000
+        }
+    }
 
     before = request.GET.get('before', None)
     token = request.GET.get('token', None)
@@ -151,7 +157,7 @@ def choices(request):
     if not before:
         before = 0
 
-    pl = Post.home_latest(pid=before)
+    pl = Post.home_latest(pid=before, limit=GLOBAL_LIMIT)
     posts = get_list_post(pl)
 
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
@@ -619,7 +625,6 @@ def tops(request, period):
         cur_user = AuthCache.id_from_token(token=token)
 
     if period in periods:
-        print "this is periods"
         dt_now = datetime.now().replace(minute=0, second=0, microsecond=0)
 
         date_from = dt_now - timedelta(**periods[period])
