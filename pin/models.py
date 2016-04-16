@@ -1611,6 +1611,8 @@ class UserHistory(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
     pos_report = models.IntegerField(default=0)
     neg_report = models.IntegerField(default=0)
+    cnt_report = models.IntegerField(default=0)
+    admin_post_deleted = models.IntegerField(default=0)
     priority = models.IntegerField(default=1)
 
 
