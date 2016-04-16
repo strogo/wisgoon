@@ -179,10 +179,12 @@ def result(request, label):
         .filter(content__contains=r.get_label_text())\
         .order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
 
+    ps = [post_item_json(p.pk) for p in posts]
+
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
             'results': results,
-            'posts': posts,
+            'posts': ps,
             'query': query,
             'r': r,
             'offset': offset + row_per_page,
@@ -190,7 +192,7 @@ def result(request, label):
 
     return render(request, 'pin2/result.html', {
         'results': results,
-        'posts': posts,
+        'posts': ps,
         'query': query,
         'r': r,
         'offset': offset + row_per_page,
@@ -846,14 +848,16 @@ def popular(request, interval=""):
         posts = SearchQuerySet().models(Post)\
             .order_by('-cnt_like_i')[offset:offset + 1 * 20]
 
+    ps = [post_item_json(post_id=p.pk) for p in posts]
+
     if request.is_ajax():
         return render(request, 'pin2/__search.html',
-                      {'posts': posts,
+                      {'posts': ps,
                        'offset': offset + 20})
 
     else:
         return render(request, 'pin2/popular.html',
-                      {'posts': posts,
+                      {'posts': ps,
                        'offset': offset + 20})
 
 
