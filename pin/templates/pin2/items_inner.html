@@ -216,9 +216,11 @@
                         {% endif %}
 
                     </div>
+                    {% if request.user_agent.is_mobile == False %}
                     <div class="btn-box share_btn" data-toggle="modal" data-target="#modal_share">
                         انتشار <span class="share_icon"></span>
                     </div>
+                    {% endif %}
                     <div class="clear"></div>
                 </div>
 
@@ -229,7 +231,7 @@
                     </a>
                     {% endfor %}
 
-                    {% if post.cnt_like > 6 %}
+                    {% if post.cnt_like > 5 %}
                     <a data-toggle="modal" data-target="#likers_modal"><span class="likers_popup"><img src="{{MEDIA_URL}}v2/images/3dot-h.png" width="25" height="8" alt=""></span></a>
 
                     <div class="modal fade" id="likers_modal" tabindex="-1" role="dialog" aria-labelledby="likers_modal_label">

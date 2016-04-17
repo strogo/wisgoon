@@ -1034,7 +1034,7 @@ def item(request, item_id):
     # pl = Likes.objects.filter(post_id=post.id)[:12]
     from models_redis import LikesRedis
     post.likes = LikesRedis(post_id=post.id)\
-        .get_likes(offset=0, limit=6, as_user_object=True)
+        .get_likes(offset=0, limit=5, as_user_object=True)
 
     # s = SearchQuerySet().models(Post).more_like_this(post)
     # print "seems with:", post.id, s[:5]

@@ -1081,7 +1081,7 @@ a.btn.btn-primary {
 	padding: 7px 7px 3px;
 }
 .post-content .activity_btn{
-	padding: 20px;
+	padding: 20px 0 20px 20px;
 	float: left;
 }
 .post-content .activity_btn .btn-box{
@@ -1093,7 +1093,7 @@ a.btn.btn-primary {
 	height: 50px;
 	overflow: hidden;
 	padding: 15px 10px 0 0;
-	width: 290px;
+	width: 285px;
 }
 .post-content .liker_avatars a{
 	margin-bottom: 10px;
