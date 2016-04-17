@@ -216,6 +216,9 @@
                         {% endif %}
 
                     </div>
+                    <div class="btn-box share_btn" data-toggle="modal" data-target="#modal_share">
+                        انتشار <span class="share_icon"></span>
+                    </div>
                     <div class="clear"></div>
                 </div>
 
@@ -358,4 +361,96 @@
         {% include "pin2/_pin_sidebar.html" %}
     </div>
 
+</div>
+
+
+<!-- share Modal -->
+<div class="modal fade" id="modal_share" tabindex="-1" role="dialog" aria-labelledby="modal_shareLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modal_shareLabel">گزینه‌های انتشار</h4>
+    </div>
+    <div class="modal-body">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs col-sm-12" role="tablist">
+            <li role="presentation" class="active col-sm-4"><a href="#x236" aria-controls="x236" role="tab" data-toggle="tab">عرض ۲۳۶</a></li>
+            <li role="presentation" class="col-sm-4"><a href="#x500" aria-controls="x500" role="tab" data-toggle="tab">عرض ۵۰۰</a></li>
+            <li role="presentation" class="col-sm-4"><a href="#xo" aria-controls="xo" role="tab" data-toggle="tab">اندازه اصلی</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <br>
+        <br>
+        <div class="tab-content pa20">
+            <div role="tabpanel" class="tab-pane active" id="x236">
+                <label for="html_txt_1">کد HTML برای سایت یا وبلاگ</label><br>
+
+                <input readonly="readonly" class="w100" type="text" id="html_txt_1" value="<a href='{{SITE_URL}}{% url "pin-item" post.id %}?rfr=embed'><img src='{{post.get_image_236.url}}' alt='عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}' /></a>" />
+                <div class="clear"></div>
+
+                <label for="bbcode_txt_1">کد انجمن‌های گفتگو</label><br>
+                <input readonly="readonly" class="w100" type="text" id="bbcode_txt_1" value="[url={{SITE_URL}}{% url "pin-item" post.id %}?rfr=embed][img]{{post.get_image_236.url}}[/img][/url]" />
+                <div class="clear"></div>
+
+                <label for="link_txt_1">لینک مطلب</label><br>
+                <input readonly="readonly" class="w100" type="text" id="link_txt_1" value="{{SITE_URL}}{% url "pin-item" post.id %}?rfr=embed" />
+                <div class="clear"></div>
+
+                <label for="direct_txt_1">لینک مستقیم</label><br>
+                <input readonly="readonly" class="w100" type="text" id="direct_txt_1" value="{{post.get_image_236.url}}" />
+                <div class="clear"></div>
+
+            </div>
+
+
+            <div role="tabpanel" class="tab-pane" id="x500">
+                <label for="html_txt_2">کد HTML برای سایت یا وبلاگ</label><br>
+                <input readonly="readonly" class="w100" type="text" id="html_txt_2" value="<a href='{{SITE_URL}}{% url "pin-item" post.id %}?rfr=embed'><img src='{{post.get_image_500.url}}' alt='عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}' /></a>" />
+
+                <div class="clear"></div>
+
+                <label for="bbcode_txt_2">کد انجمن‌های گفتگو</label><br>
+                <input readonly="readonly" class="w100" type="text" id="bbcode_txt_2" value="[url={{SITE_URL}}{% url "pin-item" post.id %}?rfr=embed][img]{{post.get_image_500.url}}[/img][/url]" />
+                <div class="clear"></div>
+
+                <label for="link_txt_2">لینک مطلب</label><br>
+                <input readonly="readonly" class="w100" type="text" id="link_txt_2" value="{{SITE_URL}}{% url "pin-item" post.id %}?rfr=embed" />
+                <div class="clear"></div>
+
+                <label for="direct_txt_2">لینک مستقیم</label><br>
+                <input readonly="readonly" class="w100" type="text" id="direct_txt_2" value="{{post.get_image_500.url}}" />
+                <div class="clear"></div>
+
+            </div>
+
+
+            <div role="tabpanel" class="tab-pane" id="xo">
+                <label for="html_txt_3">کد HTML برای سایت یا وبلاگ</label><br>
+                <input readonly="readonly" class="w100" type="text" id="html_txt_3" value="<a href='{{SITE_URL}}{% url "pin-item" post.id %}?rfr=embed'><img src='{{media_prefix}}{{MEDIA_URL}}{{post.image}}' alt='عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}' /></a>" />
+                <div class="clear"></div>
+
+                <label for="bbcode_txt_3">کد انجمن‌های گفتگو</label><br>
+                <input readonly="readonly" class="w100" type="text" id="bbcode_txt_3" value="[url={{SITE_URL}}{% url "pin-item" post.id %}?rfr=embed][img]{{media_prefix}}{{MEDIA_URL}}{{post.image}}[/img][/url]" />
+                <div class="clear"></div>
+
+                <label for="link_txt_3">لینک مطلب</label><br>
+                <input readonly="readonly" class="w100" type="text" id="link_txt_3" value="{{SITE_URL}}{% url "pin-item" post.id %}?rfr=embed" />
+                <div class="clear"></div>
+
+                <label for="direct_txt_3">لینک مستقیم</label><br>
+                <input readonly="readonly" class="w100" type="text" id="direct_txt_3" value="{{media_prefix}}{{MEDIA_URL}}{{post.image}}" />
+                <div class="clear"></div>
+
+            </div>
+
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="btn wis_btn red_o" data-dismiss="modal">انصراف</a>
+    </div>
+</div>
+</div>
 </div>

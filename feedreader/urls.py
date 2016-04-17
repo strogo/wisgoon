@@ -8,6 +8,10 @@ admin.autodiscover()
 user_resource = UserResource()
 
 urlpatterns = patterns('',
+    url(r'^email/register/', 'pin.views.email_register', name='email_register'),
+    url(r'^pass/reset/', 'pin.views.pass_reset', name='pass_reset'),
+    url(r'^newsletter/', 'pin.views.newsletter', name='newsletter'),
+
     url(r'^$', 'pin.views.home', name='home'),
     # url(r'^latest_post/', 'latest_redis', name='pin-latest-old'),
     url(r'^profile/', include('user_profile.urls')),

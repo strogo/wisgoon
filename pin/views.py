@@ -1233,6 +1233,8 @@ def pass_reset(request):
 
 
 def newsletter(request):
+    posts = Post.objects.filter(user_id=21).order_by('-id')
     return render(request, 'pin2/emails/newsletter.html', {
+        'posts': posts,
         'page': 'newsletter'
     })

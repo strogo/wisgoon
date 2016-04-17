@@ -15,7 +15,7 @@ from django.utils.text import normalize_newlines
 from django.utils.safestring import mark_safe
 
 from pin.models import Likes as pinLikes
-from pin.model_mongo import NotifCount
+# from pin.model_mongo import NotifCount
 from user_profile.models import Profile
 
 from pin.tools import userdata_cache
@@ -124,6 +124,7 @@ def get_user_notify(userid):
     #     notify = 0
     # return notify
 
+
 @register.filter
 def get_image(post_id):
     from pin.api6.cache_layer import PostCacheLayer
@@ -137,7 +138,7 @@ def get_image(post_id):
             p_236 = cache_post['images']['thumbnail']['url']
 
         try:
-            post = Post.objects.get(id=post_id)      
+            post = Post.objects.get(id=post_id)
             p_236 = post.get_image_236()
             p_236 = media_abs_url(p_236['url'], check_photos=True)
         except Post.DoesNotExist:
@@ -374,3 +375,27 @@ def remove_newlines(text):
 remove_newlines.is_safe = True
 remove_newlines = stringfilter(remove_newlines)
 register.filter(remove_newlines)
+
+
+@register.filter
+def user_posts_for_email(user_id):
+    from pin.models import Post
+    posts = Post.objects.filter(user_id=user_id).order_by('-id')
+    h1 = 0
+    h2 = 0
+    tb1_html = '<table>'
+    tb2_html = '<table>'
+    html = ''
+    for p in posts:
+        b = p.get_image_236()
+        if h1 < h2:
+            tb1_html += '<tr><td valign="top"><a href="%s"><img style="border-radius:10px;margin-bottom:5px;box-shadow:2px 2px 3px #000;" src="%s" alt="%s" /></a></td></tr>' % (p.get_absolute_url(), b['url'], p.text)
+            h1 += b['h']
+        else:
+            tb2_html += '<tr><td valign="top"><a href="%s"><img style="border-radius:10px;margin-bottom:5px;box-shadow:2px 2px 3px #000;" src="%s" alt="%s" /></a></td></tr>' % (p.get_absolute_url(), b['url'], p.text)
+            h2 += b['h']
+
+    tb1_html += '</table>'
+    tb2_html += '</table>'
+    html += '<table align="center"><tr><td valign="top">%s</td><td valign="top">%s</td></tr></table>' % (tb1_html, tb2_html)
+    return html

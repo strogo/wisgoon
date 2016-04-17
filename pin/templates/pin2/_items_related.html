@@ -1,17 +1,15 @@
 {% spaceless %}
 
 {% for item in post.mlt %}
-	{% if item.get_image_236 %}
-		{% with 1 as related %}
-			{% include "pin2/__items_base.html" %}
-		{% endwith %}
+	{% if item %}
+			{% include "pin2/__items_base_v6.html" %}
 	{% endif %}
-
-{% if offset %}
-	<span data-next="{{offset}}" ></span>
-{%else%}
-	<span data-next="{{item.id}}" ></span>
-{%endif%}
+    
+    {% if offset %}
+    	<span data-next="{{offset}}" ></span>
+    {%else%}
+    	<span data-next="{{item.id}}" ></span>
+    {%endif%}
 
 {%endfor%}
 

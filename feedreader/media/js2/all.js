@@ -145,6 +145,14 @@ if (disable_masonry==0){
         isFitWidth: true
     });
 }
+
+$(function(){
+
+    $(window).on("resize", function(){
+        feedobj.masonry('reload')
+    });
+
+});
 ms_reload();
 
 var next_pref = next_pref || '?older=';
@@ -312,6 +320,10 @@ function marker(t){
 
 
 $(function () {
+
+    $("#modal_share .tab-pane input").on("click", function () {
+        $(this).select();
+    });
     $('.gotoapp').attr('href', window.location.href);
 
     $('body').on('click', '.promote_content .nav.nav-tabs li', function(event) {
