@@ -49,13 +49,19 @@ def abs_url(url, api=True):
             return settings.SITE_URL + url
 
 
-def media_abs_url(url, check_photos=False):
+def media_abs_url(url, check_photos=False, static=False):
+
+    if static:
+        cur_base_url = settings.STATIC_CDN
+    else:
+        cur_base_url = settings.SITE_URL
+
     if url.startswith('http://'):
         new_url = url
     elif not url.startswith('/media/'):
-        new_url = settings.SITE_URL + '/media/' + url
+        new_url = cur_base_url + '/media/' + url
     elif url.startswith('/media/'):
-        new_url = settings.SITE_URL + url
+        new_url = cur_base_url + url
 
     if check_photos:
         if "photos01" in new_url:
