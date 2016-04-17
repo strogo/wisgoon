@@ -45,7 +45,7 @@ def category_get_json(cat_id):
         pass
     cat_json = {
         'id': cat.id,
-        'image': media_abs_url(cat.image.url),
+        'image': media_abs_url(cat.image.url, static=True),
         'title': cat.title,
     }
     return cat_json
