@@ -52,7 +52,7 @@ def abs_url(url, api=True):
 def media_abs_url(url, check_photos=False, static=False):
 
     if static:
-        cur_base_url = settings.STATIC_CDN
+        cur_base_url = settings.STATIC_DOMAIN
     else:
         cur_base_url = settings.SITE_URL
 
