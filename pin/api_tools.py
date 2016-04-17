@@ -56,11 +56,14 @@ def media_abs_url(url, check_photos=False, static=False):
     else:
         cur_base_url = settings.SITE_URL
 
-    if url.startswith('http://'):
-        new_url = url
-    elif not url.startswith('/media/'):
-        new_url = cur_base_url + '/media/' + url
-    elif url.startswith('/media/'):
+    if not static:
+        if url.startswith('http://'):
+            new_url = url
+        elif not url.startswith('/media/'):
+            new_url = cur_base_url + '/media/' + url
+        elif url.startswith('/media/'):
+            new_url = cur_base_url + url
+    else:
         new_url = cur_base_url + url
 
     if check_photos:
