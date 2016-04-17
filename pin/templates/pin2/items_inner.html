@@ -177,7 +177,7 @@
                         <a href="{{post.get_absolute_url}}">{{post.create|date_filter}} <i class="time_icon"></i></a>
                     </div>
                     <div class="cat pull-left">
-                        <h2>
+                        <h2>Q
                             <a href="/category/{{post.category.id}}/">{{post.category}} <i class="cat_icon"></i></a>
                         </h2>
                     </div>
@@ -187,12 +187,12 @@
             <!-- tags -->
             {% if post.get_tags %}
             <div class="post-tags">
-                {% for t in post.get_tags %}
+                {% for t in post.get_tags %}3Q
                 <a href="/hashtag/{{t}}/">#{{t}}</a>
                 {% endfor %}
                 <div class="clear"></div>
             </div>
-            {% endif %}
+            {% endif %}1
 
             <div class="post_activity">
                 <div class="activity_btn">
@@ -229,7 +229,7 @@
                     </a>
                     {% endfor %}
 
-                    {% if post.cnt_like > 6 %}
+                    {% if post.cnt_like > 5 %}
                     <a data-toggle="modal" data-target="#likers_modal"><span class="likers_popup"><img src="{{MEDIA_URL}}v2/images/3dot-h.png" width="25" height="8" alt=""></span></a>
 
                     <div class="modal fade" id="likers_modal" tabindex="-1" role="dialog" aria-labelledby="likers_modal_label">
