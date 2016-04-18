@@ -527,3 +527,9 @@ def ad_item_json(ad):
     ad_dict['end'] = str(ad.end)
     ad_dict['id'] = ad.id
     return ad_dict
+
+
+def new_reported(post):
+    new_report = {}
+    new_report['reported_post'] = post_item_json(post.post.id)
+    return new_report

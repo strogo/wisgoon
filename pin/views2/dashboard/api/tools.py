@@ -190,14 +190,12 @@ def ads_group_by(group_by, ended):
 
 
 def cnt_post_deleted_by_user(user_id):
-    return 0
     cnt_log = Log.objects\
         .filter(content_type=Log.POST, user=user_id, owner=user_id).count()
     return cnt_log
 
 
 def cnt_post_deleted_by_admin(user_id):
-    return 0
     cnt_log = Log.objects\
         .filter(content_type=Log.POST, owner=user_id)\
         .exclude(user=user_id).count()

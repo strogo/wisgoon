@@ -26,7 +26,7 @@ from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
 from pin.context_processors import is_police
 from pin.models import Post, Stream, Follow, Ad, Block,\
-    Report, Comments, Comments_score, Category, Bills2 as Bills
+    Report, Comments, Comments_score, Category, Bills2 as Bills, ReportedPost, ReportedPostReporters
 
 from pin.model_mongo import Notif, UserMeta, NotifCount
 from pin.models_redis import ActivityRedis, NotificationRedis
@@ -216,7 +216,19 @@ def report(request, pin_id):
         msg = _("You 've already reported this matter.")
 
     # TODO: add new report here @hossein
+    try:
+        reported = ReportedPost.objects.create(post=post)
+        created = True
+    except Exception as e:
+        print str(e)
 
+    if created:
+        reported.cnt_report = reported.cnt_report + 1
+        reported.save()
+    try:
+        ReportedPostReporters.objects.create(reported_post=reported, user=request.user)
+    except Exception as e:
+        print str(e)
     # End of hosseing work
 
     if request.is_ajax():

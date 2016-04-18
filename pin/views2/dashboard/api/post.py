@@ -4,7 +4,8 @@ from __future__ import division
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
-from pin.models import Post, Report, Category, SubCategory
+from pin.models import Post, Report, Category, SubCategory, ReportedPost, ReportedPostReporters,\
+    PhoneData
 from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
 from pin.api6.tools import (get_next_url, get_simple_user_object,
@@ -19,6 +20,47 @@ from pin.views2.dashboard.api.tools import (ads_group_by,
 from user_profile.models import Profile
 
 from haystack.query import SearchQuerySet
+
+
+def new_reporte(request):
+    posts = ReportedPost.objects.all()
+    data = {
+        'meta': {},
+        'objects': []
+    }
+
+    obj = []
+    imei = []
+    count = []
+
+    for rp in posts:
+        o = post_item_json(rp.post.id)
+
+        cnt_post = Profile.objects.get(user=rp.post.user)
+        count.append(cnt_post)
+
+        phone_data = PhoneData.objects.get(user=rp.post.user.id)
+        imei.append(phone_data)
+
+        reporters = ReportedPostReporters.objects.filter(reported_post=rp)
+        reports_list = []
+
+        for rps in reporters:
+            report_json = get_simple_user_object(rps.user.id)
+
+        reports_list.append(report_json)
+
+        o['reporters'] = reports_list
+        o['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(rp.post.user_id)
+        o['user']['cnt_post'] = cnt_post.cnt_post
+        o['user']['banned_profile'] = cnt_post.banned
+        o['user']['imei'] = phone_data.imei
+        o['user']['banned_active'] = rp.post.user.is_active
+        obj.append(o)
+        # report_json['imei'] = phone_data.imei
+
+    data['objects'] = obj
+    return return_json_data(data)
 
 
 def reported(request):
@@ -70,7 +112,7 @@ def reported(request):
         total_scores = 50
 
         post_item = post_item_json(post.id)
-        post_item['cnt_report'] = post.report
+        post_item_json['cnt_report'] = post.report
         post_item['total_scores'] = total_scores
         # post_item['reporter_avatar'] = reporter_avatar
         post_reporter_list.append(post_item)
