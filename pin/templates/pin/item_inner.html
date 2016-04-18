@@ -17,15 +17,15 @@
 	<div class="feed-item-bottom">
 		<div class="feed-item-actions">
 			<div style="float: left">
-				<a href="{% url "pin-item-like" post.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"> <i class="icon-heart"></i> {{post.cnt_likes}} </a> 
-                <a href="{{MEDIA_URL}}{{post.image}}" target="_blank" class="btn"><i class="icon-download"></i></a> 
-                {% if user.is_authenticated and user.id != post.user_id %}
-					<a alt="{{user.id}}/{{post.user.id}}" href="{% url "report_pin" post.id%}" style="margin-right: 5px" class="btn btn_report "> <i class="icon-eye-open"></i></a>
+				<a href="{% url " pin-item-like" post.id%}" class="btn btn_like {% if user.is_authenticated%}{% user_post_like post.id %}{% endif %}"> <i class="icon-heart"></i> {{post.cnt_likes}} </a>
+				<a href="{{MEDIA_URL}}{{post.image}}" target="_blank" class="btn"><i class="icon-download"></i></a>
+				{% if user.is_authenticated and user.id != post.user_id %}
+				<a alt="{{user.id}}/{{post.user.id}}" href="{% url " report_pin" post.id%}" style="margin-right: 5px" class="btn btn_report "> <i class="icon-eye-open"></i></a>
 				{% endif %}
                 
 				{% if user.id == post.user.id%}
-				<a href="{% url "pin-item-delete" post.id%}" class="btn btn-danger delpost" style="margin-right: 5px"><i class="icon-remove"></i></a>
-<a href="{% url "pin-item-edit" post.id%}" class="btn" style="margin-right: 5px"  data-toggle="modal" data-target="#pinitem"><i class="icon-pencil"></i></a>
+				<a href="{% url " pin-item-delete" post.id%}" class="btn btn-danger delpost" style="margin-right: 5px"><i class="icon-remove"></i></a>
+				<a href="{% url " pin-item-edit" post.id%}" class="btn" style="margin-right: 5px" data-toggle="modal" data-target="#pinitem"><i class="icon-pencil"></i></a>
 				{% endif %}
 			</div>
 			<div class="feed-item-date">
@@ -34,14 +34,14 @@
 			<div>
 				<a href="/pin/category/{{post.category.id}}">{{post.category}}</a>
 			</div>
-            <div style="width:171px;">
-            <a class="a2a_dd" href="http://www.addtoany.com/share_save"><img src="http://static.addtoany.com/buttons/share_save_171_16.png" width="171" height="16" border="0" alt="Share"/></a>
-            </div>
-                        
+			<div style="width:171px;">
+				<a class="a2a_dd" href="http://www.addtoany.com/share_save"><img src="http://static.addtoany.com/buttons/share_save_171_16.png" width="171" height="16" border="0" alt="Share"/></a>
+			</div>
+
 			<div style="direction: ltr; font-family: Arial, Helvetica, sans-serif">
 				<a rel="nofollow" target="_blank" href="{{post.url}}">{{post.url|get_host}}</a>
 			</div>
-			
+
 		</div>
 	</div>
 	{% if post.tag %}
@@ -49,83 +49,85 @@
 		<div>
 			<legend>برچسب ها</legend>
 			<ul class="tags">
-			{% for tag in post.tag %}
-				<li><a class="label label-info" href="{% url "pin-tag" tag.slug%}">{{tag.name}}</a></li> 
-			{%empty%}
+				{% for tag in post.tag %}
+				<li><a class="label label-info" href="{% url " pin-tag" tag.slug%}">{{tag.name}}</a></li>
+				{%empty%}
 				فاقد برچسب
-			{% endfor %}
+				{% endfor %}
 			</ul>
-		</div>	
+		</div>
 	</div>
 	{% endif %}
 	<div class="row-fluid">
 		<div class="comments">
-{% if user.is_authenticated and user.is_active %}
-		<legend>
-			ارسال نظر
-		</legend>
-<form action="{% url "pin-comment" %}" method="post" class="form-inline">
-<textarea id="id_comment" rows="3" cols="60" name="text" placeholder="نظر خود را وارد کنید" ></textarea>
-<input type="hidden" name="post" value="{{post.id}}">
-<input type="submit" class="btn btn-primary" name="submit" value="ارسال">
-</form>
-{% endif %}
+			{% if user.is_authenticated and user.is_active %}
+			<legend>
+				ارسال نظر
+			</legend>
+			<form action="{% url " pin-comment
+			" %}" method="post" class="form-inline">
+			<textarea id="id_comment" rows="3" cols="60" name="text" placeholder="نظر خود را وارد کنید"></textarea>
+			<input type="hidden" name="post" value="{{post.id}}">
+			<input type="submit" class="btn btn-primary" name="submit" value="ارسال">
+			</form>
+			{% endif %}
 
-		<ul id="comments">
-			{% for comment in post.comments %}
-			<li class="comment_box">
-				<div class="comment">
-					<div class="arrow reply_arrow icon_link"></div>
-					<div class="comment_side">
-						
-						<div class="avatar">
-							<a href="{% url "pin-user" comment.user_id %}"><img src="{{comment.user_id|get_avatar:36}}" alt=""></a>
+			<ul id="comments">
+				{% for comment in post.comments %}
+				<li class="comment_box">
+					<div class="comment">
+						<div class="arrow reply_arrow icon_link"></div>
+						<div class="comment_side">
+
+							<div class="avatar">
+								<a href="{% url " pin-user" comment.user_id %}"><img src="{{comment.user_id|get_avatar:36}}" alt=""></a>
+							</div>
+
 						</div>
-						
-					</div>
-					<div class="comment_main">
-						<div class="comment_top">
-							<div class="comment-author">
-								<a href="{% url "pin-user" comment.user_id %}">
+						<div class="comment_main">
+							<div class="comment_top">
+								<div class="comment-author">
+									<a href="{% url " pin-user" comment.user_id %}">
 									{{comment.user_id|get_username}}
-								</a>
-							</div>
-							<div class="comment-date">
-							{{comment.submit_date|jalali_mysql_date}}
-							</div>
-							<div class="comment_vote" rel="{{comment.id}}">
-								<div class="comment-up" rel="{{comment.id}}">
-									<i class="icon-plus"></i>
+									</a>
 								</div>
-			                	<div class="comment-down" rel="{{comment.id}}">
-									<i class="icon-minus"></i>
-								</div> | 
-			                    <div class="comment_vote_cnt" id="comment_vote_cnt_{{comment.id}}">{{comment.score}}</div>
-			                </div>
-						</div>
-						<div class="comment_content">
-							{{comment.comment}}
-						</div>
-						
-						<div class="">
-							{% if user.is_superuser %}
+								<div class="comment-date">
+									{{comment.submit_date|jalali_mysql_date}}
+								</div>
+								<div class="comment_vote" rel="{{comment.id}}">
+									<div class="comment-up" rel="{{comment.id}}">
+										<i class="icon-plus"></i>
+									</div>
+									<div class="comment-down" rel="{{comment.id}}">
+										<i class="icon-minus"></i>
+									</div>
+									|
+									<div class="comment_vote_cnt" id="comment_vote_cnt_{{comment.id}}">{{comment.score}}</div>
+								</div>
+							</div>
+							<div class="comment_content">
+								{{comment.comment}}
+							</div>
+
+							<div class="">
+								{% if user.is_superuser %}
 								{% if comment.is_public == 0 %}
-									<a href="{% url "pin-comment-approve" comment.id %}"><i class="icon-ok-sign"></i></a>
+								<a href="{% url " pin-comment-approve" comment.id %}"><i class="icon-ok-sign"></i></a>
 								{% else %}
-									<a href="{% url "pin-comment-unapprove" comment.id %}"><i class="icon-minus-sign"></i></a>
+								<a href="{% url " pin-comment-unapprove" comment.id %}"><i class="icon-minus-sign"></i></a>
 								{% endif %}
-							{% endif %}
-							{% if user.is_superuser %}
-							<a href="{% url "pin-comment-delete" comment.id %}"><i class="icon-remove"></i></a>
-							{% endif %}
+								{% endif %}
+								{% if user.is_superuser %}
+								<a href="{% url " pin-comment-delete" comment.id %}"><i class="icon-remove"></i></a>
+								{% endif %}
+							</div>
+
 						</div>
-						
 					</div>
-				</div>
-			</li>
-			{% endfor %}
-		</ul>
-	</div>
+				</li>
+				{% endfor %}
+			</ul>
+		</div>
 	</div>
 </div>
 <!-- end pin-item -->

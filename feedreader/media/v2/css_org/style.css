@@ -615,6 +615,37 @@ span.like_icon,
 	display: inline-block;
 	margin: 0 2px -4px 0;
 }
+.share_btn{
+	padding: 0 5px;
+	cursor: pointer;
+	display: flex;
+	color: #434A54;
+}
+.share_btn span.share_icon{
+	background: url("../images/icons/share.png") no-repeat scroll center top;
+	display: block;
+	height: 16px;
+	margin-top: 4px;
+	width: 16px;
+	margin-right: 10px;
+}
+#modal_share .modal-header{
+	border-bottom: 0;
+}
+#modal_share .modal-title{
+	text-align: center;
+}
+#modal_share .nav-tabs li a{
+	text-align: center;
+}
+#modal_share .tab-pane label{
+	margin-top: 20px;
+}
+#modal_share .tab-pane input{
+	direction: ltr;
+	text-align: left;
+	color: #9099A5;
+}
 a:hover span.like_icon,
 .post-action .likes:hover span.like_icon{
 	background-position: 0 -15px;
@@ -1050,7 +1081,7 @@ a.btn.btn-primary {
 	padding: 7px 7px 3px;
 }
 .post-content .activity_btn{
-	padding: 20px;
+	padding: 20px 0 20px 20px;
 	float: left;
 }
 .post-content .activity_btn .btn-box{
@@ -1062,7 +1093,7 @@ a.btn.btn-primary {
 	height: 50px;
 	overflow: hidden;
 	padding: 15px 10px 0 0;
-	width: 290px;
+	width: 285px;
 }
 .post-content .liker_avatars a{
 	margin-bottom: 10px;

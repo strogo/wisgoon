@@ -1,4 +1,5 @@
 import ast
+import urllib
 from io import FileIO, BufferedWriter
 from time import time
 
@@ -21,12 +22,14 @@ import khayyam
 
 def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
     n_url_p = reverse(url_name, kwargs=url_args) + "?"
+    d = {}
     if offset:
-        n_url_p = n_url_p + "offset=%s" % (offset)
+        d['offset'] = offset
     if token:
-        n_url_p = n_url_p + "&token=%s" % (token)
+        d['token'] = token
     for k, v in kwargs.iteritems():
-        n_url_p = n_url_p + "&%s=%s" % (k, v)
+        d[k] = v
+    n_url_p += urllib.urlencode(d)
     return abs_url(n_url_p)
 
 
@@ -42,7 +45,7 @@ def category_get_json(cat_id):
         pass
     cat_json = {
         'id': cat.id,
-        'image': media_abs_url(cat.image.url),
+        'image': media_abs_url(cat.image.url, static=True),
         'title': cat.title,
     }
     return cat_json

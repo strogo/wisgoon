@@ -296,7 +296,10 @@ class AuthCache(MyCache):
     @classmethod
     def user_from_name(cls, username):
         ct_str = "tuin_%s" % str(username)
-        c_token = cache.get(ct_str)
+        try:
+            c_token = cache.get(ct_str)
+        except:
+            c_token = False
         if c_token:
             return c_token
         try:

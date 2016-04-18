@@ -179,10 +179,12 @@ def result(request, label):
         .filter(content__contains=r.get_label_text())\
         .order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
 
+    ps = [post_item_json(p.pk) for p in posts]
+
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
             'results': results,
-            'posts': posts,
+            'posts': ps,
             'query': query,
             'r': r,
             'offset': offset + row_per_page,
@@ -190,7 +192,7 @@ def result(request, label):
 
     return render(request, 'pin2/result.html', {
         'results': results,
-        'posts': posts,
+        'posts': ps,
         'query': query,
         'r': r,
         'offset': offset + row_per_page,
@@ -846,14 +848,16 @@ def popular(request, interval=""):
         posts = SearchQuerySet().models(Post)\
             .order_by('-cnt_like_i')[offset:offset + 1 * 20]
 
+    ps = [post_item_json(post_id=p.pk) for p in posts]
+
     if request.is_ajax():
         return render(request, 'pin2/__search.html',
-                      {'posts': posts,
+                      {'posts': ps,
                        'offset': offset + 20})
 
     else:
         return render(request, 'pin2/popular.html',
-                      {'posts': posts,
+                      {'posts': ps,
                        'offset': offset + 20})
 
 
@@ -1030,7 +1034,7 @@ def item(request, item_id):
     # pl = Likes.objects.filter(post_id=post.id)[:12]
     from models_redis import LikesRedis
     post.likes = LikesRedis(post_id=post.id)\
-        .get_likes(offset=0, limit=6, as_user_object=True)
+        .get_likes(offset=0, limit=5, as_user_object=True)
 
     # s = SearchQuerySet().models(Post).more_like_this(post)
     # print "seems with:", post.id, s[:5]
@@ -1094,17 +1098,19 @@ def item_related(request, item_id):
             return cd
     try:
         post = Post.objects.get(id=item_id)
+        # post = post_item_json(post_id=item_id, cur_user_id=request.user.id)
     except Post.DoesNotExist:
         raise Http404("Post does not exist")
 
     mlt = SearchQuerySet()\
         .models(Post).more_like_this(post)[:30]
 
-    idis = []
+    related_posts = []
     for pmlt in mlt:
-        idis.append(pmlt.pk)
+        # idis.append(pmlt.pk)
+        related_posts.append(post_item_json(post_id=pmlt.pk, cur_user_id=request.user.id))
 
-    post.mlt = Post.objects.filter(id__in=idis).only(*Post.NEED_KEYS_WEB)
+    post.mlt = related_posts
 
     if request.is_ajax():
         d = render(request, 'pin2/_items_related.html', {
@@ -1212,3 +1218,23 @@ def stats(request):
 
 def feedback(request):
     return render(request, 'pin2/statics/feedback.html', {'page': 'feedback'})
+
+
+def email_register(request):
+    return render(request, 'pin2/emails/on_register.html', {
+        'page': 'feedback'
+    })
+
+
+def pass_reset(request):
+    return render(request, 'pin2/emails/on_reset_pass.html', {
+        'page': 'feedback'
+    })
+
+
+def newsletter(request):
+    posts = Post.objects.filter(user_id=21).order_by('-id')
+    return render(request, 'pin2/emails/newsletter.html', {
+        'posts': posts,
+        'page': 'newsletter'
+    })

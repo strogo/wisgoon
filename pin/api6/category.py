@@ -30,11 +30,11 @@ def all_category(request):
     for category in sub_categories:
         o = {
             "title": category.title,
-            "image": media_abs_url(category.image.url),
+            "image": media_abs_url(category.image.url, static=True),
             "childs": []
         }
         try:
-            o["image_device"] = media_abs_url(category.image_device.url)
+            o["image_device"] = media_abs_url(category.image_device.url, static=True)
         except:
             o["image_device"] = ""
         for cat in Category.objects.filter(parent=category):
