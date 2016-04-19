@@ -61,7 +61,7 @@ urlpatterns += patterns('pin.views2.dashboard.api.post',
                         url(r'post/user/(?P<user_id>\d+)', 'post_user_details',
                             name='dashboard-api-post-user'),
 
-                        url(r'^posts/new/report$', 'new_reporte', name='new_reporte'),
+                        url(r'^posts/new/report$', 'new_reporte', name='dashboard-api-post-new_reporte'),
 
                         )
 

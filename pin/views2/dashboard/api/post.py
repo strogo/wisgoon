@@ -2,7 +2,7 @@ from __future__ import division
 
 # from django.db.models import Sum
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.translation import ugettext as _
+# from django.utils.translation import ugettext as _
 
 from pin.models import Post, Report, Category, SubCategory, ReportedPost, ReportedPostReporters,\
     PhoneData
@@ -23,9 +23,12 @@ from haystack.query import SearchQuerySet
 
 
 def new_reporte(request):
-    posts = ReportedPost.objects.all()
+    before = int(request.GET.get('before', 0))
+    posts = ReportedPost.objects.only('id')[before: (before + 1) * 20]
     data = {
-        'meta': {},
+        'meta': {'limit': 20,
+                 'next': '',
+                 'total_count': ''},
         'objects': []
     }
 
@@ -39,8 +42,11 @@ def new_reporte(request):
         cnt_post = Profile.objects.get(user=rp.post.user)
         count.append(cnt_post)
 
-        phone_data = PhoneData.objects.get(user=rp.post.user.id)
-        imei.append(phone_data)
+        try:
+            phone_data = PhoneData.objects.get(user=rp.post.user.id)
+            imei.append(phone_data)
+        except Exception:
+            raise
 
         reporters = ReportedPostReporters.objects.filter(reported_post=rp)
         reports_list = []
@@ -60,6 +66,10 @@ def new_reporte(request):
         # report_json['imei'] = phone_data.imei
 
     data['objects'] = obj
+    if len(data) == 20:
+        token = request.GET.get('token', '')
+        data['meta']['next'] = get_next_url(url_name='ddashboard-api-post-new_reporte',
+                                            before=before + 20, token=token)
     return return_json_data(data)
 
 
@@ -72,9 +82,8 @@ def reported(request):
     # type_report2 = user report
 
     before = int(request.GET.get('before', 0))
-    type_report = int(request.GET.get('type', 0))
+    # type_report = int(request.GET.get('type', 0))
     reported_posts = None
-
 
     post_reporter_list = []
     data = {}
