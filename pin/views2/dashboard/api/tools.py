@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext as _
 
 from pin.model_mongo import MonthlyStats
-from pin.models import Post, Ad, Log, BannedImei
+from pin.models import Post, Ad, Log, BannedImei, ReportedPost, ReportedPostReporters, UserHistory
 from pin.tools import post_after_delete, get_user_ip
 from pin.api6.http import return_json_data
 from pin.api6.tools import get_simple_user_object,\
@@ -382,3 +382,32 @@ def get_profile_data(profile, enable_imei=False):
                     data['description'] = str(log[0].text)
 
     return data
+
+
+def undo_report_new(request):
+    print "1"
+    post_ids = request.POST.getlist('post_ids')
+    status = False
+    if post_ids:
+        try:
+            reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
+            print reported_posts
+            for post in reported_posts:
+                print '2'
+
+                posts_report = ReportedPostReporters.objects\
+                    .filter(reported_post=post).values_list('user_id', flat=True)
+
+                user_history = UserHistory.objects.create(user_id__in=posts_report)
+
+                for user in user_history:
+
+                    user.neg_report += 1
+                    user.save()
+                print "5"
+                post.delete()
+            status = True
+        except:
+            status = False
+
+    return status
