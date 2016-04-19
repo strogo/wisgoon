@@ -75,8 +75,6 @@ def reported(request):
     type_report = int(request.GET.get('type', 0))
     reported_posts = None
 
-    if not type_report:
-        return return_bad_request(message=_("Enter Type Parameter"))
 
     post_reporter_list = []
     data = {}
@@ -84,15 +82,13 @@ def reported(request):
                     'next': '',
                     'total_count': Post.objects.filter(report__gte=1).count()}
 
-    if type_report == 1:
-        reported_posts = Post.objects.filter(report__gte=30)\
-            .only('id', 'report')\
-            .order_by('-report')[before: (before + 1) * 20]
+    reported_posts = Post.objects.filter(report__gte=1).only('id', 'report')\
+        .order_by('-report')[before: (before + 1) * 20]
 
-    if type_report == 2:
-        reported_posts = Post.objects.filter(report__lt=30)\
-            .only('id', 'report')\
-            .order_by('-report')[before: (before + 1) * 20]
+    # if type_report == 2:
+    #     reported_posts = Post.objects.filter(report__lt=30)\
+    #         .only('id', 'report')\
+    #         .order_by('-report')[before: (before + 1) * 20]
 
     if not reported_posts:
         return return_not_found()
@@ -112,7 +108,7 @@ def reported(request):
         total_scores = 50
 
         post_item = post_item_json(post.id)
-        post_item_json['cnt_report'] = post.report
+        post_item['cnt_report'] = post.report
         post_item['total_scores'] = total_scores
         # post_item['reporter_avatar'] = reporter_avatar
         post_reporter_list.append(post_item)
