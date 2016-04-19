@@ -33,7 +33,7 @@ def new_reporte(request):
     }
 
     obj = []
-    imei = []
+
     count = []
 
     for rp in posts:
@@ -44,8 +44,6 @@ def new_reporte(request):
 
         try:
             phone_data = PhoneData.objects.get(user=rp.post.user.id)
-            imei.append(phone_data)
-            o['user']['imei'] = phone_data.imei
 
         except Exception, e:
             print e
@@ -60,6 +58,10 @@ def new_reporte(request):
 
         o['reporters'] = reports_list
         o['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(rp.post.user_id)
+        if phone_data.imei:
+            o['user']['imei'] = phone_data.imei
+        else:
+            o['user']['imei'] = ''
         o['user']['cnt_post'] = cnt_post.cnt_post
         o['user']['banned_profile'] = cnt_post.banned
         o['user']['banned_active'] = rp.post.user.is_active
