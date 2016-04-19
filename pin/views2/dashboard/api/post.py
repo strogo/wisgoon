@@ -35,6 +35,9 @@ def new_reporte(request):
     obj = []
 
     count = []
+    report_json = None
+    phone_data = None
+    reports_list = []
 
     for rp in posts:
         o = post_item_json(rp.post.id)
@@ -44,12 +47,10 @@ def new_reporte(request):
 
         try:
             phone_data = PhoneData.objects.get(user=rp.post.user.id)
-
-        except Exception, e:
-            print e
+        except Exception as e:
+            print str(e)
 
         reporters = ReportedPostReporters.objects.filter(reported_post=rp)
-        reports_list = []
 
         for rps in reporters:
             report_json = get_simple_user_object(rps.user.id)
@@ -58,7 +59,7 @@ def new_reporte(request):
 
         o['reporters'] = reports_list
         o['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(rp.post.user_id)
-        if phone_data.imei:
+        if phone_data:
             o['user']['imei'] = phone_data.imei
         else:
             o['user']['imei'] = ''
