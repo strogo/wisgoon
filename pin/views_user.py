@@ -216,17 +216,15 @@ def report(request, pin_id):
         msg = _("You 've already reported this matter.")
 
     # TODO: add new report here @hossein
-    try:
-        reported = ReportedPost.objects.create(post=post)
-        created = True
-    except Exception as e:
-        print str(e)
+    reported, created = ReportedPost.objects.get_or_create(post=post)
 
     if created:
         reported.cnt_report = reported.cnt_report + 1
         reported.save()
+
     try:
-        ReportedPostReporters.objects.create(reported_post=reported, user=request.user)
+        ReportedPostReporters.objects\
+            .create(reported_post=reported, user=request.user)
     except Exception as e:
         print str(e)
     # End of hosseing work
