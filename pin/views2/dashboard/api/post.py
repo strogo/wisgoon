@@ -45,8 +45,8 @@ def new_reporte(request):
         try:
             phone_data = PhoneData.objects.get(user=rp.post.user.id)
             imei.append(phone_data)
-        except Exception:
-            raise
+        except Exception, e:
+            print e
 
         reporters = ReportedPostReporters.objects.filter(reported_post=rp)
         reports_list = []
