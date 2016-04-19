@@ -424,3 +424,4 @@ ES_HOST = "localhost"
 INFLUX_HOST = "localhost"
 
 STATIC_CDN = MEDIA_URL
+STATIC_DOMAIN = MEDIA_URL
