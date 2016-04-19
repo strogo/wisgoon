@@ -42,14 +42,13 @@ def new_reporte(request):
     for rp in posts:
         o = post_item_json(rp.post.id)
 
-        cnt_post = Profile.objects.get(user=rp.post.user)
-        count.append(cnt_post)
+        user_profile = Profile.objects.get(user=rp.post.user)
+        count.append(user_profile)
 
         try:
             phone_data = PhoneData.objects.get(user=rp.post.user.id)
         except Exception as e:
             print str(e)
-
         reporters = ReportedPostReporters.objects.filter(reported_post=rp)
 
         for rps in reporters:
@@ -61,10 +60,11 @@ def new_reporte(request):
         o['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(rp.post.user_id)
         if phone_data:
             o['user']['imei'] = phone_data.imei
+            o['user']['user_imei'] = phone_data.user
         else:
             o['user']['imei'] = ''
-        o['user']['cnt_post'] = cnt_post.cnt_post
-        o['user']['banned_profile'] = cnt_post.banned
+        o['user']['cnt_post'] = user_profile.cnt_post
+        o['user']['banned_imei'] = user_profile.banned
         o['user']['banned_active'] = rp.post.user.is_active
         obj.append(o)
         # report_json['imei'] = phone_data.imei
