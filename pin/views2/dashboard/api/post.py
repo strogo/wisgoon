@@ -45,6 +45,8 @@ def new_reporte(request):
         try:
             phone_data = PhoneData.objects.get(user=rp.post.user.id)
             imei.append(phone_data)
+            o['user']['imei'] = phone_data.imei
+
         except Exception, e:
             print e
 
@@ -60,7 +62,6 @@ def new_reporte(request):
         o['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(rp.post.user_id)
         o['user']['cnt_post'] = cnt_post.cnt_post
         o['user']['banned_profile'] = cnt_post.banned
-        o['user']['imei'] = phone_data.imei
         o['user']['banned_active'] = rp.post.user.is_active
         obj.append(o)
         # report_json['imei'] = phone_data.imei
