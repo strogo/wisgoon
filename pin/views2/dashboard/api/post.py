@@ -53,7 +53,8 @@ def new_reporte(request):
             report_json = get_simple_user_object(rps.user.id)
 
         reports_list.append(report_json)
-
+        if reporters:
+            pass
         o['reporters'] = reports_list
         o['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(rp.post.user_id)
         if phone_data:
