@@ -225,9 +225,12 @@ def report(request, pin_id):
     try:
         ReportedPostReporters.objects\
             .create(reported_post=reported, user=request.user)
-        UserHistory.objects.create(user=request.user)
+        user_his = UserHistory.objects.create(user=request.user)
+        user_his.cnt_report += 1
+        user_his.save()
     except Exception as e:
         print str(e)
+
     # End of hosseing work
 
     if request.is_ajax():
