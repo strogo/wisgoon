@@ -1422,7 +1422,7 @@ class PhoneData(models.Model):
         return self.hash_data
 
     def save(self, *args, **kwargs):
-        self.get_hash_data()
+        # self.get_hash_data()
         super(PhoneData, self).save(*args, **kwargs)
 
 

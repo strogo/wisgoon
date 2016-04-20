@@ -704,9 +704,10 @@ table img {
 }
 .otherInfo li {
 	padding: 5px !important;
+	margin-bottom: 30px;
 }
 .banDesc {
-	padding: 5px 25px 5px 0;
+	padding: 5px 5px 5px 0;
 	position: relative;
 	right: -20px;
 	width: 479px;
@@ -741,9 +742,8 @@ table img {
 	border-radius: 5px;
 	float: left;
 	font-size: 10px !important;
-	margin-left: 10px;
-	margin-top: 5px;
-	padding: 2px 13px;
+	margin-left: 16px;
+	padding: 4px 27px;
 }
 .otherInfo .dropdown button {
 	font-size: 12px !important;
@@ -1109,4 +1109,20 @@ table img {
 }
 .text-ri {
 	text-align: right;
+}
+.userIinfoModal .fa-ban {
+	color: #F24F5E;
+}
+.userIinfoModal .fa-check {
+	color: #3CB878;
+}
+
+.ban-stats .fa-ban {
+	color: #F24F5E;
+}
+.ban-stats .fa-check {
+	color: #3CB878;
+}
+.box-tools .fa-check {
+	color: #fff !important;
 }

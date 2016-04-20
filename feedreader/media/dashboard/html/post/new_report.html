@@ -52,9 +52,10 @@
 						</div>
 						<div class="clear"></div>
 
-						<div class="reporters ">
-							<a href=""><img ng-src="{[{brick.user.avatar}]}" title="user avatar"></a>
-							<a class="more" href="" data-toggle="modal" data-target="#userInfo{[{brick.id}]}">+ 5</a>
+						<div class="reporters " >
+							<a ng-repeat="reporter in brick.reporters" href=""><img ng-src="{[{reporter.avatar}]}" title="user avatar">
+							</a>
+							<a ng-click="showReportersModal(brick.reporters)" class="more" href="">+ 5</a>
 						</div>
 						<div class="users-imei">
 							<button class="list-button dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -77,16 +78,19 @@
 					<div class="ban-stats col-md-12">
 						<div class="col-md-4">
 							<label>بن پروفایل : </label>
-							<span ng-show="!brick.user.banned_profile" class="fa-ban fa"></span>
-							<span ng-show="brick.user.banned_profile" class="fa-check fa"></span>
+							<span ng-show="brick.user.banned_profile" class="fa-ban fa"></span>
+							<span ng-show="!brick.user.banned_profile" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
-							<label>مسدود بودن imei : </label>
-							<span class="glyphicon glyphicon-ok"></span>
+							<label>انسداد imei :P</label>
+							<span ng-show="brick.user.imei == null ">ندارد</span>
+							<span ng-show="brick.user.imei !== null && brick.user.banned_imi" class="fa-ban fa"></span>
+							<span ng-show="brick.user.imei !== null && !brick.user.banned_imi" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
 							<label>فعال بودن کاربر : </label>
-							<span class="glyphicon glyphicon-ok"></span>
+							<span ng-show="brick.user.is_active" class="fa-ban fa"></span>
+							<span ng-show="!brick.user.is_active" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
 							<label>پست حذف شده:</label>
@@ -110,7 +114,7 @@
 						</div>
 					</div>
 					<div class="clear"></div>
-					<div class="modal fade userIinfoModal text-ri" id="userInfo{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="userIinfoModalLabel">
+					<div class="modal fade userIinfoModal text-ri" id="userInfo" tabindex="-1" role="dialog" aria-labelledby="userIinfoModalLabel">
 						<div class="loading" ng-show='loading'>
 							<div id="mySpinner"  class="loader">Loading...</div>
 						</div>
@@ -126,13 +130,13 @@
 										<div class="col-md-3">گزارش های موثر</div>
 										<div class="clear"></div>
 									</div>
-									<div class="reporters-info">
-										<div class="col-md-6">
-											<a href="">
-												<img ng-src="{[{brick.user.avatar}]}">
+									<div class="reporters-info" ng-repeat="report in modalBrickReportrs">
+										<div  class="col-md-6">
+											<a href="" >
+												<img ng-src="{[{report.avatar}]}">
 											</a>
 											<a href="">
-												{[{brick.user.username | limitTo: 15}]}
+												{[{report.username | limitTo: 15}]}
 											</a>
 										</div>
 										<div class="col-md-3">125</div>

@@ -67,10 +67,17 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope) 
 		$scope.loading = true;
 		$http.get('/dashboard/api/posts/new/report').success(function(data){
 			$scope.bricks = data;
+			$scope.len = bricks.reporters.length;
+			console.log(len);
 		}).finally(function () {
 			$scope.loading = false;
 		});
 	};
+
+	$scope.showReportersModal = function(reporters){
+		$scope.modalBrickReportrs =  reporters;
+		$("#userInfo").modal("show");
+	}
 
 	$scope.selectItem = function(br) {
 		var id = '#br-'+br;
@@ -182,7 +189,7 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 			url     : '/dashboard/api/user/bannedImei/',
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		}).success(function(data){
-			$scope.searchInfo.profile.imei_status = !data.imei_status;
+			$scope.searchInfo.profile.imei_status = data.imei_status;
 		});
 	};
 
@@ -201,6 +208,7 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		}) .success(function(data) {
 			$scope.searchInfo.profile.user_active = data.profile.user_active;
+			console.log(data.profile.user_active);
 		});
 	};	
 
@@ -261,6 +269,7 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 			$scope.loading = false;
 		});
 	};	
+
 });
 
 app.controller('adsController',['$scope','$http', function($scope, $http) {
