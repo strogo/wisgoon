@@ -1603,7 +1603,7 @@ class ReportedPost(models.Model):
 class ReportedPostReporters(models.Model):
     reported_post = models.ForeignKey(ReportedPost)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    report_type = models.ForeignKey(ReportTypes, blank=True, default=None)
+    report_type = models.ForeignKey(ReportTypes, blank=True, default=None, null=True)
     create_time = models.DateTimeField(auto_now=True)
 
 
