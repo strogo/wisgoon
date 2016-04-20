@@ -1616,6 +1616,13 @@ class UserHistory(models.Model):
     priority = models.IntegerField(default=1)
 
 
+class Commitment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    text_commitment = models.CharField(max_length=250)
+    phone_data = models.ForeignKey(PhoneData)
+    create_time = models.DateTimeField(auto_now=True)
+
+
 class Results(models.Model):
     label = models.CharField(max_length=250)
     text = models.TextField()
