@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 # from django.utils.translation import ugettext as _
 
 from pin.models import Post, Report, Category, SubCategory, ReportedPost, ReportedPostReporters,\
-    PhoneData
+    PhoneData, BannedImei
 from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
 from pin.api6.tools import (get_next_url, get_simple_user_object,
@@ -33,17 +33,15 @@ def new_reporte(request):
     }
 
     obj = []
+    reports_list = []
 
-    count = []
     report_json = None
     phone_data = None
-    reports_list = []
 
     for rp in posts:
         o = post_item_json(rp.post.id)
 
         user_profile = Profile.objects.get(user=rp.post.user)
-        count.append(user_profile)
 
         try:
             phone_data = PhoneData.objects.get(user=rp.post.user.id)
@@ -60,12 +58,15 @@ def new_reporte(request):
         o['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(rp.post.user_id)
         if phone_data:
             o['user']['imei'] = phone_data.imei
-            o['user']['user_imei'] = phone_data.user
+            banned_imi = BannedImei.objects.filter(imei=phone_data.imei).exists()
+            o['user']['banned_imi'] = banned_imi
         else:
-            o['user']['imei'] = ''
+            o['user']['imei'] = None
+            o['user']['banned_imi'] = None
+
         o['user']['cnt_post'] = user_profile.cnt_post
-        o['user']['banned_imei'] = user_profile.banned
-        o['user']['banned_active'] = rp.post.user.is_active
+        o['user']['banned_profile'] = user_profile.banned
+        o['user']['is_active'] = rp.post.user.is_active
         obj.append(o)
         # report_json['imei'] = phone_data.imei
 
