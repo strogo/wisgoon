@@ -32,7 +32,7 @@
                 <a href=""><img ng-src="{[{resultItem.avatar}]}"></a>
               </div>
               <div class="col-md-8 col-xs-8 ">
-                <h1>{[{resultItem.username}]}</h1>
+                <h1>{[{resultItem.username | limitTo: 12}]}</h1>
                 <div class="user-info">
                   <a ng-click="getInfo(resultItem.id)"  data-toggle="modal" data-target="#userInfo{[{resultItem.id}]}">
                     اطلاعات کاربر
@@ -42,9 +42,9 @@
               <div class="clear"></div>
             </div>
             <div class="modal fade userIinfoModal" id="userInfo{[{resultItem.id}]}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="loading" ng-show='loading'>
-            <div id="mySpinner"  class="loader">Loading...</div>
-          </div>
+              <div class="loading" ng-show='loading'>
+                <div id="mySpinner"  class="loader">Loading...</div>
+              </div>
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header hidden-md hidden-lg">
@@ -60,12 +60,12 @@
                             <li>
                               <label>وضعیت فعال بودن کاربر :</label>
                               <span >
-                                <i class="activeDatasText" ng-show="searchInfo.profile.user_active == 1">کاربر فعال</i>
-                                <i class="activeDatasText" ng-show="searchInfo.profile.user_active == 0">کاربر غیر فعال</i>
+                                <i class="activeDatasText" ng-show="searchInfo.profile.user_active">فعال</i>
+                                <i class="activeDatasText" ng-show="!searchInfo.profile.user_active">غیر فعال</i>
                               </span>
                               <div class="banDesc">
                                 <span class="side-up hidden-xs"></span>
-                                <form name="activeForm" novalidate ng-submit="activeUser()" ng-controller="activeUserController">
+                                <form novalidate ng-submit="activeUser()" >
                                   <div class="col-xs-9 col-md-10 pa0">
                                     <input type="text" name="description1" ng-model="formData.description1" placeholder="علت بن شدن کاربر...">
 
@@ -73,10 +73,7 @@
 
                                   </div>
                                   <div class="col-xs-2 col-md-2 pa0">
-                                   <select name="activeStatus" id="activeStatus" ng-model="formData.activeStatus">
-                                    <option value="1">فعال</option>
-                                    <option value="0">غیر فعال</option>
-                                  </select>
+                                  <input type="checkbox" name="activeStatus" id="activeStatus" ng-model="formData.activeStatus" ng-checked="!formData.activeStatus">
                                 </div>
                                 <div class="col-md-12 pa0">
                                  <button type="submit" ng-click="submitted=true">ثبت تغییرات</button>
@@ -86,26 +83,23 @@
                              <span class="side-down hidden-xs"></span>
                            </div>
                          </li>
-                         <li >
+                         <li>
                           <label>وضعیت مسدود شدن پروفایل کاربر:</label>
                           <span>
-                            <i class="banDatasText" ng-show="searchInfo.profile.userBanne_profile == 1">پروفایل فعال</i>
-                            <i class="banDatasText" ng-show="searchInfo.profile.userBanne_profile == 0">پروفایل غیر فعال</i>
+                            <i class="banDatasText" ng-show="searchInfo.profile.userBanne_profile">فعال</i>
+                            <i class="banDatasText" ng-show="!searchInfo.profile.userBanne_profile">غیر فعال</i>
                           </span>
                           <div class="banDesc">
                             <span class="side-up hidden-xs"></span>
-                            <form name="activeForm" novalidate ng-submit="banProfile()" ng-controller="banProfileController">
+                            <form novalidate ng-submit="banProfile()" >
                               <div class="col-xs-9 col-md-10 pa0">
-                                <input type="text" name="description2" ng-model="formData.description2" value="{[{searchInfo.profile.description}]}" placeholder="علت غیر فعال شدن پروفایل کاربر...">
+                                <input type="text" name="description2" ng-model="formData.description2" placeholder="علت غیر فعال شدن پروفایل کاربر...">
 
                                 <input type="hidden" name="profileBanId" ng-model="formData.profileBanId" ng-value="formData.profileBanId='{[{resultItem.id}]}'">
 
                               </div>
                               <div class="col-xs-2 col-md-2 pa0">
-                               <select name="profileBanstatus" id="profileBanstatus" ng-model="formData.profileBanstatus">
-                                <option value="1">فعال</option>
-                                <option value="0">غیر فعال</option>
-                              </select>
+                                <input type="checkbox" name="profileBanstatus" id="profileBanstatus" ng-model="formData.profileBanstatus" ng-checked="formData.profileBanstatus">
                             </div>
                             <div class="col-md-12 pa0">
                              <button type="submit" ng-click="submitted=true">ثبت تغییرات</button>
@@ -117,26 +111,23 @@
                      </li>
                      <li>
                       <label>وضعیت imei :</label>
-                      <span class="banImeiTextactiveDatasText" ng-hide="searchInfo.profile.imei == ''">
-                        {[{searchInfo.profile.imei}]}
+                      <span ng-hide="searchInfo.profile.imei == ''">
+                        <i class="imeibanText" ng-show="searchInfo.profile.imei_status"> فعال</i>
+                        <i class="imeibanText" ng-show="!searchInfo.profile.imei_status">غیر فعال</i>
                       </span>
                       <span class="banImeiText" ng-show="searchInfo.profile.imei == ''">
                         این کاربر imei  ندارد.
                       </span>
                       <div class="banDesc" ng-show="searchInfo.profile.imei != ''">
                         <span class="side-up hidden-xs"></span>
-                        <form name="activeForm" novalidate ng-submit="banImei()" ng-controller="banImeiController">
+                        <form novalidate ng-submit="banImei()" >
                           <div class="col-xs-9 col-md-10 pa0">
                             <input type="text" name="description3" ng-model="formData.description3" placeholder="علت غیر فعال شدن پروفایل کاربر...">
 
-                            <input type="hidden" name="imei" ng-model="formData.imei" ng-value="formData.imei='{[{searchInfo.profile.imei}]}'">
-
+                            <input ng-value="formData.imei='{[{searchInfo.profile.imei}]}'" type="hidden" ng-model="formData.imei" />
                           </div>
                           <div class="col-xs-2 col-md-2 pa0">
-                           <select name="status" ng-model="formData.status">
-                            <option value="1">فعال</option>
-                            <option value="0">غیر فعال</option>
-                          </select>
+                           <input type="checkbox" name="status" id="status" ng-model="formData.status" ng-checked="formData.status">
                         </div>
                         <div class="col-md-12 pa0">
                          <button type="submit" ng-click="submitted=true">ثبت تغییرات</button>
@@ -150,12 +141,12 @@
                   <label>لیست حساب ها بر اساس imei :</label>
                   <span>
                     <div class="dropdown">
-                      <button class="btn btn-default dropdown-toggle" type="button" id="userImeis" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <button ng-click="get_imei_user(searchInfo.profile.imei)" class="btn btn-default dropdown-toggle" type="button" id="userImeis" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         لیست حساب های کاربری
                         <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="userImeis">
-                        <li ng-repeat="Uimei in searchInfo.profile.users_imei"><a href="{[{Uimei.permalink}]}">{[{Uimei.username}]}</a></li>
+                        <li ng-repeat="Uimei in imei_users"><a href="{[{Uimei.permalink}]}">{[{Uimei.username}]}</a></li>
                       </ul>
                     </div>
                   </span>
@@ -168,6 +159,9 @@
               <a href="">
                 <img ng-src="{[{resultItem.avatar}]}">
               </a>
+              <div ng-controller="deleteAvatarController" class="delavatar">
+                <a href="" ng-click="delAvatar(resultItem.id)">حذف آواتار کاربر</a>
+              </div>
             </div>
             <h1><a href="">{[{resultItem.username}]}</a></h1>
             <div class="sex">

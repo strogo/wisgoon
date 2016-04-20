@@ -368,10 +368,11 @@ def get_profile_data(profile, enable_imei=False):
 
             if not profile.user.is_active or profile.banned or not profile.user.is_active:
                 try:
-                    banned = BannedImei.objects.get(imei=imei)
-                except:
+                    banned = BannedImei.objects.get(imei=int(imei))
+                except Exception as e:
+                    print str(e)
                     banned = None
-
+                print banned
                 if banned:
                     data['imei_status'] = 0
                     data['imei_description'] = str(banned.description)

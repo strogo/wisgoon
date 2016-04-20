@@ -2,208 +2,66 @@
 	<section class="content-header">
 		<ol class="breadcrumb">
 			<li><a ui-sref="home"><i class="fa fa-dashboard"></i> خانه</a></li>
-			<li class="active">پست های گزارش شده توسط سیستم</li>
+			<li class="active">گزارشات سیستم</li>
 			<div class="clear"></div>
 		</ol>
 		<h1 class="hidden-xs">
-			پست های گزارش شده توسط سیستم
+			گزارسات سیستم
 		</h1>
 		<div class="clear"></div>
 	</section>
 	<section class="content reported">
-		<div class="select">
-			<button class="button" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
-			<span><a href="" ng-show="select" ng-click="batchDelete()"><i class="fa fa-trash"></i></a></span>
-			<a ng-hide='loading' class="refresh" ng-click="reported()" href="">
-				<span class="fa fa-refresh"></span>
-			</a>
-			<a ng-show='loading' class="refresh-spinner" href="">
-				<span class="fa fa-refresh fa-spin"></span>
-			</a>
-		</div>
 
-		<div class="clear"></div>
-		<div id="feed" load-images="false" class="resize" masonry reload-on-resize  style="width:1070px;">
-			<div  ng-show='loading'>
-				<div id="mySpinner"  class="loader">Loading...</div>
-			</div>
-			<div  class="masonry-brick" ng-repeat="brick in bricks">
-				<div class="box box-solid photo" id="br-{[{brick.id}]}" postId="{[{brick.id}]}">
-					<a href="" ng-show="select" ng-click="selectItem(brick.id)">
-						<span ng-class="class" class="fa fa-square-o pull-left"></span>
-					</a>
-					<a href="{[{brick.permalink.web}]}">
-						<img ng-src="{[{brick.images.thumbnail.url}]}" height="{[{brick.images.thumbnail.height}]}" width="{[{brick.images.thumbnail.width}]}">
-					</a>
-					<div class="user">
-						<div class="clear"></div>
-						<a href="{[{brick.user.permalink}]}"><img ng-src="{[{brick.user.avatar}]}"></a>
-					</div>
-					<div class="username">
-						<a href="">{[{brick.user.username}]}</a>
-					</div>
-					<div class="report-count">
-						<a ng-click="reporters(brick.id)" href=""  data-toggle="modal" data-target="#reporter-modal{[{brick.id}]}">
-							<h5><span class="fa fa-flag-o"></span>{[{brick.cnt_report}]} گزارش تخلف</h5>
-						</a>
-					</div>
-					<div class="user-info">
-						<a class="btn btn-default" data-toggle="modal" data-target="#userInfo{[{brick.id}]}" ng-click="userInfo(brick.id)">
-							اطلاعات کاربر
-						</a>
-					</div>
-					<div class="box-tools">
-						<button class="undo" ng-click="undoPost(brick.id)">
-							<i class="fa fa-check"></i>
-						</button>
-						<button class="delete" ng-click="deletePost(brick.id)">
-							<i class="fa fa-times"></i>
-						</button>
-					</div>
-					<div class="modal fade reporter-modal" id="reporter-modal{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="reporterModalLabel">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="True">&times;</span></button>
-									<h4 class="modal-title hidden-xs" id="myModalLabel">گزارش دهندگان</h4>
-								</div>
-								<div class="modal-body">
-									<div class="reporters">
-										<div class="reporter-item" ng-repeat="report in reporterData">
-											<div class="col-md-2 col-xs-4">
-												<a href="{[{report.permalink}]}">
-													<img ng-src="{[{report.avatar}]}" title="user avatar">
-												</a>
-											</div>
-											<div class="col-md-10 col-xs-8 user-score">
-												<h2>{[{report.score}]}</h2>
-											</div>
-											<div class="clear"></div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>	
-					<div class="modal fade userIinfoModal" id="userInfo{[{brick.id}]}" tabindex="-1" role="dialog" aria-labelledby="userIinfoModalLabel">
-						<div class="modal-dialog" role="document" >
-							<div class="modal-content">
-								<div class="modal-header hidden-md hidden-lg">
-									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-								</div>
-								<div class="modal-body">
-									<div class="userIinfo">
-										<div class="col-md-8 col-xs-12 otherInfo">
-											<h2>اطلاعات کاربر</h2>
-											<hr>
-											<div class="">
-												<ul>
-													<li>
-														<label>وضعیت فعال بودن کاربر :</label>
-														<span>
-															<span ng-show="userData.profile.user_active == 1">فعال</span>
-															<span ng-show="userData.profile.user_active == 0">غیر فعال</span>
-														</span>
-														<div class="banDesc" ng-show="userData.profile.user_active == 0">
-															<span class="side-up hidden-xs"></span>
-															<div class="col-md-12 pa0">
-																<p>{[{userData.profile.description}]}</p>
-																<p ng-show="userData.profile.description== ''">توضیحات ندارد</p>
-															</div>
-															<div class="clear"></div>
-															<span class="side-down hidden-xs"></span>
-														</div>
-													</li>
-													<li>
-														<label>وضعیت مسدود شدن پروفایل کاربر :</label>
-														<span>
-															<span ng-show="userData.profile.userBanne_profile == 0">غیر فعال</span>
-															<span ng-show="userData.profile.userBanne_profile == 1">فعال</span>
-														</span>
-														<div class="banDesc" ng-show="userData.profile.userBanne_profile == 0">
-															<span class="side-up hidden-xs"></span>
-															<div class="col-md-12 pa0">
-																<p>{[{userData.profile.description}]}</p>
-																<p ng-show="userData.profile.description== ''">توضیحات ندارد</p>
-															</div>
-															<div class="clear"></div>
-															<span class="side-down hidden-xs"></span>
-														</div>
-													</li>
-													<li>
-														<label>وضعیت imei :</label>
-														<span ng-hide="userData.profile.imei == ''">
-															{[{userData.profile.imei}]}
-														</span>
-														<span ng-show="userData.profile.imei == ''">
-															imei  ندارد.
-														</span>
-														
-														<div class="banDesc" ng-hide="userData.profile.imei == ''">
-															<span class="side-up hidden-xs"></span>
-															<div class="col-md-12 pa0">
-																<p>{[{userData.profile.description}]}</p>
-																<p ng-show="userData.profile.description == ''">توضیحات ندارد</p>
-															</div>
-															<div class="clear"></div>
-															<span class="side-down hidden-xs"></span>
-														</div>
-													</li>
-													<li ng-hide="userData.profile.imei == ''">
-														<label>لیست حساب ها بر اساس imei :</label>
-														<span >
-															<div class="dropdown">
-																<button class="btn btn-default dropdown-toggle" type="button" id="userImeis" data-toggle="dropdown" aria-haspopup="True" aria-expanded="True">
-																	لیست حساب های کاربری
-																	<span class="caret"></span>
-																</button>
-																<ul class="dropdown-menu" aria-labelledby="userImeis">
-																	<li ng-repeat="Uimei in resultItem.profile.users_imei"><a href="{[{Uimei.permalink}]}">{[{Uimei.username}]}</a></li>
-																</ul>
-															</div>
-														</span>
-													</li>
-												</ul>
-											</div>
-										</div>
-										<div class="col-md-4 col-xs-12 hidden-xs rightInfo">
-											<div class="user_avatar">
-												<a href="">
-													<img ng-src="{[{brick.user.avatar}]}">
-												</a>
-											</div>
-											<h1><a href="">{[{brick.user.username}]}</a></h1>
-											<div class="sex">
-												<label>جنسیت :</label>
-												<span ng-show="userData.profile.jens == 'M'">مرد</span>
-												<span ng-show="userData.profile.jens 
-												!= 'M'">زن</span>
-											</div>
-											<div class="score">
-												<label>امتیاز :</label>
-												<span>{[{userData.profile.score}]}</span>
-											</div>
-											<div class="wis">
-												<label>اعتبار ویس :</label>
-												<span>{[{userData.profile.credit}]}</span>
-											</div>
-											<div class="joinDate">
-												<label>تاریخ عضویت :</label>
-												<span>{[{userData.profile.date_joined}]}</span>
-											</div>
-											<div class="email">
-												<label>ایمیل :</label>
-												<span>{[{userData.profile.email}]}</span>
-											</div>
-										</div>
-									</div>
-									<div class="clear"></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+		<div  ng-show='loading'>
+			<div id="mySpinner"  class="loader">Loading...</div>
 		</div>
-	</section>
+		<script type="text/javascript">
+			if (!String.prototype.format) {
+				String.prototype.format = function() {
+					var args = arguments;
+					return this.replace(/{(\d+)}/g, function(match, number) { 
+						return typeof args[number] != 'undefined'
+						? args[number]
+						: match
+						;
+					});
+				};
+			}else{
+				console.log("format of text in implemented");
+			}
+			var $grid = 0;
+			var clid = 'mqttjs_' + Math.random().toString(16).substr(2, 8);
+			client = new Paho.MQTT.Client("79.127.125.98", 10001, clid);
+
+			client.onConnectionLost = onConnectionLost;
+			client.onMessageArrived = onMessageArrived;
+
+			client.connect({onSuccess:onConnect});
+
+			function onConnect() {
+				console.log("onConnect");
+				client.subscribe("wisgoon/check/porn");
+			}
+
+// called when the client loses its connection
+function onConnectionLost(responseObject) {
+	if (responseObject.errorCode !== 0) {
+		console.log("onConnectionLost:"+responseObject.errorMessage);
+	}
+}
+
+// called when a message arrives
+function onMessageArrived(message) {
+	console.log("onMessageArrived:"+message.payloadString);
+	var obj = jQuery.parseJSON( message.payloadString );
+	s = "<div class='grid-item'><a target='_blank' href='http://wisgoon.com/pin/{0}/'><img src='{1}' style='width:236px; height:{2}px'></a> score:{3}</div>".format(obj.id, obj.image, obj.h, obj.number);
+  // $("div.grid").prepend(s);
+  $items = $(s);
+  $grid.prepend($items).masonry('prepended', $items );
+}
+
+</script>
+<div id="feed" load-images="false" class="resize" masonry reload-on-resize  style="width:1070px;">
+</div>
+</section>
 </div>

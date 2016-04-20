@@ -13,6 +13,9 @@ app.controller('indexController',['$scope','$http', '$location', function($scope
 	});
 }]);
 
+app.controller('checkpController',['$scope','$http', '$location', function($scope, $http, $location) {
+}]);
+
 app.controller('reportedController',['$http' ,'$scope', function($http, $scope) {
 
 	$scope.batchDelete = function() {
@@ -62,7 +65,7 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope) 
 
 	$scope.reported = function() {
 		$scope.loading = true;
-		$http.get('/dashboard/api/post/reported/').success(function(data){
+		$http.get('/dashboard/api/posts/new/report').success(function(data){
 			$scope.bricks = data;
 		}).finally(function () {
 			$scope.loading = false;
@@ -162,66 +165,61 @@ app.controller('catstatController',['$http','$scope', function($http, $scope, dr
 };
 $scope.refresh_cat();
 }]);
-app.controller('activeUserController',function($scope,$http,$location) {
-	$scope.activeUser = function() {
-		$http({
-			method  : 'POST',
-			url     : '/dashboard/api/user/changeStatus/',
-			data    : $.param($scope.formData), 
-			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-		}) .success(function(data) {
-			$scope.activeDatas=data;
-			if ($scope.activeDatas.status) {
-				if ($scope.activeDatas.profile.user_active) {
-					$('.activeDatasText').text('فعال');
-				}else{
-					$('.activeDatasText').text('غیر فعال');
-				}
-			};
-		});
-	};	
-});
-app.controller('banProfileController',function($scope,$http,$location) {
-	$scope.banProfile = function() {
-		$http({
-			method  : 'POST',
-			data    :  $.param($scope.formData),
-			url     : '/dashboard/api/user/bannedProfile/',
-			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-		}).success(function(data){
-			$scope.banDatas=data;
-			if ($scope.banDatas.status) {
-				if ($scope.banDatas.profile.userBanne_profile) {
-					$('.banDatasText').text('فعال');
-				}else{
-					$('.banDatasText').text('غیر فعال');
-				}
-			};
-		});
-	};	
-});
-app.controller('banImeiController',function($scope,$http,$location) {
+var aaa = {};
+app.controller('searchController',function($scope,$http,$stateParams,$location) {
+	$scope.formData = {}
+	aaa= $scope;
 	$scope.banImei = function() {
-
+		var postData = {
+			description3 : $scope.formData.description3,
+			imei : $scope.searchInfo.profile.imei,
+			status : !$scope.formData.status
+		}
+		
 		$http({
 			method  : 'POST',
-			data    :  $.param($scope.formData),
+			data    :  $.param(postData),
 			url     : '/dashboard/api/user/bannedImei/',
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		}).success(function(data){
-			$scope.banImeiDatas=data;
-			if ($scope.banImeiDatas.status) {
-				if ($scope.banImeiDatas.profile.user_active) {
-					$('.banImeiText').text('imei فعال');
-				}else{
-					$('.banImeiText').text('imei غیر فعال');
-				}
-			};
+			$scope.searchInfo.profile.imei_status = !data.imei_status;
 		});
 	};
-});
 
-app.controller('searchController',function($scope,$http,$stateParams,$location) {
+	$scope.activeUser = function() {
+
+		var data = {
+			description1 : $scope.formData.description1,
+			activeId : $scope.formData.activeId,
+			activeStatus : !$scope.formData.activeStatus
+		}
+
+		$http({
+			method  : 'POST',
+			url     : '/dashboard/api/user/changeStatus/',
+			data    : $.param(data), 
+			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+		}) .success(function(data) {
+			$scope.searchInfo.profile.user_active = data.profile.user_active;
+		});
+	};	
+
+	$scope.banProfile = function() {
+
+		var data = {
+			description2 : $scope.formData.description2,
+			profileBanId : $scope.formData.profileBanId,
+			profileBanstatus : !$scope.formData.profileBanstatus
+		}
+		$http({
+			method  : 'POST',
+			data    :  $.param(data),
+			url     : '/dashboard/api/user/bannedProfile/',
+			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+		}).success(function(data){
+			$scope.searchInfo.profile.userBanne_profile = data.profile.userBanne_profile;
+		});
+	};
 	$scope.showSearchUser = function() {
 		$scope.statusSearch= " ";
 		$scope.imei_text= "imei ندارد.";
@@ -257,10 +255,12 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 
 		$http.get('/dashboard/api/user/details/'+cmId+'/').success(function(data){
 			$scope.searchInfo = data.objects;
+			$scope.formData.activeStatus = data.objects.profile.user_active;
+			$scope.formData.profileBanstatus = data.objects.profile.userBanne_profile;
 		}).finally(function () {
 			$scope.loading = false;
 		});
-	};
+	};	
 });
 
 app.controller('adsController',['$scope','$http', function($scope, $http) {
@@ -477,6 +477,25 @@ app.controller('logsController',['$scope','$http','$stateParams','$location', fu
 	};
 }]);
 
+app.controller('logoutController',function($scope,$http,$location){
+	$scope.logout = function() {
+		$http.get("/api/v6/auth/logout/")
+		.success(function(data) {
+			user_token='';
+			user_id='';
+			$location.path('/login');
+		})
+	};
+});
+
+app.controller('deleteAvatarController',function($scope,$http,$location) {
+	$scope.delAvatar = function(uId) {
+		$http.get("/dashboard/api/user/removeAvatar/"+uId+"/")
+		.success(function(data){
+			
+		});
+	};	
+});
 /****** user activity *******/
 
 app.controller('activityUserController',['$scope','$http', function($scope, $http) {
@@ -744,14 +763,3 @@ app.controller('commentCtrl',['$scope','$http', function($scope, $http) {
 }]);
 
 /****** end user activity *******/
-
-app.controller('logoutController',function($scope,$http,$location){
-	$scope.logout = function() {
-		$http.get("/api/v6/auth/logout/")
-		.success(function(data) {
-			user_token='';
-			user_id='';
-			$location.path('/login');
-		})
-	};
-});
