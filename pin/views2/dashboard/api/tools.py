@@ -393,21 +393,47 @@ def undo_report_new(request):
         try:
             reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
             print reported_posts
+
             for post in reported_posts:
-                print '2'
 
                 posts_report = ReportedPostReporters.objects\
                     .filter(reported_post=post).values_list('user_id', flat=True)
 
-                user_history = UserHistory.objects.create(user_id__in=posts_report)
-                print user_history
+                user_history = UserHistory.objects.filter(user_id__in=posts_report)
 
                 for user in user_history:
-
+                    print '2'
+                    print user
                     user.neg_report += 1
                     user.save()
                 post.delete()
             status = True
+        except:
+            status = False
+
+    return status
+
+
+def delet_post_new(request):
+    post_ids = request.POST.getlist('post_ids')
+    status = False
+    if post_ids:
+        try:
+            reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
+            post = Post.objects.get(id__in=post_ids)
+            print post
+
+            for posts in reported_posts:
+
+                posts_report = ReportedPostReporters.objects\
+                    .filter(reported_post=posts).values_list('user_id', flat=True)
+
+                user_history = UserHistory.objects.filter(user_id__in=posts_report)
+            for user in user_history:
+                user.pos_report += 1
+                user.save()
+            posts.delete()
+            post.delete()
         except:
             status = False
 

@@ -1603,7 +1603,7 @@ class ReportedPost(models.Model):
 class ReportedPostReporters(models.Model):
     reported_post = models.ForeignKey(ReportedPost)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    report_type = models.ForeignKey(ReportTypes, blank=True, default=None)
+    report_type = models.ForeignKey(ReportTypes, blank=True, default=None, null=True)
     create_time = models.DateTimeField(auto_now=True)
 
 
@@ -1614,6 +1614,13 @@ class UserHistory(models.Model):
     cnt_report = models.IntegerField(default=0)
     admin_post_deleted = models.IntegerField(default=0)
     priority = models.IntegerField(default=1)
+
+
+class Commitment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    text_commitment = models.CharField(max_length=250)
+    phone_data = models.ForeignKey(PhoneData)
+    create_time = models.DateTimeField(auto_now=True)
 
 
 class Results(models.Model):

@@ -25,7 +25,7 @@ from django.http import HttpResponse, HttpResponseRedirect,\
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
 from pin.context_processors import is_police
-from pin.models import Post, Stream, Follow, Ad, Block,\
+from pin.models import Post, Stream, Follow, Ad, Block, UserHistory,\
     Report, Comments, Comments_score, Category, Bills2 as Bills, ReportedPost, ReportedPostReporters
 
 from pin.model_mongo import Notif, UserMeta, NotifCount
@@ -225,6 +225,7 @@ def report(request, pin_id):
     try:
         ReportedPostReporters.objects\
             .create(reported_post=reported, user=request.user)
+        UserHistory.objects.create(user=request.user)
     except Exception as e:
         print str(e)
     # End of hosseing work

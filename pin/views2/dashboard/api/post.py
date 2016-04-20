@@ -15,7 +15,7 @@ from pin.views2.dashboard.api.tools import (ads_group_by,
                                             check_admin, cnt_post_deleted_by_admin,
                                             cnt_post_deleted_by_user,
                                             delete_posts, get_ads,
-                                            undo_report, undo_report_new
+                                            undo_report, undo_report_new, delet_post_new
                                             )
 from user_profile.models import Profile
 
@@ -365,4 +365,13 @@ def post_undo_new(request):
         return return_un_auth()
 
     status = undo_report_new(request)
+    return return_json_data({'status': status})
+
+
+@csrf_exempt
+def delete_post_new(request):
+    if not check_admin(request):
+        return return_un_auth()
+
+    status = delet_post_new(request)
     return return_json_data({'status': status})

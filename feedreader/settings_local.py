@@ -40,7 +40,7 @@ DATABASES = {
         'NAME': 'feedreader',
         'USER': 'root',
         'PASSWORD': 'somaye',
-        'HOST': 'feedreader.db',
+        'HOST': 'localhost',
         'PORT': '',
     },
     'slave': {
@@ -48,7 +48,7 @@ DATABASES = {
         'NAME': 'feedreader',
         'USER': 'root',
         'PASSWORD': 'somaye',
-        'HOST': 'feedreader.db',
+        'HOST': 'localhost',
         'PORT': '',
     }
 }
