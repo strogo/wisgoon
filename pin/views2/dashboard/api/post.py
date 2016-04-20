@@ -58,9 +58,13 @@ def new_reporte(request):
         o['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(rp.post.user_id)
         if phone_data:
             o['user']['imei'] = phone_data.imei
+            o['user']['user_imei'] = phone_data.user
+
             banned_imi = BannedImei.objects.filter(imei=phone_data.imei).exists()
             o['user']['banned_imi'] = banned_imi
+
         else:
+            o['user']['user_imei'] = None
             o['user']['imei'] = None
             o['user']['banned_imi'] = None
 

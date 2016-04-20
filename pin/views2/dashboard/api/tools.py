@@ -431,6 +431,7 @@ def delet_post_new(request):
                 user_history = UserHistory.objects.filter(user_id__in=posts_report)
             for user in user_history:
                 user.pos_report += 1
+                user.admin_post_deleted += 1
                 user.save()
             posts.delete()
             post.delete()
