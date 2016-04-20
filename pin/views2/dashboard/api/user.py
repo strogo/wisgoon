@@ -195,9 +195,9 @@ def banned_imei(request):
                 return return_not_found()
 
         elif status == '0':
-            BannedImei.objects.create(imei=imei,
-                                      description=description,
-                                      user=request.user)
+            BannedImei.objects.get_or_create(imei=imei,
+                                             description=description,
+                                             user=request.user)
             desc = ''
             owner = None
             for data in phone_data:
