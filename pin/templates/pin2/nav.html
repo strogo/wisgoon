@@ -15,7 +15,7 @@
 			<div class="col-md-3 col-sm-4 navbar-header">
 
 				<a href="{% url "home" %}" class="header-brand">
-					<img src="{{MEDIA_URL}}v2/images/logo.png" alt="{{SITE_NAME_FA}} {{SITE_NAME_EN}}">
+					<img src="{{STATIC_CDN}}v2/images/logo.png" alt="{{SITE_NAME_FA}} {{SITE_NAME_EN}}">
 				</a>
 				
 			</div>
@@ -50,7 +50,7 @@
 										{{request.user.id|get_user_notify|pn}} 
 										<i class="notif_icon"></i>
 									</a>
-									<img src="{{MEDIA_URL}}v2/images/top-loading.gif" alt="..." class="loading-img" />
+									<img src="{{STATIC_CDN}}v2/images/top-loading.gif" alt="..." class="loading-img" />
 								</div>
 							</li>
 							<li>
