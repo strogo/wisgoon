@@ -216,8 +216,25 @@ def get_post_tags(post):
     return tags
 
 
-def post_item_json(post_id, cur_user_id=None, r=None):
+def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None):
     post_id = int(post_id)
+
+    def need_fields(post_object):
+        final_o = {}
+        if fields:
+            final_o = {f: post_object[f] for f in fields}
+
+        if exclude:
+            if not fields:
+                final_o = post_object
+
+            for f in exclude:
+                try:
+                    final_o.pop(f)
+                except:
+                    pass
+
+        return final_o
 
     pi = {}  # post item
     if post_id:
@@ -232,6 +249,8 @@ def post_item_json(post_id, cur_user_id=None, r=None):
             # print "get post data item json from cache"
             cache_post['cnt_view'] = pi['cnt_view']
             cache_post['cache'] = "Hit"
+
+            cache_post = need_fields(cache_post)
             return cache_post
 
         try:
@@ -315,6 +334,7 @@ def post_item_json(post_id, cur_user_id=None, r=None):
         pi['category'] = category_get_json(cat_id=post.category_id)
 
         cp.set(pi)
+        pi = need_fields(pi)
     return pi
 
 
