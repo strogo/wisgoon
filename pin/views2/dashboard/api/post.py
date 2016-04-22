@@ -53,15 +53,18 @@ def new_reporte(request):
             report_json = get_simple_user_object(rps.user.id)
 
         reports_list.append(report_json)
-        if reporters:
-            pass
+
         o['reporters'] = reports_list
         o['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(rp.post.user_id)
         if phone_data:
             o['user']['imei'] = phone_data.imei
+            o['user']['user_imei'] = phone_data.user_id
+
             banned_imi = BannedImei.objects.filter(imei=phone_data.imei).exists()
             o['user']['banned_imi'] = banned_imi
+
         else:
+            o['user']['user_imei'] = None
             o['user']['imei'] = None
             o['user']['banned_imi'] = None
 

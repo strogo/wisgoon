@@ -43,6 +43,11 @@ app.config(function ($stateProvider, $urlRouterProvider) {
       .state('check_p', {
         url: "/check_p",
         templateUrl: "/media/dashboard/html/post/check_p.html",
+        controller: "checkpController"
+    })
+       .state('new_report', {
+        url: "/new_report",
+        templateUrl: "/media/dashboard/html/post/new_report.html",
         controller: "reportedController"
     })
      .state('permissionDenied', {
@@ -57,3 +62,16 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     })
      
  });
+app.directive('ngReallyClick', [function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            element.bind('click', function() {
+                var message = attrs.ngReallyMessage;
+                if (message && confirm(message)) {
+                    scope.$apply(attrs.ngReallyClick);
+                }
+            });
+        }
+    }
+}]);

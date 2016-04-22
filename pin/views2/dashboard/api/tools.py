@@ -368,10 +368,11 @@ def get_profile_data(profile, enable_imei=False):
 
             if not profile.user.is_active or profile.banned or not profile.user.is_active:
                 try:
-                    banned = BannedImei.objects.get(imei=imei)
-                except:
+                    banned = BannedImei.objects.get(imei=int(imei))
+                except Exception as e:
+                    print str(e)
                     banned = None
-
+                print banned
                 if banned:
                     data['imei_status'] = 0
                     data['imei_description'] = str(banned.description)
@@ -430,6 +431,7 @@ def delet_post_new(request):
                 user_history = UserHistory.objects.filter(user_id__in=posts_report)
             for user in user_history:
                 user.pos_report += 1
+                user.admin_post_deleted += 1
                 user.save()
             posts.delete()
             post.delete()
