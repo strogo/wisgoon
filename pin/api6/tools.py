@@ -223,6 +223,8 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
         final_o = {}
         if fields:
             final_o = {f: post_object[f] for f in fields}
+        else:
+            final_o = post_object
 
         if exclude:
             if not fields:
