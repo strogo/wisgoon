@@ -2,8 +2,8 @@
 {% load widget_tweaks %}
 
 {% block css %}
-<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/select2.min.css" />
-<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/owl.carousel.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/select2.min.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/owl.carousel.css" />
 {% endblock css %}
 
 <div class="modal fade" id="fromImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -12,7 +12,7 @@
 			<form role="form" method="post" class="form-horizontal" action="{% url 'pin-send' %}" id="pin_form">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title" id="fromImageModal">ارسال مطلب جدید<img src="{{MEDIA_URL}}v2/images/icons/wis-icon.png" alt="" class="wis_modal_icon"></h4>
+					<h4 class="modal-title" id="fromImageModal">ارسال مطلب جدید<img src="{{STATIC_CDN}}v2/images/icons/wis-icon.png" alt="" class="wis_modal_icon"></h4>
 				</div>
 				<div class="modal-body">
 

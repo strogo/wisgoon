@@ -3,7 +3,7 @@
 {% load widget_tweaks %}
 
 {% block css %}
-<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/select2.min.css" />
+<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/select2.min.css" />
 {% endblock css %}
 
 <div class="modal fade" id="fromUrlModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -58,7 +58,7 @@
 </div>
 {% block js %}
 
-<script type="text/javascript" src="{{MEDIA_URL}}v2/js/select2.min.js"></script>
+<script type="text/javascript" src="{{STATIC_CDN}}v2/js/select2.min.js"></script>
 <script type="text/javascript">
 	$.fn.modal.Constructor.prototype.enforceFocus = function () {};
 	function cur_id_change(action) {
