@@ -9,9 +9,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'feedreader',
-        'USER': 'wisgoon_mars',
-        'PASSWORD': 'mjewyDbvLjtpCyAX',
-        'HOST': '79.127.125.104',
+        'USER': 'wis_db_user',
+        'PASSWORD': 'OTEfiD6aNeQ4E',
+        'HOST': '79.127.125.99',
         'PORT': '',
     },
 }
