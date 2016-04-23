@@ -108,8 +108,15 @@ NEO4J_DATABASE = "http://79.127.125.98:7474/db/data/"
 ES_HOST = "79.127.125.98"
 INFLUX_HOST = "79.127.125.99"
 
-REDIS_DB_4 = '79.127.125.98'
+
+REDIS_DB = '79.127.125.99'
+REDIS_DB_NUMBER = 11
+
+REDIS_DB_2 = '79.127.125.99'
+REDIS_DB_NUMBER_2 = 10
+
 REDIS_DB_3 = '79.127.125.98'
+REDIS_DB_4 = '79.127.125.98'
 
 STATIC_DOMAIN = "http://static.wisgoon.com"
 STATIC_CDN = "http://static.wisgoon.com/media/"
