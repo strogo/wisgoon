@@ -232,7 +232,7 @@
                     {% endfor %}
 
                     {% if post.cnt_like > 5 %}
-                    <a data-toggle="modal" data-target="#likers_modal"><span class="likers_popup"><img src="{{MEDIA_URL}}v2/images/3dot-h.png" width="25" height="8" alt=""></span></a>
+                    <a data-toggle="modal" data-target="#likers_modal"><span class="likers_popup"><img src="{{STATIC_CDN}}v2/images/3dot-h.png" width="25" height="8" alt=""></span></a>
 
                     <div class="modal fade" id="likers_modal" tabindex="-1" role="dialog" aria-labelledby="likers_modal_label">
                         <div class="modal-dialog" role="document">
@@ -244,7 +244,7 @@
                                 <div class="modal-body">
                                     <div class="likers_box"></div>
                                     <div class="likers_loading">
-                                        <img src="{{MEDIA_URL}}v2/images/wis_loading.gif" alt="">
+                                        <img src="{{STATIC_CDN}}v2/images/wis_loading.gif" alt="">
                                     </div>
                                     <div class="likers_loading_more" data-offset="0" data-status="enable">
                                         <a href="">بیشتر</a>
@@ -403,9 +403,7 @@
                 <label for="direct_txt_1">لینک مستقیم</label><br>
                 <input readonly="readonly" class="w100" type="text" id="direct_txt_1" value="{{post.get_image_236.url}}" />
                 <div class="clear"></div>
-
             </div>
-
 
             <div role="tabpanel" class="tab-pane" id="x500">
                 <label for="html_txt_2">کد HTML برای سایت یا وبلاگ</label><br>
@@ -424,9 +422,7 @@
                 <label for="direct_txt_2">لینک مستقیم</label><br>
                 <input readonly="readonly" class="w100" type="text" id="direct_txt_2" value="{{post.get_image_500.url}}" />
                 <div class="clear"></div>
-
             </div>
-
 
             <div role="tabpanel" class="tab-pane" id="xo">
                 <label for="html_txt_3">کد HTML برای سایت یا وبلاگ</label><br>
@@ -444,9 +440,7 @@
                 <label for="direct_txt_3">لینک مستقیم</label><br>
                 <input readonly="readonly" class="w100" type="text" id="direct_txt_3" value="{{media_prefix}}{{MEDIA_URL}}{{post.image}}" />
                 <div class="clear"></div>
-
             </div>
-
 
         </div>
     </div>

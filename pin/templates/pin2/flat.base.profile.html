@@ -10,7 +10,7 @@
 	
 	{% block opengraph %} {% endblock %}
 	{% include "pin2/all_header.html" %}
-	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/croppie.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/croppie.css" />
 
 	<script type="text/javascript">
 		var media_url = "{{MEDIA_URL}}";
@@ -46,7 +46,7 @@
 				{% include "base/ad-125x125.html" %}
 				{% endcomment %}
 				<a id="next_url" href="{{next_url}}" title="کلیک کنید">
-					<img src="{{MEDIA_URL}}v2/images/big-loader.gif" alt="Loading..." class="footer-loading-img" />
+					<img src="{{STATIC_CDN}}v2/images/big-loader.gif" alt="Loading..." class="footer-loading-img" />
 				</a>
 			</center>
 		</div>
@@ -56,7 +56,7 @@
 				{% comment %}
 				{% include "base/ad-125x125.html" %}
 				{% endcomment %}
-				<img src="{{MEDIA_URL}}v2/images/big-loader.gif" alt="Loading..." class="footer-loading-img" />
+				<img src="{{STATIC_CDN}}v2/images/big-loader.gif" alt="Loading..." class="footer-loading-img" />
 			</center>
 		</div>
 		{% endif %}
@@ -66,7 +66,7 @@
 		{% block footer_script %}{% endblock %}
 		
 		{% block footer_ex_js %}{% endblock footer_ex_js %}
-		<script src="{{MEDIA_URL}}v2/js/croppie.min.js"></script>
+		<script src="{{STATIC_CDN}}v2/js/croppie.min.js"></script>
 		
 		{% block js %}
 		{% endblock js %}
