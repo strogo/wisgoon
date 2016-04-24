@@ -30,14 +30,14 @@ def new_reporte(request):
     data = {
         'meta': {'limit': 20,
                  'next': '',
-                 'total_count': ''},
+                 'total_count': ReportedPost.objects.filter().count()},
         'objects': []
     }
 
     obj = []
     imei_user = []
     reports_list = []
-
+    # user_name = []
     report_json = None
     phone_data = None
 
@@ -52,8 +52,9 @@ def new_reporte(request):
             print str(e)
 
         for user in phone_data:
-            imei_user.append(user.imei)
-            post['user']['user_imei'] = user.user.username
+            # user_name.append(user.user.username)
+            imei_user.append(user.user.username)
+            post['user']['imei'] = user.imei
 
         reporters = ReportedPostReporters.objects.filter(reported_post=report)
 
@@ -67,26 +68,17 @@ def new_reporte(request):
             reports_list.append(report_json)
 
         post['reporters'] = reports_list
-        # o['reporters']['cnt_report'] = user_his.cnt_report
 
         post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(report.post.user_id)
-        # if phone_data:
-        post['user']['imei'] = imei_user
+        post['user']['list_imei'] = imei_user
 
         banned_imi = BannedImei.objects.filter(imei=user.imei).exists()
-        print banned_imi
         post['user']['banned_imi'] = banned_imi
-
-        # else:
-        # post['user']['user_imei'] = None
-        # post['user']['imei'] = None
-        # post['user']['banned_imi'] = None
 
         post['user']['cnt_post'] = user_profile.cnt_post
         post['user']['banned_profile'] = user_profile.banned
         post['user']['is_active'] = report.post.user.is_active
         obj.append(post)
-        # report_json['imei'] = phone_data.imei
 
     data['objects'] = obj
     if len(data) == 20:
