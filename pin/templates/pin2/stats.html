@@ -34,8 +34,8 @@
 {% endblock content%}
 
 {% block footer_script %}
-<script src="{{MEDIA_URL}}js2/highcharts.js"></script>
-<script src="{{MEDIA_URL}}js2/modules/exporting.js"></script>
+<script src="{{STATIC_CDN}}js2/highcharts.js"></script>
+<script src="{{STATIC_CDN}}js2/modules/exporting.js"></script>
 <script type="text/javascript">
 $(function () {
     $('#constantine').highcharts({
