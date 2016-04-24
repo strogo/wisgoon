@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 # from django.utils.translation import ugettext as _
 
 from pin.models import Post, Report, Category, SubCategory, ReportedPost, ReportedPostReporters,\
-    PhoneData, BannedImei
+    PhoneData, BannedImei, UserHistory
 from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
 from pin.api6.tools import (get_next_url, get_simple_user_object,
@@ -24,7 +24,9 @@ from haystack.query import SearchQuerySet
 
 def new_reporte(request):
     before = int(request.GET.get('before', 0))
+
     posts = ReportedPost.objects.only('id')[before: (before + 1) * 20]
+
     data = {
         'meta': {'limit': 20,
                  'next': '',
@@ -33,45 +35,57 @@ def new_reporte(request):
     }
 
     obj = []
+    imei_user = []
     reports_list = []
 
     report_json = None
     phone_data = None
 
-    for rp in posts:
-        o = post_item_json(rp.post.id)
+    for report in posts:
+        post = post_item_json(report.post.id)
 
-        user_profile = Profile.objects.get(user=rp.post.user)
+        user_profile = Profile.objects.get(user=report.post.user)
 
         try:
-            phone_data = PhoneData.objects.get(user=rp.post.user.id)
+            phone_data = PhoneData.objects.filter(user=report.post.user)
         except Exception as e:
             print str(e)
-        reporters = ReportedPostReporters.objects.filter(reported_post=rp)
+
+        for user in phone_data:
+            imei_user.append(user.imei)
+            post['user']['user_imei'] = user.user.username
+
+        reporters = ReportedPostReporters.objects.filter(reported_post=report)
 
         for rps in reporters:
             report_json = get_simple_user_object(rps.user.id)
+            user_his = UserHistory.objects.get(user=rps.user)
+            report_json['cnt_report'] = user_his.cnt_report
+            report_json['negative_report'] = user_his.neg_report
+            report_json['positive_report'] = user_his.pos_report
 
-        reports_list.append(report_json)
+            reports_list.append(report_json)
 
-        o['reporters'] = reports_list
-        o['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(rp.post.user_id)
-        if phone_data:
-            o['user']['imei'] = phone_data.imei
-            o['user']['user_imei'] = phone_data.user_id
+        post['reporters'] = reports_list
+        # o['reporters']['cnt_report'] = user_his.cnt_report
 
-            banned_imi = BannedImei.objects.filter(imei=phone_data.imei).exists()
-            o['user']['banned_imi'] = banned_imi
+        post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(report.post.user_id)
+        # if phone_data:
+        post['user']['imei'] = imei_user
 
-        else:
-            o['user']['user_imei'] = None
-            o['user']['imei'] = None
-            o['user']['banned_imi'] = None
+        banned_imi = BannedImei.objects.filter(imei=user.imei).exists()
+        print banned_imi
+        post['user']['banned_imi'] = banned_imi
 
-        o['user']['cnt_post'] = user_profile.cnt_post
-        o['user']['banned_profile'] = user_profile.banned
-        o['user']['is_active'] = rp.post.user.is_active
-        obj.append(o)
+        # else:
+        # post['user']['user_imei'] = None
+        # post['user']['imei'] = None
+        # post['user']['banned_imi'] = None
+
+        post['user']['cnt_post'] = user_profile.cnt_post
+        post['user']['banned_profile'] = user_profile.banned
+        post['user']['is_active'] = report.post.user.is_active
+        obj.append(post)
         # report_json['imei'] = phone_data.imei
 
     data['objects'] = obj

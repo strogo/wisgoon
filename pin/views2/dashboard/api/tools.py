@@ -435,6 +435,7 @@ def delet_post_new(request):
                 user.save()
             posts.delete()
             post.delete()
+            status = True
         except:
             status = False
 
