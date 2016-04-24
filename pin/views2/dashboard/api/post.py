@@ -39,7 +39,7 @@ def new_reporte(request):
     reports_list = []
     # user_name = []
     report_json = None
-    phone_data = None
+    user = None
 
     for report in posts:
         post = post_item_json(report.post.id)
@@ -70,20 +70,14 @@ def new_reporte(request):
         post['reporters'] = reports_list
 
         post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(report.post.user_id)
-        # post['user']['list_imei'] = imei_user
-        print user.imei
-        if phone_data:
+        if user:
             post['user']['list_imei'] = imei_user
-
             banned_imi = BannedImei.objects.filter(imei=user.imei).exists()
-            print banned_imi
             post['user']['banned_imi'] = banned_imi
-
         else:
-            post['user']['imei'] = None
+            post['user']['list_imei'] = None
             post['user']['banned_imi'] = None
 
-        post['user']['banned_imi'] = banned_imi
         post['user']['cnt_post'] = user_profile.cnt_post
         post['user']['banned_profile'] = user_profile.banned
         post['user']['is_active'] = report.post.user.is_active
