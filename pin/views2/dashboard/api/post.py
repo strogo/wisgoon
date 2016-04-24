@@ -70,12 +70,19 @@ def new_reporte(request):
         post['reporters'] = reports_list
 
         post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(report.post.user_id)
-        post['user']['list_imei'] = imei_user
+        # post['user']['list_imei'] = imei_user
         print user.imei
-        try:
+        if phone_data:
+            post['user']['list_imei'] = imei_user
+
             banned_imi = BannedImei.objects.filter(imei=user.imei).exists()
-        except Exception, e:
-            print str(e)
+            print banned_imi
+            post['user']['banned_imi'] = banned_imi
+
+        else:
+            post['user']['imei'] = None
+            post['user']['banned_imi'] = None
+
         post['user']['banned_imi'] = banned_imi
         post['user']['cnt_post'] = user_profile.cnt_post
         post['user']['banned_profile'] = user_profile.banned
