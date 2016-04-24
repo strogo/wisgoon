@@ -416,7 +416,7 @@ def undo_report_new(request):
 
 def delet_post_new(request):
     post_ids = request.POST.getlist('post_ids')
-    status = True
+    status = False
     if post_ids:
         try:
             reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
@@ -435,6 +435,7 @@ def delet_post_new(request):
                 user.save()
             posts.delete()
             post.delete()
+            status = True
         except:
             status = False
 
