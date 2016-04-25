@@ -45,7 +45,7 @@ def home(request):
     cache_str = "page:home:%s" % str(pid)
     enable_cacing = False
     if not request.user.is_authenticated():
-        enable_cacing = True
+        enable_cacing = False
         cd = cache.get(cache_str)
         if cd:
             return cd
@@ -600,7 +600,7 @@ def latest_redis(request):
     # print "cache str:", cache_str
     enable_cacing = False
     if not request.user.is_authenticated():
-        enable_cacing = True
+        enable_cacing = False
         cd = cache.get(cache_str)
         if cd:
             # print "showing data from cache"
@@ -1003,7 +1003,7 @@ def item(request, item_id):
 
     enable_cacing = False
     if not request.user.is_authenticated():
-        enable_cacing = True
+        enable_cacing = False
         cd = cache.get("page_v1_%s" % item_id)
         if cd:
             return cd
