@@ -1,0 +1,11 @@
+apt-get update
+apt-get install ssh
+apt-get install uwsgi-plugin-python uwsgi libjpeg-dev libjpeg-dev libfreetype6-dev zlib1g-dev libpng12-dev libtiff5-dev libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev python-virtualenv python-dev git rsync libmysqlclient-dev memcached python-pip libxml2-dev libxslt-dev vim
+
+docker commit 347a9777d57e wisgoon/web:0.1
+
+docker run -v /home/wisgoon/www:/home/wisgoon/www -i -t wisgoon/web:0.1
+
+cd 
+virtualenv env
+pip install -r /home/wisgoon/www/requirments.txt

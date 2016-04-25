@@ -2,22 +2,15 @@ import os
 import json
 import paramiko
 
-from influxdb import InfluxDBClient
-
 from feedreader.celery import app
 from django.conf import settings
 from django.core.cache import cache
 
-try:
-    client = InfluxDBClient(settings.INFLUX_HOST, 8086, 'root', 'root', 'wisgoon')
-    client.create_database('wisgoon')
-except Exception, e:
-    print str(e)
-
 
 @app.task(name="wisgoon.analytics.tick")
 def tick(doc):
-    client.write_points(doc)
+    pass
+    # client.write_points(doc)
     # es.index(index="wisgoon-analytics", doc_type='log', body=doc)
 
 

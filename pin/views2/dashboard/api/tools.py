@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext as _
 
 from pin.model_mongo import MonthlyStats
-from pin.models import Post, Ad, Log, BannedImei
+from pin.models import Post, Ad, Log, BannedImei, ReportedPost, ReportedPostReporters, UserHistory
 from pin.tools import post_after_delete, get_user_ip
 from pin.api6.http import return_json_data
 from pin.api6.tools import get_simple_user_object,\
@@ -190,14 +190,12 @@ def ads_group_by(group_by, ended):
 
 
 def cnt_post_deleted_by_user(user_id):
-    return 0
     cnt_log = Log.objects\
         .filter(content_type=Log.POST, user=user_id, owner=user_id).count()
     return cnt_log
 
 
 def cnt_post_deleted_by_admin(user_id):
-    return 0
     cnt_log = Log.objects\
         .filter(content_type=Log.POST, owner=user_id)\
         .exclude(user=user_id).count()
@@ -370,10 +368,11 @@ def get_profile_data(profile, enable_imei=False):
 
             if not profile.user.is_active or profile.banned or not profile.user.is_active:
                 try:
-                    banned = BannedImei.objects.get(imei=imei)
-                except:
+                    banned = BannedImei.objects.get(imei=int(imei))
+                except Exception as e:
+                    print str(e)
                     banned = None
-
+                print banned
                 if banned:
                     data['imei_status'] = 0
                     data['imei_description'] = str(banned.description)
@@ -384,3 +383,60 @@ def get_profile_data(profile, enable_imei=False):
                     data['description'] = str(log[0].text)
 
     return data
+
+
+def undo_report_new(request):
+    print "1"
+    post_ids = request.POST.getlist('post_ids')
+    status = False
+    if post_ids:
+        try:
+            reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
+            print reported_posts
+
+            for post in reported_posts:
+
+                posts_report = ReportedPostReporters.objects\
+                    .filter(reported_post=post).values_list('user_id', flat=True)
+
+                user_history = UserHistory.objects.filter(user_id__in=posts_report)
+
+                for user in user_history:
+                    print '2'
+                    print user
+                    user.neg_report += 1
+                    user.save()
+                post.delete()
+            status = True
+        except:
+            status = False
+
+    return status
+
+
+def delet_post_new(request):
+    post_ids = request.POST.getlist('post_ids')
+    status = False
+    if post_ids:
+        try:
+            reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
+            post = Post.objects.get(id__in=post_ids)
+            print post
+
+            for posts in reported_posts:
+
+                posts_report = ReportedPostReporters.objects\
+                    .filter(reported_post=posts).values_list('user_id', flat=True)
+
+                user_history = UserHistory.objects.filter(user_id__in=posts_report)
+            for user in user_history:
+                user.pos_report += 1
+                user.admin_post_deleted += 1
+                user.save()
+            posts.delete()
+            post.delete()
+            status = True
+        except:
+            status = False
+
+    return status

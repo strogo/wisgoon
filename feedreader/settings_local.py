@@ -9,7 +9,7 @@ THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DISPLAY_AD = False
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
-STATIC_VERSION = '5.8.20'
+STATIC_VERSION = '5.9.12'
 
 SITE_ROOT = os.path.dirname(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -40,7 +40,7 @@ DATABASES = {
         'NAME': 'feedreader',
         'USER': 'root',
         'PASSWORD': 'somaye',
-        'HOST': 'wisgoon.db',
+        'HOST': 'localhost',
         'PORT': '',
     },
     'slave': {
@@ -48,7 +48,7 @@ DATABASES = {
         'NAME': 'feedreader',
         'USER': 'root',
         'PASSWORD': 'somaye',
-        'HOST': 'wisgoon.db',
+        'HOST': 'localhost',
         'PORT': '',
     }
 }
@@ -424,3 +424,4 @@ ES_HOST = "localhost"
 INFLUX_HOST = "localhost"
 
 STATIC_CDN = MEDIA_URL
+STATIC_DOMAIN = MEDIA_URL

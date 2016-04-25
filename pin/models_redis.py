@@ -24,6 +24,26 @@ activityServer = redis.Redis(settings.REDIS_DB_3)
 notificationRedis = redis.Redis(settings.REDIS_DB_4)
 
 
+class PostView(object):
+    post_id = None
+    KEY_PREFIX = "pv:1:{}"
+
+    def __init__(self, post_id):
+        self.KEY_PREFIX = self.KEY_PREFIX.format(post_id)
+
+    def inc_view(self):
+        return
+        notificationRedis.incr(self.KEY_PREFIX)
+
+    def get_cnt_view(self):
+        return
+        cnt = notificationRedis.get(self.KEY_PREFIX)
+        if not cnt:
+            return 0
+        else:
+            return int(cnt)
+
+
 class NotifStruct:
     def __init__(self, **entries):
         self.__dict__.update(entries)
@@ -235,11 +255,11 @@ class LikesRedis(object):
         else:
             self.like(user_id=user_id, post_owner=post_owner, user_ip=user_ip)
 
-            from pin.tasks import activity
-            if settings.DEBUG:
-                activity(act_type=1, who=user_id, post_id=self.postId)
-            else:
-                activity.delay(act_type=1, who=user_id, post_id=self.postId)
+            # from pin.tasks import activity
+            # if settings.DEBUG:
+            #     activity(act_type=1, who=user_id, post_id=self.postId)
+            # else:
+            #     activity.delay(act_type=1, who=user_id, post_id=self.postId)
 
             lbs.zincrby(self.KEY_LEADERBORD, post_owner, 10)
             lbs.zincrby(leader_category, post_owner, 10)

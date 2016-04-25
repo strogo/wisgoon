@@ -1,0 +1,17 @@
+{% load i18n %}
+{% include "pin2/emails/_header.html" %}
+
+<h3>{% trans "Thanks for using" %} {{SITE_URL_NAME}}</h3>
+
+{% trans "Please go to the following page and choose a new password" %}:
+<br>
+<br>
+{% block reset_link %}
+<a style="color: #FF6B01;" href="{{ protocol }}://{{ domain }}{% url 'django.contrib.auth.views.password_reset_confirm' uidb64=uid
+            token=token %}">Reset password</a>
+{% endblock %}
+<br>
+<br>
+{% trans "Your username, in case you've forgotten:" %} {{ user.get_username }}
+
+{% include "pin2/emails/_footer.html" %}

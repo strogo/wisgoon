@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.db.models import F
 
-from pin.model_mongo import Notif, MonthlyStats, NotifCount
+from pin.model_mongo import MonthlyStats, NotifCount, Notif
 from pin.models_redis import NotificationRedis
 from pin.models import Post, Follow
 
@@ -45,7 +45,7 @@ def profile_after_dislike(user_id):
 
 
 def clear_notif(user_id):
-    Notif.objects.filter(owner=user_id).order_by('-date')[100:].delete()
+    # Notif.objects.filter(owner=user_id).order_by('-date')[100:].delete()
     print "clear notif"
     return "clear botif"
 

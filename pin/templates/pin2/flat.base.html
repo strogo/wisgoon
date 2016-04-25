@@ -29,7 +29,7 @@
 	{% include "pin2/nav.html" %}
 	{% include "pin2/cats.html" %}
 
-	{% if DISPLAY_AD and page != 'rp' %}
+	{% if DISPLAY_AD %}
 	<div class="tabliq-block" style="text-align:center">
 		{% include "base/tabliq.html" %}
 	</div>
@@ -44,7 +44,7 @@
 			{% include "base/ad-125x125.html" %}
 			{% endcomment %}
 			<a id="next_url" href="{{next_url}}" title="کلیک کنید">
-				<img src="{{MEDIA_URL}}v2/images/big-loader.gif" alt="Loading..." class="footer-loading-img" />
+				<img src="{{STATIC_CDN}}v2/images/big-loader.gif" alt="Loading..." class="footer-loading-img" />
 			</a>
 		</center>
 	</div>
@@ -54,7 +54,7 @@
 			{% comment %}
 			{% include "base/ad-125x125.html" %}
 			{% endcomment %}
-			<img src="{{MEDIA_URL}}v2/images/big-loader.gif" alt="Loading..." class="footer-loading-img" />
+			<img src="{{STATIC_CDN}}v2/images/big-loader.gif" alt="Loading..." class="footer-loading-img" />
 		</center>
 	</div>
 	{% endif %}

@@ -24,9 +24,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'feedreader',
-        'USER': 'root',
-        'PASSWORD': '-)**Z{QT',
-        'HOST': '79.127.125.104',
+        'USER': 'wis_db_user',
+        'PASSWORD': 'OTEfiD6aNeQ4E',
+        'HOST': '79.127.125.99',
         'PORT': '',
     },
     'slave': {
@@ -53,7 +53,7 @@ CACHES = {
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://79.127.125.106:8080/solr',
+        'URL': 'http://79.127.125.146:8080/solr',
     },
 }
 
@@ -100,15 +100,25 @@ ENABLE_CACHING = True
 SCORE_FOR_COMMENING = -5000
 SCORE_FOR_STREAMS = 10000
 
-BROKER_URL = 'amqp://guest@79.127.125.99//'
-CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.99//'
+BROKER_URL = 'amqp://guest@79.127.125.98//'
+CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.98//'
 
 NEO4J_DATABASE = "http://79.127.125.98:7474/db/data/"
 
 ES_HOST = "79.127.125.98"
 INFLUX_HOST = "79.127.125.99"
 
-REDIS_DB_4 = '79.127.125.99'
-REDIS_DB_3 = '79.127.125.98'
 
+REDIS_DB = '79.127.125.146'
+REDIS_DB_NUMBER = 11
+
+REDIS_DB_2 = '79.127.125.99'
+REDIS_DB_NUMBER_2 = 10
+
+REDIS_DB_3 = '79.127.125.98'
+REDIS_DB_4 = '79.127.125.98'
+
+STATIC_DOMAIN = "http://static.wisgoon.com"
 STATIC_CDN = "http://static.wisgoon.com/media/"
+
+MONGO_DB_HOST = "79.127.125.98"

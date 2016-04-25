@@ -25,8 +25,8 @@ from django.http import HttpResponse, HttpResponseRedirect,\
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
 from pin.context_processors import is_police
-from pin.models import Post, Stream, Follow, Ad, Block,\
-    Report, Comments, Comments_score, Category, Bills2 as Bills
+from pin.models import Post, Stream, Follow, Ad, Block, UserHistory,\
+    Report, Comments, Comments_score, Category, Bills2 as Bills, ReportedPost, ReportedPostReporters
 
 from pin.model_mongo import Notif, UserMeta, NotifCount
 from pin.models_redis import ActivityRedis, NotificationRedis
@@ -214,6 +214,24 @@ def report(request, pin_id):
     else:
         status = False
         msg = _("You 've already reported this matter.")
+
+    # TODO: add new report here @hossein
+    reported, created = ReportedPost.objects.get_or_create(post=post)
+
+    if created:
+        reported.cnt_report = reported.cnt_report + 1
+        reported.save()
+
+    try:
+        ReportedPostReporters.objects\
+            .create(reported_post=reported, user=request.user)
+        user_his = UserHistory.objects.create(user=request.user)
+        user_his.cnt_report += 1
+        user_his.save()
+    except Exception as e:
+        print str(e)
+
+    # End of hosseing work
 
     if request.is_ajax():
         data = {'status': status, 'message': msg}

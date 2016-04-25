@@ -92,7 +92,7 @@ def change_status_user(request):
         return return_not_found()
 
     if user_id:
-        if status == '1':
+        if status == 'true':
             user.is_active = True
             message = _("User Status Is True.")
             Log.active_user(user_id=request.user.id,
@@ -111,6 +111,7 @@ def change_status_user(request):
         data = {'status': True, 'message': message}
         data['user'] = get_simple_user_object(user.id)
         data['profile'] = get_profile_data(user.profile)
+        data['profile']['description1'] = desc
         return return_json_data(data)
     else:
         return return_bad_request()
@@ -130,7 +131,7 @@ def banned_profile(request):
         return return_not_found()
 
     if user_id:
-        if status == '1':
+        if status == 'true':
             profile.banned = True
             profile.save()
             Log.active_user(user_id=request.user.id,
@@ -147,7 +148,7 @@ def banned_profile(request):
         data = {'status': True, 'message': _("Successfully Change Profile banned.")}
         data['user'] = get_simple_user_object(profile.user.id)
         data['profile'] = get_profile_data(profile)
-        data['profile']['description'] = description
+        data['profile']['description2'] = description
         return return_json_data(data)
     else:
         return return_bad_request()
@@ -163,19 +164,20 @@ def banned_imei(request):
         status = str(request.POST.get('status', False))
         description = str(request.POST.get('description3', ""))
         imei = str(request.POST.get('imei', False))
-        phone_date = PhoneData.objects.filter(imei=imei)
+        phone_data = PhoneData.objects.filter(imei=imei)
     except:
         return return_not_found()
 
     if description and imei:
-        if status == '1':
+
+        if status == 'true':
             try:
                 BannedImei.objects.filter(imei=imei).delete()
 
                 desc = ''
                 owner = None
 
-                for data in phone_date:
+                for data in phone_data:
                     cur_user = data.user
                     owner = cur_user.id
                     desc += cur_user.username + ' || '
@@ -187,17 +189,21 @@ def banned_imei(request):
                                 text=desc + description,
                                 ip_address=get_user_ip(request))
                 return return_json_data({'status': True,
-                                         'message': _("Successfully Unbanned Imei.")})
+                                         'message': _("Successfully Unbanned Imei."),
+                                         'imei_status': True})
 
             except:
+
                 return return_not_found()
-        else:
+
+        elif status == 'false':
             BannedImei.objects.create(imei=imei,
                                       description=description,
                                       user=request.user)
+
             desc = ''
             owner = None
-            for data in phone_date:
+            for data in phone_data:
                 cur_user = data.user
                 owner = cur_user.id
                 desc += cur_user.username + ' || '
@@ -206,9 +212,14 @@ def banned_imei(request):
             Log.ban_by_imei(actor=request.user,
                             text=desc + description,
                             ip_address=get_user_ip(request))
+
             return return_json_data({'status': True,
-                                     'message': _("Successfully banned Imei.")})
+                                     'message': _("Successfully banned Imei."),
+                                     'imei_status': False})
+        else:
+            return return_bad_request(message=_('Status Not Valid'))
     else:
+
         return return_bad_request()
 
 

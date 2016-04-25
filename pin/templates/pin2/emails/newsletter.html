@@ -1,0 +1,22 @@
+{% load i18n %}
+{% load pin_tags %}
+{% load daddy_avatar %}
+{% load humanize %}
+
+{% include "pin2/emails/_header.html" %}
+
+<div style="padding:0 30px 30px;">
+
+    <a href='{% url "pin-absuser" posts.first.user.profile.user_id|get_user_name %}' style="border-radius: 32px; overflow: hidden; display: block; width: 64px; height: 64px;float:right;">
+        <img src="{{posts.first.user.profile.user_id|get_avatar:64}}" />
+    </a>
+    <div style="float: right; padding-right: 20px;">
+        <h3 style="margin-bottom: 0px; margin-top: 10px;">{{posts.first.user.profile.name}}</h3>
+        <small>{{posts.first.user.username}}</small>
+    </div>
+    <div style="clear:both;"></div>
+
+    {{posts.first.user_id|user_posts_for_email|safe}}
+
+</div>
+{% include "pin2/emails/_footer.html" %}

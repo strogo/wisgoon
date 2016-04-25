@@ -45,7 +45,7 @@
                             {% for c in subs %}
                             <li class="cat-{{c.id}}{% if c.sub_category %} parent{% endif %}">
                                 <a href="javascript:;">
-                                    <span class="cat-logo" style='background: url("{{MEDIA_URL}}{{c.image}}")'></span>
+                                    <span class="cat-logo" style='background: url("{{STATIC_CDN}}{{c.image}}")'></span>
                                     {{c.title}}
                                 </a>
                                 {% if c.sub_category.all %}

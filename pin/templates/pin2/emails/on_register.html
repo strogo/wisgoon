@@ -1,0 +1,17 @@
+{% load i18n %}
+{% include "pin2/emails/_header.html" %}
+
+<div style="padding:0 30px 30px;">
+    <h3>{% trans "Welcome to" %} {{SITE_URL_NAME}}</h3>
+    {% trans "Your registration has completed successfully. You can start your social activity in Wisgoon" %}.
+    <br>
+    <br> {% trans "Click on link and Activate your account" %}:
+    <br>
+    <a style="color: #FF6B01;" href="http://{{ site.domain }}/pin/email/activation/?key={{activation_key}}">http://{{site.domain }}/pin/email/activation/?key={{activation_key}}</a>
+    <br>
+    <br>
+    <br>
+    <small>{% blocktrans %} Link is valid for {{ expiration_days }} days{% endblocktrans %}.</small>
+</div>
+
+{% include "pin2/emails/_footer.html" %}

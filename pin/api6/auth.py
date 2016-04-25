@@ -272,10 +272,21 @@ def register(request):
         return return_json_data(data)
 
     if user:
+        api_key, created = ApiKey.objects.get_or_create(user=user)
+
         data = {
             'status': True,
-            'message': _("User created successfully")
+            'message': _("User created successfully"),
+            'user': {
+                'token': api_key.key,
+                'id': user.id,
+                'avatar': get_avatar(user)
+            }
         }
+        # data = {
+        #     'status': True,
+        #     'message': _("User created successfully")
+        # }
         return return_json_data(data)
     else:
         data = {
@@ -325,6 +336,42 @@ def profile(request, user_id):
         'profile': get_profile_data(profile, user_id)
     }
     return return_json_data(data)
+
+
+def users_top(request):
+    token = request.GET.get('token', False)
+    offset = int(request.GET.get('offset', 0))
+    limit = 10
+    current_user = None
+
+    if token:
+        current_user = AuthCache.id_from_token(token=token)
+
+    ob = Profile.objects\
+        .only('banned', 'user', 'score', 'cnt_post', 'cnt_like',
+              'website', 'credit', 'level', 'bio').order_by('-score')[offset:offset + limit]
+    obj = {
+        "meta": {},
+        "objects": [],
+    }
+    if offset > 100:
+        return return_json_data(obj)
+    tesla = []
+    for p in ob:
+        if current_user:
+            if Block.objects.filter(user_id=p.user_id, blocked_id=current_user).count():
+                continue
+        data = {
+            'user': get_simple_user_object(p.user_id, current_user, avatar=210),
+            'profile': get_profile_data(p, p.user_id)
+        }
+        tesla.append(data)
+    obj['objects'] = tesla
+
+    obj['meta']['next'] = get_next_url(url_name='api-6-auth-users-top',
+                                       token=token, offset=offset + limit)
+
+    return return_json_data(obj)
 
 
 @csrf_exempt

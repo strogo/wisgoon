@@ -2,8 +2,8 @@
 {% load pin_tags %}
 
 {% block extra_js %}
-<script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
-<!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
+<script src="{{STATIC_CDN}}js/jquery.masonry.min.js"></script>
+<!-- <script src="{{STATIC_CDN}}js/masonry.pkgd.min.js"></script>-->
 {% endblock extra_js %}
 
 {% block title %}- {{page_title}} {% endblock title %}
@@ -24,7 +24,7 @@
 <div id="hashtag_header">
 	<div class="header">
 		<div class="container hashtag_content">
-			<span><img src="{{MEDIA_URL}}v2/images/sharp.png" alt=""></span>
+			<span><img src="{{STATIC_CDN}}v2/images/sharp.png" alt=""></span>
 			<h1>{{page_title}}</h1>
 		</div>
 	</div>

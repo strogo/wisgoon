@@ -14,8 +14,8 @@ send(){
 	ssh wisgoon@79.127.125.146 "cd /home/wisgoon/www/wisgoon.com/www && git merge devel && touch reload"
 	sleep_f
 
-	git push origin2 devel
-	ssh wisgoon@79.127.125.104 "cd /home/wisgoon/www/wisgoon.com/www && git merge devel && touch reload"
+	git push eiffel devel
+	ssh wisgoon@79.127.125.99 "cd /home/wisgoon/www && git merge devel && touch reload"
 	sleep_f
 
 	git push mars devel
@@ -33,8 +33,8 @@ jsend(){
 	git push origin devel
 	ssh wisgoon@79.127.125.146 "cd /home/wisgoon/www/wisgoon.com/www && git merge devel"
 
-	git push origin2 devel
-	ssh wisgoon@79.127.125.104 "cd /home/wisgoon/www/wisgoon.com/www && git merge devel"
+	git push eiffel devel
+	ssh wisgoon@79.127.125.99 "cd /home/wisgoon/www && git merge devel"
 
 	git push mars devel
 	ssh wisgoon@79.127.125.98 "cd /home/wisgoon/www && git merge devel"

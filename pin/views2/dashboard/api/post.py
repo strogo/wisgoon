@@ -2,8 +2,10 @@ from __future__ import division
 
 # from django.db.models import Sum
 from django.views.decorators.csrf import csrf_exempt
+# from django.utils.translation import ugettext as _
 
-from pin.models import Post, Report, Category, SubCategory
+from pin.models import Post, Report, Category, SubCategory, ReportedPost, ReportedPostReporters,\
+    PhoneData, BannedImei, UserHistory
 from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
 from pin.api6.tools import (get_next_url, get_simple_user_object,
@@ -13,11 +15,80 @@ from pin.views2.dashboard.api.tools import (ads_group_by,
                                             check_admin, cnt_post_deleted_by_admin,
                                             cnt_post_deleted_by_user,
                                             delete_posts, get_ads,
-                                            undo_report
+                                            undo_report, undo_report_new, delet_post_new
                                             )
 from user_profile.models import Profile
 
 from haystack.query import SearchQuerySet
+
+
+def new_reporte(request):
+    before = int(request.GET.get('before', 0))
+
+    posts = ReportedPost.objects.only('id')[before: (before + 1) * 20]
+
+    data = {
+        'meta': {'limit': 20,
+                 'next': '',
+                 'total_count': ReportedPost.objects.filter().count()},
+        'objects': []
+    }
+
+    obj = []
+    imei_user = []
+    reports_list = []
+    # user_name = []
+    report_json = None
+    user = None
+
+    for report in posts:
+        post = post_item_json(report.post.id)
+
+        user_profile = Profile.objects.get(user=report.post.user)
+
+        try:
+            phone_data = PhoneData.objects.filter(user=report.post.user)
+        except Exception as e:
+            print str(e)
+
+        for user in phone_data:
+            # user_name.append(user.user.username)
+            imei_user.append(user.user.username)
+            post['user']['imei'] = user.imei
+
+        reporters = ReportedPostReporters.objects.filter(reported_post=report)
+
+        for rps in reporters:
+            report_json = get_simple_user_object(rps.user.id)
+            user_his = UserHistory.objects.get(user=rps.user)
+            report_json['cnt_report'] = user_his.cnt_report
+            report_json['negative_report'] = user_his.neg_report
+            report_json['positive_report'] = user_his.pos_report
+
+            reports_list.append(report_json)
+
+        post['reporters'] = reports_list
+
+        post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(report.post.user_id)
+        if user:
+            post['user']['list_imei'] = imei_user
+            banned_imi = BannedImei.objects.filter(imei=user.imei).exists()
+            post['user']['banned_imi'] = banned_imi
+        else:
+            post['user']['list_imei'] = None
+            post['user']['banned_imi'] = None
+
+        post['user']['cnt_post'] = user_profile.cnt_post
+        post['user']['banned_profile'] = user_profile.banned
+        post['user']['is_active'] = report.post.user.is_active
+        obj.append(post)
+
+    data['objects'] = obj
+    if len(data) == 20:
+        token = request.GET.get('token', '')
+        data['meta']['next'] = get_next_url(url_name='ddashboard-api-post-new_reporte',
+                                            before=before + 20, token=token)
+    return return_json_data(data)
 
 
 def reported(request):
@@ -25,17 +96,27 @@ def reported(request):
     from pin.api_tools import media_abs_url
     if not check_admin(request):
         return return_un_auth()
+    # type_report1 = sys report
+    # type_report2 = user report
 
     before = int(request.GET.get('before', 0))
+    # type_report = int(request.GET.get('type', 0))
+    reported_posts = None
+
     post_reporter_list = []
     data = {}
     data['meta'] = {'limit': 20,
                     'next': '',
                     'total_count': Post.objects.filter(report__gte=1).count()}
 
-    reported_posts = Post.objects.filter(report__gte=1)\
-        .only('id', 'report')\
-        .order_by('-id')[before: (before + 1) * 20]
+    reported_posts = Post.objects.filter(report__gte=1).only('id', 'report')\
+        .order_by('-report')[before: (before + 1) * 20]
+
+    # if type_report == 2:
+    #     reported_posts = Post.objects.filter(report__lt=30)\
+    #         .only('id', 'report')\
+    #         .order_by('-report')[before: (before + 1) * 20]
+
     if not reported_posts:
         return return_not_found()
 
@@ -91,7 +172,8 @@ def post_reporter_user(request, post_id):
         users['reporter'] = get_simple_user_object(reporter.user.id)
         users['reporter']['score'] = reporter.user.profile.score
         users['reporter']['permalink'] = abs_url(reverse("pin-absuser",
-                                                 kwargs={"user_name": users['reporter']['username']}))
+                                                 kwargs={"user_name": users['reporter']['username']}
+                                                         ))
         user_list.append(users)
 
     data['objects'] = users
@@ -287,4 +369,22 @@ def post_undo(request):
         return return_un_auth()
 
     status = undo_report(request)
+    return return_json_data({'status': status})
+
+
+@csrf_exempt
+def post_undo_new(request):
+    if not check_admin(request):
+        return return_un_auth()
+
+    status = undo_report_new(request)
+    return return_json_data({'status': status})
+
+
+@csrf_exempt
+def delete_post_new(request):
+    if not check_admin(request):
+        return return_un_auth()
+
+    status = delet_post_new(request)
     return return_json_data({'status': status})

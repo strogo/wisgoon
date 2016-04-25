@@ -1,4 +1,5 @@
 import ast
+import urllib
 from io import FileIO, BufferedWriter
 from time import time
 
@@ -13,7 +14,7 @@ from pin.api_tools import abs_url, media_abs_url
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
 from pin.models import Post, Follow, Comments, Block
-from pin.models_redis import LikesRedis
+from pin.models_redis import LikesRedis, PostView
 from pin.tools import create_filename
 from cache_layer import PostCacheLayer
 import khayyam
@@ -21,12 +22,14 @@ import khayyam
 
 def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
     n_url_p = reverse(url_name, kwargs=url_args) + "?"
+    d = {}
     if offset:
-        n_url_p = n_url_p + "offset=%s" % (offset)
+        d['offset'] = offset
     if token:
-        n_url_p = n_url_p + "&token=%s" % (token)
+        d['token'] = token
     for k, v in kwargs.iteritems():
-        n_url_p = n_url_p + "&%s=%s" % (k, v)
+        d[k] = v
+    n_url_p += urllib.urlencode(d)
     return abs_url(n_url_p)
 
 
@@ -42,7 +45,7 @@ def category_get_json(cat_id):
         pass
     cat_json = {
         'id': cat.id,
-        'image': media_abs_url(cat.image.url),
+        'image': media_abs_url(cat.image.url, static=True),
         'title': cat.title,
     }
     return cat_json
@@ -93,7 +96,14 @@ def save_post(request, user):
     media_url = settings.MEDIA_ROOT
 
     model = None
-    form = PinDirectForm(request.POST, request.FILES)
+
+    try:
+        form = PinDirectForm(request.POST, request.FILES)
+    except Exception, e:
+        msg = "error in data"
+        status = False
+        return status, model, msg
+
     if form.is_valid():
         upload = request.FILES.values()[0]
         filename = create_filename(upload.name)
@@ -206,19 +216,43 @@ def get_post_tags(post):
     return tags
 
 
-def post_item_json(post_id, cur_user_id=None, r=None):
+def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None):
     post_id = int(post_id)
+
+    def need_fields(post_object):
+        final_o = {}
+        if fields:
+            final_o = {f: post_object[f] for f in fields}
+        else:
+            final_o = post_object
+
+        if exclude:
+            if not fields:
+                final_o = post_object
+
+            for f in exclude:
+                try:
+                    final_o.pop(f)
+                except:
+                    pass
+
+        return final_o
 
     pi = {}  # post item
     if post_id:
         cp = PostCacheLayer(post_id=post_id)
         cache_post = cp.get()
+        pi['cnt_view'] = PostView(post_id=post_id).get_cnt_view()
+        PostView(post_id=post_id).inc_view()
         if cache_post:
             if cur_user_id:
                 cache_post['like_with_user'] = LikesRedis(post_id=post_id)\
                     .user_liked(user_id=cur_user_id)
             # print "get post data item json from cache"
+            cache_post['cnt_view'] = pi['cnt_view']
             cache_post['cache'] = "Hit"
+
+            cache_post = need_fields(cache_post)
             return cache_post
 
         try:
@@ -302,6 +336,7 @@ def post_item_json(post_id, cur_user_id=None, r=None):
         pi['category'] = category_get_json(cat_id=post.category_id)
 
         cp.set(pi)
+        pi = need_fields(pi)
     return pi
 
 
@@ -517,3 +552,9 @@ def ad_item_json(ad):
     ad_dict['end'] = str(ad.end)
     ad_dict['id'] = ad.id
     return ad_dict
+
+
+def new_reported(post):
+    new_report = {}
+    new_report['reported_post'] = post_item_json(post.post.id)
+    return new_report
