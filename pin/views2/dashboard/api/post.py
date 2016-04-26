@@ -34,6 +34,8 @@ def new_reporte(request):
         'objects': []
     }
 
+    return return_json_data(data)
+
     obj = []
     imei_user = []
     reports_list = []
