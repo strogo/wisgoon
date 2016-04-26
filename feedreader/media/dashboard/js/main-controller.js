@@ -1,4 +1,6 @@
 'use strict';
+var aaa = {};
+
 app.controller('mainController',['$scope','$http', function($scope, $http) {
 	$scope.username = user_username;
 	$scope.avatar = user_avatar;
@@ -13,7 +15,25 @@ app.controller('indexController',['$scope','$http', '$location', function($scope
 	});
 }]);
 
-app.controller('checkpController',['$scope','$http', '$location', function($scope, $http, $location) {
+app.controller('checkpController',['$scope','$interval','$http', function($scope, $interval, $http ) {
+
+	var msg ;
+	$interval(function(){
+		if (msg !== a){
+			msg = a;
+			$http.get("/dashboard/api/home/")
+			.success(function(data){
+				$scope.indexInfo=data.objects;
+			})
+		}
+	},1000);
+
+	$scope.$on("viewContentLoaded",function(){
+		clearInterval(a);
+
+	});
+
+
 }]);
 
 app.controller('reportedController',['$http' ,'$scope', function($http, $scope) {
@@ -37,8 +57,8 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope) 
 	$scope.deletePost = function(cmId) {
 		$http({
 			method  : 'POST',
-			data    :  'post_ids='+ cmId+ ',',
-			url     : '/dashboard/api/post/delete/',
+			data    :  'post_ids='+ cmId,
+			url     : '/dashboard/api/delete/post/new',
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		}).success(function(data) {
 		});
@@ -51,7 +71,7 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope) 
 		$http({
 			method  : 'POST',
 			data    : 'post_ids='+ cmId,
-			url     : '/dashboard/api/post/report/undo/',
+			url     : '/dashboard/api/posts/undo/report/new',
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		});
 		$( "[postId='"+cmId+"']").remove();
@@ -67,10 +87,13 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope) 
 		$scope.loading = true;
 		$http.get('/dashboard/api/posts/new/report').success(function(data){
 			$scope.bricks = data;
-			$scope.len = bricks.reporters.length;
-			console.log(len);
 		}).finally(function () {
 			$scope.loading = false;
+		});
+	};
+	$scope.imeiList = function(iL) {
+		$http.get('/dashboard/api/user/imei/'+iL+'/').success(function(data){
+			$scope.imeilListItems = data.objects;
 		});
 	};
 
@@ -92,7 +115,7 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope) 
 	$scope.reported();
 }]);
 
-app.controller('catstatController',['$http','$scope', function($http, $scope, drilldown) {
+app.controller('catstatController',['$http','$scope', function($http, $scope) {
 	$scope.refresh_cat=function(){
 		var start_time = $( "#cat_start_value" ).val();
 		var end_time = $( "#cat_end_value" ).val();
@@ -172,7 +195,8 @@ app.controller('catstatController',['$http','$scope', function($http, $scope, dr
 };
 $scope.refresh_cat();
 }]);
-var aaa = {};
+
+
 app.controller('searchController',function($scope,$http,$stateParams,$location) {
 	$scope.formData = {}
 	aaa= $scope;
@@ -269,10 +293,37 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 			$scope.loading = false;
 		});
 	};	
+	$scope.imeiList = function(iL) {
+		$http.get('/dashboard/api/user/imei/'+iL+'/').success(function(data){
+			$scope.imeilListItems = data.objects;
+		});
+	};
 
 });
 
 app.controller('adsController',['$scope','$http', function($scope, $http) {
+
+
+	$scope.nextPage = function() {
+		if (this.busy) return;
+		this.busy = true;
+		$http.get(this.url).success(function(data) {
+			this.url = data.meta.next;
+			if (!data.meta.next){
+				return;
+			}
+			var showPosts = data.objects;
+			for (var i = 0; i < showPosts.length; i++) {
+				this.showPosts.push(showPosts[i]);
+			}
+			$scope.showPosts = showPosts;
+			this.busy = false;
+		}.bind(this)).finally(function () {
+			$scope.loading = false;
+		});
+	};
+
+
 
 	$scope.refresh_ads=function(){
 		var start_time = $( "#ads_start_value" ).val();
@@ -294,12 +345,11 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
 							events: {
 								click: function (event) {
 									$scope.loading = true;
-									$http.get("/dashboard/api/post/showAds/?date="+event.point.x)
-									.success(function(data){
-										$scope.showPosts= data.objects;
-									}).finally(function () {
-										$scope.loading = false;
-									});
+									this.showPosts = [];
+									this.busy = false;
+									this.after = '';
+									this.url = "/dashboard/api/post/showAds/?date="+event.point.x;
+									$scope.nextPage.bind(this).call();
 								}
 							}
 						}

@@ -38,28 +38,28 @@
 					</div><!-- /.box-body -->
 				</div>
 
-				<div class="">
-					<div class="col-md-6" ng-repeat="showPost in showPosts">
-						<div class="ads-item">
-							<div class="col-md-6 ad-info pa0">
-								<ul>
-									<li><label>شناسه پست:</label><span>{[{showPost.post.id}]}</span></li>
-									<li><label>زمان شروع پروموت:</label><span>{[{showPost.start}]}</span></li>
-									<li><label>زمان پایان پروموت:</label><span>{[{showPost.end}]}</span></li>
-									<li><label>ارسال کننده پست:</label><span>{[{showPost.user.username}]}</span></li>
-									<li><label>شناسه پروموت کننده:</label><span>{[{showPost.user.id}]}</span></li>
-									<li><label>نوع پروموت:</label><span>{[{showPost.ads_type}]}</span></li>
+				<div load-images="false" infinite-scroll='nextPage()' infinite-scroll-distance='1'  masonry style="width:937px;">
+					<div class="masonry-brick col-md-6" ng-repeat="showPost in showPosts">
+							<div class="ads-item">
+								<div class="col-md-6 ad-info pa0">
+									<ul>
+										<li><label>شناسه پست:</label><span>{[{showPost.post.id}]}</span></li>
+										<li><label>زمان شروع پروموت:</label><span>{[{showPost.start}]}</span></li>
+										<li><label>زمان پایان پروموت:</label><span>{[{showPost.end}]}</span></li>
+										<li><label>ارسال کننده پست:</label><span>{[{showPost.user.username}]}</span></li>
+										<li><label>شناسه پروموت کننده:</label><span>{[{showPost.user.id}]}</span></li>
+										<li><label>نوع پروموت:</label><span>{[{showPost.ads_type}]}</span></li>
 
-								</ul>
+									</ul>
+								</div>
+								<div class="col-md-6 ad-photo pa0">
+									<a href="{[{showPost.post.permalink.web}]}">
+										<img ng-src="{[{showPost.post.images.original.url}]}">
+									</a>
+									<span class="post-view"><li class="fa fa-eye"></li> {[{showPost.cnt_view}]}</span>
+								</div>
+								<div class="clear"></div>
 							</div>
-							<div class="col-md-6 ad-photo pa0">
-								<a href="{[{showPost.post.permalink.web}]}">
-									<img ng-src="{[{showPost.post.images.original.url}]}">
-								</a>
-								<span class="post-view"><li class="fa fa-eye"></li> {[{showPost.cnt_view}]}</span>
-							</div>
-							<div class="clear"></div>
-						</div>
 					</div>
 				</div>
 				<script type="text/javascript">
