@@ -13,12 +13,11 @@ from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from pin.api_tools import abs_url, media_abs_url
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
-from pin.models import Post, Follow, Comments, Block, Log
+from pin.models import Post, Follow, Comments, Block
 from pin.models_redis import LikesRedis, PostView
 from pin.tools import create_filename
 from cache_layer import PostCacheLayer
 import khayyam
-from user_profile.models import Profile
 
 
 def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
@@ -217,13 +216,6 @@ def get_post_tags(post):
     return tags
 
 
-def cnt_post_deleted_by_admin(user_id):
-    cnt_log = Log.objects\
-        .filter(content_type=Log.POST, owner=user_id)\
-        .exclude(user=user_id).count()
-    return cnt_log
-
-
 def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None):
 
     post_id = int(post_id)
@@ -253,8 +245,6 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
     if post_id:
         cp = PostCacheLayer(post_id=post_id)
 
-        user_profile = Profile.objects.get(user=cur_user_id)
-
         cache_post = cp.get()
         pi['cnt_view'] = PostView(post_id=post_id).get_cnt_view()
         PostView(post_id=post_id).inc_view()
@@ -265,10 +255,6 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
             # print "get post data item json from cache"
             cache_post['cnt_view'] = pi['cnt_view']
             cache_post['cache'] = "Hit"
-            cache_post['cnt_post'] = user_profile.cnt_post
-
-            cache_post['cnt_admin_deleted'] = cnt_post_deleted_by_admin(cur_user_id)
-
             cache_post = need_fields(cache_post)
             return cache_post
 
