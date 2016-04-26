@@ -51,7 +51,7 @@
 						</div>
 						<div class="clear"></div>
 
-						<div class="reporters" ng-init="rp_limit = 1">
+							<div class="reporters" ng-init="rp_limit = 1">
 							<a ng-repeat="reporter in brick.reporters | limitTo: rp_limit " href=""><img ng-src="{[{reporter.avatar}]}" title="user avatar">
 							</a>
 							<span ng-if="brick.reporters.length > rp_limit">+{[{ brick.reporters.length - rp_limit}]}</span>

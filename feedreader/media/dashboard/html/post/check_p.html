@@ -2,11 +2,11 @@
 	<section class="content-header">
 		<ol class="breadcrumb">
 			<li><a ui-sref="home"><i class="fa fa-dashboard"></i> خانه</a></li>
-			<li class="active">گزارشت سیستم</li>
+			<li class="active">گزارشات سیستم</li>
 			<div class="clear"></div>
 		</ol>
 		<h1 class="hidden-xs">
-			گزارشت سیستم
+			گزارشات سیستم
 		</h1>
 		<div class="clear"></div>
 	</section>
@@ -15,8 +15,8 @@
 			<!--<button class="button hidden-xs" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
 			<span><a href="" ng-show="select" ng-click="batchDelete()"><i class="fa fa-trash"></i></a></span> -->
 		
-			<a ng-hide='loading' class="refresh" ng-click="reported()" href="">
-				<span class="fa fa-refresh"></span>
+			<a id="socketStatus" class="refresh" href="">
+				عدم ارتباط
 			</a>
 			<a ng-show='loading' class="refresh-spinner" href="">
 				<span class="fa fa-refresh fa-spin"></span>
@@ -29,7 +29,7 @@
 			<div  ng-show='loading'>
 				<div id="mySpinner"  class="loader">Loading...</div>
 			</div>
-			<div class="masonry-brick col-md-6" >
+			<div class="masonry-brick col-md-6" ng-repeat="check_ps in reportsShow">
 				<div class="box box-solid" id="br-{[{check_ps.id}]}" postId="{[{check_ps.id}]}">
 					<div class="col-md-6 pa0">
 						<a href="" ng-show="select" ng-click="selectItem(check_ps.id)">
@@ -145,21 +145,8 @@
 	</section>
 </div>
 <script type="text/javascript">
-var a = [];
+	var globalMessageFromMQTT = [];
 
-	if (!String.prototype.format) {
-		String.prototype.format = function() {
-			var args = arguments;
-			return this.replace(/{(\d+)}/g, function(match, number) { 
-				return typeof args[number] != 'undefined' ? args[number] : match
-				;
-			});
-		};
-	}
-	else{
-		console.log("format of text in implemented");
-	}
-	var $grid = 0;
 	var clid = 'mqttjs_' + Math.random().toString(16).substr(2, 8);
 	client = new Paho.MQTT.Client("79.127.125.98", 10001, clid);
 
@@ -169,26 +156,34 @@ var a = [];
 	client.connect({onSuccess:onConnect});
 
 	function onConnect() {
-		console.log("onConnect");
+		$("#socketStatus").text("متصل")
 		client.subscribe("wisgoon/check/porn");
 	}
 
-// called when the client loses its connection
-function onConnectionLost(responseObject) {
-	if (responseObject.errorCode !== 0) {
-		console.log("onConnectionLost:"+responseObject.errorMessage);
+	// called when the client loses its connection
+	function onConnectionLost(responseObject) {
+		setTimeout(function(){
+			$("#socketStatus")
+				.text("عدم اتصال")
+				.bind("click",function(){
+					client.disconnect();
+					setTimeout(function(){
+						client.connect({onSuccess:onConnect});
+					},500)
+					return false
+				})
+			},1000)		
+		if (responseObject.errorCode !== 0) {
+			console.log("onConnectionLost:"+responseObject.errorMessage);
+			client.connect({onSuccess:onConnect});
+		}
 	}
-}
 
-// called when a message arrives
-function onMessageArrived(message) {
-	console.log("onMessageArrived:"+message.payloadString);
-	var objs = jQuery.parseJSON( message.payloadString );
-    a = objs;
-	s = "<div class='grid-item'><a target='_blank' href='http://wisgoon.com/pin/{0}/'><img src='{1}' style='width:236px; height:{2}px'></a> score:{3}</div>".format(objs.id, objs.image, objs.h, objs.number);
-  // $("div.grid").prepend(s);
-  $items = $(s);
-  $grid.prepend($items).masonry('prepended', $items );
-}
+	// called when a message arrives
+	function onMessageArrived(message) {
+		// console.log("onMessageArrived:"+message.payloadString);
+		var objs = jQuery.parseJSON( message.payloadString );
+	    globalMessageFromMQTT.push(objs);
+	}
 
 </script>
