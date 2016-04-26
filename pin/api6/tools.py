@@ -19,7 +19,7 @@ from pin.tools import create_filename
 from cache_layer import PostCacheLayer
 import khayyam
 from user_profile.models import Profile
-from pin.views2.dashboard.api.tools import cnt_post_deleted_by_admin
+# from pin.views2.dashboard.api.tools import cnt_post_deleted_by_admin
 
 
 def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
@@ -260,7 +260,9 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
             cache_post['cnt_view'] = pi['cnt_view']
             cache_post['cache'] = "Hit"
             cache_post['cnt_post'] = user_profile.cnt_post
-            cache_post['cnt_admin_deleted'] = cnt_post_deleted_by_admin(cur_user_id)
+
+            # cache_post['cnt_admin_deleted'] = cnt_post_deleted_by_admin(cur_user_id)
+
             cache_post = need_fields(cache_post)
             return cache_post
 
