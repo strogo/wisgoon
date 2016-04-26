@@ -14,24 +14,62 @@ app.controller('indexController',['$scope','$http', '$location', function($scope
 		$location.path('/accounts/login/');
 	});
 }]);
+var appp= {};
 
-app.controller('checkpController',['$scope','$interval','$http', function($scope, $interval, $http ) {
+app.controller('checkpController',['$scope','$http', function($scope, $http ) {
+	appp = $scope;
+	$scope.check_ps = [];
+	var pure_reports = [] ;
+	$scope.reports = [];
+	$scope.reportsShow = [];
 
-	var msg ;
-	$interval(function(){
-		if (msg !== a){
-			msg = a;
-			var p_id = msg.id;
-			$http.get("http://wisgoon.com/api/v6/post/item/"+p_id+"/")
-			.success(function(data){
-				$scope.check_ps = data;
-				console.log($scope.check_ps);
-			})
-		}
+	var interval = setInterval(function(){
+		
+			pure_reports = globalMessageFromMQTT;
+			
+			for (var i = 0; i < pure_reports.length; i++) {
+
+				var obj = $scope.reports.filter(function(internalObj){ return (pure_reports[i].id === internalObj.id)});
+
+				if(obj.length === 0){
+					$scope.reports.push(pure_reports[i]);
+					$http.get("http://wisgoon.com/api/v6/post/item/"+pure_reports[i].id+"/")
+					.success(function(data){
+						// $scope.check_ps.push(data);
+						$scope.reportsShow.push(data);
+					})
+				}
+			};
+		
 	},1000);
 
-	$scope.$on("viewContentLoaded",function(){
-		clearInterval(a);
+	$scope.deletePost = function(cmId) {
+		$http({
+			method  : 'POST',
+			data    :  'post_ids='+ cmId,
+			url     : '/dashboard/api/delete/post/new',
+			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+		}).success(function(data) {
+
+		});
+
+		$( "[postId='"+cmId+"']").remove();
+	};
+
+	$scope.undoPost = function(cmId) {
+
+		$http({
+			method  : 'POST',
+			data    : 'post_ids='+ cmId,
+			url     : '/dashboard/api/posts/undo/report/new',
+			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+		});
+		$( "[postId='"+cmId+"']").remove();
+	};
+
+
+	$scope.$on("$destroy",function(){
+		clearInterval(interval);
 	});
 
 
