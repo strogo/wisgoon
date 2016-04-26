@@ -141,12 +141,12 @@
                   <label>لیست حساب ها بر اساس imei :</label>
                   <span>
                     <div class="dropdown">
-                      <button ng-click="get_imei_user(searchInfo.profile.imei)" class="btn btn-default dropdown-toggle" type="button" id="userImeis" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <button ng-click="imeiList(searchInfo.profile.imei)" class="btn btn-default dropdown-toggle" type="button" id="userImeis" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         لیست حساب های کاربری
                         <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="userImeis">
-                        <li ng-repeat="Uimei in imei_users"><a href="{[{Uimei.permalink}]}">{[{Uimei.username}]}</a></li>
+                        <li ng-repeat="imeilListItem in imeilListItems"><a href="{[{imeilListItem.permalink}]}">{[{imeilListItem.username}]}</a></li>
                       </ul>
                     </div>
                   </span>

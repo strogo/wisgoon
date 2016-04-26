@@ -2,46 +2,176 @@
 	<section class="content-header">
 		<ol class="breadcrumb">
 			<li><a ui-sref="home"><i class="fa fa-dashboard"></i> خانه</a></li>
-			<li class="active">گزارشات سیستم</li>
+			<li class="active">گزارشت سیستم</li>
 			<div class="clear"></div>
 		</ol>
 		<h1 class="hidden-xs">
-			گزارسات سیستم
+			گزارشت سیستم
 		</h1>
 		<div class="clear"></div>
 	</section>
 	<section class="content reported">
+		<div class="select">
+			<!--<button class="button hidden-xs" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
+			<span><a href="" ng-show="select" ng-click="batchDelete()"><i class="fa fa-trash"></i></a></span> -->
+		
+			<a ng-hide='loading' class="refresh" ng-click="reported()" href="">
+				<span class="fa fa-refresh"></span>
+			</a>
+			<a ng-show='loading' class="refresh-spinner" href="">
+				<span class="fa fa-refresh fa-spin"></span>
+			</a>
+			<div class="clear"></div>
+			
+		</div> 
+		<div class="clear"></div>
+		<div class="post-items resize" id="feed" load-images="false"  masonry reload-on-resize style="width:1070px;">
+			<div  ng-show='loading'>
+				<div id="mySpinner"  class="loader">Loading...</div>
+			</div>
+			<div class="masonry-brick col-md-6" >
+				<div class="box box-solid" id="br-{[{check_ps.id}]}" postId="{[{check_ps.id}]}">
+					<div class="col-md-6 pa0">
+						<a href="" ng-show="select" ng-click="selectItem(check_ps.id)">
+							<span ng-class="class" class="fa fa-square-o pull-left"></span>
+						</a>
+						<a class="photo" href="{[{check_ps.permalink.web}]}">
+							<img ng-src="{[{check_ps.images.thumbnail.url}]}" height="{[{check_ps.images.thumbnail.height}]}" width="{[{check_ps.images.thumbnail.width}]}">
+						</a>
+					</div>
+					<div class="col-md-6 box-info">
+						<div class="head col-md-12 pa0">
+							<!-- <a href="">
+								<span class="fa  fa-exclamation-triangle"></span>
+							</a> -->
+							<a class="user" href="{[{check_ps.user.permalink}]}"><img ng-src="{[{check_ps.user.avatar}]}"></a>
+							<a class="username" href="{[{check_ps.user.permalink}]}">{[{check_ps.user.username | limitTo: 15}]}</a>
+						</div>
+						<div class="clear"></div>
+						<div ng-hide="!check_ps.user.imei" class="users-imei">
+							<button ng-click="imeiList(check_ps.user.imei)" class="list-button dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+								لیست حساب ها
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								<li ng-repeat="imeilListItem in imeilListItems"><a href="{[{imeilListItem.permalink}]}">{[{imeilListItem.username}]}</a></li>
+							</ul>
+						</div>
+						<div class="description" ng-init="limit = 50; moreShown = false">
+							<p><label>توضیحات پست‌ :</label>
+								{[{check_ps.text | limitTo: limit}]}
+								<a ng-show="check_ps.text.length > limit" href ng-click="limit=check_ps.text.length; moreShown = true">...بیشتر
+								</a>
+							</p>
+						</div>
+					</div>
 
-		<div  ng-show='loading'>
-			<div id="mySpinner"  class="loader">Loading...</div>
+					<div class="ban-stats col-md-12">
+						<div class="col-md-4">
+							<label>بن پروفایل: </label>
+							<span ng-show="check_ps.user.banned_profile" class="fa-ban fa"></span>
+							<span ng-show="!check_ps.user.banned_profile" class="fa-check fa"></span>
+						</div>
+						<div class="col-md-4">
+							<label>انسداد imei: </label>
+							<span ng-show="check_ps.user.imei == null ">ندارد</span>
+							<span ng-show="check_ps.user.imei !== null && check_ps.user.banned_imi" class="fa-ban fa"></span>
+							<span ng-show="check_ps.user.imei !== null && !check_ps.user.banned_imi" class="fa-check fa"></span>
+						</div>
+						<div class="col-md-4">
+							<label>فعال بودن کاربر: </label>
+							<span ng-show="check_ps.user.is_active" class="fa-ban fa"></span>
+							<span ng-show="!check_ps.user.is_active" class="fa-check fa"></span>
+						</div>
+						<div class="col-md-4">
+							<label>پست حذف شده: </label>
+							<span>{[{check_ps.user.cnt_admin_deleted}]}</span>
+						</div>
+						<div class="col-md-4">
+							<label>پست ها: </label>
+							<span>{[{check_ps.user.cnt_post}]}</span>
+						</div>
+						<div class="col-md-4">
+							<label>اولویت گزارش: </label>
+							<span>۳۰</span>
+						</div>
+						<div class="box-tools">
+							<button class="undo" ng-click="undoPost(check_ps.id)">
+								<i class="fa fa-check"></i>
+							</button>
+							<button class="delete"ng-really-message="آیا میخواهید این پست پاک شود؟" ng-really-click="deletePost(check_ps.id)">
+								<i class="fa fa-times"></i>
+							</button>
+						</div>
+					</div>
+					<div class="clear"></div>
+					<div class="modal fade userIinfoModal text-ri" id="userInfo" tabindex="-1" role="dialog" aria-labelledby="userIinfoModalLabel">
+						<div class="loading" ng-show='loading'>
+							<div id="mySpinner"  class="loader">Loading...</div>
+						</div>
+						<div class="modal-dialog" role="document" >
+							<div class="modal-content">
+								<div class="modal-header hidden-md hidden-lg">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								</div>
+								<div class="modal-body">
+									<div class="reporters-head">
+										<div class="col-md-6">اطلاعات گزارش دهندگان</div>
+										<div class="col-md-3">تعداد گزارش ها</div>
+										<div class="col-md-3">گزارش های موثر</div>
+										<div class="clear"></div>
+									</div>
+									<div class="reporters-info" ng-repeat="report in modalBrickReportrs">
+										<div  class="col-md-6">
+											<a href="" >
+												<img ng-src="{[{report.avatar}]}">
+											</a>
+											<a href="">
+												{[{report.username | limitTo: 15}]}
+											</a>
+										</div>
+										<div class="col-md-3">{[{report.cnt_report}]}</div>
+										<div class="col-md-3">{[{report.positive_report}]}</div>
+										<div class="clear"></div>	
+									</div>
+									<div class="clear"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-		<script type="text/javascript">
-			if (!String.prototype.format) {
-				String.prototype.format = function() {
-					var args = arguments;
-					return this.replace(/{(\d+)}/g, function(match, number) { 
-						return typeof args[number] != 'undefined'
-						? args[number]
-						: match
-						;
-					});
-				};
-			}else{
-				console.log("format of text in implemented");
-			}
-			var $grid = 0;
-			var clid = 'mqttjs_' + Math.random().toString(16).substr(2, 8);
-			client = new Paho.MQTT.Client("79.127.125.98", 10001, clid);
+	</section>
+</div>
+<script type="text/javascript">
+var a = [];
 
-			client.onConnectionLost = onConnectionLost;
-			client.onMessageArrived = onMessageArrived;
+	if (!String.prototype.format) {
+		String.prototype.format = function() {
+			var args = arguments;
+			return this.replace(/{(\d+)}/g, function(match, number) { 
+				return typeof args[number] != 'undefined' ? args[number] : match
+				;
+			});
+		};
+	}
+	else{
+		console.log("format of text in implemented");
+	}
+	var $grid = 0;
+	var clid = 'mqttjs_' + Math.random().toString(16).substr(2, 8);
+	client = new Paho.MQTT.Client("79.127.125.98", 10001, clid);
 
-			client.connect({onSuccess:onConnect});
+	client.onConnectionLost = onConnectionLost;
+	client.onMessageArrived = onMessageArrived;
 
-			function onConnect() {
-				console.log("onConnect");
-				client.subscribe("wisgoon/check/porn");
-			}
+	client.connect({onSuccess:onConnect});
+
+	function onConnect() {
+		console.log("onConnect");
+		client.subscribe("wisgoon/check/porn");
+	}
 
 // called when the client loses its connection
 function onConnectionLost(responseObject) {
@@ -53,15 +183,12 @@ function onConnectionLost(responseObject) {
 // called when a message arrives
 function onMessageArrived(message) {
 	console.log("onMessageArrived:"+message.payloadString);
-	var obj = jQuery.parseJSON( message.payloadString );
-	s = "<div class='grid-item'><a target='_blank' href='http://wisgoon.com/pin/{0}/'><img src='{1}' style='width:236px; height:{2}px'></a> score:{3}</div>".format(obj.id, obj.image, obj.h, obj.number);
+	var objs = jQuery.parseJSON( message.payloadString );
+    a = objs;
+	s = "<div class='grid-item'><a target='_blank' href='http://wisgoon.com/pin/{0}/'><img src='{1}' style='width:236px; height:{2}px'></a> score:{3}</div>".format(objs.id, objs.image, objs.h, objs.number);
   // $("div.grid").prepend(s);
   $items = $(s);
   $grid.prepend($items).masonry('prepended', $items );
 }
 
 </script>
-<div id="feed" load-images="false" class="resize" masonry reload-on-resize  style="width:1070px;">
-</div>
-</section>
-</div>

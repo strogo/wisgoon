@@ -135,7 +135,6 @@ app.controller('postController',['$scope','$http','$stateParams', function($scop
 app.controller('searchPostController',['$scope','$stateParams','$http','$location',function($scope,$stateParams,$http,$location) {
 
 	$scope.showSearchPost = function() {
-		console.log("show searh post initialized");
 		this.bricks = [];
 		this.busy = false;
 		this.after = '';

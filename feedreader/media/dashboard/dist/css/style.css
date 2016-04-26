@@ -1040,6 +1040,12 @@ table img {
 }
 .reporters .more {
 	color: #FF6A00;
+}
+.reporters .more span {
+	font-size: 16px !important;
+	padding-top: 5px;
+}
+.reporters span {
 	font-size: 11px;
 }
 .ban-info {

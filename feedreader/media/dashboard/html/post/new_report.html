@@ -12,8 +12,8 @@
 	</section>
 	<section class="content reported">
 		<div class="select">
-			<button class="button hidden-xs" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
-			<span><a href="" ng-show="select" ng-click="batchDelete()"><i class="fa fa-trash"></i></a></span>
+			<!--<button class="button hidden-xs" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
+			<span><a href="" ng-show="select" ng-click="batchDelete()"><i class="fa fa-trash"></i></a></span> -->
 			<span>
 				<small class="label pull-left bg-green">{[{bricks.meta.total_count}]}</small>
 			</span>
@@ -25,8 +25,7 @@
 			</a>
 			<div class="clear"></div>
 			
-		</div>
-
+		</div> 
 		<div class="clear"></div>
 		<div class="post-items resize" id="feed" load-images="false"  masonry reload-on-resize style="width:1070px;">
 			<div  ng-show='loading'>
@@ -44,26 +43,29 @@
 					</div>
 					<div class="col-md-6 box-info">
 						<div class="head col-md-12 pa0">
-							<a href="">
+							<!-- <a href="">
 								<span class="fa  fa-exclamation-triangle"></span>
-							</a>
+							</a> -->
 							<a class="user" href="{[{brick.user.permalink}]}"><img ng-src="{[{brick.user.avatar}]}"></a>
 							<a class="username" href="{[{brick.user.permalink}]}">{[{brick.user.username | limitTo: 15}]}</a>
 						</div>
 						<div class="clear"></div>
 
-						<div class="reporters " >
-							<a ng-repeat="reporter in brick.reporters" href=""><img ng-src="{[{reporter.avatar}]}" title="user avatar">
+						<div class="reporters" ng-init="rp_limit = 1">
+							<a ng-repeat="reporter in brick.reporters | limitTo: rp_limit " href=""><img ng-src="{[{reporter.avatar}]}" title="user avatar">
 							</a>
-							<a ng-click="showReportersModal(brick.reporters)" class="more" href="">+ 5</a>
+							<span ng-if="brick.reporters.length > rp_limit">+{[{ brick.reporters.length - rp_limit}]}</span>
+							<a href="" class="more" ng-click="showReportersModal(brick.reporters)">
+								<span class="fa fa-eye pull-left"> </span>
+							</a>
 						</div>
-						<div class="users-imei">
-							<button class="list-button dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<div ng-hide="!brick.user.imei" class="users-imei">
+							<button ng-click="imeiList(brick.user.imei)" class="list-button dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 								لیست حساب ها
 								<span class="caret"></span>
 							</button>
 							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-								<li><a href="#">ali</a></li>
+								<li ng-repeat="imeilListItem in imeilListItems"><a href="{[{imeilListItem.permalink}]}">{[{imeilListItem.username}]}</a></li>
 							</ul>
 						</div>
 						<div class="description" ng-init="limit = 50; moreShown = false">
@@ -77,31 +79,31 @@
 
 					<div class="ban-stats col-md-12">
 						<div class="col-md-4">
-							<label>بن پروفایل : </label>
+							<label>بن پروفایل: </label>
 							<span ng-show="brick.user.banned_profile" class="fa-ban fa"></span>
 							<span ng-show="!brick.user.banned_profile" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
-							<label>انسداد imei :P</label>
+							<label>انسداد imei: </label>
 							<span ng-show="brick.user.imei == null ">ندارد</span>
 							<span ng-show="brick.user.imei !== null && brick.user.banned_imi" class="fa-ban fa"></span>
 							<span ng-show="brick.user.imei !== null && !brick.user.banned_imi" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
-							<label>فعال بودن کاربر : </label>
+							<label>فعال بودن کاربر: </label>
 							<span ng-show="brick.user.is_active" class="fa-ban fa"></span>
 							<span ng-show="!brick.user.is_active" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
-							<label>پست حذف شده:</label>
+							<label>پست حذف شده: </label>
 							<span>{[{brick.user.cnt_admin_deleted}]}</span>
 						</div>
 						<div class="col-md-4">
-							<label>پست ها :</label>
+							<label>پست ها: </label>
 							<span>{[{brick.user.cnt_post}]}</span>
 						</div>
 						<div class="col-md-4">
-							<label>اولویت گزارش:</label>
+							<label>اولویت گزارش: </label>
 							<span>۳۰</span>
 						</div>
 						<div class="box-tools">
@@ -139,8 +141,8 @@
 												{[{report.username | limitTo: 15}]}
 											</a>
 										</div>
-										<div class="col-md-3">125</div>
-										<div class="col-md-3">2</div>
+										<div class="col-md-3">{[{report.cnt_report}]}</div>
+										<div class="col-md-3">{[{report.positive_report}]}</div>
 										<div class="clear"></div>	
 									</div>
 									<div class="clear"></div>
@@ -151,9 +153,5 @@
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="clear"></div>
-</div>
-<div class="clear"></div>
-</section>
+	</section>
 </div>
