@@ -48,15 +48,6 @@
 							<a class="username" href="{[{check_ps.user.permalink}]}">{[{check_ps.user.username | limitTo: 15}]}</a>
 						</div>
 						<div class="clear"></div>
-
-						<div class="reporters" ng-init="rp_limit = 1">
-							<a ng-repeat="reporter in check_ps.reporters | limitTo: rp_limit " href=""><img ng-src="{[{reporter.avatar}]}" title="user avatar">
-							</a>
-							<span ng-if="check_ps.reporters.length > rp_limit">+{[{ check_ps.reporters.length - rp_limit}]}</span>
-							<a href="" class="more" ng-click="showReportersModal(check_ps.reporters)">
-								<span class="fa fa-eye pull-left"> </span>
-							</a>
-						</div>
 						<div ng-hide="!check_ps.user.imei" class="users-imei">
 							<button ng-click="imeiList(check_ps.user.imei)" class="list-button dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 								لیست حساب ها
