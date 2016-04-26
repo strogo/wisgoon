@@ -14,9 +14,7 @@
 		<div class="select">
 			<!--<button class="button hidden-xs" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
 			<span><a href="" ng-show="select" ng-click="batchDelete()"><i class="fa fa-trash"></i></a></span> -->
-			<span>
-				<small class="label pull-left bg-green">{[{bricks.meta.total_count}]}</small>
-			</span>
+		
 			<a ng-hide='loading' class="refresh" ng-click="reported()" href="">
 				<span class="fa fa-refresh"></span>
 			</a>
@@ -31,14 +29,14 @@
 			<div  ng-show='loading'>
 				<div id="mySpinner"  class="loader">Loading...</div>
 			</div>
-			<div class="masonry-brick col-md-6">
-				<div class="box box-solid" id="br-{[{brick.id}]}" postId="{[{brick.id}]}">
+			<div class="masonry-brick col-md-6" >
+				<div class="box box-solid" id="br-{[{check_ps.id}]}" postId="{[{check_ps.id}]}">
 					<div class="col-md-6 pa0">
-						<a href="" ng-show="select" ng-click="selectItem(brick.id)">
+						<a href="" ng-show="select" ng-click="selectItem(check_ps.id)">
 							<span ng-class="class" class="fa fa-square-o pull-left"></span>
 						</a>
-						<a class="photo" href="{[{brick.permalink.web}]}">
-							<img ng-src="{[{brick.images.thumbnail.url}]}" height="{[{brick.images.thumbnail.height}]}" width="{[{brick.images.thumbnail.width}]}">
+						<a class="photo" href="{[{check_ps.permalink.web}]}">
+							<img ng-src="{[{check_ps.images.thumbnail.url}]}" height="{[{check_ps.images.thumbnail.height}]}" width="{[{check_ps.images.thumbnail.width}]}">
 						</a>
 					</div>
 					<div class="col-md-6 box-info">
@@ -46,21 +44,21 @@
 							<!-- <a href="">
 								<span class="fa  fa-exclamation-triangle"></span>
 							</a> -->
-							<a class="user" href="{[{brick.user.permalink}]}"><img ng-src="{[{brick.user.avatar}]}"></a>
-							<a class="username" href="{[{brick.user.permalink}]}">{[{brick.user.username | limitTo: 15}]}</a>
+							<a class="user" href="{[{check_ps.user.permalink}]}"><img ng-src="{[{check_ps.user.avatar}]}"></a>
+							<a class="username" href="{[{check_ps.user.permalink}]}">{[{check_ps.user.username | limitTo: 15}]}</a>
 						</div>
 						<div class="clear"></div>
 
 						<div class="reporters" ng-init="rp_limit = 1">
-							<a ng-repeat="reporter in brick.reporters | limitTo: rp_limit " href=""><img ng-src="{[{reporter.avatar}]}" title="user avatar">
+							<a ng-repeat="reporter in check_ps.reporters | limitTo: rp_limit " href=""><img ng-src="{[{reporter.avatar}]}" title="user avatar">
 							</a>
-							<span ng-if="brick.reporters.length > rp_limit">+{[{ brick.reporters.length - rp_limit}]}</span>
-							<a href="" class="more" ng-click="showReportersModal(brick.reporters)">
+							<span ng-if="check_ps.reporters.length > rp_limit">+{[{ check_ps.reporters.length - rp_limit}]}</span>
+							<a href="" class="more" ng-click="showReportersModal(check_ps.reporters)">
 								<span class="fa fa-eye pull-left"> </span>
 							</a>
 						</div>
-						<div ng-hide="!brick.user.imei" class="users-imei">
-							<button ng-click="imeiList(brick.user.imei)" class="list-button dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<div ng-hide="!check_ps.user.imei" class="users-imei">
+							<button ng-click="imeiList(check_ps.user.imei)" class="list-button dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 								لیست حساب ها
 								<span class="caret"></span>
 							</button>
@@ -70,8 +68,8 @@
 						</div>
 						<div class="description" ng-init="limit = 50; moreShown = false">
 							<p><label>توضیحات پست‌ :</label>
-								{[{brick.text | limitTo: limit}]}
-								<a ng-show="brick.text.length > limit" href ng-click="limit=brick.text.length; moreShown = true">...بیشتر
+								{[{check_ps.text | limitTo: limit}]}
+								<a ng-show="check_ps.text.length > limit" href ng-click="limit=check_ps.text.length; moreShown = true">...بیشتر
 								</a>
 							</p>
 						</div>
@@ -80,37 +78,37 @@
 					<div class="ban-stats col-md-12">
 						<div class="col-md-4">
 							<label>بن پروفایل: </label>
-							<span ng-show="brick.user.banned_profile" class="fa-ban fa"></span>
-							<span ng-show="!brick.user.banned_profile" class="fa-check fa"></span>
+							<span ng-show="check_ps.user.banned_profile" class="fa-ban fa"></span>
+							<span ng-show="!check_ps.user.banned_profile" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
 							<label>انسداد imei: </label>
-							<span ng-show="brick.user.imei == null ">ندارد</span>
-							<span ng-show="brick.user.imei !== null && brick.user.banned_imi" class="fa-ban fa"></span>
-							<span ng-show="brick.user.imei !== null && !brick.user.banned_imi" class="fa-check fa"></span>
+							<span ng-show="check_ps.user.imei == null ">ندارد</span>
+							<span ng-show="check_ps.user.imei !== null && check_ps.user.banned_imi" class="fa-ban fa"></span>
+							<span ng-show="check_ps.user.imei !== null && !check_ps.user.banned_imi" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
 							<label>فعال بودن کاربر: </label>
-							<span ng-show="brick.user.is_active" class="fa-ban fa"></span>
-							<span ng-show="!brick.user.is_active" class="fa-check fa"></span>
+							<span ng-show="check_ps.user.is_active" class="fa-ban fa"></span>
+							<span ng-show="!check_ps.user.is_active" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
 							<label>پست حذف شده: </label>
-							<span>{[{brick.user.cnt_admin_deleted}]}</span>
+							<span>{[{check_ps.user.cnt_admin_deleted}]}</span>
 						</div>
 						<div class="col-md-4">
 							<label>پست ها: </label>
-							<span>{[{brick.user.cnt_post}]}</span>
+							<span>{[{check_ps.user.cnt_post}]}</span>
 						</div>
 						<div class="col-md-4">
 							<label>اولویت گزارش: </label>
 							<span>۳۰</span>
 						</div>
 						<div class="box-tools">
-							<button class="undo" ng-click="undoPost(brick.id)">
+							<button class="undo" ng-click="undoPost(check_ps.id)">
 								<i class="fa fa-check"></i>
 							</button>
-							<button class="delete"ng-really-message="آیا میخواهید این پست پاک شود؟" ng-really-click="deletePost(brick.id)">
+							<button class="delete"ng-really-message="آیا میخواهید این پست پاک شود؟" ng-really-click="deletePost(check_ps.id)">
 								<i class="fa fa-times"></i>
 							</button>
 						</div>
@@ -157,7 +155,7 @@
 </div>
 <script type="text/javascript">
 var a = [];
-console.log(a);
+
 	if (!String.prototype.format) {
 		String.prototype.format = function() {
 			var args = arguments;
@@ -195,9 +193,7 @@ function onConnectionLost(responseObject) {
 function onMessageArrived(message) {
 	console.log("onMessageArrived:"+message.payloadString);
 	var objs = jQuery.parseJSON( message.payloadString );
-	console.log(444,objs);
     a = objs;
-	console.log(a);
 	s = "<div class='grid-item'><a target='_blank' href='http://wisgoon.com/pin/{0}/'><img src='{1}' style='width:236px; height:{2}px'></a> score:{3}</div>".format(objs.id, objs.image, objs.h, objs.number);
   // $("div.grid").prepend(s);
   $items = $(s);

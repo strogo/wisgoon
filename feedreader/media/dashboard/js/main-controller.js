@@ -21,16 +21,17 @@ app.controller('checkpController',['$scope','$interval','$http', function($scope
 	$interval(function(){
 		if (msg !== a){
 			msg = a;
-			$http.get("/dashboard/api/home/")
+			var p_id = msg.id;
+			$http.get("http://wisgoon.com/api/v6/post/item/"+p_id+"/")
 			.success(function(data){
-				$scope.indexInfo=data.objects;
+				$scope.check_ps = data;
+				console.log($scope.check_ps);
 			})
 		}
 	},1000);
 
 	$scope.$on("viewContentLoaded",function(){
 		clearInterval(a);
-
 	});
 
 
