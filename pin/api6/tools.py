@@ -18,6 +18,8 @@ from pin.models_redis import LikesRedis, PostView
 from pin.tools import create_filename
 from cache_layer import PostCacheLayer
 import khayyam
+from user_profile.models import Profile
+from pin.views2.dashboard.api.tools import cnt_post_deleted_by_admin
 
 
 def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
@@ -217,9 +219,11 @@ def get_post_tags(post):
 
 
 def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None):
+
     post_id = int(post_id)
 
     def need_fields(post_object):
+
         final_o = {}
         if fields:
             final_o = {f: post_object[f] for f in fields}
@@ -239,8 +243,12 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
         return final_o
 
     pi = {}  # post item
+
     if post_id:
         cp = PostCacheLayer(post_id=post_id)
+
+        user_profile = Profile.objects.get(user=cur_user_id)
+
         cache_post = cp.get()
         pi['cnt_view'] = PostView(post_id=post_id).get_cnt_view()
         PostView(post_id=post_id).inc_view()
@@ -251,7 +259,8 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
             # print "get post data item json from cache"
             cache_post['cnt_view'] = pi['cnt_view']
             cache_post['cache'] = "Hit"
-
+            cache_post['cnt_post'] = user_profile.cnt_post
+            cache_post['cnt_admin_deleted'] = cnt_post_deleted_by_admin(cur_user_id)
             cache_post = need_fields(cache_post)
             return cache_post
 
@@ -259,7 +268,6 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
             post = Post.objects.get(id=post_id)
         except Post.DoesNotExist:
             return None
-
         pi['cache'] = "Miss"
         pi['id'] = post.id
         pi['text'] = post.text
