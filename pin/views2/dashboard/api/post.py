@@ -24,7 +24,7 @@ from haystack.query import SearchQuerySet
 
 @csrf_exempt
 def post_item(request, post_id):
-    data = {'objects': []}
+    data = {}
 
     posts = Post.objects.get(id=post_id)
     user_profile = Profile.objects.get(user=posts.user)
@@ -32,8 +32,8 @@ def post_item(request, post_id):
     post = post_item_json(posts.id)
 
     post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(posts.user_id)
-    post['cnt_post'] = user_profile.cnt_post
-    data['objects'] = post
+    post['user']['cnt_post'] = user_profile.cnt_post
+    data = post
 
     return return_json_data(data)
 
