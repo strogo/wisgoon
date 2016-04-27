@@ -29,9 +29,9 @@
 			<div  ng-show='loading'>
 				<div id="mySpinner"  class="loader">Loading...</div>
 			</div>
-			<div class="masonry-brick col-md-6" ng-repeat="check_ps in reportsShow">
+			<div class="masonry-brick col-md-6 col-lg-4" ng-repeat="check_ps in reportsShow" prepend="isPrepended()">
 				<div class="box box-solid" id="br-{[{check_ps.id}]}" postId="{[{check_ps.id}]}">
-					<div class="col-md-6 pa0">
+					<div class="pull-right pa0">
 						<a href="" ng-show="select" ng-click="selectItem(check_ps.id)">
 							<span ng-class="class" class="fa fa-square-o pull-left"></span>
 						</a>
@@ -39,7 +39,7 @@
 							<img ng-src="{[{check_ps.images.thumbnail.url}]}" height="{[{check_ps.images.thumbnail.height}]}" width="{[{check_ps.images.thumbnail.width}]}">
 						</a>
 					</div>
-					<div class="col-md-6 box-info">
+					<div class="pull-right col-lg-7 box-info">
 						<div class="head col-md-12 pa0">
 							<!-- <a href="">
 								<span class="fa  fa-exclamation-triangle"></span>
@@ -57,6 +57,7 @@
 								<li ng-repeat="imeilListItem in imeilListItems"><a href="{[{imeilListItem.permalink}]}">{[{imeilListItem.username}]}</a></li>
 							</ul>
 						</div>
+
 						<div class="description" ng-init="limit = 50; moreShown = false">
 							<p><label>توضیحات پست‌ :</label>
 								{[{check_ps.text | limitTo: limit}]}
@@ -67,6 +68,10 @@
 					</div>
 
 					<div class="ban-stats col-md-12">
+						<div class="post-number">
+							
+							{[{check_ps.msg.number*100 | number : 1}]} %
+						</div>
 						<div class="col-md-4">
 							<label>بن پروفایل: </label>
 							<span ng-show="check_ps.user.banned_profile" class="fa-ban fa"></span>

@@ -383,7 +383,7 @@ table img {
 }
 
 .resize {
-	width: 900px !important;
+	width: 100% !important;
 }
 .filter a:hover,
 .filter a:active,
@@ -1131,4 +1131,9 @@ table img {
 }
 .box-tools .fa-check {
 	color: #fff !important;
+}
+.post-number {
+  bottom: 86px;
+  left: 11px;
+  position: absolute;
 }

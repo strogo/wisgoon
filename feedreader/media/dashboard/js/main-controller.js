@@ -25,24 +25,25 @@ app.controller('checkpController',['$scope','$http', function($scope, $http ) {
 
 	var interval = setInterval(function(){
 		
-			pure_reports = globalMessageFromMQTT;
-			
-			for (var i = 0; i < pure_reports.length; i++) {
+		pure_reports = globalMessageFromMQTT;
 
-				var obj = $scope.reports.filter(function(internalObj){ return (pure_reports[i].id === internalObj.id)});
+		for (var i = 0; i < pure_reports.length; i++) {
 
-				if(obj.length === 0){
-					$scope.reports.push(pure_reports[i]);
-					$http.get("http://wisgoon.com/api/v6/post/item/"+pure_reports[i].id+"/")
-					.success(function(data){
+			var obj = $scope.reports.filter(function(internalObj){ return (pure_reports[i].id === internalObj.id)});
+
+			if(obj.length === 0){
+				$scope.reports.push(pure_reports[i]);
+				$http.get("http://wisgoon.com/dashboard/api/post/item/new/"+pure_reports[i].id+"/")
+				.success(function(data){
 						// $scope.check_ps.push(data);
+						var obj = pure_reports.filter(function(internalObj){ return (data.id === internalObj.id)});
+						data.msg = obj[0];
 						$scope.reportsShow.push(data);
 					})
-				}
-			};
+			}
+		};
 		
 	},1000);
-
 	$scope.deletePost = function(cmId) {
 		$http({
 			method  : 'POST',
