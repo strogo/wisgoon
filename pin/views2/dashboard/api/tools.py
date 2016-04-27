@@ -385,35 +385,6 @@ def get_profile_data(profile, enable_imei=False):
     return data
 
 
-def undo_report_new(request):
-    print "1"
-    post_ids = request.POST.getlist('post_ids')
-    status = False
-    if post_ids:
-        try:
-            reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
-            print reported_posts
-
-            for post in reported_posts:
-
-                posts_report = ReportedPostReporters.objects\
-                    .filter(reported_post=post).values_list('user_id', flat=True)
-
-                user_history = UserHistory.objects.filter(user_id__in=posts_report)
-
-                for user in user_history:
-                    print '2'
-                    print user
-                    user.neg_report += 1
-                    user.save()
-                post.delete()
-            status = True
-        except:
-            status = False
-
-    return status
-
-
 def delet_post_new(request):
     post_ids = request.POST.getlist('post_ids')
     status = False

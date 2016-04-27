@@ -2,7 +2,7 @@ from __future__ import division
 
 # from django.db.models import Sum
 from django.views.decorators.csrf import csrf_exempt
-# from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _
 
 from pin.models import Post, Report, Category, SubCategory, ReportedPost, ReportedPostReporters,\
     PhoneData, BannedImei, UserHistory
@@ -15,7 +15,7 @@ from pin.views2.dashboard.api.tools import (ads_group_by,
                                             check_admin, cnt_post_deleted_by_admin,
                                             cnt_post_deleted_by_user,
                                             delete_posts, get_ads,
-                                            undo_report, undo_report_new, delet_post_new
+                                            undo_report
                                             )
 from user_profile.models import Profile
 
@@ -393,8 +393,28 @@ def post_undo_new(request):
     if not check_admin(request):
         return return_un_auth()
 
-    status = undo_report_new(request)
-    return return_json_data({'status': status})
+    post_ids = request.POST.getlist('post_ids')
+
+    if not post_ids:
+        return return_bad_request(message=_('enter post id'))
+
+    if post_ids:
+        reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
+
+        for post in reported_posts:
+
+            posts_report = ReportedPostReporters.objects\
+                .filter(reported_post=post).values_list('user_id', flat=True)
+
+            user_history = UserHistory.objects.filter(user_id__in=posts_report)
+
+            for user in user_history:
+                user.neg_report += 1
+                user.save()
+
+            post.delete()
+    return return_json_data({'status': True,
+                             'message': _('successfully undo report')})
 
 
 @csrf_exempt
@@ -402,5 +422,27 @@ def delete_post_new(request):
     if not check_admin(request):
         return return_un_auth()
 
-    status = delet_post_new(request)
-    return return_json_data({'status': status})
+    post_ids = request.POST.getlist('post_ids')
+
+    if not post_ids:
+        return return_bad_request(message=_('enter post id'))
+
+    if post_ids:
+        reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
+        post = Post.objects.get(id__in=post_ids)
+        print post
+
+        for posts in reported_posts:
+
+            posts_report = ReportedPostReporters.objects\
+                .filter(reported_post=posts).values_list('user_id', flat=True)
+
+            user_history = UserHistory.objects.filter(user_id__in=posts_report)
+        for user in user_history:
+            user.pos_report += 1
+            user.admin_post_deleted += 1
+            user.save()
+        posts.delete()
+        post.delete()
+        return return_json_data({'status': True,
+                                 'message': _('successfully delete report')})
