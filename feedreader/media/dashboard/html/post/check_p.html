@@ -31,7 +31,7 @@
 			</div>
 			<div class="masonry-brick col-md-6 col-lg-4" ng-repeat="check_ps in reportsShow" prepend="isPrepended()">
 				<div class="box box-solid" id="br-{[{check_ps.id}]}" postId="{[{check_ps.id}]}">
-					<div class="pull-right pa0">
+					<div class="col-md-6 pa0">
 						<a href="" ng-show="select" ng-click="selectItem(check_ps.id)">
 							<span ng-class="class" class="fa fa-square-o pull-left"></span>
 						</a>
@@ -39,7 +39,7 @@
 							<img ng-src="{[{check_ps.images.thumbnail.url}]}" height="{[{check_ps.images.thumbnail.height}]}" width="{[{check_ps.images.thumbnail.width}]}">
 						</a>
 					</div>
-					<div class="pull-right col-lg-7 box-info">
+					<div class="col-md-6 box-info">
 						<div class="head col-md-12 pa0">
 							<!-- <a href="">
 								<span class="fa  fa-exclamation-triangle"></span>

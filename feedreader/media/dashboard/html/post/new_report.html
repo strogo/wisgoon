@@ -31,9 +31,9 @@
 			<div  ng-show='loading'>
 				<div id="mySpinner"  class="loader">Loading...</div>
 			</div>
-			<div class="masonry-brick col-md-6 col-lg-4" ng-repeat="brick in bricks.objects">
+			<div class="masonry-brick col-md-6 " ng-repeat="brick in bricks.objects">
 				<div class="box box-solid" id="br-{[{brick.id}]}" postId="{[{brick.id}]}">
-					<div class="pull-right pa0">
+					<div class="col-md-6 pa0">
 						<a href="" ng-show="select" ng-click="selectItem(brick.id)">
 							<span ng-class="class" class="fa fa-square-o pull-left"></span>
 						</a>
@@ -41,7 +41,7 @@
 							<img ng-src="{[{brick.images.thumbnail.url}]}" height="{[{brick.images.thumbnail.height}]}" width="{[{brick.images.thumbnail.width}]}">
 						</a>
 					</div>
-					<div class="pull-right col-lg-7 box-info">
+					<div class="col-md-6 box-info">
 						<div class="head col-md-12 pa0">
 							<!-- <a href="">
 								<span class="fa  fa-exclamation-triangle"></span>

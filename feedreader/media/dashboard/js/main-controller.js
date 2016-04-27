@@ -98,7 +98,7 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope) 
 		$http({
 			method  : 'POST',
 			data    :  'post_ids='+ cmId,
-			url     : '/dashboard/api/delete/post/new',
+			url     : '/dashboard/api/delete/post/new/',
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		}).success(function(data) {
 		});
@@ -111,7 +111,7 @@ app.controller('reportedController',['$http' ,'$scope', function($http, $scope) 
 		$http({
 			method  : 'POST',
 			data    : 'post_ids='+ cmId,
-			url     : '/dashboard/api/posts/undo/report/new',
+			url     : '/dashboard/api/posts/undo/report/new/',
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		});
 		$( "[postId='"+cmId+"']").remove();
