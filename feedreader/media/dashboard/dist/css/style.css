@@ -383,7 +383,7 @@ table img {
 }
 
 .resize {
-	width: 900px !important;
+	width: 100% !important;
 }
 .filter a:hover,
 .filter a:active,
