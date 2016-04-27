@@ -119,6 +119,6 @@ REDIS_DB_3 = '79.127.125.98'
 REDIS_DB_4 = '79.127.125.98'
 
 STATIC_DOMAIN = "http://static.wisgoon.com"
-STATIC_CDN = "http://static.wisgoon.com/media/"
+STATIC_CDN = "http://static.wisgoon.com/media/assets/"
 
 MONGO_DB_HOST = "79.127.125.98"
