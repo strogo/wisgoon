@@ -70,6 +70,9 @@ urlpatterns += patterns('pin.views2.dashboard.api.post',
                         url(r'^delete/post/new/$', 'delete_post_new',
                             name='dashboard-api-post-delete_post_new'),
 
+                        url(r'^post/item/new/(?P<post_id>\d+)/$', 'post_item',
+                            name='dashboard-api-post-post_item'),
+
 
                         )
 

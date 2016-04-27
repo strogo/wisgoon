@@ -22,6 +22,22 @@ from user_profile.models import Profile
 from haystack.query import SearchQuerySet
 
 
+@csrf_exempt
+def post_item(request, post_id):
+    data = {'objects': []}
+
+    posts = Post.objects.get(id=post_id)
+    user_profile = Profile.objects.get(user=posts.user)
+
+    post = post_item_json(posts.id)
+
+    post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(posts.user_id)
+    post['cnt_post'] = user_profile.cnt_post
+    data['objects'] = post
+
+    return return_json_data(data)
+
+
 def new_reporte(request):
     before = int(request.GET.get('before', 0))
 
