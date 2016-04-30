@@ -30,8 +30,8 @@
 		user_avatar="{{MEDIA_URL}}{{request.user.profile.avatar}}";
 	</script>
 	<div class="wrapper">
-		<div ng-include src="'/media/dashboard/html/_header.html'"></div>
-		<div ng-include src="'/media/dashboard/html/_sidebar.html'"></div>
+		<div ng-include src="'{{STATIC_CDN}}dashboard/html/_header.html'"></div>
+		<div ng-include src="'{{STATIC_CDN}}dashboard/html/_sidebar.html'"></div>
 		<div ui-view></div>
 	</div>
 	<!-- npm node_modules  -->
@@ -65,6 +65,7 @@
 	<script src="{{STATIC_CDN}}dashboard/dist/js/jquery-ui.min.js"></script>
 	<script>
 		$.widget.bridge('uibutton', $.ui.button);
+		var static_cdn = "{{STATIC_CDN}}";
 	</script>
 	<script src="{{STATIC_CDN}}dashboard/bootstrap/js/bootstrap.min.js"></script>
 	<script src="{{STATIC_CDN}}dashboard/plugins/knob/jquery.knob.js"></script>

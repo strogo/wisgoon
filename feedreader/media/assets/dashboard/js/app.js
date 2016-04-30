@@ -12,7 +12,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
      $stateProvider
      .state('home', {
         url: "/",
-        templateUrl: "/media/dashboard/html/home.html",
+        templateUrl: static_cdn + "dashboard/html/home.html",
         controller: "indexController"
     })
      .state('ads', {
