@@ -197,8 +197,8 @@ def cnt_post_deleted_by_user(user_id):
 
 def cnt_post_deleted_by_admin(user_id):
     cnt_log = Log.objects\
-        .filter(content_type=Log.POST, owner=user_id)\
-        .exclude(user=user_id).count()
+        .filter(content_type=Log.POST, user_id=user_id)\
+        .exclude(owner=user_id).count()
     return cnt_log
 
 
@@ -416,12 +416,19 @@ def delet_post_new(request):
 def get_post_reporers(post):
     user_list = []
     reporters = ReportedPostReporters.objects.filter(reported_post=post)
-    print reporters
+
     for reporter in reporters:
+
         user_his = UserHistory.objects.get(user=reporter.user)
+
         user_json = get_simple_user_object(reporter.user.id)
+
         user_json['cnt_report'] = user_his.cnt_report
+
         user_json['negative_report'] = user_his.neg_report
+
         user_json['positive_report'] = user_his.pos_report
+
         user_list.append(user_json)
     return user_list
+
