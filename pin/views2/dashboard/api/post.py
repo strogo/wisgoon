@@ -10,7 +10,7 @@ from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
 from pin.api6.tools import (get_next_url, get_simple_user_object,
                             post_item_json)
-from pin.views2.dashboard.api.tools import get_profile_data
+from pin.views2.dashboard.api.tools import get_profile_data, get_post_reporers
 from pin.views2.dashboard.api.tools import (ads_group_by,
                                             check_admin, cnt_post_deleted_by_admin,
                                             cnt_post_deleted_by_user,
@@ -52,9 +52,8 @@ def new_reporte(request):
 
     obj = []
     imei_user = []
-    reports_list = []
+
     # user_name = []
-    report_json = None
     user = None
 
     for report in posts:
@@ -71,19 +70,7 @@ def new_reporte(request):
             # user_name.append(user.user.username)
             imei_user.append(user.user.username)
             post['user']['imei'] = user.imei
-
-        reporters = ReportedPostReporters.objects.filter(reported_post=report)
-
-        for rps in reporters:
-            report_json = get_simple_user_object(rps.user.id)
-            user_his = UserHistory.objects.get(user=rps.user)
-            report_json['cnt_report'] = user_his.cnt_report
-            report_json['negative_report'] = user_his.neg_report
-            report_json['positive_report'] = user_his.pos_report
-
-            reports_list.append(report_json)
-
-        post['reporters'] = reports_list
+        post['reporters'] = get_post_reporers(report)
 
         post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(report.post.user_id)
         if user:
@@ -97,8 +84,9 @@ def new_reporte(request):
         post['user']['cnt_post'] = user_profile.cnt_post
         post['user']['banned_profile'] = user_profile.banned
         post['user']['is_active'] = report.post.user.is_active
-        obj.append(post)
 
+        obj.append(post)
+        # print obj
     data['objects'] = obj
     if len(data) == 20:
         token = request.GET.get('token', '')

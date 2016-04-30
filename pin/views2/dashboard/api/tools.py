@@ -411,3 +411,17 @@ def delet_post_new(request):
             status = False
 
     return status
+
+
+def get_post_reporers(post):
+    user_list = []
+    reporters = ReportedPostReporters.objects.filter(reported_post=post)
+    print reporters
+    for reporter in reporters:
+        user_his = UserHistory.objects.get(user=reporter.user)
+        user_json = get_simple_user_object(reporter.user.id)
+        user_json['cnt_report'] = user_his.cnt_report
+        user_json['negative_report'] = user_his.neg_report
+        user_json['positive_report'] = user_his.pos_report
+        user_list.append(user_json)
+    return user_list
