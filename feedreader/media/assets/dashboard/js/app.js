@@ -17,47 +17,47 @@ app.config(function ($stateProvider, $urlRouterProvider) {
     })
      .state('ads', {
         url: "/ads",
-        templateUrl: "/media/dashboard/html/post/ads.html",
+        templateUrl: static_cdn + "dashboard/html/post/ads.html",
         controller: "adsController"
     })
      .state('logs', {
         url: "/logs",
-        templateUrl: "/media/dashboard/html/post/logs.html",
+        templateUrl: static_cdn + "dashboard/html/post/logs.html",
         controller: "logsController"
     })
      .state('userActivity', {
         url: "/userActivity",
-        templateUrl: "/media/dashboard/html/post/user_activity.html",
+        templateUrl: static_cdn + "dashboard/html/post/user_activity.html",
         controller: "activityUserController"
     })
      .state('categoreis', {
         url: "/categoreis",
-        templateUrl: "/media/dashboard/html/post/categories.html",
+        templateUrl: static_cdn + "dashboard/html/post/categories.html",
         controller: "catstatController"
     })
      .state('reported', {
         url: "/reported",
-        templateUrl: "/media/dashboard/html/post/reported.html",
+        templateUrl: static_cdn + "dashboard/html/post/reported.html",
         controller: "reportedController"
     })
       .state('check_p', {
         url: "/check_p",
-        templateUrl: "/media/dashboard/html/post/check_p.html",
+        templateUrl: static_cdn + "dashboard/html/post/check_p.html",
         controller: "checkpController"
     })
        .state('new_report', {
         url: "/new_report",
-        templateUrl: "/media/dashboard/html/post/new_report.html",
+        templateUrl: static_cdn + "dashboard/html/post/new_report.html",
         controller: "reportedController"
     })
      .state('permissionDenied', {
         url: "/permissionDenied",
-        templateUrl: "/media/dashboard/html/permissionDenied.html",
+        templateUrl: static_cdn + "dashboard/html/permissionDenied.html",
         controller: "indexController"
     })
           .state('searchUser', {
         url: "/searchUser",
-        templateUrl: "/media/dashboard/html/post/searchUser.html",
+        templateUrl: static_cdn + "dashboard/html/post/searchUser.html",
         controller: "searchController"
     })
      

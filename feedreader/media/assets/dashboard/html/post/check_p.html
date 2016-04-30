@@ -29,7 +29,7 @@
 			<div  ng-show='loading'>
 				<div id="mySpinner"  class="loader">Loading...</div>
 			</div>
-			<div class="masonry-brick col-md-6 col-lg-4" ng-repeat="check_ps in reportsShow" prepend="isPrepended()">
+			<div class="masonry-brick col-md-6" ng-repeat="check_ps in reportsShow" prepend="isPrepended()">
 				<div class="box box-solid" id="br-{[{check_ps.id}]}" postId="{[{check_ps.id}]}">
 					<div class="col-md-6 pa0">
 						<a href="" ng-show="select" ng-click="selectItem(check_ps.id)">

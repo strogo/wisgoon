@@ -345,19 +345,23 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
 
 
 	$scope.nextPage = function() {
-		if (this.busy) return;
-		this.busy = true;
-		$http.get(this.url).success(function(data) {
-			this.url = data.meta.next;
+		var self = $scope.nextPageThis;
+		if (!self)
+			return;
+
+		if (self.busy) return;
+		self.busy = true;
+		$http.get(self.url).success(function(data) {
+			self.url = data.meta.next;
 			if (!data.meta.next){
 				return;
 			}
 			var showPosts = data.objects;
 			for (var i = 0; i < showPosts.length; i++) {
-				this.showPosts.push(showPosts[i]);
+				self.showPosts.push(showPosts[i]);
 			}
-			$scope.showPosts = showPosts;
-			this.busy = false;
+			$scope.showPosts = self.showPosts ;
+			self.busy = false;
 		}.bind(this)).finally(function () {
 			$scope.loading = false;
 		});
@@ -389,7 +393,9 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
 									this.busy = false;
 									this.after = '';
 									this.url = "/dashboard/api/post/showAds/?date="+event.point.x;
-									$scope.nextPage.bind(this).call();
+									$scope.nextPageThis = this;
+									$scope.nextPage();
+
 								}
 							}
 						}
