@@ -1,4 +1,4 @@
-'use strict';
+
 app.controller('mainController',['$scope', '$stateParams','$http', function($scope,$stateParams, $http) {
 	$scope.username = user_username;
 	$scope.avatar = user_avatar;
