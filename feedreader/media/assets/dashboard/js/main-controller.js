@@ -22,6 +22,7 @@ app.controller('checkpController',['$scope','$http', function($scope, $http ) {
 	var pure_reports = [] ;
 	$scope.reports = [];
 	$scope.reportsShow = [];
+	$scope.scoreFilter= 0;
 
 	var interval = setInterval(function(){
 		
@@ -67,6 +68,9 @@ app.controller('checkpController',['$scope','$http', function($scope, $http ) {
 		});
 		$( "[postId='"+cmId+"']").remove();
 	};
+	$scope.filter = function (score){
+		$scope.scoreFilter = score;
+	}
 
 
 	$scope.$on("$destroy",function(){
