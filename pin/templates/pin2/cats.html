@@ -38,14 +38,14 @@
                             <li><a href="{% url 'pin-popular-offset' 'lasteigth' %} ">8ساعت گذشته</a></li>
                         </ul>
                     </li>
-                    {% cache 86400 catsbar %}
+                    {% cache 86400 catsbar1 %}
                     <li class="cats">
                         <a href="javascript:;"> گروه ها <i class="fa fa-angle-down"></i></a>
                         <ul>
                             {% for c in subs %}
                             <li class="cat-{{c.id}}{% if c.sub_category %} parent{% endif %}">
                                 <a href="javascript:;">
-                                    <span class="cat-logo" style='background: url("{{STATIC_CDN}}{{c.image}}")'></span>
+                                    <span class="cat-logo" style='background: url("{{MEDIA_URL}}{{c.image}}")'></span>
                                     {{c.title}}
                                 </a>
                                 {% if c.sub_category.all %}

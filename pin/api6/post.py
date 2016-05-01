@@ -389,7 +389,7 @@ def related_post(request, item_id):
     if token:
         current_user = AuthCache.user_from_token(token=token)
 
-    cache_str = "mlt:2{}{}".format(item_id, offset)
+    cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
     mltis = cache.get(cache_str)
     if not mltis:
         try:
@@ -398,16 +398,16 @@ def related_post(request, item_id):
             return return_not_found()
 
         mlt = SearchQuerySet().models(Post)\
-            .more_like_this(post)[offset:offset + GLOBAL_LIMIT]
+            .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
 
         idis = [int(pmlt.pk) for pmlt in mlt]
         mltis = get_list_post(idis)
-        cache.set(cache_str, mltis, 3600)
+        cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
 
     data['objects'] = get_objects_list(mltis, current_user)
     data['meta']['next'] = get_next_url(url_name='api-6-post-related',
                                         token=token,
-                                        offset=offset + GLOBAL_LIMIT,
+                                        offset=offset + Post.GLOBAL_LIMIT,
                                         url_args={
                                             "item_id": item_id}
                                         )

@@ -1153,3 +1153,6 @@ table img {
 	color: #ff6a00;
 	margin-top: 10px;
 }
+.postInfo {
+	margin-bottom: 10px !important;
+}
