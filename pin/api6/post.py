@@ -407,7 +407,7 @@ def related_post(request, item_id):
     data['objects'] = get_objects_list(mltis, current_user)
     data['meta']['next'] = get_next_url(url_name='api-6-post-related',
                                         token=token,
-                                        offset=offset + GLOBAL_LIMIT,
+                                        offset=offset + Post.GLOBAL_LIMIT,
                                         url_args={
                                             "item_id": item_id}
                                         )

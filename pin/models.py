@@ -1,34 +1,33 @@
 # -*- coding: utf-8 -*-
+import hashlib
 import os
 import re
 import time
-import hashlib
-import redis
 import PIL
-
-from PIL import Image
-from textblob.classifiers import NaiveBayesClassifier
-
 from datetime import datetime, timedelta
 from time import mktime
 
+from PIL import Image
+
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.cache import cache
-from django.core.validators import URLValidator
 from django.core.urlresolvers import reverse
+from django.core.validators import URLValidator
 from django.db import models
 from django.db.models import F
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 
-from sorl.thumbnail import get_thumbnail
+import redis
 
-# from taggit.models import Tag
-
-from model_mongo import Notif as Notif_mongo, MonthlyStats
 from preprocessing import normalize_tags
+
+from model_mongo import MonthlyStats
+from sorl.thumbnail import get_thumbnail
+from textblob.classifiers import NaiveBayesClassifier
+
 
 from pin.tasks import delete_image
 from pin.classification_tools import normalize
@@ -90,10 +89,10 @@ class SubCategory(models.Model):
         return self.title
 
     def admin_image(self):
-        return '<img src="/media/%s" />' % self.image
+        return '<img src="/media/{}" />'.format(self.image)
 
     def admin_image_device(self):
-        return '<img src="/media/%s" />' % self.image_device
+        return '<img src="/media/{}" />'.format(self.image_device)
 
     admin_image.allow_tags = True
     admin_image_device.allow_tags = True
@@ -126,7 +125,6 @@ class Ad(models.Model):
     cnt_view = models.IntegerField(default=0)
     post = models.ForeignKey("Post")
     ads_type = models.IntegerField(default=TYPE_1000_USER)
-    # start = models.DateTimeField(auto_now_add=True, auto_now=True)
     start = models.DateTimeField(auto_now=True)
     end = models.DateTimeField(blank=True, null=True)
     ip_address = models.GenericIPAddressField(default="127.0.0.1")
@@ -175,8 +173,8 @@ class Ad(models.Model):
             else:
                 try:
                     cache.incr(cache_key)
-                except Exception, e:
-                    print str(e), "Pin Model line 179"
+                except:
+                    pass
 
             return ad
 
@@ -199,13 +197,12 @@ class Category(models.Model):
         return self.title
 
     def admin_image(self):
-        return '<img src="/media/%s" />' % self.image
+        return '<img src="/media/{}" />'.format(self.image)
 
     admin_image.allow_tags = True
 
     @classmethod
     def get_json(cls, cat_id):
-        # json cat cache str
         jccs = "json_cat_%s" % cat_id
         jcc = cache.get(jccs)
         if jcc:
@@ -239,7 +236,7 @@ class Post(models.Model):
 
     GLOBAL_LIMIT = 10
     MLT_CACHE_STR = "mlt:2{}{}"
-    MLT_CACHE_TTL = 43200 # 12 hours
+    MLT_CACHE_TTL = 43200  # 12 hours
 
     PENDING = 0
     APPROVED = 1
@@ -274,7 +271,6 @@ class Post(models.Model):
         (DEVICE_MOBILE_6, "mobile version 6"),
     )
 
-    # title = models.CharField(max_length=250, blank=True)
     text = models.TextField(blank=True, verbose_name=_('Text'))
     image = models.CharField(max_length=500, verbose_name=_('Picture'))
     create_date = models.DateField(auto_now_add=True)
@@ -301,14 +297,13 @@ class Post(models.Model):
     report = models.IntegerField(default=0, db_index=True)
     cnt_comment = models.IntegerField(default=0, blank=True)
     cnt_like = models.IntegerField(default=0, blank=True)
-    # tags = TaggableManager(blank=True)
 
     height = models.IntegerField(default=-1, blank=True)
     width = models.IntegerField(default=-1, blank=True)
 
-    category = models.ForeignKey(Category, default=1, verbose_name=_('Category'))
+    category = models.ForeignKey(Category, default=1,
+                                 verbose_name=_('Category'))
     objects = models.Manager()
-    # accepted = AcceptedManager()
 
     data_236 = None
     data_500 = None
@@ -322,7 +317,8 @@ class Post(models.Model):
         for r in Results.objects.all():
             if r.get_label_text() in text:
                 new_url = reverse('pin-result', args=[r.label])
-                href = '<a class="wis_btn green_o" href="%s">%s</a>' % (new_url, r.get_label_text())
+                href = '<a class="wis_btn green_o" href="{}">{}</a>'.\
+                    format(new_url, r.get_label_text())
                 o.append(href)
         return o
 
@@ -374,7 +370,7 @@ class Post(models.Model):
             }
 
         try:
-            ipath = "%s/%s" % (settings.MEDIA_ROOT, self.image)
+            ipath = "{}/{}".format(settings.MEDIA_ROOT, self.image)
             img = Image.open(ipath)
             Post.objects.filter(id=self.id)\
                 .update(height=img.size[1], width=img.size[0])
@@ -400,7 +396,6 @@ class Post(models.Model):
         if ccache:
             new_image_url, h = ccache.split(":")
         else:
-
             try:
                 imeta = PostMetaData.objects.only('img_236_h', 'img_236')\
                     .get(post_id=int(self.id))
@@ -415,10 +410,8 @@ class Post(models.Model):
                 try:
                     ibase, nname, h = self.save_thumb(basewidth=236)
                 except IOError:
-                    # print "get_image_236"
                     return False
                 except Exception:
-                    # print str(e), "get_image_236"
                     return False
                 new_image_url = ibase + "/" + nname
                 try:
@@ -429,8 +422,8 @@ class Post(models.Model):
                         p.img_236 = new_image_url
                         p.img_236_h = h
                         p.save()
-                except Exception, e:
-                    print str(e)
+                except:
+                    pass
 
         if api:
             final_url = new_image_url
@@ -471,10 +464,8 @@ class Post(models.Model):
                 try:
                     ibase, nname, h = self.save_thumb(basewidth=500)
                 except IOError:
-                    # print str(e), "get_image_500"
                     return False
                 except Exception:
-                    # print str(e), "get_image_500"
                     return False
 
                 new_image_url = ibase + "/" + nname
@@ -485,12 +476,11 @@ class Post(models.Model):
                         p.img_500 = new_image_url
                         p.img_500_h = h
                         p.save()
-                except Exception, e:
-                    print str(e)
+                except:
+                    pass
 
             except Exception:
                 pass
-                # print str(e)
 
         if api:
             final_url = new_image_url
@@ -499,7 +489,7 @@ class Post(models.Model):
         data = {
             'url': final_url,
             'h': int(h),
-            'hw': "%dx%d" % (int(h), 500)
+            'hw': "{}x{}".format(int(h), 500)
         }
         self.data_500 = data
 
@@ -522,15 +512,8 @@ class Post(models.Model):
         try:
             file_path = os.path.join(settings.MEDIA_ROOT, self.image)
             delete_image.delay(file_path)
-        except Exception, e:
-            print str(e)
-
-        r_server.srem('pending_photos', self.id)
-        r_server.srem(settings.PENDINGS, int(self.id))
-        r_server.lrem(settings.STREAM_LATEST, str(self.id))
-
-        cat_stream = "%s_%s" % (settings.STREAM_LATEST, self.category.id)
-        r_server.lrem(cat_stream, str(self.id))
+        except:
+            pass
 
         from user_profile.models import Profile
         n_score = 10 * self.cnt_like
@@ -541,10 +524,7 @@ class Post(models.Model):
         LikesRedis(post_id=self.id).delete_likes()
 
         MonthlyStats.log_hit(MonthlyStats.DELETE_POST)
-        # from tasks import send_notif_bar
 
-        # send_notif_bar(user=self.user.id, type=4, post=self.id,
-        #                actor=self.user.id)
         post_id = self.id
         super(Post, self).delete(*args, **kwargs)
         if settings.TUNING_CACHE:
@@ -587,16 +567,14 @@ class Post(models.Model):
 
     @classmethod
     def add_to_stream(cls, post):
-
-        # print "this is add to stream"
         if not post.accept_for_stream():
-            print _("Post was not Accepted for Streams")
             return
         latest_stream = settings.STREAM_LATEST
         r_server.lrem(latest_stream, post.id)
         r_server.lpush(latest_stream, post.id)
 
-        cat_stream = "%s_%s" % (settings.STREAM_LATEST_CAT, post.category.id)
+        cat_stream = "{}_{}"\
+            .format(settings.STREAM_LATEST_CAT, post.category.id)
         r_server.lrem(cat_stream, post.id)
         r_server.lpush(cat_stream, post.id)
 
@@ -628,7 +606,6 @@ class Post(models.Model):
             cat_set_key = "post_latest_%s" % post.category.id
             r_server.zadd(cat_set_key, int(post.timestamp), post.id)
             r_server.zremrangebyrank(cat_set_key, 0, -1001)
-            # r_server.ltrim(cat_set_key, 0, 1000)
 
     def hash_exists(self):
         lname = "duplic"
@@ -646,11 +623,10 @@ class Post(models.Model):
         if os.path.exists(file_path):
             try:
                 img = Image.open(file_path)
-                # print "size:", img.size
                 if img.size[0] < 236:
                     return False
-            except Exception, e:
-                print str(e), _("Models was Accepted for Stream")
+            except:
+                pass
 
         return True
 
@@ -685,9 +661,8 @@ class Post(models.Model):
         if settings.TUNING_CACHE:
             try:
                 PostCacheLayer(post_id=self.id).post_change(self)
-            except Exception, e:
-                print str(e)
-        # print "after save - thumbnail "
+            except:
+                pass
 
     @models.permalink
     def get_absolute_url(self):
@@ -701,8 +676,8 @@ class Post(models.Model):
                        api=False)
 
     def get_user_url(self):
-        url = '/pin/user/%s' % (str(self.user_id))
-        return '<a href="%s" target="_blank">%s</a>' % (url, self.user)
+        url = '/pin/user/{}'.format(str(self.user_id))
+        return '<a href="{}" target="_blank">{}</a>'.format(url, self.user)
     get_user_url.allow_tags = True
 
     def get_host_url(self):
@@ -772,12 +747,6 @@ class Post(models.Model):
 
         r_server.srem('pending_photos', self.id)
 
-        # try:
-        #     profile = Profile.objects.get(user=self.user)
-        #     profile.save()
-        # except Exception, e:
-        #     print str(e), "views_device 71"
-
         send_notif_bar(user=self.user.id, type=3, post=self.id,
                        actor=self.user.id)
 
@@ -823,7 +792,6 @@ class Post(models.Model):
                 return cache_data
             pl = r_server.lrange(cat_stream, 0, -1)
 
-        # print pl
         if pid == 0:
             return pl[:limit]
 
@@ -846,16 +814,13 @@ class Post(models.Model):
     @classmethod
     def user_stream_latest(cls, user_id, pid=0):
         row_per_page = 20
-        # user_stream = "ustream_%d" % (user_id)
         if not user_id:
             return []
-        user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
+        user_stream = "{}_{}".format(settings.USER_STREAM, int(user_id))
         pl = r_server.lrange(user_stream, 0, 1000)
         if not pl:
             Post.set_stream_to_redis(user_id=user_id)
             pl = r_server.lrange(user_stream, 0, 1000)
-
-        # print pl
 
         if pid == 0:
             import collections
@@ -903,21 +868,12 @@ class Bills2(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
-    # def __init__(self):
-    #     if Bills2.objects.all().count() == 0:
-    #         from model_mongo import Bills
-    #         for bb in Bills.objects.all():
-    #             b = Bills2()
-    #             b.status = bb.status
-    #             b.amount = bb.amount
-    #             b.trans_id = bb.trans_id
-    #             b.user_id = bb.user
-    #             b.save()
-
 
 class Follow(models.Model):
-    follower = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='follower')
-    following = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='following')
+    follower = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                 related_name='follower')
+    following = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                  related_name='following')
 
     @classmethod
     def get_follow_status(cls, follower, following):
@@ -957,22 +913,17 @@ class Follow(models.Model):
             Profile.objects.filter(user_id=following_id)\
                 .update(cnt_followers=F('cnt_followers') + 1)
 
-            # print "new follow"
-            # print cls, sender, instance, args, kwargs
-            # print "instance follow:", instance.follower.id
-            # Notif_mongo.objects.create(owner=instance.following.id, type=10,
-            #                            last_actor=instance.follower.id,
-            #                            date=datetime.now,
-            #                            seen=False)
             from pin.actions import send_notif_bar
             send_notif_bar(user=instance.following.id, type=10, post=None,
                            actor=instance.follower.id)
             MonthlyStats.log_hit(MonthlyStats.FOLLOW)
-            FollowUser.get_or_create(instance.follower, instance.following, "follow")
+            FollowUser.get_or_create(instance.follower, instance.following,
+                                     "follow")
 
 
 class Stream(models.Model):
-    following = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='stream_following')
+    following = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                  related_name='stream_following')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user')
     post = models.ForeignKey(Post)
     date = models.IntegerField(default=0)
@@ -982,9 +933,7 @@ class Stream(models.Model):
 
     @classmethod
     def add_post(cls, sender, instance, *args, **kwargs):
-        # print "here is add post in stream"
         post = instance
-        # print "user_ip:", post._user_ip
         post.get_image_236()
         post.get_image_500()
         post.get_image_sizes()
@@ -1016,9 +965,9 @@ class Stream(models.Model):
                 pass
 
 
-
 class Likes(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='pin_post_user_like')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             related_name='pin_post_user_like')
     post = models.ForeignKey(Post, related_name="post_item")
     ip = models.GenericIPAddressField(default='127.0.0.1')
 
@@ -1055,12 +1004,10 @@ class Likes(models.Model):
 
         Post.objects.filter(pk=post.id).update(cnt_like=F('cnt_like') + 1)
 
-        # Stroe last likes
         r_server.lrem(settings.LAST_LIKES, post.id)
         r_server.lpush(settings.LAST_LIKES, post.id)
         r_server.ltrim(settings.LAST_LIKES, 0, 1000)
 
-        # Store user_last_likes
         u_last_likes = "%s_%d" % (settings.USER_LAST_LIKES, int(like.user.id))
         if not r_server.exists(u_last_likes):
             likes = Likes.objects.values_list('post_id', flat=True)\
@@ -1087,7 +1034,6 @@ class Likes(models.Model):
         str_likers = "web_likes_%s" % post.id
         cache.delete(str_likers)
 
-        # Post.hot(post.id, amount=0.5)
         from pin.actions import send_notif_bar
 
         send_notif_bar(user=post.user_id, type=1, post=post.id,
@@ -1110,11 +1056,10 @@ class Likes(models.Model):
 
     @classmethod
     def user_in_likers(cls, post_id, user_id):
-        # print "come on"
         from models_redis import LikesRedis
         return LikesRedis(post_id=post_id).user_liked(user_id=user_id)
 
-        key_str = "%s_%d" % (settings.POST_LIKERS, post_id)
+        key_str = "{}_{}".format(settings.POST_LIKERS, post_id)
 
         if r_server.sismember(key_str, str(user_id)):
             return True
@@ -1151,8 +1096,10 @@ class Notifbar(models.Model):
     )
 
     post = models.ForeignKey(Post)
-    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor_id")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="post_user_id")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              related_name="actor_id")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             related_name="post_user_id")
     seen = models.BooleanField(default=False)
     type = models.IntegerField(default=1, choices=TYPES)
     date = models.DateTimeField(auto_now_add=True)
@@ -1171,7 +1118,6 @@ class Notif(models.Model):
     )
 
     post = models.ForeignKey(Post)
-    # sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="sender")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_id")
     text = models.CharField(max_length=500)
     seen = models.BooleanField(default=False)
@@ -1209,12 +1155,14 @@ class Comments(models.Model):
 
     comment = models.TextField()
     submit_date = models.DateTimeField(auto_now_add=True)
-    ip_address = models.GenericIPAddressField(default='127.0.0.1', db_index=True)
+    ip_address = models.GenericIPAddressField(default='127.0.0.1',
+                                              db_index=True)
     is_public = models.BooleanField(default=False, db_index=True)
     reported = models.BooleanField(default=False, db_index=True)
 
     object_pk = models.ForeignKey(Post, related_name='comment_post')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comment_sender')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             related_name='comment_sender')
     score = models.IntegerField(default=0, blank=True, )
 
     def __unicode__(self):
@@ -1228,19 +1176,9 @@ class Comments(models.Model):
         lt_date = datetime.now() - timedelta(days=how_many_days)
         lt_timestamp = mktime(lt_date.timetuple())
         timestamp = mktime(date.timetuple())
-        # print timestamp, older_timestamp
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
-        # from pin.classification import get_comment_category
-        # com_cat = str(get_comment_category(self.comment))
-        # if int(com_cat) in [2]:
-        #     Log.bad_comment(post=self.object_pk,
-        #                     actor=self.user,
-        #                     ip_address=self.ip_address,
-        #                     text=com_cat + " --- " + self.comment)
-        #     return
-
         if Block.objects.filter(user_id=self.object_pk.user_id,
                                 blocked_id=self.user_id).exists():
             return
@@ -1270,40 +1208,13 @@ class Comments(models.Model):
         actors_list = []
 
         if comment.user_id != post.user_id:
-            # if post.user_id == 1:
-            #     import requests
-            #     import json
-            #     from daddy_avatar.templatetags.daddy_avatar import get_avatar
-            #     pd = PhoneData.objects.only('google_token')\
-            #         .get(user_id=post.user_id)
-
-            #     data = {
-            #         "to": pd.google_token,
-            #         "data": {
-            #             "message": {
-            #                 "id": int("2%s" % comment.object_pk_id),
-            #                 "avatar_url": "http://wisgoon.com%s" % get_avatar(comment.user_id, size=100),
-            #                 "ticker": u"نظر جدید",
-            #                 "title": u"نظر داده است",
-            #                 "content": comment.comment,
-            #                 "last_actor_name": comment.user.username,
-            #                 "url": "wisgoon://wisgoon.com/pin/%s" % comment.object_pk_id,
-            #                 "is_ad": False
-            #             }
-            #         }
-            #     }
-
-            #     res = requests.post(url='https://android.googleapis.com/gcm/send',
-            #                         data=json.dumps(data),
-            #                         headers={'Content-Type': 'application/json',
-            #                                  'Authorization': 'key=AIzaSyAZ28bCEeqRa216NDPDRjHfF2IPC7fwkd4'})
-
             send_notif_bar(user=post.user_id, type=2, post=post.id,
                            actor=comment.user_id)
 
             actors_list.append(post.user_id)
 
-        comment_act(comment.object_pk_id, comment.user_id, user_ip=comment.ip_address)
+        comment_act(comment.object_pk_id, comment.user_id,
+                    user_ip=comment.ip_address)
         if post.user_id == 11253:
             return
 
@@ -1322,7 +1233,6 @@ class Comments(models.Model):
 
         users = Comments.objects.filter(object_pk=post.id)\
             .values_list('user_id', flat=True)
-        # for notif in Notif_mongo.objects.filter(type=2, post=post.id):
         for act in users:
             if act in actors_list:
                 continue
@@ -1335,12 +1245,12 @@ class Comments(models.Model):
         Post.objects.filter(pk=self.object_pk.id)\
             .update(cnt_comment=F('cnt_comment') - 1)
 
-        # print "here is delete comment"
         comment_cache_name = "com_%d" % self.object_pk.id
         cache.delete(comment_cache_name)
         super(Comments, self).delete(*args, **kwargs)
         if settings.TUNING_CACHE:
-            PostCacheLayer(post_id=self.object_pk.id).delete_comment(self.object_pk.cnt_comment)
+            PostCacheLayer(post_id=self.object_pk.id)\
+                .delete_comment(self.object_pk.cnt_comment)
 
     @models.permalink
     def get_absolute_url(self):
@@ -1355,12 +1265,14 @@ class Comments(models.Model):
 
 class Comments_score(models.Model):
     comment = models.ForeignKey(Comments)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='comment_like_user')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             related_name='comment_like_user')
     score = models.IntegerField(default=0, blank=True)
 
 
 class Report(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='report_user')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             related_name='report_user')
     post = models.ForeignKey(Post, related_name='report_post')
 
     class Meta:
@@ -1369,7 +1281,8 @@ class Report(models.Model):
 
 class Block(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='blocker')
-    blocked = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='blocked')
+    blocked = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                related_name='blocked')
 
     @classmethod
     def block_user(cls, user_id, blocked_id):
@@ -1405,7 +1318,6 @@ class PhoneData(models.Model):
 
     logged_out = models.BooleanField(default=False)
     hash_data = models.CharField(max_length=32, default="")
-    # phone_brand = models.CharField(max_length=500)
 
     def get_need_fields(self):
         fields = self._meta.get_all_field_names()
@@ -1427,7 +1339,6 @@ class PhoneData(models.Model):
         return self.hash_data
 
     def save(self, *args, **kwargs):
-        # self.get_hash_data()
         super(PhoneData, self).save(*args, **kwargs)
 
 
@@ -1453,7 +1364,8 @@ class PostMetaData(models.Model):
 
     post = models.OneToOneField(Post)
     original_size = models.IntegerField(default=0)
-    status = models.IntegerField(default=CREATED, choices=STATUS, db_index=True)
+    status = models.IntegerField(default=CREATED, choices=STATUS,
+                                 db_index=True)
     img_236_h = models.IntegerField(default=0)
     img_500_h = models.IntegerField(default=0)
     img_236 = models.CharField(max_length=250)
@@ -1462,7 +1374,6 @@ class PostMetaData(models.Model):
 
 class BannedImei(models.Model):
     imei = models.CharField(max_length=50, db_index=True)
-    # create_time = models.DateTimeField(auto_now_add=True, auto_now=True, default=datetime.now())
     create_time = models.DateTimeField(auto_now=True)
     description = models.TextField(default="")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, default=1)
@@ -1502,7 +1413,8 @@ class Log(models.Model):
     action = models.IntegerField(default=1, choices=ACTIONS, db_index=True)
     object_id = models.IntegerField(default=0, db_index=True)
     content_type = models.IntegerField(default=1, choices=TYPES, db_index=True)
-    ip_address = models.GenericIPAddressField(default='127.0.0.1', db_index=True)
+    ip_address = models.GenericIPAddressField(default='127.0.0.1',
+                                              db_index=True)
     owner = models.IntegerField(default=0)
     text = models.TextField(default="", blank=True, null=True)
 
@@ -1608,7 +1520,8 @@ class ReportedPost(models.Model):
 class ReportedPostReporters(models.Model):
     reported_post = models.ForeignKey(ReportedPost)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    report_type = models.ForeignKey(ReportTypes, blank=True, default=None, null=True)
+    report_type = models.ForeignKey(ReportTypes, blank=True, default=None,
+                                    null=True)
     create_time = models.DateTimeField(auto_now=True)
 
 
@@ -1646,8 +1559,5 @@ class Official(models.Model):
 
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
-# post_delete.connect(Likes.user_unlike_post, sender=Likes)
-# post_save.connect(Post.change_tag_slug, sender=Tag)
 post_save.connect(Comments.add_comment, sender=Comments)
 post_save.connect(Follow.new_follow, sender=Follow)
-# post_delete.connect(Follow.un_follow, sender=Follow)
