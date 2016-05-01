@@ -1085,30 +1085,25 @@ def post_likers(request, post_id, offset=0):
 
 def item_related(request, item_id):
     enable_caching = False
+    offset = int(request.GET.get('offset', 0))
 
-    if request.is_ajax():
-        cache_key = "rel:v1:ajax:%s" % item_id
-    else:
-        cache_key = "rel:v1:%s" % item_id
-
-    if not request.user.is_authenticated():
-        enable_caching = True
-        cd = cache.get(cache_key)
-        if cd:
-            return cd
     try:
         post = Post.objects.get(id=item_id)
-        # post = post_item_json(post_id=item_id, cur_user_id=request.user.id)
     except Post.DoesNotExist:
-        raise Http404("Post does not exist")
+        return Http404("Post does not exist")
 
-    mlt = SearchQuerySet()\
-        .models(Post).more_like_this(post)[:30]
+    cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
+    mltis = cache.get(cache_str)
+    if not mltis:
+        mlt = SearchQuerySet().models(Post)\
+            .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
+
+        mltis = [int(pmlt.pk) for pmlt in mlt]
+        cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
 
     related_posts = []
-    for pmlt in mlt:
-        # idis.append(pmlt.pk)
-        related_posts.append(post_item_json(post_id=pmlt.pk, cur_user_id=request.user.id))
+    for pmlt in mltis:
+        related_posts.append(post_item_json(post_id=pmlt, cur_user_id=request.user.id))
 
     post.mlt = related_posts
 
@@ -1120,9 +1115,6 @@ def item_related(request, item_id):
         d = render(request, 'pin2/item_related.html', {
             'post': post,
         }, content_type="text/html")
-
-    if enable_caching:
-        cache.set(cache_key, d, 3600)
 
     return d
 
