@@ -14,7 +14,7 @@ from pin.api6.tools import get_next_url, get_simple_user_object
 from pin.api6.http import return_json_data, return_un_auth, return_not_found,\
     return_bad_request
 from pin.views2.dashboard.api.tools import check_admin,\
-    cnt_post_deleted_by_user, cnt_post_deleted_by_admin
+    cnt_post_deleted_by_admin
 
 from user_profile.models import Profile
 
@@ -67,9 +67,10 @@ def user_details(request, user_id):
         user = User.objects.get(id=user_id)
     except:
         return return_not_found()
+    user_profile = Profile.objects.get(id=user_id)
 
     details['profile'] = get_profile_data(user.profile, enable_imei=True)
-    details['cnt_deleted'] = cnt_post_deleted_by_user(user.id)
+    details['cnt_post'] = user_profile.cnt_post
     details['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
 
     data['objects'] = details
