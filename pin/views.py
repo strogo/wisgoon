@@ -1090,7 +1090,7 @@ def item_related(request, item_id):
     try:
         post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
-        return Http404("Post does not exist")
+        raise Http404
 
     cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
     mltis = cache.get(cache_str)
