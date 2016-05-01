@@ -236,6 +236,11 @@ class Packages(models.Model):
 
 
 class Post(models.Model):
+
+    GLOBAL_LIMIT = 10
+    MLT_CACHE_STR = "mlt:2{}{}"
+    MLT_CACHE_TTL = 43200 # 12 hours
+
     PENDING = 0
     APPROVED = 1
     FAULT = 2
