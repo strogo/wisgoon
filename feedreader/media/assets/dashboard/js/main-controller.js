@@ -23,6 +23,7 @@ app.controller('checkpController',['$scope','$http', function($scope, $http ) {
 	$scope.reports = [];
 	$scope.reportsShow = [];
 	$scope.scoreFilter= 0;
+	$scope.scoreFilterText = "همه";
 
 	var interval = setInterval(function(){
 		
@@ -70,6 +71,12 @@ app.controller('checkpController',['$scope','$http', function($scope, $http ) {
 	};
 	$scope.filter = function (score){
 		$scope.scoreFilter = score;
+		if (score > 0){
+			$scope.scoreFilterText = "اولویت‌های بالای " + score + " درصد";
+		}else{
+			$scope.scoreFilterText = "همه";
+		}
+
 	}
 
 

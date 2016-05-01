@@ -57,10 +57,22 @@
                         <hr>
                         <div class="">
                           <ul>
+                            <li class="postInfo">
+                              <label>تعداد پست ها:</label>
+                              <span>
+                              {[{searchInfo.cnt_deleted}]}
+                              </span>
+                            </li>
+                            <li class="postInfo">
+                              <label>تعداد پست های حذف شده توسط ادمین:</label>
+                              <span>
+                              {[{searchInfo.cnt_admin_deleted}]}
+                              </span>
+                            </li>
                             <li>
                               <label>وضعیت فعال بودن کاربر :</label>
                               <span >
-                              <i class="fa-check fa" ng-show="!searchInfo.profile.user_active"> فعال </i>
+                                <i class="fa-check fa" ng-show="!searchInfo.profile.user_active"> فعال </i>
                                 <i class="fa-ban fa" ng-show="searchInfo.profile.user_active"> غیر فعال </i>
                               </span>
                               <div class="banDesc">

@@ -14,7 +14,7 @@
 		<div class="select">
 			<div class="dropdown score">
 				<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-				نوع نمایش
+				نوع نمایش : {[{scoreFilterText}]}
 					<span class="caret"></span>
 				</button>
 				<ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
@@ -108,7 +108,7 @@
 						</div>
 						<div class="col-md-4">
 							<label>اولویت گزارش: </label>
-							<span>۳۰</span>
+							<span>--</span>
 						</div>
 						<div class="box-tools">
 							<button class="undo" ng-click="undoPost(check_ps.id)">
@@ -199,7 +199,6 @@
 		// console.log("onMessageArrived:"+message.payloadString);
 		var objs = jQuery.parseJSON( message.payloadString );
 		globalMessageFromMQTT.push(objs);
-		console.log(objs);
 	}
 
 </script>

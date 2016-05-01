@@ -5,9 +5,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
 from pin.models import Post, Report, Category, SubCategory, ReportedPost, ReportedPostReporters,\
-    PhoneData, BannedImei, UserHistory
+    PhoneData, BannedImei, UserHistory, Log
 from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
+from pin.tools import get_user_ip
 from pin.api6.tools import (get_next_url, get_simple_user_object,
                             post_item_json)
 from pin.views2.dashboard.api.tools import get_profile_data, get_post_reporers
@@ -418,7 +419,6 @@ def delete_post_new(request):
     if post_ids:
         reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
         post = Post.objects.get(id__in=post_ids)
-        print post
 
         for posts in reported_posts:
 
@@ -426,11 +426,14 @@ def delete_post_new(request):
                 .filter(reported_post=posts).values_list('user_id', flat=True)
 
             user_history = UserHistory.objects.filter(user_id__in=posts_report)
-        for user in user_history:
-            user.pos_report += 1
-            user.admin_post_deleted += 1
-            user.save()
-        posts.delete()
+
+            for user in user_history:
+                user.pos_report += 1
+                user.admin_post_deleted += 1
+                user.save()
+            posts.delete()
+        
+        Log.post_delete(post=post, actor=request.user, ip_address=get_user_ip(request))
         post.delete()
         return return_json_data({'status': True,
                                  'message': _('successfully delete report')})
