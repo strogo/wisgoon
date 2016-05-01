@@ -60,7 +60,7 @@
                             <li class="postInfo">
                               <label>تعداد پست ها:</label>
                               <span>
-                              {[{searchInfo.cnt_deleted}]}
+                              {[{searchInfo.cnt_post}]}
                               </span>
                             </li>
                             <li class="postInfo">
@@ -70,10 +70,10 @@
                               </span>
                             </li>
                             <li>
-                              <label>وضعیت فعال بودن کاربر :</label>
+                              <label>وضعیت کاربر :</label>
                               <span >
-                                <i class="fa-check fa" ng-show="!searchInfo.profile.user_active"> فعال </i>
-                                <i class="fa-ban fa" ng-show="searchInfo.profile.user_active"> غیر فعال </i>
+                                <i class="fa-check fa" ng-show="searchInfo.profile.user_active"> فعال </i>
+                                <i class="fa-ban fa" ng-show="!searchInfo.profile.user_active"> غیر فعال </i>
                               </span>
                               <div class="banDesc">
                                 <span class="side-up hidden-xs"></span>
@@ -96,7 +96,7 @@
                            </div>
                          </li>
                          <li>
-                          <label>وضعیت مسدود شدن پروفایل کاربر:</label>
+                          <label>وضعیت پروفایل کاربر:</label>
                           <span>
                             <i class="fa-check fa" ng-show="!searchInfo.profile.userBanne_profile"> فعال </i>
                             <i class="fa-ban fa" ng-show="searchInfo.profile.userBanne_profile"> غیر فعال </i>

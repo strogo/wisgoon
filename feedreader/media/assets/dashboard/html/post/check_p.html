@@ -35,11 +35,11 @@
 
 			</div> 
 			<div class="clear"></div>
-			<div class="post-items resize" id="feed" load-images="false"  masonry reload-on-resize style="width:1070px;">
+			<div id="checkP_feed" class="post-items resize" id="feed" load-images="false"  masonry reload-on-resize style="width:1070px;">
 				<div  ng-show='loading'>
 					<div id="mySpinner"  class="loader">Loading...</div>
 				</div>
-				<div ng-if="check_ps.msg.number >= scoreFilter" class="masonry-brick col-md-6" ng-repeat="check_ps in reportsShow">
+				<div ng-if="check_ps.msg.number >= scoreFilter" class="masonry-brick col-md-6" ng-repeat="check_ps in reportsShow track by $index">
 					<div  class="box box-solid" id="br-{[{check_ps.id}]}" postId="{[{check_ps.id}]}">
 						<div class="col-md-6 pa0">
 							<a href="" ng-show="select" ng-click="selectItem(check_ps.id)">

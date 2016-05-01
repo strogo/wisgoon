@@ -25,6 +25,13 @@ app.controller('checkpController',['$scope','$http', function($scope, $http ) {
 	$scope.scoreFilter= 0;
 	$scope.scoreFilterText = "همه";
 
+
+	// var testB = localStorage.getItem("testC");
+	// if (testB) {
+	// 	$scope.reportsShow = JSON.parse(testB);
+	// };
+
+
 	var interval = setInterval(function(){
 		
 		pure_reports = globalMessageFromMQTT;
@@ -37,11 +44,14 @@ app.controller('checkpController',['$scope','$http', function($scope, $http ) {
 				$scope.reports.push(pure_reports[i]);
 				$http.get("http://wisgoon.com/dashboard/api/post/item/new/"+pure_reports[i].id+"/")
 				.success(function(data){
-						// $scope.check_ps.push(data);
-						var obj = pure_reports.filter(function(internalObj){ return (data.id === internalObj.id)});
-						data.msg = obj[0];
-						$scope.reportsShow.push(data);
-					})
+
+					var obj = pure_reports.filter(function(internalObj){ return (data.id === internalObj.id)});
+					data.msg = obj[0];
+					$scope.reportsShow.push(data);
+					var testC = $scope.reportsShow;
+					localStorage.setItem("testC",JSON.stringify(testC));
+					
+				})
 			}
 		};
 		
@@ -71,7 +81,7 @@ app.controller('checkpController',['$scope','$http', function($scope, $http ) {
 	};
 	$scope.filter = function (score){
 		$scope.scoreFilter = score;
-		if (score > 0){
+		if (score > 0) {
 			$scope.scoreFilterText = "اولویت‌های بالای " + score + " درصد";
 		}else{
 			$scope.scoreFilterText = "همه";
@@ -83,7 +93,12 @@ app.controller('checkpController',['$scope','$http', function($scope, $http ) {
 	$scope.$on("$destroy",function(){
 		clearInterval(interval);
 	});
-
+// 	if (typeof(Storage) !== "undefined") {
+//     // Store
+//     localStorage.setItem("lastname", "Smith");
+//     // Retrieve
+//     document.getElementById("result").innerHTML = localStorage.getItem("lastname");
+// }
 
 }]);
 
