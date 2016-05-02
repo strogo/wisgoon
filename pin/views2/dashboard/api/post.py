@@ -38,7 +38,7 @@ def post_item(request, post_id):
     return return_json_data(data)
 
 
-def new_reporte(request):
+def new_report(request):
     before = int(request.GET.get('before', 0))
 
     posts = ReportedPost.objects.only('id')[before: (before + 1) * 20]
@@ -54,7 +54,12 @@ def new_reporte(request):
         post = post_item_json(report.post.id)
         post['reporters'] = get_post_reporers(report)
         post['user']['imei'] = user_imei_detial(report.post.user)
-        post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(report.post.user_id)
+        # post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(report.post.user_id)
+        try:
+            post['user']['cnt_admin_deleted'] = UserHistory.objects\
+                .get(user=report.post.user_id).admin_post_deleted
+        except UserHistory.DoesNotExist:
+            post['user']['cnt_admin_deleted'] = 0
         post['user']['is_active'] = report.post.user.is_active
         post['user']['cnt_post'] = report.post.user.profile.cnt_post
         post['user']['banned_profile'] = report.post.user.profile.banned
