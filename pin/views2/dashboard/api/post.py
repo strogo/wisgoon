@@ -1,6 +1,7 @@
 from __future__ import division
 
-# from django.db.models import Sum
+from django.db.models import F
+
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
@@ -394,19 +395,14 @@ def delete_post_new(request):
 
     if post_ids:
         reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
-        post = Post.objects.get(id__in=post_ids)
+        for rp in reported_posts:
+            for reporter in ReportedPostReporters.objects.filter(reported_post=rp):
+                UserHistory.inc_user_stat(user_id=reporter.user_id,
+                                          field='pos_report')
 
-        for posts in reported_posts:
+            UserHistory.inc_user_stat(user_id=rp.post.user_id,
+                                      field="admin_post_deleted")
+            rp.post.delete()
 
-            posts_report = ReportedPostReporters.objects\
-                .filter(reported_post=posts).values_list('user_id', flat=True)
-
-            user_history = UserHistory.objects.filter(user_id__in=posts_report)
-        for user in user_history:
-            user.pos_report += 1
-            user.admin_post_deleted += 1
-            user.save()
-        posts.delete()
-        post.delete()
         return return_json_data({'status': True,
                                  'message': _('successfully delete report')})

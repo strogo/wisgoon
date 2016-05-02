@@ -11,12 +11,15 @@ from django.utils.timezone import localtime
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
 from pin.api_tools import abs_url, media_abs_url
+from pin.api6.http import return_bad_request
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
-from pin.models import Post, Follow, Comments, Block
+from pin.models import Post, Follow, Comments, Block, Category
 from pin.models_redis import LikesRedis, PostView
 from pin.tools import create_filename
+
 from cache_layer import PostCacheLayer
+
 import khayyam
 
 
@@ -34,15 +37,11 @@ def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
 
 
 def category_get_json(cat_id):
-    from pin.models import Category
     try:
         cat = Category.objects.get(id=cat_id)
     except Category.DoesNotExist:
         raise
-    else:
-        pass
-    finally:
-        pass
+
     cat_json = {
         'id': cat.id,
         'image': media_abs_url(cat.image.url, static=True),
@@ -67,23 +66,7 @@ def get_json(data):
     return to_json
 
 
-# def get_user_data(user_id):
-#     user_data = {}
-#     avatar = ''
-#     try:
-#         user = User.objects.get(id=user_id)
-#         user_data['id'] = user.id
-#         user_data['username'] = user.username
-#         if user.profile.avatar:
-#             avatar = media_abs_url(str(user.profile.avatar))
-#         user_data['avatar'] = avatar
-#     except Exception as e:
-#         print e
-#     return user_data
-
-
 def get_category(cat_id):
-    from pin.models import Category
     try:
         cat = Category.objects.get(id=get_int(cat_id))
     except Category.DoesNotExist:
@@ -92,9 +75,7 @@ def get_category(cat_id):
 
 
 def save_post(request, user):
-
     media_url = settings.MEDIA_ROOT
-
     model = None
 
     try:
@@ -201,7 +182,6 @@ def get_post_tags(post):
         tag_url = abs_url(reverse("api-6-post-hashtag",
                                   kwargs={"tag_name": tag}),
                           api=False)
-        # hashtags
         web_tag_url = abs_url(reverse("hashtags",
                                       kwargs={"tag_name": tag}),
                               api=False)
@@ -252,7 +232,6 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
             if cur_user_id:
                 cache_post['like_with_user'] = LikesRedis(post_id=post_id)\
                     .user_liked(user_id=cur_user_id)
-            # print "get post data item json from cache"
             cache_post['cnt_view'] = pi['cnt_view']
             cache_post['cache'] = "Hit"
             cache_post = need_fields(cache_post)
@@ -274,24 +253,15 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
         pi['last_likers'] = get_last_likers(post_id=post.id)
         pi['last_comments'] = get_last_comments(post_id=post.id)
 
-        try:
-            pi['url'] = post.url
-        except Exception, e:
-            print str(e)
-            if r:
-                print r.get_full_path()
-            pi['url'] = None
+        pi['url'] = post.url
+
         pi['cnt_like'] = post.cnt_like
         pi['like_with_user'] = False
         pi['status'] = post.status
 
         pi['tags'] = get_post_tags(post)
 
-        try:
-            pi['is_ad'] = False  # post.is_ad
-        except Exception, e:
-            # print str(e)
-            pi['is_ad'] = False
+        pi['is_ad'] = False
 
         pi['permalink'] = {}
 
@@ -332,8 +302,8 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
             p_original = post.get_image_sizes()
             pi['images']['original'] = p_original
             pi['images']['original']['url'] = media_abs_url(post.image, check_photos=True)
-        except Exception as e:
-            print str(e)
+        except Exception:
+            pass
 
         pi['category'] = category_get_json(cat_id=post.category_id)
 
@@ -342,100 +312,7 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
     return pi
 
 
-def post_item_json_flat(post, cur_user_id=None, r=None):
-    if isinstance(post, int):
-        post = Post.objects.get(id=post)
-
-    cp = PostCacheLayer(post_id=post.id)
-    cache_post = cp.get()
-    if cache_post:
-        if cur_user_id:
-            cache_post['like_with_user'] = LikesRedis(post_id=post.id)\
-                .user_liked(user_id=cur_user_id)
-        # print "get post data item json from cache"
-        cache_post['cache'] = "Hit"
-        del cache_post['last_likers']
-        del cache_post['last_comments']
-        del cache_post['tags']
-        return cache_post
-
-    pi = {}  # post item
-
-    pi['cache'] = "Miss"
-    pi['id'] = post.id
-    pi['text'] = post.text
-    pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
-    pi['timestamp'] = post.timestamp
-    pi['show_in_default'] = post.show_in_default
-
-    pi['user'] = get_simple_user_object(post.user_id)
-
-    try:
-        pi['url'] = post.url
-    except Exception, e:
-        print str(e)
-        if r:
-            print r.get_full_path()
-        pi['url'] = None
-    pi['cnt_like'] = post.cnt_like
-    pi['like_with_user'] = False
-    pi['status'] = post.status
-
-    try:
-        pi['is_ad'] = False  # post.is_ad
-    except Exception, e:
-        # print str(e)
-        pi['is_ad'] = False
-
-    pi['permalink'] = {}
-
-    pi['permalink']['api'] = abs_url(reverse("api-6-post-item",
-                                     kwargs={"item_id": post.id}))
-
-    pi['permalink']['web'] = abs_url(reverse("pin-item",
-                                     kwargs={"item_id": post.id}),
-                                     api=False)
-
-    if cur_user_id:
-        pi['like_with_user'] = LikesRedis(post_id=post.id)\
-            .user_liked(user_id=cur_user_id)
-
-    pi['images'] = {}
-    try:
-        p_500 = post.get_image_500(api=True)
-
-        p_500['url'] = media_abs_url(p_500['url'], check_photos=True)
-        p_500['height'] = int(p_500['hw'].split("x")[0])
-        p_500['width'] = int(p_500['hw'].split("x")[1])
-
-        del(p_500['hw'])
-        del(p_500['h'])
-
-        pi['images']['low_resolution'] = p_500
-
-        p_236 = post.get_image_236(api=True)
-
-        p_236['url'] = media_abs_url(p_236['url'], check_photos=True)
-        p_236['height'] = int(p_236['hw'].split("x")[0])
-        p_236['width'] = int(p_236['hw'].split("x")[1])
-        del(p_236['hw'])
-        del(p_236['h'])
-
-        pi['images']['thumbnail'] = p_236
-
-        p_original = post.get_image_sizes()
-        pi['images']['original'] = p_original
-        pi['images']['original']['url'] = media_abs_url(post.image, check_photos=True)
-    except Exception as e:
-        print str(e)
-
-    pi['category'] = category_get_json(cat_id=post.category_id)
-
-    return pi
-
-
 def get_objects_list(posts, cur_user_id=None, r=None):
-
     objects_list = []
     for post in posts:
         if not post:
@@ -466,46 +343,14 @@ def get_profile_data(profile, user_id):
         data['cover'] = ""
     data['score'] = profile.score
     data['jens'] = profile.jens if profile.jens else '0'
-    # data['email'] = profile.user.email
     data['bio'] = profile.bio
     data['date_joined'] = khayyam.JalaliDate(profile.user.date_joined)\
         .strftime("%Y/%m/%d")
 
-    # if enable_imei:
-    #     data['imei'] = ''
-    #     try:
-    #         imei = profile.user.phone.imei
-    #     except:
-    #         imei = None
-
-    #     if imei:
-    #         data['imei'] = str(imei)
-    #         data['users_imei'] = get_user_with_imei(imei)
-    #         if not profile.user.is_active:
-    #             try:
-    #                 banned = BannedImei.objects.get(imei=imei)
-    #                 data['description'] = str(banned.description)
-    #                 data['imei_status'] = 0
-    #             except:
-    #                 data['description'] = ""
-    #                 data['imei_status'] = ""
-    #         else:
-    #             data['description'] = ""
-    #             data['imei_status'] = 1
-    #     else:
-    #         data['imei'] = ''
-    #         data['users_imei'] = []
-    #         log = Log.objects.filter(object_id=profile.user.id, content_type=Log.USER).order_by('-id')[:1]
-    #         if log:
-    #             data['description'] = str(log[0].text)
-    #         else:
-    #             data['description'] = ""
-    #         data['imei_status'] = 0
     return data
 
 
 def update_follower_following(profile, user_id):
-    from pin.api6.http import return_bad_request
     try:
         profile.cnt_follower = Follow.objects.filter(following_id=user_id)\
             .count()

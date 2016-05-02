@@ -1516,6 +1516,19 @@ class ReportedPost(models.Model):
     cnt_report = models.IntegerField(default=0)
     priority = models.IntegerField(default=0)
 
+    @classmethod
+    def post_report(cls, post_id, reporter_id):
+        reported, created = ReportedPost.objects.get_or_create(post_id=post_id)
+        rpr, rpr_created = ReportedPostReporters.objects\
+            .get_or_create(reported_post_id=reported.id, user_id=reporter_id)
+
+        if rpr_created:
+            ReportedPost.objects.filter(post_id=post_id)\
+                .update(cnt_report=F('cnt_report') + 1)
+
+            UserHistory.inc_user_stat(user_id=reporter_id,
+                                      field="cnt_report")
+
 
 class ReportedPostReporters(models.Model):
     reported_post = models.ForeignKey(ReportedPost)
@@ -1526,12 +1539,20 @@ class ReportedPostReporters(models.Model):
 
 
 class UserHistory(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name="user_hiostory")
     pos_report = models.IntegerField(default=0)
     neg_report = models.IntegerField(default=0)
     cnt_report = models.IntegerField(default=0)
     admin_post_deleted = models.IntegerField(default=0)
     priority = models.IntegerField(default=1)
+
+    @classmethod
+    def inc_user_stat(cls, user_id, field, incr=1):
+        user, created = UserHistory.objects.get_or_create(user_id=user_id)
+        d = {
+            field: F(field) + 1
+        }
+        UserHistory.objects.filter(user_id=user_id).update(**d)
 
 
 class Commitment(models.Model):

@@ -16,7 +16,7 @@ from tastypie.models import ApiKey
 from pin.forms import PinDirectForm, PinDeviceUpdate
 from pin.context_processors import is_police
 from pin.models import Post, Comments, Comments_score,\
-    Follow, Stream, Report
+    Follow, Stream, Report, ReportedPost
 from pin.tools import create_filename, AuthCache, check_block,\
     log_act, post_after_delete, get_user_ip, get_post_user_cache
 
@@ -129,6 +129,7 @@ def post_report(request):
         return HttpResponseForbidden(_('error in entered params'))
 
     if post_id and Post.objects.filter(pk=post_id).exists():
+        ReportedPost.post_report(post_id=post_id, reporter_id=request.user.id)
         r, created = Report.objects.get_or_create(user_id=user.id,
                                                   post_id=post_id)
         if created:

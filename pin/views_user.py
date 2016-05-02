@@ -5,7 +5,7 @@ import base64
 import json
 import datetime
 import urllib
-from django.db.models import Q
+from django.db.models import Q, F
 from shutil import copyfile
 
 from instagram.client import InstagramAPI
@@ -216,21 +216,8 @@ def report(request, pin_id):
         msg = _("You 've already reported this matter.")
 
     # TODO: add new report here @hossein
-    reported, created = ReportedPost.objects.get_or_create(post=post)
-
-    if created:
-        reported.cnt_report = reported.cnt_report + 1
-        reported.save()
-
-    try:
-        ReportedPostReporters.objects\
-            .create(reported_post=reported, user=request.user)
-        user_his = UserHistory.objects.create(user=request.user)
-        user_his.cnt_report += 1
-        user_his.save()
-    except Exception as e:
-        print str(e)
-
+    # ridi azizam :D
+    ReportedPost.post_report(post_id=post.id, reporter_id=request.user.id)
     # End of hosseing work
 
     if request.is_ajax():

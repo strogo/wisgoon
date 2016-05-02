@@ -14,7 +14,7 @@ from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json
-from pin.models import Post, Report, Ad, Block
+from pin.models import Post, Report, Ad, Block, ReportedPost
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
 
@@ -237,6 +237,8 @@ def report(request, item_id):
         post = Post.objects.get(id=get_int(item_id))
     except Post.DoesNotExist:
         return return_not_found()
+
+    ReportedPost.post_report(post_id=post.id, reporter_id=current_user)
 
     try:
         Report.objects.get(user_id=current_user, post=post)
