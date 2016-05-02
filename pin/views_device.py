@@ -129,7 +129,7 @@ def post_report(request):
         return HttpResponseForbidden(_('error in entered params'))
 
     if post_id and Post.objects.filter(pk=post_id).exists():
-        ReportedPost.post_report(post_id=post_id, reporter_id=request.user.id)
+        ReportedPost.post_report(post_id=post_id, reporter_id=user.id)
         r, created = Report.objects.get_or_create(user_id=user.id,
                                                   post_id=post_id)
         if created:
