@@ -87,7 +87,7 @@ def add_to_storage(post_id):
 
 @app.task(name="wisgoon.pin.check_porn")
 def check_porn(post_id):
-    from pin.models import Post
+    from pin.models import Post, ReportedPost
     import requests
     from requests.auth import HTTPBasicAuth
     import socket
@@ -113,8 +113,9 @@ def check_porn(post_id):
             "id": post.id
         }
         if float(res.content) > 0.7:
-            post.report = post.report + 10
-            post.save()
+            ReportedPost.post_report(post_id=post.id, reporter_id=11253)
+            # post.report = post.report + 10
+            # post.save()
         publish.single("wisgoon/check/porn", json.dumps(d), hostname="mosq.wisgoon.com", qos=2)
     except Exception, e:
         print str(e)
