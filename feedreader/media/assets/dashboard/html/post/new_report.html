@@ -59,8 +59,8 @@
 								<span class="fa fa-eye pull-left"> </span>
 							</a>
 						</div>
-						<div ng-hide="!brick.user.imei" class="users-imei">
-							<button ng-click="imeiList(brick.user.imei)" class="list-button dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<div ng-hide="!brick.user.imei.imei" class="users-imei">
+							<button ng-click="imeiList(brick.user.imei.imei)" class="list-button dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 								لیست حساب ها
 								<span class="caret"></span>
 							</button>
@@ -85,9 +85,9 @@
 						</div>
 						<div class="col-md-4">
 							<label>انسداد imei: </label>
-							<span ng-show="brick.user.imei == null ">ندارد</span>
-							<span ng-show="brick.user.imei !== null && brick.user.banned_imi" class="fa-ban fa"></span>
-							<span ng-show="brick.user.imei !== null && !brick.user.banned_imi" class="fa-check fa"></span>
+							<span ng-show="brick.user.imei.imei == null ">ندارد</span>
+							<span ng-show="brick.user.imei.imei !== null && brick.user.imei.banned_imi" class="fa-ban fa"></span>
+							<span ng-show="brick.user.imei.imei !== null && !brick.user.imei.banned_imi" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
 							<label>فعال بودن کاربر: </label>

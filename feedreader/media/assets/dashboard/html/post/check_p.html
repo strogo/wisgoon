@@ -52,8 +52,8 @@
 							<a class="username" href="{[{check_ps.user.permalink}]}">{[{check_ps.user.username | limitTo: 15}]}</a>
 						</div>
 						<div class="clear"></div>
-						<div ng-hide="!check_ps.user.imei" class="users-imei">
-							<button ng-click="imeiList(check_ps.user.imei)" class="list-button dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						<div ng-hide="!check_ps.user.imei.imei" class="users-imei">
+							<button ng-click="imeiList(check_ps.user.imei.imei)" class="list-button dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 								لیست حساب ها
 								<span class="caret"></span>
 							</button>
@@ -83,9 +83,9 @@
 						</div>
 						<div class="col-md-4">
 							<label>انسداد imei: </label>
-							<span ng-show="check_ps.user.imei == null ">ندارد</span>
-							<span ng-show="check_ps.user.imei !== null && check_ps.user.banned_imi" class="fa-ban fa"></span>
-							<span ng-show="check_ps.user.imei !== null && !check_ps.user.banned_imi" class="fa-check fa"></span>
+							<span ng-show="check_ps.user.imei.imei == null ">ندارد</span>
+							<span ng-show="check_ps.user.imei.imei !== null && check_ps.user.imei.banned_imi" class="fa-ban fa"></span>
+							<span ng-show="check_ps.user.imei.imei !== null && !check_ps.user.imei.banned_imi" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
 							<label>فعال بودن کاربر: </label>
