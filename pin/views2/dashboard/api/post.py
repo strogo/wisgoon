@@ -56,6 +56,8 @@ def new_reporte(request):
         post['user']['imei'] = user_imei_detial(report.post.user)
         post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(report.post.user_id)
         post['user']['is_active'] = report.post.user.is_active
+        post['user']['cnt_post'] = report.post.user.profile.cnt_post
+        post['user']['banned_profile'] = report.post.user.profile.banned
         data['objects'].append(post)
 
     if len(data) == 20:
@@ -388,7 +390,6 @@ def delete_post_new(request):
     if post_ids:
         reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
         post = Post.objects.get(id__in=post_ids)
-        print post
 
         for posts in reported_posts:
 

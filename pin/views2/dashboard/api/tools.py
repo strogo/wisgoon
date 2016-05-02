@@ -440,9 +440,9 @@ def user_imei_detial(user):
 
     try:
         phone_data = PhoneData.objects.get(user=user)
-    except Exception as e:
+    except Exception:
         phone_data = None
-        print str(e)
+
     if phone_data:
         user_detial['imei'] = phone_data.imei
         banned_imi = BannedImei.objects.filter(imei=phone_data.imei).exists()
