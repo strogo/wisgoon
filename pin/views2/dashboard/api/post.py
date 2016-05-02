@@ -5,13 +5,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
 from pin.models import Post, Report, Category, SubCategory, ReportedPost, ReportedPostReporters,\
-    PhoneData, BannedImei, UserHistory, Log
+    UserHistory
 from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
-from pin.tools import get_user_ip
 from pin.api6.tools import (get_next_url, get_simple_user_object,
                             post_item_json)
-from pin.views2.dashboard.api.tools import get_profile_data, get_post_reporers
+from pin.views2.dashboard.api.tools import get_profile_data, get_post_reporers, user_imei_detial
 from pin.views2.dashboard.api.tools import (ads_group_by,
                                             check_admin, cnt_post_deleted_by_admin,
                                             cnt_post_deleted_by_user,
@@ -51,44 +50,16 @@ def new_reporte(request):
         'objects': []
     }
 
-    obj = []
-    imei_user = []
-
-    # user_name = []
-    user = None
-
     for report in posts:
         post = post_item_json(report.post.id)
-
-        user_profile = Profile.objects.get(user=report.post.user)
-
-        try:
-            phone_data = PhoneData.objects.filter(user=report.post.user)
-        except Exception as e:
-            print str(e)
-
-        for user in phone_data:
-            # user_name.append(user.user.username)
-            imei_user.append(user.user.username)
-            post['user']['imei'] = user.imei
         post['reporters'] = get_post_reporers(report)
-
+        post['user']['imei'] = user_imei_detial(report.post.user)
         post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(report.post.user_id)
-        if user:
-            post['user']['list_imei'] = imei_user
-            banned_imi = BannedImei.objects.filter(imei=user.imei).exists()
-            post['user']['banned_imi'] = banned_imi
-        else:
-            post['user']['list_imei'] = None
-            post['user']['banned_imi'] = None
-
-        post['user']['cnt_post'] = user_profile.cnt_post
-        post['user']['banned_profile'] = user_profile.banned
         post['user']['is_active'] = report.post.user.is_active
+        post['user']['cnt_post'] = report.post.user.profile.cnt_post
+        post['user']['banned_profile'] = report.post.user.profile.banned
+        data['objects'].append(post)
 
-        obj.append(post)
-        # print obj
-    data['objects'] = obj
     if len(data) == 20:
         token = request.GET.get('token', '')
         data['meta']['next'] = get_next_url(url_name='ddashboard-api-post-new_reporte',
@@ -96,62 +67,62 @@ def new_reporte(request):
     return return_json_data(data)
 
 
-def reported(request):
-    from daddy_avatar.templatetags.daddy_avatar import get_avatar
-    from pin.api_tools import media_abs_url
-    if not check_admin(request):
-        return return_un_auth()
-    # type_report1 = sys report
-    # type_report2 = user report
+# def reported(request):
+#     from daddy_avatar.templatetags.daddy_avatar import get_avatar
+#     from pin.api_tools import media_abs_url
+#     if not check_admin(request):
+#         return return_un_auth()
+#     # type_report1 = sys report
+#     # type_report2 = user report
 
-    before = int(request.GET.get('before', 0))
-    # type_report = int(request.GET.get('type', 0))
-    reported_posts = None
+#     before = int(request.GET.get('before', 0))
+#     # type_report = int(request.GET.get('type', 0))
+#     reported_posts = None
 
-    post_reporter_list = []
-    data = {}
-    data['meta'] = {'limit': 20,
-                    'next': '',
-                    'total_count': Post.objects.filter(report__gte=1).count()}
+#     post_reporter_list = []
+#     data = {}
+#     data['meta'] = {'limit': 20,
+#                     'next': '',
+#                     'total_count': Post.objects.filter(report__gte=1).count()}
 
-    reported_posts = Post.objects.filter(report__gte=1).only('id', 'report')\
-        .order_by('-report')[before: (before + 1) * 20]
+#     reported_posts = Post.objects.filter(report__gte=1).only('id', 'report')\
+#         .order_by('-report')[before: (before + 1) * 20]
 
-    # if type_report == 2:
-    #     reported_posts = Post.objects.filter(report__lt=30)\
-    #         .only('id', 'report')\
-    #         .order_by('-report')[before: (before + 1) * 20]
+#     # if type_report == 2:
+#     #     reported_posts = Post.objects.filter(report__lt=30)\
+#     #         .only('id', 'report')\
+#     #         .order_by('-report')[before: (before + 1) * 20]
 
-    if not reported_posts:
-        return return_not_found()
+#     if not reported_posts:
+#         return return_not_found()
 
-    for post in reported_posts:
-        reporter_ids = Report.objects.values_list('id', flat=True)\
-            .filter(post_id=post.id)[:5]
+#     for post in reported_posts:
+#         reporter_ids = Report.objects.values_list('id', flat=True)\
+#             .filter(post_id=post.id)[:5]
 
-        reporter_avatar = []
-        for reporter_id in reporter_ids:
-            reporter_avatar.append(media_abs_url(get_avatar(reporter_id, size=64),
-                                                 check_photos=True))
+#         reporter_avatar = []
+#         for reporter_id in reporter_ids:
+#             reporter_avatar.append(media_abs_url(get_avatar(reporter_id, size=64),
+#                                                  check_photos=True))
 
-        # total_scores = Profile.objects.filter(user_id__in=reporter_ids)\
-        #     .aggregate(scores=Sum('score'))
+#         # total_scores = Profile.objects.filter(user_id__in=reporter_ids)\
+#         #     .aggregate(scores=Sum('score'))
 
-        total_scores = 50
+#         total_scores = 50
 
-        post_item = post_item_json(post.id)
-        post_item['cnt_report'] = post.report
-        post_item['total_scores'] = total_scores
-        # post_item['reporter_avatar'] = reporter_avatar
-        post_reporter_list.append(post_item)
+#         post_item = post_item_json(post.id)
+#         post_item['cnt_report'] = post.report
+#         post_item['total_scores'] = total_scores
+#         # post_item['reporter_avatar'] = reporter_avatar
+#         post_reporter_list.append(post_item)
 
-    data['objects'] = post_reporter_list
+#     data['objects'] = post_reporter_list
 
-    if len(post_reporter_list) == 20:
-        token = request.GET.get('token', '')
-        data['meta']['next'] = get_next_url(url_name='dashboard-api-post-reported',
-                                            before=before + 20, token=token)
-    return return_json_data(data)
+#     if len(post_reporter_list) == 20:
+#         token = request.GET.get('token', '')
+#         data['meta']['next'] = get_next_url(url_name='dashboard-api-post-reported',
+#                                             before=before + 20, token=token)
+#     return return_json_data(data)
 
 
 def post_reporter_user(request, post_id):
@@ -426,14 +397,11 @@ def delete_post_new(request):
                 .filter(reported_post=posts).values_list('user_id', flat=True)
 
             user_history = UserHistory.objects.filter(user_id__in=posts_report)
-
-            for user in user_history:
-                user.pos_report += 1
-                user.admin_post_deleted += 1
-                user.save()
-            posts.delete()
-        
-        Log.post_delete(post=post, actor=request.user, ip_address=get_user_ip(request))
+        for user in user_history:
+            user.pos_report += 1
+            user.admin_post_deleted += 1
+            user.save()
+        posts.delete()
         post.delete()
         return return_json_data({'status': True,
                                  'message': _('successfully delete report')})

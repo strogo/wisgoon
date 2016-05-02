@@ -7,7 +7,8 @@ from django.db.models import Q
 from django.utils.translation import ugettext as _
 
 from pin.model_mongo import MonthlyStats
-from pin.models import Post, Ad, Log, BannedImei, ReportedPost, ReportedPostReporters, UserHistory
+from pin.models import Post, Ad, Log, BannedImei, ReportedPost, ReportedPostReporters, UserHistory,\
+    PhoneData
 from pin.tools import post_after_delete, get_user_ip
 from pin.api6.http import return_json_data
 from pin.api6.tools import get_simple_user_object,\
@@ -433,3 +434,17 @@ def get_post_reporers(post):
         user_list.append(user_json)
     return user_list
 
+
+def user_imei_detial(user):
+    user_detial = {'imei': '', 'banned_imi': ''}
+
+    try:
+        phone_data = PhoneData.objects.get(user=user)
+    except Exception:
+        phone_data = None
+
+    if phone_data:
+        user_detial['imei'] = phone_data.imei
+        banned_imi = BannedImei.objects.filter(imei=phone_data.imei).exists()
+        user_detial['banned_imi'] = banned_imi
+    return user_detial
