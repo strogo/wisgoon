@@ -307,6 +307,8 @@ class AuthCache(MyCache):
             cache.set(ct_str, user, 86400)
         except User.DoesNotExist:
             raise Http404
+        except Exception:
+            pass
 
         return user
 
