@@ -28,9 +28,6 @@
 				<a id="socketStatus" class="refresh" href="">
 					عدم ارتباط
 				</a>
-				<a ng-show='loading' class="refresh-spinner" href="">
-					<span class="fa fa-refresh fa-spin"></span>
-				</a>
 				<div class="clear"></div>
 
 			</div> 
@@ -39,12 +36,9 @@
 				<div  ng-show='loading'>
 					<div id="mySpinner"  class="loader">Loading...</div>
 				</div>
-				<div ng-if="check_ps.msg.number >= scoreFilter" class="masonry-brick col-md-6" ng-repeat="check_ps in reportsShow track by $index">
+				<div ng-if="check_ps.msg.number >= scoreFilter" class="masonry-brick col-md-6" ng-repeat="check_ps in reportsShow track by check_ps.id">
 					<div  class="box box-solid" id="br-{[{check_ps.id}]}" postId="{[{check_ps.id}]}">
 						<div class="col-md-6 pa0">
-							<a href="" ng-show="select" ng-click="selectItem(check_ps.id)">
-								<span ng-class="class" class="fa fa-square-o pull-left"></span>
-							</a>
 							<a class="photo" href="{[{check_ps.permalink.web}]}">
 								<img ng-src="{[{check_ps.images.thumbnail.url}]}" height="{[{check_ps.images.thumbnail.height}]}" width="{[{check_ps.images.thumbnail.width}]}">
 							</a>
@@ -161,7 +155,6 @@
 </div>
 <script type="text/javascript">
 	var globalMessageFromMQTT = [];
-
 	var clid = 'mqttjs_' + Math.random().toString(16).substr(2, 8);
 	client = new Paho.MQTT.Client("79.127.125.98", 10001, clid);
 
@@ -196,9 +189,10 @@
 
 	// called when a message arrives
 	function onMessageArrived(message) {
-		// console.log("onMessageArrived:"+message.payloadString);
+		console.log("onMessageArrived:"+message.payloadString);
 		var objs = jQuery.parseJSON( message.payloadString );
 		globalMessageFromMQTT.push(objs);
+		console.log(objs);
 	}
 
 </script>

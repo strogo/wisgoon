@@ -16,7 +16,7 @@ app.controller('indexController',['$scope','$http', '$location', function($scope
 }]);
 var appp= {};
 
-app.controller('checkpController',['$scope','$http', function($scope, $http ) {
+app.controller('checkpController',['$scope','$http', '$timeout', function($scope, $http ,$timeout ) {
 	appp = $scope;
 	$scope.check_ps = [];
 	var pure_reports = [] ;
@@ -26,14 +26,30 @@ app.controller('checkpController',['$scope','$http', function($scope, $http ) {
 	$scope.scoreFilterText = "همه";
 
 
-	// var testB = localStorage.getItem("testC");
-	// if (testB) {
-	// 	$scope.reportsShow = JSON.parse(testB);
-	// };
 
+		var testB = localStorage.getItem("testC");
+
+		var append = function(i,obj){
+			setTimeout(function(){
+				$scope.reportsShow.push(obj);
+				$scope.$apply();
+			},400 * i)				
+		}
+
+		if (testB) {
+			var testA = JSON.parse(testB);
+			var time = 0;
+			for (var i = 0 ;testA.length > i ; i++) {
+				if (i > testA.length - 50){
+					append(time,testA[i])
+					time++;
+				}
+			};
+		};
+	
 
 	var interval = setInterval(function(){
-		
+
 		pure_reports = globalMessageFromMQTT;
 
 		for (var i = 0; i < pure_reports.length; i++) {
@@ -48,13 +64,14 @@ app.controller('checkpController',['$scope','$http', function($scope, $http ) {
 					var obj = pure_reports.filter(function(internalObj){ return (data.id === internalObj.id)});
 					data.msg = obj[0];
 					$scope.reportsShow.push(data);
+
 					var testC = $scope.reportsShow;
 					localStorage.setItem("testC",JSON.stringify(testC));
-					
+
 				})
 			}
 		};
-		
+
 	},1000);
 	$scope.deletePost = function(cmId) {
 		$http({
@@ -93,13 +110,6 @@ app.controller('checkpController',['$scope','$http', function($scope, $http ) {
 	$scope.$on("$destroy",function(){
 		clearInterval(interval);
 	});
-// 	if (typeof(Storage) !== "undefined") {
-//     // Store
-//     localStorage.setItem("lastname", "Smith");
-//     // Retrieve
-//     document.getElementById("result").innerHTML = localStorage.getItem("lastname");
-// }
-
 }]);
 
 app.controller('reportedController',['$http' ,'$scope', function($http, $scope) {
