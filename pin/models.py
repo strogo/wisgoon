@@ -1399,6 +1399,7 @@ class Log(models.Model):
     BAN_IMEI = 5
     BAN_ADMIN = 6
     ACTIVE_USER = 7
+    DEACTIVE_USER = 8
     ACTIONS = (
         (DELETE, _("delete")),
         (PENDING, _("pending")),
@@ -1406,6 +1407,7 @@ class Log(models.Model):
         (BAD_POST, _("bad post")),
         (BAN_IMEI, _("ban imei")),
         (BAN_ADMIN, _("ban by admin")),
+        (DEACTIVE_USER, _("Deactive user")),
         (ACTIVE_USER, _("activated"))
     )
 
@@ -1493,6 +1495,16 @@ class Log(models.Model):
                            content_type=cls.USER,
                            text=text,
                            ip_address=ip_address)
+
+    @classmethod
+    def deactive_user(cls, owner, user_id, text="", ip_address="127.0.0.1"):
+        Log.objects.create(user_id=user_id,
+                           action=cls.DEACTIVE_USER,
+                           owner=owner,
+                           content_type=cls.USER,
+                           text=text,
+                           ip_address=ip_address)
+
 
     @classmethod
     def post_pending(cls, post, actor, ip_address="127.0.0.1"):
