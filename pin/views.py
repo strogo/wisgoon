@@ -11,12 +11,10 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
-from pin.models import Post, Follow, Likes, Category, Comments, Report,\
+from pin.models import Post, Follow, Likes, Category, Comments,\
     Results, Block
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
     get_user_ip, get_delta_timestamp, AuthCache
-
-from pin.context_processors import is_police
 
 from pin.model_mongo import Ads
 from pin.models_redis import LikesRedis
@@ -781,14 +779,9 @@ def item(request, item_id):
 
     post.mlt = mlts
 
-    if post.is_pending():
-        if not is_police(request, flat=True):
-            return render(request, 'pending.html')
-
     if request.user.is_authenticated():
         if check_block(user_id=post.user_id, blocked_id=request.user.id):
-            if not is_police(request, flat=True):
-                return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/')
 
     post.tag = []
 

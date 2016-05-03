@@ -1,24 +1,22 @@
 import datetime
-import time
-import redis
 
 from django.conf import settings
 from django.core.cache import cache
 
 from pin.forms import PinForm
 from pin.models import Category, SubCategory
-from pin.model_mongo import MonthlyStats, UserMeta
+from pin.model_mongo import MonthlyStats
 
 from pin.mycache import caching
-
-r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 
 def static_version(request):
     return {'STATIC_VERSION': settings.STATIC_VERSION}
 
+
 def static_cdn(request):
     return {'STATIC_CDN': settings.STATIC_CDN}
+
 
 def pin_form(request):
     return {'pin_form': PinForm}
@@ -43,7 +41,6 @@ def today_stats(request):
     ma = {}
     for mm in m:
         ma[mm.object_type] = mm.count
-    # print ma
 
     cache.set("today_stats", ma, 60)
 
@@ -51,30 +48,10 @@ def today_stats(request):
 
 
 def is_super_user(request):
-    # return {'is_super_user': False}
-    # print "re user", request.user
     if request.user.is_superuser:
         return {'is_super_user': True}
 
     return {'is_super_user': False}
-
-
-def is_police(request, flat=False):
-    # if request.user.is_authenticated():
-    #     from user_profile.models import Profile
-    #     try:
-    #         um = Profile.objects.only('level').get(user_id=request.user.id)
-    #         if um.is_police():
-    #             if flat:
-    #                 return True
-    #             return {'is_police': True}
-    #     except Exception, e:
-    #         print str(e)
-    #         pass
-
-    # if flat:
-    #     return False
-    return {'is_police': False}
 
 
 def user__id(request):
@@ -96,10 +73,12 @@ def subs(request):
 
 
 def global_values(request):
-    return {'SITE_URL': settings.SITE_URL,
-            'SITE_NAME_FA': settings.SITE_NAME_FA,
-            'SITE_NAME_EN': settings.SITE_NAME_EN,
-            'SITE_DESC': settings.SITE_DESC,
-            'DEBUG': settings.DEBUG,
-            'DISPLAY_AD': settings.DISPLAY_AD,
-            'SITE_URL_NAME': settings.SITE_URL_NAME}
+    return {
+        'SITE_URL': settings.SITE_URL,
+        'SITE_NAME_FA': settings.SITE_NAME_FA,
+        'SITE_NAME_EN': settings.SITE_NAME_EN,
+        'SITE_DESC': settings.SITE_DESC,
+        'DEBUG': settings.DEBUG,
+        'DISPLAY_AD': settings.DISPLAY_AD,
+        'SITE_URL_NAME': settings.SITE_URL_NAME
+    }
