@@ -1,5 +1,4 @@
 import json
-import redis
 from hashlib import md5
 
 from django.core.cache import cache
@@ -12,11 +11,8 @@ from daddy_avatar.templatetags.daddy_avatar import get_avatar
 from pin.tools import AuthCache
 from pin.models import Category, Post, Likes
 
-r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
-
 
 def get_cat_json(cat_id):
-    # json cat cache str
     jccs = "json_cat3_%s" % cat_id
     jcc = cache.get(jccs)
     if jcc:
@@ -50,7 +46,6 @@ def abs_url(url, api=True):
 
 
 def media_abs_url(url, check_photos=False, static=False):
-
     if static:
         cur_base_url = settings.STATIC_DOMAIN
     else:
@@ -83,12 +78,6 @@ def media_abs_url(url, check_photos=False, static=False):
 
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
-        # if isinstance(obj, datetime.datetime):
-        #     return int(mktime(obj.timetuple()))
-
-        """if isinstance(obj, FieldFile):
-            return str(obj)"""
-
         return json.JSONEncoder.default(self, obj)
 
 
@@ -133,16 +122,15 @@ def get_list_post(pl, from_model='latest'):
     pl_str = '32_'.join(pl)
     cache_pl = md5(pl_str).hexdigest()
 
-    posts = get_cache(cache_pl)  # cache.get(cache_pl)
+    posts = get_cache(cache_pl)
     if posts:
         return posts
 
     for pll in pl:
         try:
             arp.append(Post.objects.only(*Post.NEED_KEYS2).get(id=pll))
-        except Exception, e:
-            print str(e), 'line 133', pll
-            # r_server.lrem(from_model, str(pll))
+        except Exception:
+            pass
 
     posts = arp
     cache.set(cache_pl, posts, 3600)
@@ -160,14 +148,12 @@ def get_thumb(o_image, thumb_size, thumb_quality):
         img_cache = None
     if img_cache:
         imo = img_cache
-        # print imo, "cache"
     else:
         try:
             im = get_thumbnail(o_image,
                                thumb_size,
                                quality=settings.API_THUMB_QUALITY,
                                upscale=False)
-            # print "after im, im is:", im
             imo = {
                 'thumbnail': im.url,
                 'hw': "%sx%s" % (im.height, im.width)
@@ -197,16 +183,12 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
         o['id'] = p.id
         o['text'] = p.text
         o['cnt_comment'] = 0 if p.cnt_comment == -1 else p.cnt_comment
-        # o['image'] = p.image
-
         o['user'] = get_user_dict(p.user_id)
-
         o['timestamp'] = p.timestamp
         o['url'] = p.url
         o['like'] = p.cnt_like
         o['like_with_user'] = False
         o['status'] = p.status
-
         o['permalink'] = abs_url("/pin/%d/" % p.id)
         o['resource_uri'] = abs_url(reverse('api-3-item', args=[p.id]))
 
@@ -236,7 +218,5 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
 
         o['category'] = get_cat_json(cat_id=p.category_id)
         objects_list.append(o)
-
-    # cache.set(list_cache_str, objects_list, 600)
 
     return objects_list
