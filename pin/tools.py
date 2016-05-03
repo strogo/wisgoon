@@ -74,10 +74,6 @@ def post_after_delete(post, user, ip_address=None):
                    actor=11253, post_image=post.get_image_236())
 
 
-def log_act(path,):
-    statsd.incr(path)
-
-
 def get_fixed_ads():
     c_name = "fixed_post"
     c_e = cache.get(c_name)

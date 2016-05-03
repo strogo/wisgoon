@@ -3,30 +3,22 @@ from django.contrib import admin
 
 from pin.feeds import EditorPinFeed
 from pin.api import PostResource, CategotyResource, CommentResource,\
-    ProfileResource, AppResource, LikesResource,\
-    StreamResource
+    ProfileResource, AppResource, StreamResource
 
 admin.autodiscover()
 
 post_resource = PostResource()
 cat_resource = CategotyResource()
 comment_resource = CommentResource()
-#notify_resource = NotifyResource()
+
 profile_resource = ProfileResource()
 app_resource = AppResource()
-#likes_resource = LikesResource()
+
 stream_resource = StreamResource()
 
-#urlpatterns = patterns('pin.views_api',
-#    url(r'^api/like/likes/', 'likes', name="api-like"),
-#)
 
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
-
-    url(r'^latest_post/', 'latest_redis', name='pin-latest'),
-    url(r'^latest_backup/', 'latest_backup', name='pin-latest-redis'),
-    url(r'^last/likes/$', 'last_likes', name='pin-last-likes'),
     url(r'^search/', 'search', name='search'),
     url(r'^(?P<item_id>\d+)/$', 'item', name="pin-item"),
     url(r'^(?P<item_id>\d+)/related/$', 'item_related', name="pin-item-related"),
@@ -40,7 +32,6 @@ urlpatterns = patterns('pin.views',
     url(r'^likers/(?P<post_id>\d+)/$', 'post_likers', name='pin-likers'),
 
     url(r'^com/posts/(?P<post_id>\d+)/', 'get_comments', name='pin-get-comments'),
-    # url(r'^tag/(.*)/', 'tag', name="pin-tag"),
     url(r'^editor/choices/feed/', EditorPinFeed(), name="pin-latest-feed"),
 
     url(r'^popular/(?P<interval>\w+)/$', 'popular', name='pin-popular-offset'),
@@ -48,27 +39,16 @@ urlpatterns = patterns('pin.views',
     url(r'^topuser/$', 'topuser', name='pin-topuser'),
     url(r'^top-group-user/$', 'topgroupuser', name='pin-topgroupuser'),
 
-    #url(r'^mylike/', 'mylike', name='pin-mylike'),
-    #url(r'^send_mail', 'send_mail', name='pin-sendmail'),
-    #url(r'^test_page', 'test_page', name='google_contacts_login'),
-    url(r'^category_back/(?P<cat_id>\d+)', 'category_back', name='pin-category_back'),
-    url(r'^category/(?P<cat_id>\d+)', 'category_redis', name='pin-category'),
-    #url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
-    #not stables
+    url(r'^category/(?P<cat_id>\d+)', 'category', name='pin-category'),
 
     url(r'^api1/', include(post_resource.urls)),
     url(r'^apic/', include(cat_resource.urls)),
-    # url(r'^api/com/', include(comment_resource.urls)),
-    #url(r'^api/notif/', include(notify_resource.urls)),
     url(r'^api/profile/', include(profile_resource.urls)),
     url(r'^api/app/', include(app_resource.urls)),
-    #url(r'^api/like/', include(likes_resource.urls)),
     url(r'^api/stream/', include(stream_resource.urls)),
 )
 
 urlpatterns += patterns('pin.views_user',
-    url(r'^get_insta/$', 'get_insta', name="pin-get-insta"),
-    # url(r'^hook/instagram/$', 'hook_insta', name="pin-get-hinsta"),
     url(r'^notif/$', 'notif_user', name="pin-notif-user"),
     url(r'^following/activity/$', 'notif_following', name="pin-notif-user-following"),
     url(r'^notif/all/$', 'notif_all', name="pin-notif-user-all"),
@@ -112,21 +92,9 @@ urlpatterns += patterns('pin.views_static',
 
 urlpatterns += patterns('pin.views_admin',
     url(r'user/activate/(?P<user_id>\d+)/(?P<status>\d+)/$', 'activate_user', name='activate-user'),
-    url(r'user/post_accept/(?P<user_id>\d+)/(?P<status>\d+)/$', 'post_accept', name='post-accept'),
     url(r'^goto_index/(?P<item_id>\d+)/(?P<status>\d+)/', 'goto_index', name='pin-item-goto-index'),
 
-    url(r'^fault/(?P<item_id>\d+)/', 'item_fault', name='pin-item-fault'),
-    url(r'^ads/admin/$', 'ads_admin', name='ads-admin'),
-    url(r'^ads/fixed/admin/$', 'ads_fixed_admin', name='ads-fixed-admin'),
-
-    url(r'^change_level/(?P<user_id>\d+)/(?P<level>\d+)/$', 'change_level', name='change-level'),
-    url(r'^pending/post/(?P<post>\d+)/$', 'pending_post', name='pending_post'),
-    url(r'^pending/post/(?P<post>\d+)/(?P<status>\d+)/$', 'pending_post', name='unpending_post'),
-
     url(r'^comment/delete/(?P<id>\d+)', 'comment_delete', name="pin-comment-delete"),
-    url(r'^comment/approve/(?P<id>\d+)', 'comment_approve', name="pin-comment-approve"),
-    url(r'^comment/unapprove/(?P<id>\d+)', 'comment_unapprove', name="pin-comment-unapprove"),
-    url(r'^check_p/$', 'check_p', name='pin-check-p'),
 )
 
 urlpatterns += patterns('pin.views_device',
@@ -143,7 +111,6 @@ urlpatterns += patterns('pin.views_device',
 )
 
 urlpatterns += patterns('',
-    # url(r'^comments/', include('django.contrib.comments.urls')),
     url(r'^api/post/(?P<item_id>\d+)/$', 'pin.views2_api.post_item', name="post_api_item"),
     url(r'^api/post/(?P<post_id>\d+)/details/', 'pin.views2_api.post_details', name="post_api_details"),
     url(r'^api/post/', 'pin.views2_api.post', name="post_api"),

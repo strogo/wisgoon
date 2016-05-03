@@ -4,7 +4,7 @@ import time
 
 from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
-from django.db.models import F, Sum
+from django.db.models import Sum
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext_lazy as _
@@ -14,11 +14,10 @@ from django.http import HttpResponse, HttpResponseForbidden,\
 from tastypie.models import ApiKey
 
 from pin.forms import PinDirectForm, PinDeviceUpdate
-from pin.context_processors import is_police
 from pin.models import Post, Comments, Comments_score,\
-    Follow, Stream, Report, ReportedPost
+    Follow, ReportedPost
 from pin.tools import create_filename, AuthCache, check_block,\
-    log_act, post_after_delete, get_user_ip, get_post_user_cache
+    post_after_delete, get_user_ip, get_post_user_cache
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -29,8 +28,6 @@ def check_auth(request):
         return False
 
     try:
-        # api = ApiKey.objects.get(key=token)
-        # user = api.user
         user = AuthCache.user_from_token(token)
         if not user:
             return False
@@ -48,7 +45,6 @@ def check_auth(request):
 
 @csrf_exempt
 def like(request):
-    log_act("wisgoon.api.post.liking.count")
     user = check_auth(request)
 
     if not user:
@@ -65,7 +61,6 @@ def like(request):
                                       content_type="application/json")
     try:
         post = get_post_user_cache(post_id=post_id)
-        # post = Post.objects.only('user').get(pk=post_id)
     except Post.DoesNotExist:
         return HttpResponse('0', content_type="application/json")
 
@@ -86,7 +81,6 @@ def like(request):
 
 @csrf_exempt
 def post_comment(request):
-    log_act("wisgoon.api.post.commenting.count")
     user = check_auth(request)
     if not user:
         return HttpResponseForbidden(_('error in user validation'),
@@ -104,10 +98,8 @@ def post_comment(request):
 
     try:
         post = get_post_user_cache(post_id=object_pk)
-        # post = Post.objects.only('user').get(id=object_pk)
         if check_block(user_id=post.user_id, blocked_id=user.id):
-            if not is_police(request, flat=True):
-                return HttpResponse(0)
+            return HttpResponse(0)
 
         Comments.objects.create(object_pk_id=object_pk,
                                 comment=comment,
@@ -130,10 +122,6 @@ def post_report(request):
 
     if post_id and Post.objects.filter(pk=post_id).exists():
         ReportedPost.post_report(post_id=post_id, reporter_id=user.id)
-        r, created = Report.objects.get_or_create(user_id=user.id,
-                                                  post_id=post_id)
-        if created:
-            Post.objects.filter(pk=post_id).update(report=F('report') + 1)
 
         return HttpResponse(1)
     else:
@@ -253,19 +241,6 @@ def follow(request, following, action):
 
         if int(action) == 0 and follow:
             follow.delete()
-            Stream.objects.filter(following=following, user=user)\
-                .all().delete()
-        # elif created:
-            # posts = Post.objects.only('timestamp').filter(user=following)\
-            #     .order_by('-timestamp')[:100]
-
-            # for post in posts:
-            #     s, created = Stream.objects\
-            #         .get_or_create(post=post,
-            #                        user=user,
-            #                        date=post.timestamp,
-            #                        following=following)
-
     except User.DoesNotExist:
         return HttpResponse(_('User does not exist'))
 
