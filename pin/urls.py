@@ -93,21 +93,9 @@ urlpatterns += patterns('pin.views_static',
 
 urlpatterns += patterns('pin.views_admin',
     url(r'user/activate/(?P<user_id>\d+)/(?P<status>\d+)/$', 'activate_user', name='activate-user'),
-    url(r'user/post_accept/(?P<user_id>\d+)/(?P<status>\d+)/$', 'post_accept', name='post-accept'),
     url(r'^goto_index/(?P<item_id>\d+)/(?P<status>\d+)/', 'goto_index', name='pin-item-goto-index'),
 
-    url(r'^fault/(?P<item_id>\d+)/', 'item_fault', name='pin-item-fault'),
-    url(r'^ads/admin/$', 'ads_admin', name='ads-admin'),
-    url(r'^ads/fixed/admin/$', 'ads_fixed_admin', name='ads-fixed-admin'),
-
-    url(r'^change_level/(?P<user_id>\d+)/(?P<level>\d+)/$', 'change_level', name='change-level'),
-    url(r'^pending/post/(?P<post>\d+)/$', 'pending_post', name='pending_post'),
-    url(r'^pending/post/(?P<post>\d+)/(?P<status>\d+)/$', 'pending_post', name='unpending_post'),
-
     url(r'^comment/delete/(?P<id>\d+)', 'comment_delete', name="pin-comment-delete"),
-    url(r'^comment/approve/(?P<id>\d+)', 'comment_approve', name="pin-comment-approve"),
-    url(r'^comment/unapprove/(?P<id>\d+)', 'comment_unapprove', name="pin-comment-unapprove"),
-    url(r'^check_p/$', 'check_p', name='pin-check-p'),
 )
 
 urlpatterns += patterns('pin.views_device',
@@ -124,7 +112,6 @@ urlpatterns += patterns('pin.views_device',
 )
 
 urlpatterns += patterns('',
-    # url(r'^comments/', include('django.contrib.comments.urls')),
     url(r'^api/post/(?P<item_id>\d+)/$', 'pin.views2_api.post_item', name="post_api_item"),
     url(r'^api/post/(?P<post_id>\d+)/details/', 'pin.views2_api.post_details', name="post_api_details"),
     url(r'^api/post/', 'pin.views2_api.post', name="post_api"),
