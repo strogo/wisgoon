@@ -2,15 +2,11 @@
 from time import mktime, time
 import json
 import datetime
-import operator
-import itertools
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.cache import cache
-from django.contrib.contenttypes.models import ContentType
-from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
@@ -22,16 +18,12 @@ from pin.tools import get_request_timestamp, get_request_pid, check_block,\
 
 from pin.context_processors import is_police
 
-from django_user_agents.utils import get_user_agent
-
 from pin.model_mongo import Ads
 from pin.models_redis import LikesRedis
 
 from pin.api6.tools import post_item_json
 
-# from daddy_avatar.templatetags import daddy_avatar
 from user_profile.models import Profile
-# from taggit.models import Tag, TaggedItem
 
 from haystack.query import SearchQuerySet
 
@@ -42,13 +34,6 @@ REPORT_TYPE = settings.REPORT_TYPE
 
 def home(request):
     pid = get_request_pid(request)
-    cache_str = "page:home:%s" % str(pid)
-    enable_cacing = False
-    if not request.user.is_authenticated():
-        enable_cacing = False
-        cd = cache.get(cache_str)
-        if cd:
-            return cd
     pl = Post.home_latest(pid=pid)
     arp = []
 
@@ -56,44 +41,31 @@ def home(request):
     next_url = None
 
     for pll in pl:
-        try:
-            post_id = int(pll)
-            post_item = post_item_json(post_id=post_id, cur_user_id=request.user.id)
-            if post_item:
-                arp.append(post_item)
-            # arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
-            last_id = pll
-        except Exception, e:
-            print str(e), "pin views line 63"
-            pass
+        pid = int(pll)
+        post_item = post_item_json(post_id=pid, cur_user_id=request.user.id)
+        if post_item:
+            arp.append(post_item)
+        last_id = pll
 
     if arp:
         next_url = reverse('home') + "?older=" + last_id
-        # print next_url
-
-    response_data = HttpResponse(0)
 
     if request.is_ajax():
         if arp:
-            response_data = render(request, 'pin2/_items_2_v6.html', {
+            return render(request, 'pin2/_items_2_v6.html', {
                 'latest_items': arp,
                 'cls': 'new_items',
                 'next_url': next_url,
             })
         else:
-            response_data = HttpResponse(0)
-    else:
-        response_data = render(request, 'pin2/home_v6.html', {
-            'latest_items': arp,
-            'cls': 'new_items',
-            'next_url': next_url,
-            'page': 'home'
-        })
+            return HttpResponse(0)
 
-    if enable_cacing:
-        cache.set(cache_str, response_data, 300)
-
-    return response_data
+    return render(request, 'pin2/home_v6.html', {
+        'latest_items': arp,
+        'cls': 'new_items',
+        'next_url': next_url,
+        'page': 'home'
+    })
 
 
 def leaderboard(request):
@@ -351,7 +323,6 @@ def user_friends(request, user_id):
 
 @csrf_exempt
 def absuser_following(request, user_namefg):
-    # row_per_page = 20
     user = get_object_or_404(User, username=user_namefg)
     user_id = int(user.id)
     profile, created = Profile.objects.get_or_create(user_id=user_id)
@@ -364,7 +335,8 @@ def absuser_following(request, user_namefg):
         following = Follow.objects\
             .filter(follower_id=user_id, id__lt=older).order_by('-id')[:16]
     else:
-        following = Follow.objects.filter(follower_id=user_id).order_by('-id')[:16]
+        following = Follow.objects.filter(follower_id=user_id)\
+            .order_by('-id')[:16]
 
     if request.is_ajax():
         if following.exists():
@@ -454,9 +426,11 @@ def absuser_followers(request, user_namefl):
         raise Http404
 
     if older:
-        friends = Follow.objects.filter(following_id=user_id, id__lt=older).order_by('-id')[:16]
+        friends = Follow.objects.filter(following_id=user_id, id__lt=older)\
+            .order_by('-id')[:16]
     else:
-        friends = Follow.objects.filter(following_id=user_id).order_by('-id')[:16]
+        friends = Follow.objects.filter(following_id=user_id)\
+            .order_by('-id')[:16]
     if request.is_ajax():
         if friends.exists():
             return render(request, 'pin2/_user_followers.html', {
@@ -521,15 +495,11 @@ def user_like(request, user_id):
 
 
 def absuser_like(request, user_namel):
-
     try:
         user = AuthCache.user_from_name(username=user_namel)
     except User.DoesNotExist:
         raise Http404
-    except Http404:
-        raise Http404
 
-    # user = get_object_or_404(User, username=user_namel)
     user_id = user.id
     profile, created = Profile.objects.get_or_create(user_id=user_id)
     if profile.banned:
@@ -546,12 +516,9 @@ def absuser_like(request, user_namel):
     r_user_id = request.user.id
 
     for pll in pl:
-        try:
-            ob = post_item_json(pll, cur_user_id=r_user_id)
-            if ob:
-                arp.append(ob)
-        except:
-            pass
+        ob = post_item_json(pll, cur_user_id=r_user_id)
+        if ob:
+            arp.append(ob)
 
     latest_items = arp
 
@@ -562,25 +529,23 @@ def absuser_like(request, user_namel):
                           {'latest_items': latest_items})
         else:
             return HttpResponse(0)
+
+    if request.user.id:
+        follow_status = Follow.objects.filter(follower=request.user.id,
+                                              following=user.id).exists()
+        following_status = Follow.objects.filter(following=request.user.id,
+                                                 follower=user.id).exists()
     else:
-        # follow_status = Follow.objects\
-        #     .filter(follower=request.user.id, following=user_id).count()
-        if request.user.id:
-            follow_status = Follow.objects.filter(follower=request.user.id,
-                                                  following=user.id).exists()
-            following_status = Follow.objects.filter(following=request.user.id,
-                                                     follower=user.id).exists()
-        else:
-            follow_status = 0
-            following_status = 0
-        return render(request, 'pin2/user__likes.html', {
-            'latest_items': latest_items,
-            'user_id': user_id,
-            'follow_status': follow_status,
-            'following_status': following_status,
-            'profile': profile,
-            'page': 'profile'
-        })
+        follow_status = 0
+        following_status = 0
+    return render(request, 'pin2/user__likes.html', {
+        'latest_items': latest_items,
+        'user_id': user_id,
+        'follow_status': follow_status,
+        'following_status': following_status,
+        'profile': profile,
+        'page': 'profile'
+    })
 
 
 def rp(request):
@@ -598,22 +563,8 @@ def rp(request):
         return HttpResponseRedirect(reverse('pin-home'))
 
 
-# hp = Post.get_hot()
-# if hp:
-#     latest_items = itertools.chain(hp, latest_items)
-
-
-def latest_redis(request):
+def latest(request):
     pid = get_request_pid(request)
-    cache_str = "page:latest:%s" % str(pid)
-    # print "cache str:", cache_str
-    enable_cacing = False
-    if not request.user.is_authenticated():
-        enable_cacing = False
-        cd = cache.get(cache_str)
-        if cd:
-            # print "showing data from cache"
-            return cd
 
     pl = Post.latest(pid=pid)
     arp = []
@@ -634,168 +585,33 @@ def latest_redis(request):
             pass
 
     for pll in pl:
-        try:
-            pll_id = int(pll)
-            ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
-            if ob:
-                arp.append(ob)
-            # arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
-            last_id = pll
-        except Exception, e:
-            raise
-            print str(e)
-            pass
+        pll_id = int(pll)
+        ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
+        if ob:
+            arp.append(ob)
+        last_id = pll
 
     if arp and last_id:
         next_url = reverse('pin-latest') + "?pid=" + last_id
 
-    response_data = HttpResponse(0)
-
     if request.is_ajax():
         if arp:
-            response_data = render(request, 'pin2/_items_2_v6.html', {
+            return render(request, 'pin2/_items_2_v6.html', {
                 'latest_items': arp,
                 'next_url': next_url,
             })
         else:
-            response_data = HttpResponse(0)
-    else:
-        response_data = render(request, 'pin2/latest_redis.html', {
-            'latest_items': arp,
-            'page': 'latest',
-            'next_url': next_url,
-        })
-
-    if enable_cacing:
-        cache.set(cache_str, response_data, 300)
-    return response_data
-
-
-def last_likes(request):
-    pl = Post.last_likes()
-    arp = []
-
-    for pll in pl:
-        try:
-            arp.append(Post.objects.get(id=pll))
-        except:
-            pass
-
-    latest_items = arp
-
-    if request.is_ajax():
-        # if latest_items:
-        #     return render(request,
-        #                   'pin2/_items_2.html',
-        #                   {'latest_items': latest_items})
-        # else:
-        return HttpResponse(0)
-    else:
-        return render(request, 'pin2/latest_redis.html', {
-            'latest_items': latest_items
-        })
-
-
-def latest_backup(request):
-    timestamp = get_request_timestamp(request)
-
-    if timestamp == 0:
-        latest_items = Post.accepted\
-            .order_by('-timestamp')[:20]
-
-        hp = Post.get_hot()
-        if hp:
-            latest_items = itertools.chain(hp, latest_items)
-    else:
-        latest_items = Post.accepted\
-            .extra(where=['timestamp<%s'], params=[timestamp])\
-            .order_by('-timestamp')[:20]
-
-    if request.is_ajax():
-        if latest_items:
-            return render(request,
-                          'pin/_items.html',
-                          {'latest_items': latest_items})
-        else:
             return HttpResponse(0)
-    else:
-        return render(request, 'pin/home.html', {'latest_items': latest_items})
+
+    return render(request, 'pin2/latest_redis.html', {
+        'latest_items': arp,
+        'page': 'latest',
+        'next_url': next_url,
+    })
 
 
-def latest_back(request):
-    timestamp = get_request_timestamp(request)
-
-    # if timestamp == 0:
-    print "timestamp is:", timestamp
-    pl = Post.latest(timestamp=timestamp)
-    idis = []
-    for p in pl:
-        idis.append(int(p[1]))
-
-    print idis
-    latest_items = Post.objects.filter(id__in=idis).order_by('-timestamp')[:20]
-    latest_items = sorted(latest_items,
-                          key=operator.attrgetter('timestamp'),
-                          reverse=True)
-    for li in latest_items:
-        print li.id, li.timestamp
-
-    # auths = Author.objects.order_by('-score')[:30]
-    # latest_items = sorted(latest_items,
-    #                       key=operator.attrgetter('timestamp'),
-    #                       reverse=True)
-
-        # hp = Post.get_hot()
-        # if hp:
-        #     latest_items = itertools.chain(hp, latest_items)
-    # else:
-    #     latest_items = Post.accepted\
-    #         .extra(where=['timestamp<%s'], params=[timestamp])\
-    #         .order_by('-timestamp')[:20]
-
-    if request.is_ajax():
-        if latest_items:
-            return render(request,
-                          'pin/_items.html',
-                          {'latest_items': latest_items})
-        else:
-            return HttpResponse(0)
-    else:
-        return render(request, 'pin/home.html', {'latest_items': latest_items})
-
-
-def category_back(request, cat_id):
+def category(request, cat_id):
     cat = get_object_or_404(Category, pk=cat_id)
-    cat_id = cat.id
-    timestamp = get_request_timestamp(request)
-
-    if timestamp == 0:
-        latest_items = Post.objects.filter(status=1, category=cat_id)\
-            .order_by('-is_ads', '-timestamp')[:20]
-    else:
-        latest_items = Post.objects.filter(status=1, category=cat_id)\
-            .extra(where=['timestamp<%s'], params=[timestamp])\
-            .order_by('-timestamp')[:20]
-
-    if request.is_ajax():
-        if latest_items.exists():
-            return render(request,
-                          'pin/_items.html',
-                          {'latest_items': latest_items})
-        else:
-            return HttpResponse(0)
-    else:
-        return render(request,
-                      'pin/category.html',
-                      {'latest_items': latest_items, 'cur_cat': cat})
-
-
-def category_redis(request, cat_id):
-    cat = get_object_or_404(Category, pk=cat_id)
-
-    if not request.user.is_authenticated:
-        if int(cat_id) in [23, 22]:
-            return HttpResponse('/')
 
     cat_id = cat.id
     pid = get_request_pid(request)
@@ -803,29 +619,25 @@ def category_redis(request, cat_id):
     arp = []
 
     for pll in pl:
-        try:
-            # arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
-            pll_id = int(pll)
-            ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
-            if ob:
-                arp.append(ob)
-            # arp.append(Post.objects.get(id=pll))
-        except:
-            pass
+        pll_id = int(pll)
+        ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
+        if ob:
+            arp.append(ob)
 
     latest_items = arp
 
     if request.is_ajax():
         if latest_items:
-            return render(request,
-                          'pin2/_items_2_v6.html',
-                          {'latest_items': latest_items})
+            return render(request, 'pin2/_items_2_v6.html', {
+                'latest_items': latest_items
+            })
         else:
             return HttpResponse(0)
-    else:
-        return render(request,
-                      'pin2/category_redis.html',
-                      {'latest_items': latest_items, 'cur_cat': cat, 'page': 'category'})
+
+    return render(request, 'pin2/category_redis.html', {
+        'latest_items': latest_items,
+        'cur_cat': cat, 'page': 'category'
+    })
 
 
 def popular(request, interval=""):
@@ -860,14 +672,15 @@ def popular(request, interval=""):
     ps = [post_item_json(post_id=p.pk) for p in posts]
 
     if request.is_ajax():
-        return render(request, 'pin2/__search.html',
-                      {'posts': ps,
-                       'offset': offset + 20})
+        return render(request, 'pin2/__search.html', {
+            'posts': ps,
+            'offset': offset + 20
+        })
 
-    else:
-        return render(request, 'pin2/popular.html',
-                      {'posts': ps,
-                       'offset': offset + 20})
+    return render(request, 'pin2/popular.html', {
+        'posts': ps,
+        'offset': offset + 20
+    })
 
 
 def topuser(request):
@@ -875,19 +688,15 @@ def topuser(request):
     for tu in top_user:
         tu.follow_status = Follow.objects\
             .filter(follower=request.user.id, following=tu.user_id).count()
-        print tu.follow_status
 
     return render(request, 'pin2/topuser.html', {'top_user': top_user})
 
 
 def topgroupuser(request):
-    # tc = cache.get("topgroupuser")
-    # if not tc:
     cats = Category.objects.all()
     for cat in cats:
         cat.tops = []
         leaders = LikesRedis().get_leaderboards_groups(category=cat.id)
-        leaders_list = []
         for leader in leaders:
             o = {}
             user_id = int(leader[0])
@@ -897,51 +706,12 @@ def topgroupuser(request):
             o['user'] = u
             cat.tops.append(o)
 
-            # cat.tops = Post.objects.values('user_id')\
-            #     .filter(category_id=cat.id)\
-            #     .annotate(sum_like=Sum('cnt_like'))\
-            #     .order_by('-sum_like')[:4]
-            # for ut in cat.tops:
-            #     ut['user'] = User.objects.get(pk=ut['user_id'])
-
-        # cache.set("topgroupuser", cats, 86400)
-    # else:
-        # cats = tc
-
     return render(request, 'pin2/topgroupuser.html', {'cats': cats})
 
 
 def user(request, user_id, user_name=None):
     user = get_object_or_404(User, pk=user_id)
     return HttpResponseRedirect(reverse('pin-absuser', args=[user.username]))
-    profile = Profile.objects.get_or_create(user_id=user_id)
-
-    timestamp = get_request_timestamp(request)
-    if timestamp == 0:
-        latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
-            .order_by('-timestamp')[:20]
-    else:
-        latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
-            .extra(where=['timestamp<%s'], params=[timestamp])\
-            .order_by('-timestamp')[:20]
-
-    if request.is_ajax():
-        if latest_items.exists():
-            return render(request, 'pin2/_items_2_1.html',
-                          {'latest_items': latest_items})
-        else:
-            return HttpResponse(0)
-    else:
-
-        follow_status = Follow.objects\
-            .filter(follower=request.user.id, following=user.id).count()
-
-        return render(request, 'pin2/user.html',
-                      {'latest_items': latest_items,
-                       'follow_status': follow_status,
-                       'user_id': int(user_id),
-                       'profile': profile,
-                       'cur_user': user})
 
 
 def absuser(request, user_name=None):
@@ -950,13 +720,10 @@ def absuser(request, user_name=None):
     except User.DoesNotExist:
         raise Http404
 
-    # if Block.objects.filter(user_id=user.id, blocked_id=request.user.id):
-    #     raise Http404
-
     user_id = user.id
 
     try:
-        profile = Profile.objects.only('banned', 'user', 'score', 'cnt_post', 'website', 'credit', 'level', 'bio').get(user_id=user_id)
+        profile = Profile.objects.get(user_id=user_id)
     except Profile.DoesNotExist:
         profile = Profile.objects.create(user_id=user_id)
 
@@ -989,25 +756,25 @@ def absuser(request, user_name=None):
             })
         else:
             return HttpResponse(0)
-    else:
-        if request.user.id:
-            follow_status = Follow.objects.filter(follower=request.user.id,
-                                                  following=user.id).exists()
-            following_status = Follow.objects.filter(following=request.user.id,
-                                                     follower=user.id).exists()
-        else:
-            follow_status = 0
-            following_status = 0
 
-        return render(request, 'pin2/user.html', {
-            'latest_items': latest_items,
-            'follow_status': follow_status,
-            'following_status': following_status,
-            'ban_by_admin': ban_by_admin,
-            'user_id': int(user_id),
-            'profile': profile,
-            'page': "profile",
-        })
+    if request.user.id:
+        follow_status = Follow.objects.filter(follower=request.user.id,
+                                              following=user.id).exists()
+        following_status = Follow.objects.filter(following=request.user.id,
+                                                 follower=user.id).exists()
+    else:
+        follow_status = 0
+        following_status = 0
+
+    return render(request, 'pin2/user.html', {
+        'latest_items': latest_items,
+        'follow_status': follow_status,
+        'following_status': following_status,
+        'ban_by_admin': ban_by_admin,
+        'user_id': int(user_id),
+        'profile': profile,
+        'page': "profile",
+    })
 
 
 def item(request, item_id):
@@ -1040,13 +807,10 @@ def item(request, item_id):
 
     post.tag = []
 
-    # pl = Likes.objects.filter(post_id=post.id)[:12]
     from models_redis import LikesRedis
     post.likes = LikesRedis(post_id=post.id)\
         .get_likes(offset=0, limit=5, as_user_object=True)
 
-    # s = SearchQuerySet().models(Post).more_like_this(post)
-    # print "seems with:", post.id, s[:5]
     follow_status = 0
     if request.user.is_authenticated():
         follow_status = Follow.objects.filter(follower=request.user.id,
@@ -1093,7 +857,6 @@ def post_likers(request, post_id, offset=0):
 
 
 def item_related(request, item_id):
-    enable_caching = False
     offset = int(request.GET.get('offset', 0))
 
     try:
@@ -1119,15 +882,13 @@ def item_related(request, item_id):
     post.mlt = related_posts
 
     if request.is_ajax():
-        d = render(request, 'pin2/_items_related.html', {
+        return render(request, 'pin2/_items_related.html', {
             'post': post
         })
-    else:
-        d = render(request, 'pin2/item_related.html', {
-            'post': post,
-        }, content_type="text/html")
 
-    return d
+    return render(request, 'pin2/item_related.html', {
+        'post': post,
+    }, content_type="text/html")
 
 
 def get_comments(request, post_id):
@@ -1141,50 +902,6 @@ def get_comments(request, post_id):
     return render(request, 'pin2/__comments_box.html', {
         'comments': comments
     })
-
-
-# def tag(request, keyword):
-#     row_per_page = 20
-
-#     tag = get_object_or_404(Tag, slug=keyword)
-#     content_type = ContentType.objects.get_for_model(Post)
-#     tag_items = TaggedItem.objects.filter(tag_id=tag.id,
-#                                           content_type=content_type)
-
-#     paginator = Paginator(tag_items, row_per_page)
-
-#     try:
-#         offset = int(request.GET.get('older', 1))
-#     except ValueError:
-#         offset = 1
-
-#     try:
-#         tag_items = paginator.page(offset)
-#     except PageNotAnInteger:
-#         tag_items = paginator.page(1)
-#     except EmptyPage:
-#         return HttpResponse(0)
-
-#     s = []
-#     for t in tag_items:
-#         s.append(t.object_id)
-
-#     if tag_items.has_next() is False:
-#         tag_items.next_page_number = -1
-#     latest_items = Post.objects.filter(id__in=s).all()
-
-#     if request.is_ajax():
-#         if latest_items.exists():
-#             return render(request, 'pin/_items.html',
-#                           {'latest_items': latest_items,
-#                            'offset': tag_items.next_page_number})
-#         else:
-#             return HttpResponse(0)
-#     else:
-#         return render(request, 'pin/tag.html',
-#                       {'latest_items': latest_items,
-#                        'tag': tag,
-#                        'offset': tag_items.next_page_number})
 
 
 def policy(request):

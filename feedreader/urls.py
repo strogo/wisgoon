@@ -39,16 +39,15 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('pin.views',
-    url(r'^latest/$', 'latest_redis', name='pin-latest'),
+    url(r'^latest/$', 'latest', name='pin-latest'),
     url(r'^page/(?P<label>.*)/$', 'result', name='pin-result'),
     # url(r'^recent/$', 'latest_redis', name='pin-latest'),
 
     url(r'^rp/$', 'rp', name='rp'),
 
     url(r'^feedback/$', 'feedback', name='pin-feedback'),
-    url(r'^last/likes/$', 'last_likes', name='pin-last-likes'),
 
-    url(r'^category/(?P<cat_id>\d+)/$', 'category_redis', name='pin-category'),
+    url(r'^category/(?P<cat_id>\d+)/$', 'category', name='pin-category'),
     url(r'^category/(?P<category_id>\d+)/top/$', 'category_top', name='pin-category-top'),
 
     url(r'^search/', 'search', name='search'),
