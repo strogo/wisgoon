@@ -542,7 +542,9 @@ def absuser_like(request, user_namel):
 
     for pll in pl:
         try:
-            arp.append(post_item_json(pll, cur_user_id=r_user_id))
+            ob = post_item_json(pll, cur_user_id=r_user_id)
+            if ob:
+                arp.append(ob)
         except:
             pass
 
