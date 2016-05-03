@@ -200,7 +200,7 @@ def cnt_post_deleted_by_admin(user_id):
     cnt_log = Log.objects\
         .filter(content_type=Log.POST, owner=user_id)\
         .exclude(user_id=user_id)
-    print cnt_log.query
+    # print cnt_log.query
     return cnt_log.count()
 
 
