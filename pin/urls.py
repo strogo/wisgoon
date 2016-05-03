@@ -49,7 +49,6 @@ urlpatterns = patterns('pin.views',
 )
 
 urlpatterns += patterns('pin.views_user',
-    url(r'^get_insta/$', 'get_insta', name="pin-get-insta"),
     url(r'^notif/$', 'notif_user', name="pin-notif-user"),
     url(r'^following/activity/$', 'notif_following', name="pin-notif-user-following"),
     url(r'^notif/all/$', 'notif_all', name="pin-notif-user-all"),
