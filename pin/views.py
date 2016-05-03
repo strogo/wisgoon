@@ -59,7 +59,8 @@ def home(request):
         try:
             post_id = int(pll)
             post_item = post_item_json(post_id=post_id, cur_user_id=request.user.id)
-            arp.append(post_item)
+            if post_item:
+                arp.append(post_item)
             # arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
             last_id = pll
         except Exception, e:
@@ -124,7 +125,9 @@ def search(request):
         post_queryset = SearchQuerySet().models(Post)\
             .filter(content__contains=query)[offset:offset + 1 * row_per_page]
         for p in post_queryset:
-            posts.append(post_item_json(post_id=p.pk, cur_user_id=request.user.id))
+            ob = post_item_json(post_id=p.pk, cur_user_id=request.user.id)
+            if ob:
+                posts.append(ob)
     else:
         today_stamp = get_delta_timestamp(days=0)
         week_statmp = get_delta_timestamp(days=7)
@@ -271,7 +274,9 @@ def hashtag(request, tag_name):
         .filter(tags=tag_name)\
         .order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
     for p in post_queryset:
-        posts.append(post_item_json(post_id=p.pk, cur_user_id=request.user.id))
+        ob = post_item_json(post_id=p.pk, cur_user_id=request.user.id)
+        if ob:
+            posts.append(ob)
 
     tags = ['کربلا']
 
@@ -631,8 +636,9 @@ def latest_redis(request):
     for pll in pl:
         try:
             pll_id = int(pll)
-            arp.append(post_item_json(post_id=pll_id,
-                                      cur_user_id=request.user.id))
+            ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
+            if ob:
+                arp.append(ob)
             # arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
             last_id = pll
         except Exception, e:
@@ -800,8 +806,9 @@ def category_redis(request, cat_id):
         try:
             # arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
             pll_id = int(pll)
-            arp.append(post_item_json(post_id=pll_id,
-                                      cur_user_id=request.user.id))
+            ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
+            if ob:
+                arp.append(ob)
             # arp.append(Post.objects.get(id=pll))
         except:
             pass
@@ -1105,7 +1112,9 @@ def item_related(request, item_id):
 
     related_posts = []
     for pmlt in mltis:
-        related_posts.append(post_item_json(post_id=pmlt, cur_user_id=request.user.id))
+        ob = post_item_json(post_id=pmlt, cur_user_id=request.user.id)
+        if ob:
+            related_posts.append(ob)
 
     post.mlt = related_posts
 
