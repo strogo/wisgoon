@@ -345,7 +345,7 @@ def get_profile_data(profile, enable_imei=False):
     data = {}
     data['name'] = profile.name
     data['score'] = profile.score
-    data['user_active'] = 1 if profile.user.is_active else 0
+    data['user_active'] = profile.user.is_active
     data['credit'] = profile.credit
     data['userBanne_profile'] = 1 if profile.banned else 0
     data['jens'] = profile.jens
@@ -356,9 +356,7 @@ def get_profile_data(profile, enable_imei=False):
     if enable_imei:
         data['imei'] = ''
         data['imei_status'] = ''
-        data['imei_description'] = ''
-        data['description'] = ''
-
+        # data['imei_description'] = ''
         try:
             imei = profile.user.phone.imei
         except:
@@ -366,7 +364,7 @@ def get_profile_data(profile, enable_imei=False):
 
         if imei:
             data['imei'] = str(imei)
-            data['imei_status'] = 1
+            data['imei_status'] = True
 
             if not profile.user.is_active or profile.banned or not profile.user.is_active:
                 try:
@@ -374,15 +372,10 @@ def get_profile_data(profile, enable_imei=False):
                 except Exception as e:
                     print str(e)
                     banned = None
-                print banned
-                if banned:
-                    data['imei_status'] = 0
-                    data['imei_description'] = str(banned.description)
-                else:
 
-                    log = Log.objects.filter(object_id=profile.user.id,
-                                             content_type=Log.USER).order_by('-id')[:1]
-                    data['description'] = str(log[0].text)
+                if banned:
+                    data['imei_status'] = False
+                    # data['imei_description'] = str(banned.description)
 
     return data
 

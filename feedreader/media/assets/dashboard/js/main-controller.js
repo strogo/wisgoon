@@ -253,7 +253,7 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 		var postData = {
 			description3 : $scope.formData.description3,
 			imei : $scope.searchInfo.profile.imei,
-			status : !$scope.formData.status
+			status : !$scope.searchInfo.profile.imei_status
 		}
 		
 		$http({
@@ -263,6 +263,7 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		}).success(function(data){
 			$scope.searchInfo.profile.imei_status = data.imei_status;
+			console.log(data);
 		});
 	};
 
@@ -270,8 +271,8 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 
 		var data = {
 			description1 : $scope.formData.description1,
-			activeId : $scope.formData.activeId,
-			activeStatus : !$scope.formData.activeStatus
+			activeId : $scope.searchInfo.user_id,
+			activeStatus : !$scope.searchInfo.profile.user_active
 		}
 
 		$http({
@@ -288,8 +289,8 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 
 		var data = {
 			description2 : $scope.formData.description2,
-			profileBanId : $scope.formData.profileBanId,
-			profileBanstatus : !$scope.formData.profileBanstatus
+			profileBanId : $scope.searchInfo.user_id,
+			profileBanstatus : !$scope.searchInfo.profile.userBanne_profile
 		}
 		$http({
 			method  : 'POST',
@@ -335,6 +336,17 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 
 		$http.get('/dashboard/api/user/details/'+cmId+'/').success(function(data){
 			$scope.searchInfo = data.objects;
+			if (data.objects.profile.user_active) {
+				$scope.formData.description1 = data.objects.profile.active_desc;
+			}
+			else {
+				$scope.formData.description1 = data.objects.profile.inactive_desc;	
+			}
+
+			$scope.formData.description2 = data.objects.profile.ban_profile_desc;
+			$scope.formData.description3 = data.objects.profile.ban_imei_desc;
+
+			$scope.formData.status = data.objects.profile.imei_status;
 			$scope.formData.activeStatus = data.objects.profile.user_active;
 			$scope.formData.profileBanstatus = data.objects.profile.userBanne_profile;
 		}).finally(function () {
@@ -437,7 +449,7 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
 					marker: {
 						symbol: 'circle',
 					},
-					color: '#7EB6EC'
+					color: '#FF6A00'
 				}]
 			};
 		});
@@ -655,7 +667,7 @@ app.controller('blockCtrl',['$scope','$http', function($scope, $http) {
 					marker: {
 						symbol: 'circle',
 					},
-					color: '#7EB6EC'
+					color: '#FF6A00'
 				}]
 			}
 		}).finally(function () {
@@ -705,7 +717,7 @@ app.controller('userCtrl',['$scope','$http', function($scope, $http) {
 					marker: {
 						symbol: 'circle',
 					},
-					color: '#7EB6EC'
+					color: '#FF6A00'
 				}]
 			}
 		}).finally(function () {
@@ -762,7 +774,7 @@ app.controller('followCtrl',['$scope','$http', function($scope, $http) {
 					marker: {
 						symbol: 'circle',
 					},
-					color: '#7EB6EC'
+					color: '#FF6A00'
 				}]
 			};
 		}).finally(function () {
@@ -815,7 +827,7 @@ app.controller('likesCtrl',['$scope','$http', function($scope, $http) {
 					marker: {
 						symbol: 'circle',
 					},
-					color: '#7EB6EC'
+					color: '#FF6A00'
 				}]
 			}
 		}).finally(function () {
@@ -865,7 +877,7 @@ app.controller('commentCtrl',['$scope','$http', function($scope, $http) {
 					marker: {
 						symbol: 'circle',
 					},
-					color: '#7EB6EC'
+					color: '#FF6A00'
 				}]
 			}
 		}).finally(function () {

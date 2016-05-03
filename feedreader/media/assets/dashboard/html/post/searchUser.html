@@ -82,9 +82,9 @@
                                   <input type="checkbox" name="activeStatus" id="activeStatus" ng-model="formData.activeStatus" ng-checked="!formData.activeStatus">
                                 </div>
                                 <div class="col-xs-9 col-md-9 pa0">
-                                  <input type="text" name="description1" ng-model="formData.description1" placeholder="علت بن شدن کاربر...">
+                                  <input type="text" name="description1" ng-model="formData.description1" placeholder="علت بن شدن کاربر..." >
 
-                                  <input type="hidden" name="activeId" ng-model="formData.activeId" >
+                                  <input type="hidden" name="activeId" ng-model="formData.activeId">
 
                                 </div>
                                 <div class="col-md-2 pa0">
@@ -110,7 +110,7 @@
                             <div class="col-xs-9 col-md-9 pa0">
                               <input type="text" name="description2" ng-model="formData.description2" placeholder="علت غیر فعال شدن پروفایل کاربر...">
 
-                              <input type="hidden" name="profileBanId" ng-model="formData.profileBanId" ng-value="formData.profileBanId='{[{searchInfo.user_id}]}'">
+                              <input type="hidden" name="profileBanId" ng-model="formData.profileBanId">
 
                             </div>
                             <div class="col-md-2 pa0">
@@ -124,8 +124,8 @@
                      <li>
                       <label>وضعیت imei :</label>
                       <span ng-hide="searchInfo.profile.imei == ''">
-                        <i class="fa-check fa" ng-show="!searchInfo.profile.imei_status"> فعال </i>
-                        <i class="fa-ban fa" ng-show="searchInfo.profile.imei_status"> غیر فعال </i>
+                        <i class="fa-check fa" ng-show="searchInfo.profile.imei_status"> فعال </i>
+                        <i class="fa-ban fa" ng-show="!searchInfo.profile.imei_status"> غیر فعال </i>
                       </span>
                       <span class="banImeiText" ng-show="searchInfo.profile.imei == ''">
                         این کاربر imei  ندارد.
@@ -134,7 +134,7 @@
                         <span class="side-up hidden-xs"></span>
                         <form novalidate ng-submit="banImei()" >
                          <div class="col-xs-1 col-md-1 pa0">
-                           <input type="checkbox" name="status" id="status" ng-model="formData.status" ng-checked="formData.status">
+                           <input type="checkbox" name="status" id="status" ng-model="formData.status" ng-checked="!formData.status">
                          </div>
                          <div class="col-xs-9 col-md-9 pa0">
                           <input type="text" name="description3" ng-model="formData.description3" placeholder="علت غیر فعال شدن پروفایل کاربر...">
@@ -158,7 +158,7 @@
                         <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="userImeis">
-                        <li ng-repeat="imeilListItem in imeilListItems"><a href="{[{imeilListItem.permalink}]}">{[{imeilListItem.username}]}</a></li>
+                        <li class="postInfo" ng-repeat="imeilListItem in imeilListItems"><a href="{[{imeilListItem.permalink}]}">{[{imeilListItem.username}]}</a></li>
                       </ul>
                     </div>
                   </span>
