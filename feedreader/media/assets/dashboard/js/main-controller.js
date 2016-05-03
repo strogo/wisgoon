@@ -24,30 +24,7 @@ app.controller('checkpController',['$scope','$http', '$timeout', function($scope
 	$scope.reportsShow = [];
 	$scope.scoreFilter= 0;
 	$scope.scoreFilterText = "همه";
-
-
-
-		var testB = localStorage.getItem("testC");
-
-		var append = function(i,obj){
-			setTimeout(function(){
-				$scope.reportsShow.push(obj);
-				$scope.$apply();
-			},400 * i)				
-		}
-
-		if (testB) {
-			var testA = JSON.parse(testB);
-			var time = 0;
-			for (var i = 0 ;testA.length > i ; i++) {
-				if (i > testA.length - 50){
-					append(time,testA[i])
-					time++;
-				}
-			};
-		};
 	
-
 	var interval = setInterval(function(){
 
 		pure_reports = globalMessageFromMQTT;
@@ -64,10 +41,6 @@ app.controller('checkpController',['$scope','$http', '$timeout', function($scope
 					var obj = pure_reports.filter(function(internalObj){ return (data.id === internalObj.id)});
 					data.msg = obj[0];
 					$scope.reportsShow.push(data);
-
-					var testC = $scope.reportsShow;
-					localStorage.setItem("testC",JSON.stringify(testC));
-
 				})
 			}
 		};
@@ -308,7 +281,6 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		}) .success(function(data) {
 			$scope.searchInfo.profile.user_active = data.profile.user_active;
-			console.log(data.profile.user_active);
 		});
 	};	
 

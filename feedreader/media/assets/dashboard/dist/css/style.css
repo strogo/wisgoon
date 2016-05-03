@@ -1156,3 +1156,16 @@ table img {
 .postInfo {
 	margin-bottom: 10px !important;
 }
+.reset {
+  color: #fff;
+  left: 20px;
+  position: relative;
+  top: 12px;
+  border: 1px;
+  background: #ff6a00;
+  padding: 1px 15px;
+  border-radius: 5px;
+}
+.reset:hover {
+	color: #fff;
+}
