@@ -94,7 +94,9 @@ def following(request):
     arp = []
     for pll in pl:
         pll_id = int(pll)
-        arp.append(post_item_json(pll_id, cur_user_id=request.user.id))
+        ob = post_item_json(pll_id, cur_user_id=request.user.id)
+        if ob:
+            arp.append(ob)
 
     latest_items = arp
 
