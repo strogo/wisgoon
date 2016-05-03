@@ -70,7 +70,7 @@ def user_details(request, user_id):
     user_profile = Profile.objects.get(id=user_id)
 
     details['profile'] = get_profile_data(user.profile, enable_imei=True)
-    details['user_id'] = user_id
+    details['user_id'] = int(user_id)
     details['cnt_post'] = user_profile.cnt_post
     details['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
 
