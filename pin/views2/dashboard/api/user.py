@@ -1,20 +1,19 @@
-from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.translation import ugettext as _
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
+from django.views.decorators.csrf import csrf_exempt
 
+from haystack.query import Raw
 from haystack.query import SearchQuerySet
 from haystack.query import SQ
-from haystack.query import Raw
 
-from pin.tools import get_user_ip
-from pin.api_tools import media_abs_url
-from pin.models import PhoneData, BannedImei, Log
-from pin.views2.dashboard.api.tools import get_profile_data
 from pin.api6.tools import get_next_url, get_simple_user_object
 from pin.api6.http import return_json_data, return_un_auth, return_not_found,\
     return_bad_request
-from pin.views2.dashboard.api.tools import check_admin,\
+from pin.api_tools import media_abs_url
+from pin.models import PhoneData, BannedImei, Log
+from pin.tools import get_user_ip
+from pin.views2.dashboard.api.tools import get_profile_data, check_admin,\
     cnt_post_deleted_by_admin
 
 from user_profile.models import Profile
@@ -73,18 +72,20 @@ def user_details(request, user_id):
     details['profile'] = get_profile_data(user.profile, enable_imei=True)
 
     ban_profile_log = Log.objects\
-        .filter(object_id=user.id, content_type=Log.USER, action=Log.BAN_ADMIN).order_by('-id')[:1]
+        .filter(object_id=user.id, content_type=Log.USER,
+                action=Log.BAN_ADMIN).order_by('-id')[:1]
+
     ban_imei_log = Log.objects\
-        .filter(owner=user.id, content_type=Log.USER, action=Log.BAN_IMEI).order_by('-id')[:1]
+        .filter(owner=user.id, content_type=Log.USER,
+                action=Log.BAN_IMEI).order_by('-id')[:1]
 
     active_log = Log.objects\
-        .filter(owner=user.id, content_type=Log.USER, action=Log.ACTIVE_USER).order_by('-id')[:1]
+        .filter(owner=user.id, content_type=Log.USER,
+                action=Log.ACTIVE_USER).order_by('-id')[:1]
 
     inactive_log = Log.objects\
-        .filter(owner=user.id, content_type=Log.USER, action=Log.DEACTIVE_USER).order_by('-id')[:1]
-
-    print active_log.query
-
+        .filter(owner=user.id, content_type=Log.USER,
+                action=Log.DEACTIVE_USER).order_by('-id')[:1]
 
     details['profile']['ban_profile_desc'] = str(ban_profile_log[0].text) if ban_profile_log else ''
     details['profile']['ban_imei_desc'] = str(ban_imei_log[0].text) if ban_imei_log else ''
@@ -187,7 +188,10 @@ def banned_profile(request):
                              user_id=profile.user.id,
                              text="%s || %s" % (profile.user.username, description),
                              ip_address=get_user_ip(request))
-        data = {'status': True, 'message': _("Successfully Change Profile banned.")}
+        data = {
+            'status': True,
+            'message': _("Successfully Change Profile banned.")
+        }
         data['user'] = get_simple_user_object(profile.user.id)
         data['profile'] = get_profile_data(profile)
         data['profile']['description2'] = description
