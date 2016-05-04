@@ -76,7 +76,7 @@ def user_details(request, user_id):
                 action=Log.BAN_ADMIN).order_by('-id')[:1]
 
     ban_imei_log = BannedImei.objects\
-        .filter(owner=user.id).order_by('-id')[:1]
+        .filter(user=user.id).order_by('-id')[:1]
 
     active_log = Log.objects\
         .filter(owner=user.id, content_type=Log.USER,
