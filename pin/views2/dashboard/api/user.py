@@ -71,9 +71,9 @@ def user_details(request, user_id):
 
     details['profile'] = get_profile_data(user.profile, enable_imei=True)
 
-    ban_profile_log = Log.objects\
-        .filter(object_id=user.id, content_type=Log.USER,
-                action=Log.BAN_ADMIN).order_by('-id')[:1]
+    # ban_profile_log = Log.objects\
+    #     .filter(object_id=user.id, content_type=Log.USER,
+    #             action=Log.BAN_ADMIN).order_by('-id')[:1]
 
     ban_imei_log = BannedImei.objects\
         .filter(user=user.id).order_by('-id')[:1]
@@ -86,7 +86,7 @@ def user_details(request, user_id):
         .filter(object_id=user.id, content_type=Log.USER,
                 action=Log.BAN_ADMIN).order_by('-id')[:1]
 
-    details['profile']['ban_profile_desc'] = str(ban_profile_log[0].text) if ban_profile_log else ''
+    # details['profile']['ban_profile_desc'] = str(ban_profile_log[0].text) if ban_profile_log else ''
     details['profile']['ban_imei_desc'] = str(ban_imei_log[0].description) if ban_imei_log else ''
     details['profile']['active_desc'] = str(active_log[0].text) if active_log else ''
     details['profile']['inactive_desc'] = str(inactive_log[0].text) if inactive_log else ''
