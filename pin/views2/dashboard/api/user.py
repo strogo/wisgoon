@@ -68,7 +68,7 @@ def user_details(request, user_id):
         user = User.objects.get(id=user_id)
     except:
         return return_not_found()
-    user_profile = Profile.objects.get_or_create(id=user_id)
+    user_profile = Profile.objects.get_or_create(user_id=user_id)
 
     details['profile'] = get_profile_data(user.profile, enable_imei=True)
 
