@@ -83,7 +83,7 @@ def user_details(request, user_id):
                 action=Log.ACTIVE_USER).order_by('-id')[:1]
 
     inactive_log = Log.objects\
-        .filter(owner=user.id, content_type=Log.USER,
+        .filter(object_id=user.id, content_type=Log.USER,
                 action=Log.BAN_ADMIN).order_by('-id')[:1]
 
     details['profile']['ban_profile_desc'] = str(ban_profile_log[0].text) if ban_profile_log else ''
