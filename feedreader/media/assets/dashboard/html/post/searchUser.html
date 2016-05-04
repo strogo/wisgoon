@@ -42,13 +42,13 @@
               <div class="clear"></div>
             </div>
             <div class="modal fade userIinfoModal" id="userInfo{[{resultItem.id}]}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-              <div class="loading" ng-show='loading'>
-                <div id="mySpinner"  class="loader">Loading...</div>
-              </div>
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header hidden-md hidden-lg">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  </div>
+                  <div class="loading" ng-show='loading'>
+                    <div id="mySpinner"  class="loader">Loading...</div>
                   </div>
                   <div class="modal-body">
                     <div class="userIinfo">
@@ -60,13 +60,13 @@
                             <li class="postInfo">
                               <label>تعداد پست ها:</label>
                               <span>
-                              {[{searchInfo.cnt_post}]}
+                                {[{searchInfo.cnt_post}]}
                               </span>
                             </li>
                             <li class="postInfo">
                               <label>تعداد پست های حذف شده توسط ادمین:</label>
                               <span>
-                              {[{searchInfo.cnt_admin_deleted}]}
+                                {[{searchInfo.cnt_admin_deleted}]}
                               </span>
                             </li>
                             <li>

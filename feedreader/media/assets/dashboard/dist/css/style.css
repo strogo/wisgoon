@@ -385,9 +385,6 @@ table img {
 	float: left;
 }
 
-.resize {
-	width: 900px !important;
-}
 .filter a:hover,
 .filter a:active,
 .filter a:focus {
@@ -717,7 +714,7 @@ table img {
 	width: 479px;
 	background-color: #e9e9e9;
 	margin-top: 10px;
-	z-index: 1000;
+	z-index: 100;
 	-webkit-transition: all 1s ease;/* Safari 3.2+, Chrome */
 	-moz-transition: all 1s ease;/* Firefox 4-15 */
 	-o-transition: all 1s ease;/* Opera 10.5-12.00 */
