@@ -12,34 +12,34 @@ gulp.task('templates', function() {
 
 
 gulp.task('minify-css', function() {
-    return gulp.src('./feedreader/media/v2/css_org/*.css')
+    return gulp.src('./feedreader/media/assets/v2/css_org/*.css')
     .pipe(minifyCss({compatibility: 'ie8'}))
-    .pipe(gulp.dest('./feedreader/media/v2/css'));
+    .pipe(gulp.dest('./feedreader/media/assets/v2/css'));
 });
 
 gulp.task('minify-css-shop', function() {
-    return gulp.src('./feedreader/media/shop/css_org/*.css')
+    return gulp.src('./feedreader/media/assets/shop/css_org/*.css')
     .pipe(minifyCss({compatibility: 'ie8'}))
-    .pipe(gulp.dest('./feedreader/media/shop/css'));
+    .pipe(gulp.dest('./feedreader/media/assets/shop/css'));
 });
 
 gulp.task('css', function() {
-    return gulp.src("./feedreader/media/v2/css")
+    return gulp.src("./feedreader/media/assets/v2/css")
     .pipe(browserSync.stream());
 });
 
 gulp.task('css-shop', function() {
-    return gulp.src("./feedreader/media/shop/css")
+    return gulp.src("./feedreader/media/assets/shop/css")
     .pipe(browserSync.stream());
 });
 gulp.task('sass', function () {
-    gulp.src('./feedreader/media/v2/scss/*.scss')
+    gulp.src('./feedreader/media/assets/v2/scss/*.scss')
     .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./feedreader/media/v2/css'));
+    .pipe(gulp.dest('./feedreader/media/assets/v2/css'));
 });
 
 gulp.task('sass:watch', function () {
-    gulp.watch('./feedreader/media/v2/scss/*.scss', ['sass']);
+    gulp.watch('./feedreader/media/assets/v2/scss/*.scss', ['sass']);
 });
 
 gulp.task('default', ['css', 'css-shop', 'minify-css', 'minify-css-shop'], function() {
@@ -49,10 +49,10 @@ gulp.task('default', ['css', 'css-shop', 'minify-css', 'minify-css-shop'], funct
         proxy: "0.0.0.0:8000"
     });
 
-    gulp.watch("./feedreader/media/v2/css_org/*.css", ['minify-css', 'css']);
-    gulp.watch("./feedreader/media/v2/css/*.css", ['css']);
-    gulp.watch("./feedreader/media/shop/css_org/*.css", ['minify-css-shop', 'css-shop']);
-    gulp.watch("./feedreader/media/shop/css/*.css", ['css-shop']);
+    gulp.watch("./feedreader/media/assets/v2/css_org/*.css", ['minify-css', 'css']);
+    gulp.watch("./feedreader/media/assets/v2/css/*.css", ['css']);
+    gulp.watch("./feedreader/media/assets/shop/css_org/*.css", ['minify-css-shop', 'css-shop']);
+    gulp.watch("./feedreader/media/assets/shop/css/*.css", ['css-shop']);
     // gulp.watch("./pin/templates/**/*.html", ['templates']);
 
 });

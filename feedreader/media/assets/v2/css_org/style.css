@@ -1391,6 +1391,32 @@ i.time_icon,
 	margin-right: 0;
 	margin-left: 0;
 }
+#pin-form-from-url #image_control {
+	position: relative;
+}
+#pin-form-from-url #image_control .img-move{
+	background: #FF6B01;
+	border-radius: 50px;
+	color: #fff;
+	padding: 9px 13px;
+	position: absolute;
+	z-index: 5000;
+	top: 50%;
+}
+#pin-form-from-url #image_control .img-move.left{
+	left: 0;
+}
+#pin-form-from-url #image_control .img-move.right{
+	right: 0;
+}
+#pin-form-from-url #image_control #images{
+	text-align: center;
+}
+#pin-form-from-url #image_control #ajx-img{
+	margin-top: 10px;
+	max-width: 500px;
+	max-height: 500px;
+}
 
 .ltr{
 	text-align: left;
@@ -3017,6 +3043,37 @@ div.comment div div.row:hover .del-comment{
 }
 .pro_box_thumb img{
 	border-radius: 8px;
+}
+
+.disable_box {
+	background: rgba(255, 255, 255, 0.90);
+	height: 100%;
+	position: absolute;
+	width: 100%;
+	z-index: 999999;
+	border-radius: 10px;
+}
+.disable_box .df{
+	display: flex;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+	padding: 50px;
+	flex-direction: column;
+}
+.disable_box h1,
+.disable_box h3{
+	flex-flow: column nowrap;
+	margin: auto;
+	text-align: center;
+	width: 65%;
+}
+.disable_box h1{
+	color: #FF6B01;
+	line-height: 60px;
+}
+.disable_box h4{
+	color: #3CB100;
 }
 
 @media (max-width: 1200px) {
