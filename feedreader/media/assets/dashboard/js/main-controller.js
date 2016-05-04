@@ -71,9 +71,14 @@ app.controller('checkpController',['$scope','$http', '$timeout', function($scope
 	};
 	$scope.filter = function (score){
 		$scope.scoreFilter = score;
-		if (score > 0) {
+		if (score > 0.3){
 			$scope.scoreFilterText = "اولویت‌های بالای " + score + " درصد";
-		}else{
+		}else if (score > 0.5){
+			$scope.scoreFilterText = "اولویت‌های بالای " + score + " درصد";
+		}else if (score > 0.7){
+			$scope.scoreFilterText = "اولویت‌های بالای " + score + " درصد";
+		}
+		else{
 			$scope.scoreFilterText = "همه";
 		}
 
