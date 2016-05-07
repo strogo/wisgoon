@@ -16,7 +16,7 @@ from pin.models import Post, Follow, Likes, Category, Comments,\
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
     get_user_ip, get_delta_timestamp, AuthCache
 
-from pin.model_mongo import Ads
+from pin.model_mongo import Ads, MonthlyStats
 from pin.models_redis import LikesRedis
 
 from pin.api6.tools import post_item_json
@@ -478,18 +478,19 @@ def user_like(request, user_id):
 
     if request.is_ajax():
         if latest_items:
-            return render(request,
-                          'pin2/_items_2.html',
-                          {'latest_items': latest_items})
+            return render(request, 'pin2/_items_2.html', {
+                'latest_items': latest_items
+            })
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin2/user__likes.html',
-                      {'latest_items': latest_items,
-                       'user_id': user_id,
-                       'page': "profile",
-                       'profile': profile,
-                       'cur_user': user})
+        return render(request, 'pin2/user__likes.html', {
+            'latest_items': latest_items,
+            'user_id': user_id,
+            'page': "profile",
+            'profile': profile,
+            'cur_user': user
+        })
 
 
 def absuser_like(request, user_namel):
@@ -522,9 +523,9 @@ def absuser_like(request, user_namel):
 
     if request.is_ajax():
         if latest_items:
-            return render(request,
-                          'pin2/_items_2_v6.html',
-                          {'latest_items': latest_items})
+            return render(request, 'pin2/_items_2_v6.html', {
+                'latest_items': latest_items
+            })
         else:
             return HttpResponse(0)
 
@@ -722,20 +723,27 @@ def absuser(request, user_name=None):
 
     timestamp = get_request_timestamp(request)
     if timestamp == 0:
-        latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
+        lt = Post.objects.only('id').filter(user=user_id)\
             .order_by('-timestamp')[:20]
     else:
-        latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
+        lt = Post.objects.only('id').filter(user=user_id)\
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
+
+    latest_items = []
+    for li in lt:
+        pob = post_item_json(li.id, cur_user_id=request.user.id)
+        if pob:
+            latest_items.append(pob)
 
     profile.cnt_follower = Follow.objects.filter(following_id=user.id).count()
     profile.cnt_following = Follow.objects.filter(follower_id=user.id).count()
 
     if request.is_ajax():
-        if latest_items.exists():
-            return render(request, 'pin2/_items_2_1.html', {
-                'latest_items': latest_items
+        if latest_items:
+            return render(request, 'pin2/_items_2_v6.html', {
+                'latest_items': latest_items,
+                'ptime': True,
             })
         else:
             return HttpResponse(0)
@@ -751,6 +759,7 @@ def absuser(request, user_name=None):
 
     return render(request, 'pin2/user.html', {
         'latest_items': latest_items,
+        'ptime': True,
         'follow_status': follow_status,
         'following_status': following_status,
         'ban_by_admin': ban_by_admin,
@@ -761,15 +770,8 @@ def absuser(request, user_name=None):
 
 
 def item(request, item_id):
-    from pin.model_mongo import MonthlyStats
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
 
-    enable_cacing = False
-    if not request.user.is_authenticated():
-        enable_cacing = False
-        cd = cache.get("page_v1_%s" % item_id)
-        if cd:
-            return cd
     try:
         post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
@@ -785,7 +787,6 @@ def item(request, item_id):
 
     post.tag = []
 
-    from models_redis import LikesRedis
     post.likes = LikesRedis(post_id=post.id)\
         .get_likes(offset=0, limit=5, as_user_object=True)
 
@@ -798,20 +799,17 @@ def item(request, item_id):
     related_url = reverse('pin-item-related', args=[post.id])
 
     if request.is_ajax():
-        return render(request, 'pin2/items_inner.html',
-                      {'post': post, 'follow_status': follow_status})
-    else:
-        d = render(request, 'pin2/item.html', {
-            'post': post,
-            'follow_status': follow_status,
-            'comments_url': comments_url,
-            'page': 'item',
-            'related_url': related_url,
-        }, content_type="text/html")
-        if enable_cacing:
-            cache.set("page_v1_%s" % item_id, d, 300)
+        return render(request, 'pin2/items_inner.html', {
+            'post': post, 'follow_status': follow_status
+        })
 
-        return d
+    return render(request, 'pin2/item.html', {
+        'post': post,
+        'follow_status': follow_status,
+        'comments_url': comments_url,
+        'page': 'item',
+        'related_url': related_url,
+    }, content_type="text/html")
 
 
 def post_likers(request, post_id, offset=0):
