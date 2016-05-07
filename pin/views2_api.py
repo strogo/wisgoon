@@ -544,10 +544,6 @@ def post2(request):
             pop_posts = SearchQuerySet().models(Post)\
                 .order_by('-cnt_like_i')[0:30]
 
-    cache_stream_str = "v21%s_%s" % (str(filters), sort_by)
-
-    cache_stream_name = md5(cache_stream_str).hexdigest()
-
     posts = []
 
     if popular:
@@ -556,6 +552,8 @@ def post2(request):
             po = get_list_post2(p.pk, cur_user_id=cur_user)
             if po:
                 posts.append(po)
+
+        posts = get_list_post2(posts)
 
     elif not category_id and not popular and not user_id:
         if not before:
@@ -566,9 +564,7 @@ def post2(request):
     elif category_id and len(category_ids) == 1:
         if not before:
             before = 0
-
         pl = Post.latest(pid=before, cat_id=category_id)
-        from_model = "%s_%s" % (settings.STREAM_LATEST_CAT, category_id)
         posts = get_list_post2(pl, cur_user_id=cur_user)
 
     else:
@@ -577,7 +573,7 @@ def post2(request):
             .filter(**filters).order_by(*sort_by)[:10]
         pl = [oib.id for oib in posts]
 
-        posts = get_list_post2(pl)
+        posts = get_list_post2(pl, cur_user_id=cur_user)
         # if not posts:
         #     posts = Post.objects\
         #         .only(*Post.NEED_KEYS2)\
@@ -609,7 +605,7 @@ def post2(request):
         ad = Ad.get_ad(user_id=viewer_id)
         if ad:
             hot_post = int(ad.post_id)
-            posts.append(hot_post)
+            posts.append(get_list_post2(pl, cur_user_id=cur_user))
         # if hot_post:
         #     exists_posts = False
         #     for ppp in posts:
