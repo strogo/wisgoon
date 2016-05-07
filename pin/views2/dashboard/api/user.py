@@ -75,25 +75,38 @@ def user_details(request, user_id):
     #     .filter(object_id=user.id, content_type=Log.USER,
     #             action=Log.BAN_ADMIN).order_by('-id')[:1]
 
-    ban_imei_log = UserLog.objects.filter(user=user.id,
-                                          action=UserLog.BAN_IMEI).order_by('-id')[:1]
+    ban_imei_log = UserLog.objects\
+        .filter(user=user.id,
+                action=UserLog.BAN_IMEI).order_by('-id')[:1]
+
+    ban_profile_log = UserLog.objects\
+        .filter(user=user.id,
+                action=UserLog.DEBAN_PROFILE).order_by('-id')[:1]
+
+    inactive_log = UserLog.objects\
+        .filter(user=user.id,
+                action=UserLog.DEACTIVE).order_by('-id')[:1]
+
+    active_log = UserLog.objects\
+        .filter(user=user.id,
+                action=UserLog.ACTIVE).order_by('-id')[:1]
+
+    # active_log = Log.objects\
+    #     .filter(owner=user.id, content_type=Log.USER,
+    #             action=Log.ACTIVE_USER).order_by('-id')[:1]
 
     # ban_imei_log = BannedImei.objects\
     #     .filter(user=user.id).order_by('-id')[:1]
 
-    active_log = Log.objects\
-        .filter(owner=user.id, content_type=Log.USER,
-                action=Log.ACTIVE_USER).order_by('-id')[:1]
+    # inactive_log = Log.objects\
+    #     .filter(object_id=user.id, content_type=Log.USER,
+    #             action=Log.BAN_ADMIN).order_by('-id')[:1]
 
-    inactive_log = Log.objects\
-        .filter(object_id=user.id, content_type=Log.USER,
-                action=Log.BAN_ADMIN).order_by('-id')[:1]
-
-    # details['profile']['ban_profile_desc'] = str(ban_profile_log[0].text)\
-    # if ban_profile_log else ''
+    details['profile']['ban_profile_desc'] = str(ban_profile_log[0].description)\
+        if ban_profile_log else ''
     details['profile']['ban_imei_desc'] = str(ban_imei_log[0].description) if ban_imei_log else ''
-    details['profile']['active_desc'] = str(active_log[0].text) if active_log else ''
-    details['profile']['inactive_desc'] = str(inactive_log[0].text) if inactive_log else ''
+    details['profile']['active_desc'] = str(active_log[0].description) if active_log else ''
+    details['profile']['inactive_desc'] = str(inactive_log[0].description) if inactive_log else ''
     details['user_id'] = int(user_id)
     details['cnt_post'] = user_profile.cnt_post
     details['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
@@ -136,8 +149,8 @@ def change_status_user(request):
                             text=desc + desc,
                             ip_address=get_user_ip(request))
 
-            UserLog.objects.create(user_id=current_user.id,
-                                   actor_id=user.id,
+            UserLog.objects.create(user_id=user.id,
+                                   actor_id=current_user.id,
                                    description=desc,
                                    action=UserLog.ACTIVE)
         else:
@@ -148,8 +161,8 @@ def change_status_user(request):
                               text=desc + desc,
                               ip_address=get_user_ip(request))
 
-            UserLog.objects.create(user_id=current_user.id,
-                                   actor_id=user.id,
+            UserLog.objects.create(user_id=user.id,
+                                   actor_id=current_user.id,
                                    description=desc,
                                    action=UserLog.DEACTIVE)
 
