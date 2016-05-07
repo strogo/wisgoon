@@ -1602,10 +1602,12 @@ class UserLog(models.Model):
         (BAN_IMEI, _("BAN IMEI")),
     )
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_log")
-    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor_log")
     description = models.TextField()
     action = models.IntegerField(choices=ACTIONS, default=ACTIVE)
+    create_time = models.DateTimeField(auto_now=True)
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_log")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor_log")
 
 
 class Commitment(models.Model):
