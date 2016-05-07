@@ -478,18 +478,19 @@ def user_like(request, user_id):
 
     if request.is_ajax():
         if latest_items:
-            return render(request,
-                          'pin2/_items_2.html',
-                          {'latest_items': latest_items})
+            return render(request, 'pin2/_items_2.html', {
+                'latest_items': latest_items
+            })
         else:
             return HttpResponse(0)
     else:
-        return render(request, 'pin2/user__likes.html',
-                      {'latest_items': latest_items,
-                       'user_id': user_id,
-                       'page': "profile",
-                       'profile': profile,
-                       'cur_user': user})
+        return render(request, 'pin2/user__likes.html', {
+            'latest_items': latest_items,
+            'user_id': user_id,
+            'page': "profile",
+            'profile': profile,
+            'cur_user': user
+        })
 
 
 def absuser_like(request, user_namel):
@@ -522,9 +523,9 @@ def absuser_like(request, user_namel):
 
     if request.is_ajax():
         if latest_items:
-            return render(request,
-                          'pin2/_items_2_v6.html',
-                          {'latest_items': latest_items})
+            return render(request, 'pin2/_items_2_v6.html', {
+                'latest_items': latest_items
+            })
         else:
             return HttpResponse(0)
 
@@ -722,20 +723,27 @@ def absuser(request, user_name=None):
 
     timestamp = get_request_timestamp(request)
     if timestamp == 0:
-        latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
+        lt = Post.objects.only('id').filter(user=user_id)\
             .order_by('-timestamp')[:20]
     else:
-        latest_items = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id)\
+        lt = Post.objects.only('id').filter(user=user_id)\
             .extra(where=['timestamp<%s'], params=[timestamp])\
             .order_by('-timestamp')[:20]
+
+    latest_items = []
+    for li in lt:
+        pob = post_item_json(li.id, cur_user_id=request.user.id)
+        if pob:
+            latest_items.append(pob)
 
     profile.cnt_follower = Follow.objects.filter(following_id=user.id).count()
     profile.cnt_following = Follow.objects.filter(follower_id=user.id).count()
 
     if request.is_ajax():
-        if latest_items.exists():
-            return render(request, 'pin2/_items_2_1.html', {
-                'latest_items': latest_items
+        if latest_items:
+            return render(request, 'pin2/_items_2_v6.html', {
+                'latest_items': latest_items,
+                'ptime': True,
             })
         else:
             return HttpResponse(0)
@@ -751,6 +759,7 @@ def absuser(request, user_name=None):
 
     return render(request, 'pin2/user.html', {
         'latest_items': latest_items,
+        'ptime': True,
         'follow_status': follow_status,
         'following_status': following_status,
         'ban_by_admin': ban_by_admin,
