@@ -58,30 +58,17 @@ def goto_index(request, item_id, status):
     if not request.user.is_superuser:
         return HttpResponseRedirect('/')
 
-    from pin.api6.cache_layer import PostCacheLayer
-
-    if int(status) == 1:
-        Post.objects.filter(pk=item_id).update(show_in_default=True)
-        r_server.lpush(settings.HOME_STREAM, item_id)
-        data = [{
-            'status': 1,
-            'url': reverse('pin-item-goto-index', args=[item_id, 0])
-        }]
-
-        PostCacheLayer(post_id=item_id).show_in_default_change(status=True)
-
-        return HttpResponse(json.dumps(data))
+    status = int(status)
+    if status == 1:
+        Post.add_to_home(post_id=item_id)
     else:
-        r_server.lrem(settings.HOME_STREAM, item_id)
-        Post.objects.filter(pk=item_id).update(show_in_default=False)
-        data = [{
-            'status': 0,
-            'url': reverse('pin-item-goto-index', args=[item_id, 1])
-        }]
+        Post.remove_from_home(post_id=item_id)
+    data = [{
+        'status': status,
+        'url': reverse('pin-item-goto-index', args=[item_id, int(not(status))])
+    }]
 
-        PostCacheLayer(post_id=item_id).show_in_default_change(status=False)
-
-        return HttpResponse(json.dumps(data))
+    return HttpResponse(json.dumps(data))
 
 
 @login_required
