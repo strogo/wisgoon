@@ -4,6 +4,7 @@ try:
 except ImportError:
     import json
 
+import urlparse
 import urllib2
 import hashlib
 
@@ -34,6 +35,7 @@ from pin.models import Post, Category, Likes, Follow, Comments, Block,\
 from pin.model_mongo import Notif, UserLocation
 from pin.models_redis import NotificationRedis
 from pin.cacheLayer import UserDataCache, CategoryDataCache
+from pin.api6.tools import post_item_json
 
 from haystack.query import SearchQuerySet
 
@@ -207,6 +209,72 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
     return objects_list
 
 
+def fix_url(url):
+    path = urlparse.urlparse(url).path
+    path = path.replace('/media/', '')
+    return path
+
+
+def get_objects_list2(posts, cur_user_id, thumb_size, r=None):
+    objects_list = []
+    for p in posts:
+        if not p:
+            continue
+
+        o = {}
+        o['id'] = p['id']
+        o['text'] = p['text']
+        o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
+        o['image'] = fix_url(p['images']['original']['url'])
+
+        o['user_avatar'] = get_avatar(p['user']['id'], size=100)
+        o['user_name'] = UserDataCache.get_user_name(user_id=p['user']['id'])
+
+        o['timestamp'] = p['timestamp']
+
+        o['user'] = p['user']['id']
+        o['url'] = p['url']
+        o['like'] = p['cnt_like']
+        o['likers'] = None
+        o['like_with_user'] = False
+        o['status'] = p['status']
+
+        o['is_ad'] = False
+
+        o['permalink'] = "/pin/%d/" % p['id']
+        o['resource_uri'] = "/pin/api/post/%d/" % p['id']
+
+        if cur_user_id:
+            o['like_with_user'] = Likes.user_in_likers(post_id=p['id'],
+                                                       user_id=cur_user_id)
+
+        if not thumb_size:
+            thumb_size = "236"
+
+        net_quality = "normal"
+        if r:
+            net_quality = str(r.GET.get('net_quality', "normal"))
+
+        try:
+            if net_quality in ["normal", "fast"]:
+                imo = p['images']['low_resolution']
+            else:
+                imo = p['images']['thumbnail']
+        except Exception:
+            continue
+
+        if imo:
+            o['thumbnail'] = fix_url(imo['url'])
+            o['hw'] = "{}x{}".format(imo['height'], imo['width'])
+        else:
+            continue
+        o['category'] = CategoryDataCache\
+            .get_cat_json(category_id=p['category']['id'])
+        objects_list.append(o)
+
+    return objects_list
+
+
 def get_list_post(pl, from_model='latest'):
     arp = []
     pl_str = 'p2_'.join(pl)
@@ -224,6 +292,18 @@ def get_list_post(pl, from_model='latest'):
 
     posts = arp
     cache.set(cache_pl, posts, 3600)
+    return posts
+
+
+def get_list_post2(pl, from_model='latest', cur_user_id=None):
+    arp = []
+
+    for pll in pl:
+        op = post_item_json(pll, cur_user_id=cur_user_id)
+        if op:
+            arp.append(op)
+
+    posts = arp
     return posts
 
 
@@ -391,6 +471,172 @@ def post(request):
                                        cur_user_id=cur_user,
                                        thumb_size=thumb_size,
                                        r=request)
+    json_data = json.dumps(data, cls=MyEncoder)
+    return HttpResponse(json_data, content_type="application/json")
+
+
+def post2(request):
+    data = {}
+    data['meta'] = {'limit': 10,
+                    'next': '',
+                    'offset': 0,
+                    'previous': '',
+                    'total_count': 1000}
+
+    category_ids = []
+    filters = {}
+    cur_user = None
+    before = request.GET.get('before', None)
+    category_id = request.GET.get('category_id', None)
+    popular = request.GET.get('popular', None)
+    user_id = request.GET.get('user_id', None)
+
+    if before:
+        sort_by = ['-timestamp']
+    else:
+        sort_by = ['-is_ads', '-timestamp']
+
+    token = request.GET.get('token', '')
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+
+    if category_id:
+        category_ids = category_id.replace(',', ' ').split(' ')
+        filters.update(dict(category_id__in=category_ids))
+
+    if before:
+        filters.update(dict(id__lt=before))
+
+    if user_id:
+        if cur_user:
+            if Block.objects.filter(user_id=user_id, blocked_id=cur_user)\
+                    .count():
+                return HttpResponse('Blocked')
+
+        sort_by = ['-id']
+        filters.update(dict(user_id=user_id))
+        if cur_user:
+            filters.pop('status', None)
+
+    if popular:
+        sort_by = ['-cnt_like']
+        date_from = None
+
+        dt_now = datetime.datetime.now()
+        dt_now = dt_now.replace(minute=0, second=0, microsecond=0)
+
+        if popular == 'month':
+            date_from = dt_now - datetime.timedelta(days=30)
+        elif popular == 'lastday':
+            date_from = dt_now - datetime.timedelta(days=1)
+        elif popular == 'lastweek':
+            date_from = dt_now - datetime.timedelta(days=7)
+        elif popular == 'lasteigth':
+            date_from = dt_now - datetime.timedelta(days=1)
+
+        if date_from:
+            start_from = time.mktime(date_from.timetuple())
+            pop_posts = SearchQuerySet().models(Post)\
+                .filter(timestamp_i__gt=int(start_from))\
+                .order_by('-cnt_like_i')[0:30]
+        else:
+            start_from = time.mktime(date_from.timetuple())
+            pop_posts = SearchQuerySet().models(Post)\
+                .order_by('-cnt_like_i')[0:30]
+
+    cache_stream_str = "v21%s_%s" % (str(filters), sort_by)
+
+    cache_stream_name = md5(cache_stream_str).hexdigest()
+
+    posts = cache.get(cache_stream_name)
+
+    if popular:
+        posts = []
+        for p in pop_posts:
+            po = get_list_post2(p.pk, cur_user_id=cur_user)
+            if po:
+                posts.append(po)
+
+    elif not category_id and not popular and not user_id:
+        if not before:
+            before = 0
+        pl = Post.latest(pid=before)
+        posts = get_list_post2(pl, cur_user_id=cur_user)
+
+    elif category_id and len(category_ids) == 1:
+        if not before:
+            before = 0
+
+        pl = Post.latest(pid=before, cat_id=category_id)
+        from_model = "%s_%s" % (settings.STREAM_LATEST_CAT, category_id)
+        posts = get_list_post2(pl, cur_user_id=cur_user)
+
+    else:
+        posts = Post.objects\
+            .only('id')\
+            .filter(**filters).order_by(*sort_by)[:10]
+        pl = [oib.id for oib in posts]
+
+        posts = get_list_post2(pl)
+        # if not posts:
+        #     posts = Post.objects\
+        #         .only(*Post.NEED_KEYS2)\
+        #         .filter(**filters).order_by(*sort_by)[:10]
+
+        #     cache.set(cache_stream_name, posts, 86400)
+    # else:
+    #     if user_id:
+    #         posts = Post.objects\
+    #             .only('id')\
+    #             .filter(**filters).order_by(*sort_by)[:10]
+    #         pl = [oib.id for oib in posts]
+
+    #         posts = get_list_post2(pl)
+
+    #     else:
+    #         posts = Post.objects\
+    #             .only(*Post.NEED_KEYS2)\
+    #             .filter(**filters).order_by(*sort_by)[:10]
+    #     print "current", filters
+    if not user_id and not category_id:
+        hot_post = None
+
+        if cur_user:
+            viewer_id = str(cur_user)
+        else:
+            viewer_id = str(get_user_ip(request))
+
+        ad = Ad.get_ad(user_id=viewer_id)
+        if ad:
+            hot_post = int(ad.post_id)
+            posts = list(hot_post) + list(posts)
+        # if hot_post:
+        #     exists_posts = False
+        #     for ppp in posts:
+        #         if not ppp:
+        #             continue
+        #         if ppp.id == hot_post:
+        #             exists_posts = True
+        #             break
+
+        #     if not exists_posts:
+        #         hot_post = Post.objects\
+        #             .only('id')\
+        #             .filter(id=hot_post)
+        #         for h in hot_post:
+        #             h.is_ad = True
+
+    thumb_size = int(request.GET.get('thumb_size', "236"))
+
+    if thumb_size > 400:
+        thumb_size = 500
+    else:
+        thumb_size = "236"
+
+    data['objects'] = get_objects_list2(posts,
+                                        cur_user_id=cur_user,
+                                        thumb_size=thumb_size,
+                                        r=request)
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
 
