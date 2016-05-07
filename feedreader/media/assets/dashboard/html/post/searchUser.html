@@ -79,11 +79,19 @@
                                 <span class="side-up hidden-xs"></span>
                                 <form novalidate ng-submit="activeUser()" >
                                  <div class="col-xs-2 col-md-1 pa0">
-                                  <input type="checkbox" name="activeStatus" id="activeStatus" ng-model="formData.activeStatus" ng-checked="!formData.activeStatus">
+                                  <input type="hidden" name="activeStatus" id="activeStatus" ng-model="formData.activeStatus" ng-checked="!formData.activeStatus">
                                 </div>
                                 <div class="col-xs-9 col-md-9 pa0">
-                                  <input type="text" name="description1" ng-model="formData.description1" placeholder="علت بن شدن کاربر..." >
-
+                                  <select name="description1" id="description1" ng-model="formData.description1">
+                                    <option value="توهین به مقدسات" >مقدسات</option>
+                                    <option value="توهین به مقامات کشوری">مقامات کشوری</option>
+                                    <option value="توهین به کاربران">کاربران</option>
+                                    <option value="محتوای غیر اخلاقی">محتوای غیر اخلاقی</option>
+                                    <option value="نقض حریم خصوصی">نقض حریم خصوصی</option>
+                                    <option value="تکرار تخلف">تکرار تخلف</option>
+                                    <option value="ارسال هرزنامه">ارسال هرزنامه</option>
+                                  </select>
+                                <label>{[{searchInfo.profile.inactive_desc}]}</label>
                                   <input type="hidden" name="activeId" ng-model="formData.activeId">
 
                                 </div>
@@ -105,11 +113,9 @@
                             <span class="side-up hidden-xs"></span>
                             <form novalidate ng-submit="banProfile()" >
                              <div class="col-xs-1 col-md-1 pa0">
-                              <input type="checkbox" name="profileBanstatus" id="profileBanstatus" ng-model="formData.profileBanstatus" ng-checked="formData.profileBanstatus">
+                              <input type="hidden" name="profileBanstatus" id="profileBanstatus" ng-model="formData.profileBanstatus" ng-checked="formData.profileBanstatus">
                             </div>
                             <div class="col-xs-9 col-md-9 pa0">
-                              <input type="text" name="description2" ng-model="formData.description2" placeholder="علت غیر فعال شدن پروفایل کاربر...">
-
                               <input type="hidden" name="profileBanId" ng-model="formData.profileBanId">
 
                             </div>
@@ -124,8 +130,8 @@
                      <li>
                       <label>وضعیت imei :</label>
                       <span ng-hide="searchInfo.profile.imei == ''">
-                        <i class="fa-check fa" ng-show="searchInfo.profile.imei_status"> فعال </i>
-                        <i class="fa-ban fa" ng-show="!searchInfo.profile.imei_status"> غیر فعال </i>
+                        <i class="fa-check fa" ng-show="!searchInfo.profile.imei_status"> فعال </i>
+                        <i class="fa-ban fa" ng-show="searchInfo.profile.imei_status"> غیر فعال </i>
                       </span>
                       <span class="banImeiText" ng-show="searchInfo.profile.imei == ''">
                         این کاربر imei  ندارد.
@@ -134,7 +140,7 @@
                         <span class="side-up hidden-xs"></span>
                         <form novalidate ng-submit="banImei()" >
                          <div class="col-xs-1 col-md-1 pa0">
-                           <input type="checkbox" name="status" id="status" ng-model="formData.status" ng-checked="!formData.status">
+                           <input type="hidden" name="status" id="status" ng-model="formData.status" ng-checked="!formData.status">
                          </div>
                          <div class="col-xs-9 col-md-9 pa0">
                           <input type="text" name="description3" ng-model="formData.description3" placeholder="علت غیر فعال شدن پروفایل کاربر...">
