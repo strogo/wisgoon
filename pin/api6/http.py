@@ -38,5 +38,5 @@ def return_un_auth(message=_("authentication failed")):
 
 
 def return_json_data(data):
-    return HttpResponse(json.dumps(data),
-                        content_type='application/json')
+    jdata = json.dumps(data)
+    return HttpResponse(jdata, content_type='application/json')

@@ -16,7 +16,7 @@ from pin.models import Post, Follow, Likes, Category, Comments,\
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
     get_user_ip, get_delta_timestamp, AuthCache
 
-from pin.model_mongo import Ads
+from pin.model_mongo import Ads, MonthlyStats
 from pin.models_redis import LikesRedis
 
 from pin.api6.tools import post_item_json
@@ -770,15 +770,8 @@ def absuser(request, user_name=None):
 
 
 def item(request, item_id):
-    from pin.model_mongo import MonthlyStats
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
 
-    enable_cacing = False
-    if not request.user.is_authenticated():
-        enable_cacing = False
-        cd = cache.get("page_v1_%s" % item_id)
-        if cd:
-            return cd
     try:
         post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
@@ -794,7 +787,6 @@ def item(request, item_id):
 
     post.tag = []
 
-    from models_redis import LikesRedis
     post.likes = LikesRedis(post_id=post.id)\
         .get_likes(offset=0, limit=5, as_user_object=True)
 
@@ -807,20 +799,17 @@ def item(request, item_id):
     related_url = reverse('pin-item-related', args=[post.id])
 
     if request.is_ajax():
-        return render(request, 'pin2/items_inner.html',
-                      {'post': post, 'follow_status': follow_status})
-    else:
-        d = render(request, 'pin2/item.html', {
-            'post': post,
-            'follow_status': follow_status,
-            'comments_url': comments_url,
-            'page': 'item',
-            'related_url': related_url,
-        }, content_type="text/html")
-        if enable_cacing:
-            cache.set("page_v1_%s" % item_id, d, 300)
+        return render(request, 'pin2/items_inner.html', {
+            'post': post, 'follow_status': follow_status
+        })
 
-        return d
+    return render(request, 'pin2/item.html', {
+        'post': post,
+        'follow_status': follow_status,
+        'comments_url': comments_url,
+        'page': 'item',
+        'related_url': related_url,
+    }, content_type="text/html")
 
 
 def post_likers(request, post_id, offset=0):
