@@ -1590,6 +1590,24 @@ class UserHistory(models.Model):
         UserHistory.objects.filter(user_id=user_id).update(**d)
 
 
+class UserLog(models.Model):
+    BAN_IMEI = 1
+    DEBAN_IMEI = 2
+    BAN_PROFILE = 3
+    DEBAN_PROFILE = 4
+    DEACTIVE = 5
+    ACTIVE = 6
+
+    ACTIONS = (
+        (BAN_IMEI, _("BAN IMEI")),
+    )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_log")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor_log")
+    description = models.TextField()
+    action = models.IntegerField(choices=ACTIONS, default=ACTIVE)
+
+
 class Commitment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     text_commitment = models.CharField(max_length=250)
