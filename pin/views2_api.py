@@ -222,10 +222,18 @@ def get_objects_list2(posts, cur_user_id, thumb_size, r=None):
             continue
 
         o = {}
-        o['id'] = p['id']
+        try:
+            o['id'] = p['id']
+        except TypeError, e:
+            print str(e), p
+            continue
         o['text'] = p['text']
         o['cnt_comment'] = 0 if p['cnt_comment'] == -1 else p['cnt_comment']
-        o['image'] = fix_url(p['images']['original']['url'])
+        try:
+            o['image'] = fix_url(p['images']['original']['url'])
+        except KeyError:
+            print "post original url DoesNotExist", p
+            continue
 
         o['user_avatar'] = get_avatar(p['user']['id'], size=100)
         o['user_name'] = UserDataCache.get_user_name(user_id=p['user']['id'])
