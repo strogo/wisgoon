@@ -586,7 +586,7 @@ def post2(request):
         ad = Ad.get_ad(user_id=viewer_id)
         if ad:
             hot_post = int(ad.post_id)
-            posts.append(get_list_post2(hot_post, cur_user_id=cur_user))
+            posts.append(get_list_post2([hot_post], cur_user_id=cur_user))
 
     thumb_size = int(request.GET.get('thumb_size', "236"))
 
