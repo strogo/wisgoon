@@ -609,7 +609,7 @@ def post2(request):
         ad = Ad.get_ad(user_id=viewer_id)
         if ad:
             hot_post = int(ad.post_id)
-            posts = list(hot_post) + list(posts)
+            posts.append(hot_post)
         # if hot_post:
         #     exists_posts = False
         #     for ppp in posts:
