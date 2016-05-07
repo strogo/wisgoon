@@ -11,7 +11,7 @@ from pin.api6.tools import get_next_url, get_simple_user_object
 from pin.api6.http import return_json_data, return_un_auth, return_not_found,\
     return_bad_request
 from pin.api_tools import media_abs_url
-from pin.models import PhoneData, BannedImei, Log
+from pin.models import PhoneData, BannedImei, Log, UserLog
 from pin.tools import get_user_ip
 from pin.views2.dashboard.api.tools import get_profile_data, check_admin,\
     cnt_post_deleted_by_admin
@@ -75,8 +75,11 @@ def user_details(request, user_id):
     #     .filter(object_id=user.id, content_type=Log.USER,
     #             action=Log.BAN_ADMIN).order_by('-id')[:1]
 
-    ban_imei_log = BannedImei.objects\
-        .filter(user=user.id).order_by('-id')[:1]
+    ban_imei_log = UserLog.objects.filter(user=user.id,
+                                          action=UserLog.BAN_IMEI).order_by('-id')[:1]
+
+    # ban_imei_log = BannedImei.objects\
+    #     .filter(user=user.id).order_by('-id')[:1]
 
     active_log = Log.objects\
         .filter(owner=user.id, content_type=Log.USER,
@@ -86,7 +89,8 @@ def user_details(request, user_id):
         .filter(object_id=user.id, content_type=Log.USER,
                 action=Log.BAN_ADMIN).order_by('-id')[:1]
 
-    # details['profile']['ban_profile_desc'] = str(ban_profile_log[0].text) if ban_profile_log else ''
+    # details['profile']['ban_profile_desc'] = str(ban_profile_log[0].text)\
+    # if ban_profile_log else ''
     details['profile']['ban_imei_desc'] = str(ban_imei_log[0].description) if ban_imei_log else ''
     details['profile']['active_desc'] = str(active_log[0].text) if active_log else ''
     details['profile']['inactive_desc'] = str(inactive_log[0].text) if inactive_log else ''
@@ -180,6 +184,12 @@ def banned_profile(request):
                             owner=profile.user.id,
                             text="%s || %s" % (profile.user.username, description),
                             ip_address=get_user_ip(request))
+
+            UserLog.objects.create(user_id=profile.user.id,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.DEBAN_PROFILE)
+
         else:
             profile.banned = False
             profile.save()
@@ -187,6 +197,11 @@ def banned_profile(request):
                              user_id=profile.user.id,
                              text="%s || %s" % (profile.user.username, description),
                              ip_address=get_user_ip(request))
+
+            UserLog.objects.create(user_id=profile.user.id,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.BAN_PROFILE)
         data = {
             'status': True,
             'message': _("Successfully Change Profile banned.")
@@ -243,6 +258,12 @@ def banned_imei(request):
                                 owner=owner,
                                 text=desc + description,
                                 ip_address=get_user_ip(request))
+
+                UserLog.objects.create(user_id=owner,
+                                       actor_id=current_user.id,
+                                       description=description,
+                                       action=UserLog.DEBAN_IMEI)
+
                 return return_json_data({'status': True,
                                          'message': _("Successfully Unbanned Imei."),
                                          'imei_status': True})
@@ -266,6 +287,11 @@ def banned_imei(request):
             Log.ban_by_imei(actor=current_user,
                             text=desc + description,
                             ip_address=get_user_ip(request))
+
+            UserLog.objects.create(user_id=owner,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.BAN_IMEI)
 
             return return_json_data({'status': True,
                                      'message': _("Successfully banned Imei."),
