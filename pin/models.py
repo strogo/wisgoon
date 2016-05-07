@@ -1600,6 +1600,11 @@ class UserLog(models.Model):
 
     ACTIONS = (
         (BAN_IMEI, _("BAN IMEI")),
+        (DEBAN_IMEI, _("DEBAN IMEI")),
+        (BAN_PROFILE, _("BAN PROFILE")),
+        (DEBAN_PROFILE, _("DEBAN PROFILE")),
+        (DEACTIVE, _("DEACTIVE")),
+        (ACTIVE, _("ACTIVE")),
     )
 
     description = models.TextField()
