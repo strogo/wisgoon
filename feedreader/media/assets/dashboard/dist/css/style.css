@@ -347,6 +347,15 @@ table img {
 	position: relative;
 	bottom: 5px;
 	margin-top: 15px;
+
+}
+.tables-pagination  a {
+  background-color: transparent;
+  border: 1px solid red;
+  border-radius: 5px;
+  color: red;
+  margin-right: 10px;
+  padding: 0 10px;
 }
 .tables-pagination a {
 	border-color: #999 !important;
@@ -1168,4 +1177,12 @@ table img {
 }
 .reset:hover {
 	color: #fff;
+}
+.select span a {
+  background-color: transparent;
+  border: 1px solid red;
+  border-radius: 5px;
+  color: red;
+  margin-right: 10px;
+  padding: 0 10px;
 }
