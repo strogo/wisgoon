@@ -574,26 +574,7 @@ def post2(request):
         pl = [oib.id for oib in posts]
 
         posts = get_list_post2(pl, cur_user_id=cur_user)
-        # if not posts:
-        #     posts = Post.objects\
-        #         .only(*Post.NEED_KEYS2)\
-        #         .filter(**filters).order_by(*sort_by)[:10]
 
-        #     cache.set(cache_stream_name, posts, 86400)
-    # else:
-    #     if user_id:
-    #         posts = Post.objects\
-    #             .only('id')\
-    #             .filter(**filters).order_by(*sort_by)[:10]
-    #         pl = [oib.id for oib in posts]
-
-    #         posts = get_list_post2(pl)
-
-    #     else:
-    #         posts = Post.objects\
-    #             .only(*Post.NEED_KEYS2)\
-    #             .filter(**filters).order_by(*sort_by)[:10]
-    #     print "current", filters
     if not user_id and not category_id:
         hot_post = None
 
@@ -605,22 +586,7 @@ def post2(request):
         ad = Ad.get_ad(user_id=viewer_id)
         if ad:
             hot_post = int(ad.post_id)
-            posts.append(get_list_post2(pl, cur_user_id=cur_user))
-        # if hot_post:
-        #     exists_posts = False
-        #     for ppp in posts:
-        #         if not ppp:
-        #             continue
-        #         if ppp.id == hot_post:
-        #             exists_posts = True
-        #             break
-
-        #     if not exists_posts:
-        #         hot_post = Post.objects\
-        #             .only('id')\
-        #             .filter(id=hot_post)
-        #         for h in hot_post:
-        #             h.is_ad = True
+            posts.append(get_list_post2(hot_post, cur_user_id=cur_user))
 
     thumb_size = int(request.GET.get('thumb_size', "236"))
 
