@@ -135,6 +135,11 @@ def change_status_user(request):
                             owner=user.id,
                             text=desc + desc,
                             ip_address=get_user_ip(request))
+
+            UserLog.objects.create(user_id=current_user.id,
+                                   actor_id=user.id,
+                                   description=desc,
+                                   action=UserLog.ACTIVE)
         else:
             user.is_active = False
             message = _("User Status Is False.")
@@ -142,6 +147,11 @@ def change_status_user(request):
                               owner=user.id,
                               text=desc + desc,
                               ip_address=get_user_ip(request))
+
+            UserLog.objects.create(user_id=current_user.id,
+                                   actor_id=user.id,
+                                   description=desc,
+                                   action=UserLog.DEACTIVE)
 
         user.save()
         data = {'status': True, 'message': message}
