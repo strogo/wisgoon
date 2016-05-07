@@ -548,7 +548,7 @@ def post2(request):
 
     cache_stream_name = md5(cache_stream_str).hexdigest()
 
-    posts = cache.get(cache_stream_name)
+    posts = []
 
     if popular:
         posts = []
