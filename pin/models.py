@@ -1629,9 +1629,9 @@ class UserLog(models.Model):
 class UserPermissions(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
 
-    post = models.TextField(default="")
-    comment = models.TextField(default="")
-    report = models.TextField(default="")
+    post = models.BooleanField(default=True)
+    comment = models.BooleanField(default=True)
+    report = models.BooleanField(default=True)
 
 
 class UserCron(models.Model):
