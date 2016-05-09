@@ -1651,12 +1651,13 @@ class UserCron(models.Model):
         (DISABLE_COMMENT, _("DISABLE COMMENT")),
     )
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    actor = models.ForeignKey(settings.AUTH_USER_MODEL)
-    due_date = create_time = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_cron")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor_cron")
+
+    due_date = models.DateTimeField(auto_now=True)
     action = models.IntegerField(choices=ACTIONS, default=ENABLE_POST)
     after = models.IntegerField(choices=ACTIONS, default=ENABLE_POST)
-    create_time = models.DateTimeField(default=datetime.now)
+    create_time = models.DateTimeField()
 
 
 class Commitment(models.Model):
