@@ -1528,7 +1528,6 @@ class Log(models.Model):
                            text=text,
                            ip_address=ip_address)
 
-
     @classmethod
     def post_pending(cls, post, actor, ip_address="127.0.0.1"):
         Log.objects.create(user=actor,
@@ -1597,6 +1596,12 @@ class UserLog(models.Model):
     DEBAN_PROFILE = 4
     DEACTIVE = 5
     ACTIVE = 6
+    ENABLE_POST = 7
+    DISABLE_POST = 8
+    ENABLE_REPORT = 9
+    DISABLE_REPORT = 10
+    ENABLE_COMMENT = 11
+    DISABLE_COMMENT = 12
 
     ACTIONS = (
         (BAN_IMEI, _("BAN IMEI")),
@@ -1605,6 +1610,12 @@ class UserLog(models.Model):
         (DEBAN_PROFILE, _("DEBAN PROFILE")),
         (DEACTIVE, _("DEACTIVE")),
         (ACTIVE, _("ACTIVE")),
+        (ENABLE_POST, _("ENABLE POST")),
+        (DISABLE_POST, _("DISABLE POST")),
+        (ENABLE_REPORT, _("ENABLE REPORT")),
+        (DISABLE_REPORT, _("DISABLE REPORT")),
+        (ENABLE_COMMENT, _("ENABLE COMMENT")),
+        (DISABLE_COMMENT, _("DISABLE COMMENT")),
     )
 
     description = models.TextField()
@@ -1613,6 +1624,39 @@ class UserLog(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_log")
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor_log")
+
+
+class UserPermissions(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+
+    post = models.TextField(default="")
+    comment = models.TextField(default="")
+    report = models.TextField(default="")
+
+
+class UserCron(models.Model):
+    ENABLE_POST = 1
+    DISABLE_POST = 2
+    ENABLE_REPORT = 3
+    DISABLE_REPORT = 4
+    ENABLE_COMMENT = 5
+    DISABLE_COMMENT = 6
+
+    ACTIONS = (
+        (ENABLE_POST, _("ENABLE POST")),
+        (DISABLE_POST, _("DISABLE POST")),
+        (ENABLE_REPORT, _("ENABLE REPORT")),
+        (DISABLE_REPORT, _("DISABLE REPORT")),
+        (ENABLE_COMMENT, _("ENABLE COMMENT")),
+        (DISABLE_COMMENT, _("DISABLE COMMENT")),
+    )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL)
+    due_date = create_time = models.DateTimeField(auto_now=True)
+    action = models.IntegerField(choices=ACTIONS, default=ENABLE_POST)
+    after = models.IntegerField(choices=ACTIONS, default=ENABLE_POST)
+    create_time = models.DateTimeField(default=datetime.now)
 
 
 class Commitment(models.Model):
