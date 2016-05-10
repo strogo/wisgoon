@@ -14,6 +14,6 @@ urlpatterns = patterns('shop.views',
                        url(r'^cart/$', 'cart', name='shop-cart'),
                        url(r'^address/info/$', 'address', name='shop-address'),
                        url(r'^confirm/$', 'confirm', name='shop-confirm'),
-                       url(r'^hesabit/redirect/$', 'hesabit_redirect',
+                       url(r'^hesabit/redirect/$', 'get_access_token',
                            name='shop-hesabit-redirect'),
                        )
