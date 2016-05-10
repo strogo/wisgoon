@@ -79,7 +79,6 @@
 		action = $(this).attr('rel');
 		cur_id_change(action);
 		im = images[cur_id];
-		console.log(im);
 		$("#ajx-img").attr('src', im);
 		$("#image_url").val(im);
 	});
@@ -106,24 +105,31 @@
 			error_alert();
 			return false;
 		}
+		
 		$.each(data, function(index, element) {
 			var tmpImg = new Image();
 			tmpImg.src= element;
 			$(tmpImg).on('load',function(){
 				var orgWidth = tmpImg.width;
 				var orgHeight = tmpImg.height;
-				if (orgWidth >= 235 && orgHeight >= 236) {
+				if (orgWidth >= 236 && orgHeight >= 236) {
 					images.push(element);
 				};
+
+				if (index == data.length-1) {
+					if (images.length == 0) {
+						alertify.error("هیچ تصویری با اندازه بزرگتر از ۲۳۶پیکسل \n در این صفحه پیدا نشد! \n لطفا دوباره تلاش کنید");
+						$("#btn-pin-url").val('بررسی لینک').removeClass('disabled');
+					}else{
+						start_images();
+					}
+				};
 			});
+
+
 		});
 
-		if (images.length == 0) {
-			alertify.error("هیچ تصویری با اندازه بزرگتر از ۲۳۶پیکسل \n در این صفحه پیدا نشد! \n لطفا دوباره تلاش کنید");
-			$("#btn-pin-url").val('بررسی لینک').removeClass('disabled');
-		}else{
-			start_images();
-		}
+		
 	}
 
 
