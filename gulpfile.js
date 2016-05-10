@@ -1,6 +1,6 @@
 var gulp        = require('gulp');
 var browserSync = require('browser-sync').create();
-var sass        = require('gulp-sass');
+// var sass        = require('gulp-sass');
 var minifyCss   = require('gulp-minify-css');
 var reload      = browserSync.reload;
 
@@ -32,15 +32,15 @@ gulp.task('css-shop', function() {
     return gulp.src("./feedreader/media/assets/shop/css")
     .pipe(browserSync.stream());
 });
-gulp.task('sass', function () {
-    gulp.src('./feedreader/media/assets/v2/scss/*.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./feedreader/media/assets/v2/css'));
-});
+// gulp.task('sass', function () {
+//     gulp.src('./feedreader/media/assets/v2/scss/*.scss')
+//     .pipe(sass().on('error', sass.logError))
+//     .pipe(gulp.dest('./feedreader/media/assets/v2/css'));
+// });
 
-gulp.task('sass:watch', function () {
-    gulp.watch('./feedreader/media/assets/v2/scss/*.scss', ['sass']);
-});
+// gulp.task('sass:watch', function () {
+//     gulp.watch('./feedreader/media/assets/v2/scss/*.scss', ['sass']);
+// });
 
 gulp.task('default', ['css', 'css-shop', 'minify-css', 'minify-css-shop'], function() {
 // gulp.task('default', ['sass', 'css', 'minify-css', 'templates'], function() {

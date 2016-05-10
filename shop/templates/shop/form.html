@@ -1,0 +1,74 @@
+{% extends "shop/base_clear.html" %}
+{% block content %}
+<div class="invoice_form wis_form box ofh mato50">
+    <div class="logo_box">
+        <div class="wis_new_logo w100">
+            <img src="{{STATIC_CDN}}v2/images/new_logo.png" alt="">
+
+        </div>
+    </div>
+    <div class="form_box">
+        <h3 class="orange_t">ماگ طرح قلب ویسگون</h3>
+        <h5>MUG-12-HEART</h5>
+        <hr>
+        <form method="post" class="form">
+            <div class="form-group with_icon col-md-6 col-xs-12">
+                <label>نام</label>
+                <input type="text" class="form-control ltr wis_input" placeholder="نام" />
+                <span class="icon username"></span>
+            </div>
+
+            <div class="form-group with_icon col-md-6 col-xs-12">
+                <label>نام خانوادگی</label>
+                <input type="text" class="form-control ltr wis_input" placeholder="نام خانوادگی" />
+                <span class="icon username"></span>
+            </div>
+
+            <div class="form-group with_icon col-md-6 col-xs-12">
+                <label>ایمیل</label>
+                <input type="text" class="form-control ltr wis_input" placeholder="ایمیل" />
+                <span class="icon username"></span>
+            </div>
+
+            <div class="form-group with_icon col-md-6 col-xs-12">
+                <label>موبایل</label>
+                <input type="text" class="form-control ltr wis_input" placeholder="موبایل" />
+                <span class="icon username"></span>
+            </div>
+
+            <div class="form-group with_icon col-md-12">
+                <label>نشانی</label>
+                <textarea name="address" class="form-control ltr wis_input" id="id_address" cols="30" rows="4"></textarea>
+            </div>
+
+            <div class="form-group with_icon col-md-6 col-xs-12">
+                <label>تعداد</label>
+                <input type="number" class="form-control ltr wis_input" value="1" placeholder="تعداد" />
+                <span class="icon username"></span>
+            </div>
+
+            <div class="form-group with_icon col-md-6 col-xs-12">
+                <label>قیمت هر عدد</label>
+                <label class="form-control ltr wis_input"> ۲۰۰۰۰ تومان </label>
+                <span class="icon username"></span>
+            </div>
+
+            <div class="form-group with_icon col-md-12">
+                <label>جمله موردنظر شما</label> <br>
+                <small >این جمله باید حداکثر ۲۰ کلمه باشد.</small>
+                <textarea name="desc" class="form-control ltr wis_input" id="id_address" rows="2"></textarea>
+                <span class="icon username"></span>
+            </div>
+
+            <div class="clear"></div>
+
+            
+            <div class="tace col-md-12">
+                <input type="submit" value='ثبت خرید' class="wis_btn pull-left green mato50 mabo50 w50">
+            </div>
+        </form>
+    </div>
+    <div class="clear"></div>
+
+</div>
+{% endblock%}

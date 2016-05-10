@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('shop.views',
     url(r'^$', 'home', name='shop-home'),
@@ -8,4 +8,5 @@ urlpatterns = patterns('shop.views',
     url(r'^cart/$', 'cart', name='shop-cart'),
     url(r'^address/info/$', 'address', name='shop-address'),
     url(r'^confirm/$', 'confirm', name='shop-confirm'),
+    url(r'^form/$', 'form', name='shop-form'),
 )
