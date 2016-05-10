@@ -71,9 +71,14 @@ app.controller('checkpController',['$scope','$http', '$timeout', function($scope
 	};
 	$scope.filter = function (score){
 		$scope.scoreFilter = score;
-		if (score > 0) {
+		if (score > 0){
 			$scope.scoreFilterText = "اولویت‌های بالای " + score + " درصد";
-		}else{
+		}else if (score > 0.5){
+			$scope.scoreFilterText = "اولویت‌های بالای " + score + " درصد";
+		}else if (score > 0.7){
+			$scope.scoreFilterText = "اولویت‌های بالای " + score + " درصد";
+		}
+		else{
 			$scope.scoreFilterText = "همه";
 		}
 
@@ -333,7 +338,7 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 		});
 	};
 	$scope.getInfo = function(cmId) {
-
+		$scope.loading = true;
 		$http.get('/dashboard/api/user/details/'+cmId+'/').success(function(data){
 			$scope.searchInfo = data.objects;
 			if (data.objects.profile.user_active) {
@@ -617,7 +622,7 @@ app.controller('deleteAvatarController',function($scope,$http,$location) {
 	$scope.delAvatar = function(uId) {
 		$http.get("/dashboard/api/user/removeAvatar/"+uId+"/")
 		.success(function(data){
-			
+			$( ".user_avatar img").remove();
 		});
 	};	
 });

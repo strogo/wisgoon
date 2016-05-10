@@ -238,6 +238,8 @@ class Post(models.Model):
     MLT_CACHE_STR = "mlt:2{}{}"
     MLT_CACHE_TTL = 43200  # 12 hours
 
+    HOME_QUEUE_NAME = "home_queue"
+
     PENDING = 0
     APPROVED = 1
     FAULT = 2
@@ -321,6 +323,27 @@ class Post(models.Model):
                     format(new_url, r.get_label_text())
                 o.append(href)
         return o
+
+    @classmethod
+    def add_to_home(cls, post_id):
+        r_server.lrem(cls.HOME_QUEUE_NAME, post_id)
+        r_server.rpush(cls.HOME_QUEUE_NAME, post_id)
+        Post.objects.filter(pk=post_id).update(show_in_default=True)
+        PostCacheLayer(post_id=post_id).show_in_default_change(status=True)
+
+    @classmethod
+    def remove_from_home(cls, post_id):
+        r_server.lrem(cls.HOME_QUEUE_NAME, post_id)
+        r_server.lrem(settings.HOME_STREAM, post_id)
+        Post.objects.filter(pk=post_id).update(show_in_default=False)
+        PostCacheLayer(post_id=post_id).show_in_default_change(status=False)
+
+    @classmethod
+    def fix_in_home(cls):
+        for post_id in r_server.lrange(cls.HOME_QUEUE_NAME, 0, 0):
+            r_server.lrem(settings.HOME_STREAM, post_id)
+            r_server.lpush(settings.HOME_STREAM, post_id)
+            r_server.lrem(cls.HOME_QUEUE_NAME, post_id)
 
     def get_username(self):
         from cacheLayer import UserDataCache
@@ -1565,6 +1588,31 @@ class UserHistory(models.Model):
             field: F(field) + 1
         }
         UserHistory.objects.filter(user_id=user_id).update(**d)
+
+
+class UserLog(models.Model):
+    BAN_IMEI = 1
+    DEBAN_IMEI = 2
+    BAN_PROFILE = 3
+    DEBAN_PROFILE = 4
+    DEACTIVE = 5
+    ACTIVE = 6
+
+    ACTIONS = (
+        (BAN_IMEI, _("BAN IMEI")),
+        (DEBAN_IMEI, _("DEBAN IMEI")),
+        (BAN_PROFILE, _("BAN PROFILE")),
+        (DEBAN_PROFILE, _("DEBAN PROFILE")),
+        (DEACTIVE, _("DEACTIVE")),
+        (ACTIVE, _("ACTIVE")),
+    )
+
+    description = models.TextField()
+    action = models.IntegerField(choices=ACTIONS, default=ACTIVE)
+    create_time = models.DateTimeField(auto_now=True)
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_log")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor_log")
 
 
 class Commitment(models.Model):

@@ -19,7 +19,10 @@
 				</button>
 				<ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
 					<li><a ng-click="filter(0)" href="">همه</a></li>
+					<li><a ng-click="filter(0.3)" href="">اولویت بالای ۳۰٪</a></li>
 					<li><a ng-click="filter(0.7)" href="">اولویت بالای ۷۰٪</a></li>
+					<li><a ng-click="filter(0.5)" href="">اولویت بالای ۵۰٪</a></li>
+
 				</ul>
 			</div>
 				<!--<button class="button hidden-xs" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
@@ -32,7 +35,7 @@
 
 			</div> 
 			<div class="clear"></div>
-			<div id="checkP_feed" class="post-items resize" id="feed" load-images="false"  masonry reload-on-resize style="width:1070px;">
+			<div id="checkP_feed" class="post-items resize" id="feed" load-images="false"  masonry reload-on-resize>
 				<div  ng-show='loading'>
 					<div id="mySpinner"  class="loader">Loading...</div>
 				</div>
