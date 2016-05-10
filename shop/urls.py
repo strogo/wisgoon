@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, url
 
 urlpatterns = patterns('shop.views',
+
     url(r'^$', 'home', name='shop-home'),
     url(r'^product/(?P<product_id>\d+)$', 'product', name='shop-product'),
     url(r'^cart/add/product/$', 'cart_add_product', name='shop-cart-add-product'),
@@ -9,4 +10,6 @@ urlpatterns = patterns('shop.views',
     url(r'^address/info/$', 'address', name='shop-address'),
     url(r'^confirm/$', 'confirm', name='shop-confirm'),
     url(r'^form/$', 'form', name='shop-form'),
+    url(r'^hesabit/redirect/$', 'get_access_token',
+        name='shop-hesabit-redirect'),
 )
