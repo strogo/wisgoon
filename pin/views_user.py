@@ -5,10 +5,8 @@ import base64
 import json
 import datetime
 import urllib
-from django.db.models import Q, F
+from django.db.models import Q
 from shutil import copyfile
-
-from instagram.client import InstagramAPI
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -24,15 +22,14 @@ from django.http import HttpResponse, HttpResponseRedirect,\
 
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
-from pin.context_processors import is_police
-from pin.models import Post, Stream, Follow, Ad, Block, UserHistory,\
-    Report, Comments, Comments_score, Category, Bills2 as Bills, ReportedPost, ReportedPostReporters
+from pin.models import Post, Stream, Follow, Ad, Block,\
+    Report, Comments, Comments_score, Category, Bills2 as Bills, ReportedPost
 
-from pin.model_mongo import Notif, UserMeta, NotifCount
+from pin.model_mongo import Notif
 from pin.models_redis import ActivityRedis, NotificationRedis
 import pin_image
-from pin.tools import create_filename, get_user_ip, get_request_pid, check_block,\
-    post_after_delete, get_post_user_cache
+from pin.tools import create_filename, get_user_ip, get_request_pid,\
+    check_block, post_after_delete, get_post_user_cache
 
 from pin.tasks import porn_feedback
 from pin.api6.tools import post_item_json
@@ -47,46 +44,6 @@ SITE_URL = settings.SITE_URL
 
 
 @login_required
-def get_insta(request):
-    client_id = "ecb7cbd35a11467fb2cf558583a44047"
-    client_secret = "74e85dfb6b904ac68139a93a9b047247"
-    redirect_uri = "http://127.0.0.1:8000/pin/get_insta/"
-    scope = ["basic"]
-
-    try:
-        um = UserMeta.objects.get(user=int(request.user.id))
-        access_token = um.insta_token
-        insta_id = um.insta_id
-
-        api = InstagramAPI(client_id=client_id, client_secret=client_secret)
-
-    except UserMeta.DoesNotExist:
-        api = InstagramAPI(client_id=client_id, client_secret=client_secret,
-                           redirect_uri=redirect_uri)
-
-        redirect_uri = api.get_authorize_login_url(scope=scope)
-        code = request.GET.get('code')
-        if not code:
-            return HttpResponseRedirect(redirect_uri)
-
-        # api = InstagramAPI(access_token=access_token)
-        access_token = api.exchange_code_for_access_token(code)
-        insta_id = access_token[1]["id"]
-        access_token = access_token[0]
-        UserMeta.objects(user=int(request.user.id))\
-            .update(set__insta_token=access_token,
-                    set__insta_id=insta_id,
-                    upsert=True)
-
-    from instagram import client
-    instagram_client = client.InstagramAPI(client_id=client_id,
-                                           client_secret=client_secret)
-    callback_url = 'http://wisgoon.com/pin/hook/instagram'
-    instagram_client.create_subscription(object='user', aspect='media',
-                                         callback_url=callback_url)
-
-
-@login_required
 def following(request):
     pid = get_request_pid(request)
     pl = Post.user_stream_latest(pid=pid, user_id=request.user.id)
@@ -94,7 +51,9 @@ def following(request):
     arp = []
     for pll in pl:
         pll_id = int(pll)
-        arp.append(post_item_json(pll_id, cur_user_id=request.user.id))
+        ob = post_item_json(pll_id, cur_user_id=request.user.id)
+        if ob:
+            arp.append(ob)
 
     latest_items = arp
 
@@ -142,15 +101,6 @@ def follow(request, following, action):
         message = _('Your connection was successfully shut down')
         status = False
     elif created:
-        # posts = Post.objects.only('timestamp').filter(user=following)\
-        #     .order_by('-timestamp')[:100]
-
-        # for post in posts:
-        #     s, created = Stream.objects.get_or_create(post=post,
-        #                                               user=request.user,
-        #                                               date=post.timestamp,
-        #                                               following=following)
-        # print "post", post.id, s, created
         message = _('Your connection successfully established.')
         status = True
 
@@ -305,9 +255,8 @@ def send_comment(request):
 
         if text and post:
             post = get_object_or_404(Post, pk=post)
-            if check_block(user_id=post.user_id, blocked_id=request.user.id):
-                if not is_police(request, flat=True):
-                    return HttpResponseRedirect('/')
+            if check_block(user_id=post.user_id, blocked_id=request.user.id):    
+                return HttpResponseRedirect('/')
 
             comment = Comments.objects.create(object_pk_id=post.id,
                                               comment=text,
@@ -359,19 +308,18 @@ def sendurl(request):
 @login_required
 @csrf_exempt
 def a_sendurl(request):
-    if request.method == "POST":
-        url = request.POST['url']
-
-        if url == '':
-            return HttpResponse(0)
-
-        images = get_images(url)
-        if images == 0:
-            return HttpResponse(0)
-
-        return HttpResponse(json.dumps(images))
-    else:
+    if request.method != "POST":
         return HttpResponse(0)
+
+    url = request.POST['url']
+    if url == '':
+        return HttpResponse(0)
+
+    images = get_images(url)
+    if images == 0:
+        return HttpResponse(0)
+
+    return HttpResponse(json.dumps(images))
 
 
 @login_required
@@ -388,9 +336,7 @@ def send(request):
         image_data = data_url_pattern.match(image_data_post).group(2)
         image_type = data_url_pattern.match(image_data_post).group(1)
 
-        # If none or len 0, means illegal image data
         if not image_data or len(image_data) == 0:
-            # PRINT ERROR MESSAGE HERE
             pass
 
         image_data = base64.b64decode(image_data)
@@ -399,14 +345,11 @@ def send(request):
 
         fpath = "{}/pin/temp/o/{}".format(MEDIA_ROOT, filename)
         with open(fpath, 'wb') as dest:
-            print "fpath is:", fpath
             dest.write(image_data)
-            # return True
 
         post_values['image'] = fpath
 
         form = PinForm(post_values)
-        # return HttpResponse(0)
 
         if form.is_valid():
             model = form.save(commit=False)
@@ -469,8 +412,6 @@ def edit(request, post_id):
 
         if request.method == "POST":
             post_values = request.POST.copy()
-            # tags = post_values['tags']
-            # post_values['tags'] = tags[tags.find("[") + 1:tags.find("]")]
             form = PinUpdateForm(post_values, instance=post)
             if form.is_valid():
                 form.save()
@@ -490,8 +431,6 @@ def edit(request, post_id):
 
 
 def save_upload(uploaded, filename, raw_data):
-    ''' raw_data: if True, upfile is a HttpRequest object with raw post data
-        as the file, rather than a Django UploadedFile from request.FILES '''
     try:
         from io import FileIO, BufferedWriter
         with BufferedWriter(FileIO("%s/pin/temp/o/%s" % (MEDIA_ROOT, filename), "wb")) as dest:
@@ -507,7 +446,6 @@ def save_upload(uploaded, filename, raw_data):
                     dest.write(c)
             return True
     except IOError:
-        # could not open the file most likely
         return False
 
 
@@ -557,9 +495,7 @@ def upload(request):
 
 @login_required
 def show_notify(request):
-    # NotifCount.objects.filter(owner=request.user.id).update(set__unread=0)
     NotificationRedis(user_id=request.user.id).clear_notif_count()
-    # notif = Notif.objects.all().filter(owner=request.user.id).order_by('-date')[:20]
     notif = NotificationRedis(user_id=request.user.id)\
         .get_notif()
 
@@ -578,7 +514,6 @@ def show_notify(request):
         anl['id'] = n.post
         anl['type'] = n.type
         anl['actor'] = n.last_actor
-        # anl['owner'] = n.owner
 
         nl.append(anl)
     return render(request, 'pin2/notify.html', {'notif': nl})
@@ -609,9 +544,6 @@ def notif_user(request):
 
         nl.append(anl)
 
-    # for n in notif:
-    #    print 'pois', n.po
-
     if request.is_ajax():
         return render(request, 'pin/_notif.html', {
             'notif': nl,
@@ -627,7 +559,6 @@ def notif_user(request):
 @login_required
 def notif_following(request):
     notif_data = ActivityRedis(user_id=request.user.id).get_activity()
-    # return HttpResponse(json.dumps(notif_data))
     return render(request, 'pin2/notif_user_following.html', {
         'notif': notif_data,
         'page': 'follow_notif',
@@ -704,9 +635,11 @@ def verify_payment(request, bill_id):
 
         url = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'
         client = Client(url)
-        data = {'MerchantID': MERCHANT_ID,
-                'Amount': bill.amount,
-                'Authority': authority}
+        data = {
+            'MerchantID': MERCHANT_ID,
+            'Amount': bill.amount,
+            'Authority': authority
+        }
 
         result = client.service.PaymentVerification(**data)
 
@@ -736,8 +669,6 @@ def verify_payment(request, bill_id):
 
 @login_required
 def save_as_ads(request, post_id):
-    # for i in range(0, 50000):
-    #     Ads.objects(user=55).update(add_to_set__users=i, upsert=True)
     p = Post.objects.get(id=post_id)
     profile = request.user.profile
 
@@ -757,8 +688,6 @@ def save_as_ads(request, post_id):
                                   start=datetime.datetime.now(),
                                   ip_address=get_user_ip(request))
 
-                # profile.credit = int(profile.credit) - int(mode_price)
-                # profile.save()
                 messages.success(request,
                                  _("Post of you was advertised successfully ."))
 

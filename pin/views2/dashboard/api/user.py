@@ -1,19 +1,19 @@
+from django.conf import settings
 from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
+from django.views.decorators.csrf import csrf_exempt
 
+from haystack.query import Raw
 from haystack.query import SearchQuerySet
 from haystack.query import SQ
-from haystack.query import Raw
 
-from pin.tools import get_user_ip
-from pin.api_tools import media_abs_url
-from pin.models import PhoneData, BannedImei, Log
-from pin.views2.dashboard.api.tools import get_profile_data
 from pin.api6.tools import get_next_url, get_simple_user_object
 from pin.api6.http import return_json_data, return_un_auth, return_not_found,\
     return_bad_request
-from pin.views2.dashboard.api.tools import check_admin,\
+from pin.api_tools import media_abs_url
+from pin.models import PhoneData, BannedImei, Log, UserLog
+from pin.tools import get_user_ip
+from pin.views2.dashboard.api.tools import get_profile_data, check_admin,\
     cnt_post_deleted_by_admin
 
 from user_profile.models import Profile
@@ -67,9 +67,47 @@ def user_details(request, user_id):
         user = User.objects.get(id=user_id)
     except:
         return return_not_found()
-    user_profile = Profile.objects.get(id=user_id)
+    user_profile, created = Profile.objects.get_or_create(user_id=user_id)
 
     details['profile'] = get_profile_data(user.profile, enable_imei=True)
+
+    # ban_profile_log = Log.objects\
+    #     .filter(object_id=user.id, content_type=Log.USER,
+    #             action=Log.BAN_ADMIN).order_by('-id')[:1]
+
+    ban_imei_log = UserLog.objects\
+        .filter(user=user.id,
+                action=UserLog.BAN_IMEI).order_by('-id')[:1]
+
+    ban_profile_log = UserLog.objects\
+        .filter(user=user.id,
+                action=UserLog.DEBAN_PROFILE).order_by('-id')[:1]
+
+    inactive_log = UserLog.objects\
+        .filter(user=user.id,
+                action=UserLog.DEACTIVE).order_by('-id')[:1]
+
+    active_log = UserLog.objects\
+        .filter(user=user.id,
+                action=UserLog.ACTIVE).order_by('-id')[:1]
+
+    # active_log = Log.objects\
+    #     .filter(owner=user.id, content_type=Log.USER,
+    #             action=Log.ACTIVE_USER).order_by('-id')[:1]
+
+    # ban_imei_log = BannedImei.objects\
+    #     .filter(user=user.id).order_by('-id')[:1]
+
+    # inactive_log = Log.objects\
+    #     .filter(object_id=user.id, content_type=Log.USER,
+    #             action=Log.BAN_ADMIN).order_by('-id')[:1]
+
+    details['profile']['ban_profile_desc'] = str(ban_profile_log[0].description)\
+        if ban_profile_log else ''
+    details['profile']['ban_imei_desc'] = str(ban_imei_log[0].description) if ban_imei_log else ''
+    details['profile']['active_desc'] = str(active_log[0].description) if active_log else ''
+    details['profile']['inactive_desc'] = str(inactive_log[0].description) if inactive_log else ''
+    details['user_id'] = int(user_id)
     details['cnt_post'] = user_profile.cnt_post
     details['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
 
@@ -92,21 +130,41 @@ def change_status_user(request):
     except:
         return return_not_found()
 
+    if settings.DEBUG:
+        from pin.tools import AuthCache
+        token = request.GET.get('token', '')
+        if token:
+            current_user = AuthCache.user_from_token(token=token)
+        else:
+            current_user = request.user
+    else:
+        current_user = request.user
+
     if user_id:
         if status == 'true':
             user.is_active = True
             message = _("User Status Is True.")
-            Log.active_user(user_id=request.user.id,
+            Log.active_user(user_id=current_user.id,
                             owner=user.id,
                             text=desc + desc,
                             ip_address=get_user_ip(request))
+
+            UserLog.objects.create(user_id=user.id,
+                                   actor_id=current_user.id,
+                                   description=desc,
+                                   action=UserLog.ACTIVE)
         else:
             user.is_active = False
             message = _("User Status Is False.")
-            Log.ban_by_admin(actor=request.user,
-                             user_id=user.id,
-                             text="%s || %s" % (user.username, desc),
-                             ip_address=get_user_ip(request))
+            Log.deactive_user(user_id=current_user.id,
+                              owner=user.id,
+                              text=desc + desc,
+                              ip_address=get_user_ip(request))
+
+            UserLog.objects.create(user_id=user.id,
+                                   actor_id=current_user.id,
+                                   description=desc,
+                                   action=UserLog.DEACTIVE)
 
         user.save()
         data = {'status': True, 'message': message}
@@ -131,22 +189,46 @@ def banned_profile(request):
     except:
         return return_not_found()
 
+    if settings.DEBUG:
+        from pin.tools import AuthCache
+        token = request.GET.get('token', '')
+        if token:
+            current_user = AuthCache.user_from_token(token=token)
+        else:
+            current_user = request.user
+    else:
+        current_user = request.user
+
     if user_id:
         if status == 'true':
             profile.banned = True
             profile.save()
-            Log.active_user(user_id=request.user.id,
+            Log.active_user(user_id=current_user.id,
                             owner=profile.user.id,
                             text="%s || %s" % (profile.user.username, description),
                             ip_address=get_user_ip(request))
+
+            UserLog.objects.create(user_id=profile.user.id,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.DEBAN_PROFILE)
+
         else:
             profile.banned = False
             profile.save()
-            Log.ban_by_admin(actor=request.user,
+            Log.ban_by_admin(actor=current_user,
                              user_id=profile.user.id,
                              text="%s || %s" % (profile.user.username, description),
                              ip_address=get_user_ip(request))
-        data = {'status': True, 'message': _("Successfully Change Profile banned.")}
+
+            UserLog.objects.create(user_id=profile.user.id,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.BAN_PROFILE)
+        data = {
+            'status': True,
+            'message': _("Successfully Change Profile banned.")
+        }
         data['user'] = get_simple_user_object(profile.user.id)
         data['profile'] = get_profile_data(profile)
         data['profile']['description2'] = description
@@ -162,12 +244,22 @@ def banned_imei(request):
 
     phone_data = None
     try:
-        status = str(request.POST.get('status', False))
+        status = str(request.POST.get('status', 0))
         description = str(request.POST.get('description3', ""))
-        imei = str(request.POST.get('imei', False))
+        imei = request.POST.get('imei', None)
         phone_data = PhoneData.objects.filter(imei=imei)
     except:
         return return_not_found()
+
+    if settings.DEBUG:
+        from pin.tools import AuthCache
+        token = request.GET.get('token', '')
+        if token:
+            current_user = AuthCache.user_from_token(token=token)
+        else:
+            current_user = request.user
+    else:
+        current_user = request.user
 
     if description and imei:
 
@@ -185,22 +277,27 @@ def banned_imei(request):
                     cur_user.is_active = True
                     cur_user.save()
 
-                Log.active_user(user_id=request.user.id,
+                Log.active_user(user_id=current_user.id,
                                 owner=owner,
                                 text=desc + description,
                                 ip_address=get_user_ip(request))
+
+                UserLog.objects.create(user_id=owner,
+                                       actor_id=current_user.id,
+                                       description=description,
+                                       action=UserLog.DEBAN_IMEI)
+
                 return return_json_data({'status': True,
                                          'message': _("Successfully Unbanned Imei."),
                                          'imei_status': True})
 
             except:
-
                 return return_not_found()
 
         elif status == 'false':
             BannedImei.objects.create(imei=imei,
                                       description=description,
-                                      user=request.user)
+                                      user=current_user)
 
             desc = ''
             owner = None
@@ -210,9 +307,14 @@ def banned_imei(request):
                 desc += cur_user.username + ' || '
                 cur_user.is_active = False
                 cur_user.save()
-            Log.ban_by_imei(actor=request.user,
+            Log.ban_by_imei(actor=current_user,
                             text=desc + description,
                             ip_address=get_user_ip(request))
+
+            UserLog.objects.create(user_id=owner,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.BAN_IMEI)
 
             return return_json_data({'status': True,
                                      'message': _("Successfully banned Imei."),

@@ -79,3 +79,7 @@ def address(request):
 @login_required
 def confirm(request):
     return render(request, 'shop/confirm.html')
+
+
+def form(request):
+    return render(request, 'shop/form.html')

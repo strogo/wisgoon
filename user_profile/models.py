@@ -178,8 +178,7 @@ class Profile(models.Model):
     def store_avatars(self, update_model=False):
         try:
             im = Image.open(self.avatar)
-        except IOError, e:
-            print str(e)
+        except IOError:
             return
 
         ipath = "%s/%s" % (settings.MEDIA_ROOT, self.avatar)
@@ -260,7 +259,6 @@ class CreditLog(models.Model):
         (DECREMENT, _('Decrement')),
     )
 
-    # profile = models.ForeignKey(Profile, related_name="user_credit_log")
     prof_id = models.IntegerField(default=0)
     mode = models.IntegerField(blank=True, null=True, default=1,
                                choices=MODE_CHOICES)

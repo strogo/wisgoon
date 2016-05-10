@@ -238,6 +238,8 @@ class Post(models.Model):
     MLT_CACHE_STR = "mlt:2{}{}"
     MLT_CACHE_TTL = 43200  # 12 hours
 
+    HOME_QUEUE_NAME = "home_queue"
+
     PENDING = 0
     APPROVED = 1
     FAULT = 2
@@ -321,6 +323,27 @@ class Post(models.Model):
                     format(new_url, r.get_label_text())
                 o.append(href)
         return o
+
+    @classmethod
+    def add_to_home(cls, post_id):
+        r_server.lrem(cls.HOME_QUEUE_NAME, post_id)
+        r_server.rpush(cls.HOME_QUEUE_NAME, post_id)
+        Post.objects.filter(pk=post_id).update(show_in_default=True)
+        PostCacheLayer(post_id=post_id).show_in_default_change(status=True)
+
+    @classmethod
+    def remove_from_home(cls, post_id):
+        r_server.lrem(cls.HOME_QUEUE_NAME, post_id)
+        r_server.lrem(settings.HOME_STREAM, post_id)
+        Post.objects.filter(pk=post_id).update(show_in_default=False)
+        PostCacheLayer(post_id=post_id).show_in_default_change(status=False)
+
+    @classmethod
+    def fix_in_home(cls):
+        for post_id in r_server.lrange(cls.HOME_QUEUE_NAME, 0, 0):
+            r_server.lrem(settings.HOME_STREAM, post_id)
+            r_server.lpush(settings.HOME_STREAM, post_id)
+            r_server.lrem(cls.HOME_QUEUE_NAME, post_id)
 
     def get_username(self):
         from cacheLayer import UserDataCache
@@ -1399,6 +1422,7 @@ class Log(models.Model):
     BAN_IMEI = 5
     BAN_ADMIN = 6
     ACTIVE_USER = 7
+    DEACTIVE_USER = 8
     ACTIONS = (
         (DELETE, _("delete")),
         (PENDING, _("pending")),
@@ -1406,6 +1430,7 @@ class Log(models.Model):
         (BAD_POST, _("bad post")),
         (BAN_IMEI, _("ban imei")),
         (BAN_ADMIN, _("ban by admin")),
+        (DEACTIVE_USER, _("Deactive user")),
         (ACTIVE_USER, _("activated"))
     )
 
@@ -1495,6 +1520,15 @@ class Log(models.Model):
                            ip_address=ip_address)
 
     @classmethod
+    def deactive_user(cls, owner, user_id, text="", ip_address="127.0.0.1"):
+        Log.objects.create(user_id=user_id,
+                           action=cls.DEACTIVE_USER,
+                           owner=owner,
+                           content_type=cls.USER,
+                           text=text,
+                           ip_address=ip_address)
+
+    @classmethod
     def post_pending(cls, post, actor, ip_address="127.0.0.1"):
         Log.objects.create(user=actor,
                            action=2,
@@ -1553,6 +1587,77 @@ class UserHistory(models.Model):
             field: F(field) + 1
         }
         UserHistory.objects.filter(user_id=user_id).update(**d)
+
+
+class UserLog(models.Model):
+    BAN_IMEI = 1
+    DEBAN_IMEI = 2
+    BAN_PROFILE = 3
+    DEBAN_PROFILE = 4
+    DEACTIVE = 5
+    ACTIVE = 6
+    ENABLE_POST = 7
+    DISABLE_POST = 8
+    ENABLE_REPORT = 9
+    DISABLE_REPORT = 10
+    ENABLE_COMMENT = 11
+    DISABLE_COMMENT = 12
+
+    ACTIONS = (
+        (BAN_IMEI, _("BAN IMEI")),
+        (DEBAN_IMEI, _("DEBAN IMEI")),
+        (BAN_PROFILE, _("BAN PROFILE")),
+        (DEBAN_PROFILE, _("DEBAN PROFILE")),
+        (DEACTIVE, _("DEACTIVE")),
+        (ACTIVE, _("ACTIVE")),
+        (ENABLE_POST, _("ENABLE POST")),
+        (DISABLE_POST, _("DISABLE POST")),
+        (ENABLE_REPORT, _("ENABLE REPORT")),
+        (DISABLE_REPORT, _("DISABLE REPORT")),
+        (ENABLE_COMMENT, _("ENABLE COMMENT")),
+        (DISABLE_COMMENT, _("DISABLE COMMENT")),
+    )
+
+    description = models.TextField()
+    action = models.IntegerField(choices=ACTIONS, default=ACTIVE)
+    create_time = models.DateTimeField(auto_now=True)
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_log")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor_log")
+
+
+class UserPermissions(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+
+    post = models.BooleanField(default=True)
+    comment = models.BooleanField(default=True)
+    report = models.BooleanField(default=True)
+
+
+class UserCron(models.Model):
+    ENABLE_POST = 1
+    DISABLE_POST = 2
+    ENABLE_REPORT = 3
+    DISABLE_REPORT = 4
+    ENABLE_COMMENT = 5
+    DISABLE_COMMENT = 6
+
+    ACTIONS = (
+        (ENABLE_POST, _("ENABLE POST")),
+        (DISABLE_POST, _("DISABLE POST")),
+        (ENABLE_REPORT, _("ENABLE REPORT")),
+        (DISABLE_REPORT, _("DISABLE REPORT")),
+        (ENABLE_COMMENT, _("ENABLE COMMENT")),
+        (DISABLE_COMMENT, _("DISABLE COMMENT")),
+    )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_cron")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor_cron")
+
+    due_date = models.DateTimeField(auto_now=True)
+    action = models.IntegerField(choices=ACTIONS, default=ENABLE_POST)
+    after = models.IntegerField(choices=ACTIONS, default=ENABLE_POST)
+    create_time = models.DateTimeField()
 
 
 class Commitment(models.Model):

@@ -114,7 +114,7 @@
 
 		<div class="username">
 			<a href="{% url 'pin-absuser' item.get_username %}" data-toggle="tooltip" data-placement="bottom" title="{{item.user.profile.name}}">
-				{{item.user.profile.name|truncatechars:"18"}}
+				{{item.user.username}}
 			</a>
 		</div>	
 

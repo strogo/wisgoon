@@ -29,8 +29,6 @@ urlpatterns = patterns('',
     url(r'^about_us_for_mobile/', 'pin.views.about_us_for_mobile', name='about_us_for_mobile'),
     url(r'^stats/', 'pin.views.stats', name='stats'),
     url(r'^captcha/', include('captcha.urls')),
-    url(r'^blog/', include('blog.urls')),
-    # url(r'^ckeditor/', include('ckeditor.urls')),
     url(r'^buggy/', 'pin.views_test.buggy', name='buggy'),
     url(r'^api/v6/', include('pin.api6.urls')),
     url(r'^dashboard/', include('pin.views2.dashboard.urls')),
@@ -39,16 +37,11 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('pin.views',
-    url(r'^latest/$', 'latest_redis', name='pin-latest'),
+    url(r'^latest/$', 'latest', name='pin-latest'),
     url(r'^page/(?P<label>.*)/$', 'result', name='pin-result'),
-    # url(r'^recent/$', 'latest_redis', name='pin-latest'),
-
-    url(r'^rp/$', 'rp', name='rp'),
-
     url(r'^feedback/$', 'feedback', name='pin-feedback'),
-    url(r'^last/likes/$', 'last_likes', name='pin-last-likes'),
 
-    url(r'^category/(?P<cat_id>\d+)/$', 'category_redis', name='pin-category'),
+    url(r'^category/(?P<cat_id>\d+)/$', 'category', name='pin-category'),
     url(r'^category/(?P<category_id>\d+)/top/$', 'category_top', name='pin-category-top'),
 
     url(r'^search/', 'search', name='search'),
@@ -85,8 +78,6 @@ urlpatterns += patterns('pin.views4_api',
     url(r'^api/v4/user/credit/$', 'user_credit', name="api-4-user-credit"),
     url(r'^api/v4/user/check/username/$', 'user_check_username', name="api-4-user-check-username"),
 
-    # url(r'^api/v4/user/salam/is/user/registered/$', 'salam_is_user_registered', name="api-4-salam-is-user-registered"),
-    # url(r'^api/v4/user/salam/change/password/$', 'salam_change_password', name="api-4-salam-change-password"),
 )
 
 if not settings.DEBUG:

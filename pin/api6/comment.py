@@ -1,5 +1,4 @@
 from django.views.decorators.csrf import csrf_exempt
-# from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext as _
 
 from pin.tools import AuthCache
@@ -10,7 +9,6 @@ from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
     return_bad_request
 from pin.tools import check_block, get_post_user_cache
 from pin.toolkit import check_auth
-from pin.context_processors import is_police
 
 
 def comment_post(request, item_id):
@@ -53,11 +51,10 @@ def add_comment(request, item_id):
         })
 
     if check_block(user_id=post.user_id, blocked_id=request.user.id):
-        if not is_police(request, flat=True):
-            return return_json_data({
-                'status': False,
-                'message': _('This User Has Blocked You')
-            })
+        return return_json_data({
+            'status': False,
+            'message': _('This User Has Blocked You')
+        })
     try:
         comment = Comments.objects.create(object_pk=post, comment=text,
                                           user_id=get_int(user.id),

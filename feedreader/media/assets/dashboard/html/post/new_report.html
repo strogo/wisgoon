@@ -27,11 +27,11 @@
 			
 		</div> 
 		<div class="clear"></div>
-		<div class="post-items resize" id="feed" load-images="false"  masonry reload-on-resize style="width:1070px;">
+		<div class="post-items resize" id="feed" load-images="false"  masonry reload-on-resize>
 			<div  ng-show='loading'>
 				<div id="mySpinner"  class="loader">Loading...</div>
 			</div>
-			<div class="masonry-brick col-md-6 " ng-repeat="brick in bricks.objects">
+			<div class="masonry-brick col-md-6 col-xlg-4" ng-repeat="brick in bricks.objects">
 				<div class="box box-solid" id="br-{[{brick.id}]}" postId="{[{brick.id}]}">
 					<div class="col-md-6 pa0">
 						<a href="" ng-show="select" ng-click="selectItem(brick.id)">
@@ -91,8 +91,8 @@
 						</div>
 						<div class="col-md-4">
 							<label>فعال بودن کاربر: </label>
-							<span ng-show="brick.user.is_active" class="fa-ban fa"></span>
-							<span ng-show="!brick.user.is_active" class="fa-check fa"></span>
+							<span ng-show="!brick.user.is_active" class="fa-ban fa"></span>
+							<span ng-show="brick.user.is_active" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
 							<label>پست حذف شده: </label>

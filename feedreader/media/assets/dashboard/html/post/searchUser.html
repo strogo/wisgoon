@@ -42,13 +42,13 @@
               <div class="clear"></div>
             </div>
             <div class="modal fade userIinfoModal" id="userInfo{[{resultItem.id}]}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-              <div class="loading" ng-show='loading'>
-                <div id="mySpinner"  class="loader">Loading...</div>
-              </div>
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header hidden-md hidden-lg">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  </div>
+                  <div class="loading" ng-show='loading'>
+                    <div id="mySpinner"  class="loader">Loading...</div>
                   </div>
                   <div class="modal-body">
                     <div class="userIinfo">
@@ -57,152 +57,164 @@
                         <hr>
                         <div class="">
                           <ul>
-                            <li class="postInfo">
-                              <label>تعداد پست ها:</label>
-                              <span>
+                            <li class="hidden-md hidden-lg hidden-sm">
+                            <span ng-controller="deleteAvatarController" class="delavatar">
+                              <a href="" ng-click="delAvatar(searchInfo.user_id)">حذف آواتار کاربر</a>
+                              </span>
+                              <div class="clear"></div>
+                          </li>
+                          <li class="postInfo">
+                            <label>تعداد پست ها:</label>
+                            <span>
                               {[{searchInfo.cnt_post}]}
-                              </span>
-                            </li>
-                            <li class="postInfo">
-                              <label>تعداد پست های حذف شده توسط ادمین:</label>
-                              <span>
+                            </span>
+                          </li>
+                          <li class="postInfo">
+                            <label>تعداد پست های حذف شده توسط ادمین:</label>
+                            <span>
                               {[{searchInfo.cnt_admin_deleted}]}
-                              </span>
-                            </li>
-                            <li>
-                              <label>وضعیت کاربر :</label>
-                              <span >
-                                <i class="fa-check fa" ng-show="searchInfo.profile.user_active"> فعال </i>
-                                <i class="fa-ban fa" ng-show="!searchInfo.profile.user_active"> غیر فعال </i>
-                              </span>
-                              <div class="banDesc">
-                                <span class="side-up hidden-xs"></span>
-                                <form novalidate ng-submit="activeUser()" >
-                                 <div class="col-xs-2 col-md-1 pa0">
-                                  <input type="checkbox" name="activeStatus" id="activeStatus" ng-model="formData.activeStatus" ng-checked="!formData.activeStatus">
-                                </div>
-                                <div class="col-xs-9 col-md-9 pa0">
-                                  <input type="text" name="description1" ng-model="formData.description1" placeholder="علت بن شدن کاربر...">
+                            </span>
+                          </li>
+                          <li>
+                            <label>وضعیت کاربر :</label>
+                            <span>
+                              <i class="fa-check fa" ng-show="searchInfo.profile.user_active"> فعال </i>
+                              <i class="fa-ban fa" ng-show="!searchInfo.profile.user_active"> غیر فعال </i>
+                            </span>
+                            <div class="banDesc">
+                              <span class="side-up hidden-xs"></span>
+                              <form novalidate ng-submit="activeUser()" >
+                               <div class="col-xs-2 col-md-1 pa0">
+                                <input type="hidden" name="activeStatus" id="activeStatus" ng-model="formData.activeStatus" ng-checked="!formData.activeStatus">
+                              </div>
+                              <div class="col-xs-9 col-md-9 pa0">
+                                <select name="description1" id="description1" ng-model="formData.description1">
+                                  <option value="توهین به مقدسات" >مقدسات</option>
+                                  <option value="توهین به مقامات کشوری">مقامات کشوری</option>
+                                  <option value="توهین به کاربران">کاربران</option>
+                                  <option value="محتوای غیر اخلاقی">محتوای غیر اخلاقی</option>
+                                  <option value="نقض حریم خصوصی">نقض حریم خصوصی</option>
+                                  <option value="تکرار تخلف">تکرار تخلف</option>
+                                  <option value="ارسال هرزنامه">ارسال هرزنامه</option>
+                                </select>
+                                <label>{[{searchInfo.profile.inactive_desc}]}</label>
+                                <input type="hidden" name="activeId" ng-model="formData.activeId">
 
-                                  <input type="hidden" name="activeId" ng-model="formData.activeId" ng-value="formData.activeId='{[{resultItem.id}]}'">
-
-                                </div>
-                                <div class="col-md-2 pa0">
-                                 <button type="submit" ng-click="submitted=true">ثبت</button>
-                               </div>
-                             </form>
-                             <div class="clear"></div>
-                             <span class="side-down hidden-xs"></span>
-                           </div>
-                         </li>
-                         <li>
-                          <label>وضعیت پروفایل کاربر:</label>
-                          <span>
-                            <i class="fa-check fa" ng-show="!searchInfo.profile.userBanne_profile"> فعال </i>
-                            <i class="fa-ban fa" ng-show="searchInfo.profile.userBanne_profile"> غیر فعال </i>
-                          </span>
-                          <div class="banDesc">
-                            <span class="side-up hidden-xs"></span>
-                            <form novalidate ng-submit="banProfile()" >
-                             <div class="col-xs-1 col-md-1 pa0">
-                              <input type="checkbox" name="profileBanstatus" id="profileBanstatus" ng-model="formData.profileBanstatus" ng-checked="formData.profileBanstatus">
-                            </div>
-                            <div class="col-xs-9 col-md-9 pa0">
-                              <input type="text" name="description2" ng-model="formData.description2" placeholder="علت غیر فعال شدن پروفایل کاربر...">
-
-                              <input type="hidden" name="profileBanId" ng-model="formData.profileBanId" ng-value="formData.profileBanId='{[{resultItem.id}]}'">
-
-                            </div>
-                            <div class="col-md-2 pa0">
-                             <button type="submit" ng-click="submitted=true">ثبت</button>
-                           </div>
-                         </form>
-                         <div class="clear"></div>
-                         <span class="side-down hidden-xs"></span>
-                       </div>
-                     </li>
-                     <li>
-                      <label>وضعیت imei :</label>
-                      <span ng-hide="searchInfo.profile.imei == ''">
-                        <i class="fa-check fa" ng-show="!searchInfo.profile.imei_status"> فعال </i>
-                        <i class="fa-ban fa" ng-show="searchInfo.profile.imei_status"> غیر فعال </i>
-                      </span>
-                      <span class="banImeiText" ng-show="searchInfo.profile.imei == ''">
-                        این کاربر imei  ندارد.
-                      </span>
-                      <div class="banDesc" ng-show="searchInfo.profile.imei != ''">
-                        <span class="side-up hidden-xs"></span>
-                        <form novalidate ng-submit="banImei()" >
-                         <div class="col-xs-1 col-md-1 pa0">
-                           <input type="checkbox" name="status" id="status" ng-model="formData.status" ng-checked="formData.status">
+                              </div>
+                              <div class="col-md-2 pa0">
+                               <button type="submit" ng-click="submitted=true">ثبت</button>
+                             </div>
+                           </form>
+                           <div class="clear"></div>
+                           <span class="side-down hidden-xs"></span>
                          </div>
-                         <div class="col-xs-9 col-md-9 pa0">
-                          <input type="text" name="description3" ng-model="formData.description3" placeholder="علت غیر فعال شدن پروفایل کاربر...">
+                       </li>
+                       <li>
+                        <label>وضعیت پروفایل کاربر:</label>
+                        <span>
+                          <i class="fa-check fa" ng-show="!searchInfo.profile.userBanne_profile"> فعال </i>
+                          <i class="fa-ban fa" ng-show="searchInfo.profile.userBanne_profile"> غیر فعال </i>
+                        </span>
+                        <div class="banDesc">
+                          <span class="side-up hidden-xs"></span>
+                          <form novalidate ng-submit="banProfile()" >
+                           <div class="col-xs-1 col-md-1 pa0">
+                            <input type="hidden" name="profileBanstatus" id="profileBanstatus" ng-model="formData.profileBanstatus" ng-checked="formData.profileBanstatus">
+                          </div>
+                          <div class="col-xs-9 col-md-9 pa0">
+                            <input type="hidden" name="profileBanId" ng-model="formData.profileBanId">
 
-                          <input ng-value="formData.imei='{[{searchInfo.profile.imei}]}'" type="hidden" ng-model="formData.imei" />
-                        </div>
-                        <div class="col-md-2 pa0">
-                         <button type="submit" ng-click="submitted=true">ثبت</button>
+                          </div>
+                          <div class="col-md-2 pa0">
+                           <button type="submit" ng-click="submitted=true">ثبت</button>
+                         </div>
+                       </form>
+                       <div class="clear"></div>
+                       <span class="side-down hidden-xs"></span>
+                     </div>
+                   </li>
+                   <li>
+                    <label>وضعیت imei :</label>
+                    <span ng-hide="searchInfo.profile.imei == ''">
+                      <i class="fa-check fa" ng-show="searchInfo.profile.imei_status"> فعال </i>
+                      <i class="fa-ban fa" ng-show="!searchInfo.profile.imei_status"> غیر فعال </i>
+                    </span>
+                    <span class="banImeiText" ng-show="searchInfo.profile.imei == ''">
+                      این کاربر imei  ندارد.
+                    </span>
+                    <div class="banDesc" ng-show="searchInfo.profile.imei != ''">
+                      <span class="side-up hidden-xs"></span>
+                      <form novalidate ng-submit="banImei()" >
+                       <div class="col-xs-1 col-md-1 pa0">
+                         <input type="hidden" name="status" id="status" ng-model="formData.status" ng-checked="!formData.status">
                        </div>
-                     </form>
-                     <div class="clear"></div>
-                     <span class="side-down hidden-xs"></span>
-                   </div>
-                 </li>
-                 <li ng-hide="searchInfo.profile.imei == ''">
-                  <label>لیست حساب ها بر اساس imei :</label>
-                  <span>
-                    <div class="dropdown">
-                      <button ng-click="imeiList(searchInfo.profile.imei)" class="btn btn-default dropdown-toggle" type="button" id="userImeis" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        لیست حساب های کاربری
-                        <span class="caret"></span>
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="userImeis">
-                        <li ng-repeat="imeilListItem in imeilListItems"><a href="{[{imeilListItem.permalink}]}">{[{imeilListItem.username}]}</a></li>
-                      </ul>
-                    </div>
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-4 hidden-xs rightInfo">
-            <div class="user_avatar">
-              <a href="">
-                <img ng-src="{[{resultItem.avatar}]}">
-              </a>
-              <div ng-controller="deleteAvatarController" class="delavatar">
-                <a href="" ng-click="delAvatar(resultItem.id)">حذف آواتار کاربر</a>
-              </div>
-            </div>
-            <h1><a href="">{[{resultItem.username}]}</a></h1>
-            <div class="sex">
-              <label>جنسیت :</label>
-              <span ng-show="searchInfo.profile.jens == 'M'">مرد</span>
-              <span ng-show="searchInfo.profile.jens != 'M'">زن</span>
-            </div>
-            <div class="score">
-              <label>امتیاز :</label>
-              <span>{[{searchInfo.profile.score}]}</span>
-            </div>
-            <div class="wis">
-              <label>اعتبار ویس :</label>
-              <span>{[{searchInfo.profile.credit}]}</span>
-            </div>
-            <div class="joinDate">
-              <label>تاریخ عضویت :</label>
-              <span>{[{searchInfo.profile.date_joined}]}</span>
-            </div>
-            <div class="email">
-              <label>ایمیل :</label>
-              <span>{[{searchInfo.profile.email}]}</span>
-            </div>
+                       <div class="col-xs-9 col-md-9 pa0">
+                        <input type="text" name="description3" ng-model="formData.description3" placeholder="علت غیر فعال شدن پروفایل کاربر...">
+
+                        <input ng-value="formData.imei='{[{searchInfo.profile.imei}]}'" type="hidden" ng-model="formData.imei" />
+                      </div>
+                      <div class="col-md-2 pa0">
+                       <button type="submit" ng-click="submitted=true">ثبت</button>
+                     </div>
+                   </form>
+                   <div class="clear"></div>
+                   <span class="side-down hidden-xs"></span>
+                 </div>
+               </li>
+               <li ng-hide="searchInfo.profile.imei == ''">
+                <label>لیست حساب ها بر اساس imei :</label>
+                <span>
+                  <div class="dropdown">
+                    <button ng-click="imeiList(searchInfo.profile.imei)" class="btn btn-default dropdown-toggle" type="button" id="userImeis" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      لیست حساب های کاربری
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="userImeis">
+                      <li class="postInfo" ng-repeat="imeilListItem in imeilListItems"><a href="{[{imeilListItem.permalink}]}">{[{imeilListItem.username}]}</a></li>
+                    </ul>
+                  </div>
+                </span>
+              </li>
+            </ul>
           </div>
         </div>
-        <div class="clear"></div>
+        <div class="col-md-4 hidden-xs rightInfo">
+          <div class="user_avatar">
+            <a href="">
+              <img ng-src="{[{resultItem.avatar}]}">
+            </a>
+            <div ng-controller="deleteAvatarController" class="delavatar">
+              <a href="" ng-click="delAvatar(searchInfo.user_id)">حذف آواتار کاربر</a>
+            </div>
+          </div>
+          <h1><a href="">{[{resultItem.username}]}</a></h1>
+          <div class="sex">
+            <label>جنسیت :</label>
+            <span ng-show="searchInfo.profile.jens == 'M'">مرد</span>
+            <span ng-show="searchInfo.profile.jens != 'M'">زن</span>
+          </div>
+          <div class="score">
+            <label>امتیاز :</label>
+            <span>{[{searchInfo.profile.score}]}</span>
+          </div>
+          <div class="wis">
+            <label>اعتبار ویس :</label>
+            <span>{[{searchInfo.profile.credit}]}</span>
+          </div>
+          <div class="joinDate">
+            <label>تاریخ عضویت :</label>
+            <span>{[{searchInfo.profile.date_joined}]}</span>
+          </div>
+          <div class="email">
+            <label>ایمیل :</label>
+            <span>{[{searchInfo.profile.email}]}</span>
+          </div>
+        </div>
       </div>
+      <div class="clear"></div>
     </div>
   </div>
+</div>
 </div>
 </div>
 </div>

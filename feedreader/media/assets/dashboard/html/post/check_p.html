@@ -14,25 +14,28 @@
 		<div class="select">
 			<div class="dropdown score">
 				<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-				نوع نمایش : {[{scoreFilterText}]}
+					نوع نمایش : {[{scoreFilterText}]}
 					<span class="caret"></span>
 				</button>
 				<ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
 					<li><a ng-click="filter(0)" href="">همه</a></li>
+					<li><a ng-click="filter(0.3)" href="">اولویت بالای ۳۰٪</a></li>
 					<li><a ng-click="filter(0.7)" href="">اولویت بالای ۷۰٪</a></li>
+					<li><a ng-click="filter(0.5)" href="">اولویت بالای ۵۰٪</a></li>
+
 				</ul>
 			</div>
 				<!--<button class="button hidden-xs" ng-click="select = ! select;">انتخاب دسته ای پست ها</button>
 				<span><a href="" ng-show="select" ng-click="batchDelete()"><i class="fa fa-trash"></i></a></span> -->
 
-				<a id="socketStatus" class="refresh" href="">
+				<a id="socketStatus" onclick="client.disconnect();" class="refresh" href="">
 					عدم ارتباط
 				</a>
 				<div class="clear"></div>
 
 			</div> 
 			<div class="clear"></div>
-			<div id="checkP_feed" class="post-items resize" id="feed" load-images="false"  masonry reload-on-resize style="width:1070px;">
+			<div id="checkP_feed" class="post-items resize" id="feed" load-images="false"  masonry reload-on-resize>
 				<div  ng-show='loading'>
 					<div id="mySpinner"  class="loader">Loading...</div>
 				</div>
@@ -89,8 +92,8 @@
 						</div>
 						<div class="col-md-4">
 							<label>فعال بودن کاربر: </label>
-							<span ng-show="check_ps.user.is_active" class="fa-ban fa"></span>
-							<span ng-show="!check_ps.user.is_active" class="fa-check fa"></span>
+							<span ng-show="!check_ps.user.is_active" class="fa-ban fa"></span>
+							<span ng-show="check_ps.user.is_active" class="fa-check fa"></span>
 						</div>
 						<div class="col-md-4">
 							<label>پست حذف شده: </label>
@@ -192,7 +195,6 @@
 		console.log("onMessageArrived:"+message.payloadString);
 		var objs = jQuery.parseJSON( message.payloadString );
 		globalMessageFromMQTT.push(objs);
-		console.log(objs);
 	}
 
 </script>

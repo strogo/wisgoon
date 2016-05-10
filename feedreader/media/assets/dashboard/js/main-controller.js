@@ -24,30 +24,7 @@ app.controller('checkpController',['$scope','$http', '$timeout', function($scope
 	$scope.reportsShow = [];
 	$scope.scoreFilter= 0;
 	$scope.scoreFilterText = "همه";
-
-
-
-		var testB = localStorage.getItem("testC");
-
-		var append = function(i,obj){
-			setTimeout(function(){
-				$scope.reportsShow.push(obj);
-				$scope.$apply();
-			},400 * i)				
-		}
-
-		if (testB) {
-			var testA = JSON.parse(testB);
-			var time = 0;
-			for (var i = 0 ;testA.length > i ; i++) {
-				if (i > testA.length - 50){
-					append(time,testA[i])
-					time++;
-				}
-			};
-		};
 	
-
 	var interval = setInterval(function(){
 
 		pure_reports = globalMessageFromMQTT;
@@ -64,10 +41,6 @@ app.controller('checkpController',['$scope','$http', '$timeout', function($scope
 					var obj = pure_reports.filter(function(internalObj){ return (data.id === internalObj.id)});
 					data.msg = obj[0];
 					$scope.reportsShow.push(data);
-
-					var testC = $scope.reportsShow;
-					localStorage.setItem("testC",JSON.stringify(testC));
-
 				})
 			}
 		};
@@ -98,9 +71,14 @@ app.controller('checkpController',['$scope','$http', '$timeout', function($scope
 	};
 	$scope.filter = function (score){
 		$scope.scoreFilter = score;
-		if (score > 0) {
+		if (score > 0){
 			$scope.scoreFilterText = "اولویت‌های بالای " + score + " درصد";
-		}else{
+		}else if (score > 0.5){
+			$scope.scoreFilterText = "اولویت‌های بالای " + score + " درصد";
+		}else if (score > 0.7){
+			$scope.scoreFilterText = "اولویت‌های بالای " + score + " درصد";
+		}
+		else{
 			$scope.scoreFilterText = "همه";
 		}
 
@@ -280,7 +258,7 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 		var postData = {
 			description3 : $scope.formData.description3,
 			imei : $scope.searchInfo.profile.imei,
-			status : !$scope.formData.status
+			status : !$scope.searchInfo.profile.imei_status
 		}
 		
 		$http({
@@ -290,6 +268,7 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		}).success(function(data){
 			$scope.searchInfo.profile.imei_status = data.imei_status;
+			console.log(data);
 		});
 	};
 
@@ -297,8 +276,8 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 
 		var data = {
 			description1 : $scope.formData.description1,
-			activeId : $scope.formData.activeId,
-			activeStatus : !$scope.formData.activeStatus
+			activeId : $scope.searchInfo.user_id,
+			activeStatus : !$scope.searchInfo.profile.user_active
 		}
 
 		$http({
@@ -308,7 +287,6 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 			headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
 		}) .success(function(data) {
 			$scope.searchInfo.profile.user_active = data.profile.user_active;
-			console.log(data.profile.user_active);
 		});
 	};	
 
@@ -316,8 +294,8 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 
 		var data = {
 			description2 : $scope.formData.description2,
-			profileBanId : $scope.formData.profileBanId,
-			profileBanstatus : !$scope.formData.profileBanstatus
+			profileBanId : $scope.searchInfo.user_id,
+			profileBanstatus : !$scope.searchInfo.profile.userBanne_profile
 		}
 		$http({
 			method  : 'POST',
@@ -360,9 +338,20 @@ app.controller('searchController',function($scope,$http,$stateParams,$location) 
 		});
 	};
 	$scope.getInfo = function(cmId) {
-
+		$scope.loading = true;
 		$http.get('/dashboard/api/user/details/'+cmId+'/').success(function(data){
 			$scope.searchInfo = data.objects;
+			if (data.objects.profile.user_active) {
+				$scope.formData.description1 = data.objects.profile.active_desc;
+			}
+			else {
+				$scope.formData.description1 = data.objects.profile.inactive_desc;	
+			}
+
+			$scope.formData.description2 = data.objects.profile.ban_profile_desc;
+			$scope.formData.description3 = data.objects.profile.ban_imei_desc;
+
+			$scope.formData.status = data.objects.profile.imei_status;
 			$scope.formData.activeStatus = data.objects.profile.user_active;
 			$scope.formData.profileBanstatus = data.objects.profile.userBanne_profile;
 		}).finally(function () {
@@ -465,7 +454,7 @@ app.controller('adsController',['$scope','$http', function($scope, $http) {
 					marker: {
 						symbol: 'circle',
 					},
-					color: '#7EB6EC'
+					color: '#FF6A00'
 				}]
 			};
 		});
@@ -633,7 +622,7 @@ app.controller('deleteAvatarController',function($scope,$http,$location) {
 	$scope.delAvatar = function(uId) {
 		$http.get("/dashboard/api/user/removeAvatar/"+uId+"/")
 		.success(function(data){
-			
+			$( ".user_avatar img").remove();
 		});
 	};	
 });
@@ -683,7 +672,7 @@ app.controller('blockCtrl',['$scope','$http', function($scope, $http) {
 					marker: {
 						symbol: 'circle',
 					},
-					color: '#7EB6EC'
+					color: '#FF6A00'
 				}]
 			}
 		}).finally(function () {
@@ -733,7 +722,7 @@ app.controller('userCtrl',['$scope','$http', function($scope, $http) {
 					marker: {
 						symbol: 'circle',
 					},
-					color: '#7EB6EC'
+					color: '#FF6A00'
 				}]
 			}
 		}).finally(function () {
@@ -790,7 +779,7 @@ app.controller('followCtrl',['$scope','$http', function($scope, $http) {
 					marker: {
 						symbol: 'circle',
 					},
-					color: '#7EB6EC'
+					color: '#FF6A00'
 				}]
 			};
 		}).finally(function () {
@@ -843,7 +832,7 @@ app.controller('likesCtrl',['$scope','$http', function($scope, $http) {
 					marker: {
 						symbol: 'circle',
 					},
-					color: '#7EB6EC'
+					color: '#FF6A00'
 				}]
 			}
 		}).finally(function () {
@@ -893,7 +882,7 @@ app.controller('commentCtrl',['$scope','$http', function($scope, $http) {
 					marker: {
 						symbol: 'circle',
 					},
-					color: '#7EB6EC'
+					color: '#FF6A00'
 				}]
 			}
 		}).finally(function () {

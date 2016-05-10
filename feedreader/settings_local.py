@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-# from easy_thumbnails.conf import Settings as thumbnail_settings
 
 INSTANCE_NAME = 'moon'
 DEBUG = True
@@ -9,7 +8,7 @@ THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DISPLAY_AD = False
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
-STATIC_VERSION = '5.9.13'
+STATIC_VERSION = '5.9.15'
 
 SITE_ROOT = os.path.dirname(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -23,9 +22,6 @@ LOCALE_PATHS = (
 )
 
 CASSANDRA_DB = '127.0.0.1'
-# THUMBNAIL_PROCESSORS = (
-#     'image_cropping.thumbnail_processors.crop_corners',
-# ) + thumbnail_settings.THUMBNAIL_PROCESSORS
 
 ALLOWED_HOSTS = ["127.0.0.1:8000",
                  "192.168.0.110:8080"
@@ -91,7 +87,6 @@ STATIC_URL = '/static/'
 
 THUMBNAIL_PREFIX = 'cache2/'
 THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.cached_db_kvstore.KVStore'
-# THUMBNAIL_QUALITY = 90
 
 IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT, 'image_cache')
 
@@ -126,12 +121,8 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'johnny.middleware.LocalStoreClearMiddleware',
-    # 'johnny.middleware.QueryCacheMiddleware',
     'pin.middleware.UrlRedirectMiddleware',
     'pin.middleware.XsSharing',
-    # 'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-    # 'django_cprofile_middleware.middleware.ProfilerMiddleware',
     'django_user_agents.middleware.UserAgentMiddleware',
 ]
 CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
@@ -147,19 +138,12 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
-    # 'social_auth.context_processors.social_auth_by_name_backends',
-    # 'social_auth.context_processors.social_auth_backends',
-    # 'social_auth.context_processors.social_auth_by_type_backends',
-    # 'social_auth.context_processors.social_auth_login_redirect',
-    # 'rss.context_processors.c_url',
-    # 'rss.context_processors.node_url',
     'pin.context_processors.pin_form',
     'pin.context_processors.pin_categories',
     'pin.context_processors.is_super_user',
     'pin.context_processors.user__id',
     'pin.context_processors.today_stats',
     'pin.context_processors.media_prefix',
-    'pin.context_processors.is_police',
     'pin.context_processors.subs',
     'pin.context_processors.global_values',
     'pin.context_processors.static_version',
@@ -176,12 +160,10 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.humanize',
     'django.contrib.flatpages',
-    'blog.apps.BlogConfig',
     'registration',
     'pin.apps.PinConfig',
     'sorl.thumbnail',
     'daddy_avatar',
-    'contactus',
     'compressor',
     'user_profile.apps.UserProfileConfig',
     'captcha',
@@ -206,19 +188,10 @@ HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
         'URL': 'http://127.0.0.1:8983/solr'
-        # ...or for multicore...
-        # 'URL': 'http://127.0.0.1:8983/solr/mysite',
     },
 }
 
 AUTHENTICATION_BACKENDS = [
-    # 'social_auth.backends.twitter.TwitterBackend',
-    # 'social_auth.backends.facebook.FacebookBackend',
-    # 'social_auth.backends.google.GoogleOAuthBackend',
-    # 'social_auth.backends.google.GoogleOAuth2Backend',
-    # 'social_auth.backends.google.GoogleBackend',
-    # 'social_auth.backends.yahoo.YahooBackend',
-    # 'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -228,10 +201,6 @@ CKEDITOR_CONFIGS = {
         'toolbar': 'full',
     },
 }
-
-# DEBUG_TOOLBARN_CONFIG = {
-#     'INTERCEPT_REDIRECTS': True,
-# }
 
 SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
 
@@ -254,18 +223,12 @@ INTERNAL_IPS = ('127.0.0.1',)
 
 CACHES = {
     'default': dict(
-        # BACKEND='johnny.backends.memcached.MemcachedCache',
         BACKEND='django.core.cache.backends.memcached.MemcachedCache',
         LOCATION=['127.0.0.1:11211'],
-        # LOCATION=['79.127.125.104:11211'],
-        # JOHNNY_CACHE=False,
     ),
     'cache_layer': dict(
-        # BACKEND='johnny.backends.memcached.MemcachedCache',
         BACKEND='django.core.cache.backends.memcached.MemcachedCache',
         LOCATION=['127.0.0.1:11211'],
-        # LOCATION=['79.127.125.104:11211'],
-        # JOHNNY_CACHE=False,
     ),
 }
 
@@ -417,7 +380,6 @@ CELERY_ROUTES.update({
     }
 })
 
-# format of avatar cache name by user_id
 AVATAR_CACHE_KEY = "dad:avatar:{}"
 
 ES_HOST = "localhost"
