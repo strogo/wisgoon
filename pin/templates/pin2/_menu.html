@@ -40,12 +40,13 @@
 			</li>
 		</ul>
 	</li>
+	{% comment %}
 	<li>
 		<a data-toggle="modal" data-target="#fromImageModal" href="#fromImageModal">
 			ارسال فایل
 		</a>
 	</li>
-	{% comment %}
+	{% endcomment %}
 	<li class="parent">
 		<a href="javascript:;">
 			ارسال تصویر
@@ -63,7 +64,6 @@
 			</li>
 		</ul>
 	</li>
-	{% endcomment %}
 
 	<li class="{% if page == 'following' %} active{% endif %}">
 		<a href="{% url "pin-following" %}">مطالب دوستان</a>

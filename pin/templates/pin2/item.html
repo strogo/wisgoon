@@ -69,14 +69,39 @@ mlt: {{mlt.0.object.id}}
                 var curObj = d.objects[i];
                 var href = curObj.permalink.web;
                 var title = curObj.text;
-                var width = curObj.images.low_resolution.width;
-                var height = curObj.images.low_resolution.height;
-                wpercent = (otherPostWidth / width);
-                hsize = parseInt(height * wpercent);
-                if (curObj.images.thumbnail.url) {
-                    var path = curObj.images.low_resolution.url;
-                    html += '<div class="user-post-item"><a href="'+href+'"><img width="'+otherPostWidth+'" height="'+hsize+'" src="'+ path +'" title="'+title+'"></a></div>';
+                if (typeof curObj.images.low_resolution !== 'undefined') {
+                    var width = curObj.images.low_resolution.width;
+                    var height = curObj.images.low_resolution.height;
+                }else{
+                    if (typeof curObj.images.thumbnail !== 'undefined') {
+                        var width = curObj.images.thumbnail.width;
+                        var height = curObj.images.thumbnail.height;                    
+                    }else {
+                        if (typeof curObj.images.original !== 'undefined') {
+                            var width = curObj.images.original.width;
+                            var height = curObj.images.original.height;
+                        }
+                    }
                 };
+
+                if (width) {
+                    wpercent = (otherPostWidth / width);
+                    hsize = parseInt(height * wpercent);
+                    if (typeof curObj.images.thumbnail !== 'undefined') {
+                        var path = curObj.images.thumbnail.url;
+                    }else{
+                        if (typeof curObj.images.low_resolution !== 'undefined') {
+                            var path = curObj.images.low_resolution.url;
+                        }else{
+                            if (typeof curObj.images.original !== 'undefined') {
+                                var path = curObj.images.original.url;
+                            }
+                        }
+                    }
+                    if (path) {
+                        html += '<div class="user-post-item"><a href="'+href+'"><img width="'+otherPostWidth+'" height="'+hsize+'" src="'+ path +'" title="'+title+'"></a></div>';
+                    };
+                }
             };
             $("div.user-post-items").append(html).each(function(){
                 $('.user-post-items').masonry('reload');
