@@ -274,6 +274,7 @@ def you_are_deactive(request):
 
 
 @login_required
+@csrf_exempt
 def sendurl(request):
     if request.method == "POST":
         post_values = request.POST.copy()
