@@ -76,10 +76,10 @@ urlpatterns += patterns('pin.views_user',
     url(r'^promotion/$', 'promotion_list', name="promotion-list"),
 )
 
-urlpatterns += patterns('pin.views_backbone',
-    url(r'new/home', 'home', name='new-home'),
-    url(r'new/notif/', 'notif', name='new-notif'),
-)
+# urlpatterns += patterns('pin.views_backbone',
+#     url(r'new/home', 'home', name='new-home'),
+#     url(r'new/notif/', 'notif', name='new-notif'),
+# )
 
 urlpatterns += patterns('pin.views_oauth',
     url(r'invite/google', 'invite_google', name='invite-google'),
