@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.conf import settings
 
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -58,7 +59,7 @@ class ProductImages(models.Model):
 class Cart(models.Model):
     quantity = models.IntegerField(default=1)
     product = models.ForeignKey(Product)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
 
 class Recivers(models.Model):
@@ -67,7 +68,7 @@ class Recivers(models.Model):
     phone = models.CharField(max_length=50)
     postal_code = models.CharField(max_length=100)
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
 
 class Order(models.Model):
@@ -89,5 +90,13 @@ class Order(models.Model):
     quantity = models.IntegerField(default=1)
     status = models.IntegerField(choices=STATUS, default=CHECKING)
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     reciver = models.ForeignKey(Recivers)
+
+
+# class HesabitToken(models.Model):
+#     token = models.CharField(max_length=255, null=True, blank=True)
+#     refresh_token = models.CharField(max_length=255, null=True, blank=True)
+#     expire_time = models.IntegerField(default=10 * 3600)
+#     create_at = models.DateTimeField(auto_now=True)
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL)

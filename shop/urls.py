@@ -10,6 +10,6 @@ urlpatterns = patterns('shop.views',
     url(r'^address/info/$', 'address', name='shop-address'),
     url(r'^confirm/$', 'confirm', name='shop-confirm'),
     url(r'^form/$', 'form', name='shop-form'),
-    url(r'^hesabit/redirect/$', 'get_access_token',
-        name='shop-hesabit-redirect'),
+    # url(r'^hesabit/redirect', 'get_access_token',
+    #     name='shop-hesabit-redirect'),
 )
