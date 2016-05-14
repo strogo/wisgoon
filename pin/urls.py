@@ -76,19 +76,19 @@ urlpatterns += patterns('pin.views_user',
     url(r'^promotion/$', 'promotion_list', name="promotion-list"),
 )
 
-urlpatterns += patterns('pin.views_backbone',
-    url(r'new/home', 'home', name='new-home'),
-    url(r'new/notif/', 'notif', name='new-notif'),
-)
+# urlpatterns += patterns('pin.views_backbone',
+#     url(r'new/home', 'home', name='new-home'),
+#     url(r'new/notif/', 'notif', name='new-notif'),
+# )
 
 urlpatterns += patterns('pin.views_oauth',
     url(r'invite/google', 'invite_google', name='invite-google'),
     url(r'email/activation/$', 'activation_email', name='activation_email'),
 )
 
-urlpatterns += patterns('pin.views_static',
-    url(r'app/android/', 'android', name='static-android'),
-)
+# urlpatterns += patterns('pin.views_static',
+#     url(r'app/android/', 'android', name='static-android'),
+# )
 
 urlpatterns += patterns('pin.views_admin',
     url(r'user/activate/(?P<user_id>\d+)/(?P<status>\d+)/$', 'activate_user', name='activate-user'),

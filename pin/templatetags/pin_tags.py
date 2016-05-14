@@ -399,3 +399,47 @@ def user_posts_for_email(user_id):
     tb2_html += '</table>'
     html += '<table align="center"><tr><td valign="top">%s</td><td valign="top">%s</td></tr></table>' % (tb1_html, tb2_html)
     return html
+
+
+@register.filter
+def timestamp_to_datetime(timestamp):
+    import pytz
+
+    tz = pytz.timezone('Asia/Tehran')
+    converted = tz.localize(datetime.datetime.fromtimestamp(int(timestamp)))
+
+    t1 = converted.astimezone(tz).replace(tzinfo=None)
+    t2 = datetime.datetime.today()
+
+    days = (t2 - t1).days
+
+    if not days:
+        diff = (t2 - t1)
+        hour, minutue = divmod(diff.days * 86400 + diff.seconds, 3600)
+
+        if hour:
+            return '%d ساعت پیش' % hour
+
+        minutue, second = divmod(diff.days * 86400 + diff.seconds, 60)
+        if minutue:
+            return '%d دقیقه پیش' % minutue
+
+        elif not minutue and second:
+            return '%d ثانیه پیش' % second
+
+        else:
+            return 'لحظاتی پیش'
+    else:
+        if days > 31:
+
+            try:
+                return khayyam.JalaliDatetime.fromtimestamp(timestamp).strftime("%B %Y")
+            except AttributeError:
+                return t1
+
+        else:
+            weeks = days / 7
+            if days > 7:
+                return '%d هفته پیش' % weeks
+            else:
+                return '%d روز پیش' % days

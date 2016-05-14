@@ -303,7 +303,7 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
             pi['images']['original'] = p_original
             pi['images']['original']['url'] = media_abs_url(post.image, check_photos=True)
         except Exception:
-            pass
+            return None
 
         pi['category'] = category_get_json(cat_id=post.category_id)
 

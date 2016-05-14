@@ -19,38 +19,38 @@
 					{{ form.errors}}
 					<div class="form-group">
 						<label class="control-label">آدرس:</label>
-						<input type="text" name="url" id="url" placeholder="URL" class="form-control span3 ltr">
+						<input type="text" name="url" id="url" placeholder="URL" class="form-control wis_input ltr">
 					</div>
 					<div class="form-group">
-						<input id="btn-pin-url" type="button" class="form-control btn btn-primary" value="بررسی لینک" />
+						<input id="btn-pin-url" type="button" class="wis_btn green" value="بررسی لینک" />
 					</div>
 					<input type="hidden" name="image" id="image_url">
 					<div id="hidden_actions" style="display: none">
 						<div class="form-group" id="image_control">
 							<div class="controls">
-								<div id="images" style="width:210px;text-align: center">
+								<div id="images">
 									<div class="" style="width: 100%;">
-										<a style="float: right" class="img-move btn" rel="next" href="#"><i class="glyphicon glyphicon-forward"></i></a>
-										<a style="float: left" class="img-move btn" rel="back" href="#"><i class="glyphicon glyphicon-backward"></i></a>
+										<a class="img-move btn right" rel="next" href="#"><i class="fa fa-arrow-right"></i></a>
+										<a class="img-move btn left" rel="back" href="#"><i class="fa fa-arrow-left"></i></a>
 									</div>
 									<br>
 									<div class="clearfix"> </div>
-									<img src="" id="ajx-img" style="max-height: 100px;max-width: 150px;margin-top: 10px">
+									<img src="" id="ajx-img" />
 								</div>
 							</div>
 						</div>
 						<div class="form-group ">
 							<label>توضیحات: </label>
-							<textarea class="form-control" id="id_text" rows="5" cols="40" name="text"> </textarea>
+							<textarea class="form-control wis_input" id="id_text" rows="5" cols="40" name="text"> </textarea>
 						</div>
 						<div class="form-group">
 							<label>گروه </label>
-							{% render_field pin_form.category class+="form-control select2" %}
+							{% render_field pin_form.category class+="form-control select2 wis_input" %}
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<input id="pin-submit" type="submit" class="btn btn-primary" value="ذخیره" style="display: none" />
+					<input id="pin-submit" type="submit" class="wis_btn green" value="ذخیره" style="display: none" />
 				</div>
 			</form>
 		</div>
@@ -76,17 +76,15 @@
 	}
 
 	$('body').on('click', '.img-move', function(){
-	    event.preventDefault();
-		action = $(this).attr('rel')
+		action = $(this).attr('rel');
 		cur_id_change(action);
-		$("#ajx-img").attr('src', images[cur_id]);
-		$("#image_url").val(images[cur_id]);
+		im = images[cur_id];
+		$("#ajx-img").attr('src', im);
+		$("#image_url").val(im);
 	});
 
 	$('body').on('click', '#btn-pin-url', function(){
-	    event.preventDefault();
-		$(this).val('لطفا صبر کنید');
-		$(this).addClass('disabled');
+		$(this).val('لطفا صبر کنید...').addClass('disabled');
 
 		url = $("#url").val();
 		$.post('{% url "pin-sendurl-a" %}', {
@@ -98,7 +96,7 @@
 	var cur_id = 0;
 
 	function error_alert() {
-		alert('لطفا آدرس را با دقت وارد نمایید');
+		alertify.error('لطفا آدرس را با دقت وارد نمایید');
 		$("#btn-pin-url").val('بررسی لینک').removeClass('disabled');
 	}
 
@@ -107,11 +105,31 @@
 			error_alert();
 			return false;
 		}
+		
 		$.each(data, function(index, element) {
-			images.push(element);
+			var tmpImg = new Image();
+			tmpImg.src= element;
+			$(tmpImg).on('load',function(){
+				var orgWidth = tmpImg.width;
+				var orgHeight = tmpImg.height;
+				if (orgWidth >= 236 && orgHeight >= 236) {
+					images.push(element);
+				};
+
+				if (index == data.length-1) {
+					if (images.length == 0) {
+						alertify.error("هیچ تصویری با اندازه بزرگتر از ۲۳۶پیکسل \n در این صفحه پیدا نشد! \n لطفا دوباره تلاش کنید");
+						$("#btn-pin-url").val('بررسی لینک').removeClass('disabled');
+					}else{
+						start_images();
+					}
+				};
+			});
+
+
 		});
 
-		start_images();
+		
 	}
 
 

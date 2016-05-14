@@ -22,8 +22,10 @@ from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
 
 def search_user(request):
+
     if not check_admin(request):
         return return_un_auth()
+
     query = request.GET.get('q', '')
     before = int(request.GET.get('before', 0))
     token = request.GET.get('token', '')
@@ -33,9 +35,9 @@ def search_user(request):
 
     words = query.split()
     sq = SQ()
-    for w in words:
-        sq.add(SQ(text__contains=Raw("%s*" % w)), SQ.OR)
-        sq.add(SQ(text__contains=Raw(w)), SQ.OR)
+    for word in words:
+        sq.add(SQ(text__contains=Raw("%s*" % word), author__contains=Raw("%s*" % word)), SQ.OR)
+        sq.add(SQ(text__contains=Raw(word), author__contains=Raw(word)), SQ.OR)
 
     results = SearchQuerySet().models(Profile).filter(sq)[before:before + 20]
 

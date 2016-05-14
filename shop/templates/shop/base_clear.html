@@ -1,0 +1,46 @@
+{% load pin_tags %}
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>wisgoon shop</title>
+
+	<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}shop/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}shop/css/bootstrap-rtl.min.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}shop/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}shop/css/font-awesome-animation.min.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}shop/css/fonts.css">
+	<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}shop/css/style.css?ver=0.0.2">
+
+	{% block header-css %}{% endblock header-css %}
+
+</head>
+<body>
+	<div class="main">
+		<div class="container">
+			{% block content %} {% endblock content%}
+			<footer>
+				<div class="container">
+					<div class="col-md-4">
+						ایمیل پشتیبانی:
+						<img src="{{STATIC_CDN}}v2/images/info-mail.png" alt="">
+					</div>
+					<div class="col-md-4">
+
+					</div>
+					<div class="col-md-4">
+						طراحی و توسعه توسط  <a href="">گروه نرم افزاری رخ</a>
+					</div>
+				</div>	
+			</footer>
+		</div>
+		<div class="clear"></div>
+	</div>
+	<script type="text/javascript" src="{{STATIC_CDN}}shop/js/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_CDN}}shop/js/bootstrap.min.js"></script>
+	{% block footer-script %}{% endblock %}
+</body>
+</html>
