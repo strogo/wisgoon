@@ -1684,6 +1684,9 @@ a.img-move{
 .menu-box ul {
 	padding: 0;
 }
+.menu-box > ul {
+	margin-bottom: 100px;
+}
 .menu-box ul li.parent::before {
 	content: attr(data-content);
 	font-family: "Glyphicons Halflings";
@@ -3281,10 +3284,18 @@ div.comment div div.row:hover .del-comment{
 	iframe{
 		width: 100% !important;
 	}
+
+	.alertify-notifier{
+		margin-bottom: 70px;
+	}
 	
 }
 
 @media (max-width: 600px) {
+	.gotop{
+		bottom: 70px;
+		right: 40px;
+	}
 	.profile_data .user_avtivity{
 		display: block;
 	}

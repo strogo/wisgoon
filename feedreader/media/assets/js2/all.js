@@ -311,6 +311,24 @@ function marker(t){
 }
 
 $(function () {
+
+    $('.menu-box').bind('mousewheel DOMMouseScroll', function(e) {
+        var scrollTo = null;
+
+        if (e.type == 'mousewheel') {
+            scrollTo = (e.originalEvent.wheelDelta * -1);
+        }
+        else if (e.type == 'DOMMouseScroll') {
+            scrollTo = 10 * e.originalEvent.detail;
+        }
+
+        if (scrollTo) {
+            e.preventDefault();
+            $(this).scrollTop(scrollTo + $(this).scrollTop());
+        }
+    });
+
+
     $(window).on("resize", function(){
         feedobj.masonry('reload')
     });
@@ -534,8 +552,18 @@ $(function () {
 
     if (no_download) {
         $('.top_download').parent().remove();
-        $('body').append("<style type='text/css'>@media (max-width: 768px) {body{padding-top:0 !important;}}</style>");
     };
+
+
+    var no_sticky = Cookies.get('no_sticky');
+    if (no_download) {
+        $('.sticky_top').remove();
+    };
+
+    if (no_download) {
+        $('body').append("<style type='text/css'>@media (max-width: 768px) {body{padding-top:0 !important;}}</style>");
+    }
+
 
 });
 
