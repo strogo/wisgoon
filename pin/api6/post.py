@@ -459,17 +459,17 @@ def hashtag(request, tag_name):
     data = {}
     data['meta'] = {'limit': 20,
                     'next': "",
-                    'total_count': 1000}
+                    'total_count': ''}
 
     if query:
 
-        results = SearchQuerySet().models(Post)\
-            .filter(tags=query)\
-            .order_by('-timestamp_i')[before:before + row_per_page]
+        results = SearchQuerySet().models(Post).filter(tags=query)
+
+        data['meta']['total_count'] = results.count()
 
         cur_user = AuthCache.id_from_token(token=token)
         posts = []
-        for p in results:
+        for p in results.order_by('-timestamp_i')[before:before + row_per_page]:
             try:
                 pp = int(p.object.id)
                 posts.append(pp)
