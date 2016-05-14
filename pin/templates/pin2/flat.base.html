@@ -19,11 +19,11 @@
 	{% include "base/analytics.html"%}
 </head>
 <body class="{{page}} {% if request.user_agent.is_mobile %}mobile_page{% endif %}">
-	{% if request.user_agent.is_mobile %}
+	{% if not request.COOKIES.no_download %}
+
+	{# {% include "pin2/includes/_top_mob_download.html" %} #}
 	{% include "pin2/includes/_sticky_download.html" %}
 	{% endif %}
-
-	{% include "pin2/includes/_top_mob_download.html" %}
 
 	<div id="pagetop"></div>
 	{% include "pin2/nav.html" %}

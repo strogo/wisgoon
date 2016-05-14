@@ -542,27 +542,12 @@ $(function () {
         event.preventDefault();
         $(this).parents(".only_mobile_view").remove();
         $('body').css('padding-top', "0 !important");
-        $('body').append("<style type='text/css'>@media (max-width: 768px) {body{padding-top:0 !important;}}</style>");
+        // $('body').append("<style type='text/css'>@media (max-width: 768px) {body{padding-top:0 !important;}}</style>");
         var date = new Date();
         date.setTime(date.getTime() + (60 * 60 * 1000));
         Cookies.set('no_download', 1, { expires : date });
     });
 
-    var no_download = Cookies.get('no_download');
-
-    if (no_download) {
-        $('.top_download').parent().remove();
-    };
-
-
-    var no_sticky = Cookies.get('no_sticky');
-    if (no_download) {
-        $('.sticky_top').remove();
-    };
-
-    if (no_download) {
-        $('body').append("<style type='text/css'>@media (max-width: 768px) {body{padding-top:0 !important;}}</style>");
-    }
 
 
 });
