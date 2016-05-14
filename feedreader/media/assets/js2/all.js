@@ -542,7 +542,7 @@ $(function () {
         event.preventDefault();
         $(this).parents(".only_mobile_view").remove();
         $('body').css('padding-top', "0 !important");
-        // $('body').append("<style type='text/css'>@media (max-width: 768px) {body{padding-top:0 !important;}}</style>");
+        $('body').append("<style type='text/css'>@media (max-width: 768px) {body{padding-top:0 !important;}}</style>");
         var date = new Date();
         date.setTime(date.getTime() + (60 * 60 * 1000));
         Cookies.set('no_download', 1, { expires : date });

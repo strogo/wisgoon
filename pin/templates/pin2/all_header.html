@@ -35,7 +35,7 @@
 {% if request.user_agent.is_mobile %}
 <link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}v2/css/style_mobile.css?ver={{STATIC_VERSION}}">
 
-{% if request.COOKIES.no_download == 1 %}
+{% if request.COOKIES.no_download %}
 <style type="text/css">
 	@media (max-width: 768px) {
 		body{
