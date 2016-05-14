@@ -232,42 +232,48 @@ def tags(request, tag_name):
 def hashtag(request, tag_name):
     row_per_page = 20
     results = []
-    posts = []
+    posts_list = []
     query = tag_name
 
     if query in [u'عروس', u'عاشقانه'] and not request.user.is_authenticated():
         return render(request, 'pin2/samandehi.html')
 
     offset = int(request.GET.get('offset', 0))
-    post_queryset = SearchQuerySet().models(Post)\
-        .filter(tags=tag_name)\
-        .order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
-    for p in post_queryset:
-        ob = post_item_json(post_id=p.pk, cur_user_id=request.user.id)
-        if ob:
-            posts.append(ob)
+
+    post_queryset = SearchQuerySet().models(Post).filter(tags=tag_name)
+
+    posts = post_queryset.order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
+
+    for post in posts:
+        post_json = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
+        if post_json:
+            posts_list.append(post_json)
 
     tags = ['کربلا']
+    total_count = post_queryset.count()
 
     if not query:
         return render(request, 'pin2/tags.html', {
             'tags': tags,
+            'total_count': total_count
         })
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
             'results': results,
-            'posts': posts,
+            'posts': posts_list,
             'query': query,
             'offset': offset + row_per_page,
+            'total_count': total_count
         })
 
     return render(request, 'pin2/tag.html', {
         'results': results,
-        'posts': posts,
+        'posts': posts_list,
         'query': query,
         'page_title': tag_name,
         'offset': offset + row_per_page,
+        'total_count': total_count
     })
 
 

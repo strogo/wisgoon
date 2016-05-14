@@ -1,5 +1,6 @@
 {% load daddy_avatar %}
 {% load pin_tags %}
+{% load humanize %}
 <div class="feed-item masonry-brick new_items">
 	<div class="img-content">
 		<a class="pin-item-link" href="{% url 'pin-item' item.id%}{% if related %}?from={{post.id}}{%endif%}">
@@ -83,7 +84,6 @@
 		<span class=''>
 			
 		</span>
-
 		{% if user.is_authenticated %}
 		<div class="dropdown three-dot">
 			<a class="dropdown-toggle dl" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -116,6 +116,7 @@
 			<a href="{% url 'pin-absuser' item.user.username %}" data-toggle="tooltip" data-placement="bottom" title="{{item.user.username}}">
 				{{item.user.username|truncatechars:"18"}}
 			</a>
+			<div>{{item.timestamp|timestamp_to_datetime}}</div>
 		</div>	
 
 	</div>

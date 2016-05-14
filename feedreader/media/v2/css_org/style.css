@@ -1391,6 +1391,21 @@ i.time_icon,
 	margin-right: 0;
 	margin-left: 0;
 }
+#pin-form-from-url .image_control .img-move{
+	background: #FF6B01;
+	border-radius: 50px;
+	color: #fff;
+	left: 0;
+	position: absolute;
+}
+#pin-form-from-url .image_control #images{
+	text-align: center;
+}
+#pin-form-from-url .image_control #ajx-img{
+	margin-top: 10px; 
+	max-width: 500px;
+	max-height: 500px;
+}
 
 .ltr{
 	text-align: left;

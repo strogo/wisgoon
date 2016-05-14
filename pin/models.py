@@ -84,6 +84,7 @@ class SubCategory(models.Model):
     title = models.CharField(max_length=250)
     image = models.ImageField(default='', upload_to='pin/scategory/')
     image_device = models.ImageField(default='', upload_to='pin/scategory/')
+    cnt_post = models.IntegerField(default=0)
 
     def __unicode__(self):
         return self.title
@@ -192,6 +193,7 @@ class Category(models.Model):
     image = models.ImageField(default='', upload_to='pin/category/')
     parent = models.ForeignKey(SubCategory, related_name='sub_category',
                                blank=True, null=True)
+    cnt_post = models.IntegerField(default=0)
 
     def __unicode__(self):
         return self.title
