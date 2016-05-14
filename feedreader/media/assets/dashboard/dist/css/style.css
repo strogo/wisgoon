@@ -986,7 +986,7 @@ table img {
 }
 .box .description p {
 	padding: 5px 10px;
-	font-size: 10px;
+	font-size: 14px;
 }
 .description p a {
 	color: #ff6a00;
@@ -1020,7 +1020,7 @@ table img {
 	padding:10px;
 }
 .box .reporters img{
-	width: 30px;
+	width: 40px;
 	border-radius: 50%;
 }
 .box-info {
@@ -1115,7 +1115,7 @@ table img {
 	margin-top: 20px;
 }
 .reporters-info img {
-	width: 50px !important;
+	width: 60px !important;
 	border-radius: 50%;
 }
 
