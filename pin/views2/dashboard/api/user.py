@@ -11,7 +11,7 @@ from pin.api6.tools import get_next_url, get_simple_user_object
 from pin.api6.http import return_json_data, return_un_auth, return_not_found,\
     return_bad_request
 from pin.api_tools import media_abs_url
-from pin.models import PhoneData, BannedImei, Log, UserLog
+from pin.models import PhoneData, BannedImei, Log, UserLog, UserPermissions, UserCron
 from pin.tools import get_user_ip
 from pin.views2.dashboard.api.tools import get_profile_data, check_admin,\
     cnt_post_deleted_by_admin
@@ -19,6 +19,8 @@ from pin.views2.dashboard.api.tools import get_profile_data, check_admin,\
 from user_profile.models import Profile
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
+
+import datetime
 
 
 def search_user(request):
@@ -172,6 +174,240 @@ def change_status_user(request):
         data['profile'] = get_profile_data(user.profile)
         data['profile']['description1'] = desc
         return return_json_data(data)
+    else:
+        return return_bad_request()
+
+
+@csrf_exempt
+def user_post_permissions(request):
+    if not check_admin(request):
+        return return_un_auth()
+
+    try:
+        user_id = int(request.POST.get('user_id', False))
+        status = str(request.POST.get('status', False))
+        description = str(request.POST.get('description', ""))
+        due = str(request.POST.get('due_data', ""))
+    except:
+        return return_not_found()
+
+    if settings.DEBUG:
+        from pin.tools import AuthCache
+        token = request.GET.get('token', '')
+        if token:
+            current_user = AuthCache.user_from_token(token=token)
+        else:
+            current_user = request.user
+    else:
+        current_user = request.user
+
+    if user_id and description:
+        if status == 'true':
+
+            try:
+                user_permissions, create = UserPermissions.objects.get_or_create(user_id=user_id)
+            except Exception, e:
+                print str(e)
+
+            if user_permissions:
+                user_permissions.post = True
+                user_permissions.save()
+            else:
+                UserPermissions.objects.create(user=user_id, post=True)
+
+            UserLog.objects.create(user_id=user_id,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.ENABLE_POST,
+                                   )
+
+            return return_json_data({'status': True,
+                                     'message': _("Successfully post_permissions true."),
+                                     'post_permissions': True})
+        else:
+            try:
+                user_permissions, create = UserPermissions.objects.get_or_create(user_id=user_id)
+            except Exception, e:
+                print str(e)
+
+            if user_permissions:
+                user_permissions.post = False
+                user_permissions.save()
+            else:
+                UserPermissions.objects.create(user=user_id, post=False)
+
+            UserLog.objects.create(user_id=user_id,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.DISABLE_POST)
+            if due:
+                due_data = datetime.datetime.strptime(due, "%Y/%m/%d %H:%M:%S")
+
+                UserCron.objects.create(user_id=user_id,
+                                        actor_id=current_user.id,
+                                        action=UserCron.DISABLE_POST,
+                                        after=UserCron.ENABLE_POST,
+                                        create_time=due_data)
+            else:
+                return return_bad_request({'message': _('Enter time')})
+
+            return return_json_data({'status': True,
+                                     'message': _("Successfully post_permissions false."),
+                                     'post_permissions': False})
+
+
+@csrf_exempt
+def user_comment_permissions(request):
+    if not check_admin(request):
+        return return_un_auth()
+
+    try:
+        user_id = int(request.POST.get('user_id', False))
+        status = str(request.POST.get('status', False))
+        description = str(request.POST.get('description', ""))
+        due = str(request.POST.get('due_data', ""))
+    except:
+        return return_not_found()
+
+    if settings.DEBUG:
+        from pin.tools import AuthCache
+        token = request.GET.get('token', '')
+        if token:
+            current_user = AuthCache.user_from_token(token=token)
+        else:
+            current_user = request.user
+    else:
+        current_user = request.user
+
+    if user_id and description:
+        if status == 'true':
+
+            try:
+                user_permissions, create = UserPermissions.objects.get_or_create(user_id=user_id)
+            except Exception, e:
+                print str(e)
+
+            if user_permissions:
+                user_permissions.comment = True
+                user_permissions.save()
+            else:
+                UserPermissions.objects.create(user=user_id, comment=True)
+
+            UserLog.objects.create(user_id=user_id,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.ENABLE_COMMENT)
+
+            return return_json_data({'status': True,
+                                     'message': _("Successfully comment_permissions true."),
+                                     'comment_permissions': True})
+        else:
+            try:
+                user_permissions, create = UserPermissions.objects.get_or_create(user_id=user_id)
+            except Exception, e:
+                print str(e)
+
+            if user_permissions:
+                user_permissions.comment = False
+                user_permissions.save()
+            else:
+                UserPermissions.objects.create(user=user_id, comment=False)
+
+            UserLog.objects.create(user_id=user_id,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.DISABLE_COMMENT)
+            if due:
+                due_data = datetime.datetime.strptime(due, "%Y/%m/%d %H:%M:%S")
+
+                UserCron.objects.create(user_id=user_id,
+                                        actor_id=current_user.id,
+                                        action=UserCron.DISABLE_COMMENT,
+                                        after=UserCron.ENABLE_COMMENT,
+                                        create_time=due_data)
+
+            else:
+                return return_bad_request({'message': _('Enter time')})
+
+            return return_json_data({'status': True,
+                                     'message': _("Successfully comment_permissions false."),
+                                     'post_permissions': False})
+
+
+@csrf_exempt
+def user_report_permissions(request):
+    if not check_admin(request):
+        return return_un_auth()
+
+    try:
+        user_id = int(request.POST.get('user_id', False))
+        status = str(request.POST.get('status', False))
+        description = str(request.POST.get('description', ""))
+        due = str(request.POST.get('due_data', ""))
+    except:
+        return return_not_found()
+
+    if settings.DEBUG:
+        from pin.tools import AuthCache
+        token = request.GET.get('token', '')
+        if token:
+            current_user = AuthCache.user_from_token(token=token)
+        else:
+            current_user = request.user
+    else:
+        current_user = request.user
+
+    if user_id and description:
+        if status == 'true':
+
+            try:
+                user_permissions, create = UserPermissions.objects.get_or_create(user_id=user_id)
+            except Exception, e:
+                print str(e)
+
+            if user_permissions:
+                user_permissions.report = True
+                user_permissions.save()
+            else:
+                UserPermissions.objects.create(user=user_id, report=True)
+
+            UserLog.objects.create(user_id=user_id,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.ENABLE_REPORT)
+
+            return return_json_data({'status': True,
+                                     'message': _("Successfully report_permissions true."),
+                                     'comment_permissions': True})
+        else:
+            try:
+                user_permissions, create = UserPermissions.objects.get_or_create(user_id=user_id)
+            except Exception, e:
+                print str(e)
+
+            if user_permissions:
+                user_permissions.report = False
+                user_permissions.save()
+            else:
+                UserPermissions.objects.create(user=user_id, report=False)
+
+            UserLog.objects.create(user_id=user_id,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.DISABLE_REPORT)
+            if due:
+                due_data = datetime.datetime.strptime(due, "%Y/%m/%d %H:%M:%S")
+                UserCron.objects.create(user_id=user_id,
+                                        actor_id=current_user.id,
+                                        action=UserCron.DISABLE_REPORT,
+                                        after=UserCron.ENABLE_REPORT,
+                                        create_time=due_data)
+            else:
+                return return_bad_request({'message': _('Enter time')})
+
+            return return_json_data({'status': True,
+                                     'message': _("Successfully REPORT_permissions false."),
+                                     'post_permissions': False})
     else:
         return return_bad_request()
 
