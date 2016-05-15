@@ -11,7 +11,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
-from pin.models import Post, Follow, Likes, Category, Comments, UserPermissions, Results, Block
+from pin.models import Post, Follow, Likes, Category, Comments, Results, Block
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
     get_user_ip, get_delta_timestamp, AuthCache
 
@@ -803,10 +803,10 @@ def item(request, item_id):
     comments_url = reverse('pin-get-comments', args=[post.id])
     related_url = reverse('pin-item-related', args=[post.id])
 
-    try:
-        permission = UserPermissions.objects.get(user=request.user)
-    except Exception, e:
-        print str(e), "function post_item permission"
+    # try:
+    #     permission = UserPermissions.objects.get(user=request.user)
+    # except Exception, e:
+    #     print str(e), "function post_item permission"
 
     if request.is_ajax():
         return render(request, 'pin2/items_inner.html', {
@@ -819,7 +819,7 @@ def item(request, item_id):
         'comments_url': comments_url,
         'page': 'item',
         'related_url': related_url,
-        'comment_status': permission.comment
+        # 'comment_status': permission.comment
     }, content_type="text/html")
 
 
