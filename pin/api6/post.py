@@ -14,7 +14,7 @@ from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json
-from pin.models import Post, Report, Ad, Block, ReportedPost, UserPermissions
+from pin.models import Post, Report, Ad, Block, ReportedPost
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
 
@@ -319,36 +319,26 @@ def send(request):
     else:
         return return_bad_request()
 
+    status, post, msg = save_post(request, current_user)
+    if status is False:
+        return return_json_data({'status': status, 'message': msg})
+
     try:
-        permission = UserPermissions.objects.get(user=current_user)
-    except Exception, e:
-        print str(e), "function send_post permission"
+        posts = get_list_post([post.id])
+        data = get_objects_list(posts, cur_user_id=current_user.id, r=request)[0]
+    except IndexError:
+        # print str(e), "function send_post permission"
 
-    if permission.post:
-
-        status, post, msg = save_post(request, current_user)
-        if status is False:
-            return return_json_data({'status': status, 'message': msg})
-        try:
-            posts = get_list_post([post.id])
-            data = get_objects_list(posts, cur_user_id=current_user.id,
-                                    r=request)[0]
-        except IndexError:
-            return return_json_data({
-                'status': False,
-                'message': _('Post Not Found')
-            })
-
-        if post.status == 1:
-            msg = _('Your article has been sent.')
-        elif post.status == 0:
-            msg = _('Your article has been sent and displayed on the site after confirmation ')
-        return return_json_data({'status': status, 'message': msg, 'post': data})
-    else:
         return return_json_data({
             'status': False,
-            'message': _('user post is blocked')
+            'message': _('Post Not Found')
         })
+
+    if post.status == 1:
+        msg = _('Your article has been sent.')
+    elif post.status == 0:
+        msg = _('Your article has been sent and displayed on the site after confirmation ')
+    return return_json_data({'status': status, 'message': msg, 'post': data})
 
 
 def user_post(request, user_id):
