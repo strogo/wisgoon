@@ -552,7 +552,6 @@ a, a:link, a:hover, a:visited {
 
 .feed-item .username a{
 	color: #656d78;
-	text-align: center;
 	font-size: 13px;
 	
 }
@@ -567,6 +566,7 @@ a, a:link, a:hover, a:visited {
 }
 .feed-item .username{
 	float: right;
+	text-align: right;
 	margin-right: 10px;
 }
 .feed-item .post-avatar{
@@ -592,6 +592,11 @@ a, a:link, a:hover, a:visited {
 	margin: 5px;
 	padding: 5px;
 	width: auto;
+}
+.post_time{
+	color: #9099A5;
+	display: block;
+	font-size: 11px;
 }
 .post-action{
 	border-bottom: 1px solid #d5d7e4;
@@ -3077,6 +3082,16 @@ div.comment div div.row:hover .del-comment{
 }
 .disable_box h4{
 	color: #3CB100;
+}
+
+.sticky_top{
+	
+}
+.sticky_top .fa.fa-times{
+	left: 0;
+	padding: 16px;
+	position: absolute;
+	top: 0;
 }
 
 @media (max-width: 1200px) {
