@@ -44,7 +44,7 @@ body.user_follower #follower-box .follow_box{
 	width: 90%;
 }
 .mobile_page .nav{
-	margin-top: 50px;
+	/*margin-top: 50px;*/
 }
 #main #related_posts > h3{
 	padding: 0 20px;

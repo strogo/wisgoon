@@ -507,11 +507,6 @@ $(function () {
         window.location.href = $(this).attr('href');
     });
 
-    // $('body').on('mouseleave', '#wis_navbar', function(event) {
-    //     $('.marker').css('display', 'none');
-    // });
-
-    //
     $('body').on('click', '.cats > ul > li', function(event) {
         event.preventDefault();
         var t = $(this);
@@ -547,8 +542,6 @@ $(function () {
         date.setTime(date.getTime() + (60 * 60 * 1000));
         Cookies.set('no_download', 1, { expires : date });
     });
-
-
 
 });
 
