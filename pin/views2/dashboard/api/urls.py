@@ -107,4 +107,16 @@ urlpatterns += patterns('pin.views2.dashboard.api.user',
 
                         url(r'user/removeAvatar/(?P<user_id>\d+)', 'delete_user_avatar',
                             name='dashboard-api-user-remove-avatar'),
+
+                        url(r'user/post/permissions/', 'user_post_permissions',
+                            name='dashboard-api-user-user_post_permissions'),
+
+                        url(r'user/comment/permissions/', 'user_comment_permissions',
+                            name='dashboard-api-user-user_comment_permissions'),
+
+                        url(r'user/report/permissions/', 'user_report_permissions',
+                            name='dashboard-api-user-user_report_permissions'),
+
+                        url(r'user/remove/comments/(?P<user_id>\d+)', 'removal_comment_user',
+                            name='dashboard-api-user-removal-comment-user'),
                         )

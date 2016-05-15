@@ -22,7 +22,7 @@ from django.http import HttpResponse, HttpResponseRedirect,\
 
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
-from pin.models import Post, Stream, Follow, Ad, Block,\
+from pin.models import Post, Stream, Follow, Ad, Block, UserPermissions,\
     Report, Comments, Comments_score, Category, Bills2 as Bills, ReportedPost
 
 from pin.model_mongo import Notif
@@ -143,38 +143,47 @@ def like(request, item_id):
 @login_required
 def report(request, pin_id):
     try:
-        post = Post.objects.get(id=pin_id)
-    except Post.DoesNotExist:
-        return HttpResponseRedirect('/')
+        permission = UserPermissions.objects.get(user=request.user)
+    except Exception, e:
+        print str(e), "function report permission"
 
-    try:
-        Report.objects.get(user=request.user, post=post)
-        created = False
-    except Report.DoesNotExist:
-        Report.objects.create(user=request.user, post=post)
-        created = True
+    if permission.report:
 
-    if created:
-        if post.report == 9:
-            post.status = 0
-        post.report = post.report + 1
-        post.save()
-        status = True
-        msg = _('Your report was saved.')
+        try:
+            post = Post.objects.get(id=pin_id)
+        except Post.DoesNotExist:
+            return HttpResponseRedirect('/')
+
+        try:
+            Report.objects.get(user=request.user, post=post)
+            created = False
+        except Report.DoesNotExist:
+            Report.objects.create(user=request.user, post=post)
+            created = True
+
+        if created:
+            if post.report == 9:
+                post.status = 0
+            post.report = post.report + 1
+            post.save()
+            status = True
+            msg = _('Your report was saved.')
+        else:
+            status = False
+            msg = _("You 've already reported this matter.")
+
+        # TODO: add new report here @hossein
+        # ridi azizam :D
+        ReportedPost.post_report(post_id=post.id, reporter_id=request.user.id)
+        # End of hosseing work
+
+        if request.is_ajax():
+            data = {'status': status, 'message': msg}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        else:
+            return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
     else:
-        status = False
-        msg = _("You 've already reported this matter.")
-
-    # TODO: add new report here @hossein
-    # ridi azizam :D
-    ReportedPost.post_report(post_id=post.id, reporter_id=request.user.id)
-    # End of hosseing work
-
-    if request.is_ajax():
-        data = {'status': status, 'message': msg}
-        return HttpResponse(json.dumps(data), content_type='application/json')
-    else:
-        return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
+        return HttpResponse('message : user report is blocked')
 
 
 @login_required
@@ -249,28 +258,38 @@ def nop(request, item_id):
 @login_required
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 def send_comment(request):
-    if request.method == 'POST':
-        text = request.POST.get('text', None)
-        post = request.POST.get('post', None)
+    try:
+        permission = UserPermissions.objects.get(user=request.user)
+    except Exception, e:
+        print str(e), "function send_comment permission"
 
-        if text and post:
-            post = get_object_or_404(Post, pk=post)
-            if check_block(user_id=post.user_id, blocked_id=request.user.id):    
-                return HttpResponseRedirect('/')
+    print permission
+    if permission.comment:
 
-            comment = Comments.objects.create(object_pk_id=post.id,
-                                              comment=text,
-                                              user=request.user,
-                                              ip_address=get_user_ip(request))
-            return render(request, 'pin2/show_comment.html', {
-                'comment': comment
-            })
+        if request.method == 'POST':
+            text = request.POST.get('text', None)
+            post = request.POST.get('post', None)
 
-    return HttpResponse('error')
+            if text and post:
+                post = get_object_or_404(Post, pk=post)
+                if check_block(user_id=post.user_id, blocked_id=request.user.id):
+                    return HttpResponseRedirect('/')
+
+                comment = Comments.objects.create(object_pk_id=post.id,
+                                                  comment=text,
+                                                  user=request.user,
+                                                  ip_address=get_user_ip(request))
+                return render(request, 'pin2/show_comment.html', {
+                    'comment': comment
+                })
+
+        return HttpResponse('error')
+    else:
+        return HttpResponse('message : user is blocked')
 
 
 def you_are_deactive(request):
-    return render(request, 'pin/you_are_deactive.html')
+        return render(request, 'pin/you_are_deactive.html')
 
 
 @login_required

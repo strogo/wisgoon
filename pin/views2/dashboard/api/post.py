@@ -1,6 +1,6 @@
 from __future__ import division
 
-from django.db.models import F
+# from django.db.models import F
 
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
@@ -66,10 +66,12 @@ def new_report(request):
         post['user']['banned_profile'] = report.post.user.profile.banned
         data['objects'].append(post)
 
-    if len(data) == 20:
+    # if len(data) == 20:
+    if data['objects']:
         token = request.GET.get('token', '')
-        data['meta']['next'] = get_next_url(url_name='ddashboard-api-post-new_reporte',
-                                            before=before + 20, token=token)
+        data['meta']['next'] = get_next_url(url_name='dashboard-api-post-new_report',
+                                            token=token,
+                                            before=before + 20)
     return return_json_data(data)
 
 
