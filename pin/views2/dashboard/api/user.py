@@ -11,7 +11,7 @@ from pin.api6.tools import get_next_url, get_simple_user_object
 from pin.api6.http import return_json_data, return_un_auth, return_not_found,\
     return_bad_request
 from pin.api_tools import media_abs_url
-from pin.models import PhoneData, BannedImei, Log, UserLog, UserPermissions, UserCron
+from pin.models import PhoneData, BannedImei, Log, UserLog, UserPermissions, UserCron, Comments
 from pin.tools import get_user_ip
 from pin.views2.dashboard.api.tools import get_profile_data, check_admin,\
     cnt_post_deleted_by_admin
@@ -38,8 +38,8 @@ def search_user(request):
     words = query.split()
     sq = SQ()
     for word in words:
-        sq.add(SQ(text__contains=Raw("%s*" % word), author__contains=Raw("%s*" % word)), SQ.OR)
-        sq.add(SQ(text__contains=Raw(word), author__contains=Raw(word)), SQ.OR)
+        sq.add(SQ(text__contains=Raw("%s*" % word)), SQ.OR)
+        sq.add(SQ(text__contains=Raw(word)), SQ.OR)
 
     results = SearchQuerySet().models(Profile).filter(sq)[before:before + 20]
 
@@ -597,3 +597,15 @@ def delete_user_avatar(request, user_id):
     profile.save()
     data = {'status': True, 'message': _('Successfully removed.')}
     return return_json_data(data)
+
+
+def removal_comment_user(request, user_id):
+    if not check_admin(request):
+        return return_un_auth()
+    comments = Comments.objects.filter(user_id=user_id)
+
+    for comment in comments:
+        comment.delete()
+    return return_json_data({'status': True,
+                             'message': _("Successfully delete comments"),
+                             })

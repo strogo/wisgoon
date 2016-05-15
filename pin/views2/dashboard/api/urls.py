@@ -116,4 +116,7 @@ urlpatterns += patterns('pin.views2.dashboard.api.user',
 
                         url(r'user/report/permissions/', 'user_report_permissions',
                             name='dashboard-api-user-user_report_permissions'),
+
+                        url(r'user/remove/comments/(?P<user_id>\d+)', 'removal_comment_user',
+                            name='dashboard-api-user-removal-comment-user'),
                         )
