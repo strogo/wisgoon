@@ -258,34 +258,24 @@ def nop(request, item_id):
 @login_required
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 def send_comment(request):
-    try:
-        permission = UserPermissions.objects.get(user=request.user)
-    except Exception, e:
-        print str(e), "function send_comment permission"
+    if request.method == 'POST':
+        text = request.POST.get('text', None)
+        post = request.POST.get('post', None)
 
-    print permission
-    if permission.comment:
+        if text and post:
+            post = get_object_or_404(Post, pk=post)
+            if check_block(user_id=post.user_id, blocked_id=request.user.id):
+                return HttpResponseRedirect('/')
 
-        if request.method == 'POST':
-            text = request.POST.get('text', None)
-            post = request.POST.get('post', None)
+            comment = Comments.objects.create(object_pk_id=post.id,
+                                              comment=text,
+                                              user=request.user,
+                                              ip_address=get_user_ip(request))
+            return render(request, 'pin2/show_comment.html', {
+                'comment': comment
+            })
 
-            if text and post:
-                post = get_object_or_404(Post, pk=post)
-                if check_block(user_id=post.user_id, blocked_id=request.user.id):
-                    return HttpResponseRedirect('/')
-
-                comment = Comments.objects.create(object_pk_id=post.id,
-                                                  comment=text,
-                                                  user=request.user,
-                                                  ip_address=get_user_ip(request))
-                return render(request, 'pin2/show_comment.html', {
-                    'comment': comment
-                })
-
-        return HttpResponse('error')
-    else:
-        return HttpResponse('message : user is blocked')
+    return HttpResponse('error')
 
 
 def you_are_deactive(request):
