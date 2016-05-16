@@ -2846,7 +2846,7 @@ div.comment div div.row:hover .del-comment{
 
 .wis_form.login,
 .wis_form.logout{
-	width: 760px;
+	width: 100%;
 	margin: 0 auto;
 	display: flex;
 	flex-direction: row-reverse;
@@ -3146,7 +3146,8 @@ div.comment div div.row:hover .del-comment{
 	.wis_form.login,
 	.wis_form.logout{
 		display: block;
-		width: 400px;
+		width: 70%;
+		margin-bottom: 50px;
 	}
 	.wis_form.login .form_box,
 	.wis_form.logout .form_box{
@@ -3386,11 +3387,13 @@ div.comment div div.row:hover .del-comment{
 		margin-left: 0 !important;
 	}
 }
-@media (max-width: 400px) {
+@media (max-width: 500px) {
 	.wis_form.login,
 	.wis_form.logout{
 		width: 100%;
 	}
+}
+@media (max-width: 400px) {
 	.feed-item{
 		margin-right: 0 !important;
 		margin-left: 0 !important;

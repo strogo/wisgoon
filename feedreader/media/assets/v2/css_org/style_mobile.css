@@ -105,5 +105,24 @@ body.category .category-title .wis_btn{
 .user_avtivity .profile_item > *{
 	width: initial;
 }
+.feed-item .avatar-box .username{
+	display: none;
+}
+
+@media (max-width: 768px) {	
+	.search_page form .tags,
+	.search_page form input[type="text"]{
+		width: 100% !important;
+	}
+}
+
 @media (max-width: 500px) {
+	.search_page form .tags h3{
+		font-size: 18px;
+	}
+}
+@media (max-width: 400px) {
+	.search_page form{
+		padding: 30px 10px !important;
+	}
 }
