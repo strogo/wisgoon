@@ -240,8 +240,7 @@ def hashtag(request, tag_name):
 
     offset = int(request.GET.get('offset', 0))
 
-    post_queryset = SearchQuerySet().models(Post).filter(tags=tag_name)
-
+    post_queryset = SearchQuerySet().models(Post).filter(tags=tag_name).facet('tags')
     posts = post_queryset.order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
 
     for post in posts:
@@ -250,6 +249,7 @@ def hashtag(request, tag_name):
             posts_list.append(post_json)
 
     tags = ['کربلا']
+    related_tags = post_queryset['fields']['tags'][1:8]
     total_count = post_queryset.count()
 
     if not query:
@@ -264,7 +264,8 @@ def hashtag(request, tag_name):
             'posts': posts_list,
             'query': query,
             'offset': offset + row_per_page,
-            'total_count': total_count
+            'total_count': total_count,
+            'related_tags': related_tags
         })
 
     return render(request, 'pin2/tag.html', {
@@ -273,32 +274,8 @@ def hashtag(request, tag_name):
         'query': query,
         'page_title': tag_name,
         'offset': offset + row_per_page,
-        'total_count': total_count
-    })
-
-
-def related_hashtag(request):
-    posts_list = []
-    results = []
-    posts = SearchQuerySet().models(Post).facet('tags', sort='count')
-    query = 'asas'
-    for post in posts:
-        post_json = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
-        if post_json:
-            posts_list.append(post_json)
-
-    if request.is_ajax():
-        return render(request, 'pin2/__search.html', {
-            'results': results,
-            'posts': posts_list,
-            'query': query,
-        })
-
-    return render(request, 'pin2/tag.html', {
-        'results': results,
-        'posts': posts_list,
-        'query': query,
-        'page_title': query,
+        'total_count': total_count,
+        'related_tags': related_tags
     })
 
 
