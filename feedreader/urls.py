@@ -47,6 +47,7 @@ urlpatterns += patterns('pin.views',
     url(r'^search/', 'search', name='search'),
     url(r'^tag/(?P<tag_name>.*)/$', 'tags', name='tags'),
     url(r'^hashtag/(?P<tag_name>.*)/$', 'hashtag', name='hashtags'),
+    url(r'^related/hashtag/$', 'related_hashtag', name='related-hashtag'),
 
     url(r'^user/(?P<user_id>\d+)/$', 'user', name='pin-user'),
     url(r'^user/(?P<user_id>\d+)/likes/$', 'user_like', name='pin-user-like'),

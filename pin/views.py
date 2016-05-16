@@ -278,6 +278,31 @@ def hashtag(request, tag_name):
     })
 
 
+def related_hashtag(request):
+    posts_list = []
+    results = []
+    posts = SearchQuerySet().models(Post).facet('tags', sort='count')
+    query = 'asas'
+    for post in posts:
+        post_json = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
+        if post_json:
+            posts_list.append(post_json)
+
+    if request.is_ajax():
+        return render(request, 'pin2/__search.html', {
+            'results': results,
+            'posts': posts_list,
+            'query': query,
+        })
+
+    return render(request, 'pin2/tag.html', {
+        'results': results,
+        'posts': posts_list,
+        'query': query,
+        'page_title': query,
+    })
+
+
 def user_friends(request, user_id):
     raise Http404
     user_id = int(user_id)
@@ -723,7 +748,8 @@ def absuser(request, user_name=None):
     ban_by_admin = False
     if request.user.is_superuser and not user.is_active:
         from pin.models import Log
-        ban_by_admin = Log.objects.filter(object_id=user_id, action=Log.BAN_ADMIN, content_type=Log.USER).order_by('-id')
+        ban_by_admin = Log.objects.filter(object_id=user_id, action=Log.BAN_ADMIN,
+                                          content_type=Log.USER).order_by('-id')
         if ban_by_admin:
             ban_by_admin = ban_by_admin[0].text
 
@@ -876,7 +902,8 @@ def item_related(request, item_id):
 def get_comments(request, post_id):
     offset = int(request.GET.get('offset', 0))
     comments = Comments.objects.filter(object_pk=post_id)\
-        .order_by('-id').only('id', 'user__username', 'user__id', 'comment', 'submit_date')[offset:offset + 1 * 10]
+        .order_by('-id')\
+        .only('id', 'user__username', 'user__id', 'comment', 'submit_date')[offset:offset + 1 * 10]
 
     if len(comments) == 0:
         return HttpResponse(0)
