@@ -3132,6 +3132,12 @@ div.comment div div.row:hover .del-comment{
 }
 
 @media (max-width: 768px) {
+
+	.search_page form .tags,
+	.search_page form input[type="text"]{
+		width: 100% !important;
+	}
+
 	.top_download .pa10{
 		margin: 0 !important;
 		background: #EA6100;
@@ -3392,11 +3398,17 @@ div.comment div div.row:hover .del-comment{
 	.wis_form.logout{
 		width: 100%;
 	}
+	.search_page form .tags h3{
+		font-size: 18px;
+	}
 }
 @media (max-width: 400px) {
 	.feed-item{
 		margin-right: 0 !important;
 		margin-left: 0 !important;
+	}
+	.search_page form{
+		padding: 30px 10px !important;
 	}
 
 }
