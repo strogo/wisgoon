@@ -27,11 +27,11 @@
 			
 		</div> 
 		<div class="clear"></div>
-		<div class="post-items resize" id="feed" load-images="false"  masonry reload-on-resize>
+		<div class="post-items">
 			<div  ng-show='loading'>
 				<div id="mySpinner"  class="loader">Loading...</div>
 			</div>
-			<div class="masonry-brick col-md-6 col-xlg-4" ng-repeat="brick in bricks.objects">
+			<div class="col-md-6 col-md-offset-3" ng-repeat="brick in bricks.objects">
 				<div class="box box-solid" id="br-{[{brick.id}]}" postId="{[{brick.id}]}">
 					<div class="col-md-6 pa0">
 						<a href="" ng-show="select" ng-click="selectItem(brick.id)">
@@ -52,7 +52,7 @@
 						<div class="clear"></div>
 
 							<div class="reporters" ng-init="rp_limit = 1">
-							<a ng-repeat="reporter in brick.reporters | limitTo: rp_limit " href=""><img ng-src="{[{reporter.avatar}]}" title="user avatar">
+							<a ng-repeat="reporter in brick.reporters | limitTo: rp_limit " href="{[{reporter.permalink}]}"><img ng-src="{[{reporter.avatar}]}" title="user avatar">
 							</a>
 							<span ng-if="brick.reporters.length > rp_limit">+{[{ brick.reporters.length - rp_limit}]}</span>
 							<a href="" class="more" ng-click="showReportersModal(brick.reporters)">
@@ -69,7 +69,7 @@
 							</ul>
 						</div>
 						<div class="description" ng-init="limit = 50; moreShown = false">
-							<p><label>توضیحات پست‌ :</label>
+							<p>
 								{[{brick.text | limitTo: limit}]}
 								<a ng-show="brick.text.length > limit" href ng-click="limit=brick.text.length; moreShown = true">...بیشتر
 								</a>
@@ -134,8 +134,8 @@
 									</div>
 									<div class="reporters-info" ng-repeat="report in modalBrickReportrs">
 										<div  class="col-md-6">
-											<a href="" >
-												<img ng-src="{[{report.avatar}]}">
+											<a href="{[{report.permalink}]}" >
+												<img ng-src="{[{report.avatar}]}" >
 											</a>
 											<a href="">
 												{[{report.username | limitTo: 15}]}
@@ -152,6 +152,7 @@
 					</div>
 				</div>
 			</div>
+			<div class="clear"></div>
 		</div>
 	</section>
 </div>

@@ -116,7 +116,7 @@
 			<a href="{% url 'pin-absuser' item.user.username %}" data-toggle="tooltip" data-placement="bottom" title="{{item.user.username}}">
 				{{item.user.username|truncatechars:"18"}}
 			</a>
-			<div>{{item.timestamp|timestamp_to_datetime}}</div>
+			<span class="post_time">{{item.timestamp|timestamp_to_datetime}}</span>
 		</div>	
 
 	</div>

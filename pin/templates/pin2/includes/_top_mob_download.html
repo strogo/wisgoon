@@ -1,4 +1,4 @@
-{% if request.COOKIES.no_download == 1 %}
+{% if not request.COOKIES.no_download %}
 <div class="only_mobile_view">
     <div class="top_download">
         <p class="pa10">

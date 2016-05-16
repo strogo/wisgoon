@@ -255,7 +255,7 @@ def send_comment(request):
 
         if text and post:
             post = get_object_or_404(Post, pk=post)
-            if check_block(user_id=post.user_id, blocked_id=request.user.id):    
+            if check_block(user_id=post.user_id, blocked_id=request.user.id):
                 return HttpResponseRedirect('/')
 
             comment = Comments.objects.create(object_pk_id=post.id,

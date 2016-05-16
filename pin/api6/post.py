@@ -325,9 +325,10 @@ def send(request):
 
     try:
         posts = get_list_post([post.id])
-        data = get_objects_list(posts, cur_user_id=current_user.id,
-                                r=request)[0]
+        data = get_objects_list(posts, cur_user_id=current_user.id, r=request)[0]
     except IndexError:
+        # print str(e), "function send_post permission"
+
         return return_json_data({
             'status': False,
             'message': _('Post Not Found')
