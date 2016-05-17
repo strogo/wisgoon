@@ -698,6 +698,7 @@ def save_as_ads(request, post_id):
 
     return render(request, 'pin2/credit/save_as_ads.html', {
         'post': p,
+        'page': 'save_as_ad',
         'user_meta': profile,
         'Ads': Ad,
     })

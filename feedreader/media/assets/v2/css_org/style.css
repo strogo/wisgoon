@@ -2941,7 +2941,7 @@ div.comment div div.row:hover .del-comment{
 }
 
 .promote_content .wis_pro_gap{
-	margin-bottom: -20px;
+	margin-bottom: -17px;
 }
 .promote_content .tab-content{
 	text-align: center;
@@ -3094,6 +3094,11 @@ div.comment div div.row:hover .del-comment{
 	top: 0;
 }
 
+.promote_content .wis_pro_type{
+	background-size: 100%;
+	width: 100%;
+}
+
 @media (max-width: 1200px) {
 	.top_user_boxes {
 		width: 100%;
@@ -3105,6 +3110,9 @@ div.comment div div.row:hover .del-comment{
 @media (max-width: 992px) {
 	#wis_navbar > ul > li > a{
 		padding: 15px 5px !important;
+	}
+	.save_as_ad .container{
+		width: 100%;
 	}
 	.send-photo span.text{
 		display: none;
@@ -3132,7 +3140,6 @@ div.comment div div.row:hover .del-comment{
 }
 
 @media (max-width: 768px) {
-
 	.search_page form .tags,
 	.search_page form input[type="text"]{
 		width: 100% !important;
@@ -3400,6 +3407,21 @@ div.comment div div.row:hover .del-comment{
 	}
 	.search_page form .tags h3{
 		font-size: 18px;
+	}
+	.pro_page {
+		flex-direction: column;
+	}
+	.pro_box_text{
+		width: 100% !important;
+	}
+	.promote_content .wis_pro_type{
+		background-size: 100%;
+		width: 100%;
+	}
+}
+@media (max-width: 420px) {
+	.promote_content .tab-pane img{
+		width: 100%;
 	}
 }
 @media (max-width: 400px) {
