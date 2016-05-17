@@ -16,6 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from pin.model_mongo import MonthlyStats
 from pin.models_graph import UserGraph
+from pin.models import PhoneData
 
 
 def avatar_file_name(instance, filename):
@@ -168,6 +169,15 @@ class Profile(models.Model):
 
         Profile.objects.filter(user_id=user_id)\
             .update(cnt_like=F('cnt_like') - 1, score=F('score') - 10)
+
+    @property
+    def imei(self):
+        try:
+            data = PhoneData.objects.get(user=self.user)
+            imei = data.imei
+        except:
+            imei = ''
+        return imei
 
     def get_avatar_64_str(self):
         s = str(self.avatar)

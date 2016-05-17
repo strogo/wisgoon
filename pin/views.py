@@ -181,6 +181,7 @@ def category_top(request, category_id):
         .filter(category_i=category_id)\
         .order_by('-cnt_like_i')[offset:offset + 1 * row_per_page]
 
+
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
             'results': results,
@@ -724,7 +725,7 @@ def absuser(request, user_name=None):
     ban_by_admin = False
     if request.user.is_superuser and not user.is_active:
         from pin.models import Log
-        ban_by_admin = Log.objects.filter(object_id=user_id, action=Log.BAN_ADMIN,
+        ban_by_admin = Log.objects.filter(object_id=user_id,
                                           content_type=Log.USER).order_by('-id')
         if ban_by_admin:
             ban_by_admin = ban_by_admin[0].text
@@ -868,6 +869,14 @@ def item_related(request, item_id):
         ob = post_item_json(post_id=pmlt, cur_user_id=request.user.id)
         if ob:
             related_posts.append(ob)
+
+    ''' age related_posts khali bud az category miyarim'''
+    if not related_posts:
+        post_ids = Post.latest(cat_id=post.category_id)
+        for post_id in post_ids:
+            if post.id != post_id:
+                post_json = post_item_json(post_id=int(post_id), cur_user_id=request.user.id)
+                related_posts.append(post_json)
 
     post.mlt = related_posts
 

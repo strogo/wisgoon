@@ -1,2 +1,4 @@
 {{object.name}}
 {{object.user.username}}
+{{object.user.email}}
+{{object.imei}}

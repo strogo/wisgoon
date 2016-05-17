@@ -1,3 +1,4 @@
+# coding: utf-8
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
@@ -148,9 +149,10 @@ def change_status_user(request):
         if status == 'true':
             user.is_active = True
             message = _("User Status Is True.")
-            Log.active_user(user_id=current_user.id,
-                            owner=user.id,
-                            text=desc + desc,
+
+            Log.active_user(actor=current_user,
+                            user_id=user.id,
+                            text="{} || {}".format(user.username, desc),
                             ip_address=get_user_ip(request))
 
             UserLog.objects.create(user_id=user.id,
@@ -160,9 +162,9 @@ def change_status_user(request):
         else:
             user.is_active = False
             message = _("User Status Is False.")
-            Log.deactive_user(user_id=current_user.id,
-                              owner=user.id,
-                              text=desc + desc,
+            Log.deactive_user(user_id=user.id,
+                              actor=current_user,
+                              text="{} || {}".format(user.username, desc),
                               ip_address=get_user_ip(request))
 
             UserLog.objects.create(user_id=user.id,
@@ -422,7 +424,7 @@ def banned_profile(request):
     try:
         user_id = int(request.POST.get('profileBanId', False))
         status = str(request.POST.get('profileBanstatus', False))
-        description = str(request.POST.get('description2', ""))
+        description = str(request.POST.get('description2', "ساماندهی"))
         profile = Profile.objects.get(user_id=user_id)
     except:
         return return_not_found()
@@ -441,30 +443,31 @@ def banned_profile(request):
         if status == 'true':
             profile.banned = True
             profile.save()
-            Log.active_user(user_id=current_user.id,
-                            owner=profile.user.id,
-                            text="%s || %s" % (profile.user.username, description),
+
+            Log.ban_profile(actor=current_user,
+                            user_id=profile.user.id,
+                            text="{} || {}".format(profile.user.username, description),
                             ip_address=get_user_ip(request))
+
+            UserLog.objects.create(user_id=profile.user.id,
+                                   actor_id=current_user.id,
+                                   description=description,
+                                   action=UserLog.BAN_PROFILE)
+        else:
+            profile.banned = False
+            profile.save()
+            Log.unban_profile(user_id=profile.user.id,
+                              actor=current_user,
+                              text="{} || {}".format(profile.user.username, description),
+                              ip_address=get_user_ip(request))
 
             UserLog.objects.create(user_id=profile.user.id,
                                    actor_id=current_user.id,
                                    description=description,
                                    action=UserLog.DEBAN_PROFILE)
 
-        else:
-            profile.banned = False
-            profile.save()
-            Log.ban_by_admin(actor=current_user,
-                             user_id=profile.user.id,
-                             text="%s || %s" % (profile.user.username, description),
-                             ip_address=get_user_ip(request))
-
-            UserLog.objects.create(user_id=profile.user.id,
-                                   actor_id=current_user.id,
-                                   description=description,
-                                   action=UserLog.BAN_PROFILE)
         data = {
-            'status': True,
+            'status': False,
             'message': _("Successfully Change Profile banned.")
         }
         data['user'] = get_simple_user_object(profile.user.id)
@@ -506,24 +509,22 @@ def banned_imei(request):
                 BannedImei.objects.filter(imei=imei).delete()
 
                 desc = ''
-                owner = None
+                user_id = None
 
                 for data in phone_data:
                     cur_user = data.user
-                    owner = cur_user.id
+                    user_id = cur_user.id
                     desc += cur_user.username + ' || '
                     cur_user.is_active = True
                     cur_user.save()
+                    UserLog.objects.create(user_id=user_id,
+                                           actor_id=current_user.id,
+                                           description=description,
+                                           action=UserLog.DEBAN_IMEI)
 
-                Log.active_user(user_id=current_user.id,
-                                owner=owner,
-                                text=desc + description,
-                                ip_address=get_user_ip(request))
-
-                UserLog.objects.create(user_id=owner,
-                                       actor_id=current_user.id,
-                                       description=description,
-                                       action=UserLog.DEBAN_IMEI)
+                Log.unban_by_imei(actor=current_user,
+                                  text=desc + description,
+                                  ip_address=get_user_ip(request))
 
                 return return_json_data({'status': True,
                                          'message': _("Successfully Unbanned Imei."),
@@ -538,21 +539,21 @@ def banned_imei(request):
                                       user=current_user)
 
             desc = ''
-            owner = None
+            user_id = None
             for data in phone_data:
                 cur_user = data.user
-                owner = cur_user.id
+                user_id = cur_user.id
                 desc += cur_user.username + ' || '
                 cur_user.is_active = False
                 cur_user.save()
+                UserLog.objects.create(user_id=user_id,
+                                       actor_id=current_user.id,
+                                       description=description,
+                                       action=UserLog.BAN_IMEI)
+
             Log.ban_by_imei(actor=current_user,
                             text=desc + description,
                             ip_address=get_user_ip(request))
-
-            UserLog.objects.create(user_id=owner,
-                                   actor_id=current_user.id,
-                                   description=description,
-                                   action=UserLog.BAN_IMEI)
 
             return return_json_data({'status': True,
                                      'message': _("Successfully banned Imei."),
