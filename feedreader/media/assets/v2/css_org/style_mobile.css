@@ -105,5 +105,17 @@ body.category .category-title .wis_btn{
 .user_avtivity .profile_item > *{
 	width: initial;
 }
+.feed-item .avatar-box .username{
+	display: none;
+}
+
+@media (max-width: 768px) {	
+	
+}
+
 @media (max-width: 500px) {
+	
+}
+@media (max-width: 400px) {
+	
 }
