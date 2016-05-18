@@ -175,23 +175,28 @@ def category_top(request, category_id):
     row_per_page = 20
     cat = get_object_or_404(Category, pk=category_id)
     results = []
+    posts_list = []
     offset = int(request.GET.get('offset', 0))
 
     posts = SearchQuerySet().models(Post)\
         .filter(category_i=category_id)\
         .order_by('-cnt_like_i')[offset:offset + 1 * row_per_page]
 
+    for post in posts:
+        post_json = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
+        if post_json:
+            posts_list.append(post_json)
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
             'results': results,
-            'posts': posts,
+            'posts': posts_list,
             'offset': offset + row_per_page,
         })
 
     return render(request, 'pin2/category_top.html', {
         'results': results,
-        'posts': posts,
+        'posts': posts_list,
         'offset': offset + row_per_page,
         'cur_cat': cat
     })
@@ -232,9 +237,12 @@ def tags(request, tag_name):
 
 def hashtag(request, tag_name):
     row_per_page = 20
-    results = []
     posts_list = []
     query = tag_name
+    related_tags = []
+    total_count = 0
+    result = []
+    tags = ['کربلا']
 
     if query in [u'عروس', u'عاشقانه'] and not request.user.is_authenticated():
         return render(request, 'pin2/samandehi.html')
@@ -242,16 +250,24 @@ def hashtag(request, tag_name):
     offset = int(request.GET.get('offset', 0))
 
     post_queryset = SearchQuerySet().models(Post).filter(tags=tag_name).facet('tags')
-    posts = post_queryset.order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
+
+    ''' select posts'''
+    posts = post_queryset.order_by('-timestamp_i')[offset:offset + row_per_page]
 
     for post in posts:
         post_json = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
         if post_json:
             posts_list.append(post_json)
 
-    tags = ['کربلا']
-    related_tags = post_queryset['fields']['tags'][1:8]
-    total_count = post_queryset.count()
+    ''' related tags query '''
+    tags_facet = post_queryset.facet_counts()
+    result = tags_facet['fields']['tags']
+
+    for key, val in result:
+        if key != tag_name:
+            related_tags.append(key)
+        else:
+            total_count = val
 
     if not query:
         return render(request, 'pin2/tags.html', {
@@ -261,7 +277,6 @@ def hashtag(request, tag_name):
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
-            'results': results,
             'posts': posts_list,
             'query': query,
             'offset': offset + row_per_page,
@@ -270,7 +285,6 @@ def hashtag(request, tag_name):
         })
 
     return render(request, 'pin2/tag.html', {
-        'results': results,
         'posts': posts_list,
         'query': query,
         'page_title': tag_name,
@@ -478,7 +492,7 @@ def user_like(request, user_id):
 
     for pll in pl:
         try:
-            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
+            arp.append(post_item_json(post_id=pll, cur_user_id=request.user.id))
         except:
             pass
 
@@ -523,7 +537,7 @@ def absuser_like(request, user_namel):
     r_user_id = request.user.id
 
     for pll in pl:
-        ob = post_item_json(pll, cur_user_id=r_user_id)
+        ob = post_item_json(post_id=int(pll), cur_user_id=r_user_id)
         if ob:
             arp.append(ob)
 
@@ -830,6 +844,7 @@ def item(request, item_id):
 def post_likers(request, post_id, offset=0):
     from models_redis import LikesRedis
     from pin.api6.tools import get_simple_user_object
+
     likers = LikesRedis(post_id=int(post_id))\
         .get_likes(offset=int(offset), limit=10)
 
@@ -953,8 +968,12 @@ def pass_reset(request):
 
 
 def newsletter(request):
+    posts_list = []
     posts = Post.objects.filter(user_id=21).order_by('-id')
+    for post in posts:
+        post_item = post_item_json(post_id=post.id, cur_user_id=request.user.id)
+        posts_list.append(post_item)
     return render(request, 'pin2/emails/newsletter.html', {
-        'posts': posts,
+        'posts': posts_list,
         'page': 'newsletter'
     })
