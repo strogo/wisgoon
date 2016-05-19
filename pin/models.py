@@ -1425,6 +1425,10 @@ class Log(models.Model):
     BAN_ADMIN = 6
     ACTIVE_USER = 7
     DEACTIVE_USER = 8
+    BAN_PROFILE = 9
+    UNBAN_PROFILE = 10
+    UNBAN_IMEI = 11
+
     ACTIONS = (
         (DELETE, _("delete")),
         (PENDING, _("pending")),
@@ -1433,7 +1437,9 @@ class Log(models.Model):
         (BAN_IMEI, _("ban imei")),
         (BAN_ADMIN, _("ban by admin")),
         (DEACTIVE_USER, _("Deactive user")),
-        (ACTIVE_USER, _("activated"))
+        (ACTIVE_USER, _("activated")),
+        (BAN_PROFILE, _("ban profile")),
+        (UNBAN_PROFILE, _("unban profile"))
     )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -1497,35 +1503,61 @@ class Log(models.Model):
 
     @classmethod
     def ban_by_admin(cls, actor, user_id, text="", ip_address="127.0.0.1"):
-        Log.objects.create(user_id=actor.id,
-                           action=Log.BAN_ADMIN,
-                           content_type=Log.USER,
+        Log.objects.create(user=actor,
+                           action=cls.BAN_ADMIN,
+                           content_type=cls.USER,
                            object_id=user_id,
                            text=text,
                            ip_address=ip_address)
 
     @classmethod
     def ban_by_imei(cls, actor, text="", ip_address="127.0.0.1"):
-        Log.objects.create(user_id=actor.id,
-                           action=5,
-                           content_type=3,
-                           text=text,
-                           ip_address=ip_address)
-
-    @classmethod
-    def active_user(cls, owner, user_id, text="", ip_address="127.0.0.1"):
-        Log.objects.create(user_id=user_id,
-                           action=cls.ACTIVE_USER,
-                           owner=owner,
+        Log.objects.create(user=actor,
+                           action=cls.BAN_IMEI,
                            content_type=cls.USER,
                            text=text,
                            ip_address=ip_address)
 
     @classmethod
-    def deactive_user(cls, owner, user_id, text="", ip_address="127.0.0.1"):
-        Log.objects.create(user_id=user_id,
+    def unban_by_imei(cls, actor, text="", ip_address="127.0.0.1"):
+        Log.objects.create(user=actor,
+                           action=cls.UNBAN_IMEI,
+                           content_type=cls.USER,
+                           text=text,
+                           ip_address=ip_address)
+
+    @classmethod
+    def active_user(cls, actor, user_id, text="", ip_address="127.0.0.1"):
+        Log.objects.create(user=actor,
+                           action=cls.ACTIVE_USER,
+                           object_id=user_id,
+                           content_type=cls.USER,
+                           text=text,
+                           ip_address=ip_address)
+
+    @classmethod
+    def deactive_user(cls, actor, user_id, text="", ip_address="127.0.0.1"):
+        Log.objects.create(user=actor,
                            action=cls.DEACTIVE_USER,
-                           owner=owner,
+                           object_id=user_id,
+                           content_type=cls.USER,
+                           text=text,
+                           ip_address=ip_address)
+
+    @classmethod
+    def ban_profile(cls, actor, user_id, text="", ip_address="127.0.0.1"):
+        Log.objects.create(user=actor,
+                           action=cls.BAN_PROFILE,
+                           object_id=user_id,
+                           content_type=cls.USER,
+                           text=text,
+                           ip_address=ip_address)
+
+    @classmethod
+    def unban_profile(cls, actor, user_id, text="", ip_address="127.0.0.1"):
+        Log.objects.create(user=actor,
+                           action=cls.UNBAN_PROFILE,
+                           object_id=user_id,
                            content_type=cls.USER,
                            text=text,
                            ip_address=ip_address)

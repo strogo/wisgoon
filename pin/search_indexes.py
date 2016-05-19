@@ -49,7 +49,8 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
         tags = hash_tags.findall(obj.text)
 
         for tag in tags:
-            nt.append(normalize_tags(tag))
+            if tag not in nt:
+                nt.append(normalize_tags(tag))
         # print nt
         return nt
 
@@ -75,16 +76,3 @@ class ProfileIndex(indexes.SearchIndex, indexes.Indexable):
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
-
-    # def prepare_text(self, obj):
-    #     text = []
-    #     data = None
-    #     try:
-    #         data = PhoneData.objects.get(user=obj.user)
-    #     except:
-    #         pass
-    #     if data:
-    #         text.append(data.imei)
-    #     text.append(obj.user.email)
-    #     text.append(obj.name)
-    #     return text

@@ -31,7 +31,7 @@ from tastypie.models import ApiKey
 from pin.tools import AuthCache, get_user_ip, get_new_access_token,\
     get_post_user_cache
 from pin.models import Post, Category, Likes, Follow, Comments, Block,\
-    Packages, Ad, Bills2, PhoneData, Log, BannedImei
+    Packages, Ad, Bills2, PhoneData, BannedImei
 from pin.model_mongo import Notif, UserLocation
 from pin.models_redis import NotificationRedis
 from pin.cacheLayer import UserDataCache, CategoryDataCache
@@ -1650,8 +1650,8 @@ def get_phone_data(request):
                 u.is_active = False
                 u.save()
 
-                Log.ban_by_imei(actor=user, text=u.username,
-                                ip_address=get_user_ip(request))
+                # Log.ban_by_imei(actor=user, text=u.username,
+                #                 ip_address=get_user_ip(request))
 
     try:
         upd = PhoneData.objects.only("hash_data").get(user=user)

@@ -17,7 +17,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
-from pin.models import Follow, Block, Likes, BannedImei, Log, PhoneData, Bills2
+from pin.models import Follow, Block, Likes, BannedImei, PhoneData, Bills2
 from pin.tools import AuthCache, get_user_ip, get_new_access_token, get_new_access_token2
 from pin.api6.http import return_bad_request, return_json_data, return_un_auth,\
     return_not_found
@@ -579,8 +579,8 @@ def get_phone_data(request):
                 u.is_active = False
                 u.save()
 
-                Log.ban_by_imei(actor=user, text=u.username,
-                                ip_address=get_user_ip(request))
+                # Log.ban_by_imei(actor=user, text=u.username,
+                #                 ip_address=get_user_ip(request))
 
     try:
         upd = PhoneData.objects.only("hash_data").get(user=user)
