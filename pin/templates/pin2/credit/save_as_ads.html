@@ -31,25 +31,25 @@
 					<li role="presentation" class="active">
 						<a href="#wis1" data-val="1" aria-controls="wis1" role="tab" class="wis_pro_btn" data-toggle="tab">
 							<span class="wis_pro_tab"></span>
-							۵۰۰ <br> ویس
+							۱۰۰۰ <br> بازدید
 						</a>
 					</li>
 					<li role="presentation">
 						<a href="#wis2" data-val="2" aria-controls="wis2" role="tab" class="wis_pro_btn" data-toggle="tab">
 							<span class="wis_pro_tab"></span>
-							۱۰۰۰ <br> ویس
+							۳۰۰۰ <br> بازدید
 						</a>
 					</li>
 					<li role="presentation">
 						<a href="#wis3" data-val="3" aria-controls="wis3" role="tab" class="wis_pro_btn" data-toggle="tab">
 							<span class="wis_pro_tab"></span>
-							۲۰۰۰ <br> ویس
+							۶۰۰۰ <br> بازدید
 						</a>
 					</li>
 					<li role="presentation">
 						<a href="#wis4" data-val="4" aria-controls="wis4" role="tab" class="wis_pro_btn" data-toggle="tab">
 							<span class="wis_pro_tab"></span>
-							۵۰۰۰ <br> ویس
+							۱۵۰۰۰ <br> بازدید
 						</a>
 					</li>
 				</ul>
@@ -63,10 +63,10 @@
 				<a href="{% url 'pin-inc-credit' %}" class="wis_btn orange mabo20">افزایش موجودی </a>
 	
 				<div class="wis_pro_content">
-					<div data-val-pro="1" class="pa10 active">با انتخاب این گزینه، تصویر شما برای <strong class="red">۵۰۰</strong> کاربر به نمایش در خواهد آمد</div>
-					<div data-val-pro="2" class="pa10">با انتخاب این گزینه، تصویر شما برای <strong class="red">۱۰۰۰</strong> کاربر به نمایش در خواهد آمد</div>
-					<div data-val-pro="3" class="pa10">با انتخاب این گزینه، تصویر شما برای <strong class="red">۲۰۰۰</strong> کاربر به نمایش در خواهد آمد</div>
-					<div data-val-pro="4" class="pa10">با انتخاب این گزینه، تصویر شما برای <strong class="red">۵۰۰۰</strong> کاربر به نمایش در خواهد آمد</div>
+					<div data-val-pro="1" class="pa10 active">با انتخاب این گزینه، تصویر شما برای <strong class="red">۱۰۰۰</strong> کاربر به نمایش در خواهد آمد</div>
+					<div data-val-pro="2" class="pa10">با انتخاب این گزینه، تصویر شما برای <strong class="red">۳۰۰۰</strong> کاربر به نمایش در خواهد آمد</div>
+					<div data-val-pro="3" class="pa10">با انتخاب این گزینه، تصویر شما برای <strong class="red">۶۰۰۰</strong> کاربر به نمایش در خواهد آمد</div>
+					<div data-val-pro="4" class="pa10">با انتخاب این گزینه، تصویر شما برای <strong class="red">۱۵۰۰۰</strong> کاربر به نمایش در خواهد آمد</div>
 				</div>
 				با ویژه کردن این پست امکان مشاهده مطلب مورد نظر برای تعداد بیشتری از کاربران ممکن می شود.
 			</div>
@@ -77,7 +77,7 @@
 		<form method="post" id="pro_form" class="form pull-left pa20">
 			{% csrf_token %}
 			<input type="hidden" value="1" id="wis_pro_type" name="mode"></input>
-			<input type="submit" class="wis_btn green pull-left promote_btn" value="تکمیل خرید"  style="width: 150px;">
+			<input type="submit" class="wis_btn green pull-left promote_btn" value="ویژه کن"  style="width: 150px;">
 		</form>
 	
 		<div class="clear"></div>
