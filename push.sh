@@ -10,10 +10,12 @@ sleep_f(){
 }
 
 send(){
-	git push origin stable
-	ssh wisgoon@79.127.125.146 "cd /home/wisgoon/www/wisgoon.com/www && git merge stable && touch reload"
-	sleep_f
+	# git push origin stable
+	# ssh wisgoon@79.127.125.146 "cd /home/wisgoon/www/wisgoon.com/www && git merge stable && touch reload"
 
+	git push neptune stable
+	ssh wisgoon@79.127.125.146 "cd /home/wisgoon/www && git merge stable && touch reload"
+	
 }
 
 jsend(){
