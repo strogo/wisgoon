@@ -255,7 +255,7 @@ def send_comment(request):
 
         if text and post:
             post = get_object_or_404(Post, pk=post)
-            if check_block(user_id=post.user_id, blocked_id=request.user.id):    
+            if check_block(user_id=post.user_id, blocked_id=request.user.id):
                 return HttpResponseRedirect('/')
 
             comment = Comments.objects.create(object_pk_id=post.id,
@@ -698,6 +698,7 @@ def save_as_ads(request, post_id):
 
     return render(request, 'pin2/credit/save_as_ads.html', {
         'post': p,
+        'page': 'save_as_ad',
         'user_meta': profile,
         'Ads': Ad,
     })

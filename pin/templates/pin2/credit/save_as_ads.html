@@ -1,6 +1,7 @@
 {% extends "pin2/flat.base.box.html"%}
 {% load pin_tags %}
 
+{% block title %} :: ویژه کردن تصویر {% endblock title %}
 {% block content %}
 
 <div class="pro_page">
@@ -88,3 +89,34 @@
 </div>
 
 {% endblock content %}
+
+{% block js %}
+<script type="text/javascript">
+	pro_rr = 0.515789474;
+	var pro_w=0, pro_v=0;
+	function resize_ad(){
+		pro_parent = $('.promote_content .tab-content').width();
+		pro_w = $('.promote_content .tab-content .active .wis_pro_type').width();
+		if (pro_parent < pro_w) {
+			pro_w = pro_parent;
+			$('.promote_content .tab-content .wis_pro_type').width(pro_w);
+		};
+		$('.promote_content .tab-content .wis_pro_type').height(pro_w*pro_rr);
+		pro_new_p = (pro_w*pro_rr)*(pro_v-1);
+		$('.promote_content .tab-content .wis_pro_type').height(pro_w*pro_rr);
+		$('.type_'+pro_v).css('background-position', "0px -"+pro_new_p+"px");
+	}
+	$(window).on('resize', function(){
+		resize_ad();
+	});
+	$(function () {
+		resize_ad();
+		$('body').on('click', '.wis_pro_btn', function(event) {
+			event.preventDefault();
+			pro_w = $('.promote_content .tab-content .active .wis_pro_type').width();
+			pro_v = $(this).data('val');
+			resize_ad();
+		});
+	});
+</script>
+{% endblock js %}

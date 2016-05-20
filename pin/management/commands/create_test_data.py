@@ -31,13 +31,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # Create Users
-        create_users(self)
+        # create_users(self)
 
         # Create Profile
-        create_profile(self)
+        # create_profile(self)
 
         # Create Category
-        create_category(self)
+        # create_category(self)
 
         # Create Post
         create_post(self)
@@ -84,7 +84,6 @@ def create_post(self):
                     PostCacheLayer(post_id=post_id).show_in_default_change(status=True)
             except Exception, e:
                 self.stdout.write(str(e))
-                raise
             print "post %s was created" % str(post_id)
         except Exception as e:
             self.stdout.write(str(e))
@@ -107,7 +106,7 @@ def create_like_comment(self):
                 user_id = random.randint(1, cnt_user)
                 LikesRedis(post_id=post.id)\
                     .like_or_dislike(user_id=user_id, post_owner=post.user_id)
-
+            self.stdout.write("---------------------------------------------------")
             self.stdout.write("add %s like for post %s" % (str(like_range), str(post.id)))
 
             comment_range = random.randint(5, 20)
@@ -122,6 +121,7 @@ def create_like_comment(self):
                 comment.save()
 
             self.stdout.write("add %s comment for post %s" % (str(comment_range), str(post.id)))
+            self.stdout.write("---------------------------------------------------")
 
         except Exception as e:
             self.stdout.write(str(e))

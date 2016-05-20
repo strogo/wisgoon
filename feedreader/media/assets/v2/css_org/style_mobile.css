@@ -44,7 +44,7 @@ body.user_follower #follower-box .follow_box{
 	width: 90%;
 }
 .mobile_page .nav{
-	margin-top: 50px;
+	/*margin-top: 50px;*/
 }
 #main #related_posts > h3{
 	padding: 0 20px;
@@ -105,5 +105,17 @@ body.category .category-title .wis_btn{
 .user_avtivity .profile_item > *{
 	width: initial;
 }
+.feed-item .avatar-box .username{
+	display: none;
+}
+
+@media (max-width: 768px) {	
+	
+}
+
 @media (max-width: 500px) {
+	
+}
+@media (max-width: 400px) {
+	
 }

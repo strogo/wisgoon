@@ -11,8 +11,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
-from pin.models import Post, Follow, Likes, Category, Comments,\
-    Results, Block
+from pin.models import Post, Follow, Likes, Category, Comments, Results, Block
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
     get_user_ip, get_delta_timestamp, AuthCache
 
@@ -176,22 +175,28 @@ def category_top(request, category_id):
     row_per_page = 20
     cat = get_object_or_404(Category, pk=category_id)
     results = []
+    posts_list = []
     offset = int(request.GET.get('offset', 0))
 
     posts = SearchQuerySet().models(Post)\
         .filter(category_i=category_id)\
         .order_by('-cnt_like_i')[offset:offset + 1 * row_per_page]
 
+    for post in posts:
+        post_json = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
+        if post_json:
+            posts_list.append(post_json)
+
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
             'results': results,
-            'posts': posts,
+            'posts': posts_list,
             'offset': offset + row_per_page,
         })
 
     return render(request, 'pin2/category_top.html', {
         'results': results,
-        'posts': posts,
+        'posts': posts_list,
         'offset': offset + row_per_page,
         'cur_cat': cat
     })
@@ -232,26 +237,37 @@ def tags(request, tag_name):
 
 def hashtag(request, tag_name):
     row_per_page = 20
-    results = []
     posts_list = []
     query = tag_name
+    related_tags = []
+    total_count = 0
+    result = []
+    tags = ['کربلا']
 
     if query in [u'عروس', u'عاشقانه'] and not request.user.is_authenticated():
         return render(request, 'pin2/samandehi.html')
 
     offset = int(request.GET.get('offset', 0))
 
-    post_queryset = SearchQuerySet().models(Post).filter(tags=tag_name)
+    post_queryset = SearchQuerySet().models(Post).filter(tags=tag_name).facet('tags')
 
-    posts = post_queryset.order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
+    ''' select posts'''
+    posts = post_queryset.order_by('-timestamp_i')[offset:offset + row_per_page]
 
     for post in posts:
         post_json = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
         if post_json:
             posts_list.append(post_json)
 
-    tags = ['کربلا']
-    total_count = post_queryset.count()
+    ''' related tags query '''
+    tags_facet = post_queryset.facet_counts()
+    result = tags_facet['fields']['tags']
+
+    for key, val in result:
+        if key != tag_name:
+            related_tags.append(key)
+        else:
+            total_count = val
 
     if not query:
         return render(request, 'pin2/tags.html', {
@@ -261,20 +277,20 @@ def hashtag(request, tag_name):
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
-            'results': results,
             'posts': posts_list,
             'query': query,
             'offset': offset + row_per_page,
-            'total_count': total_count
+            'total_count': total_count,
+            'related_tags': related_tags
         })
 
     return render(request, 'pin2/tag.html', {
-        'results': results,
         'posts': posts_list,
         'query': query,
         'page_title': tag_name,
         'offset': offset + row_per_page,
-        'total_count': total_count
+        'total_count': total_count,
+        'related_tags': related_tags
     })
 
 
@@ -476,7 +492,7 @@ def user_like(request, user_id):
 
     for pll in pl:
         try:
-            arp.append(Post.objects.only(*Post.NEED_KEYS_WEB).get(id=pll))
+            arp.append(post_item_json(post_id=pll, cur_user_id=request.user.id))
         except:
             pass
 
@@ -521,7 +537,7 @@ def absuser_like(request, user_namel):
     r_user_id = request.user.id
 
     for pll in pl:
-        ob = post_item_json(pll, cur_user_id=r_user_id)
+        ob = post_item_json(post_id=int(pll), cur_user_id=r_user_id)
         if ob:
             arp.append(ob)
 
@@ -723,7 +739,8 @@ def absuser(request, user_name=None):
     ban_by_admin = False
     if request.user.is_superuser and not user.is_active:
         from pin.models import Log
-        ban_by_admin = Log.objects.filter(object_id=user_id, action=Log.BAN_ADMIN, content_type=Log.USER).order_by('-id')
+        ban_by_admin = Log.objects.filter(object_id=user_id,
+                                          content_type=Log.USER).order_by('-id')
         if ban_by_admin:
             ban_by_admin = ban_by_admin[0].text
 
@@ -804,6 +821,11 @@ def item(request, item_id):
     comments_url = reverse('pin-get-comments', args=[post.id])
     related_url = reverse('pin-item-related', args=[post.id])
 
+    # try:
+    #     permission = UserPermissions.objects.get(user=request.user)
+    # except Exception, e:
+    #     print str(e), "function post_item permission"
+
     if request.is_ajax():
         return render(request, 'pin2/items_inner.html', {
             'post': post, 'follow_status': follow_status
@@ -815,12 +837,14 @@ def item(request, item_id):
         'comments_url': comments_url,
         'page': 'item',
         'related_url': related_url,
+        # 'comment_status': permission.comment
     }, content_type="text/html")
 
 
 def post_likers(request, post_id, offset=0):
     from models_redis import LikesRedis
     from pin.api6.tools import get_simple_user_object
+
     likers = LikesRedis(post_id=int(post_id))\
         .get_likes(offset=int(offset), limit=10)
 
@@ -861,6 +885,14 @@ def item_related(request, item_id):
         if ob:
             related_posts.append(ob)
 
+    ''' age related_posts khali bud az category miyarim'''
+    if not related_posts:
+        post_ids = Post.latest(cat_id=post.category_id)
+        for post_id in post_ids:
+            if post.id != post_id:
+                post_json = post_item_json(post_id=int(post_id), cur_user_id=request.user.id)
+                related_posts.append(post_json)
+
     post.mlt = related_posts
 
     if request.is_ajax():
@@ -876,7 +908,8 @@ def item_related(request, item_id):
 def get_comments(request, post_id):
     offset = int(request.GET.get('offset', 0))
     comments = Comments.objects.filter(object_pk=post_id)\
-        .order_by('-id').only('id', 'user__username', 'user__id', 'comment', 'submit_date')[offset:offset + 1 * 10]
+        .order_by('-id')\
+        .only('id', 'user__username', 'user__id', 'comment', 'submit_date')[offset:offset + 1 * 10]
 
     if len(comments) == 0:
         return HttpResponse(0)
@@ -935,8 +968,12 @@ def pass_reset(request):
 
 
 def newsletter(request):
+    posts_list = []
     posts = Post.objects.filter(user_id=21).order_by('-id')
+    for post in posts:
+        post_item = post_item_json(post_id=post.id, cur_user_id=request.user.id)
+        posts_list.append(post_item)
     return render(request, 'pin2/emails/newsletter.html', {
-        'posts': posts,
+        'posts': posts_list,
         'page': 'newsletter'
     })
