@@ -504,7 +504,9 @@ def show_notify(request):
     for n in notif:
         anl = {}
         try:
-            anl['po'] = Post.objects.only('image').get(pk=n.post)
+            image = post_item_json(post_id=n.post, fields=['images'])
+            anl['po'] = image['images']['original']
+            # anl['po'] = Post.objects.only('image').get(pk=n.post)
         except Post.DoesNotExist:
             if n.type == 4:
                 anl['po'] = n.post_image
@@ -530,7 +532,9 @@ def notif_user(request):
     for notif in notifications:
         anl = {}
         try:
-            anl['po'] = Post.objects.only('image').get(pk=notif.post)
+            image = post_item_json(post_id=notif.post, fields=['images'])
+            anl['po'] = image['images']['original']
+            # anl['po'] = Post.objects.only('image').get(pk=notif.post)
         except Post.DoesNotExist:
             if notif.type == 4:
                 anl['po'] = notif.post_image
@@ -575,7 +579,9 @@ def notif_all(request):
     for n in notif:
         anl = {}
         try:
-            po = anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+            image = post_item_json(post_id=notif.post, fields=['images'])
+            po = anl['po'] = image['images']['original']
+            # po = anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
             if po not in idis:
                 idis.append(po)
             else:
@@ -600,7 +606,7 @@ def inc_credit(request):
             return HttpResponseRedirect(reverse('pin-inc-credit'))
 
         bill = Bills.objects.create(user=request.user, amount=amount)
-        callBackUrl = '%s%s' % (SITE_URL, reverse('pin-verify-payment', args=[bill.id]))
+        call_back_url = '%s%s' % (SITE_URL, reverse('pin-verify-payment', args=[bill.id]))
 
         url = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'
         client = Client(url)
@@ -611,7 +617,7 @@ def inc_credit(request):
                 'Description': desc,
                 'Email': str(request.user.email),
                 'Mobile': str(request.user.id),
-                'CallbackURL': callBackUrl}
+                'CallbackURL': call_back_url}
 
         result = client.service.PaymentRequest(**data)
 
@@ -659,7 +665,8 @@ def verify_payment(request, bill_id):
 
             return HttpResponseRedirect(reverse('pin-inc-credit'))
         else:
-            message = 'Payment unsuccessful , the amount deducted from your account the bank returns .'
+            message = 'Payment unsuccessful , the amount deducted from your account the\
+                       bank returns .'
             messages.error(request,
                            _(message))
             return HttpResponseRedirect(reverse('pin-inc-credit'))
@@ -732,7 +739,8 @@ def blocked_list(request):
     older = request.POST.get('older', False)
 
     if older:
-        blocked_list = Block.objects.filter(user_id=request.user.id, id__lt=older).order_by('-id')[:16]
+        blocked_list = Block.objects.filter(user_id=request.user.id, id__lt=older)\
+            .order_by('-id')[:16]
     else:
         blocked_list = Block.objects.filter(user_id=request.user.id).order_by('-id')[:16]
 
@@ -757,9 +765,11 @@ def promotion_list(request):
     older = request.POST.get('older', False)
 
     if older:
-        promotion_list = Ad.objects.filter(Q(user=request.user) | Q(owner=request.user), id__lt=older).order_by('-id')[:16]
+        promotion_list = Ad.objects\
+            .filter(Q(user=request.user) | Q(owner=request.user), id__lt=older).order_by('-id')[:16]
     else:
-        promotion_list = Ad.objects.filter(Q(user=request.user) | Q(owner=request.user)).order_by('-id')[:16]
+        promotion_list = Ad.objects\
+            .filter(Q(user=request.user) | Q(owner=request.user)).order_by('-id')[:16]
 
     if request.is_ajax():
         if promotion_list.exists():

@@ -226,7 +226,7 @@ def user_post_permissions(request):
                                    )
 
             return return_json_data({'status': True,
-                                     'message': _("Successfully post_permissions true."),
+                                     'message': _("Successfully change permission."),
                                      'post_permissions': True})
         else:
             try:
@@ -256,7 +256,7 @@ def user_post_permissions(request):
                 return return_bad_request({'message': _('Enter time')})
 
             return return_json_data({'status': True,
-                                     'message': _("Successfully post_permissions false."),
+                                     'message': _("Successfully change permission."),
                                      'post_permissions': False})
 
 
@@ -303,7 +303,7 @@ def user_comment_permissions(request):
                                    action=UserLog.ENABLE_COMMENT)
 
             return return_json_data({'status': True,
-                                     'message': _("Successfully comment_permissions true."),
+                                     'message': _("Successfully change permission."),
                                      'comment_permissions': True})
         else:
             try:
@@ -334,7 +334,7 @@ def user_comment_permissions(request):
                 return return_bad_request({'message': _('Enter time')})
 
             return return_json_data({'status': True,
-                                     'message': _("Successfully comment_permissions false."),
+                                     'message': _("Successfully change permission."),
                                      'post_permissions': False})
 
 
@@ -381,7 +381,7 @@ def user_report_permissions(request):
                                    action=UserLog.ENABLE_REPORT)
 
             return return_json_data({'status': True,
-                                     'message': _("Successfully report_permissions true."),
+                                     'message': _("Successfully change permission."),
                                      'comment_permissions': True})
         else:
             try:
@@ -410,7 +410,7 @@ def user_report_permissions(request):
                 return return_bad_request({'message': _('Enter time')})
 
             return return_json_data({'status': True,
-                                     'message': _("Successfully REPORT_permissions false."),
+                                     'message': _("Successfully change permission."),
                                      'post_permissions': False})
     else:
         return return_bad_request()
