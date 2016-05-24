@@ -254,11 +254,11 @@ def send_comment(request):
         post = request.POST.get('post', None)
 
         if text and post:
-            post = get_object_or_404(Post, pk=post)
-            if check_block(user_id=post.user_id, blocked_id=request.user.id):
+            post = post_item_json(post_id=post)
+            if check_block(user_id=post['user']['id'], blocked_id=request.user.id):
                 return HttpResponseRedirect('/')
 
-            comment = Comments.objects.create(object_pk_id=post.id,
+            comment = Comments.objects.create(object_pk_id=post['id'],
                                               comment=text,
                                               user=request.user,
                                               ip_address=get_user_ip(request))
@@ -677,7 +677,8 @@ def verify_payment(request, bill_id):
 
 @login_required
 def save_as_ads(request, post_id):
-    p = Post.objects.get(id=post_id)
+    # p = Post.objects.get(id=post_id)
+    p = post_item_json(post_id=post_id)
     profile = request.user.profile
 
     if request.method == "POST":
