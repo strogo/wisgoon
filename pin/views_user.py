@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect,\
@@ -405,6 +405,7 @@ def send(request):
 
 @login_required
 def edit(request, post_id):
+    print post_id
     try:
         post = Post.objects.get(pk=int(post_id))
         if not request.user.is_superuser:
@@ -424,9 +425,9 @@ def edit(request, post_id):
             form = PinUpdateForm(instance=post)
 
         if request.is_ajax():
-            return render(request, 'pin/_edit.html', {'form': form, 'post': post})
+            return render(request, 'pin2/_edit.html', {'form': form, 'post': post})
         else:
-            return render(request, 'pin/edit.html', {'form': form, 'post': post})
+            return render(request, 'pin2/edit.html', {'form': form, 'post': post})
     except Post.DoesNotExist:
         return HttpResponseRedirect('/pin/')
 
