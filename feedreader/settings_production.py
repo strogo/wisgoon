@@ -42,11 +42,11 @@ DATABASES = {
 CACHES = {
     'default': dict(
         BACKEND='django.core.cache.backends.memcached.MemcachedCache',
-        LOCATION=['79.127.125.98:11211'],
+        LOCATION=['79.127.125.104:11211'],
     ),
     'cache_layer': dict(
         BACKEND='django.core.cache.backends.memcached.MemcachedCache',
-        LOCATION=['79.127.125.98:11211'],
+        LOCATION=['79.127.125.104:11211'],
     )
 }
 
