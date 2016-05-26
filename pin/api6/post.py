@@ -379,7 +379,7 @@ def related_post(request, item_id):
             'next': "",
             'total_count': 1000
         },
-        'objects': {},
+        'objects': [],
     }
 
     token = request.GET.get('token', False)
