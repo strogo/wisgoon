@@ -198,6 +198,9 @@ def get_post_tags(post):
 
 def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None):
 
+    if not post_id:
+        return {}
+
     post_id = int(post_id)
 
     def need_fields(post_object):
