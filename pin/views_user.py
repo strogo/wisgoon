@@ -505,8 +505,8 @@ def show_notify(request):
     for n in notif:
         anl = {}
         try:
-            image = post_item_json(post_id=n.post, fields=['images'])
-            anl['po'] = image['images']['original']
+            anl['ob'] = post_item_json(post_id=n.post)
+            # anl['ob'] = image['images']['original']
             # anl['po'] = Post.objects.only('image').get(pk=n.post)
         except Post.DoesNotExist:
             if n.type == 4:
