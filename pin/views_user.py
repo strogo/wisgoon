@@ -533,8 +533,7 @@ def notif_user(request):
     for notif in notifications:
         anl = {}
         try:
-            image = post_item_json(post_id=notif.post, fields=['images'])
-            anl['po'] = image['images']['original']
+            anl['ob'] = post_item_json(post_id=notif.post)
             # anl['po'] = Post.objects.only('image').get(pk=notif.post)
         except Post.DoesNotExist:
             if notif.type == 4:
