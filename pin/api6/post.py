@@ -367,6 +367,7 @@ def user_post(request, user_id):
     last_item = before + 20
     data['meta']['next'] = get_next_url(url_name='api-6-post-user',
                                         before=last_item,
+                                        token=token,
                                         url_args={"user_id": user_id}
                                         )
     return return_json_data(data)
@@ -445,7 +446,8 @@ def promoted(request):
 
     last_item = before + 20
     data['meta']['next'] = get_next_url(url_name='api-6-post-promoted',
-                                        before=last_item
+                                        before=last_item,
+                                        token=token
                                         )
     return return_json_data(data)
 
