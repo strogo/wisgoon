@@ -489,6 +489,8 @@ def absuser_followers(request, user_namefl):
 def user_like(request, user_id):
     user_id = int(user_id)
     user = get_object_or_404(User, pk=user_id)
+    return HttpResponseRedirect(reverse('pin-absuser-like',
+                                        args=[user.username]))
     profile = Profile.objects.get(user_id=user_id)
 
     pid = get_request_pid(request)
