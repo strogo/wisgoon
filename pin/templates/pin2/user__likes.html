@@ -3,7 +3,7 @@
 {% load pin_tags %}
 {% load daddy_avatar%}
 
-{% block title%} - مطالب مورد علاقه {{profile.user|get_username}}{% endblock title%}
+{% block title%} - مطالب مورد علاقه {{profile.user|get_username}} - {{profile.user.username}}{% endblock title%}
 
 {% block extra_js %}
 <script src="{{STATIC_CDN}}js/jquery.masonry.min.js"></script>
