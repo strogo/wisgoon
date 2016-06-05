@@ -1,0 +1,46 @@
+{% load widget_tweaks%}
+{% load pin_tags %}
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <h4 class="modal-title">ویرایش</h4>
+</div>
+<div class="modal-body">
+
+
+  <div class="row col-md-12" style="background: #FFF">
+    <form method="post" action="{% url "pin-item-edit" post.id%}" data-async class="form-horizontal" action="" id="pin_form-edit" >
+      {% csrf_token%}
+      <div class="col-md-3">
+        <div class="img-block tace mabo20">
+            <img src="{{post.get_image_236.url}}" width="110" height="{{ post.get_image_236.height }}">
+        </div>
+      </div>
+      <div class="col-md-8">
+
+        {{ form.errors}}
+        <input type="hidden" value="{{post.image}}" id="image_field" name="image" />
+
+        <div class="form-group">
+          <label for="id_text">متن تصویر</label>
+          <textarea id="id_text" rows="5" class="form-control wis_input" cols="40" name="text">{{form.text.value}}</textarea>
+        </div>
+        <div class="form-group">
+          <label for="id_category">دسته‌بندی <span class="red">(اجباری)</span></label>
+          {% render_field form.category class+="form-control wis_input" %}
+          <!-- {{form.category}} -->
+        </div>
+        <div class="form-group">
+          <label for="id_url">نشانی</label>
+          <input type="text" id="id_url" name="url" value="{{form.url.value}}" placeholder="URL" class="span3 ltr form-control wis_input">
+        </div>
+
+        <div class="form-group">
+          <input type="submit" class="wis_btn green w100 mabo20" value="ذخیـــره" />
+        </div>
+      </div>
+    </form>
+
+  </div>
+  <div class="clear"></div>
+
+</div>
