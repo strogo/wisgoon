@@ -265,7 +265,7 @@ def hashtag(request, tag_name):
 
     ''' related tags query '''
     tags_facet = post_queryset.facet_counts()
-    if(result):
+    if result:
         result = tags_facet['fields']['tags']
 
     for key, val in result:
