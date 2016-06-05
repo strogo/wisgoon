@@ -59,7 +59,7 @@
 	</div>
 
 	<div class="clearfix"></div>
-	{% if item.text %}
+	{% if not item.text.strip == "" %}
 	<div class="description">
 		<p>{{item.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:30}}</p>
 	</div>
