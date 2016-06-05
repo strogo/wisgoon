@@ -14,6 +14,7 @@ from pin.model_mongo import Notif, MonthlyStats, NotifCount
 from pin.models import Post, Follow
 
 from user_profile.models import Profile
+from pin.models_redis import NotificationRedis
 
 
 @app.task(name="tasks.notif_test")
@@ -24,6 +25,8 @@ def notif_send(user_id, type, post, actor_id, seen=False, post_image=None):
                          last_actor=actor_id,
                          date=datetime.now,
                          post_image=post_image)
+    NotificationRedis(user_id=user_id)\
+        .set_notif(ntype=type, post=post, actor=actor_id)
 
     # NotifCas.create(owner=user_id, type=type, post=post,
     #                 last_actor=actor_id,
