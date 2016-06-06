@@ -2820,6 +2820,10 @@ div.comment div div.row:hover .del-comment{
 #hashtag_header .header .hashtag_content span img{
 	margin-top: -10px;
 }
+#hashtag_header h1 small{
+	color: #ffb57f;
+	font-size: 15px;
+}
 .error_page{
 	display: block;
 	margin: 0 auto;

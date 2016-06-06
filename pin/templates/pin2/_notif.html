@@ -1,0 +1,46 @@
+{% load pin_tags%}
+{% load humanize %}
+{% load daddy_avatar%}
+
+{% spaceless %}
+{% for item in notif %}
+<div class="notif-item">
+	{% if item.type != 10 %}
+	<div class="notif-img pull-left">
+		<a class="pin-item-link" style="float:right" href="{% url "pin-item" item.id%}">
+			<img src="{{item.ob.images.thumbnail.url }}" class="img img-circle" style="width:40px;height:40px;" />
+		</a>
+	</div>
+	{% endif %}
+
+	<div class="notif-actors col-md-2 col-sm-2 col-xs-2 pull-right">
+		<div>
+			<a target="_blank" href="{% url 'pin-absuser' item.actor|get_absusername %}" class="user-avatar" data-toggle="tooltip" data-placement="bottom" title="{{item.actor|get_absusername}}">
+				<img class="nav-avatar" src="{{item.actor|get_userdata_avatar:50}}">
+			</a>
+		</div>
+	</div>
+	<div class="notif-type col-md-5 col-sm-5 col-xs-8">
+		{% if item.type == 1 %}
+		<i class="glyphicon glyphicon-heart-empty red"></i> تصویر شما را پسندید
+		{% elif item.type == 2 %}
+		<i class="glyphicon glyphicon-comment"></i> برای تصویر شما نظر داده است
+		{% elif item.type == 3 %}
+		<i class="icon-ok"></i>
+		{% elif item.type == 4 %}
+		<i class="icon-remove"></i>
+		{% elif item.type == 10 %}
+		<i class="icon-user"></i> شما را دنبال می کند
+		{% endif %}
+	</div>
+	{% if offset %}
+	<span data-next="{{offset}}" ></span>
+	{%else%}
+	<span data-next="{{item.pid}}" ></span>
+	{%endif%}
+	<div class="clear"></div>
+</div>
+<div class="clear"></div>
+
+{%endfor%}
+{% endspaceless %}
