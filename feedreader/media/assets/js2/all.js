@@ -312,6 +312,12 @@ function marker(t){
 
 $(function () {
 
+    $('body').on('click', '.expand_post', function(event) {
+        $(this).parent().css('max-height', 'none');
+        feedobj.masonry('reload');
+        $(this).remove();
+    });
+
     $('.menu-box').bind('mousewheel DOMMouseScroll', function(e) {
         var scrollTo = null;
 

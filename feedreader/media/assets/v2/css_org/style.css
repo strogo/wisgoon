@@ -501,6 +501,9 @@ a, a:link, a:hover, a:visited {
 	/*padding-right: 10px;*/
 	overflow: hidden;
 	max-height: 500px;
+	-webkit-transition: max-height 0.2s;
+	-moz-transition: max-height 0.2s;
+	transition: max-height 0.2s;
 }
 .avatar.post-avatar > a {
 	display: inline-block;
@@ -2820,6 +2823,10 @@ div.comment div div.row:hover .del-comment{
 #hashtag_header .header .hashtag_content span img{
 	margin-top: -10px;
 }
+#hashtag_header h1 small{
+	color: #ffb57f;
+	font-size: 15px;
+}
 .error_page{
 	display: block;
 	margin: 0 auto;
@@ -3001,6 +3008,7 @@ div.comment div div.row:hover .del-comment{
 	padding: 5px;
 	position: absolute;
 	right: 0;
+	cursor: pointer;
 	text-shadow: 0 1px 0 #fff;
 }
 .alert,

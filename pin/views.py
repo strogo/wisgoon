@@ -203,6 +203,7 @@ def category_top(request, category_id):
 
 
 def tags(request, tag_name):
+    return HttpResponseRedirect(reverse('hashtags', args=[tag_name]))
     row_per_page = 20
     results = []
     query = tag_name.replace('_', ' ')
@@ -249,19 +250,23 @@ def hashtag(request, tag_name):
 
     offset = int(request.GET.get('offset', 0))
 
-    post_queryset = SearchQuerySet().models(Post).filter(tags=tag_name).facet('tags')
+    post_queryset = SearchQuerySet().models(Post)\
+        .filter(tags=tag_name).facet('tags')
 
     ''' select posts'''
-    posts = post_queryset.order_by('-timestamp_i')[offset:offset + row_per_page]
+    posts = post_queryset\
+        .order_by('-timestamp_i')[offset:offset + row_per_page]
 
     for post in posts:
-        post_json = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
+        post_json = post_item_json(post_id=post.pk,
+                                   cur_user_id=request.user.id)
         if post_json:
             posts_list.append(post_json)
 
     ''' related tags query '''
     tags_facet = post_queryset.facet_counts()
-    result = tags_facet['fields']['tags']
+    if result:
+        result = tags_facet['fields']['tags']
 
     for key, val in result:
         if key != tag_name:
@@ -484,6 +489,8 @@ def absuser_followers(request, user_namefl):
 def user_like(request, user_id):
     user_id = int(user_id)
     user = get_object_or_404(User, pk=user_id)
+    return HttpResponseRedirect(reverse('pin-absuser-like',
+                                        args=[user.username]))
     profile = Profile.objects.get(user_id=user_id)
 
     pid = get_request_pid(request)

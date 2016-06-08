@@ -550,12 +550,12 @@ def notif_user(request):
         nl.append(anl)
 
     if request.is_ajax():
-        return render(request, 'pin/_notif.html', {
+        return render(request, 'pin2/_notif.html', {
             'notif': nl,
             'offset': offset + 20
         })
     else:
-        return render(request, 'pin/notif_user.html', {
+        return render(request, 'pin2/notif_user.html', {
             'notif': nl,
             'offset': offset + 20
         })
