@@ -434,9 +434,10 @@ def user_search(request):
 
             data['objects'].append(o)
 
-            data['meta']['next'] = get_next_url(url_name='api-6-post-search',
+            data['meta']['next'] = get_next_url(url_name='api-6-auth-user-search',
                                                 token=token,
-                                                before=before + row_per_page)
+                                                before=before + row_per_page,
+                                                q=query)
         return return_json_data(data)
     else:
         return return_bad_request()
