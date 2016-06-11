@@ -250,7 +250,7 @@ def hashtag(request, tag_name):
     offset = int(request.GET.get('offset', 0))
 
     post_queryset = SearchQuerySet().models(Post)\
-        .filter(tags=tag_name).facet('tags')
+        .filter(tags=tag_name).facet('tags', mincount=1)
 
     ''' select posts'''
     posts = post_queryset\
@@ -270,7 +270,7 @@ def hashtag(request, tag_name):
     if not result:
         result = []
 
-    for key, val in result:
+    for key, val in result[:10]:
         if key != tag_name:
             related_tags.append(key)
         else:
