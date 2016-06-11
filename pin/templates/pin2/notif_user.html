@@ -1,0 +1,29 @@
+{% extends "pin2/flat.base.html"%}
+{% load pin_tags %}
+
+{% block extra_js %}
+    <script src="{{MEDIA_URL}}js/jquery.masonry.min.js"></script>
+    <!-- <script src="{{MEDIA_URL}}js/masonry.pkgd.min.js"></script>-->
+{% endblock extra_js %}
+
+{% block content %}
+    <div class="container">
+        <div id="profile" class="row row-fluid">
+        	<div id="feed" class="container mato20">
+        		{% include "pin2/_notif.html"%}
+        	</div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+{% endblock content %}
+{% block js %}
+    <script>
+    var start_loading=0;
+    </script>
+{% endblock js %}

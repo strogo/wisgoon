@@ -15,8 +15,8 @@
         <img src="{{noti.actor|get_avatar:60}}">
     </a>
     {% if noti.type != 10 %}
-    <a class="notif_img pull-left" href="{% url "pin-item" noti.po.id %}">
-        <img src="{{noti.po.get_image_236.url }}" />
+    <a class="notif_img pull-left" href="{% url "pin-item" noti.id %}">
+        <img src="{{noti.ob.images.thumbnail.url }}" />
     </a>
     {% endif %}
     <div class="notif_text pull-right">

@@ -242,7 +242,6 @@ def hashtag(request, tag_name):
     query = tag_name
     related_tags = []
     total_count = 0
-    result = []
     tags = ['کربلا']
 
     if query in [u'عروس', u'عاشقانه'] and not request.user.is_authenticated():
@@ -265,8 +264,11 @@ def hashtag(request, tag_name):
 
     ''' related tags query '''
     tags_facet = post_queryset.facet_counts()
-    if(result):
-        result = tags_facet['fields']['tags']
+
+    result = tags_facet['fields']['tags']
+
+    if not result:
+        result = []
 
     for key, val in result:
         if key != tag_name:

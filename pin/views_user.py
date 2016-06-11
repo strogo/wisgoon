@@ -505,8 +505,8 @@ def show_notify(request):
     for n in notif:
         anl = {}
         try:
-            image = post_item_json(post_id=n.post, fields=['images'])
-            anl['po'] = image['images']['original']
+            anl['ob'] = post_item_json(post_id=n.post)
+            # anl['ob'] = image['images']['original']
             # anl['po'] = Post.objects.only('image').get(pk=n.post)
         except Post.DoesNotExist:
             if n.type == 4:
@@ -533,8 +533,7 @@ def notif_user(request):
     for notif in notifications:
         anl = {}
         try:
-            image = post_item_json(post_id=notif.post, fields=['images'])
-            anl['po'] = image['images']['original']
+            anl['ob'] = post_item_json(post_id=notif.post)
             # anl['po'] = Post.objects.only('image').get(pk=notif.post)
         except Post.DoesNotExist:
             if notif.type == 4:
@@ -551,12 +550,12 @@ def notif_user(request):
         nl.append(anl)
 
     if request.is_ajax():
-        return render(request, 'pin/_notif.html', {
+        return render(request, 'pin2/_notif.html', {
             'notif': nl,
             'offset': offset + 20
         })
     else:
-        return render(request, 'pin/notif_user.html', {
+        return render(request, 'pin2/notif_user.html', {
             'notif': nl,
             'offset': offset + 20
         })
