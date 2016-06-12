@@ -9,7 +9,7 @@ r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for ad in Ad.objects.filter(ended=False):
+        for ad in Ad.objects.filter(ended=True):
             key_name = "ad_{}".format(ad.id)
             print "going to remove " + key_name
             r_server.delete(key_name)
