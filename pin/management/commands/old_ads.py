@@ -11,4 +11,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for ad in Ad.objects.filter(ended=False):
             key_name = "ad_{}".format(ad.id)
+            print "going to remove " + key_name
             r_server.delete(key_name)
