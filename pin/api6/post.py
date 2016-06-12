@@ -49,7 +49,7 @@ def latest(request):
     if cur_user:
         viewer_id = str(cur_user)
     else:
-        viewer_id = str(get_user_ip(request))
+        viewer_id = str(get_user_ip(request, to_int=True))
 
     ad = Ad.get_ad(user_id=viewer_id)
     if ad:

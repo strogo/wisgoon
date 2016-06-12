@@ -3,6 +3,8 @@ import os
 import time
 import re
 import urllib2
+import socket
+import struct
 
 try:
     import simplejson as json
@@ -178,12 +180,26 @@ def get_request_pid(request):
     return pid
 
 
-def get_user_ip(request):
+def ip2int(addr):
+    return struct.unpack("!I", socket.inet_aton(addr))[0]
+
+
+def int2ip(addr):
+    return socket.inet_ntoa(struct.pack("!I", addr))
+
+
+def get_user_ip(request, to_int=False):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR', None)
     if x_forwarded_for:
         ip = x_forwarded_for
     else:
         ip = request.META.get('REMOTE_ADDR', None)
+
+    if to_int:
+        try:
+            ip = ip2int(ip)
+        except:
+            pass
     return ip
     # return request.META.get('REMOTE_ADDR', None)
 
