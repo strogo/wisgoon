@@ -241,7 +241,8 @@ class LikesRedis(object):
             send_notif_bar(user=post_owner, type=1, post=self.postId,
                            actor=user_id)
 
-    def like_or_dislike(self, user_id, post_owner, user_ip="127.0.0.1", category=1):
+    def like_or_dislike(self, user_id, post_owner,
+                        user_ip="127.0.0.1", category=1):
         leader_category = self.KEY_LEADERBORD_GROUPS.format(category)
         lbs = leaderBoardServer.pipeline()
         if self.user_liked(user_id=user_id):
@@ -272,8 +273,10 @@ class LikesRedis(object):
         return liked, disliked, self.cntlike()
 
     def get_leaderboards(self):
-        return leaderBoardServer.zrevrange(self.KEY_LEADERBORD, 0, 23, withscores=True)
+        return leaderBoardServer\
+            .zrevrange(self.KEY_LEADERBORD, 0, 23, withscores=True)
 
     def get_leaderboards_groups(self, category):
         leader_category = self.KEY_LEADERBORD_GROUPS.format(category)
-        return leaderBoardServer.zrevrange(leader_category, 0, 3, withscores=True)
+        return leaderBoardServer\
+            .zrevrange(leader_category, 0, 3, withscores=True)
