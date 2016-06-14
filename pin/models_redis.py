@@ -13,6 +13,7 @@ from models import Post
 from khayyam import JalaliDate
 
 from pin.analytics import like_act
+from pin.models_casper import LikesModel
 
 # redis set server
 rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
@@ -165,6 +166,7 @@ class LikesRedis(object):
 
     def __init__(self, post_id=None):
         if post_id:
+            self.postId = int(post_id)
             self.postId = str(post_id)
             self.keyNameSet = self.KEY_PREFIX_SET + self.postId
             self.keyNameList = self.KEY_PREFIX_LIST + self.postId
@@ -187,6 +189,10 @@ class LikesRedis(object):
         return ul
 
     def user_liked(self, user_id):
+        lc = LikesModel.objects.filter(post_id=self.postId,
+                                       likers__contains=user_id)
+        print lc
+
         if rSetServer.sismember(self.keyNameSet, str(user_id)):
             return True
         return False
