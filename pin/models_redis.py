@@ -13,7 +13,7 @@ from models import Post
 from khayyam import JalaliDate
 
 from pin.analytics import like_act
-from pin.models_casper import LikesModel
+from pin.models_casper import UserLikedPosts
 
 # redis set server
 rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
@@ -84,7 +84,8 @@ class NotificationRedis(object):
             if not post_id:
                 post_id = 0
             if post_id > 0:
-                o['id'] = eval("{}{}{}".format(post_id, ssplited[2], ssplited[0]))
+                o['id'] = eval("{}{}{}".format(post_id,
+                                               ssplited[2], ssplited[0]))
             else:
                 o['id'] = eval("{}{}".format(ssplited[2], ssplited[0]))
             o['type'] = eval(ssplited[0])
@@ -189,29 +190,59 @@ class LikesRedis(object):
         return ul
 
     def user_liked(self, user_id):
-        lc = LikesModel.objects.filter(post_id=self.postId,
-                                       likers__contains=user_id)
-        print lc
+        if rListServer.exists("back_" + self.keyNameList):
+            rListServer.rename("back_" + self.keyNameList, self.keyNameList)
+        if rListServer.exists(self.keyNameList):
+            mems = rSetServer.smembers(self.keyNameSet)
+            c = 0
+            for mem in mems:
+                c += 1
+                UserLikedPosts.objects.create(post_id=self.postId,
+                                              user_id=mem,
+                                              like_time=c)
+                # UserLikedPostsOrder.objects.create(post_id=self.postId,
+                #                                    user_id=mem,
+                #                                    like_time=c)
+            # lc = UserLikedPosts.objects.filter(post_id=self.postId,
+            #                                likers__contains=user_id).limit(1)
+            # print lc
 
-        if rSetServer.sismember(self.keyNameSet, str(user_id)):
+            # rListServer.rename(self.keyNameList, "back_" + self.keyNameList)
+
+        if UserLikedPosts.objects.filter(post_id=self.postId,
+                                         user_id=user_id).count():
             return True
+
+        # if rSetServer.sismember(self.keyNameSet, str(user_id)):
+            # return True
         return False
 
     def cntlike(self):
         if self.cntLike:
             return self.cntLike
-        self.cntLike = rListServer.llen(self.keyNameList)
+        # self.cntLike = rListServer.llen(self.keyNameList)
+        # self.cntLike = rSetServer.scard(self.keyNameSet)
+        self.cntLike = UserLikedPosts.objects(post_id=self.postId).count()
         return self.cntLike
 
     def dislike(self, user_id, post_owner):
-        rListServer.lrem(self.keyNameList, user_id)
+        # User
+        UserLikedPosts.objects.filter(post_id=self.postId, user_id=user_id)\
+            .delete()
+        # print ulp, ulp.like_time
+        # UserLikedPostsOrder.objects(post_id=self.postId,
+        #                             user_id=user_id,
+        #                             like_time=ulp.like_time).delete()
+        # UserLikedPosts.objects.get(post_id=self.postId, user_id=user_id)\
+        #     .delete()
+        # rListServer.lrem(self.keyNameList, user_id)
         rSetServer.srem(self.keyNameSet, str(user_id))
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') - 1)
 
-        user_last_likes = "{}_{}".\
-            format(settings.USER_LAST_LIKES, int(user_id))
-        rListServer.lrem(user_last_likes, self.postId)
+        # user_last_likes = "{}_{}".\
+        #     format(settings.USER_LAST_LIKES, int(user_id))
+        # rListServer.lrem(user_last_likes, self.postId)
 
         Profile.after_dislike(user_id=post_owner)
 
@@ -219,18 +250,25 @@ class LikesRedis(object):
         MonthlyStats.log_hit(object_type=MonthlyStats.DISLIKE)
 
     def like(self, user_id, post_owner, user_ip):
+        like_time = int(time.time())
+        UserLikedPosts.objects.create(post_id=self.postId,
+                                      user_id=user_id,
+                                      like_time=like_time)
+        # UserLikedPostsOrder.objects.create(post_id=self.postId,
+        #                                    user_id=user_id,
+        #                                    like_time=like_time)
         rSetServer.sadd(self.keyNameSet, str(user_id))
 
-        p = rListServer.pipeline()
-        p.lrem(self.keyNameList, user_id)
-        p.lpush(self.keyNameList, user_id)
-        # Store user_last_likes
-        user_last_likes = "{}_{}".\
-            format(settings.USER_LAST_LIKES, int(user_id))
-        p.lrem(user_last_likes, self.postId)
-        p.lpush(user_last_likes, self.postId)
-        p.ltrim(user_last_likes, 0, 1000)
-        p.execute()
+        # p = rListServer.pipeline()
+        # p.lrem(self.keyNameList, user_id)
+        # p.lpush(self.keyNameList, user_id)
+        # # Store user_last_likes
+        # user_last_likes = "{}_{}".\
+        #     format(settings.USER_LAST_LIKES, int(user_id))
+        # p.lrem(user_last_likes, self.postId)
+        # p.lpush(user_last_likes, self.postId)
+        # p.ltrim(user_last_likes, 0, 1000)
+        # p.execute()
 
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') + 1)
