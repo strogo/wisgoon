@@ -52,10 +52,12 @@ def new_report(request):
     }
 
     for report in posts:
+        if not report:
+            continue
         post = post_item_json(report.post.id)
         post['reporters'] = get_post_reporers(report)
         post['user']['imei'] = user_imei_detial(report.post.user)
-        # post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(report.post.user_id)
+
         try:
             post['user']['cnt_admin_deleted'] = UserHistory.objects\
                 .get(user=report.post.user_id).admin_post_deleted
