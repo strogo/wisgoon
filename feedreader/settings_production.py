@@ -123,4 +123,4 @@ STATIC_CDN = "http://static.wisgoon.com/media/assets/"
 
 STATIC_URL = 'http://static.wisgoon.com/static/'
 
-MONGO_DB_HOST = "79.127.125.104"
+MONGO_DB_HOST = "79.127.125.99"
