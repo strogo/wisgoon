@@ -37,6 +37,7 @@ def like_post(request, item_id):
     data = {'cnt_like': current_like, 'user_act': user_act, 'user': user}
     return return_json_data(data)
 
+
 @csrf_exempt
 def like_item(request):
     token = request.POST.get('token', False)
