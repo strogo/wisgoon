@@ -22,6 +22,9 @@ from cache_layer import PostCacheLayer
 
 import khayyam
 
+VERB = {5: "Create post", 6: "Comment", 7: "Like",
+        8: "Follow", 9: "request follow", 10: "accept follow"}
+
 
 def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
     n_url_p = reverse(url_name, kwargs=url_args) + "?"
@@ -408,3 +411,26 @@ def new_reported(post):
     new_report = {}
     new_report['reported_post'] = post_item_json(post.post.id)
     return new_report
+
+
+def notif_simple_json(notification, user=True, post=True,
+                      text=False):
+    notif_dict = {}
+    notif_dict['verb'] = VERB[notification.verb.id]
+    notif_dict['other_actor_count'] = notification.other_actor_count
+    notif_dict['user'] = {}
+    notif_dict['post'] = {}
+    notif_dict['text'] = ''
+    notif_dict['activity_ids'] = notification.activity_ids
+    notif_dict['is_seen'] = notification.is_seen
+
+    if user:
+        notif_dict['user'] = get_simple_user_object(current_user=notification.actor_ids[-1])
+
+    if post:
+        notif_dict['post'] = post_item_json(post_id=notification.object_ids[0])
+
+    if text:
+        notif_dict['text'] = notification.activities[-1].extra_context['text']
+
+    return notif_dict

@@ -18,7 +18,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect,\
-    HttpResponseBadRequest, Http404
+    HttpResponseBadRequest, Http404, JsonResponse
 
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
@@ -32,7 +32,8 @@ from pin.tools import create_filename, get_user_ip, get_request_pid,\
     check_block, post_after_delete, get_post_user_cache
 
 from pin.tasks import porn_feedback
-from pin.api6.tools import post_item_json
+from pin.api6.tools import post_item_json, notif_simple_json
+from pin.notification_models import UserNotification, MyNotificationFeed
 
 from suds.client import Client
 
@@ -786,3 +787,42 @@ def promotion_list(request):
         'profile': request.user.profile,
         'cur_user': request.user
     })
+
+
+@login_required
+def user_notif(request):
+    notif_list = []
+    before = int(request.GET.get("before", 0))
+
+    notifications = UserNotification(user_id=11)\
+        .get_obj_notif(before=before)
+
+    if notifications:
+        for notification in notifications:
+
+            '''update notification is_seen
+                mark_activities(self, activity_ids, seen=True, read=False) by default'''
+            MyNotificationFeed(request.user.id).mark_activities(notification.activity_ids)
+
+            if notification.verb.infinitive == 'create':
+                notif = notif_simple_json(notification=notification, user=False)
+
+            elif notification.verb.infinitive == 'comment':
+                if len(notification.actor_ids) == 1:
+                    notif = notif_simple_json(notification=notification, text=True)
+                else:
+                    notif = notif_simple_json(notification=notification)
+
+            elif notification.verb.infinitive == 'like':
+                notif = notif_simple_json(notification=notification)
+
+            elif notification.verb.infinitive in ['follow', 'request follow', 'accept follow']:
+                notif = notif_simple_json(notification=notification, post=False)
+
+            notif_list.append(notif)
+
+    return JsonResponse(notif_list, safe=False)
+
+    # return render(request, 'pin2/new_notif.html', {
+    #     'notif_list': notif_list,
+    # })

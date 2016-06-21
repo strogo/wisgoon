@@ -5,6 +5,7 @@ import re
 import urllib2
 import socket
 import struct
+import zlib
 
 try:
     import simplejson as json
@@ -35,6 +36,7 @@ USERDATA_TIMEOUT = 300
 
 CARBON_SERVER = '127.0.0.1'
 CARBON_PORT = 2003
+
 
 # if settings.DEBUG:
 #     from feedreader.task_cel_local import inc_prof
@@ -538,3 +540,8 @@ def get_delta_timestamp(days):
     today_date = datetime.date.today()
     days_stamp = (today_date - datetime.timedelta(days)).strftime("%s")
     return int(days_stamp)
+
+
+def get_crc_32(string):
+    result = zlib.crc32(string) & 0xFFFFFFFF
+    return result

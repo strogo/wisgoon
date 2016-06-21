@@ -1717,6 +1717,63 @@ class Official(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     mode = models.IntegerField(choices=((1, 'sp1'), (2, 'sp2')), default='1')
 
+
+# class Acl(models.Model):
+#         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"
+
+#         ALLOW_TYPE_DENY = 0
+#         ALLOW_TYPE_ALLOW = 1
+
+#         ALLOW_CHOICES = (
+#             (ALLOW_TYPE_DENY, 'deny'),
+#             (ALLOW_TYPE_ALLOW, 'allow'),
+#         )
+
+#         ACCESS_TYPE_SUBSCRIBE = 1
+#         ACCESS_TYPE_PUBLISH = 2
+#         ACCESS_TYPE_PUBSUB = 3
+
+#         ACCESS_CHOICES = (
+#             (ACCESS_TYPE_SUBSCRIBE, 'subscribe'),
+#             (ACCESS_TYPE_PUBLISH, 'publish'),
+#             (ACCESS_TYPE_PUBSUB, 'pubsub'),
+#         )
+
+#         allow = models.IntegerField(default=None, null=True, blank=True,
+#                                     choices=ALLOW_CHOICES)
+#         ipaddr = models.GenericIPAddressField(default=None, null=True, blank=True)
+#         username = models.CharField(default=None, null=True, blank=True,
+#                                     max_length=100)
+#         clientid = models.CharField(default=None, null=True, blank=True,
+#                                     max_length=100)
+#         access = models.IntegerField(choices=ACCESS_CHOICES)
+#         topic = models.CharField(default="", max_length=200)
+#         topic_crc = models.BigIntegerField(default=0, db_index=True)
+
+#         @classmethod
+#         def add_self_user_topics(cls, user_id, username):
+#             from pin.tools import get_crc_32
+
+#             topi = cls.USER_SELF_TOPIC_STR.format(user_id)
+#             topi_crc = get_crc_32(topi)
+#             cls.objects.get_or_create(topic=topi, topic_crc=topi_crc,
+#                                       username=username,
+#                                       access=cls.ACCESS_TYPE_PUBSUB,
+#                                       allow=cls.ALLOW_TYPE_ALLOW)
+
+#         def save(self, *args, **kwargs):
+#             from pin.tools import get_crc_32
+
+#             self.topic_crc = get_crc_32(self.topic)
+#             if not self.ipaddr:
+#                 self.ipaddr = None
+#             if not self.clientid:
+#                 self.clientid = None
+#             if not self.username:
+#                 self.username = None
+#             super(Acl, self).save(*args, **kwargs)
+
+
 post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
 post_save.connect(Comments.add_comment, sender=Comments)

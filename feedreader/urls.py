@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^email/register/', 'pin.views.email_register', name='email_register'),
     url(r'^pass/reset/', 'pin.views.pass_reset', name='pass_reset'),
     url(r'^newsletter/', 'pin.views.newsletter', name='newsletter'),
+    url(r'^notification/$', 'pin.views_user.user_notif', name="user-notif"),
 
     url(r'^$', 'pin.views.home', name='home'),
     # url(r'^latest_post/', 'latest_redis', name='pin-latest-old'),
