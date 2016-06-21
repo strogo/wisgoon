@@ -37,7 +37,7 @@ class PostView(object):
         PostStats(post_id=self.post_id).update(cnt_view=1)
 
     def inc_view(self):
-        PostStats(post_id=self.post_id).update(cnt_view=1)
+        # PostStats(post_id=self.post_id).update(cnt_view=1)
         return
         notificationRedis.incr(self.KEY_PREFIX)
 
