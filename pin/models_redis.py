@@ -42,7 +42,7 @@ class PostView(object):
         notificationRedis.incr(self.KEY_PREFIX)
 
     def get_cnt_view(self):
-        return
+        return PostStats.objects.get(post_id=self.post_id).cnt_view
         cnt = notificationRedis.get(self.KEY_PREFIX)
         if not cnt:
             return 0
