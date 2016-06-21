@@ -33,6 +33,10 @@ class PostView(object):
         self.post_id = int(post_id)
         self.KEY_PREFIX = self.KEY_PREFIX.format(post_id)
 
+    def inc_view_test(self):
+        from pin.models_casper import PostStats
+        PostStats(post_id=self.post_id).update(cnt_view=1)
+
     def inc_view(self):
         # PostStats(post_id=self.post_id).update(cnt_view=1)
         return
