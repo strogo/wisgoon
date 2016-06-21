@@ -13,7 +13,7 @@ from models import Post
 from khayyam import JalaliDate
 
 from pin.analytics import like_act
-# from pin.models_casper import PostStats
+from pin.models_casper import PostStats
 
 # redis set server
 rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
@@ -34,7 +34,6 @@ class PostView(object):
         self.KEY_PREFIX = self.KEY_PREFIX.format(post_id)
 
     def inc_view_test(self):
-        from pin.models_casper import PostStats
         PostStats(post_id=self.post_id).update(cnt_view=1)
 
     def inc_view(self):
