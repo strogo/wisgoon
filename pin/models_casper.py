@@ -27,8 +27,8 @@ class PostStats(Model):
 #     user_id = columns.Integer(primary_key=True)
 
 
-connection.setup([settings.CASSANDRA_DB], "wisgoon", protocol_version=3)
-management.create_keyspace_simple("wisgoon", replication_factor=1)
+# connection.setup([settings.CASSANDRA_DB], "wisgoon", protocol_version=3)
+# management.create_keyspace_simple("wisgoon", replication_factor=1)
 
-sync_table(PostStats)
+# sync_table(PostStats)
 # sync_table(UserLikedPostsOrder)
