@@ -216,6 +216,8 @@ class LikesRedis(object):
         #                                  user_id=user_id).count():
         #     return True
 
+        rListServer.delete(self.keyNameList)
+
         if rSetServer.sismember(self.keyNameSet, str(user_id)):
             return True
         return False
