@@ -809,6 +809,10 @@ def item(request, item_id):
     except Post.DoesNotExist:
         raise Http404("Post does not exist")
 
+    # if int(item_id) == 14470480:
+    #     from models_redis import PostView
+    #     PostView(14470480).inc_view_test()
+
     mlts = []
 
     post.mlt = mlts

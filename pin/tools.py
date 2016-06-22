@@ -197,6 +197,9 @@ def get_user_ip(request, to_int=False):
     else:
         ip = request.META.get('REMOTE_ADDR', None)
 
+    if "," in ip:
+        ip = ip.split(',')[0]
+
     if to_int:
         try:
             ip = ip2int(ip)

@@ -13,6 +13,7 @@ from models import Post
 from khayyam import JalaliDate
 
 from pin.analytics import like_act
+from pin.models_casper import PostStats
 
 # redis set server
 rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
@@ -29,14 +30,22 @@ class PostView(object):
     KEY_PREFIX = "pv:1:{}"
 
     def __init__(self, post_id):
+        self.post_id = int(post_id)
         self.KEY_PREFIX = self.KEY_PREFIX.format(post_id)
 
+    def inc_view_test(self):
+        PostStats(post_id=self.post_id).update(cnt_view=1)
+
     def inc_view(self):
+        PostStats(post_id=self.post_id).update(cnt_view=1)
         return
         notificationRedis.incr(self.KEY_PREFIX)
 
     def get_cnt_view(self):
-        return
+        try:
+            return PostStats.objects.get(post_id=self.post_id).cnt_view
+        except:
+            return 0
         cnt = notificationRedis.get(self.KEY_PREFIX)
         if not cnt:
             return 0
@@ -83,7 +92,8 @@ class NotificationRedis(object):
             if not post_id:
                 post_id = 0
             if post_id > 0:
-                o['id'] = eval("{}{}{}".format(post_id, ssplited[2], ssplited[0]))
+                o['id'] = eval("{}{}{}".format(post_id,
+                                               ssplited[2], ssplited[0]))
             else:
                 o['id'] = eval("{}{}".format(ssplited[2], ssplited[0]))
             o['type'] = eval(ssplited[0])
@@ -165,6 +175,7 @@ class LikesRedis(object):
 
     def __init__(self, post_id=None):
         if post_id:
+            self.postId = int(post_id)
             self.postId = str(post_id)
             self.keyNameSet = self.KEY_PREFIX_SET + self.postId
             self.keyNameList = self.KEY_PREFIX_LIST + self.postId
@@ -174,7 +185,10 @@ class LikesRedis(object):
         rSetServer.delete(self.keyNameSet)
 
     def get_likes(self, offset, limit=20, as_user_object=False):
-        data = rListServer.lrange(self.keyNameList, offset, offset + limit - 1)
+        smems = list(rSetServer.smembers(self.keyNameSet))
+        data = smems[offset: offset + limit]
+        # data = rListServer\
+        #    .lrange(self.keyNameList, offset, offset + limit - 1)
         if not as_user_object:
             return data
 
@@ -187,6 +201,31 @@ class LikesRedis(object):
         return ul
 
     def user_liked(self, user_id):
+        # if rListServer.exists("back_" + self.keyNameList):
+            # rListServer.rename("back_" + self.keyNameList, self.keyNameList)
+        # if rListServer.exists(self.keyNameList):
+            # mems = rSetServer.smembers(self.keyNameSet)
+            # c = 0
+            # for mem in mems:
+                # c += 1
+                # UserLikedPosts.objects.create(post_id=self.postId,
+                #                               user_id=mem,
+                #                               like_time=c)
+                # UserLikedPostsOrder.objects.create(post_id=self.postId,
+                #                                    user_id=mem,
+                #                                    like_time=c)
+            # lc = UserLikedPosts.objects.filter(post_id=self.postId,
+            #                                likers__contains=user_id).limit(1)
+            # print lc
+
+            # rListServer.rename(self.keyNameList, "back_" + self.keyNameList)
+
+        # if UserLikedPosts.objects.filter(post_id=self.postId,
+        #                                  user_id=user_id).count():
+        #     return True
+
+        rListServer.delete(self.keyNameList)
+
         if rSetServer.sismember(self.keyNameSet, str(user_id)):
             return True
         return False
@@ -194,10 +233,21 @@ class LikesRedis(object):
     def cntlike(self):
         if self.cntLike:
             return self.cntLike
-        self.cntLike = rListServer.llen(self.keyNameList)
+        # self.cntLike = rListServer.llen(self.keyNameList)
+        self.cntLike = rSetServer.scard(self.keyNameSet)
+        # self.cntLike = UserLikedPosts.objects(post_id=self.postId).count()
         return self.cntLike
 
     def dislike(self, user_id, post_owner):
+        # User
+        # UserLikedPosts.objects.filter(post_id=self.postId, user_id=user_id)\
+            # .delete()
+        # print ulp, ulp.like_time
+        # UserLikedPostsOrder.objects(post_id=self.postId,
+        #                             user_id=user_id,
+        #                             like_time=ulp.like_time).delete()
+        # UserLikedPosts.objects.get(post_id=self.postId, user_id=user_id)\
+        #     .delete()
         rListServer.lrem(self.keyNameList, user_id)
         rSetServer.srem(self.keyNameSet, str(user_id))
         Post.objects.filter(pk=int(self.postId))\
@@ -213,11 +263,18 @@ class LikesRedis(object):
         MonthlyStats.log_hit(object_type=MonthlyStats.DISLIKE)
 
     def like(self, user_id, post_owner, user_ip):
+        # like_time = int(time.time())
+        # UserLikedPosts.objects.create(post_id=self.postId,
+        #                               user_id=user_id,
+        #                               like_time=like_time)
+        # UserLikedPostsOrder.objects.create(post_id=self.postId,
+        #                                    user_id=user_id,
+        #                                    like_time=like_time)
         rSetServer.sadd(self.keyNameSet, str(user_id))
 
         p = rListServer.pipeline()
-        p.lrem(self.keyNameList, user_id)
-        p.lpush(self.keyNameList, user_id)
+        # p.lrem(self.keyNameList, user_id)
+        # p.lpush(self.keyNameList, user_id)
         # Store user_last_likes
         user_last_likes = "{}_{}".\
             format(settings.USER_LAST_LIKES, int(user_id))
@@ -241,7 +298,8 @@ class LikesRedis(object):
             send_notif_bar(user=post_owner, type=1, post=self.postId,
                            actor=user_id)
 
-    def like_or_dislike(self, user_id, post_owner, user_ip="127.0.0.1", category=1):
+    def like_or_dislike(self, user_id, post_owner,
+                        user_ip="127.0.0.1", category=1):
         leader_category = self.KEY_LEADERBORD_GROUPS.format(category)
         lbs = leaderBoardServer.pipeline()
         if self.user_liked(user_id=user_id):
@@ -272,8 +330,10 @@ class LikesRedis(object):
         return liked, disliked, self.cntlike()
 
     def get_leaderboards(self):
-        return leaderBoardServer.zrevrange(self.KEY_LEADERBORD, 0, 23, withscores=True)
+        return leaderBoardServer\
+            .zrevrange(self.KEY_LEADERBORD, 0, 23, withscores=True)
 
     def get_leaderboards_groups(self, category):
         leader_category = self.KEY_LEADERBORD_GROUPS.format(category)
-        return leaderBoardServer.zrevrange(leader_category, 0, 3, withscores=True)
+        return leaderBoardServer\
+            .zrevrange(leader_category, 0, 3, withscores=True)
