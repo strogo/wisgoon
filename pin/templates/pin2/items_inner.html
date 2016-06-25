@@ -153,8 +153,8 @@
 
             <!-- img -->
             <div class="post-img">
-                <a href="{{media_prefix}}{{MEDIA_URL}}{{post.image}}" >
-                    <img src="{{ post.get_image_500.url }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
+                <a href="{{post.images.original.url}}" >
+                    <img src="{{ post.images.low_resolution.url }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
                 </a>
             </div>
             <!-- text -->
@@ -174,11 +174,17 @@
 
                 <div class="post_footer mato20">
                     <div class="time pull-left">
-                        <a href="{{post.get_absolute_url}}">{{post.create|date_filter}} <i class="time_icon"></i></a>
+                        <a href="{{post.get_absolute_url}}">{{post.timestamp|date_filter}} <i class="time_icon"></i></a>
+                    </div>
+                    <div class="view-Count pull-left">
+                        <h2>
+                            <span>{{post.cnt_view}}</span>
+                            <i class="cnt_view_icon"></i>
+                        </h2>
                     </div>
                     <div class="cat pull-left">
                         <h2>
-                            <a href="/category/{{post.category.id}}/">{{post.category}} <i class="cat_icon"></i></a>
+                            <a href="/category/{{post.category.id}}/">{{post.category.title}} <i class="cat_icon"></i></a>
                         </h2>
                     </div>
                     <div class="clear"></div>
@@ -198,7 +204,7 @@
                 <div class="activity_btn">
                     <div class="btn-box comment">
                         <a href="#submit_comment">
-                            <span class="cnt-like">{{post.cnt_comments|pn}}</span>
+                            <span class="cnt-like">{{post.cnt_comment|pn}}</span>
                             <span class="cmnt_icon"></span>
                         </a>
                     </div>

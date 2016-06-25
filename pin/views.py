@@ -805,7 +805,8 @@ def item(request, item_id):
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
 
     try:
-        post = Post.objects.get(id=item_id)
+        # post = Post.objects.get(id=item_id)
+        post = post_item_json(post_id=item_id)
     except Post.DoesNotExist:
         raise Http404("Post does not exist")
 
@@ -813,26 +814,26 @@ def item(request, item_id):
     #     from models_redis import PostView
     #     PostView(14470480).inc_view_test()
 
-    mlts = []
+    # mlts = []
 
-    post.mlt = mlts
+    # post["mlt"] = mlts
 
     if request.user.is_authenticated():
-        if check_block(user_id=post.user_id, blocked_id=request.user.id):
+        if check_block(user_id=post["user"]["id"], blocked_id=request.user.id):
             return HttpResponseRedirect('/')
 
-    post.tag = []
+    # post["tag"] = []
 
-    post.likes = LikesRedis(post_id=post.id)\
-        .get_likes(offset=0, limit=5, as_user_object=True)
+    # post["likes"] = LikesRedis(post_id=post["id"])\
+    #     .get_likes(offset=0, limit=5, as_user_object=True)
 
     follow_status = 0
     if request.user.is_authenticated():
         follow_status = Follow.objects.filter(follower=request.user.id,
-                                              following=post.user.id).count()
+                                              following=post["user"]["id"]).count()
 
-    comments_url = reverse('pin-get-comments', args=[post.id])
-    related_url = reverse('pin-item-related', args=[post.id])
+    comments_url = reverse('pin-get-comments', args=[post["id"]])
+    related_url = reverse('pin-item-related', args=[post["id"]])
 
     # try:
     #     permission = UserPermissions.objects.get(user=request.user)

@@ -7,7 +7,7 @@
 			<img src="{{ item.images.thumbnail.url }}" width="236" height="{{ item.images.thumbnail.height }}" alt="{{item.text|remove_newlines|truncatewords:35}}">
 		</a>
 		{% if item.images.thumbnail.height > 500 %}
-			<div class="expand_post">عکس بلند</div>
+		<div class="expand_post">عکس بلند</div>
 		{% endif %}
 	</div>
 	
@@ -62,6 +62,12 @@
 	{% if not item.text.strip == "" %}
 	<div class="description">
 		<p>{{item.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:30}}</p>
+		<div class="post_time pull-right">
+			<i class="post-time-content">{{item.timestamp|timestamp_to_datetime}}</i>
+		</div>
+		<div class="post_cnt_view pull-right">
+			<i class="post-time-content">{{item.cnt_view}}</i>
+			</div>
 	</div>
 	{% endif %}
 
@@ -116,8 +122,6 @@
 			<a href="{% url 'pin-absuser' item.user.username %}" data-toggle="tooltip" data-placement="bottom" title="{{item.user.username}}">
 				{{item.user.username|truncatechars:"18"}}
 			</a>
-			<span class="post_time">{{item.timestamp|timestamp_to_datetime}}</span>
-			<span class="post_cnt_view">تعداد نمایش {{item.cnt_view}}</span>
 		</div>	
 
 	</div>
