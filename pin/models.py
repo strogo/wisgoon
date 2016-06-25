@@ -988,7 +988,9 @@ class Stream(models.Model):
 
             try:
                 from models_casper import PostData
-                PostData(post_id=post.id, creator_ip=post._user_ip).save()
+                PostData(post_id=post.id,
+                         creator_ip=post._user_ip,
+                         create_time=datetime.now()).save()
                 post_act(post=post.id, actor=user.id,
                          category=post.category.title, user_ip=post._user_ip)
 

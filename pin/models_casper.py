@@ -15,6 +15,7 @@ class PostStats(Model):
 class PostData(Model):
     post_id = columns.Integer(primary_key=True)
     creator_ip = columns.Inet()
+    create_time = columns.DateTime()
 
 
 # class UserLikedPosts(Model):
