@@ -548,6 +548,9 @@ class Post(models.Model):
         from models_redis import LikesRedis
         LikesRedis(post_id=self.id).delete_likes()
 
+        from models_casper import PostStats
+        PostStats.objects(post_id=self.id).delete()
+
         MonthlyStats.log_hit(MonthlyStats.DELETE_POST)
 
         post_id = self.id
@@ -984,8 +987,11 @@ class Stream(models.Model):
                 Post.add_to_stream(post=post)
 
             try:
+                from models_casper import PostData
+                PostData(post_id=post.id, creator_ip=post._user_ip).save()
                 post_act(post=post.id, actor=user.id,
                          category=post.category.title, user_ip=post._user_ip)
+
             except:
                 pass
 
@@ -1247,6 +1253,7 @@ class Comments(models.Model):
         mentions = mention.findall(comment.comment)
         if mentions:
             for username in mentions:
+                print "username is:", username
                 try:
                     u = User.objects.only('id').get(username=username)
                 except User.DoesNotExist:
