@@ -33,6 +33,7 @@ from pin.tasks import delete_image
 from pin.classification_tools import normalize
 from pin.api6.cache_layer import PostCacheLayer
 from pin.models_graph import FollowUser
+from models_casper import UserStream
 from pin.analytics import comment_act, post_act
 
 LIKE_TO_DEFAULT_PAGE = 10
@@ -618,12 +619,19 @@ class Post(models.Model):
             r_server.rpush(user_stream, ss)
 
     @classmethod
-    def add_to_user_stream(cls, post_id, user_id):
+    def add_to_user_stream(cls, post_id, user_id, post_owner):
         user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
 
         r_server.lrem(user_stream, post_id)
         r_server.lpush(user_stream, post_id)
         r_server.ltrim(user_stream, 0, 1000)
+
+        try:
+            UserStream(user_id=user_id,
+                       post_id=post_id, post_owner=post_owner)\
+                .ttl(86400 * 10).save()
+        except Exception, e:
+            print str(e)
 
     @classmethod
     def add_to_set(cls, set_name, post, set_cat=True):
@@ -977,7 +985,8 @@ class Stream(models.Model):
 
             user = post.user
 
-            Post.add_to_user_stream(post_id=post.id, user_id=user.id)
+            Post.add_to_user_stream(post_id=post.id, user_id=user.id,
+                                    post_owner=user.id)
 
             from pin.actions import send_post_to_followers
 

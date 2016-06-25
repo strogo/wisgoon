@@ -18,6 +18,12 @@ class PostData(Model):
     create_time = columns.DateTime()
 
 
+class UserStream(Model):
+    user_id = columns.Integer(primary_key=True)
+    post_id = columns.Integer(primary_key=True, clustering_order="desc")
+    post_owner = columns.Integer(index=True)
+
+
 # class UserLikedPosts(Model):
     # post_id = columns.Integer(primary_key=True)
     # user_id = columns.Integer(primary_key=True)
@@ -39,5 +45,6 @@ try:
 
     sync_table(PostStats)
     sync_table(PostData)
+    sync_table(UserStream)
 except Exception, e:
     print str(e)
