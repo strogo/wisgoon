@@ -21,7 +21,7 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'conf/locale'),
 )
 
-CASSANDRA_DB = '127.0.0.1'
+CASSANDRA_DB = '79.127.125.104'
 
 ALLOWED_HOSTS = ["127.0.0.1:8000",
                  "192.168.0.110:8080"
