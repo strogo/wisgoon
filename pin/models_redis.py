@@ -37,7 +37,10 @@ class PostView(object):
         PostStats(post_id=self.post_id).update(cnt_view=1)
 
     def inc_view(self):
-        PostStats(post_id=self.post_id).update(cnt_view=1)
+        try:
+            PostStats(post_id=self.post_id).update(cnt_view=1)
+        except Exception, e:
+            print str(e)
         return
         notificationRedis.incr(self.KEY_PREFIX)
 
@@ -224,7 +227,7 @@ class LikesRedis(object):
         #                                  user_id=user_id).count():
         #     return True
 
-        rListServer.delete(self.keyNameList)
+        # rListServer.delete(self.keyNameList)
 
         if rSetServer.sismember(self.keyNameSet, str(user_id)):
             return True

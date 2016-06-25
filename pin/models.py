@@ -1215,6 +1215,14 @@ class Comments(models.Model):
         comment_cache_name = "com_{}".format(int(self.object_pk_id))
         cache.delete(comment_cache_name)
         super(Comments, self).save(*args, **kwargs)
+
+        # from models_casper import PostComments
+        # PostComments.objects.create(post_id=self.object_pk_id,
+        #                             create_time=time.time(),
+        #                             comment=self.comment,
+        #                             ip_address=self.ip_address,
+        #                             user_id=self.user_id)
+
         if settings.TUNING_CACHE:
             PostCacheLayer(post_id=self.object_pk.id)\
                 .comment_change(self.object_pk.cnt_comment)
