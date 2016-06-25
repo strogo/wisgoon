@@ -626,12 +626,12 @@ class Post(models.Model):
         r_server.lpush(user_stream, post_id)
         r_server.ltrim(user_stream, 0, 1000)
 
-        try:
-            UserStream(user_id=user_id,
-                       post_id=post_id, post_owner=post_owner)\
-                .ttl(86400 * 10).save()
-        except Exception, e:
-            print str(e)
+        # try:
+        #     UserStream(user_id=user_id,
+        #                post_id=post_id, post_owner=post_owner)\
+        #         .ttl(86400 * 10).save()
+        # except Exception, e:
+        #     print str(e)
 
     @classmethod
     def add_to_set(cls, set_name, post, set_cat=True):
