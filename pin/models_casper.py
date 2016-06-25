@@ -12,6 +12,15 @@ class PostStats(Model):
     cnt_view = columns.Counter()
 
 
+class PostComments(Model):
+    post_id = columns.Integer(primary_key=True)
+    create_time = columns.Integer(primary_key=True, clustering_order="desc")
+    ip_address = columns.Text()
+    comment = columns.Text()
+    user_id = columns.Integer()
+    old_comment_id = columns.Integer(index=True)
+
+
 # class UserLikedPosts(Model):
     # post_id = columns.Integer(primary_key=True)
     # user_id = columns.Integer(primary_key=True)
@@ -26,9 +35,12 @@ class PostStats(Model):
 #     like_time = columns.Integer(primary_key=True, clustering_order="desc")
 #     user_id = columns.Integer(primary_key=True)
 
+try:
+    connection.setup([settings.CASSANDRA_DB], "wisgoon", protocol_version=3)
+    management.create_keyspace_simple("wisgoon", replication_factor=1)
 
-connection.setup([settings.CASSANDRA_DB], "wisgoon", protocol_version=3)
-# management.create_keyspace_simple("wisgoon", replication_factor=1)
-
-# sync_table(PostStats)
+    sync_table(PostStats)
+    sync_table(PostComments)
+except Exception, e:
+    print str(e)
 # sync_table(UserLikedPostsOrder)
