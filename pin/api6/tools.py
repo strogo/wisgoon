@@ -282,7 +282,11 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
             pi['like_with_user'] = LikesRedis(post_id=post.id)\
                 .user_liked(user_id=cur_user_id)
 
-        pi['images'] = {}
+        pi['images'] = {
+            'thumbnail': {},
+            'original': {},
+            'low_resolution': {}
+        }
         try:
             p_500 = post.get_image_500(api=True)
 
@@ -294,7 +298,10 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
             del(p_500['h'])
 
             pi['images']['low_resolution'] = p_500
+        except Exception:
+            pass
 
+        try:
             p_236 = post.get_image_236(api=True)
 
             p_236['url'] = media_abs_url(p_236['url'], check_photos=True)
@@ -305,11 +312,16 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
 
             pi['images']['thumbnail'] = p_236
 
+        except Exception:
+            pass
+
+        try:
             p_original = post.get_image_sizes()
             pi['images']['original'] = p_original
-            pi['images']['original']['url'] = media_abs_url(post.image, check_photos=True)
+            pi['images']['original']['url'] = media_abs_url(post.image,
+                                                            check_photos=True)
         except Exception:
-            return None
+            pass
 
         pi['category'] = category_get_json(cat_id=post.category_id)
 

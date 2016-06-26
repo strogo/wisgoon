@@ -264,10 +264,13 @@ def check_official(user_id):
 def date_filter(index, time=False):
     import pytz
     if not isinstance(index, datetime.datetime):
-        return ''
+        index = datetime.datetime.fromtimestamp(index)
+        t1 = index
+    else:
+        t1 = index.astimezone(tz).replace(tzinfo=None)
+        
 
     tz = pytz.timezone('Asia/Tehran')
-    t1 = index.astimezone(tz).replace(tzinfo=None)
     t2 = datetime.datetime.today()
 
     days = (t2 - t1).days

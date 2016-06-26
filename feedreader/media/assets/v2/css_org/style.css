@@ -598,8 +598,35 @@ a, a:link, a:hover, a:visited {
 }
 .post_time{
 	color: #9099A5;
-	display: block;
 	font-size: 11px;
+	background: url(../images/mini-time.png) no-repeat  right center;
+}
+.post_cnt_view {
+	font-size: 11px;
+	margin-right: 10px;
+	background: url(../images/eye.png) no-repeat  right center;
+}
+.post-time-content {
+	margin-right: 15px;
+}
+.view-Count{
+	margin:  0 10px;
+}
+i.cnt_view_icon{
+	background: url("../images/eye16px.png") no-repeat scroll 0 0;
+	display: inline-block;
+	height: 15px;
+	margin-bottom: -4px;
+	margin-left: 5px;
+	width: 20px;
+}
+.view-Count span {
+	color: #777;
+	font-weight: normal;
+}
+.post-content .post_footer .view-Count h2 {
+  font-size: 13px;
+  margin: 0;
 }
 .post-action{
 	border-bottom: 1px solid #d5d7e4;
