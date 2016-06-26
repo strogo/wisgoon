@@ -41,7 +41,7 @@ def add_comment(request, item_id):
         post = get_post_user_cache(post_id=get_int(item_id))
         # post = Post.objects.get(id=get_int(item_id))
     except Post.DoesNotExist:
-        return return_not_found()
+        return return_not_found(status=False)
 
     text = request.POST.get('comment', False)
     if not text:
@@ -82,7 +82,7 @@ def delete_comment(request, comment_id):
     try:
         comment = Comments.objects.get(id=get_int(comment_id))
     except Comments.DoesNotExist:
-        return return_not_found()
+        return return_not_found(status=False)
 
     if comment.user_id == current_user or comment.object_pk.user.id == current_user:
         comment_id = comment.id

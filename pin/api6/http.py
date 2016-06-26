@@ -17,9 +17,9 @@ def return_bad_request(message=_("Bad request")):
                         status=400)
 
 
-def return_not_found(message=_("Not found")):
+def return_not_found(status=404, message=_("Not found")):
     data = {
-        'status': 404,
+        'status': status,
         'message': message,
     }
     return HttpResponse(json.dumps(data),
