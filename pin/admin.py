@@ -7,7 +7,7 @@ from haystack.admin import SearchModelAdmin
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
-    Results, Storages
+    Results, Storages, Lable, UserActivitiesSample
 from pin.actions import send_notif
 from user_profile.models import Profile, CreditLog
 from pin.tools import revalidate_bazaar
@@ -333,8 +333,29 @@ class SearchCommentAdmin(SearchModelAdmin):
     delete_all_user_comments.short_description = 'حذف تمام کامنت های این کاربر و غیر فعال کردن کاربر'
 
 
-admin.site.register(Comments, SearchCommentAdmin)
+class CategoriesInline(admin.TabularInline):
+    model = UserActivitiesSample.categories.through
+    extra = 1
 
+
+class LableAdmin(admin.ModelAdmin):
+    list_display = ('id', 'text')
+
+
+class UserActivitiesSampleAdmin(admin.ModelAdmin):
+    inlines = [
+        CategoriesInline,
+    ]
+    model = UserActivitiesSample
+    list_display = ('id', 'label')
+
+    def label(self, obj):
+        return obj.label.text
+
+    # label.admin_order_field = 'label_text'
+
+
+admin.site.register(Comments, SearchCommentAdmin)
 admin.site.register(Post, PinAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Profile, ProfileAdmin)
@@ -354,3 +375,5 @@ admin.site.register(CommentClassification, CommentClassificationAdmin)
 admin.site.register(CommentClassificationTags, CommentClassificationTagsAdmin)
 admin.site.register(Results, ResultsAdmin)
 admin.site.register(Storages, StoragesAdmin)
+admin.site.register(Lable, LableAdmin)
+admin.site.register(UserActivitiesSample, UserActivitiesSampleAdmin)

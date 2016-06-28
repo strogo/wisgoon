@@ -1718,6 +1718,23 @@ class Official(models.Model):
     mode = models.IntegerField(choices=((1, 'sp1'), (2, 'sp2')), default='1')
 
 
+class Lable(models.Model):
+    text = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.text
+
+
+class UserActivitiesSample(models.Model):
+    label = models.ForeignKey(Lable, related_name='lable')
+    categories = models.ManyToManyField(Category, through='UserLikeActivities')
+
+
+class UserLikeActivities(models.Model):
+    score = models.PositiveIntegerField(default=0)
+    category = models.ForeignKey(Category)
+    user_activity = models.ForeignKey(UserActivitiesSample)
+
 # class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"
 
