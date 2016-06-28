@@ -1260,7 +1260,8 @@ class Comments(models.Model):
         if post.user_id == 11253:
             return
 
-        mention = re.compile(ur'(?i)(?<=\@)\w+', re.UNICODE)
+        # mention = re.compile(ur'(?i)(?<=\@)\w+', re.UNICODE)
+        mention = re.compile("(?:^|\s)[＠ @]{1}([^\s#<>[\]|{}]+)", re.UNICODE)
         mentions = mention.findall(comment.comment)
         if mentions:
             for username in mentions:
