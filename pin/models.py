@@ -33,6 +33,7 @@ from pin.tasks import delete_image
 from pin.classification_tools import normalize
 from pin.api6.cache_layer import PostCacheLayer
 from pin.models_graph import FollowUser
+from models_casper import UserStream
 from pin.analytics import comment_act, post_act
 
 LIKE_TO_DEFAULT_PAGE = 10
@@ -548,6 +549,9 @@ class Post(models.Model):
         from models_redis import LikesRedis
         LikesRedis(post_id=self.id).delete_likes()
 
+        from models_casper import PostStats
+        PostStats.objects(post_id=self.id).delete()
+
         MonthlyStats.log_hit(MonthlyStats.DELETE_POST)
 
         post_id = self.id
@@ -615,12 +619,19 @@ class Post(models.Model):
             r_server.rpush(user_stream, ss)
 
     @classmethod
-    def add_to_user_stream(cls, post_id, user_id):
+    def add_to_user_stream(cls, post_id, user_id, post_owner):
         user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
 
         r_server.lrem(user_stream, post_id)
         r_server.lpush(user_stream, post_id)
         r_server.ltrim(user_stream, 0, 1000)
+
+        # try:
+        #     UserStream(user_id=user_id,
+        #                post_id=post_id, post_owner=post_owner)\
+        #         .ttl(86400 * 10).save()
+        # except Exception, e:
+        #     print str(e)
 
     @classmethod
     def add_to_set(cls, set_name, post, set_cat=True):
@@ -974,7 +985,8 @@ class Stream(models.Model):
 
             user = post.user
 
-            Post.add_to_user_stream(post_id=post.id, user_id=user.id)
+            Post.add_to_user_stream(post_id=post.id, user_id=user.id,
+                                    post_owner=user.id)
 
             from pin.actions import send_post_to_followers
 
@@ -984,8 +996,13 @@ class Stream(models.Model):
                 Post.add_to_stream(post=post)
 
             try:
+                from models_casper import PostData
+                PostData(post_id=post.id,
+                         creator_ip=post._user_ip,
+                         create_time=datetime.now()).save()
                 post_act(post=post.id, actor=user.id,
                          category=post.category.title, user_ip=post._user_ip)
+
             except:
                 pass
 
@@ -1243,10 +1260,12 @@ class Comments(models.Model):
         if post.user_id == 11253:
             return
 
-        mention = re.compile(ur'(?i)(?<=\@)\w+', re.UNICODE)
+        # mention = re.compile(ur'(?i)(?<=\@)\w+', re.UNICODE)
+        mention = re.compile("(?:^|\s)[＠ @]{1}([^\s#<>[\]|{}]+)", re.UNICODE)
         mentions = mention.findall(comment.comment)
         if mentions:
             for username in mentions:
+                print "username is:", username
                 try:
                     u = User.objects.only('id').get(username=username)
                 except User.DoesNotExist:
@@ -1256,15 +1275,15 @@ class Comments(models.Model):
                                    actor=comment.user_id)
             return
 
-        users = Comments.objects.filter(object_pk=post.id)\
-            .values_list('user_id', flat=True)
-        for act in users:
-            if act in actors_list:
-                continue
-            actors_list.append(act)
-            if act != comment.user_id:
-                send_notif_bar(user=act, type=2, post=post.id,
-                               actor=comment.user_id)
+        # users = Comments.objects.filter(object_pk=post.id)\
+        #     .values_list('user_id', flat=True)
+        # for act in users:
+        #     if act in actors_list:
+        #         continue
+        #     actors_list.append(act)
+        #     if act != comment.user_id:
+        #         send_notif_bar(user=act, type=2, post=post.id,
+        #                        actor=comment.user_id)
 
     def delete(self, *args, **kwargs):
         Post.objects.filter(pk=self.object_pk.id)\
