@@ -7,7 +7,11 @@ env.use_ssh_config = True
 
 def deploy():
     code_dir = '/home/wisgoon/new'
-    local("git push new devel")
+    try:
+        local("git push new devel")
+        pass
+    except Exception, e:
+        raise e
 
     with cd(code_dir):
         run("git merge devel")
