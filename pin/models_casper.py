@@ -12,6 +12,14 @@ class PostStats(Model):
     cnt_view = columns.Counter()
 
 
+# class PostComments(Model):
+#     post_id = columns.Integer(primary_key=True)
+#     timestamp = columns.Integer(primary_key=True, clustering_order="desc")
+#     commentor = columns.Integer(index=True)
+#     commentor_ip = columns.Inet()
+#     comment_id =
+
+
 class PostData(Model):
     post_id = columns.Integer(primary_key=True)
     creator_ip = columns.Inet()

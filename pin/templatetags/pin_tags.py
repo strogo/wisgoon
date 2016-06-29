@@ -267,8 +267,12 @@ def date_filter(index, time=False):
         return ''
 
     tz = pytz.timezone('Asia/Tehran')
-    t1 = index.astimezone(tz).replace(tzinfo=None)
-    t2 = datetime.datetime.today()
+    try:
+        t1 = index.astimezone(tz).replace(tzinfo=None)
+    except:
+        t1 = tz.localize(index).replace(tzinfo=None)
+        pass
+    t2 = datetime.datetime.today().replace(tzinfo=None)
 
     days = (t2 - t1).days
     if not days:
