@@ -18,8 +18,8 @@ def deploy():
 
 
 def cod():
-    local('git add .')
     try:
+        local('git add .')
         local('git commit -m "changein files"')
     except Exception, e:
         print str(e)
