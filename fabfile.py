@@ -9,9 +9,8 @@ def deploy():
     code_dir = '/home/wisgoon/new'
     try:
         local("git push new devel")
-        pass
     except Exception, e:
-        raise e
+        print str(e)
 
     with cd(code_dir):
         run("git merge devel")
