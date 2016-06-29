@@ -2,6 +2,7 @@ from fabric.api import cd, run, local, env
 
 env.hosts = ['79.127.125.104']
 env.user = 'wisgoon'
+env.password = 'O0k1.sgPACGgA'
 env.use_ssh_config = True
 
 
