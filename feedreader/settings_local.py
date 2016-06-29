@@ -32,10 +32,10 @@ ALLOWED_HOSTS = ["127.0.0.1:8000",
 MANAGERS = ADMINS
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'feedreader',
-        'USER': 'root',
-        'PASSWORD': 'somaye',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'wisgoon',
+        'USER': 'wisgoon_user',
+        'PASSWORD': 'nN7E9M0rAYiuE',
         'HOST': 'localhost',
         'PORT': '',
     },
