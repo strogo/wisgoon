@@ -263,15 +263,21 @@ def check_official(user_id):
 @register.filter
 def date_filter(index, time=False):
     import pytz
+    tz = pytz.timezone('Asia/Tehran')
+
     if not isinstance(index, datetime.datetime):
         index = datetime.datetime.fromtimestamp(index)
         t1 = index
     else:
         t1 = index.astimezone(tz).replace(tzinfo=None)
-        
 
-    tz = pytz.timezone('Asia/Tehran')
     t2 = datetime.datetime.today()
+    try:
+        t1 = index.astimezone(tz).replace(tzinfo=None)
+    except:
+        t1 = tz.localize(index).replace(tzinfo=None)
+        pass
+    t2 = datetime.datetime.today().replace(tzinfo=None)
 
     days = (t2 - t1).days
     if not days:
