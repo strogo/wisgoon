@@ -22,15 +22,15 @@ ADMINS = (
 
 CASSANDRA_DB = '79.127.125.104'
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'wisgoon',
-#         'USER': 'wisgoon_user',
-#         'PASSWORD': 'KP9CPby8jkOCw',
-#         'HOST': '79.127.125.99',
-#         'PORT': '',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'wisgoon',
+        'USER': 'wisgoon_user',
+        'PASSWORD': 'KP9CPby8jkOCw',
+        'HOST': '79.127.125.99',
+        'PORT': '',
+    }
+}
 
 ALLOWED_HOSTS = ALLOWED_HOSTS + ["new.wisgoon.com"]
