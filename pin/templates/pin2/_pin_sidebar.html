@@ -12,7 +12,7 @@
 	<div class="user-detail">
 		<div class="avatar">
 			<a href="{% url "pin-absuser" post.user.id|get_user_name %}">
-				<img src="{{post.user_id|get_avatar:65}}" />
+				<img src="{{post.user.id|get_avatar:65}}" />
 			</a>
 		</div>
 		<div class="user-info">
