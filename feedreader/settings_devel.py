@@ -6,7 +6,7 @@ TEMPLATE_DEBUG = True
 THUMBNAIL_DEBUG = False
 DISPLAY_AD = True
 
-SITE_ID = 1
+SITE_ID = 2
 
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
