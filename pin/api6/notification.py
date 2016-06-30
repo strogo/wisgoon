@@ -16,10 +16,7 @@ def notif_count(request):
             return return_un_auth()
     else:
         return return_bad_request()
-    # try:
-    #     notif_count = NotifCount.objects.filter(owner=current_user).first().unread
-    # except:
-    #     notif_count = 0
+
     notif_count = NotificationRedis(user_id=current_user).get_notif_count()
     return return_json_data({'status': True, 'notif_count': notif_count})
 

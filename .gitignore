@@ -30,3 +30,4 @@ feedreader/*media*/cache2/
 /index.csv
 /reports/
 /mysql2pgsql.yml
+/api/main
