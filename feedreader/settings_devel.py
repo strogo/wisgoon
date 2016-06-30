@@ -33,6 +33,8 @@ DATABASES = {
     }
 }
 
+SESSION_ENGINE = ''
+
 
 ALLOWED_HOSTS = ['www.wisgoon.com', '*.wisgoon.com', 'wisgoon.com', "Sib-DL2",
                  "127.0.0.1:3060", "127.0.0.1:3061", "127.0.0.1:3062",

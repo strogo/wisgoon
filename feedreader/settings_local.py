@@ -168,7 +168,7 @@ INSTALLED_APPS = [
     'user_profile.apps.UserProfileConfig',
     'captcha',
     'tastypie',
-    'debug_toolbar',
+    # 'debug_toolbar',
     'widget_tweaks',
     'ckeditor',
     'shop.apps.ShopConfig',
@@ -232,7 +232,7 @@ CACHES = {
     ),
 }
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 JOHNNY_MIDDLEWARE_KEY_PREFIX = 'wis_cac2'
 
 COMPRESS_URL = MEDIA_URL
