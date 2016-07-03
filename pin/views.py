@@ -807,6 +807,8 @@ def item(request, item_id):
     try:
         # post = Post.objects.get(id=item_id)
         post = post_item_json(post_id=item_id)
+        if not post:
+            raise Post.DoesNotExist
     except Post.DoesNotExist:
         raise Http404("Post does not exist")
 
