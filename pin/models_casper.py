@@ -12,6 +12,15 @@ class PostStats(Model):
     cnt_view = columns.Counter()
 
 
+class PostComments(Model):
+    post_id = columns.Integer(primary_key=True)
+    create_time = columns.Integer(primary_key=True, clustering_order="desc")
+    ip_address = columns.Text()
+    comment = columns.Text()
+    user_id = columns.Integer()
+    old_comment_id = columns.Integer(index=True)
+
+
 class PostData(Model):
     post_id = columns.Integer(primary_key=True)
     creator_ip = columns.Inet()
@@ -37,7 +46,6 @@ class UserStream(Model):
 #     post_id = columns.Integer(primary_key=True)
 #     like_time = columns.Integer(primary_key=True, clustering_order="desc")
 #     user_id = columns.Integer(primary_key=True)
-
 
 try:
     connection.setup([settings.CASSANDRA_DB], "wisgoon", protocol_version=3)

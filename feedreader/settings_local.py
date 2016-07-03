@@ -8,7 +8,7 @@ THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DISPLAY_AD = False
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
-STATIC_VERSION = '5.9.24'
+STATIC_VERSION = '5.9.25'
 
 SITE_ROOT = os.path.dirname(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -21,7 +21,7 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'conf/locale'),
 )
 
-CASSANDRA_DB = '79.127.125.104'
+CASSANDRA_DB = '127.0.0.1'
 
 ALLOWED_HOSTS = ["127.0.0.1:8000",
                  "192.168.0.110:8080"
@@ -37,16 +37,15 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': 'somaye',
         'HOST': 'localhost',
-        'PORT': '',
     },
-    'slave': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'feedreader',
-        'USER': 'root',
-        'PASSWORD': 'somaye',
+    'postgres': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'wisgoon',
+        'USER': 'wisgoon_user',
+        'PASSWORD': 'nN7E9M0rAYiuE',
         'HOST': 'localhost',
         'PORT': '',
-    }
+    },
 }
 
 NEO4J_DATABASE = "http://localhost:7474/db/data/"
@@ -232,7 +231,7 @@ CACHES = {
     ),
 }
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 JOHNNY_MIDDLEWARE_KEY_PREFIX = 'wis_cac2'
 
 COMPRESS_URL = MEDIA_URL
@@ -387,3 +386,5 @@ INFLUX_HOST = "localhost"
 
 STATIC_CDN = "/media/assets/"
 STATIC_DOMAIN = MEDIA_URL
+
+READ_ONLY = False

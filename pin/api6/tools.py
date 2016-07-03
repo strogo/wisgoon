@@ -393,8 +393,14 @@ def comment_item_json(comment):
     comment_dict['id'] = comment.id
     comment_dict['comment'] = comment.comment
     comment_dict['user'] = get_simple_user_object(comment.user.id)
-    d = localtime(comment.submit_date)
-    comment_dict['date'] = int(d.strftime("%s"))
+
+    # TODO for stable
+
+    try:
+        d = localtime(comment.submit_date)
+        comment_dict['date'] = int(d.strftime("%s"))
+    except ValueError:
+        comment_dict['date'] = int(comment.submit_date.strftime("%s"))
     return comment_dict
 
 

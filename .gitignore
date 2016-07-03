@@ -29,3 +29,5 @@ feedreader/*media*/cache2/
 /wisgoon.sublime-*
 /index.csv
 /reports/
+/mysql2pgsql.yml
+/api/main
