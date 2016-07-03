@@ -30,7 +30,15 @@ DATABASES = {
         'PASSWORD': 'KP9CPby8jkOCw',
         'HOST': '79.127.125.99',
         'PORT': '',
-    }
+    },
+    'postgres': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'wisgoon',
+        'USER': 'wisgoon_user',
+        'PASSWORD': 'nN7E9M0rAYiuE',
+        'HOST': '79.127.125.99',
+        'PORT': '',
+    },
 }
 
 ALLOWED_HOSTS = ALLOWED_HOSTS + ["new.wisgoon.com"]
