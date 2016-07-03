@@ -935,7 +935,7 @@ def comments(request):
     limit = int(request.GET.get('limit', 20))
     object_pk = int(request.GET.get('object_pk', 0))
 
-    comment_cache_name = "com_%d" % object_pk
+    comment_cache_name = "com_v1_%d" % object_pk
     cc = cache.get(comment_cache_name)
     pc = "%d-%d" % (offset, limit)
     if not cc:
