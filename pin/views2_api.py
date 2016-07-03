@@ -4,6 +4,7 @@ try:
 except ImportError:
     import json
 
+import emoji
 import urlparse
 import urllib2
 import hashlib
@@ -969,7 +970,7 @@ def comments(request):
         com_date = com_date.strftime('%Y-%m-%dT%H:%M:%S')
 
         o['submit_date'] = com_date
-        o['comment'] = com.comment
+        o['comment'] = emoji.emojize(com.comment)
         o['user_url'] = com.user_id
         o['user_avatar'] = get_avatar(com.user_id, size=100)
         o['user_name'] = com.get_username()

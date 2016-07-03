@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import emoji
 import hashlib
 import os
 import re
@@ -1228,6 +1229,8 @@ class Comments(models.Model):
         if not self.pk:
             Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
+
+        self.comment = emoji.demojize(self.comment)
 
         comment_cache_name = "com_{}".format(int(self.object_pk_id))
         cache.delete(comment_cache_name)
