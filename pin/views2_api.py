@@ -935,7 +935,7 @@ def comments(request):
     limit = int(request.GET.get('limit', 20))
     object_pk = int(request.GET.get('object_pk', 0))
 
-    comment_cache_name = "com_%d" % object_pk
+    comment_cache_name = "comv1_%d" % object_pk
     cc = cache.get(comment_cache_name)
     pc = "%d-%d" % (offset, limit)
     if not cc:
@@ -970,7 +970,7 @@ def comments(request):
         com_date = com_date.strftime('%Y-%m-%dT%H:%M:%S')
 
         o['submit_date'] = com_date
-        o['comment'] = emoji.emojize(com.comment)
+        o['comment'] = emoji.demojize(com.comment)
         o['user_url'] = com.user_id
         o['user_avatar'] = get_avatar(com.user_id, size=100)
         o['user_name'] = com.get_username()
