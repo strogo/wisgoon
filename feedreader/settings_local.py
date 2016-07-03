@@ -167,7 +167,7 @@ INSTALLED_APPS = [
     'user_profile.apps.UserProfileConfig',
     'captcha',
     'tastypie',
-    'debug_toolbar',
+    # 'debug_toolbar',
     'widget_tweaks',
     'ckeditor',
     'shop.apps.ShopConfig',
