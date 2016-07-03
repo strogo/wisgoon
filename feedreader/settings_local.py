@@ -21,7 +21,7 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'conf/locale'),
 )
 
-CASSANDRA_DB = '79.127.125.104'
+CASSANDRA_DB = '127.0.0.1'
 
 ALLOWED_HOSTS = ["127.0.0.1:8000",
                  "192.168.0.110:8080"
@@ -32,6 +32,13 @@ ALLOWED_HOSTS = ["127.0.0.1:8000",
 MANAGERS = ADMINS
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'feedreader',
+        'USER': 'root',
+        'PASSWORD': 'somaye',
+        'HOST': 'localhost',
+    },
+    'postgres': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'wisgoon',
         'USER': 'wisgoon_user',
@@ -39,14 +46,6 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '',
     },
-    'slave': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'feedreader',
-        'USER': 'root',
-        'PASSWORD': 'somaye',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
 }
 
 NEO4J_DATABASE = "http://localhost:7474/db/data/"
@@ -387,3 +386,5 @@ INFLUX_HOST = "localhost"
 
 STATIC_CDN = "/media/assets/"
 STATIC_DOMAIN = MEDIA_URL
+
+READ_ONLY = False

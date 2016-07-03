@@ -1,6 +1,5 @@
-
 from tastypie.models import ApiKey
-
+from django.conf import settings
 from pin.tools import AuthCache, get_user_ip
 
 
@@ -24,3 +23,7 @@ def check_auth(request):
         return False
 
     return False
+
+
+def get_read_only_system():
+    return getattr(settings, 'READ_ONLY', False)
