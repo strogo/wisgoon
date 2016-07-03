@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import emoji
 import datetime
 import re
 
@@ -41,6 +42,11 @@ urlize_hashtag = stringfilter(urlize_hashtag)
 def urlize_text(text):
     hashtag_pattern = re.compile(ur'(?i)#(\w+)', re.UNICODE)
     text = hashtag_pattern.sub(hashtag_urlize, text)
+    return text
+
+
+def emojize_text(text):
+    text = emoji.emojize(text)
     return text
 
 
