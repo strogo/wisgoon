@@ -12,7 +12,7 @@
 	<div class="user-detail">
 		<div class="avatar">
 			<a href="{% url "pin-absuser" post.user.id|get_user_name %}">
-				<img src="{{post.user_id|get_avatar:65}}" />
+				<img src="{{post.user.id|get_avatar:65}}" />
 			</a>
 		</div>
 		<div class="user-info">
@@ -33,9 +33,9 @@
 	<div class="clear"></div>
 	{% if post.user.id != request.user.id and user.is_authenticated %}
 	{% if follow_status == 0 %}
-	<a class="wis_btn green w100 mabo10 mato10 ajax-follow" data-user-id="{{post.user_id}}" href='{% url "pin-follow" post.user_id 1 %}'>ایجاد دوستی</a>
+	<a class="wis_btn green w100 mabo10 mato10 ajax-follow" data-user-id="{{post.user.id}}" href='{% url "pin-follow" post.user.id 1 %}'>ایجاد دوستی</a>
 	{% else %}
-	<a class="wis_btn red w100 mabo10  mato10 ajax-follow" data-user-id="{{post.user_id}}" href='{% url "pin-follow" post.user_id 0 %}'>قطع ارتباط</a>
+	<a class="wis_btn red w100 mabo10  mato10 ajax-follow" data-user-id="{{post.user.id}}" href='{% url "pin-follow" post.user.id 0 %}'>قطع ارتباط</a>
 	{%endif%}
 	{% endif %}
 	{% endif %}

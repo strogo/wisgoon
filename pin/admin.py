@@ -4,12 +4,13 @@ import time
 from django.contrib import admin
 from haystack.admin import SearchModelAdmin
 
+from user_profile.models import Profile, CreditLog
+
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
-    Results, Storages, Lable, UserActivitiesSample
+    Results, Storages, Lable, UserActivitiesSample, UserLable, UserActivities
 from pin.actions import send_notif
-from user_profile.models import Profile, CreditLog
 from pin.tools import revalidate_bazaar
 
 
@@ -347,13 +348,27 @@ class UserActivitiesSampleAdmin(admin.ModelAdmin):
         CategoriesInline,
     ]
     model = UserActivitiesSample
-    list_display = ('id', 'label')
+    list_display = ('id', 'lable')
 
     def label(self, obj):
-        return obj.label.text
+        return obj.lable.text
 
-    # label.admin_order_field = 'label_text'
 
+class UserLableAdmin(admin.ModelAdmin):
+    list_display = ('id', 'lable', 'user')
+
+    def lable(self, obj):
+        return obj.lable.text
+
+    def user(self, obj):
+        return obj.user.username
+
+
+class UserActivitiesAdmin(admin.ModelAdmin):
+    list_display = ('id', 'activities', 'user', 'create_at', 'update_at')
+
+    def user(self, obj):
+        return obj.user.username
 
 admin.site.register(Comments, SearchCommentAdmin)
 admin.site.register(Post, PinAdmin)
@@ -377,3 +392,5 @@ admin.site.register(Results, ResultsAdmin)
 admin.site.register(Storages, StoragesAdmin)
 admin.site.register(Lable, LableAdmin)
 admin.site.register(UserActivitiesSample, UserActivitiesSampleAdmin)
+admin.site.register(UserLable, UserLableAdmin)
+admin.site.register(UserActivities, UserActivitiesAdmin)

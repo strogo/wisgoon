@@ -1745,14 +1745,29 @@ class Lable(models.Model):
 
 
 class UserActivitiesSample(models.Model):
-    label = models.ForeignKey(Lable, related_name='lable')
+    lable = models.ForeignKey(Lable, related_name='lable')
     categories = models.ManyToManyField(Category, through='UserLikeActivities')
+    array = models.TextField(null=True, blank=True)
+    # objects = models.Manager()
 
 
 class UserLikeActivities(models.Model):
     score = models.PositiveIntegerField(default=0)
     category = models.ForeignKey(Category)
     user_activity = models.ForeignKey(UserActivitiesSample)
+
+
+class UserActivities(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    activities = models.TextField()
+    create_at = models.DateTimeField(null=True, blank=True)
+    update_at = models.DateTimeField(null=True, blank=True)
+
+
+class UserLable(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    lable = models.TextField(null=True, blank=True)
+
 
 # class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"

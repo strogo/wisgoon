@@ -136,13 +136,11 @@ def like(request, item_id):
 
     if like:
         user_act = 1
-        a = redis_server.incr(key, 1)
-        print a
+        redis_server.incr(key, 1)
 
     elif dislike:
         user_act = -1
-        a = redis_server.incr(key, -1)
-        print a
+        redis_server.incr(key, -1)
 
     if request.is_ajax():
         data = [{'likes': current_like, 'user_act': user_act}]
