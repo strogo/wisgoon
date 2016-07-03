@@ -1,4 +1,5 @@
 import ast
+import emoji
 import urllib
 from io import FileIO, BufferedWriter
 from time import time
@@ -389,9 +390,10 @@ def get_comments(post_id, limit, before):
 
 
 def comment_item_json(comment):
+
     comment_dict = {}
     comment_dict['id'] = comment.id
-    comment_dict['comment'] = comment.comment
+    comment_dict['comment'] = emoji.emojize(comment.comment)
     comment_dict['user'] = get_simple_user_object(comment.user.id)
 
     # TODO for stable

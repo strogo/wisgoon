@@ -1,3 +1,4 @@
+import emoji
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
@@ -56,6 +57,7 @@ def add_comment(request, item_id):
             'message': _('This User Has Blocked You')
         })
     try:
+        text = emoji.demojize(text)
         comment = Comments.objects.create(object_pk=post, comment=text,
                                           user_id=get_int(user.id),
                                           ip_address=user._ip)
