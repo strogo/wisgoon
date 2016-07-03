@@ -275,15 +275,15 @@
             <div class="profile box">
                 <div class="user-detail">
                     <div class="avatar">
-                        <a href="{% url "pin-absuser" post.user_id|get_user_name %}">
-                            <img src="{{post.user_id|get_avatar:65}}" />
+                        <a href="{% url "pin-absuser" post.user.id|get_user_name %}">
+                            <img src="{{post.user.id|get_avatar:65}}" />
                         </a>
                     </div>
                     <div class="user-info">
                         <div class="username">
                             <h3>
-                                <a href="{% url "pin-absuser" post.user_id|get_user_name %}">
-                                    {{post.user.profile.name|truncatechars:"20"}}
+                                <a href="{% url "pin-absuser" post.user.id|get_user_name %}">
+                                    {{post.user.username|truncatechars:"20"}}
                                 </a>
                             </h3>
                         </div>
