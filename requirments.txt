@@ -106,3 +106,5 @@ urllib3==1.14
 user-agents==1.0.1
 wheel==0.24.0
 wsgiref==0.1.2
+scikit-learn==0.17.1
+scipy==0.17.1

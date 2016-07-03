@@ -117,6 +117,8 @@ def follow(request, following, action):
 
 @login_required
 def like(request, item_id):
+    import redis
+
     try:
         post = get_post_user_cache(post_id=item_id)
     except Post.DoesNotExist:
@@ -129,10 +131,16 @@ def like(request, item_id):
                          user_ip=get_user_ip(request),
                          category=post.category_id)
 
+    redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
+    key = "cnt_like:user:{}:{}".format(request.user.id, post.category.id)
+
     if like:
         user_act = 1
+        redis_server.incr(key, 1)
+
     elif dislike:
         user_act = -1
+        redis_server.incr(key, -1)
 
     if request.is_ajax():
         data = [{'likes': current_like, 'user_act': user_act}]
