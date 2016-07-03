@@ -44,7 +44,7 @@ def urlize_text(text):
     text = hashtag_pattern.sub(hashtag_urlize, text)
     return text
 
-
+@register.filter
 def emojize_text(text):
     text = emoji.emojize(text)
     return text
