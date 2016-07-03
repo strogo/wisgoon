@@ -24,10 +24,10 @@ CASSANDRA_DB = '79.127.125.104'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'wisgoon',
-        'USER': 'wisgoon_user',
-        'PASSWORD': 'KP9CPby8jkOCw',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'feedreader',
+        'USER': 'wis_db_user',
+        'PASSWORD': 'OTEfiD6aNeQ4E',
         'HOST': '79.127.125.99',
         'PORT': '',
     },
