@@ -693,6 +693,7 @@ class Post(models.Model):
             if Official.objects.filter(user=self.user).count():
                 self.status = 1
 
+        self.text = emoji.demojize(self.text)
         self.text = normalize_tags(self.text)
         super(Post, self).save(*args, **kwargs)
         if settings.TUNING_CACHE:
