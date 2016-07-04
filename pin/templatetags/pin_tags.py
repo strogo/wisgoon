@@ -65,7 +65,7 @@ def millify(n):
 
 @register.filter
 def millify_int(number):
-    return millify(number)
+    return millify(number).replace(" ", "")
 
 
 def hashtag_urlize(m):
