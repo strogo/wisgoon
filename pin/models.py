@@ -16,7 +16,7 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
 from django.db import models
-from django.db.models import F
+from django.db.models import F, Q
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 
@@ -634,6 +634,11 @@ class Post(models.Model):
         #     print str(e)
 
     @classmethod
+    def remove_post_from_stream(cls, user_id, post_id):
+        user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
+        r_server.lrem(user_stream, post_id)
+
+    @classmethod
     def add_to_set(cls, set_name, post, set_cat=True):
         r_server.zadd(set_name, int(post.timestamp), post.id)
         r_server.zremrangebyrank(set_name, 0, -1001)
@@ -933,6 +938,11 @@ class Follow(models.Model):
         FollowUser.delete_relations(self.follower,
                                     self.following)
         super(Follow, self).delete(*args, **kwargs)
+
+        # TO DO
+        from pin.tasks import remove_from_stream
+        remove_from_stream.delay(user_id=follower_id, owner_id=following_id)
+        # remove_from_stream(user_id=following_id, owner_id=follower_id)
 
     def save(self, *args, **kwargs):
         super(Follow, self).save(*args, **kwargs)
@@ -1344,6 +1354,15 @@ class Block(models.Model):
         try:
             Block.objects.get_or_create(user_id=user_id, blocked_id=blocked_id)
             MonthlyStats.log_hit(MonthlyStats.BLOCK)
+            follows = Follow.objects.filter(Q(following_id=user_id, follower_id=blocked_id) |
+                                            Q(following_id=blocked_id, follower_id=user_id))
+            if follows:
+                for follow in follows:
+                    print "assssssss"
+                    follow.delete()
+
+            print "block"
+
         except:
             pass
 

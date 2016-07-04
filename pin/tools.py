@@ -331,13 +331,17 @@ class AuthCache(MyCache):
 
 
 def check_block(user_id, blocked_id):
-    block_cnt = Block.objects.filter(user_id=user_id,
-                                     blocked_id=blocked_id).count()
-    # print "block cnt is:", block_cnt
-    if block_cnt:
-        return True
+    status = True
+    try:
+        block = Block.objects.get(user_id=user_id, blocked_id=blocked_id)
+    except:
+        block = None
+        status = False
 
-    return False
+    if block and block.blocked.is_superuser and block.blocked.is_active:
+        status = False
+
+    return status
 
 
 def get_user_meta(user_id):

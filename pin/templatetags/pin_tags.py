@@ -357,9 +357,18 @@ def pn(value):
 
 @register.filter
 def check_block(blocker_id, blocked_id):
-    from pin.tools import check_block
+    from pin.models import Block
+    is_block = Block.objects.filter(user_id=blocker_id, blocked_id=blocked_id).exists()
+    return is_block
 
-    return check_block(blocker_id, blocked_id)
+
+@register.filter
+def allow_follow(blocker_id, blocked_id):
+    from pin.models import Block
+    from django.db.models import Q
+    block = Block.objects.filter(Q(user_id=blocker_id, blocked_id=blocked_id) |
+                                 Q(user_id=blocked_id, blocked_id=blocker_id)).exists()
+    return block
 
 
 @register.filter
