@@ -241,6 +241,7 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
                     .user_liked(user_id=cur_user_id)
             cache_post['cnt_view'] = pi['cnt_view']
             cache_post['cache'] = "Hit"
+            cache_post['text'] = emoji.emojize(cache_post['text'])
             cache_post = need_fields(cache_post)
             return cache_post
 
