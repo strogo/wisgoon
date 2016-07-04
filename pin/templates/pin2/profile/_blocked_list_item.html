@@ -3,7 +3,7 @@
 {% load daddy_avatar %}
 {% if blocked_list %}
   {% for u in blocked_list %}
-  <div class="follow_box box">    
+  <div class="follow_box box">
     {{u.blocked.id|get_user_posts|safe}}
 
     <div class="follow_avatar">
