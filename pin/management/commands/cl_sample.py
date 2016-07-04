@@ -8,17 +8,17 @@ from datetime import datetime
 class Command(BaseCommand):
     def handle(self, *args, **options):
 
-        # add_lable = raw_input("Do you want to add lable y/n?")
+        add_lable = raw_input("Do you want to add lable y/n?")
 
-        # if add_lable == 'y' or add_lable == '':
-        #     lable_list = raw_input("Enter your lable. seprate with ','")
-        #     create_lable(lables=lable_list)
+        if add_lable == 'y' or add_lable == '':
+            lable_list = raw_input("Enter your lable. seprate with ','")
+            create_lable(lables=lable_list)
 
         count_sample = raw_input("How many sample you want to add?")
         create_sample(count_sample)
 
         # count_activity = raw_input("How many user activity you want to add?")
-        create_user_activity()
+        # create_user_activity()
 
 
 def create_lable(lables=[]):

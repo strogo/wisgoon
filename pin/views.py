@@ -40,8 +40,8 @@ def home(request):
     for pll in pl:
         pid = int(pll)
         post_item = post_item_json(post_id=pid, cur_user_id=request.user.id)
-        if not check_block(user_id=post_item['user']['id'], blocked_id=request.user.id):
-            if post_item:
+        if post_item:
+            if not check_block(user_id=post_item['user']['id'], blocked_id=request.user.id):
                 arp.append(post_item)
         last_id = pll
 
@@ -841,7 +841,7 @@ def item(request, item_id):
     # post["mlt"] = mlts
 
     if request.user.is_authenticated():
-        if check_block(user_id=post["user"]["id"], blocked_id=request.user.id):
+        if post and check_block(user_id=post["user"]["id"], blocked_id=request.user.id):
             return HttpResponseRedirect('/')
 
     # post["tag"] = []
