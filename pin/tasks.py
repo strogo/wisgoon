@@ -209,7 +209,8 @@ def migrate_avatar_storage(profile_id):
 
     local_path = os.path.join(settings.MEDIA_ROOT, str(profile.avatar))
     image_new_path = str(profile.avatar)
-    image_new_path = image_new_path.replace('avatars/%s' % settings.INSTANCE_NAME, "avatars/%s" % storage.name)
+    image_new_path = image_new_path\
+        .replace('avatars/%s' % settings.INSTANCE_NAME, "avatars/%s" % storage.name)
     remote_path = os.path.join(storage.path, image_new_path)
     remote_dir = os.path.dirname(remote_path)
 
@@ -220,7 +221,8 @@ def migrate_avatar_storage(profile_id):
 
     local_path = os.path.join(settings.MEDIA_ROOT, profile.get_avatar_64_str())
     image_new_path_64 = profile.get_avatar_64_str()
-    image_new_path_64 = image_new_path_64.replace('avatars/%s' % settings.INSTANCE_NAME, "avatars/%s" % storage.name)
+    image_new_path_64 = image_new_path_64\
+        .replace('avatars/%s' % settings.INSTANCE_NAME, "avatars/%s" % storage.name)
     remote_path = os.path.join(storage.path, image_new_path_64)
     remote_dir = os.path.dirname(remote_path)
 
@@ -302,3 +304,17 @@ def post_to_follower_single(post_id, follower_id, post_owner):
                             post_owner=post_owner)
 
     return "this is post_to_followers"
+
+
+@app.task(name="tasks.remove_from_stream")
+def remove_from_stream(user_id, owner_id):
+    from pin.models import Post
+    posts = Post.objects.filter(user_id=owner_id).values_list('id', flat=True)
+
+    user_stream = Post.user_stream_latest(user_id)
+
+    for post_id in user_stream:
+        if post_id in posts:
+            Post.remove_post_from_stream(user_id, post_id)
+
+    return "remove posts from stream user {}".format(user_id)

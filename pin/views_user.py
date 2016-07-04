@@ -54,7 +54,9 @@ def following(request):
         pll_id = int(pll)
         ob = post_item_json(pll_id, cur_user_id=request.user.id)
         if ob:
-            arp.append(ob)
+            is_block = check_block(user_id=ob['user']['id'], blocked_id=request.user.id)
+            if not is_block:
+                arp.append(ob)
 
     latest_items = arp
 
@@ -81,6 +83,9 @@ def follow(request, following, action):
     status = ''
     if int(following) == request.user.id:
         return HttpResponseRedirect(reverse('pin-home'))
+
+    if check_block(user_id=int(following), blocked_id=request.user.id):
+        return HttpResponseRedirect('/')
 
     try:
         following = User.objects.get(pk=int(following))
@@ -120,19 +125,22 @@ def like(request, item_id):
     import redis
 
     try:
-        post = get_post_user_cache(post_id=item_id)
+        post = post_item_json(post_id=int(item_id))
     except Post.DoesNotExist:
+        return HttpResponseRedirect('/')
+
+    if check_block(user_id=post['user']['id'], blocked_id=request.user.id):
         return HttpResponseRedirect('/')
 
     from models_redis import LikesRedis
     like, dislike, current_like = LikesRedis(post_id=item_id)\
         .like_or_dislike(user_id=request.user.id,
-                         post_owner=post.user_id,
+                         post_owner=post['user']['id'],
                          user_ip=get_user_ip(request),
-                         category=post.category_id)
+                         category=post['category']['id'])
 
     redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
-    key = "cnt_like:user:{}:{}".format(request.user.id, post.category.id)
+    key = "cnt_like:user:{}:{}".format(request.user.id, post['category']['id'])
 
     if like:
         user_act = 1
@@ -146,21 +154,24 @@ def like(request, item_id):
         data = [{'likes': current_like, 'user_act': user_act}]
         return HttpResponse(json.dumps(data), content_type="text/html")
     else:
-        return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
+        return HttpResponseRedirect(reverse('pin-item', args=[post['id']]))
 
 
 @login_required
 def report(request, pin_id):
     try:
-        post = Post.objects.get(id=pin_id)
+        post = Post.objects.only('id', 'user_id').get(id=pin_id)
     except Post.DoesNotExist:
         return HttpResponseRedirect('/')
 
+    if check_block(user_id=post.user_id, blocked_id=request.user.id):
+        return HttpResponseRedirect('/')
+
     try:
-        Report.objects.get(user=request.user, post=post)
+        Report.objects.get(user=request.user, post_id=post.id)
         created = False
     except Report.DoesNotExist:
-        Report.objects.create(user=request.user, post=post)
+        Report.objects.create(user=request.user, post=post.id)
         created = True
 
     if created:
@@ -414,7 +425,6 @@ def send(request):
 
 @login_required
 def edit(request, post_id):
-    print post_id
     try:
         post = Post.objects.get(pk=int(post_id))
         if not request.user.is_superuser:
