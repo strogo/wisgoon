@@ -1,4 +1,5 @@
 import ast
+import emoji
 import urllib
 from io import FileIO, BufferedWriter
 from time import time
@@ -240,6 +241,7 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
                     .user_liked(user_id=cur_user_id)
             cache_post['cnt_view'] = pi['cnt_view']
             cache_post['cache'] = "Hit"
+            cache_post['text'] = emoji.emojize(cache_post['text'])
             cache_post = need_fields(cache_post)
             return cache_post
 
@@ -249,7 +251,7 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
             return None
         pi['cache'] = "Miss"
         pi['id'] = post.id
-        pi['text'] = post.text
+        pi['text'] = emoji.emojize(post.text)
         pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
         pi['timestamp'] = post.timestamp
         pi['show_in_default'] = post.show_in_default
@@ -389,9 +391,10 @@ def get_comments(post_id, limit, before):
 
 
 def comment_item_json(comment):
+
     comment_dict = {}
     comment_dict['id'] = comment.id
-    comment_dict['comment'] = comment.comment
+    comment_dict['comment'] = emoji.emojize(comment.comment)
     comment_dict['user'] = get_simple_user_object(comment.user.id)
 
     # TODO for stable

@@ -62,14 +62,17 @@
 	{% if not item.text.strip == "" %}
 	<div class="description">
 		<p>{{item.text|safe|truncatewords:"50"|linebreaksbr|urlizetrunc:30}}</p>
+	</div>
+	{% endif %}
+
+	<div class="description">
 		<div class="post_time pull-right">
 			<i class="post-time-content">{{item.timestamp|timestamp_to_datetime}}</i>
 		</div>
 		<div class="post_cnt_view pull-right">
-			<i class="post-time-content">{{item.cnt_view}}</i>
-			</div>
+			<i class="post-time-content">{{item.cnt_view|millify_int}}</i>
+		</div>
 	</div>
-	{% endif %}
 
 	{% if item.tags %}
 	<div class="tags">

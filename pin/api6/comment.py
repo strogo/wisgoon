@@ -1,3 +1,4 @@
+import emoji
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 

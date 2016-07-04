@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import emoji
 import hashlib
 import os
 import re
@@ -697,6 +698,7 @@ class Post(models.Model):
             if Official.objects.filter(user=self.user).count():
                 self.status = 1
 
+        self.text = emoji.demojize(self.text)
         self.text = normalize_tags(self.text)
         super(Post, self).save(*args, **kwargs)
         if settings.TUNING_CACHE:
@@ -1238,6 +1240,8 @@ class Comments(models.Model):
         if not self.pk:
             Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
+
+        self.comment = emoji.demojize(self.comment)
 
         comment_cache_name = "com_{}".format(int(self.object_pk_id))
         cache.delete(comment_cache_name)
