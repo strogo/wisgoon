@@ -103,7 +103,7 @@ def search(request):
             ob = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
             if ob:
                 if request.user.is_authenticated():
-                    if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+                    if not check_block(user_id=ob['user']['id'], blocked_id=request.user.id):
                         posts.append(ob)
                 else:
                     posts.append(ob)
@@ -167,7 +167,7 @@ def result(request, label):
         ob = post_item_json(post.pk)
         if ob:
             if request.user.is_authenticated():
-                if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+                if not check_block(user_id=ob['user']['id'], blocked_id=request.user.id):
                     ps.append(ob)
             else:
                 ps.append(ob)
@@ -207,7 +207,7 @@ def category_top(request, category_id):
         post_json = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
         if post_json:
             if request.user.is_authenticated():
-                if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+                if not check_block(user_id=post_json['user']['id'], blocked_id=request.user.id):
                     posts_list.append(post_json)
             else:
                 posts_list.append(post_json)
@@ -286,7 +286,7 @@ def hashtag(request, tag_name):
                                    cur_user_id=request.user.id)
         if post_json:
             if request.user.is_authenticated():
-                if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+                if not check_block(user_id=post_json['user']['id'], blocked_id=request.user.id):
                     posts_list.append(post_json)
             else:
                 posts_list.append(post_json)
@@ -744,7 +744,7 @@ def popular(request, interval=""):
         post_json = post_item_json(post_id=post.pk)
         if post_json:
             if request.user.is_authenticated():
-                if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+                if not check_block(user_id=post_json['user']['id'], blocked_id=request.user.id):
                     ps.append(post_item_json(post_id=post.pk))
             else:
                 ps.append(post_item_json(post_id=post.pk))

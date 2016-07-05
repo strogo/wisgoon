@@ -271,14 +271,15 @@ def nop(request, item_id):
 def send_comment(request):
     if request.method == 'POST':
         text = request.POST.get('text', None)
-        post = request.POST.get('post', None)
+        post = int(request.POST.get('post', None))
 
         if text and post:
-            post = post_item_json(post_id=post)
-            if post and check_block(user_id=post['user']['id'], blocked_id=request.user.id):
+            post_json = post_item_json(post_id=post)
+            if post_json and check_block(user_id=post_json['user']['id'],
+                                         blocked_id=request.user.id):
                 return HttpResponseRedirect('/')
 
-            comment = Comments.objects.create(object_pk_id=post['id'],
+            comment = Comments.objects.create(object_pk_id=post_json['id'],
                                               comment=text,
                                               user=request.user,
                                               ip_address=get_user_ip(request))
