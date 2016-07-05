@@ -544,10 +544,9 @@ def user_like(request, user_id):
     arp = []
 
     for pll in pl:
-        try:
-            arp.append(post_item_json(post_id=pll, cur_user_id=request.user.id))
-        except:
-            pass
+        post_item = post_item_json(post_id=pll, cur_user_id=request.user.id)
+        if post_item:
+            arp.append(post_item)
 
     latest_items = arp
 
@@ -745,9 +744,9 @@ def popular(request, interval=""):
         if post_json:
             if request.user.is_authenticated():
                 if not check_block(user_id=post_json['user']['id'], blocked_id=request.user.id):
-                    ps.append(post_item_json(post_id=post.pk))
+                    ps.append(post_json)
             else:
-                ps.append(post_item_json(post_id=post.pk))
+                ps.append(post_json)
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
@@ -977,6 +976,9 @@ def item_related(request, item_id):
                 post_json = post_item_json(post_id=int(post_id), cur_user_id=request.user.id)
                 if post_json:
                     related_posts.append(post_json)
+                    mltis.append(post_id)
+        if mltis:
+            cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
 
     post.mlt = related_posts
 
