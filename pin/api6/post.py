@@ -385,6 +385,7 @@ def related_post(request, item_id):
 
     token = request.GET.get('token', False)
     offset = int(request.GET.get('offset', 0))
+    last_id = 0
 
     if offset > 100:
         return return_json_data(data)
@@ -409,15 +410,19 @@ def related_post(request, item_id):
         mltis = get_list_post(idis)
 
         if not mltis:
-            post_ids = Post.latest(cat_id=post.category_id)
+            post_ids = Post.latest(cat_id=post.category_id, pid=last_id)
             for post_id in post_ids:
                 if post.id != post_id:
+                    last_id = post_id
                     mltis.append(post_id)
+    if mltis:
+        last_id = mltis[-1]
 
     data['objects'] = get_objects_list(mltis, current_user)
     data['meta']['next'] = get_next_url(url_name='api-6-post-related',
                                         token=token,
                                         offset=offset + Post.GLOBAL_LIMIT,
+                                        last_id=last_id,
                                         url_args={
                                             "item_id": item_id}
                                         )
