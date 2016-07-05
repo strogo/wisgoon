@@ -385,7 +385,7 @@ def related_post(request, item_id):
 
     token = request.GET.get('token', False)
     offset = int(request.GET.get('offset', 0))
-    last_id = 0
+    last_id = int(request.GET.get('last_id', 0))
 
     if offset > 100:
         return return_json_data(data)
