@@ -129,7 +129,7 @@ def like(request, item_id):
     except Post.DoesNotExist:
         return HttpResponseRedirect('/')
 
-    if check_block(user_id=post['user']['id'], blocked_id=request.user.id):
+    if post and check_block(user_id=post['user']['id'], blocked_id=request.user.id):
         return HttpResponseRedirect('/')
 
     from models_redis import LikesRedis
@@ -275,7 +275,7 @@ def send_comment(request):
 
         if text and post:
             post = post_item_json(post_id=post)
-            if check_block(user_id=post['user']['id'], blocked_id=request.user.id):
+            if post and check_block(user_id=post['user']['id'], blocked_id=request.user.id):
                 return HttpResponseRedirect('/')
 
             comment = Comments.objects.create(object_pk_id=post['id'],
