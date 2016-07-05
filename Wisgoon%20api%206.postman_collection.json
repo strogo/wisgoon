@@ -1,0 +1,1490 @@
+{
+	"id": "63c27999-320c-cc0d-2609-287e20cd91b5",
+	"name": "Wisgoon api 6",
+	"description": "",
+	"order": [],
+	"folders": [
+		{
+			"id": "fde101ce-4e6c-21c7-b926-3a5948daf7c7",
+			"name": "App",
+			"description": "",
+			"order": [
+				"cb78cc5f-97f9-c6f2-111b-8e604d17d2ae"
+			],
+			"owner": 0
+		},
+		{
+			"id": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929",
+			"name": "Authentication",
+			"description": "",
+			"order": [
+				"235af50f-f063-9dbb-27f9-f2e88fd0b1e1",
+				"1cc71fb4-6c4e-14e3-48a1-29d28eafc6f7",
+				"77bae951-9b8f-8675-8a67-71fd0215e7ae",
+				"7cf56e79-727c-33b9-58ef-19e6e3fc2f8a",
+				"a53b24d4-8b69-3606-95c5-e69b913e926c",
+				"a95a5ead-e82d-943b-d051-f38e2b9c8ad9",
+				"a12d7054-5614-56ec-8923-59a53f973a17",
+				"fb3a3322-479d-c62c-38a5-3e78bf165bdd",
+				"a3a23ab2-32b1-b76b-2a0b-48e83f54e6a9",
+				"0d0a17d3-a957-0b12-0698-a69863950914",
+				"25299947-b2ad-772d-49d1-5e8e8505fbbc",
+				"8ca5777d-e5d1-ce6e-dedf-511c3ec21408",
+				"25346305-4eed-634b-3290-e488ea3d6593",
+				"82aee96f-5e07-9564-1e70-f8f78a5eeec8",
+				"7960fa6f-234e-b711-8299-494ce91a44f0",
+				"6d3b7fb6-ea65-abe6-90ae-9181c3b8c35d"
+			],
+			"owner": 0
+		},
+		{
+			"id": "b7773fb5-1fd2-c103-a3be-4c72afc723dc",
+			"name": "Campaign",
+			"description": "",
+			"order": [
+				"9e4de54a-d25f-c5a9-665f-5fe3390e60b5",
+				"9a100384-c371-502f-aab0-a2c4d601c431"
+			],
+			"owner": 0
+		},
+		{
+			"id": "1899c402-2814-2676-4c1c-371b75dffd2d",
+			"name": "Category",
+			"description": "",
+			"order": [
+				"4bc1b9b0-8a03-4f04-12bc-096bff7cb286",
+				"1ec25a9f-a723-1254-b029-e61c26510f44"
+			],
+			"owner": 0
+		},
+		{
+			"id": "1473ffd1-bff4-8cd1-6ae3-d562f6df0638",
+			"name": "Comments",
+			"description": "",
+			"order": [
+				"3482f7f7-54b7-66ee-3083-19ef5b93a5cb",
+				"2e5cec65-8e3b-8ca8-4ec4-464309935ca1",
+				"ba1797e2-1586-85f5-e58e-2d8a18b8b75e",
+				"2679e9dc-80bc-2011-463c-d0e0ca9ee456"
+			],
+			"owner": 0,
+			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff"
+		},
+		{
+			"id": "5155c794-575f-eaa3-3fea-f7fb0c1fac29",
+			"name": "Likes",
+			"description": "",
+			"order": [
+				"3d98f571-5d51-b83e-cb9e-b299972eb4fe",
+				"0109bce0-d93e-1f54-87e3-a1e2008ad965",
+				"4f77470f-ee7d-aaf1-e960-ec384c2169bc"
+			],
+			"owner": 0
+		},
+		{
+			"id": "61f7e2f0-2120-1ca4-aa81-db03f7d21060",
+			"name": "Notification",
+			"description": "",
+			"order": [
+				"b68674a9-4f06-e0d8-d226-81ae6c297f69",
+				"5ab84ba9-dcf8-3bec-2abe-138d7d774dcb"
+			],
+			"owner": 0
+		},
+		{
+			"id": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14",
+			"name": "Post",
+			"description": "",
+			"order": [
+				"45b062c3-df61-d4c1-0111-fad43ef59009",
+				"33d14e48-6a63-27be-dcec-3a088756c0aa",
+				"02a33ac5-f5dc-9ebb-d9a0-cd7485747e4c",
+				"e5436511-6d88-91e8-df81-8bcf5a090356",
+				"02ec0d82-10b0-c899-5715-8b383b8c7cbc",
+				"a5e267fe-eb43-dcf1-c6bf-3be9f8b1f2fb",
+				"ff6cc498-a135-6766-e9bc-7e185153ec90",
+				"dba920e6-874a-1f96-dd5c-7f440a194168",
+				"3e3e1b7d-05f9-d7bc-0fd7-2cf459bb1206",
+				"de7e1aef-06c9-8775-f8c2-11eb9e5fa48c",
+				"fab231b6-a04b-4ccf-824b-84a6e179783e",
+				"6b10473c-8f6b-8cc6-9ad5-a3d3403cddcb",
+				"8308cdb8-f084-f63b-6651-2c3342e339b2",
+				"e1c1f7dd-c8ac-800e-dadd-81d9afa13ce4"
+			],
+			"owner": 0,
+			"collectionId": "64faee03-3311-d8c9-2a6a-7130ce4b455d"
+		},
+		{
+			"id": "9025af4f-3d47-88a0-1330-f13f65f7cb6c",
+			"name": "Urls Map",
+			"description": "",
+			"order": [
+				"670244c2-9bab-790a-1dd7-f02880c5afbe"
+			],
+			"owner": 0
+		}
+	],
+	"timestamp": 1438073335198,
+	"owner": 0,
+	"remoteLink": "",
+	"public": false,
+	"published": false,
+	"requests": [
+		{
+			"id": "0109bce0-d93e-1f54-87e3-a1e2008ad965",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/like/post/1/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Like or Dislike",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447489757422,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "5155c794-575f-eaa3-3fea-f7fb0c1fac29"
+		},
+		{
+			"id": "02a33ac5-f5dc-9ebb-d9a0-cd7485747e4c",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/category/1/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Category",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1438433960464,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		},
+		{
+			"id": "02ec0d82-10b0-c899-5715-8b383b8c7cbc",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/choices/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Editor choices",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1438435270967,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		},
+		{
+			"id": "0d0a17d3-a957-0b12-0698-a69863950914",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/user/4/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "comment",
+					"value": "@kjkfjkdfjkdf@%&*(( skjds dks dkjs dasad5465621sdsd",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "User Profile",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447664788244,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "1cc71fb4-6c4e-14e3-48a1-29d28eafc6f7",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/login/",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "username",
+					"value": "vahid",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "111",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "token",
+					"value": "e622c330c77a17c8426e638d7a85da6c2ec9f455",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1448091950765,
+			"name": "Login",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"responses": [],
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "1ec25a9f-a723-1254-b029-e61c26510f44",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/category/all/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "All category",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447831252425,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1899c402-2814-2676-4c1c-371b75dffd2d"
+		},
+		{
+			"id": "235af50f-f063-9dbb-27f9-f2e88fd0b1e1",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/register/",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "username",
+					"value": "vahid",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "111",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "token",
+					"value": "e622c330c77a17c8426e638d7a85da6c2ec9f455",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1448091940356,
+			"name": "Registeration",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 32,
+					"headers": [
+						{
+							"name": "Access-Control-Allow-Methods",
+							"key": "Access-Control-Allow-Methods",
+							"value": "POST,GET,OPTIONS,PUT,DELETE",
+							"description": "Specifies the method or methods allowed when accessing the resource. This is used in response to a preflight request."
+						},
+						{
+							"name": "Access-Control-Allow-Origin",
+							"key": "Access-Control-Allow-Origin",
+							"value": "*",
+							"description": "Specifies a URI that may access the resource. For requests without credentials, the server may specify '*' as a wildcard, thereby allowing any origin to access the resource."
+						},
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Date",
+							"key": "Date",
+							"value": "Tue, 28 Jul 2015 09:09:56 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "WSGIServer/0.1 Python/2.7.6",
+							"description": "A name for the server"
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"status\": false, \"message\": \"Email already exists\"}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"state": {
+						"size": "normal"
+					},
+					"previewType": "preview",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"isSample": true,
+					"scrollToResult": false,
+					"runTests": true,
+					"id": "5241ba8f-caff-f922-0d74-1774cca126f3",
+					"name": "res",
+					"request": {
+						"name": "Registeration",
+						"description": "",
+						"url": "http://127.0.0.1:8000/api/v6/auth/register/",
+						"pathVariables": {},
+						"data": "{\"token\":\"e622c330c77a17c8426e638d7a85da6c2ec9f455\",\n \"username\":\"apitest22\",\n \"password\":\"apipassword22\",\n \"email\":\"vchakoshy@gmail.com\"}",
+						"headers": "",
+						"dataMode": "raw",
+						"method": "POST",
+						"tests": "",
+						"isFromCollection": true,
+						"version": 2
+					},
+					"owner": 0
+				}
+			],
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "25299947-b2ad-772d-49d1-5e8e8505fbbc",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/password/change/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "password",
+					"value": "11",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "re_password",
+					"value": "11",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "old_password",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Change password",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1454710746135,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "25346305-4eed-634b-3290-e488ea3d6593",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/block/user/2/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "token",
+					"value": "1234",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Block user",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1456256140137,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "2679e9dc-80bc-2011-463c-d0e0ca9ee456",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/comment/report/6/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Report",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1454775476959,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1473ffd1-bff4-8cd1-6ae3-d562f6df0638"
+		},
+		{
+			"id": "2e5cec65-8e3b-8ca8-4ec4-464309935ca1",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/comment/delete/13/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "raw",
+			"name": "Delete Comment",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447245953230,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1473ffd1-bff4-8cd1-6ae3-d562f6df0638",
+			"rawModeData": ""
+		},
+		{
+			"id": "33d14e48-6a63-27be-dcec-3a088756c0aa",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/friends/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Friends posts",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1438433285653,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		},
+		{
+			"id": "3482f7f7-54b7-66ee-3083-19ef5b93a5cb",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/comment/add/post/1/?token=1234",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "comment",
+					"value": "@kjkfjkdfjkdf@%&*(( skjds dks dkjs dasad5465621sdsd",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1447592510202,
+			"name": "Add Comment",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"responses": [],
+			"folder": "1473ffd1-bff4-8cd1-6ae3-d562f6df0638"
+		},
+		{
+			"id": "3d98f571-5d51-b83e-cb9e-b299972eb4fe",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/like/likers/post/1/",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1447828343558,
+			"name": "Post Likers",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"responses": [],
+			"folder": "5155c794-575f-eaa3-3fea-f7fb0c1fac29"
+		},
+		{
+			"id": "3e3e1b7d-05f9-d7bc-0fd7-2cf459bb1206",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/send/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "image",
+					"type": "file",
+					"enabled": true
+				},
+				{
+					"key": "description",
+					"value": "kjljkljjk",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "url",
+					"value": "http://www.google.com",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "category",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Send Post",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447574705857,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		},
+		{
+			"id": "45b062c3-df61-d4c1-0111-fad43ef59009",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/latest/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Latest",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1438432467995,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		},
+		{
+			"id": "4bc1b9b0-8a03-4f04-12bc-096bff7cb286",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/category/1/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Show category",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447831232243,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1899c402-2814-2676-4c1c-371b75dffd2d"
+		},
+		{
+			"id": "4f77470f-ee7d-aaf1-e960-ec384c2169bc",
+			"headers": "",
+			"url": "http://wisgoon.com/api/v6/like/item/",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "token",
+					"value": "c5de9b7860b82842b71607c3810a2f4134ba9c93",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "item_id",
+					"value": "12256888",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1456150955187,
+			"name": "Like or Dislike item",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"responses": [],
+			"folder": "5155c794-575f-eaa3-3fea-f7fb0c1fac29"
+		},
+		{
+			"id": "5ab84ba9-dcf8-3bec-2abe-138d7d774dcb",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/notif/count/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "image",
+					"type": "file",
+					"enabled": true
+				},
+				{
+					"key": "description",
+					"value": "kjljkljjk",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "url",
+					"value": "http://www.google.com",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "category",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Notification Count",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447589874530,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "61f7e2f0-2120-1ca4-aa81-db03f7d21060"
+		},
+		{
+			"id": "670244c2-9bab-790a-1dd7-f02880c5afbe",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/urls",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Urls",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447828256197,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "9025af4f-3d47-88a0-1330-f13f65f7cb6c"
+		},
+		{
+			"id": "6b10473c-8f6b-8cc6-9ad5-a3d3403cddcb",
+			"headers": "",
+			"url": "http://wisgoon.com/api/v6/post/related/905681/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Related",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447743464993,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		},
+		{
+			"id": "6d3b7fb6-ea65-abe6-90ae-9181c3b8c35d",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/user/inc/credit/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "price",
+					"value": "650",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "baz_token",
+					"value": "8BRRputHKV9r4gzD",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "package",
+					"value": "wis_500",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "inc credit",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1456757867694,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "77bae951-9b8f-8675-8a67-71fd0215e7ae",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/user/update/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "avatar",
+					"type": "file",
+					"enabled": true
+				},
+				{
+					"key": "name",
+					"value": "sdsds",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "jens",
+					"value": "M",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "location",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "website",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "bio",
+					"value": "sdsdsd",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Update Profile",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1448094199188,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "7960fa6f-234e-b711-8299-494ce91a44f0",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/password/reset/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "email",
+					"value": "vchakoshy@gmail.com",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Password reset",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1456256624666,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "7cf56e79-727c-33b9-58ef-19e6e3fc2f8a",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/follow/?token=1234&user_id=3",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Follow",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1438078875326,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "82aee96f-5e07-9564-1e70-f8f78a5eeec8",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/unblock/user/2/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "token",
+					"value": "1234",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "unblock user",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1456256156724,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "8308cdb8-f084-f63b-6651-2c3342e339b2",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/promoted/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Promoted",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447828199216,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		},
+		{
+			"id": "8ca5777d-e5d1-ce6e-dedf-511c3ec21408",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/get/phone/data/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "os",
+					"value": "android",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "app_version",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "google_token",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "user_wisgoon_token",
+					"value": "1234",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "imei",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "android_version",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "phone_serial",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "phone_model",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "get phone data",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1455560579079,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "9a100384-c371-502f-aab0-a2c4d601c431",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/campaign/posts/2",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1467711233101,
+			"name": "Campaign Posts",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"responses": []
+		},
+		{
+			"id": "9e4de54a-d25f-c5a9-665f-5fe3390e60b5",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/campaign/current/",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1467711244894,
+			"name": "Current Campaign",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"responses": []
+		},
+		{
+			"id": "a12d7054-5614-56ec-8923-59a53f973a17",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/following/1/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Following list",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1438080451830,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "a3a23ab2-32b1-b76b-2a0b-48e83f54e6a9",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/auth/user/search/?token=1234&q=amir_abbs",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Search User",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447748962816,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "a53b24d4-8b69-3606-95c5-e69b913e926c",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/unfollow/?token=1234&user_id=3",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "UnFollow",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1438079057395,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "a5e267fe-eb43-dcf1-c6bf-3be9f8b1f2fb",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/search/?q=test",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Search posts",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1440254378260,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		},
+		{
+			"id": "a95a5ead-e82d-943b-d051-f38e2b9c8ad9",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/followers/1/?token=1234",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1438080145406,
+			"name": "Followers list",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"responses": [],
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "b68674a9-4f06-e0d8-d226-81ae6c297f69",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/notif/?token=123&before=56419e2c0bbf8c4d84068839",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "image",
+					"type": "file",
+					"enabled": true
+				},
+				{
+					"key": "description",
+					"value": "kjljkljjk",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "url",
+					"value": "http://www.google.com",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "category",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Show All Notifications",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447589828555,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "61f7e2f0-2120-1ca4-aa81-db03f7d21060"
+		},
+		{
+			"id": "ba1797e2-1586-85f5-e58e-2d8a18b8b75e",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/comment/showComments/post/1/",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1447828311458,
+			"name": "Comments Post",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"responses": [],
+			"folder": "1473ffd1-bff4-8cd1-6ae3-d562f6df0638"
+		},
+		{
+			"id": "cb78cc5f-97f9-c6f2-111b-8e604d17d2ae",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/app/latest/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "latest version",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1454573635149,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "fde101ce-4e6c-21c7-b926-3a5948daf7c7"
+		},
+		{
+			"id": "dba920e6-874a-1f96-dd5c-7f440a194168",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/edit/1/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "text",
+					"value": "jhgghhhgjh",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "url",
+					"value": "http://www.google.com",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "category",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Edit Post",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447508923645,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		},
+		{
+			"id": "de7e1aef-06c9-8775-f8c2-11eb9e5fa48c",
+			"headers": "",
+			"url": "127.0.0.1:8000/api/v6/post/delete/1/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "POST",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "delete post",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1454572532707,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		},
+		{
+			"id": "e1c1f7dd-c8ac-800e-dadd-81d9afa13ce4",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/hashtag/sport/?token=1234",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1462968230346,
+			"name": "Hashtag",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"responses": []
+		},
+		{
+			"id": "e5436511-6d88-91e8-df81-8bcf5a090356",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://127.0.0.1:8000/api/v6/post/item/1/?token=1234",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1447240175976,
+			"name": "Post item",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"responses": [],
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		},
+		{
+			"id": "fab231b6-a04b-4ccf-824b-84a6e179783e",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/user/4/",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [
+				{
+					"key": "name",
+					"value": "apitest2",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "jens",
+					"value": "M",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "location",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "website",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "bio",
+					"value": null,
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "avatar",
+					"value": "",
+					"type": "file",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Post User",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447671923905,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		},
+		{
+			"id": "fb3a3322-479d-c62c-38a5-3e78bf165bdd",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/auth/logout/",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [
+				{
+					"key": "username",
+					"value": "vahid",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "111",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1448092129930,
+			"name": "Logout",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"responses": [],
+			"folder": "1ba8e7a8-d10b-0db1-4f8a-7b64b4e67929"
+		},
+		{
+			"id": "ff6cc498-a135-6766-e9bc-7e185153ec90",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/post/report/1/?token=1234",
+			"pathVariables": {},
+			"preRequestScript": "",
+			"method": "GET",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",
+			"data": [],
+			"dataMode": "params",
+			"name": "Report",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1447490439375,
+			"version": 2,
+			"responses": [],
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "d2f0a76d-0b7c-2b73-a2aa-4bb882badd14"
+		}
+	]
+}
