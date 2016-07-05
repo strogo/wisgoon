@@ -13,21 +13,21 @@
 
 {% include "base/all_header.html"%}
 
-{% compress css %}
+
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/main.css?ver=1.1.5">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/important.css?v=0.0.3">
 {% block extra_css%}{% endblock extra_css%}
-{%endcompress%}
 
-{% compress js%}
+
+
 <script type="text/javascript" src="{{MEDIA_URL}}js/jquery.js"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}js/bootstrap.js"></script>
 <script type="text/javascript" src="{{MEDIA_URL}}js/textextc.js"></script>
 <script src="{{MEDIA_URL}}js/fileuploader.js" type="text/javascript"></script>
 {% block extra_js %}{% endblock extra_js %}
 
-{% endcompress %}
+
 
 
 
