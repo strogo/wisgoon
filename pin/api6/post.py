@@ -396,9 +396,9 @@ def related_post(request, item_id):
     cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
     mltis = cache.get(cache_str)
     if not mltis:
-        post = post_item_json(post_id=int(item_id))
-
-        if not post:
+        try:
+            post = Post.objects.get(id=int(item_id))
+        except Exception, e:
             return return_not_found()
 
         mlt = SearchQuerySet().models(Post)\
@@ -408,12 +408,12 @@ def related_post(request, item_id):
         mltis = get_list_post(idis)
         cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
 
-    # if not mltis:
-    #     post_ids = Post.latest(cat_id=post.category_id)
-    #     for post_id in post_ids:
-    #         if post.id != post_id:
-    #             post_json = post_item_json(post_id=int(post_id), cur_user_id=request.user.id)
-    #             mltis.append(post_json)
+        if not mltis:
+            post_ids = Post.latest(cat_id=post.category_id)
+            for post_id in post_ids:
+                if post.id != post_id:
+                    post_json = post_item_json(post_id=int(post_id), cur_user_id=request.user.id)
+                    mltis.append(post_json)
 
     data['objects'] = get_objects_list(mltis, current_user)
     data['meta']['next'] = get_next_url(url_name='api-6-post-related',
