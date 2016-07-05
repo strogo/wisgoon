@@ -41,8 +41,12 @@ def home(request):
         pid = int(pll)
         post_item = post_item_json(post_id=pid, cur_user_id=request.user.id)
         if post_item:
-            if not check_block(user_id=post_item['user']['id'], blocked_id=request.user.id):
+            if request.user.is_authenticated():
+                if not check_block(user_id=post_item['user']['id'], blocked_id=request.user.id):
+                    arp.append(post_item)
+            else:
                 arp.append(post_item)
+
         last_id = pll
 
     if arp:
@@ -96,10 +100,14 @@ def search(request):
             .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
         for post in post_queryset:
-            # if check_block(user_id=post.user.id, blocked_id=request.user.id):
             ob = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
             if ob:
-                posts.append(ob)
+                if request.user.is_authenticated():
+                    if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+                        posts.append(ob)
+                else:
+                    posts.append(ob)
+
     else:
         today_stamp = get_delta_timestamp(days=0)
         week_statmp = get_delta_timestamp(days=7)
@@ -156,10 +164,14 @@ def result(request, label):
 
     ps = []
     for post in posts:
-        # if not check_block(user_id=post.user.id, blocked_id=request.user.id):
         ob = post_item_json(post.pk)
         if ob:
-            ps.append(ob)
+            if request.user.is_authenticated():
+                if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+                    ps.append(ob)
+            else:
+                ps.append(ob)
+
     # ps = [post_item_json(p.pk) for p in posts]
 
     if request.is_ajax():
@@ -192,9 +204,12 @@ def category_top(request, category_id):
         .order_by('-cnt_like_i')[offset:offset + 1 * row_per_page]
 
     for post in posts:
-        if not check_block(user_id=post.user.id, blocked_id=request.user.id):
-            post_json = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
-            if post_json:
+        post_json = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
+        if post_json:
+            if request.user.is_authenticated():
+                if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+                    posts_list.append(post_json)
+            else:
                 posts_list.append(post_json)
 
     if request.is_ajax():
@@ -267,11 +282,14 @@ def hashtag(request, tag_name):
         .order_by('-timestamp_i')[offset:offset + row_per_page]
 
     for post in posts:
-        # if not check_block(user_id=post.user.id, blocked_id=request.user.id):
         post_json = post_item_json(post_id=post.pk,
                                    cur_user_id=request.user.id)
         if post_json:
-            posts_list.append(post_json)
+            if request.user.is_authenticated():
+                if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+                    posts_list.append(post_json)
+            else:
+                posts_list.append(post_json)
 
     ''' related tags query '''
     tags_facet = post_queryset.facet_counts()
@@ -367,8 +385,15 @@ def absuser_following(request, user_namefg):
     older = request.POST.get('older', False)
     following = None
 
-    if not check_block(user_id=user.id, blocked_id=request.user.id):
-
+    if request.user.is_authenticated():
+        if not check_block(user_id=user.id, blocked_id=request.user.id):
+            if older:
+                following = Follow.objects\
+                    .filter(follower_id=user_id, id__lt=older).order_by('-id')[:16]
+            else:
+                following = Follow.objects.filter(follower_id=user_id)\
+                    .order_by('-id')[:16]
+    else:
         if older:
             following = Follow.objects\
                 .filter(follower_id=user_id, id__lt=older).order_by('-id')[:16]
@@ -461,7 +486,16 @@ def absuser_followers(request, user_namefl):
     older = request.POST.get('older', False)
     friends = None
 
-    if not check_block(user_id=user.id, blocked_id=request.user.id):
+    if request.user.is_authenticated():
+
+        if not check_block(user_id=user.id, blocked_id=request.user.id):
+            if older:
+                friends = Follow.objects.filter(following_id=user_id, id__lt=older)\
+                    .order_by('-id')[:16]
+            else:
+                friends = Follow.objects.filter(following_id=user_id)\
+                    .order_by('-id')[:16]
+    else:
         if older:
             friends = Follow.objects.filter(following_id=user_id, id__lt=older)\
                 .order_by('-id')[:16]
@@ -616,8 +650,12 @@ def latest(request):
         pll_id = int(pll)
         ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
         if ob:
-            if not check_block(user_id=ob['user']['id'], blocked_id=request.user.id):
+            if request.user.is_authenticated():
+                if not check_block(user_id=ob['user']['id'], blocked_id=request.user.id):
+                    arp.append(ob)
+            else:
                 arp.append(ob)
+
         last_id = pll
 
     if arp and last_id:
@@ -651,7 +689,10 @@ def category(request, cat_id):
         pll_id = int(pll)
         ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
         if ob:
-            if not check_block(user_id=ob['user']['id'], blocked_id=request.user.id):
+            if request.user.is_authenticated():
+                if not check_block(user_id=ob['user']['id'], blocked_id=request.user.id):
+                    arp.append(ob)
+            else:
                 arp.append(ob)
 
     latest_items = arp
@@ -700,10 +741,13 @@ def popular(request, interval=""):
             .order_by('-cnt_like_i')[offset:offset + 1 * 20]
     ps = []
     for post in posts:
-        # if not check_block(user_id=post.user.id, blocked_id=request.user.id):
         post_json = post_item_json(post_id=post.pk)
         if post_json:
-            ps.append(post_item_json(post_id=post.pk))
+            if request.user.is_authenticated():
+                if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+                    ps.append(post_item_json(post_id=post.pk))
+            else:
+                ps.append(post_item_json(post_id=post.pk))
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
@@ -785,7 +829,13 @@ def absuser(request, user_name=None):
     # profile.cnt_following = Follow.objects.filter(follower_id=user.id).count()
 
     latest_items = []
-    if not check_block(user_id=profile.user.id, blocked_id=request.user.id):
+    is_block = False
+
+    if request.user.is_authenticated():
+        if check_block(user_id=profile.user.id, blocked_id=request.user.id):
+            is_block = True
+
+    if not is_block:
         for li in lt:
             pob = post_item_json(li.id, cur_user_id=request.user.id)
             if pob:
@@ -840,19 +890,17 @@ def item(request, item_id):
 
     # post["mlt"] = mlts
 
+    follow_status = 0
     if request.user.is_authenticated():
         if post and check_block(user_id=post["user"]["id"], blocked_id=request.user.id):
             return HttpResponseRedirect('/')
 
+        follow_status = Follow.objects.filter(follower=request.user.id,
+                                              following=post["user"]["id"]).count()
     # post["tag"] = []
 
     # post["likes"] = LikesRedis(post_id=post["id"])\
     #     .get_likes(offset=0, limit=5, as_user_object=True)
-
-    follow_status = 0
-    if request.user.is_authenticated():
-        follow_status = Follow.objects.filter(follower=request.user.id,
-                                              following=post["user"]["id"]).count()
 
     comments_url = reverse('pin-get-comments', args=[post["id"]])
     related_url = reverse('pin-item-related', args=[post["id"]])
