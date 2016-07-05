@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
-    get_list_post, get_objects_list, ad_item_json
+    get_list_post, get_objects_list, ad_item_json, post_item_json
 from pin.models import Post, Report, Ad, Block, ReportedPost
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
@@ -396,9 +396,9 @@ def related_post(request, item_id):
     cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
     mltis = cache.get(cache_str)
     if not mltis:
-        try:
-            post = Post.objects.get(id=item_id)
-        except Post.DoesNotExist:
+        post = post_item_json(post_id=int(item_id))
+
+        if not post:
             return return_not_found()
 
         mlt = SearchQuerySet().models(Post)\
@@ -407,6 +407,13 @@ def related_post(request, item_id):
         idis = [int(pmlt.pk) for pmlt in mlt]
         mltis = get_list_post(idis)
         cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
+
+    if not mltis:
+        post_ids = Post.latest(cat_id=post.category_id)
+        for post_id in post_ids:
+            if post.id != post_id:
+                post_json = post_item_json(post_id=int(post_id), cur_user_id=request.user.id)
+                mltis.append(post_json)
 
     data['objects'] = get_objects_list(mltis, current_user)
     data['meta']['next'] = get_next_url(url_name='api-6-post-related',

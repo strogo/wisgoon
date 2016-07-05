@@ -975,7 +975,8 @@ def item_related(request, item_id):
         for post_id in post_ids:
             if post.id != post_id:
                 post_json = post_item_json(post_id=int(post_id), cur_user_id=request.user.id)
-                related_posts.append(post_json)
+                if post_json:
+                    related_posts.append(post_json)
 
     post.mlt = related_posts
 
@@ -1056,7 +1057,8 @@ def newsletter(request):
     posts = Post.objects.filter(user_id=21).order_by('-id')
     for post in posts:
         post_item = post_item_json(post_id=post.id, cur_user_id=request.user.id)
-        posts_list.append(post_item)
+        if post_item:
+            posts_list.append(post_item)
     return render(request, 'pin2/emails/newsletter.html', {
         'posts': posts_list,
         'page': 'newsletter'

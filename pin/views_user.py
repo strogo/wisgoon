@@ -124,12 +124,11 @@ def follow(request, following, action):
 def like(request, item_id):
     import redis
 
-    try:
-        post = post_item_json(post_id=int(item_id))
-    except Post.DoesNotExist:
+    post = post_item_json(post_id=int(item_id))
+    if not post:
         return HttpResponseRedirect('/')
 
-    if post and check_block(user_id=post['user']['id'], blocked_id=request.user.id):
+    if check_block(user_id=post['user']['id'], blocked_id=request.user.id):
         return HttpResponseRedirect('/')
 
     from models_redis import LikesRedis
@@ -524,17 +523,18 @@ def show_notify(request):
     nl = []
     for n in notif:
         anl = {}
-        try:
-            anl['ob'] = post_item_json(post_id=n.post)
-            # anl['ob'] = image['images']['original']
-            # anl['po'] = Post.objects.only('image').get(pk=n.post)
-        except Post.DoesNotExist:
+        anl['ob'] = post_item_json(post_id=n.post)
+        if not anl['ob']:
             if n.type == 4:
                 anl['po'] = n.post_image
             elif n.type == 10:
                 anl['po'] = n.last_actor
             else:
                 continue
+        # try:
+            # anl['ob'] = image['images']['original']
+            # anl['po'] = Post.objects.only('image').get(pk=n.post)
+        # except Post.DoesNotExist:
         anl['id'] = n.post
         anl['type'] = n.type
         anl['actor'] = n.last_actor
@@ -552,16 +552,17 @@ def notif_user(request):
     nl = []
     for notif in notifications:
         anl = {}
-        try:
-            anl['ob'] = post_item_json(post_id=notif.post)
-            # anl['po'] = Post.objects.only('image').get(pk=notif.post)
-        except Post.DoesNotExist:
+        anl['ob'] = post_item_json(post_id=notif.post)
+        if not anl['ob']:
             if notif.type == 4:
                 anl['po'] = notif.post_image
             elif notif.type == 10:
                 anl['po'] = notif.last_actor
             else:
                 continue
+        # try:
+            # anl['po'] = Post.objects.only('image').get(pk=notif.post)
+        # except Post.DoesNotExist:
         anl['id'] = notif.post
         anl['type'] = notif.type
         anl['actor'] = notif.last_actor
@@ -598,16 +599,17 @@ def notif_all(request):
     idis = []
     for n in notif:
         anl = {}
-        try:
-            image = post_item_json(post_id=notif.post, fields=['images'])
+        image = post_item_json(post_id=notif.post, fields=['images'])
+        if image:
             po = anl['po'] = image['images']['original']
-            # po = anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
             if po not in idis:
                 idis.append(po)
             else:
                 continue
-        except Post.DoesNotExist:
-            continue
+        # try:
+            # po = anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
+        # except Post.DoesNotExist:
+            # continue
         anl['id'] = n.post
         anl['type'] = n.type
         anl['actors'] = n.last_actors
