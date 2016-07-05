@@ -413,8 +413,6 @@ def related_post(request, item_id):
             for post_id in post_ids:
                 if post.id != post_id:
                     mltis.append(post_id)
-        if mltis:
-            cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
 
     data['objects'] = get_objects_list(mltis, current_user)
     data['meta']['next'] = get_next_url(url_name='api-6-post-related',
