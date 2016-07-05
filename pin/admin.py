@@ -9,7 +9,7 @@ from user_profile.models import Profile, CreditLog
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
-    Results, Storages, Lable, UserActivitiesSample, UserLable, UserActivities
+    Results, Storages, Lable, UserActivitiesSample, UserLable, UserActivities, Campaign
 from pin.actions import send_notif
 from pin.tools import revalidate_bazaar
 
@@ -370,6 +370,24 @@ class UserActivitiesAdmin(admin.ModelAdmin):
     def user(self, obj):
         return obj.user.username
 
+
+class WinnersInline(admin.TabularInline):
+    model = Campaign.winners.through
+    raw_id_fields = ('user',)
+    extra = 1
+
+
+class CampaignAdmin(admin.ModelAdmin):
+    inlines = [
+        WinnersInline,
+    ]
+    model = Campaign
+    search_fields = ['winners']
+    raw_id_fields = ('owner',)
+    list_display = ('id', 'description', 'primary_tag', 'tags', 'is_current',
+                    'start_date', 'end_date', 'expired')
+
+
 admin.site.register(Comments, SearchCommentAdmin)
 admin.site.register(Post, PinAdmin)
 admin.site.register(Category, CategoryAdmin)
@@ -394,3 +412,4 @@ admin.site.register(Lable, LableAdmin)
 admin.site.register(UserActivitiesSample, UserActivitiesSampleAdmin)
 admin.site.register(UserLable, UserLableAdmin)
 admin.site.register(UserActivities, UserActivitiesAdmin)
+admin.site.register(Campaign, CampaignAdmin)

@@ -1800,6 +1800,28 @@ class UserLable(models.Model):
     lable = models.TextField(null=True, blank=True)
 
 
+class Campaign(models.Model):
+    description = models.TextField(null=True, blank=True)
+    primary_tag = models.CharField(blank=True, null=True, max_length=100)
+    tags = models.TextField(null=True, blank=True)
+    is_current = models.BooleanField(default=False)
+    start_date = models.DateTimeField(null=True, blank=True)
+    end_date = models.DateTimeField(null=True, blank=True)
+    expired = models.BooleanField(default=False)
+    winners = models.ManyToManyField(settings.AUTH_USER_MODEL, through="WinnersList")
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='campaign_owner')
+    notif = models.BooleanField(default=True)
+    logo = models.ImageField(default='', upload_to='pin/campaigns/')
+    award = models.TextField(null=True, blank=True)
+    help_text = models.TextField(null=True, blank=True)
+
+
+class WinnersList(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    text = models.TextField(null=True, blank=True)
+    rank = models.IntegerField(default=0)
+    campaign = models.ForeignKey(Campaign)
+
 # class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"
 

@@ -104,3 +104,13 @@ urlpatterns += patterns('pin.api6.category',
                             name='api-6-category'),
                         url(r'category/all/$', 'all_category', name='api-6-categoreis'),
                         )
+
+
+urlpatterns += patterns('pin.api6.campaign',
+                        url(r'campaign/current/$', 'current_campaign',
+                            name='api-6-campaign-current'),
+                        url(r'campaign/list/$', 'list',
+                            name='api-6-campaign-list'),
+                        url(r'campaign/posts/(?P<camp_id>\d+)/$', 'campaign_posts',
+                            name='api-6-campaign-posts'),
+                        )

@@ -455,3 +455,36 @@ def notif_simple_json(notification, user=True, post=True,
         notif_dict['text'] = notification.activities[-1].extra_context['text']
 
     return notif_dict
+
+
+def campaign_sample_json(campaign):
+    to_dict = {}
+    to_dict['description'] = campaign.description
+    to_dict['primary_tag'] = campaign.primary_tag
+    to_dict['tags'] = campaign.tags
+    to_dict['is_current'] = campaign.is_current
+    to_dict['start_date'] = str(campaign.start_date)
+    to_dict['end_date'] = str(campaign.end_date)
+    to_dict['expired'] = campaign.expired
+    to_dict['logo'] = media_abs_url(campaign.logo.url)
+    to_dict['award'] = campaign.award
+    to_dict['help'] = campaign.help_text
+    to_dict['winners'] = winners_sample_json(campaign)
+    to_dict['permalink'] = {}
+    to_dict['permalink']['posts'] = abs_url(reverse("api-6-campaign-posts",
+                                                    kwargs={"camp_id": campaign.id}))
+
+    return to_dict
+
+
+def winners_sample_json(campaign):
+    winners = campaign.winnerslist_set.all()
+    winners_lsit = []
+
+    for winner in winners:
+        to_dict = {}
+        to_dict['user'] = get_simple_user_object(winner.user.id)
+        to_dict['text'] = winner.text
+        to_dict['rank'] = winner.rank
+        winners_lsit.append(to_dict)
+    return winners_lsit
