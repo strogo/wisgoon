@@ -267,11 +267,11 @@ def hashtag(request, tag_name):
         .order_by('-timestamp_i')[offset:offset + row_per_page]
 
     for post in posts:
-        if not check_block(user_id=post.user.id, blocked_id=request.user.id):
-            post_json = post_item_json(post_id=post.pk,
-                                       cur_user_id=request.user.id)
-            if post_json:
-                posts_list.append(post_json)
+        # if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+        post_json = post_item_json(post_id=post.pk,
+                                   cur_user_id=request.user.id)
+        if post_json:
+            posts_list.append(post_json)
 
     ''' related tags query '''
     tags_facet = post_queryset.facet_counts()
