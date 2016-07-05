@@ -96,10 +96,10 @@ def search(request):
             .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
         for post in post_queryset:
-            if check_block(user_id=post.user.id, blocked_id=request.user.id):
-                ob = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
-                if ob:
-                    posts.append(ob)
+            # if check_block(user_id=post.user.id, blocked_id=request.user.id):
+            ob = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
+            if ob:
+                posts.append(ob)
     else:
         today_stamp = get_delta_timestamp(days=0)
         week_statmp = get_delta_timestamp(days=7)
