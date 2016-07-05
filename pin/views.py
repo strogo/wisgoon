@@ -156,10 +156,10 @@ def result(request, label):
 
     ps = []
     for post in posts:
-        if not check_block(user_id=post.user.id, blocked_id=request.user.id):
-            ob = post_item_json(post.pk)
-            if ob:
-                ps.append(ob)
+        # if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+        ob = post_item_json(post.pk)
+        if ob:
+            ps.append(ob)
     # ps = [post_item_json(p.pk) for p in posts]
 
     if request.is_ajax():
