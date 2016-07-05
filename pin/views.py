@@ -700,10 +700,10 @@ def popular(request, interval=""):
             .order_by('-cnt_like_i')[offset:offset + 1 * 20]
     ps = []
     for post in posts:
-        if not check_block(user_id=post.user.id, blocked_id=request.user.id):
-            post_json = post_item_json(post_id=post.pk)
-            if post_json:
-                ps.append(post_item_json(post_id=post.pk))
+        # if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+        post_json = post_item_json(post_id=post.pk)
+        if post_json:
+            ps.append(post_item_json(post_id=post.pk))
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
