@@ -977,8 +977,6 @@ def item_related(request, item_id):
                 if post_json:
                     related_posts.append(post_json)
                     mltis.append(post_id)
-        if mltis:
-            cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
 
     post.mlt = related_posts
 
