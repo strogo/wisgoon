@@ -96,10 +96,10 @@ def search(request):
             .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
         for post in post_queryset:
-            if check_block(user_id=post.user.id, blocked_id=request.user.id):
-                ob = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
-                if ob:
-                    posts.append(ob)
+            # if check_block(user_id=post.user.id, blocked_id=request.user.id):
+            ob = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
+            if ob:
+                posts.append(ob)
     else:
         today_stamp = get_delta_timestamp(days=0)
         week_statmp = get_delta_timestamp(days=7)
@@ -156,10 +156,10 @@ def result(request, label):
 
     ps = []
     for post in posts:
-        if not check_block(user_id=post.user.id, blocked_id=request.user.id):
-            ob = post_item_json(post.pk)
-            if ob:
-                ps.append(ob)
+        # if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+        ob = post_item_json(post.pk)
+        if ob:
+            ps.append(ob)
     # ps = [post_item_json(p.pk) for p in posts]
 
     if request.is_ajax():
@@ -267,11 +267,11 @@ def hashtag(request, tag_name):
         .order_by('-timestamp_i')[offset:offset + row_per_page]
 
     for post in posts:
-        if not check_block(user_id=post.user.id, blocked_id=request.user.id):
-            post_json = post_item_json(post_id=post.pk,
-                                       cur_user_id=request.user.id)
-            if post_json:
-                posts_list.append(post_json)
+        # if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+        post_json = post_item_json(post_id=post.pk,
+                                   cur_user_id=request.user.id)
+        if post_json:
+            posts_list.append(post_json)
 
     ''' related tags query '''
     tags_facet = post_queryset.facet_counts()
@@ -700,10 +700,10 @@ def popular(request, interval=""):
             .order_by('-cnt_like_i')[offset:offset + 1 * 20]
     ps = []
     for post in posts:
-        if not check_block(user_id=post.user.id, blocked_id=request.user.id):
-            post_json = post_item_json(post_id=post.pk)
-            if post_json:
-                ps.append(post_item_json(post_id=post.pk))
+        # if not check_block(user_id=post.user.id, blocked_id=request.user.id):
+        post_json = post_item_json(post_id=post.pk)
+        if post_json:
+            ps.append(post_item_json(post_id=post.pk))
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {

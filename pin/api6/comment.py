@@ -1,4 +1,3 @@
-import emoji
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
@@ -72,28 +71,32 @@ def add_comment(request, item_id):
 
 
 def delete_comment(request, comment_id):
-    token = request.GET.get('token', '')
-    if token:
-        current_user = AuthCache.id_from_token(token=token)
-        if not current_user:
-            return return_un_auth()
-    else:
-        return return_bad_request()
+    user = check_auth(request)
+    if not user:
+        return return_json_data({
+            'status': False,
+            'message': _('error in user validation')
+        })
 
     try:
         comment = Comments.objects.get(id=get_int(comment_id))
     except Comments.DoesNotExist:
         return return_not_found(status=False)
 
-    if comment.user_id == current_user or comment.object_pk.user.id == current_user:
+    if comment.user_id == user.id or comment.object_pk.user.id == user.id:
         comment_id = comment.id
         comment.delete()
-        data = {'status': True,
-                'message': _('Successfully Removed Comment'),
-                'comment_id': comment_id}
+        data = {
+            'status': True,
+            'message': _('Successfully Removed Comment'),
+            'comment_id': comment_id
+        }
     else:
-        data = {'status': False,
-                'message': _('Access Denied')}
+        data = {
+            'status': False,
+            'message': _('Access Denied')
+        }
+
     return return_json_data(data)
 
 
