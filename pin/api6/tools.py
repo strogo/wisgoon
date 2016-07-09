@@ -410,6 +410,7 @@ def comment_item_json(comment):
 def comment_objects_list(comments):
     comments_list = []
     for comment in comments:
+        print comment.id
         print comment.user
         comment_dict = comment_item_json(comment)
         comments_list.append(comment_dict)
