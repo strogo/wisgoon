@@ -396,7 +396,6 @@ def comment_item_json(comment):
     comment_dict['id'] = comment.id
     comment_dict['comment'] = emoji.emojize(comment.comment)
     comment_dict['user'] = get_simple_user_object(comment.user.id)
-    print get_simple_user_object(comment.user.id), " |||| ", comment.user
 
     # TODO for stable
 
