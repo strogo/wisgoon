@@ -1,5 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
+from django.http import UnreadablePostError
 
 from pin.tools import AuthCache
 from pin.models import Comments, Post
@@ -43,7 +44,11 @@ def add_comment(request, item_id):
     except Post.DoesNotExist:
         return return_not_found(status=False)
 
-    text = request.POST.get('comment', False)
+    try:
+        text = request.POST.get('comment', False)
+    except UnreadablePostError:
+        return return_bad_request()
+
     if not text:
         return return_json_data({
             'status': False,
