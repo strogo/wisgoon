@@ -34,7 +34,7 @@ from pin.tools import AuthCache, get_user_ip, get_new_access_token,\
 from pin.models import Post, Category, Likes, Follow, Comments, Block,\
     Packages, Ad, Bills2, PhoneData, BannedImei
 from pin.model_mongo import Notif, UserLocation
-from pin.models_redis import NotificationRedis
+from pin.models_redis import NotificationRedis, PostView
 from pin.cacheLayer import UserDataCache, CategoryDataCache
 from pin.api6.tools import post_item_json
 
@@ -147,6 +147,7 @@ def get_objects_list(posts, cur_user_id, thumb_size, r=None):
             continue
         o = {}
         o['id'] = p.id
+        PostView(post_id=int(p.id)).inc_view()
         o['text'] = p.text
         o['cnt_comment'] = 0 if p.cnt_comment == -1 else p.cnt_comment
         o['image'] = p.image
