@@ -354,14 +354,37 @@ def send(request):
         try:
             post_values = request.POST.copy()
         except UnreadablePostError:
-            msg = _("Error sending the image.")
-            messages.add_message(request, messages.WARNING, msg)
-            return HttpResponseRedirect('/')
+            if request.is_ajax():
+                status = False
+                next_url = reverse('pin-home')
+                data = {
+                    "location": next_url,
+                    "status": status
+                }
+                return HttpResponse(json.dumps(data), content_type="application/json")
+            else:
+                msg = _("Error sending the image.")
+                messages.add_message(request, messages.WARNING, msg)
+                return HttpResponseRedirect('/')
 
         data_url_pattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
         image_data_post = post_values['image']
-        image_data = data_url_pattern.match(image_data_post).group(2)
-        image_type = data_url_pattern.match(image_data_post).group(1)
+        if image_data_post:
+            image_data = data_url_pattern.match(image_data_post).group(2)
+            image_type = data_url_pattern.match(image_data_post).group(1)
+        else:
+            if request.is_ajax():
+                status = False
+                next_url = reverse('pin-home')
+                data = {
+                    "location": next_url,
+                    "status": status
+                }
+                return HttpResponse(json.dumps(data), content_type="application/json")
+            else:
+                msg = _("Error sending the image.")
+                messages.add_message(request, messages.WARNING, msg)
+                return HttpResponseRedirect('/')
 
         if not image_data or len(image_data) == 0:
             pass
