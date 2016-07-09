@@ -393,27 +393,30 @@ def get_comments(post_id, limit, before):
 def comment_item_json(comment):
 
     comment_dict = {}
+    try:
+        comment_dict['user'] = get_simple_user_object(comment.user.id)
+    except:
+        return comment_dict
+
     comment_dict['id'] = comment.id
     comment_dict['comment'] = emoji.emojize(comment.comment)
-    comment_dict['user'] = get_simple_user_object(comment.user.id)
 
     # TODO for stable
-
     try:
         d = localtime(comment.submit_date)
         comment_dict['date'] = int(d.strftime("%s"))
     except ValueError:
         comment_dict['date'] = int(comment.submit_date.strftime("%s"))
+
     return comment_dict
 
 
 def comment_objects_list(comments):
     comments_list = []
     for comment in comments:
-        print comment.id, "comment id"
-        print comment.user
         comment_dict = comment_item_json(comment)
-        comments_list.append(comment_dict)
+        if comment_dict:
+            comments_list.append(comment_dict)
     return comments_list
 
 
