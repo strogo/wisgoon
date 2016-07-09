@@ -559,15 +559,18 @@ def password_change(request):
 def get_phone_data(request):
     if request.method != "POST":
         return return_bad_request()
-    os = request.POST.get("os", "")
-    app_version = request.POST.get("app_version", "")
-    google_token = request.POST.get("google_token", "")
-    token = request.POST.get("user_wisgoon_token", None)
-    imei = request.POST.get("imei", "")
-    android_version = request.POST.get("android_version", "")
-    phone_serial = request.POST.get("phone_serial", "")
-    phone_model = request.POST.get("phone_model", "")\
-        .encode('ascii', 'ignore').decode('ascii')
+    try:
+        os = request.POST.get("os", "")
+        app_version = request.POST.get("app_version", "")
+        google_token = request.POST.get("google_token", "")
+        token = request.POST.get("user_wisgoon_token", None)
+        imei = request.POST.get("imei", "")
+        android_version = request.POST.get("android_version", "")
+        phone_serial = request.POST.get("phone_serial", "")
+        phone_model = request.POST.get("phone_model", "")\
+            .encode('ascii', 'ignore').decode('ascii')
+    except UnreadablePostError:
+        return return_bad_request()
 
     if not token:
         return return_un_auth()
