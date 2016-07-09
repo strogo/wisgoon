@@ -54,8 +54,11 @@ def like(request):
     if request.method != "POST":
         return HttpResponseBadRequest(_('error in entered parameters'),
                                       content_type="application/json")
-
-    post_id = int(request.POST.get('post_id', None))
+    try:
+        post_id = int(request.POST.get('post_id', None))
+    except UnreadablePostError:
+        return HttpResponseBadRequest(_('There is no post id'),
+                                      content_type="application/json")
     if not post_id:
         return HttpResponseBadRequest(_('There is no post id'),
                                       content_type="application/json")
