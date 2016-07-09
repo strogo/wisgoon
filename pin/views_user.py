@@ -170,7 +170,7 @@ def report(request, pin_id):
         Report.objects.get(user=request.user, post_id=post.id)
         created = False
     except Report.DoesNotExist:
-        Report.objects.create(user=request.user, post=post.id)
+        Report.objects.create(user=request.user, post_id=post.id)
         created = True
 
     if created:
