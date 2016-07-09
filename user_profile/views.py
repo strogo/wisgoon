@@ -1,7 +1,7 @@
 # Create your views here.
 
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, UnreadablePostError
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.translation import ugettext_lazy as _
@@ -17,15 +17,16 @@ from tastypie.models import ApiKey
 def change(request):
     profile, create = Profile.objects.get_or_create(user=request.user)
     if request.method == "POST":
-        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        try:
+            form = ProfileForm(request.POST, request.FILES, instance=profile)
+        except UnreadablePostError:
+            return HttpResponse(_('Error sending the image.'))
+
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/pin/user/%d' % request.user.id)
     else:
         form = ProfileForm(instance=profile)
-        for f in form:
-            print f.name
-
         if request.is_ajax():
             return render(request, '__change.html', {'form': form})
     return render(request, 'change.html', {'form': form})
@@ -48,7 +49,11 @@ def d_change(request):
     if request.method == "POST":
         if not user.is_active:
             return HttpResponse(_('user is inactive'))
-        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        try:
+            form = ProfileForm(request.POST, request.FILES, instance=profile)
+        except UnreadablePostError:
+            return HttpResponse(_('Error sending the image.'))
+
         if form.is_valid():
             form.save()
             return HttpResponse(_('profile has saved'))
