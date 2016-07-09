@@ -7,7 +7,7 @@ try:
     import simplejson as json
 except ImportError:
     import json
-
+from django.http import UnreadablePostError
 from django.conf import settings
 from django.contrib.auth import authenticate, login as auth_login,\
     logout as auth_logout
@@ -388,7 +388,11 @@ def update_profile(request):
 
     profile, create = Profile.objects.get_or_create(user=current_user)
 
-    form = ProfileForm2(request.POST, request.FILES, instance=profile)
+    try:
+        form = ProfileForm2(request.POST, request.FILES, instance=profile)
+    except UnreadablePostError:
+        return return_bad_request()
+
     if form.is_valid():
         form.save()
         update_follower_following(profile, current_user)
