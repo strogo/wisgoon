@@ -259,6 +259,7 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
         pi['user'] = get_simple_user_object(post.user_id)
 
         pi['last_likers'] = get_last_likers(post_id=post.id)
+        print post.id, "post_id"
         pi['last_comments'] = get_last_comments(post_id=post.id)
 
         pi['url'] = post.url
