@@ -351,12 +351,8 @@ def send(request):
     filename = None
     status = False
     if request.method == "POST":
-        try:
-            post_values = request.POST.copy()
-        except UnreadablePostError:
-            msg = _("Error sending the image.")
-            messages.add_message(request, messages.WARNING, msg)
-            return HttpResponseRedirect('/')
+
+        post_values = request.POST.copy()
 
         data_url_pattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
         image_data_post = post_values['image']
