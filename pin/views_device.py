@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponse, HttpResponseForbidden,\
-    HttpResponseBadRequest, HttpResponseNotFound
+    HttpResponseBadRequest, HttpResponseNotFound, UnreadablePostError
 
 from tastypie.models import ApiKey
 
@@ -85,8 +85,11 @@ def post_comment(request):
     if not user:
         return HttpResponseForbidden(_('error in user validation'),
                                      content_type="application/json")
+    try:
+        data = request.POST.copy()
+    except UnreadablePostError:
+        return HttpResponse(0, content_type="application/json")
 
-    data = request.POST.copy()
     comment = data.get('comment')
     object_pk = data.get("object_pk")
     if not data or not comment or not object_pk:
