@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
+from django.http import UnreadablePostError
 
 from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
     return_bad_request
@@ -40,8 +41,13 @@ def like_post(request, item_id):
 
 @csrf_exempt
 def like_item(request):
-    token = request.POST.get('token', False)
-    item_id = int(request.POST.get('item_id', 0))
+
+    try:
+        token = request.POST.get('token', False)
+        item_id = int(request.POST.get('item_id', 0))
+    except UnreadablePostError:
+        return return_bad_request()
+
     if token:
         current_user = AuthCache.id_from_token(token=token)
         if not current_user:
