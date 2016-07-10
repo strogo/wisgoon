@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 import redis
 from django.conf import settings
 from django.contrib.auth.models import User
-from pin.models import UserActivities, UserActivitiesSample
+from pin.models import UserActivities, UserActivitiesSample, Category
 from datetime import datetime
 
 
@@ -10,14 +10,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
         users = User.objects.values_list('id', flat=True).all()[:1000]
-        print datetime.now()
+        categories = Category.objects.all()
+
         for user_id in users:
-            like_cat_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            keys = redis_server.keys("cnt_like:user:{}:*".format(user_id))
-            for key in keys:
-                index = int(key.split(":")[-1]) - 1
-                like_cat_list[index] = int(redis_server.get(key))
+            like_cat_list = [0 for i in range(0, len(categories))]
+            for category in categories:
+                key = "cnt_like:user:{}:{}".format(user_id, category.id)
+                try:
+                    like_cat_list[category.id - 1] = int(redis_server.get(key))
+                except:
+                    pass
 
             user_activity = UserActivities.objects.filter(user_id=user_id)
 
