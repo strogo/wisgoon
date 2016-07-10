@@ -269,8 +269,11 @@ def nop(request, item_id):
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 def send_comment(request):
     if request.method == 'POST':
-        text = request.POST.get('text', None)
-        post = int(request.POST.get('post', None))
+        try:
+            text = request.POST.get('text', None)
+            post = int(request.POST.get('post', None))
+        except UnreadablePostError:
+            return HttpResponse('There is no post and text')
 
         if text and post:
             post_json = post_item_json(post_id=post)
