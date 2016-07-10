@@ -8,24 +8,30 @@ from datetime import datetime
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        user_id = raw_input("Enter user id: ")
+        print datetime.now(), "  1"
         redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
-        users = User.objects.values_list('id', flat=True).all()
+        users = User.objects.only('id').filter(id=int(user_id))
+        print datetime.now(), "  2"
 
-        for user_id in users:
+        for user in users:
             like_cat_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            keys = redis_server.keys("cnt_like:user:{}:*".format(user_id))
+            keys = redis_server.keys("cnt_like:user:{}:*".format(user.id))
             for key in keys:
                 index = int(key.split(":")[-1]) - 1
                 like_cat_list[index] = int(redis_server.get(key))
 
-            user_activity, created = UserActivities.objects.get_or_create(user_id=user_id)
+            print datetime.now(), "  3"
+            user_activity, created = UserActivities.objects.get_or_create(user_id=user.id)
             if created:
                 user_activity.create_at = datetime.now()
             user_activity.activities = like_cat_list
             user_activity.update_at = datetime.now()
             user_activity.save()
-            print "create user {} like activity".format(user_id)
+            print datetime.now(), "  4"
+            print "create user {} like activity".format(user.id)
+        print datetime.now(), "  5"
 
         # samples = UserActivitiesSample.objects.all()
 
