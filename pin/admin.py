@@ -385,7 +385,7 @@ class CampaignAdmin(admin.ModelAdmin):
     search_fields = ['winners']
     raw_id_fields = ('owner',)
     list_display = ('id', 'description', 'primary_tag', 'tags', 'is_current',
-                    'start_date', 'end_date', 'expired')
+                    'start_date', 'end_date', 'expired', 'title')
 
 
 admin.site.register(Comments, SearchCommentAdmin)

@@ -1801,6 +1801,7 @@ class UserLable(models.Model):
 
 
 class Campaign(models.Model):
+    title = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     primary_tag = models.CharField(blank=True, null=True, max_length=100)
     tags = models.TextField(null=True, blank=True)
@@ -1821,6 +1822,11 @@ class WinnersList(models.Model):
     text = models.TextField(null=True, blank=True)
     rank = models.IntegerField(default=0)
     campaign = models.ForeignKey(Campaign)
+
+
+class SystemState(models.Model):
+    read_only = models.BooleanField(default=False)
+    registration_open = models.BooleanField(default=True)
 
 # class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"
