@@ -464,6 +464,7 @@ def notif_simple_json(notification, user=True, post=True,
 
 def campaign_sample_json(campaign):
     to_dict = {}
+    to_dict['id'] = campaign.id
     to_dict['title'] = campaign.title
     to_dict['description'] = campaign.description
     to_dict['primary_tag'] = campaign.primary_tag
