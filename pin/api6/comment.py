@@ -5,7 +5,7 @@ from django.http import UnreadablePostError
 from pin.tools import AuthCache
 from pin.models import Comments, Post
 from pin.api6.tools import get_int, get_next_url,\
-    get_comments, comment_objects_list, comment_item_json, system_read_only
+    get_comments, comment_objects_list, comment_item_json, is_system_writable
 from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
     return_bad_request
 from pin.tools import check_block, get_post_user_cache
@@ -31,7 +31,7 @@ def comment_post(request, item_id):
 
 @csrf_exempt
 def add_comment(request, item_id):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -83,7 +83,7 @@ def add_comment(request, item_id):
 
 
 def delete_comment(request, comment_id):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -121,7 +121,7 @@ def delete_comment(request, comment_id):
 
 @csrf_exempt
 def report(request, comment_id):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')

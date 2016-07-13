@@ -4,7 +4,7 @@
 from pin.api6.http import return_json_data
 from pin.api_tools import media_abs_url
 from pin.models import App_data
-from pin.api6.tools import system_read_only
+from pin.api6.tools import is_system_writable
 
 
 def latest(request, startup=None):
@@ -59,5 +59,5 @@ def startup_data(request):
 
     data['app_version'] = latest(request, startup=True)
     data['ads'] = ads
-    data['read_only'] = system_read_only()
+    data['read_only'] = is_system_writable()
     return return_json_data(data)

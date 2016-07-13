@@ -9,7 +9,7 @@ from pin.models import Post, Report, Category, SubCategory, ReportedPost, Report
     UserHistory
 from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
-from pin.api6.tools import (get_next_url, get_simple_user_object, system_read_only,
+from pin.api6.tools import (get_next_url, get_simple_user_object, is_system_writable,
                             post_item_json)
 from pin.views2.dashboard.api.tools import get_profile_data, get_post_reporers, user_imei_detial
 from pin.views2.dashboard.api.tools import (ads_group_by,
@@ -46,7 +46,7 @@ def new_report(request):
                  'total_count': ReportedPost.objects.filter().count()},
         'objects': []
     }
-    if system_read_only():
+    if is_system_writable() is False:
         return return_json_data(data)
     before = int(request.GET.get('before', 0))
 
@@ -343,7 +343,7 @@ def post_of_sub_category(request):
 
 @csrf_exempt
 def delete_post(request):
-    if system_read_only():
+    if is_system_writable() is False:
         return return_json_data({"status": False})
 
     if not check_admin(request):
@@ -355,7 +355,7 @@ def delete_post(request):
 
 @csrf_exempt
 def post_undo(request):
-    if system_read_only():
+    if is_system_writable() is False:
         return return_json_data({"status": False})
 
     if not check_admin(request):
@@ -367,7 +367,7 @@ def post_undo(request):
 
 @csrf_exempt
 def post_undo_new(request):
-    if system_read_only():
+    if is_system_writable() is False:
         return return_json_data({"status": False, "message": _("Website update in progress.")})
 
     if not check_admin(request):
@@ -399,7 +399,7 @@ def post_undo_new(request):
 
 @csrf_exempt
 def delete_post_new(request):
-    if system_read_only():
+    if is_system_writable() is False:
         return return_json_data({"status": False, "message": _("Website update in progress.")})
 
     if not check_admin(request):

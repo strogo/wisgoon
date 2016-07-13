@@ -3,8 +3,11 @@ from pin.api6.tools import campaign_sample_json
 from pin.api6.http import return_json_data, return_not_found
 # from pin.tools import AuthCache
 from pin.api6.tools import post_item_json, get_next_url
-from haystack.query import SearchQuerySet
 from pin.tools import AuthCache
+
+from haystack.query import SearchQuerySet
+from haystack.query import SQ
+from haystack.query import Raw
 
 
 def current_campaign(request, startup=None):
@@ -80,4 +83,25 @@ def campaign_posts(request, camp_id):
                                         before=before + 20,
                                         url_args={"camp_id": camp_id}
                                         )
+    return return_json_data(data)
+
+
+def search(request):
+    query = request.GET.get('q', '')
+    data = {}
+    data['meta'] = {'limit': 20, 'next': ""}
+    data['objects'] = []
+    words = query.split()
+    sq = SQ()
+    for w in words:
+        sq.add(SQ(text__contains=Raw("%s*" % w)), SQ.OR)
+        sq.add(SQ(text__contains=Raw(w)), SQ.OR)
+
+    results = SearchQuerySet().models(Campaign).filter(sq)
+
+    for result in results:
+        print result.object
+        campaign = result.object.id
+        data['objects'].append(campaign_sample_json(campaign))
+
     return return_json_data(data)

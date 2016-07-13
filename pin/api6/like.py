@@ -4,14 +4,14 @@ from django.utils.translation import ugettext as _
 
 from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
     return_bad_request
-from pin.api6.tools import get_int, get_simple_user_object, get_next_url, system_read_only
+from pin.api6.tools import get_int, get_simple_user_object, get_next_url, is_system_writable
 from pin.models import Post
 from pin.models_redis import LikesRedis
 from pin.tools import AuthCache, get_post_user_cache
 
 
 def like_post(request, item_id):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -49,7 +49,7 @@ def like_post(request, item_id):
 
 @csrf_exempt
 def like_item(request):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')

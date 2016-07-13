@@ -13,10 +13,11 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
-    get_list_post, get_objects_list, ad_item_json, system_read_only
+    get_list_post, get_objects_list, ad_item_json, is_system_writable
 from pin.models import Post, Report, Ad, Block, ReportedPost
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
+from django.http import UnreadablePostError
 
 
 GLOBAL_LIMIT = 10
@@ -226,7 +227,7 @@ def item(request, item_id):
 
 
 def report(request, item_id):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -270,7 +271,7 @@ def report(request, item_id):
 
 @csrf_exempt
 def edit(request, item_id):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -278,6 +279,7 @@ def edit(request, item_id):
         return return_json_data(data)
 
     from pin.forms import PinUpdateForm
+
     # Get User From Token
     token = request.GET.get('token', False)
     if token:
@@ -295,8 +297,10 @@ def edit(request, item_id):
 
     # Check User and Update Post
     if current_user.is_superuser or post.user.id == current_user.id:
-
-        form = PinUpdateForm(request.POST.copy(), instance=post)
+        try:
+            form = PinUpdateForm(request.POST.copy(), instance=post)
+        except UnreadablePostError:
+            return return_bad_request()
         if form.is_valid():
             form.save()
         else:
@@ -324,7 +328,7 @@ def edit(request, item_id):
 
 @csrf_exempt
 def send(request):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -525,7 +529,7 @@ def hashtag(request, tag_name):
 
 @csrf_exempt
 def delete(request, item_id):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -587,7 +591,7 @@ def promotion_prices(request):
 
 @csrf_exempt
 def post_promote(request, post_id):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')

@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 
 from user_profile.forms import ProfileForm
 from user_profile.models import Profile
-from pin.api6.tools import system_read_only
+from pin.api6.tools import is_system_writable
 
 from tastypie.models import ApiKey
 
@@ -18,7 +18,7 @@ from tastypie.models import ApiKey
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 @login_required
 def change(request):
-    if system_read_only():
+    if is_system_writable() is False:
         msg = _("Website update in progress.")
         if request.is_ajax():
             return HttpResponse(msg)
@@ -45,7 +45,7 @@ def change(request):
 
 @csrf_exempt
 def d_change(request):
-    if system_read_only():
+    if is_system_writable() is False:
         return HttpResponse(_('Website update in progress.'))
 
     token = request.GET.get('token', '')

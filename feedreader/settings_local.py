@@ -147,7 +147,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'pin.context_processors.global_values',
     'pin.context_processors.static_version',
     'pin.context_processors.static_cdn',
-    'pin.context_processors.system_read_only',
+    'pin.context_processors.is_system_writable',
 ]
 
 INSTALLED_APPS = [

@@ -389,7 +389,7 @@ class CampaignAdmin(admin.ModelAdmin):
 
 
 class SystemStateAdmin(admin.ModelAdmin):
-    list_display = ('id', 'read_only')
+    list_display = ('id', 'writable')
 
 
 admin.site.register(SystemState, SystemStateAdmin)

@@ -36,7 +36,7 @@ from pin.models import Post, Category, Likes, Follow, Comments, Block,\
 from pin.model_mongo import Notif, UserLocation
 from pin.models_redis import NotificationRedis, PostView
 from pin.cacheLayer import UserDataCache, CategoryDataCache
-from pin.api6.tools import post_item_json, system_read_only
+from pin.api6.tools import post_item_json, is_system_writable
 
 from haystack.query import SearchQuerySet
 
@@ -346,7 +346,7 @@ def post(request):
                     'total_count': 1000}
     data['objects'] = []
 
-    if system_read_only():
+    if is_system_writable() is False:
         json_data = json.dumps(data, cls=MyEncoder)
         return HttpResponse(json_data, content_type="application/json")
 
@@ -499,7 +499,7 @@ def post2(request):
                     'total_count': 1000}
     data['objects'] = []
 
-    if system_read_only():
+    if is_system_writable() is False:
         json_data = json.dumps(data, cls=MyEncoder)
         return HttpResponse(json_data, content_type="application/json")
 
@@ -707,7 +707,7 @@ def likes(request):
                     'total_count': 1000}
     data['objects'] = []
 
-    if system_read_only():
+    if is_system_writable() is False:
         json_data = json.dumps(data, cls=MyEncoder)
         return HttpResponse(json_data, content_type="application/json")
 
@@ -1277,7 +1277,7 @@ def password_reset(request, is_admin_site=False,
 
 @csrf_exempt
 def change_password(request):
-    if system_read_only():
+    if is_system_writable() is False:
         return HttpResponse('error in change password')
 
     token = request.GET.get('token', '')
@@ -1303,7 +1303,7 @@ def change_password(request):
 
 
 def comment_delete(request, id):
-    if system_read_only():
+    if is_system_writable() is False:
         return HttpResponse('1')
 
     user = None
@@ -1337,7 +1337,7 @@ def comment_delete(request, id):
 
 
 def block_user(request, user_id):
-    if system_read_only():
+    if is_system_writable() is False:
         return HttpResponse('1')
 
     user = None
@@ -1353,7 +1353,7 @@ def block_user(request, user_id):
 
 
 def unblock_user(request, user_id):
-    if system_read_only():
+    if is_system_writable() is False:
         return HttpResponse('1')
 
     user = None
@@ -1474,7 +1474,7 @@ def user_credit(request):
 
 
 def inc_credit(request):
-    if system_read_only():
+    if is_system_writable() is False:
         return HttpResponse("failed", content_type="text/html")
 
     user = None
@@ -1563,7 +1563,7 @@ def inc_credit(request):
 
 @csrf_exempt
 def save_as_ads(request, post_id):
-    if system_read_only():
+    if is_system_writable() is False:
         return HttpResponseForbidden("error in data")
 
     try:
@@ -1664,7 +1664,7 @@ def promoted(request):
 
 
 def get_phone_data(request):
-    if system_read_only():
+    if is_system_writable() is False:
         return HttpResponse("not only :D", content_type="text/html")
 
     os = request.GET.get("os", "")
@@ -1723,7 +1723,7 @@ def get_phone_data(request):
 
 
 def get_plus_data(request):
-    if system_read_only():
+    if is_system_writable() is False:
         return HttpResponse("accepted", content_type="text/html")
 
     token = request.GET.get("token", None)
@@ -1744,7 +1744,7 @@ def get_plus_data(request):
 
 
 def logout(request):
-    if system_read_only():
+    if is_system_writable() is False:
         return HttpResponse("logged out", content_type="text/html")
 
     token = request.GET.get("token", None)

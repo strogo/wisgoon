@@ -18,9 +18,7 @@
 	</div>
 
 	<div class="form_box">
-	{% if READ_ONLY %}
-		{% trans "Website update in progress" %}			
-	{% else %}
+	{% if WRITABLE %}
 		<form method="post" class="form">
 			{% csrf_token %}
 			{% for f in form %}
@@ -45,6 +43,8 @@
 				<input type="submit" value='{%trans "sign up"%}' class="wis_btn orange mato50 mabo50 w50">
 			</div>
 		</form>
+	{% else %}
+		{% trans "Website update in progress" %}			
 	{% endif %}
 	</div>
 

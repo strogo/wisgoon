@@ -84,13 +84,13 @@ def global_values(request):
     }
 
 
-def system_read_only(request):
+def is_system_writable(request):
     state = cache.get(SystemState.CACHE_NAME)
     if state is None:
         try:
             sys_state = SystemState.objects.get(id=1)
-            state = sys_state.read_only
+            state = sys_state.writable
         except SystemState.DoesNotExist:
-            sys_state = SystemState.objects.create(read_only=False)
-            state = sys_state.read_only
-    return {'READ_ONLY': state}
+            sys_state = SystemState.objects.create(writable=True)
+            state = sys_state.writable
+    return {'WRITABLE': state}

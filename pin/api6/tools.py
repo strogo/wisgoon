@@ -498,13 +498,13 @@ def winners_sample_json(campaign):
     return winners_lsit
 
 
-def system_read_only():
+def is_system_writable():
     state = cache.get(SystemState.CACHE_NAME)
     if state is None:
         try:
             sys_state = SystemState.objects.get(id=1)
-            state = sys_state.read_only
+            state = sys_state.writable
         except SystemState.DoesNotExist:
-            sys_state = SystemState.objects.create(read_only=False)
-            state = sys_state.read_only
-    return state
+            sys_state = SystemState.objects.create(writable=True)
+            state = sys_state.writable
+    return bool(state)

@@ -47,9 +47,20 @@ def activate_user(request, user_id, status):
         raise Http404(_('User does not exist.'))
 
     # TODO samte ui moshkel dare
-    from pin.api6.tools import system_read_only
+    from pin.api6.tools import is_system_writable
 
-    if system_read_only():
+    if is_system_writable():
+        status = bool(int(status))
+        user.is_active = status
+        user.save()
+        if not status:
+            q = request.GET.get("q", "")
+            Log.ban_by_admin(actor=request.user,
+                             user_id=user_id,
+                             text="%s || %s" % (user.username, q),
+                             ip_address=get_user_ip(request))
+        return HttpResponseRedirect(reverse('pin-user', args=[user_id]))
+    else:
         msg = _("Website update in progress.")
         if request.is_ajax():
             data = {'status': False, 'message': msg}
@@ -58,26 +69,27 @@ def activate_user(request, user_id, status):
             messages.error(request, msg)
             return HttpResponseRedirect(reverse('pin-user', args=[user_id]))
 
-    status = bool(int(status))
-    user.is_active = status
-    user.save()
-    if not status:
-        q = request.GET.get("q", "")
-        Log.ban_by_admin(actor=request.user,
-                         user_id=user_id,
-                         text="%s || %s" % (user.username, q),
-                         ip_address=get_user_ip(request))
-    return HttpResponseRedirect(reverse('pin-user', args=[user_id]))
-
 
 @login_required
 def goto_index(request, item_id, status):
-    from pin.api6.tools import system_read_only
+    from pin.api6.tools import is_system_writable
 
     if not request.user.is_superuser:
         return HttpResponseRedirect('/')
 
-    if system_read_only():
+    if is_system_writable():
+        status = int(status)
+        if status == 1:
+            Post.add_to_home(post_id=item_id)
+        else:
+            Post.remove_from_home(post_id=item_id)
+        data = [{
+            'status': status,
+            'url': reverse('pin-item-goto-index', args=[item_id, int(not(status))])
+        }]
+
+        return HttpResponse(json.dumps(data))
+    else:
         msg = _("Website update in progress.")
         if request.is_ajax():
             data = {'status': False,
@@ -87,18 +99,6 @@ def goto_index(request, item_id, status):
             messages.error(request, msg)
             return HttpResponseRedirect('/')
 
-    status = int(status)
-    if status == 1:
-        Post.add_to_home(post_id=item_id)
-    else:
-        Post.remove_from_home(post_id=item_id)
-    data = [{
-        'status': status,
-        'url': reverse('pin-item-goto-index', args=[item_id, int(not(status))])
-    }]
-
-    return HttpResponse(json.dumps(data))
-
 
 @login_required
 def comment_delete(request, id):
@@ -106,8 +106,19 @@ def comment_delete(request, id):
     post_id = comment.object_pk.id
 
     # TODO samte ui moshkel dare
-    from pin.api6.tools import system_read_only
-    if system_read_only():
+    from pin.api6.tools import is_system_writable
+    if is_system_writable():
+        if not request.user.is_superuser:
+            if comment.user.id != request.user.id:
+                if comment.object_pk.user.id != request.user.id:
+                    return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
+
+        comment.delete()
+        if request.is_ajax():
+            data = {'status': True, 'message': _("Comment removed")}
+            return HttpResponse(json.dumps(data), content_type="application/json")
+        return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
+    else:
         msg = _("Website update in progress.")
         if request.is_ajax():
             data = {'status': False, 'message': msg}
@@ -115,14 +126,3 @@ def comment_delete(request, id):
         else:
             messages.error(request, msg)
             return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
-
-    if not request.user.is_superuser:
-        if comment.user.id != request.user.id:
-            if comment.object_pk.user.id != request.user.id:
-                return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
-
-    comment.delete()
-    if request.is_ajax():
-        data = {'status': True, 'message': _("Comment removed")}
-        return HttpResponse(json.dumps(data), content_type="application/json")
-    return HttpResponseRedirect(reverse('pin-item', args=[post_id]))

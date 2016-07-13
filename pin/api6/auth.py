@@ -22,7 +22,7 @@ from pin.tools import AuthCache, get_new_access_token2
 from pin.api6.http import return_bad_request, return_json_data, return_un_auth,\
     return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object, get_int, get_profile_data,\
-    update_follower_following, post_item_json, system_read_only
+    update_follower_following, post_item_json, is_system_writable
 
 from user_profile.models import Profile
 from user_profile.forms import ProfileForm2
@@ -107,7 +107,7 @@ def following(request, user_id=1):
 
 
 def follow(request):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -145,7 +145,7 @@ def follow(request):
 
 
 def unfollow(request):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -183,16 +183,20 @@ def unfollow(request):
 
 @csrf_exempt
 def login(request):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
         }
         return return_json_data(data)
 
-    username = request.POST.get("username", '')
-    password = request.POST.get("password", 'False')
-    req_token = request.POST.get("token", '')
+    try:
+        username = request.POST.get("username", '')
+        password = request.POST.get("password", 'False')
+        req_token = request.POST.get("token", '')
+    except UnreadablePostError:
+        return return_bad_request()
+
     app_token = settings.APP_TOKEN_KEY
 
     if req_token != app_token:
@@ -237,7 +241,7 @@ def login(request):
 
 @csrf_exempt
 def register(request):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -402,7 +406,7 @@ def users_top(request):
 
 @csrf_exempt
 def update_profile(request):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -411,12 +415,6 @@ def update_profile(request):
 
     token = request.GET.get('token', False)
     status = False
-    if system_read_only():
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     if token:
         current_user = AuthCache.id_from_token(token=token)
@@ -543,7 +541,7 @@ def user_like(request, user_id):
 
 @csrf_exempt
 def password_change(request):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -602,7 +600,7 @@ def password_change(request):
 
 @csrf_exempt
 def get_phone_data(request, startup=None):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -701,7 +699,7 @@ PACKS = {
 
 @csrf_exempt
 def inc_credit(request):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -796,7 +794,7 @@ def inc_credit(request):
 @csrf_exempt
 def block_user(request, user_id):
     # TODO implement checking user_id
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -822,7 +820,7 @@ def block_user(request, user_id):
 @csrf_exempt
 def unblock_user(request, user_id):
     # TODO implement checking user_id
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -847,7 +845,7 @@ def unblock_user(request, user_id):
 
 @csrf_exempt
 def password_reset(request):
-    if system_read_only():
+    if is_system_writable() is False:
         data = {
             'status': False,
             'message': _('Website update in progress.')
@@ -874,42 +872,3 @@ def password_reset(request):
             return return_json_data(data)
 
     return return_bad_request()
-
-
-def startup_data(request):
-    from pin.api6.notification import notif_count
-    from pin.api6.campaign import current_campaign
-    from pin.api6.app import latest
-    import requests
-
-    token = request.GET.get('token', False)
-    data = {}
-    ads = {
-        "advertisement": {
-            "adad": False,
-            "agahist": True
-        }
-    }
-
-    get_phone_data(request, startup=None)
-
-    try:
-        response = requests.get('http://agahist.com/mobileAdStatus/wisgoonv6/', timeout=0.15)
-        if response.status_code == 200:
-            ads = response.json()
-    except requests.exceptions.Timeout:
-        pass
-    except requests.exceptions.ConnectionError:
-        pass
-
-    data['campaign'] = current_campaign(request, startup=True)
-
-    if token:
-        data['notif_count'] = notif_count(request, startup=True)
-    else:
-        data['notif_count'] = 0
-
-    data['app_version'] = latest(request, startup=True)
-    data['ads'] = ads
-    data['read_only'] = system_read_only()
-    return return_json_data(data)

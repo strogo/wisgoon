@@ -36,8 +36,8 @@ class PostView(object):
         PostStats(post_id=self.post_id).update(cnt_view=1)
 
     def inc_view(self):
-        from pin.api6.tools import system_read_only
-        if system_read_only() is False:
+        from pin.api6.tools import is_system_writable
+        if is_system_writable():
             try:
                 PostStats(post_id=self.post_id).update(cnt_view=1)
             except Exception, e:
@@ -73,9 +73,9 @@ class NotificationRedis(object):
         self.KEY_PREFIX_CNT = self.KEY_PREFIX_CNT.format(user_id)
 
     def set_notif(self, ntype, post, actor, seen=False, post_image=None):
-        from pin.api6.tools import system_read_only
+        from pin.api6.tools import is_system_writable
 
-        if system_read_only() is False:
+        if is_system_writable():
 
             notif_str = "{}:{}:{}:{}:{}:{}"\
                 .format(ntype, post, actor, seen, post_image, int(time.time()))
@@ -119,9 +119,9 @@ class NotificationRedis(object):
         return nobjesct
 
     def clear_notif_count(self):
-        from pin.api6.tools import system_read_only
+        from pin.api6.tools import is_system_writable
 
-        if system_read_only() is False:
+        if is_system_writable():
             notificationRedis.set(self.KEY_PREFIX_CNT, 0)
 
     def get_notif_count(self):
