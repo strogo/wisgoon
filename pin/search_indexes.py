@@ -1,7 +1,7 @@
 import re
 
 from haystack import indexes
-from pin.models import Post, Comments
+from pin.models import Post, Comments, Campaign
 from user_profile.models import Profile
 from django.contrib.auth import get_user_model
 
@@ -76,3 +76,26 @@ class ProfileIndex(indexes.SearchIndex, indexes.Indexable):
     def index_queryset(self, using=None):
         """Used when the entire index for model is updated."""
         return self.get_model().objects.all()
+
+
+class CampaignIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.CharField(document=True, use_template=True)
+    tags = indexes.MultiValueField(indexed=True, stored=True)
+
+    def get_model(self):
+        return Campaign
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return self.get_model().objects.all()
+
+    def prepare_tags(self, obj):
+        nt = []
+
+        tags = obj.tags.split(',')
+        tags.append(obj.primary_tag)
+
+        for tag in tags:
+            if tag not in nt:
+                nt.append(normalize_tags(tag))
+        return nt

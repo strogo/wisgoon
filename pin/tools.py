@@ -307,6 +307,8 @@ class AuthCache(MyCache):
             return u
         except ApiKey.DoesNotExist:
             return None
+        except User.DoesNotExist:
+            return None
 
         return None
 

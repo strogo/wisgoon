@@ -86,12 +86,11 @@ def campaign_posts(request, camp_id):
     return return_json_data(data)
 
 
-def search(request):
-    query = request.GET.get('q', '')
+def search(request, camp):
     data = {}
     data['meta'] = {'limit': 20, 'next': ""}
     data['objects'] = []
-    words = query.split()
+    words = camp.split()
     sq = SQ()
     for w in words:
         sq.add(SQ(text__contains=Raw("%s*" % w)), SQ.OR)
@@ -100,8 +99,7 @@ def search(request):
     results = SearchQuerySet().models(Campaign).filter(sq)
 
     for result in results:
-        print result.object
-        campaign = result.object.id
+        campaign = result.object
         data['objects'].append(campaign_sample_json(campaign))
 
     return return_json_data(data)

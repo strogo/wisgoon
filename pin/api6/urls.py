@@ -116,4 +116,6 @@ urlpatterns += patterns('pin.api6.campaign',
                             name='api-6-campaign-list'),
                         url(r'campaign/posts/(?P<camp_id>\d+)/$', 'campaign_posts',
                             name='api-6-campaign-posts'),
+                        url(r'campaign/search/(?P<camp>\w+)/$', 'search',
+                            name='api-6-campaign-search'),
                         )
