@@ -8,7 +8,7 @@ from pin.api6.tools import get_simple_user_object,\
     get_next_url, post_item_json
 
 
-def notif_count(request):
+def notif_count(request, startup=None):
     token = request.GET.get('token', '')
     if token:
         current_user = AuthCache.id_from_token(token=token)
@@ -16,9 +16,11 @@ def notif_count(request):
             return return_un_auth()
     else:
         return return_bad_request()
-
     notif_count = NotificationRedis(user_id=current_user).get_notif_count()
-    return return_json_data({'status': True, 'notif_count': notif_count})
+    if startup:
+        return notif_count
+    else:
+        return return_json_data({'status': True, 'notif_count': notif_count})
 
 
 def notif(request):

@@ -18,7 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 
 from pin.models import Follow, Block, Likes, BannedImei, PhoneData, Bills2
-from pin.tools import AuthCache, get_user_ip, get_new_access_token, get_new_access_token2
+from pin.tools import AuthCache, get_new_access_token2
 from pin.api6.http import return_bad_request, return_json_data, return_un_auth,\
     return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object, get_int, get_profile_data,\
@@ -601,7 +601,7 @@ def password_change(request):
 
 
 @csrf_exempt
-def get_phone_data(request):
+def get_phone_data(request, startup=None):
     if system_read_only():
         data = {
             'status': False,
@@ -670,10 +670,13 @@ def get_phone_data(request):
     upd.logged_out = False
     upd.save()
 
-    return return_json_data({
-        "status": True,
-        'message': _('accepted')
-    })
+    if startup:
+        return True
+    else:
+        return return_json_data({
+            "status": True,
+            'message': _('accepted')
+        })
 
 
 PACKS = {
@@ -871,3 +874,42 @@ def password_reset(request):
             return return_json_data(data)
 
     return return_bad_request()
+
+
+def startup_data(request):
+    from pin.api6.notification import notif_count
+    from pin.api6.campaign import current_campaign
+    from pin.api6.app import latest
+    import requests
+
+    token = request.GET.get('token', False)
+    data = {}
+    ads = {
+        "advertisement": {
+            "adad": False,
+            "agahist": True
+        }
+    }
+
+    get_phone_data(request, startup=None)
+
+    try:
+        response = requests.get('http://agahist.com/mobileAdStatus/wisgoonv6/', timeout=0.15)
+        if response.status_code == 200:
+            ads = response.json()
+    except requests.exceptions.Timeout:
+        pass
+    except requests.exceptions.ConnectionError:
+        pass
+
+    data['campaign'] = current_campaign(request, startup=True)
+
+    if token:
+        data['notif_count'] = notif_count(request, startup=True)
+    else:
+        data['notif_count'] = 0
+
+    data['app_version'] = latest(request, startup=True)
+    data['ads'] = ads
+    data['read_only'] = system_read_only()
+    return return_json_data(data)

@@ -493,7 +493,7 @@ def hashtag(request, tag_name):
     data = {}
     data['meta'] = {'limit': 20,
                     'next': "",
-                    'total_count': ''}
+                    'total_count': 0}
 
     if query:
 

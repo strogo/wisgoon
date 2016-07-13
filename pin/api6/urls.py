@@ -40,7 +40,8 @@ urlpatterns += patterns('pin.api6.post',
                         url(r'post/latest/$', 'latest', name='api-6-post-latest'),
                         url(r'post/choices/$', 'choices', name='api-6-post-choices'),
                         url(r'post/friends/$', 'friends', name='api-6-post-friends'),
-                        url(r'post/category/(?P<category_id>\d+)/$', 'category', name='api-6-post-category'),
+                        url(r'post/category/(?P<category_id>\d+)/$', 'category',
+                            name='api-6-post-category'),
                         url(r'post/item/(?P<item_id>\d+)/$', 'item',
                             name='api-6-post-item'),
                         url(r'post/search/$', 'search', name='api-6-post-search'),
@@ -79,6 +80,8 @@ urlpatterns += patterns('pin.api6.comment',
 
 urlpatterns += patterns('pin.api6.app',
                         url(r'app/latest/$', 'latest', name='api-6-app-latest'),
+                        url(r'^app/startup/data/$', 'startup_data',
+                            name="api-6-app-startup-data"),
                         )
 
 urlpatterns += patterns('pin.api6.like',
