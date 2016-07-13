@@ -5,9 +5,12 @@ from django.http import HttpResponseRedirect, HttpResponse, UnreadablePostError
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.translation import ugettext_lazy as _
+from django.contrib import messages
+from django.core.urlresolvers import reverse
 
 from user_profile.forms import ProfileForm
 from user_profile.models import Profile
+from pin.api6.tools import system_read_only
 
 from tastypie.models import ApiKey
 
@@ -15,6 +18,14 @@ from tastypie.models import ApiKey
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 @login_required
 def change(request):
+    if system_read_only():
+        msg = _("Website update in progress.")
+        if request.is_ajax():
+            return HttpResponse(msg)
+        else:
+            messages.error(request, msg)
+            return HttpResponseRedirect(reverse('pin-absuser', args=[request.user.username]))
+
     profile, create = Profile.objects.get_or_create(user=request.user)
     if request.method == "POST":
         try:
@@ -34,6 +45,9 @@ def change(request):
 
 @csrf_exempt
 def d_change(request):
+    if system_read_only():
+        return HttpResponse(_('Website update in progress.'))
+
     token = request.GET.get('token', '')
 
     if not token:

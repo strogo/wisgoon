@@ -20,6 +20,7 @@ from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect,\
     HttpResponseBadRequest, Http404, JsonResponse, UnreadablePostError
 
+
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
 from pin.models import Post, Stream, Follow, Ad, Block,\
@@ -30,7 +31,7 @@ from pin.models_redis import ActivityRedis, NotificationRedis
 import pin_image
 from pin.tools import create_filename, get_user_ip, get_request_pid,\
     check_block, post_after_delete, get_post_user_cache
-
+from pin.api6.tools import system_read_only
 from pin.tasks import porn_feedback
 from pin.api6.tools import post_item_json, notif_simple_json
 from pin.notification_models import UserNotification, MyNotificationFeed
@@ -92,6 +93,15 @@ def follow(request, following, action):
     except User.DoesNotExist:
         return HttpResponseRedirect('/')
 
+    if system_read_only():
+        msg = _("Website update in progress.")
+        if request.is_ajax():
+            data = {'status': False, 'message': msg}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        else:
+            messages.error(request, msg)
+            return HttpResponseRedirect(reverse('pin-absuser', args=[following.username]))
+
     try:
         follow, created = Follow.objects.get_or_create(follower=request.user,
                                                        following=following)
@@ -122,12 +132,21 @@ def follow(request, following, action):
 
 @login_required
 def like(request, item_id):
-    import redis
-
     post = post_item_json(post_id=int(item_id))
     if not post:
         return HttpResponseRedirect('/')
 
+    # TODO samte ui moshkel dare
+    if system_read_only():
+        msg = _("Website update in progress.")
+        if request.is_ajax():
+            data = {'status': False, 'message': msg}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        else:
+            messages.error(request, msg)
+            return HttpResponseRedirect(reverse('pin-item', args=[post['id']]))
+
+    import redis
     if check_block(user_id=post['user']['id'], blocked_id=request.user.id):
         return HttpResponseRedirect('/')
 
@@ -158,10 +177,21 @@ def like(request, item_id):
 
 @login_required
 def report(request, pin_id):
+
     try:
         post = Post.objects.only('id', 'user_id').get(id=pin_id)
     except Post.DoesNotExist:
         return HttpResponseRedirect('/')
+
+    # TODO samte ui moshkel dare
+    if system_read_only():
+        msg = _("Website update in progress.")
+        if request.is_ajax():
+            data = {'status': False, 'message': msg}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        else:
+            messages.error(request, msg)
+            return HttpResponseRedirect(reverse('pin-home'))
 
     if check_block(user_id=post.user_id, blocked_id=request.user.id):
         return HttpResponseRedirect('/')
@@ -233,6 +263,16 @@ def delete(request, item_id):
     except Post.DoesNotExist:
         return HttpResponse('0')
 
+    # TODO samte ui moshkel dare
+    if system_read_only():
+        msg = _("Website update in progress.")
+        if request.is_ajax():
+            data = {'status': False, 'message': msg}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        else:
+            messages.error(request, msg)
+            return HttpResponseRedirect(reverse('pin-home'))
+
     if request.user.is_superuser or post.user == request.user:
         post_after_delete(post=post,
                           user=request.user,
@@ -268,6 +308,7 @@ def nop(request, item_id):
 @login_required
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 def send_comment(request):
+
     if request.method == 'POST':
         try:
             text = request.POST.get('text', None)
@@ -277,6 +318,17 @@ def send_comment(request):
 
         if text and post:
             post_json = post_item_json(post_id=post)
+
+            # TODO samte ui moshkel dare
+            if post_json and system_read_only():
+                msg = _("Website update in progress.")
+                if request.is_ajax():
+                    data = {'status': False, 'message': msg}
+                    return HttpResponse(json.dumps(data), content_type='application/json')
+                else:
+                    messages.error(request, msg)
+                    return HttpResponseRedirect(reverse('pin-item', args=[post_json['id']]))
+
             if post_json and check_block(user_id=post_json['user']['id'],
                                          blocked_id=request.user.id):
                 return HttpResponseRedirect('/')
@@ -350,6 +402,16 @@ def a_sendurl(request):
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 @csrf_exempt
 def send(request):
+    # TODO samte ui moshkel dare
+    if system_read_only():
+        if request.is_ajax():
+            data = {'status': False, 'location': reverse('pin-home')}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        else:
+            msg = _("Website update in progress.")
+            messages.add_message(request, messages.WARNING, msg)
+            return HttpResponseRedirect('/')
+
     fpath = None
     filename = None
     status = False
@@ -457,28 +519,39 @@ def send(request):
 def edit(request, post_id):
     try:
         post = Post.objects.get(pk=int(post_id))
-        if not request.user.is_superuser:
-            if post.user.id != request.user.id:
-                return HttpResponseRedirect('/pin/')
-
-        if request.method == "POST":
-            post_values = request.POST.copy()
-            form = PinUpdateForm(post_values, instance=post)
-            if form.is_valid():
-                form.save()
-                if request.is_ajax():
-                    return HttpResponse(_('Successfully updated.'))
-                else:
-                    return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
-        else:
-            form = PinUpdateForm(instance=post)
-
-        if request.is_ajax():
-            return render(request, 'pin2/_edit.html', {'form': form, 'post': post})
-        else:
-            return render(request, 'pin2/edit.html', {'form': form, 'post': post})
     except Post.DoesNotExist:
         return HttpResponseRedirect('/pin/')
+
+    if not request.user.is_superuser:
+        if post.user.id != request.user.id:
+            return HttpResponseRedirect('/pin/')
+
+    # TODO samte ui moshkel dare
+    if system_read_only():
+        msg = _("Website update in progress.")
+        if request.is_ajax():
+            data = {'status': False, 'messages': msg}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        else:
+            messages.add_message(request, messages.WARNING, msg)
+            return HttpResponseRedirect('/')
+
+    if request.method == "POST":
+        post_values = request.POST.copy()
+        form = PinUpdateForm(post_values, instance=post)
+        if form.is_valid():
+            form.save()
+            if request.is_ajax():
+                return HttpResponse(_('Successfully updated.'))
+            else:
+                return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
+    else:
+        form = PinUpdateForm(instance=post)
+
+    if request.is_ajax():
+        return render(request, 'pin2/_edit.html', {'form': form, 'post': post})
+    else:
+        return render(request, 'pin2/edit.html', {'form': form, 'post': post})
 
 
 def save_upload(uploaded, filename, raw_data):
@@ -651,6 +724,11 @@ def notif_all(request):
 
 @login_required
 def inc_credit(request):
+    if system_read_only():
+        msg = _("Website update in progress.")
+        messages.error(request, msg)
+        return HttpResponseRedirect(reverse('pin-absuser', args=[request.user.username]))
+
     if request.method == "POST":
 
         amount = request.POST.get('amount', 0)
@@ -729,8 +807,16 @@ def verify_payment(request, bill_id):
 
 @login_required
 def save_as_ads(request, post_id):
+
     # p = Post.objects.get(id=post_id)
     p = post_item_json(post_id=post_id)
+
+    # TODO samte ui moshkel dare
+    if system_read_only():
+        msg = _("Website update in progress.")
+        messages.error(request, msg)
+        return HttpResponseRedirect('/')
+
     profile = request.user.profile
 
     if request.method == "POST":
@@ -766,6 +852,11 @@ def save_as_ads(request, post_id):
 
 @login_required
 def block_action(request, user_id):
+    # TODO samte ui moshkel dare
+    if system_read_only():
+        data = {'status': False, 'type': 'None', 'message': _("Website update in progress.")}
+        return HttpResponse(json.dumps(data), content_type='application/json')
+
     user = request.user
     action = request.GET.get('action', False)
 

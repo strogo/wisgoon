@@ -14,7 +14,6 @@ from khayyam import JalaliDate
 
 from pin.analytics import like_act
 from pin.models_casper import PostStats
-
 # redis set server
 rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
 # redis list server
@@ -37,12 +36,14 @@ class PostView(object):
         PostStats(post_id=self.post_id).update(cnt_view=1)
 
     def inc_view(self):
-        try:
-            PostStats(post_id=self.post_id).update(cnt_view=1)
-        except Exception, e:
-            print str(e)
-        return
-        notificationRedis.incr(self.KEY_PREFIX)
+        from pin.api6.tools import system_read_only
+        if system_read_only() is False:
+            try:
+                PostStats(post_id=self.post_id).update(cnt_view=1)
+            except Exception, e:
+                print str(e)
+            return
+            notificationRedis.incr(self.KEY_PREFIX)
 
     def get_cnt_view(self):
         try:
@@ -72,14 +73,18 @@ class NotificationRedis(object):
         self.KEY_PREFIX_CNT = self.KEY_PREFIX_CNT.format(user_id)
 
     def set_notif(self, ntype, post, actor, seen=False, post_image=None):
-        notif_str = "{}:{}:{}:{}:{}:{}"\
-            .format(ntype, post, actor, seen, post_image, int(time.time()))
+        from pin.api6.tools import system_read_only
 
-        np = notificationRedis.pipeline()
-        np.lpush(self.KEY_PREFIX, notif_str)
-        np.ltrim(self.KEY_PREFIX, 0, 1000)
-        np.incr(self.KEY_PREFIX_CNT)
-        np.execute()
+        if system_read_only() is False:
+
+            notif_str = "{}:{}:{}:{}:{}:{}"\
+                .format(ntype, post, actor, seen, post_image, int(time.time()))
+
+            np = notificationRedis.pipeline()
+            np.lpush(self.KEY_PREFIX, notif_str)
+            np.ltrim(self.KEY_PREFIX, 0, 1000)
+            np.incr(self.KEY_PREFIX_CNT)
+            np.execute()
 
     def get_notif(self, start=0, limit=20):
         end = start + limit
@@ -114,7 +119,10 @@ class NotificationRedis(object):
         return nobjesct
 
     def clear_notif_count(self):
-        notificationRedis.set(self.KEY_PREFIX_CNT, 0)
+        from pin.api6.tools import system_read_only
+
+        if system_read_only() is False:
+            notificationRedis.set(self.KEY_PREFIX_CNT, 0)
 
     def get_notif_count(self):
         cnt = notificationRedis.get(self.KEY_PREFIX_CNT)

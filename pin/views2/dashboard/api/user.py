@@ -8,7 +8,7 @@ from haystack.query import Raw
 from haystack.query import SearchQuerySet
 from haystack.query import SQ
 
-from pin.api6.tools import get_next_url, get_simple_user_object
+from pin.api6.tools import get_next_url, get_simple_user_object, system_read_only
 from pin.api6.http import return_json_data, return_un_auth, return_not_found,\
     return_bad_request
 from pin.api_tools import media_abs_url
@@ -123,6 +123,8 @@ def user_details(request, user_id):
 
 @csrf_exempt
 def change_status_user(request):
+    if system_read_only():
+        return return_bad_request(message=_("Website update in progress."))
 
     if not check_admin(request):
         return return_un_auth()
@@ -184,6 +186,9 @@ def change_status_user(request):
 
 @csrf_exempt
 def user_post_permissions(request):
+    if system_read_only():
+        return return_bad_request(message=_("Website update in progress."))
+
     if not check_admin(request):
         return return_un_auth()
 
@@ -262,6 +267,9 @@ def user_post_permissions(request):
 
 @csrf_exempt
 def user_comment_permissions(request):
+    if system_read_only():
+        return return_bad_request(message=_("Website update in progress."))
+
     if not check_admin(request):
         return return_un_auth()
 
@@ -340,6 +348,9 @@ def user_comment_permissions(request):
 
 @csrf_exempt
 def user_report_permissions(request):
+    if system_read_only():
+        return return_bad_request(message=_("Website update in progress."))
+
     if not check_admin(request):
         return return_un_auth()
 
@@ -418,6 +429,9 @@ def user_report_permissions(request):
 
 @csrf_exempt
 def banned_profile(request):
+    if system_read_only():
+        return return_bad_request(message=_("Website update in progress."))
+
     if not check_admin(request):
         return return_un_auth()
 
@@ -480,6 +494,9 @@ def banned_profile(request):
 
 @csrf_exempt
 def banned_imei(request):
+    if system_read_only():
+        return return_bad_request(message=_("Website update in progress."))
+
     if not check_admin(request):
         return return_un_auth()
 
@@ -585,6 +602,9 @@ def get_user_with_imei(request, imei):
 
 
 def delete_user_avatar(request, user_id):
+    if system_read_only():
+        return return_bad_request(message=_("Website update in progress."))
+
     if not check_admin(request):
         return return_un_auth()
     try:

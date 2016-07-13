@@ -1825,8 +1825,13 @@ class WinnersList(models.Model):
 
 
 class SystemState(models.Model):
+    CACHE_NAME = 'system_state:read_only'
+    CACHE_TTL = 86400 * 30
     read_only = models.BooleanField(default=False)
-    registration_open = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        super(SystemState, self).save(*args, **kwargs)
+        cache.set(self.CACHE_NAME, self.read_only, self.CACHE_TTL)
 
 # class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"

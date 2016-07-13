@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
-    get_list_post, get_objects_list, ad_item_json
+    get_list_post, get_objects_list, ad_item_json, system_read_only
 from pin.models import Post, Report, Ad, Block, ReportedPost
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
@@ -23,6 +23,7 @@ GLOBAL_LIMIT = 10
 
 
 def latest(request):
+
     cur_user = None
     last_item = None
     hot_post = None
@@ -225,6 +226,13 @@ def item(request, item_id):
 
 
 def report(request, item_id):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
     token = request.GET.get('token', False)
     if token:
         current_user = AuthCache.id_from_token(token=token)
@@ -262,8 +270,14 @@ def report(request, item_id):
 
 @csrf_exempt
 def edit(request, item_id):
-    from pin.forms import PinUpdateForm
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
 
+    from pin.forms import PinUpdateForm
     # Get User From Token
     token = request.GET.get('token', False)
     if token:
@@ -310,6 +324,12 @@ def edit(request, item_id):
 
 @csrf_exempt
 def send(request):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
     # Get User From Token
     token = request.GET.get('token', False)
     if token:
@@ -505,6 +525,13 @@ def hashtag(request, tag_name):
 
 @csrf_exempt
 def delete(request, item_id):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
     """Delete post."""
     # Get User From Token
     token = request.GET.get('token', False)
@@ -560,6 +587,13 @@ def promotion_prices(request):
 
 @csrf_exempt
 def post_promote(request, post_id):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
     try:
         Post.objects.get(id=int(post_id))
     except Exception, Post.DoesNotExist:

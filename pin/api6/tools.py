@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from django.utils.timezone import localtime
+from django.core.cache import cache
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
@@ -15,7 +16,7 @@ from pin.api_tools import abs_url, media_abs_url
 from pin.api6.http import return_bad_request
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
-from pin.models import Post, Follow, Comments, Block, Category
+from pin.models import Post, Follow, Comments, Block, Category, SystemState
 from pin.models_redis import LikesRedis, PostView
 from pin.tools import create_filename
 
@@ -470,8 +471,8 @@ def campaign_sample_json(campaign):
     to_dict['primary_tag'] = campaign.primary_tag
     to_dict['tags'] = campaign.tags
     to_dict['is_current'] = campaign.is_current
-    to_dict['start_date'] = campaign.start_date.strftime("%s")
-    to_dict['end_date'] = campaign.end_date.strftime("%s")
+    to_dict['start_date'] = int(campaign.start_date.strftime("%s"))
+    to_dict['end_date'] = int(campaign.end_date.strftime("%s"))
     to_dict['expired'] = campaign.expired
     to_dict['logo'] = media_abs_url(campaign.logo.url)
     to_dict['award'] = campaign.award
@@ -495,3 +496,15 @@ def winners_sample_json(campaign):
         to_dict['rank'] = winner.rank
         winners_lsit.append(to_dict)
     return winners_lsit
+
+
+def system_read_only():
+    state = cache.get(SystemState.CACHE_NAME)
+    if state is None:
+        try:
+            sys_state = SystemState.objects.get(id=1)
+            state = sys_state.read_only
+        except SystemState.DoesNotExist:
+            sys_state = SystemState.objects.create(read_only=False)
+            state = sys_state.read_only
+    return state

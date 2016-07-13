@@ -9,7 +9,7 @@ from user_profile.models import Profile, CreditLog
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
-    Results, Storages, Lable, UserActivitiesSample, UserLable, UserActivities, Campaign
+    Results, Storages, Lable, UserActivitiesSample, UserLable, UserActivities, Campaign, SystemState
 from pin.actions import send_notif
 from pin.tools import revalidate_bazaar
 
@@ -388,6 +388,11 @@ class CampaignAdmin(admin.ModelAdmin):
                     'start_date', 'end_date', 'expired', 'title')
 
 
+class SystemStateAdmin(admin.ModelAdmin):
+    list_display = ('id', 'read_only')
+
+
+admin.site.register(SystemState, SystemStateAdmin)
 admin.site.register(Comments, SearchCommentAdmin)
 admin.site.register(Post, PinAdmin)
 admin.site.register(Category, CategoryAdmin)

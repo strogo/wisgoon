@@ -36,7 +36,7 @@ from pin.models import Post, Category, Likes, Follow, Comments, Block,\
 from pin.model_mongo import Notif, UserLocation
 from pin.models_redis import NotificationRedis, PostView
 from pin.cacheLayer import UserDataCache, CategoryDataCache
-from pin.api6.tools import post_item_json
+from pin.api6.tools import post_item_json, system_read_only
 
 from haystack.query import SearchQuerySet
 
@@ -344,6 +344,11 @@ def post(request):
                     'offset': 0,
                     'previous': '',
                     'total_count': 1000}
+    data['objects'] = []
+
+    if system_read_only():
+        json_data = json.dumps(data, cls=MyEncoder)
+        return HttpResponse(json_data, content_type="application/json")
 
     category_ids = []
     filters = {}
@@ -492,6 +497,11 @@ def post2(request):
                     'offset': 0,
                     'previous': '',
                     'total_count': 1000}
+    data['objects'] = []
+
+    if system_read_only():
+        json_data = json.dumps(data, cls=MyEncoder)
+        return HttpResponse(json_data, content_type="application/json")
 
     category_ids = []
     filters = {}
@@ -689,6 +699,18 @@ def friends_post(request):
 
 
 def likes(request):
+    data = {}
+    data['meta'] = {'limit': 20,
+                    'next': '',
+                    'offset': 0,
+                    'previous': '',
+                    'total_count': 1000}
+    data['objects'] = []
+
+    if system_read_only():
+        json_data = json.dumps(data, cls=MyEncoder)
+        return HttpResponse(json_data, content_type="application/json")
+
     post_id = request.GET.get('post_id', None)
     offset = int(request.GET.get('offset', 0))
     limit = 20
@@ -697,13 +719,7 @@ def likes(request):
         'url': "/pin/api/like/likes/?limit=%s&offset=%s" % (
             limit, offset + limit),
     }
-
-    data = {}
-    data['meta'] = {'limit': 20,
-                    'next': next['url'],
-                    'offset': 0,
-                    'previous': '',
-                    'total_count': 1000}
+    data['meta']['next'] = next['url']
 
     objects_list = []
     filters = {}
@@ -1261,6 +1277,9 @@ def password_reset(request, is_admin_site=False,
 
 @csrf_exempt
 def change_password(request):
+    if system_read_only():
+        return HttpResponse('error in change password')
+
     token = request.GET.get('token', '')
     if token:
         user = AuthCache.user_from_token(token=token)
@@ -1284,6 +1303,9 @@ def change_password(request):
 
 
 def comment_delete(request, id):
+    if system_read_only():
+        return HttpResponse('1')
+
     user = None
     token = request.GET.get('token', '')
     if token:
@@ -1315,6 +1337,9 @@ def comment_delete(request, id):
 
 
 def block_user(request, user_id):
+    if system_read_only():
+        return HttpResponse('1')
+
     user = None
     token = request.GET.get('token', '')
     if token:
@@ -1328,6 +1353,9 @@ def block_user(request, user_id):
 
 
 def unblock_user(request, user_id):
+    if system_read_only():
+        return HttpResponse('1')
+
     user = None
     token = request.GET.get('token', '')
     if token:
@@ -1446,6 +1474,9 @@ def user_credit(request):
 
 
 def inc_credit(request):
+    if system_read_only():
+        return HttpResponse("failed", content_type="text/html")
+
     user = None
     token = request.GET.get('token', '')
     price = int(request.GET.get('price', 0))
@@ -1479,7 +1510,8 @@ def inc_credit(request):
         return HttpResponse("bazzar token error", status=404)
     else:
         access_token = get_new_access_token()
-        url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=%s" % (package_name, baz_token, access_token)
+        url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp\
+               /%s/purchases/%s/?access_token=%s" % (package_name, baz_token, access_token)
         try:
             u = urllib2.urlopen(url).read()
             j = json.loads(u)
@@ -1531,6 +1563,9 @@ def inc_credit(request):
 
 @csrf_exempt
 def save_as_ads(request, post_id):
+    if system_read_only():
+        return HttpResponseForbidden("error in data")
+
     try:
         Post.objects.get(id=int(post_id))
     except Exception, Post.DoesNotExist:
@@ -1604,8 +1639,9 @@ def promoted(request):
     }
 
     objects = []
-
-    for ad in Ad.objects.filter(Q(owner=user) | Q(user=user)).order_by("-id")[offset:offset + 1 * row_per_page]:
+    ads = Ad.objects.filter(Q(owner=user) | Q(user=user))\
+        .order_by("-id")[offset:offset + 1 * row_per_page]
+    for ad in ads:
         o = {}
         o['post'] = get_objects_list([ad.post], cur_user_id=user.id, thumb_size=250)
         o['cnt_view'] = ad.get_cnt_view()
@@ -1628,6 +1664,9 @@ def promoted(request):
 
 
 def get_phone_data(request):
+    if system_read_only():
+        return HttpResponse("not only :D", content_type="text/html")
+
     os = request.GET.get("os", "")
     app_version = request.GET.get("app_version", "")
     google_token = request.GET.get("google_token", "")
@@ -1684,6 +1723,9 @@ def get_phone_data(request):
 
 
 def get_plus_data(request):
+    if system_read_only():
+        return HttpResponse("accepted", content_type="text/html")
+
     token = request.GET.get("token", None)
     lat = float(request.GET.get("lat", 0))
     lon = float(request.GET.get('lon', 0))
@@ -1702,6 +1744,9 @@ def get_plus_data(request):
 
 
 def logout(request):
+    if system_read_only():
+        return HttpResponse("logged out", content_type="text/html")
+
     token = request.GET.get("token", None)
 
     if token:

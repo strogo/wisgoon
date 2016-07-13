@@ -9,7 +9,7 @@ from pin.models import Post, Report, Category, SubCategory, ReportedPost, Report
     UserHistory
 from pin.api6.http import (return_bad_request, return_json_data,
                            return_not_found, return_un_auth)
-from pin.api6.tools import (get_next_url, get_simple_user_object,
+from pin.api6.tools import (get_next_url, get_simple_user_object, system_read_only,
                             post_item_json)
 from pin.views2.dashboard.api.tools import get_profile_data, get_post_reporers, user_imei_detial
 from pin.views2.dashboard.api.tools import (ads_group_by,
@@ -40,16 +40,17 @@ def post_item(request, post_id):
 
 
 def new_report(request):
-    before = int(request.GET.get('before', 0))
-
-    posts = ReportedPost.objects.only('id')[before: (before + 1) * 20]
-
     data = {
         'meta': {'limit': 20,
                  'next': '',
                  'total_count': ReportedPost.objects.filter().count()},
         'objects': []
     }
+    if system_read_only():
+        return return_json_data(data)
+    before = int(request.GET.get('before', 0))
+
+    posts = ReportedPost.objects.only('id')[before: (before + 1) * 20]
 
     for report in posts:
         if not report:
@@ -342,6 +343,9 @@ def post_of_sub_category(request):
 
 @csrf_exempt
 def delete_post(request):
+    if system_read_only():
+        return return_json_data({"status": False})
+
     if not check_admin(request):
         return return_un_auth()
 
@@ -351,6 +355,9 @@ def delete_post(request):
 
 @csrf_exempt
 def post_undo(request):
+    if system_read_only():
+        return return_json_data({"status": False})
+
     if not check_admin(request):
         return return_un_auth()
 
@@ -360,6 +367,9 @@ def post_undo(request):
 
 @csrf_exempt
 def post_undo_new(request):
+    if system_read_only():
+        return return_json_data({"status": False, "message": _("Website update in progress.")})
+
     if not check_admin(request):
         return return_un_auth()
 
@@ -389,6 +399,9 @@ def post_undo_new(request):
 
 @csrf_exempt
 def delete_post_new(request):
+    if system_read_only():
+        return return_json_data({"status": False, "message": _("Website update in progress.")})
+
     if not check_admin(request):
         return return_un_auth()
 

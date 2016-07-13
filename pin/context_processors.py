@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.cache import cache
 
 from pin.forms import PinForm
-from pin.models import Category, SubCategory
+from pin.models import Category, SubCategory, SystemState
 from pin.model_mongo import MonthlyStats
 
 from pin.mycache import caching
@@ -82,3 +82,15 @@ def global_values(request):
         'DISPLAY_AD': settings.DISPLAY_AD,
         'SITE_URL_NAME': settings.SITE_URL_NAME
     }
+
+
+def system_read_only(request):
+    state = cache.get(SystemState.CACHE_NAME)
+    if state is None:
+        try:
+            sys_state = SystemState.objects.get(id=1)
+            state = sys_state.read_only
+        except SystemState.DoesNotExist:
+            sys_state = SystemState.objects.create(read_only=False)
+            state = sys_state.read_only
+    return {'READ_ONLY': state}

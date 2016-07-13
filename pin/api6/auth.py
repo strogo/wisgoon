@@ -22,7 +22,7 @@ from pin.tools import AuthCache, get_user_ip, get_new_access_token, get_new_acce
 from pin.api6.http import return_bad_request, return_json_data, return_un_auth,\
     return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object, get_int, get_profile_data,\
-    update_follower_following, post_item_json
+    update_follower_following, post_item_json, system_read_only
 
 from user_profile.models import Profile
 from user_profile.forms import ProfileForm2
@@ -107,6 +107,13 @@ def following(request, user_id=1):
 
 
 def follow(request):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
     token = request.GET.get('token', '')
     user_id = request.GET.get('user_id', None)
 
@@ -138,6 +145,13 @@ def follow(request):
 
 
 def unfollow(request):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
     token = request.GET.get('token', '')
     user_id = request.GET.get('user_id', None)
 
@@ -169,6 +183,12 @@ def unfollow(request):
 
 @csrf_exempt
 def login(request):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
 
     username = request.POST.get("username", '')
     password = request.POST.get("password", 'False')
@@ -217,6 +237,12 @@ def login(request):
 
 @csrf_exempt
 def register(request):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
     username = request.POST.get("username", '')
     password = request.POST.get("password", 'False')
     req_token = request.POST.get("token", '')
@@ -225,7 +251,7 @@ def register(request):
 
     if req_token != app_token:
         data = {
-            'success': False,
+            'status': False,
             'message': _('Application token problem')
         }
         return return_json_data(data)
@@ -376,8 +402,21 @@ def users_top(request):
 
 @csrf_exempt
 def update_profile(request):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
     token = request.GET.get('token', False)
     status = False
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
 
     if token:
         current_user = AuthCache.id_from_token(token=token)
@@ -504,6 +543,12 @@ def user_like(request, user_id):
 
 @csrf_exempt
 def password_change(request):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
     user = None
     token = request.GET.get('token', '')
     if token:
@@ -557,6 +602,13 @@ def password_change(request):
 
 @csrf_exempt
 def get_phone_data(request):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
     if request.method != "POST":
         return return_bad_request()
     try:
@@ -646,6 +698,13 @@ PACKS = {
 
 @csrf_exempt
 def inc_credit(request):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
     user = None
     token = request.GET.get('token', '')
     price = int(request.POST.get('price', 0))
@@ -734,6 +793,13 @@ def inc_credit(request):
 @csrf_exempt
 def block_user(request, user_id):
     # TODO implement checking user_id
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
     user = None
     token = request.POST.get('token', '')
     if token:
@@ -753,6 +819,13 @@ def block_user(request, user_id):
 @csrf_exempt
 def unblock_user(request, user_id):
     # TODO implement checking user_id
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
     user = None
     token = request.POST.get('token', '')
     if token:
@@ -771,6 +844,13 @@ def unblock_user(request, user_id):
 
 @csrf_exempt
 def password_reset(request):
+    if system_read_only():
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
     if request.method == "POST":
         form = PasswordResetForm(request.POST)
         if form.is_valid():

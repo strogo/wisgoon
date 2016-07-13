@@ -147,6 +147,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'pin.context_processors.global_values',
     'pin.context_processors.static_version',
     'pin.context_processors.static_cdn',
+    'pin.context_processors.system_read_only',
 ]
 
 INSTALLED_APPS = [
@@ -386,5 +387,3 @@ INFLUX_HOST = "localhost"
 
 STATIC_CDN = "/media/assets/"
 STATIC_DOMAIN = MEDIA_URL
-
-READ_ONLY = False

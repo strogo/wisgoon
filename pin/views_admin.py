@@ -5,8 +5,9 @@ import redis
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponseForbidden,\
-    HttpResponse
+    HttpResponse, Http404
 
 from django.shortcuts import get_object_or_404
 from django.conf import settings
@@ -40,8 +41,24 @@ def activate_user(request, user_id, status):
     if not is_admin(request.user):
         return HttpResponseForbidden(_("You do not have permission to view this page"))
 
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        raise Http404(_('User does not exist.'))
+
+    # TODO samte ui moshkel dare
+    from pin.api6.tools import system_read_only
+
+    if system_read_only():
+        msg = _("Website update in progress.")
+        if request.is_ajax():
+            data = {'status': False, 'message': msg}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        else:
+            messages.error(request, msg)
+            return HttpResponseRedirect(reverse('pin-user', args=[user_id]))
+
     status = bool(int(status))
-    user = User.objects.get(pk=user_id)
     user.is_active = status
     user.save()
     if not status:
@@ -55,8 +72,20 @@ def activate_user(request, user_id, status):
 
 @login_required
 def goto_index(request, item_id, status):
+    from pin.api6.tools import system_read_only
+
     if not request.user.is_superuser:
         return HttpResponseRedirect('/')
+
+    if system_read_only():
+        msg = _("Website update in progress.")
+        if request.is_ajax():
+            data = {'status': False,
+                    'url': reverse('pin-item-goto-index', args=[item_id, int(not(status))])}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        else:
+            messages.error(request, msg)
+            return HttpResponseRedirect('/')
 
     status = int(status)
     if status == 1:
@@ -75,6 +104,17 @@ def goto_index(request, item_id, status):
 def comment_delete(request, id):
     comment = get_object_or_404(Comments, pk=id)
     post_id = comment.object_pk.id
+
+    # TODO samte ui moshkel dare
+    from pin.api6.tools import system_read_only
+    if system_read_only():
+        msg = _("Website update in progress.")
+        if request.is_ajax():
+            data = {'status': False, 'message': msg}
+            return HttpResponse(json.dumps(data), content_type='application/json')
+        else:
+            messages.error(request, msg)
+            return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
 
     if not request.user.is_superuser:
         if comment.user.id != request.user.id:
