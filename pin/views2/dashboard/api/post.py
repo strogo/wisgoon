@@ -27,14 +27,14 @@ from haystack.query import SearchQuerySet
 def post_item(request, post_id):
     data = {}
 
-    posts = Post.objects.get(id=post_id)
-    user_profile = Profile.objects.get(user=posts.user)
+    post = Post.objects.get(id=post_id)
+    user_profile = Profile.objects.get(user=post.user)
 
-    post = post_item_json(posts.id)
-
-    post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(posts.user_id)
-    post['user']['cnt_post'] = user_profile.cnt_post
-    data = post
+    post = post_item_json(post.id)
+    if post:
+        post['user']['cnt_admin_deleted'] = cnt_post_deleted_by_admin(post.user_id)
+        post['user']['cnt_post'] = user_profile.cnt_post
+        data = post
 
     return return_json_data(data)
 
@@ -55,19 +55,22 @@ def new_report(request):
     for report in posts:
         if not report:
             continue
-        post = post_item_json(report.post.id)
-        post['reporters'] = get_post_reporers(report)
-        post['user']['imei'] = user_imei_detial(report.post.user)
 
-        try:
-            post['user']['cnt_admin_deleted'] = UserHistory.objects\
-                .get(user=report.post.user_id).admin_post_deleted
-        except UserHistory.DoesNotExist:
-            post['user']['cnt_admin_deleted'] = 0
-        post['user']['is_active'] = report.post.user.is_active
-        post['user']['cnt_post'] = report.post.user.profile.cnt_post
-        post['user']['banned_profile'] = report.post.user.profile.banned
-        data['objects'].append(post)
+        post = post_item_json(report.post.id)
+        if post:
+            post['reporters'] = get_post_reporers(report)
+            post['user']['imei'] = user_imei_detial(report.post.user)
+
+            try:
+                post['user']['cnt_admin_deleted'] = UserHistory.objects\
+                    .get(user=report.post.user_id).admin_post_deleted
+            except UserHistory.DoesNotExist:
+                post['user']['cnt_admin_deleted'] = 0
+
+            post['user']['is_active'] = report.post.user.is_active
+            post['user']['cnt_post'] = report.post.user.profile.cnt_post
+            post['user']['banned_profile'] = report.post.user.profile.banned
+            data['objects'].append(post)
 
     # if len(data) == 20:
     if data['objects']:

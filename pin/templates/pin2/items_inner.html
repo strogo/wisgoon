@@ -297,9 +297,9 @@
                 <div class="clear"></div>
                 {% if post.user.id != request.user.id and user.is_authenticated %}
                 {% if follow_status == 0 %}
-                <a class="wis_btn green w100 mabo10 mato10 ajax-follow" data-user-id="{{post.user.id}}" href='{% url "pin-follow" post.user.id 1 %}'>ایجاد دوستی</a>
+                <a class="wis_btn green w100 mabo10 mato10 ajax-follow" data-user-id="{{post.user.id}}" href='{% url "pin-follow" post.user.id 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
                 {% else %}
-                <a class="wis_btn red w100 mabo10  mato10 ajax-follow" data-user-id="{{post.user.id}}" href='{% url "pin-follow" post.user.id 0 %}'>قطع ارتباط</a>
+                <a class="wis_btn red w100 mabo10  mato10 ajax-follow" data-user-id="{{post.user.id}}" href='{% url "pin-follow" post.user.id 0 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i></a>
                 {%endif%}
                 {% endif %}
             </div>

@@ -6,11 +6,19 @@
 {% for item in notif %}
 <div class="notif-item">
 	{% if item.type != 10 %}
-	<div class="notif-img pull-left">
-		<a class="pin-item-link" style="float:right" href="{% url "pin-item" item.id%}">
-			<img src="{{item.ob.images.thumbnail.url }}" class="img img-circle" style="width:40px;height:40px;" />
-		</a>
-	</div>
+		<div class="notif-img pull-left">
+			<a class="pin-item-link" style="float:right" href="{% url "pin-item" item.id%}">
+				<img src="{{item.ob.images.thumbnail.url }}" class="img img-circle" style="width:40px;height:40px;" />
+			</a>
+		</div>
+	{% else %}
+		<div class="notif-img pull-left">
+		{% if request.user.id|get_follow_status:item.actor == False  %}
+	        <a data-user-id="{{item.actor}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" item.actor 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
+	   {% else %}
+	        <a data-user-id="{{item.actor}}" class="wis_btn pull-left mabo10 red ajax-follow" href='{% url "pin-follow" item.actor 0 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i></a>
+	   {%endif%}
+	  </div>
 	{% endif %}
 
 	<div class="notif-actors col-md-2 col-sm-2 col-xs-2 pull-right">
@@ -22,16 +30,19 @@
 	</div>
 	<div class="notif-type col-md-5 col-sm-5 col-xs-8">
 		{% if item.type == 1 %}
-		<i class="glyphicon glyphicon-heart-empty red"></i> تصویر شما را پسندید
+			<i class="glyphicon glyphicon-heart-empty red"></i> تصویر شما را پسندید
 		{% elif item.type == 2 %}
-		<i class="glyphicon glyphicon-comment"></i> برای تصویر شما نظر داده است
+			<i class="glyphicon glyphicon-comment"></i> برای تصویر شما نظر داده است
 		{% elif item.type == 3 %}
-		<i class="icon-ok"></i>
+			<i class="icon-ok"></i>
 		{% elif item.type == 4 %}
-		<i class="icon-remove"></i>
+			<i class="icon-remove"></i>
 		{% elif item.type == 10 %}
-		<i class="icon-user"></i> شما را دنبال می کند
+			<i class="icon-user"></i> شما را دنبال می کند
+		{% elif item.type == 5 %}
+    	<i class="glyphicon glyphicon-ok"></i> پست شما برگزیده شد
 		{% endif %}
+
 	</div>
 	{% if offset %}
 	<span data-next="{{offset}}" ></span>

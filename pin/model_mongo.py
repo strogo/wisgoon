@@ -192,6 +192,7 @@ class Notif(Document):
     COMMENT = 2
     DELETE_POST = 4
     FOLLOW = 10
+    CHOICE = 5
 
     last_actor = IntField()
     date = DateTimeField()

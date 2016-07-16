@@ -80,7 +80,7 @@ def goto_index(request, item_id, status):
     if is_system_writable():
         status = int(status)
         if status == 1:
-            Post.add_to_home(post_id=item_id)
+            Post.add_to_home(sender=request.user, post_id=item_id)
         else:
             Post.remove_from_home(post_id=item_id)
         data = [{
