@@ -17,9 +17,9 @@
 
 		{% if profile.user_id != request.user.id and user.is_authenticated%}
 			{% if follow_status == 0 %}
-				<a class="btn btn-xs btn-success ajax-follow" href='{% url "pin-follow" profile.user_id 1 %}'>ایجاد دوستی</a>
+				<a class="btn btn-xs btn-success ajax-follow" href='{% url "pin-follow" profile.user_id 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
 			{% else %}
-				<a class="btn btn-xs btn-danger ajax-follow" href='{% url "pin-follow" profile.user_id 0 %}'>قطع ارتباط</a>
+				<a class="btn btn-xs btn-danger ajax-follow" href='{% url "pin-follow" profile.user_id 0 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i></a>
 			{%endif%}
 		{% endif %}
 	</div>

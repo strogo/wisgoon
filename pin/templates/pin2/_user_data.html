@@ -78,9 +78,9 @@
                         {% if profile.user_id != request.user.id and request.user.is_authenticated %}
                             {% if not request.user.id|allow_follow:profile.user_id%}
                                 {% if follow_status == 0 %}
-                                    <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" profile.user_id 1 %}'>ایجاد دوستی <i class="fa fa-plus"></i></a>
+                                    <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" profile.user_id 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
                                 {% else %}
-                                    <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left mabo10 red ajax-follow" href='{% url "pin-follow" profile.user_id 0 %}'>قطع ارتباط  <i class="fa fa-times"></i></a>
+                                    <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left mabo10 red ajax-follow" href='{% url "pin-follow" profile.user_id 0 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i></a>
                                 {%endif%}
                             {% endif %}
 

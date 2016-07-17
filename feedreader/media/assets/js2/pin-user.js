@@ -444,7 +444,6 @@ $('body').on('click', '.block_btn', function(event) {
     
 });
 
-
 $('body').on('click', '.ajax-follow', function(event) {
     // event.preventDefault();
     var t = $(this);
@@ -458,11 +457,11 @@ $('body').on('click', '.ajax-follow', function(event) {
         if (response.status) {
             alertify.success(response.message);
             t.attr('href', '/pin/follow/' + t.data('user-id') + '/0/');
-            t.html('قطع ارتباط <i class="fa fa-times"></i>').removeClass('green').addClass('red');
+            t.html('<i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i>').removeClass('green').addClass('red');
         } else {
             alertify.success(response.message);
             t.attr('href', '/pin/follow/' + t.data('user-id') + '/1/');
-            t.html('ایجاد دوستی  <i class="fa fa-plus"></i>').removeClass('red').addClass('green');
+            t.html('<i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i>').removeClass('red').addClass('green');
         }
         if (t.parents('.follow_box')) {
             t.parents('.follow_box').find('.follower_count strong').text(pn(response.count));

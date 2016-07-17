@@ -329,11 +329,16 @@ class Post(models.Model):
         return o
 
     @classmethod
-    def add_to_home(cls, post_id):
+    def add_to_home(cls, sender, post_id):
         r_server.lrem(cls.HOME_QUEUE_NAME, post_id)
         r_server.rpush(cls.HOME_QUEUE_NAME, post_id)
         Post.objects.filter(pk=post_id).update(show_in_default=True)
         PostCacheLayer(post_id=post_id).show_in_default_change(status=True)
+        post = PostCacheLayer(post_id=post_id).get()
+        if post:
+            from pin.actions import send_notif_bar
+            send_notif_bar(user=post['user']['id'], type=5, post=post_id,
+                           actor=sender.id)
 
     @classmethod
     def remove_from_home(cls, post_id):

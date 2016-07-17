@@ -23,9 +23,9 @@
 		<div class="action">
 			{% if u.follower.id != request.user.id and request.user.is_authenticated%}
                 {% if request.user.id|get_follow_status:u.follower.id == False %}
-                    <a data-user-id="{{u.follower.id}}" class="wis_btn green mabo10 ajax-follow" href='{% url "pin-follow" u.follower.id 1 %}'>ایجاد دوستی <i class="fa fa-plus"></i></a>
+                    <a data-user-id="{{u.follower.id}}" class="wis_btn green mabo10 ajax-follow" href='{% url "pin-follow" u.follower.id 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
                 {% else %}
-                    <a data-user-id="{{u.follower.id}}" class="wis_btn mabo10 red ajax-follow" href='{% url "pin-follow" u.follower.id 0 %}'>قطع ارتباط  <i class="fa fa-times"></i></a>
+                    <a data-user-id="{{u.follower.id}}" class="wis_btn mabo10 red ajax-follow" href='{% url "pin-follow" u.follower.id 0 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i></a>
                 {%endif%}
             {% else %}
             	<a class="wis_btn mabo10" href='{% url "pin-absuser" u.follower %}'>نمایش پروفایل <i class="fa fa-user"></i></a>

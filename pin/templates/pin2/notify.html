@@ -18,6 +18,12 @@
     <a class="notif_img pull-left" href="{% url "pin-item" noti.id %}">
         <img src="{{noti.ob.images.thumbnail.url }}" />
     </a>
+    {% else %}
+        {% if request.user.id|get_follow_status:noti.actor == False  %}
+            <a data-user-id="{{noti.actor}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" noti.actor 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
+        {% else %}
+            <a data-user-id="{{noti.actor}}" class="wis_btn pull-left mabo10 red ajax-follow" href='{% url "pin-follow" noti.actor 0 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i></a>
+       {%endif%}
     {% endif %}
     <div class="notif_text pull-right">
         {% if noti.type == 1 %}
@@ -28,6 +34,8 @@
         <i class="glyphicon glyphicon-remove"></i> تصویر شما حذف شد
         {% elif noti.type == 10 %}
         <i class="glyphicon glyphicon-user"></i> شما را دنبال می‌کند
+        {% elif noti.type == 5 %}
+        <i class="glyphicon glyphicon-ok"></i> پست شما برگزیده شد
         {% endif %}
     </div>
 {% comment %}
