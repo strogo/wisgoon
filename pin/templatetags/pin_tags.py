@@ -269,6 +269,12 @@ def date_from_timestamp(value):
 
 
 @register.filter
+def date2_from_timestamp(value):
+    return datetime.datetime.fromtimestamp(int(value))\
+        .strftime('%Y-%m-%d')
+
+
+@register.filter
 def jalali_mysql_date(value):
     gd = value
     cal = Calverter()

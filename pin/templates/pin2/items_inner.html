@@ -16,8 +16,8 @@
         "@type":"WebPage",
         "@id":"http://wisgoon.com/pin"
     },
-    "datePublished" : "{{post.timestamp}}",
-    "dateModified": "{{post.timestamp}}",
+    "datePublished" : "{{post.timestamp|date2_from_timestamp}}",
+    "dateModified": "{{post.timestamp|date2_from_timestamp}}",
     "image": {
         "@type": "ImageObject",
         "url": "{{post.images.original.url}}",
