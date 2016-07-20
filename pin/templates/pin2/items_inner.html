@@ -16,13 +16,13 @@
         "@type":"WebPage",
         "@id":"http://wisgoon.com/pin"
     },
-    "datePublished" : {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
-    "dateModified": {% language 'en' %}"{{post.create_date|date:'Y-m-d'}}{% endlanguage %}",
+    "datePublished" : "{{post.timestamp|date2_from_timestamp}}",
+    "dateModified": "{{post.timestamp|date2_from_timestamp}}",
     "image": {
         "@type": "ImageObject",
-        "url": "{{media_prefix}}{{MEDIA_URL}}{{post.image}}",
-        "height": {{post.height}},
-        "width": {{post.width}}
+        "url": "{{post.images.original.url}}",
+        "height": {{post.images.original.height}},
+        "width": {{post.images.original.width}}
     },
     "articleSection" : "{{post.category.title}}",
     "articleBody" : "{{post.text|striptags|remove_newlines|addslashes}}",
@@ -55,8 +55,8 @@
     "@type": "ListItem",
     "position": 2,
     "item": {
-      "@id": "http://wisgoon.com/category/{{post.category_id}}/",
-      "name": "{{post.category}}"
+      "@id": "http://wisgoon.com/category/{{post.category.id}}/",
+      "name": "{{post.category.title}}"
   }
 }]
 }
