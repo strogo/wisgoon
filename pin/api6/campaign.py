@@ -19,7 +19,8 @@ def current_campaign(request, startup=None):
             }
 
     current = Campaign.objects.filter(is_current=True, expired=False).order_by('?').first()
-    data['objects'].append(campaign_sample_json(current))
+    if current:
+        data['objects'].append(campaign_sample_json(current))
 
     if startup:
         return data
