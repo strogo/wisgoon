@@ -471,8 +471,8 @@ def campaign_sample_json(campaign):
     to_dict['primary_tag'] = campaign.primary_tag
     to_dict['tags'] = campaign.tags
     to_dict['is_current'] = campaign.is_current
-    to_dict['start_date'] = int(campaign.start_date.strftime("%s"))
-    to_dict['end_date'] = int(campaign.end_date.strftime("%s"))
+    to_dict['start_date'] = int(localtime(campaign.start_date).strftime("%s"))
+    to_dict['end_date'] = int(localtime(campaign.end_date).strftime("%s"))
     to_dict['expired'] = campaign.expired
     to_dict['logo'] = media_abs_url(campaign.logo.url)
     to_dict['award'] = campaign.award
