@@ -481,6 +481,7 @@ def campaign_sample_json(campaign):
     to_dict['permalink'] = {}
     to_dict['permalink']['posts'] = abs_url(reverse("api-6-campaign-posts",
                                                     kwargs={"camp_id": campaign.id}))
+    to_dict['owner'] = get_simple_user_object(current_user=campaign.owner_id)
 
     return to_dict
 
