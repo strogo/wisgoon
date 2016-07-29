@@ -19,7 +19,8 @@ def current_campaign(request, startup=None):
             }
 
     current = Campaign.objects.filter(is_current=True, expired=False).order_by('?').first()
-    data['objects'].append(campaign_sample_json(current))
+    if current:
+        data['objects'].append(campaign_sample_json(current))
 
     if startup:
         return data
@@ -53,6 +54,13 @@ def campaign_posts(request, camp_id):
             'objects': []
             }
     token = request.GET.get('token', False)
+    order_by = request.GET.get('order', False)
+
+    if not order_by or order_by != "cnt_like":
+        order_by = "timestamp_i"
+    else:
+        order_by = "cnt_like_i"
+
     user = False
     if token:
         user = AuthCache.user_from_token(token=token)
@@ -67,9 +75,12 @@ def campaign_posts(request, camp_id):
     campaign_tags = campaign.tags
     tags = campaign_tags.split(',')
     tags.append(campaign.primary_tag)
+    start_date = campaign.start_date.strftime("%s")
+    end_date = campaign.end_date.strftime("%s")
 
     posts = SearchQuerySet().models(Post).filter(tags__in=tags)\
-        .order_by('-timestamp_i')[before:before + 20]
+        .narrow("timestamp_i:[{} TO {}]".format(start_date, end_date))\
+        .order_by('-{}'.format(order_by))[before:before + 20]
 
     for post in posts:
         if user:
