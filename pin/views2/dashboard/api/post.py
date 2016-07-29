@@ -292,8 +292,8 @@ def post_of_category(request, cat_name):
     if post_of_cat or count_of_posts != 0:
         for key, value in post_of_cat['fields']['category_i']:
             if int(key) in categories:
-                percent = (value * 100) / count_of_posts
-                cat_list.append({"name": categories[int(key)], "y": percent})
+                # percent = (value * 100) / count_of_posts
+                cat_list.append({"name": categories[int(key)], "y": value})
 
     data['objects'] = cat_list
 
@@ -337,8 +337,8 @@ def post_of_sub_category(request):
                 value['cnt_post'] = cat_cnt_post.get(str(value['id']), 0)
                 sum_of_post += int(value['cnt_post'])
 
-            percentage = (sum_of_post * 100) / count_of_posts
-            result.append({"name": cat, "y": percentage})
+            # percentage = (sum_of_post * 100) / count_of_posts
+            result.append({"name": cat, "y": sum_of_post})
 
     data['objects'] = result
     return return_json_data(data)
