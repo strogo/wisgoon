@@ -132,11 +132,11 @@ def check_porn(post_id):
         ReportedPost.post_report(post_id=post.id, reporter_id=11253)
         # post.report = post.report + 10
         # post.save()
-    try:
-        publish.single("wisgoon/check/porn", json.dumps(d),
-                       hostname="mosq.wisgoon.com", qos=2)
-    except Exception, e:
-        print "mqtt ", str(e)
+    # try:
+    #     publish.single("wisgoon/check/porn", json.dumps(d),
+    #                    hostname="mosq.wisgoon.com", qos=2)
+    # except Exception, e:
+    #     print "mqtt ", str(e)
     print "work at ", post_id
 
 
