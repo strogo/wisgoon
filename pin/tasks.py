@@ -116,6 +116,7 @@ def check_porn(post_id):
         # post.report = post.report + 10
         # post.save()
     publish.single("wisgoon/check/porn", json.dumps(d), hostname="mosq.wisgoon.com", qos=2)
+    print "work at ", post_id
 
 
 
