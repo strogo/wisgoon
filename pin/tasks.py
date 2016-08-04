@@ -136,7 +136,7 @@ def check_porn(post_id):
         publish.single("wisgoon/check/porn", json.dumps(d),
                        hostname="mosq.wisgoon.com", qos=2)
     except Exception, e:
-        print str("mqtt ", e)
+        print "mqtt ", str(e)
     print "work at ", post_id
 
 
