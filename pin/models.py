@@ -1267,6 +1267,8 @@ class Comments(models.Model):
     def add_comment(cls, sender, instance, created, *args, **kwargs):
         from pin.actions import send_notif_bar
         from pin.tools import get_post_user_cache
+        from pin.model_mongo import Notif
+
         if not created:
             return None
 
@@ -1277,7 +1279,7 @@ class Comments(models.Model):
         actors_list = []
 
         if comment.user_id != post.user_id:
-            send_notif_bar(user=post.user_id, type=2, post=post.id,
+            send_notif_bar(user=post.user_id, type=Notif.COMMENT, post=post.id,
                            actor=comment.user_id)
 
             actors_list.append(post.user_id)
@@ -1298,7 +1300,7 @@ class Comments(models.Model):
                 except User.DoesNotExist:
                     continue
                 if u.id != comment.user_id and u.id != post.user_id:
-                    send_notif_bar(user=u.id, type=2, post=post.id,
+                    send_notif_bar(user=u.id, type=Notif.COMMENT, post=post.id,
                                    actor=comment.user_id)
             return
 

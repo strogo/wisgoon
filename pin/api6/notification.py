@@ -79,10 +79,12 @@ def notif(request):
                 post_object = {}
             data_extra['post'] = post_object
 
-        elif Notif.DELETE_POST:
+        elif notif.type == Notif.DELETE_POST:
             if notif.post_image:
                 data_extra['type'] = Notif.DELETE_POST
                 data_extra['post_image'] = media_abs_url(notif.post_image)
+        else:
+            continue
 
         notifs_list.append(data_extra)
 
