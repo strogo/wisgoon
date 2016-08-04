@@ -102,23 +102,21 @@ def check_porn(post_id):
     img_url = post.get_image_500()['url']
     r = requests.get(img_url)
 
-    try:
-        res = requests.post("https://188.75.73.226:1509/analyzer",
-                            auth=HTTPBasicAuth('wisgoon94', 'Ghavi!394YUASTTH'),
-                            verify=False, data=r.content)
-        d = {
-            "number": res.content,
-            "image": post.get_image_236()['url'],
-            "h": post.get_image_236()['h'],
-            "id": post.id
-        }
-        if float(res.content) > 0.7:
-            ReportedPost.post_report(post_id=post.id, reporter_id=11253)
-            # post.report = post.report + 10
-            # post.save()
-        publish.single("wisgoon/check/porn", json.dumps(d), hostname="mosq.wisgoon.com", qos=2)
-    except Exception, e:
-        print str(e)
+    res = requests.post("https://188.75.73.226:1509/analyzer",
+                        auth=HTTPBasicAuth('wisgoon94', 'Ghavi!394YUASTTH'),
+                        verify=False, data=r.content)
+    d = {
+        "number": res.content,
+        "image": post.get_image_236()['url'],
+        "h": post.get_image_236()['h'],
+        "id": post.id
+    }
+    if float(res.content) > 0.7:
+        ReportedPost.post_report(post_id=post.id, reporter_id=11253)
+        # post.report = post.report + 10
+        # post.save()
+    publish.single("wisgoon/check/porn", json.dumps(d), hostname="mosq.wisgoon.com", qos=2)
+
 
 
 @app.task(name="wisgoon.pin.porn_feedback")
