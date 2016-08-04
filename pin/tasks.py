@@ -100,22 +100,43 @@ def check_porn(post_id):
     except Post.DoesNotExist:
         return "post does not exists"
     img_url = post.get_image_500()['url']
-    r = requests.get(img_url)
 
-    res = requests.post("https://188.75.73.226:1509/analyzer",
-                        auth=HTTPBasicAuth('wisgoon94', 'Ghavi!394YUASTTH'),
-                        verify=False, data=r.content)
+    try:
+        r = requests.get(img_url, timeout=5)
+    except requests.ConnectionError, e:
+        print str(e)
+        return
+    except requests.exceptions.Timeout, e:
+        print str(e)
+        return
+
+    try:
+        hba = HTTPBasicAuth('wisgoon94', 'Ghavi!394YUASTTH')
+        res = requests.post("https://188.75.73.226:1509/analyzer",
+                            auth=hba,
+                            verify=False, data=r.content, timeout=10)
+    except requests.ConnectionError, e:
+        print str(e)
+        return
+    except requests.exceptions.Timeout, e:
+        print str(e)
+        return
     d = {
         "number": res.content,
         "image": post.get_image_236()['url'],
         "h": post.get_image_236()['h'],
         "id": post.id
     }
+    print d
     if float(res.content) > 0.7:
         ReportedPost.post_report(post_id=post.id, reporter_id=11253)
         # post.report = post.report + 10
         # post.save()
-    publish.single("wisgoon/check/porn", json.dumps(d), hostname="mosq.wisgoon.com", qos=2)
+    try:
+        publish.single("wisgoon/check/porn", json.dumps(d),
+                       hostname="mosq.wisgoon.com", qos=2)
+    except Exception, e:
+        print str("mqtt ", e)
     print "work at ", post_id
 
 
