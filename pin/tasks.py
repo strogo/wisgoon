@@ -125,7 +125,7 @@ def check_porn(post_id):
         "number": res.content,
         "image": post.get_image_236()['url'],
         "h": post.get_image_236()['h'],
-        "id": post.id
+        "id": int(post.id)
     }
     print d
     if float(res.content) > 0.7:
@@ -138,7 +138,6 @@ def check_porn(post_id):
     except Exception, e:
         print "mqtt ", str(e)
     print "work at ", post_id
-
 
 
 @app.task(name="wisgoon.pin.porn_feedback")
