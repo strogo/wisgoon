@@ -88,9 +88,8 @@ def campaign_posts(request, camp_id):
         else:
             post_json = post_item_json(post_id=post.pk)
         if post_json:
+            print post_json['cnt_like']
             data['objects'].append(post_json)
-
-    data['objects'] = sorted(data['objects'], key=lambda item: item['cnt_like'], reverse=True)
 
     data['meta']['next'] = get_next_url(url_name='api-6-campaign-posts',
                                         before=before + 20,
