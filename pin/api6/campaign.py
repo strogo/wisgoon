@@ -89,7 +89,7 @@ def campaign_posts(request, camp_id):
         else:
             post_json = post_item_json(post_id=post.pk)
         if post_json:
-            print post['cnt_like'], post.pk
+            print post_json['cnt_like'], post.pk
             data['objects'].append(post_json)
 
     data['meta']['next'] = get_next_url(url_name='api-6-campaign-posts',
