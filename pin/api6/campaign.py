@@ -83,12 +83,13 @@ def campaign_posts(request, camp_id):
         .order_by('-{}'.format(order_by))[before:before + 20]
 
     for post in posts:
-        print post.objects.cnt_like
+        print post.cnt_like_i, post.pk
         if user:
             post_json = post_item_json(post_id=post.pk, cur_user_id=user.id)
         else:
             post_json = post_item_json(post_id=post.pk)
         if post_json:
+            print post['cnt_like'], post.pk
             data['objects'].append(post_json)
 
     data['meta']['next'] = get_next_url(url_name='api-6-campaign-posts',
