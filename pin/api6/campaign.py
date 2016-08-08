@@ -83,6 +83,7 @@ def campaign_posts(request, camp_id):
         .order_by('-{}'.format(order_by))[before:before + 20]
 
     for post in posts:
+        print post.objects.cnt_like
         if user:
             post_json = post_item_json(post_id=post.pk, cur_user_id=user.id)
         else:
