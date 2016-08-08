@@ -79,7 +79,7 @@ def campaign_posts(request, camp_id):
     end_date = campaign.end_date.strftime("%s")
 
     posts = SearchQuerySet().models(Post).filter(tags__in=tags)\
-        .narrow("timestamp_i:[{} TO {}]".format(start_date, end_date))\
+        .filter(timestamp_i__lte=end_date, timestamp_i__gte=start_date)\
         .order_by('-{}'.format(order_by))[before:before + 20]
 
     for post in posts:
@@ -88,7 +88,6 @@ def campaign_posts(request, camp_id):
         else:
             post_json = post_item_json(post_id=post.pk)
         if post_json:
-            print post_json['cnt_like']
             data['objects'].append(post_json)
 
     data['meta']['next'] = get_next_url(url_name='api-6-campaign-posts',
