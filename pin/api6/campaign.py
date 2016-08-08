@@ -79,7 +79,7 @@ def campaign_posts(request, camp_id):
     end_date = campaign.end_date.strftime("%s")
 
     posts = SearchQuerySet().models(Post).filter(tags__in=tags)\
-        .filter(timestamp_i__lte=end_date, timestamp_i__gte=start_date)\
+        .filter(timestamp_i__lte=end_date).filter(timestamp_i__gte=start_date)\
         .order_by('-{}'.format(order_by))[before:before + 20]
 
     for post in posts:
