@@ -63,6 +63,7 @@ def gcm_push(user_id, action_type, post_id, actor_id, timestamp):
         post = post_item_json(post_id=post_id, fields=need_fiedls)
 
         push_data = make_like_data(post, actor, timestamp)
+        print push_data
         send_push.delay(push_data, up.google_token)
 
 
