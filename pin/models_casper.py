@@ -52,6 +52,8 @@ class UserStream(Model):
 #     like_time = columns.Integer(primary_key=True, clustering_order="desc")
 #     user_id = columns.Integer(primary_key=True)
 
+print settings.CASSANDRA_DB
+
 try:
     connection.setup([settings.CASSANDRA_DB], "wisgoon", protocol_version=3)
     management.create_keyspace_simple("wisgoon", replication_factor=1)
