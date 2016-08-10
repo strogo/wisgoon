@@ -9,6 +9,7 @@ from django.conf import settings
 from django.core.cache import cache
 
 
+@app.task(name="wisgoon.gcm.push.send")
 def send_push(data, google_token):
     data = {
         "to": google_token,
@@ -62,7 +63,7 @@ def gcm_push(user_id, action_type, post_id, actor_id, timestamp):
         post = post_item_json(post_id=post_id, fields=need_fiedls)
 
         push_data = make_like_data(post, actor, timestamp)
-        send_push(push_data, up.google_token)
+        send_push.delay(push_data, up.google_token)
 
 
 @app.task(name="wisgoon.analytics.tick")
