@@ -28,7 +28,7 @@ def send_notif_bar(user, type, post, actor, seen=False, post_image=None):
                 notif_send.delay(user, type, post, actor, seen=False,
                                  post_image=post_image)
             else:
-                gcm_push(user, type, post, actor, time.time())
+                gcm_push.delay(user, type, post, actor, time.time())
                 notif_send(user, type, post, actor, seen=False,
                            post_image=post_image)
         except Exception, e:
