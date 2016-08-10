@@ -1,10 +1,68 @@
+# -*- coding: utf-8 -*-
 import os
 import json
 import paramiko
+import requests
 
 from feedreader.celery import app
 from django.conf import settings
 from django.core.cache import cache
+
+
+def send_push(data, google_token):
+    data = {
+        "to": google_token,
+        "data": data,
+    }
+
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'key=AIzaSyBb2hrHjni36s1UG70f3t22s9AZ7LZmrow'}
+
+    res = requests.post(url='https://android.googleapis.com/gcm/send',
+                        data=json.dumps(data),
+                        headers=headers,
+                        timeout=10)
+
+    print data
+    print res, res.content
+
+
+def make_like_data(post, actor, timestamp):
+    data = {
+        "notification": {
+            "text": u"تصویر شمارا پسندید.",
+            "actor": actor,
+            "date": timestamp,
+            "post": post,
+            "type": settings.NOTIFICATION_TYPE_LIKE,
+        }
+    }
+
+    return data
+
+
+@app.task(name="wisgoon.analytics.gcm.push")
+def gcm_push(user_id, action_type, post_id, actor_id, timestamp):
+    from pin.models import PhoneData
+    from pin.api6.tools import get_simple_user_object, post_item_json
+    timestamp = int(timestamp)
+    try:
+        up = PhoneData.objects.get(user_id=user_id)
+        if up.app_version < settings.GCM_VERSION:
+            return
+        if not up.google_token or up.google_token == 'NONE':
+            return
+    except PhoneData.DoesNotExist:
+        return
+
+    if settings.NOTIFICATION_TYPE_LIKE == action_type:
+        need_fiedls = ['id', 'user', 'permalink']
+        actor = get_simple_user_object(actor_id)
+        post = post_item_json(post_id=post_id, fields=need_fiedls)
+
+        push_data = make_like_data(post, actor, timestamp)
+        send_push(push_data, up.google_token)
 
 
 @app.task(name="wisgoon.analytics.tick")

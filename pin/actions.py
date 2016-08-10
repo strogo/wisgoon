@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+import time
 
 from django.conf import settings
+
 from pin.api6.tools import is_system_writable
+
+from pin.tasks import post_to_followers, gcm_push
 
 if settings.DEBUG:
     from feedreader.task_cel_local import notif_send, profile_after_like,\
@@ -10,8 +14,6 @@ if settings.DEBUG:
 else:
     from feedreader.task_cel import notif_send, profile_after_like,\
         profile_after_dislike, clear_notif
-
-from pin.tasks import post_to_followers
 
 
 def send_notif(user, type, post, actor, seen=False):
@@ -22,9 +24,11 @@ def send_notif_bar(user, type, post, actor, seen=False, post_image=None):
     if is_system_writable():
         try:
             if settings.USE_CELERY:
+                gcm_push.delay(user, type, post, actor, time.time())
                 notif_send.delay(user, type, post, actor, seen=False,
                                  post_image=post_image)
             else:
+                gcm_push(user, type, post, actor, time.time())
                 notif_send(user, type, post, actor, seen=False,
                            post_image=post_image)
         except Exception, e:
