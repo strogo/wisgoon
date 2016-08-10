@@ -35,8 +35,8 @@ CELERY_ROUTES = {
     'wisgoon.gcm.push': {
         'queue': 'wisgoon.gcm.push'
     },
-    'wisgoon.gcm.push.send': {
-        'queue': 'wisgoon.gcm.push.send'
+    'wisgoon.gcm.send': {
+        'queue': 'wisgoon.gcm.send'
     },
     'wisgoon.pin.porn_feedback': {
         'queue': 'wisgoon.pin.porn_feedback'

@@ -378,11 +378,11 @@ CELERY_ROUTES.update({
     'wisgoon.pin.activity': {
         'queue': 'wisgoon.pin.activity'
     },
-    'wisgoon.gcm.push.send': {
-        'queue': 'wisgoon.gcm.push.send'
+    'wisgoon.gcm.push': {
+        'queue': 'wisgoon.gcm.push'
     },
-    'wisgoon.analytics.gcm.push': {
-        'queue': 'wisgoon.analytics.gcm.push'
+    'wisgoon.gcm.send': {
+        'queue': 'wisgoon.gcm.send'
     }
 })
 

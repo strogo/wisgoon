@@ -9,7 +9,21 @@ from django.conf import settings
 from django.core.cache import cache
 
 
-@app.task(name="wisgoon.gcm.push.send")
+def make_like_data(post, actor, timestamp):
+    data = {
+        "notification": {
+            "text": u"تصویر شمارا پسندید.",
+            "actor": actor,
+            "date": timestamp,
+            "post": post,
+            "type": settings.NOTIFICATION_TYPE_LIKE,
+        }
+    }
+
+    return data
+
+
+@app.task(name="wisgoon.gcm.send")
 def send_push(data, google_token):
     data = {
         "to": google_token,
@@ -27,20 +41,6 @@ def send_push(data, google_token):
 
     print data
     print res, res.content
-
-
-def make_like_data(post, actor, timestamp):
-    data = {
-        "notification": {
-            "text": u"تصویر شمارا پسندید.",
-            "actor": actor,
-            "date": timestamp,
-            "post": post,
-            "type": settings.NOTIFICATION_TYPE_LIKE,
-        }
-    }
-
-    return data
 
 
 @app.task(name="wisgoon.gcm.push")
