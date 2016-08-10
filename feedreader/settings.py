@@ -32,6 +32,9 @@ CELERY_ROUTES = {
     'wisgoon.analytics.tick': {
         'queue': 'wisgoon.analytics.tick'
     },
+    'wisgoon.analytics.gcm.push': {
+        'queue': 'wisgoon.analytics.gcm.push'
+    },
     'wisgoon.pin.porn_feedback': {
         'queue': 'wisgoon.pin.porn_feedback'
     },
