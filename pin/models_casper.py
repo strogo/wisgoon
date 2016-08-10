@@ -1,10 +1,15 @@
 # from uuid import uuid1
+import os
 from django.conf import settings
 from cassandra.cqlengine import columns
 from cassandra.cqlengine import connection
 from cassandra.cqlengine import management
 from cassandra.cqlengine.management import sync_table
 from cassandra.cqlengine.models import Model
+
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'feedreader.settings_local')
+
+print os.getenv('DJANGO_SETTINGS_MODULE', 'not set yet')
 
 
 class PostStats(Model):
