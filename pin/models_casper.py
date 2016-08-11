@@ -1,15 +1,10 @@
 # from uuid import uuid1
-import os
 from django.conf import settings
 from cassandra.cqlengine import columns
 from cassandra.cqlengine import connection
 from cassandra.cqlengine import management
 from cassandra.cqlengine.management import sync_table
 from cassandra.cqlengine.models import Model
-
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'feedreader.settings_local')
-
-print os.getenv('DJANGO_SETTINGS_MODULE', 'not set yet')
 
 
 class PostStats(Model):
@@ -51,8 +46,6 @@ class UserStream(Model):
 #     post_id = columns.Integer(primary_key=True)
 #     like_time = columns.Integer(primary_key=True, clustering_order="desc")
 #     user_id = columns.Integer(primary_key=True)
-
-print settings.CASSANDRA_DB
 
 try:
     connection.setup([settings.CASSANDRA_DB], "wisgoon", protocol_version=3)
