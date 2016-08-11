@@ -48,7 +48,7 @@ class UserStream(Model):
 #     user_id = columns.Integer(primary_key=True)
 
 try:
-    slist = ['79.127.125.146', '79.127.125.104', '79.127.125.99', '127.0.0.1']
+    slist = ['79.127.125.104']
     connection.setup(slist, "wisgoon", protocol_version=3)
     management.create_keyspace_simple("wisgoon", replication_factor=1)
 
