@@ -43,7 +43,6 @@ def send_push(data, google_token):
     print res, res.content
 
 
-@app.task(name="wisgoon.gcm.push")
 def gcm_push(user_id, action_type, post_id, actor_id, timestamp):
     from pin.models import PhoneData
     from pin.api6.tools import get_simple_user_object, post_item_json
