@@ -27,6 +27,7 @@ def make_like_data(post, actor, timestamp):
 def send_push(data, google_token):
     data = {
         "to": google_token,
+        "priority": "high",
         "data": data,
     }
 
