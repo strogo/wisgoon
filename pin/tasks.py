@@ -12,7 +12,7 @@ from django.core.cache import cache
 def make_like_data(post, actor, timestamp):
     data = {
         "notification": {
-            "text": u"تصویر شمارا پسندید.",
+            "text": u"تصویر شمارا پسندید",
             "actor": actor,
             "date": timestamp,
             "post": post,
