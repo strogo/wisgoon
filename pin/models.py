@@ -1280,7 +1280,7 @@ class Comments(models.Model):
 
         if comment.user_id != post.user_id:
             send_notif_bar(user=post.user_id, type=Notif.COMMENT, post=post.id,
-                           actor=comment.user_id)
+                           actor=comment.user_id, comment=comment)
 
             actors_list.append(post.user_id)
 
