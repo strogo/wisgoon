@@ -1294,7 +1294,6 @@ class Comments(models.Model):
         mentions = mention.findall(comment.comment)
         if mentions:
             for username in mentions:
-                print "username is:", username
                 try:
                     u = User.objects.only('id').get(username=username)
                 except User.DoesNotExist:
