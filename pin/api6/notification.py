@@ -58,7 +58,7 @@ def notif(request):
             data_extra['date'] = int(notif.date.strftime("%s"))
 
         if notif.type == Notif.LIKE:
-            data_extra['text'] = "تصویر شمارا پسندید."
+            data_extra['text'] = "تصویر شمارا پسندید"
             try:
                 post_object = post_item_json(notif.post, current_user, request)
             except:
@@ -68,11 +68,11 @@ def notif(request):
 
         elif notif.type == Notif.FOLLOW:
             data_extra['type'] = Notif.FOLLOW
-            data_extra['text'] = "شما را دنبال می کند."
+            data_extra['text'] = "شما را دنبال می کند"
 
         elif notif.type == Notif.COMMENT:
             data_extra['type'] = Notif.COMMENT
-            data_extra['text'] = "برای تصویر شما نظر داد"
+            data_extra['text'] = "مطلبی را با شما به اشتراک گذاشته"
             try:
                 post_object = post_item_json(notif.post, current_user, request)
             except IndexError:
