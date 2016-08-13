@@ -12,11 +12,26 @@ from django.core.cache import cache
 def make_like_data(post, actor, timestamp):
     data = {
         "notification": {
-            "text": u"تصویر شمارا پسندید.",
+            "text": u"تصویر شمارا پسندید",
             "actor": actor,
             "date": timestamp,
             "post": post,
             "type": settings.NOTIFICATION_TYPE_LIKE,
+        }
+    }
+
+    return data
+
+
+def make_comment_data(post, actor, timestamp, comment):
+    data = {
+        "notification": {
+            "text": u"برای تصویر شما نظر داد",
+            "actor": actor,
+            "date": timestamp,
+            "comment": comment[0:100].strip(),
+            "post": post,
+            "type": settings.NOTIFICATION_TYPE_COMMENT,
         }
     }
 
@@ -44,7 +59,7 @@ def send_push(data, google_token):
     print res, res.content
 
 
-def gcm_push(user_id, action_type, post_id, actor_id, timestamp):
+def gcm_push(user_id, action_type, post_id, actor_id, timestamp, comment=None):
     from pin.models import PhoneData
     from pin.api6.tools import get_simple_user_object, post_item_json
     timestamp = int(timestamp)
@@ -63,7 +78,14 @@ def gcm_push(user_id, action_type, post_id, actor_id, timestamp):
         post = post_item_json(post_id=post_id, fields=need_fiedls)
 
         push_data = make_like_data(post, actor, timestamp)
-        print push_data
+        send_push.delay(push_data, up.google_token)
+
+    elif settings.NOTIFICATION_TYPE_COMMENT == action_type:
+        need_fiedls = ['id', 'user', 'permalink']
+        actor = get_simple_user_object(actor_id)
+        post = post_item_json(post_id=post_id, fields=need_fiedls)
+
+        push_data = make_comment_data(post, actor, timestamp, comment)
         send_push.delay(push_data, up.google_token)
 
 

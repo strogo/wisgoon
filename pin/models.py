@@ -1301,7 +1301,7 @@ class Comments(models.Model):
                     continue
                 if u.id != comment.user_id and u.id != post.user_id:
                     send_notif_bar(user=u.id, type=Notif.COMMENT, post=post.id,
-                                   actor=comment.user_id)
+                                   actor=comment.user_id, comment=comment)
             return
 
         # users = Comments.objects.filter(object_pk=post.id)\
