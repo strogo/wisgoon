@@ -20,15 +20,16 @@ def send_notif(user, type, post, actor, seen=False):
     return True
 
 
-def send_notif_bar(user, type, post, actor, seen=False, post_image=None):
+def send_notif_bar(user, type, post, actor, seen=False, post_image=None,
+                   comment=None):
     if is_system_writable():
         try:
             if settings.USE_CELERY:
-                gcm_push(user, type, post, actor, time.time())
+                gcm_push(user, type, post, actor, time.time(), comment)
                 notif_send.delay(user, type, post, actor, seen=False,
                                  post_image=post_image)
             else:
-                gcm_push(user, type, post, actor, time.time())
+                gcm_push(user, type, post, actor, time.time(), comment)
                 notif_send(user, type, post, actor, seen=False,
                            post_image=post_image)
         except Exception, e:

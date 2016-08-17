@@ -1280,7 +1280,7 @@ class Comments(models.Model):
 
         if comment.user_id != post.user_id:
             send_notif_bar(user=post.user_id, type=Notif.COMMENT, post=post.id,
-                           actor=comment.user_id)
+                           actor=comment.user_id, comment=comment.comment)
 
             actors_list.append(post.user_id)
 
@@ -1294,14 +1294,14 @@ class Comments(models.Model):
         mentions = mention.findall(comment.comment)
         if mentions:
             for username in mentions:
-                print "username is:", username
                 try:
                     u = User.objects.only('id').get(username=username)
                 except User.DoesNotExist:
                     continue
                 if u.id != comment.user_id and u.id != post.user_id:
                     send_notif_bar(user=u.id, type=Notif.COMMENT, post=post.id,
-                                   actor=comment.user_id)
+                                   actor=comment.user_id,
+                                   comment=comment.comment)
             return
 
         # users = Comments.objects.filter(object_pk=post.id)\

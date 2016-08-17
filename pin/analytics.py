@@ -1,30 +1,30 @@
+from influxdb import InfluxDBClient
+
 from django.utils import timezone
-from django.conf import settings
-from pin.tasks import tick
+# from django.conf import settings
+
+# from pin.tasks import tick
+
+
+client = InfluxDBClient('79.127.125.104', 8086)
+
+client.create_database('wisgoonStats')
 
 
 def send_tick(doc):
-    return
-    # pass
     try:
-        if settings.DEBUG:
-            tick(doc=doc)
-        else:
-            tick.delay(doc=doc)
+        client.write_points(doc, database="wisgoonStats")
     except Exception, e:
         print str(e)
 
 
 def like_act(post, actor, user_ip):
-    t_date = timezone.now().isoformat()
-
     json_body = [
         {
             "measurement": "actions",
             "tags": {
                 "type": "like",
             },
-            "time": t_date,
             "fields": {
                 "value": 1
             }
