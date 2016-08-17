@@ -53,7 +53,7 @@ def send_push(data, google_token):
     res = requests.post(url='https://android.googleapis.com/gcm/send',
                         data=json.dumps(data),
                         headers=headers,
-                        timeout=10)
+                        timeout=2)
 
     print data
     print res, res.content

@@ -280,7 +280,7 @@ def post_send(request):
                     dest.write(c)
 
             # image rotate
-            # fix_rotation(u)
+            fix_rotation(u)
 
             model = Post()
             model.image = "pin/{}/images/o/{}".\

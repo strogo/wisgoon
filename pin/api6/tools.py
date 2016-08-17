@@ -101,7 +101,7 @@ def save_post(request, user):
                     dest.write(c)
 
             # rotate image
-            # fix_rotation(u)
+            fix_rotation(u)
 
             model = Post()
             model.image = "pin/{}/images/o/{}".\
