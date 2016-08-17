@@ -17,7 +17,7 @@ from pin.forms import PinDirectForm, PinDeviceUpdate
 from pin.models import Post, Comments, Comments_score,\
     Follow, ReportedPost
 from pin.tools import create_filename, AuthCache, check_block,\
-    post_after_delete, get_user_ip, get_post_user_cache
+    post_after_delete, get_user_ip, get_post_user_cache, fix_rotation
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -278,6 +278,9 @@ def post_send(request):
             with BufferedWriter(FileIO(u, "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
+
+            # image rotate
+            fix_rotation(u)
 
             model = Post()
             model.image = "pin/{}/images/o/{}".\
