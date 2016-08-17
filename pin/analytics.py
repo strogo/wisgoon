@@ -5,10 +5,11 @@ from django.utils import timezone
 
 # from pin.tasks import tick
 
-
-client = InfluxDBClient('79.127.125.104', 8086)
-
-client.create_database('wisgoonStats')
+try:
+    client = InfluxDBClient('79.127.125.104', 8086, timeout=1)
+    client.create_database('wisgoonStats')
+except Exception, e:
+    pass
 
 
 def send_tick(doc):
