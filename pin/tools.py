@@ -202,7 +202,7 @@ def get_user_ip(request, to_int=False):
 
     if to_int:
         try:
-            ip = ip2int(ip)
+            ip = (ip)
         except:
             pass
     return ip
@@ -554,3 +554,29 @@ def get_delta_timestamp(days):
 def get_crc_32(string):
     result = zlib.crc32(string) & 0xFFFFFFFF
     return result
+
+
+def fix_rotation(image_on):
+    from PIL import Image, ExifTags
+
+    image = Image.open(image_on)
+    for orientation in ExifTags.TAGS.keys():
+        if ExifTags.TAGS[orientation] == 'Orientation':
+            break
+    try:
+        exif = dict(image._getexif().items())
+    except Exception, e:
+        print str(e)
+        return
+
+    try:
+        if exif[orientation] == 3:
+            image = image.rotate(180, expand=True)
+        elif exif[orientation] == 6:
+            image = image.rotate(270, expand=True)
+        elif exif[orientation] == 8:
+            image = image.rotate(90, expand=True)
+    except KeyError:
+        return
+
+    image.save(image_on)

@@ -18,7 +18,7 @@ from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
 from pin.models import Post, Follow, Comments, Block, Category, SystemState
 from pin.models_redis import LikesRedis, PostView
-from pin.tools import create_filename
+from pin.tools import create_filename, fix_rotation
 
 from cache_layer import PostCacheLayer
 
@@ -99,6 +99,9 @@ def save_post(request, user):
             with BufferedWriter(FileIO(u, "wb")) as dest:
                 for c in upload.chunks():
                     dest.write(c)
+
+            # rotate image
+            fix_rotation(u)
 
             model = Post()
             model.image = "pin/{}/images/o/{}".\
@@ -252,7 +255,7 @@ def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None)
             return None
         pi['cache'] = "Miss"
         pi['id'] = post.id
-        pi['text'] = emoji.emojize(post.text)
+        pi['text'] = emoji.emojize(post.text).strip()
         pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
         pi['timestamp'] = post.timestamp
         pi['show_in_default'] = post.show_in_default
