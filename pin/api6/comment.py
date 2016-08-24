@@ -100,7 +100,10 @@ def delete_comment(request, comment_id):
     try:
         comment = Comments.objects.get(id=get_int(comment_id))
     except Comments.DoesNotExist:
-        return return_not_found(status=False)
+        return return_json_data({
+            'status': False,
+            'message': _('comment not found')
+        })
 
     if comment.user_id == user.id or comment.object_pk.user.id == user.id:
         comment_id = comment.id
