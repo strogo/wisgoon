@@ -15,7 +15,7 @@ class Command(BaseCommand):
         sum_mr = 0
 
         for p in Post.objects.filter(user=user):
-            lr = LikesRedis(p.id).cnt_like()
+            lr = LikesRedis(p.id).cntlike()
             lm = p.cnt_like
 
             sum_lr += lr
