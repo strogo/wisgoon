@@ -9,7 +9,7 @@ from pin.models_redis import LikesRedis
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        user = User.objects.get(id=264595)
+        user = User.objects.get(id=873063)
 
         sum_lr = 0
         sum_mr = 0
