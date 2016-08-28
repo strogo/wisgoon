@@ -20,8 +20,10 @@ class Command(BaseCommand):
 
             for post in posts:
                 post_index = PostIndex()
-                post_obj = Post.objects.get(id=post.pk)
-                post_index.update_object(post_obj)
-                # print "post cnt_like: ", post_obj.cnt_like
-                print "post {} updated".format(post.pk)
-                print "=================================================="
+                try:
+                    post_obj = Post.objects.get(id=post.pk)
+                    post_index.update_object(post_obj)
+                    print "post {} updated".format(post.pk)
+                    print "=================================================="
+                except:
+                    pass
