@@ -85,6 +85,7 @@ def like(request):
 @csrf_exempt
 def post_comment(request):
     # user = check_auth(request)
+    return HttpResponse(1, content_type="application/json")
     user = None
     if not user:
         return HttpResponseForbidden(_('error in user validation'),
