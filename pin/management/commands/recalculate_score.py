@@ -11,7 +11,9 @@ class Command(BaseCommand):
         users = User.objects.only('id').all()
 
         for user in users:
-            posts = Post.objects.filter(user_id=user.id).aggregate(cnt_like=Sum('cnt_like'))
+            print "user:", user.id
+            posts = Post.objects.filter(user_id=user.id)\
+                .aggregate(cnt_like=Sum('cnt_like'))
 
             if posts['cnt_like']:
                 score = int(posts['cnt_like']) * 10

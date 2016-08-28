@@ -40,7 +40,7 @@ class UserResource(ModelResource):
                                                         'application/json'))
 
         app_token = hashlib.sha1(settings.APP_TOKEN_STR).hexdigest()
-        req_token = data.get('token', '')
+        req_token = None
 
         if req_token != app_token:
             return self.create_response(request, {
@@ -48,9 +48,12 @@ class UserResource(ModelResource):
                 'reason': 'token problem for register'
             })
 
-        username = data.get('username', '')
-        email = data.get('email', '')
-        password = data.get('password', '')
+        # username = data.get('username', '')
+        username = None
+        # email = data.get('email', '')
+        email = None
+        # password = data.get('password', '')
+        password = None
 
         if not username or not email or not password:
             return self.create_response(request, {
@@ -88,7 +91,7 @@ class UserResource(ModelResource):
 
         app_token = hashlib.sha1(settings.APP_TOKEN_STR).hexdigest()
 
-        req_token = data.get('token', '')
+        req_token = None
 
         if req_token != app_token:
             print "%s, %s" % (req_token, app_token)
@@ -97,8 +100,10 @@ class UserResource(ModelResource):
                 'reason': 'token problem',
             }, HttpForbidden)
 
-        username = data.get('username', '')
-        password = data.get('password', '')
+        username = None
+        # username = data.get('username', '')
+        password = None
+        # password = data.get('password', '')
 
         user = authenticate(username=username, password=password)
 
