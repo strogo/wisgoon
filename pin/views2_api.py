@@ -703,8 +703,7 @@ def comments(request):
 
 def follower(request, user_id=1):
     data = {}
-    cur_user = None
-    follow_cnt = Follow.objects.filter(following_id=user_id).count()
+    follow_cnt = 0
 
     offset = int(request.GET.get('offset', 0))
     limit = int(request.GET.get('limit', 20))
@@ -720,40 +719,13 @@ def follower(request, user_id=1):
                     'previous': '',
                     'total_count': follow_cnt}
 
-    objects_list = []
-
-    token = request.GET.get('token', '')
-    if token:
-        cur_user = AuthCache.id_from_token(token=token)
-
-    fq = Follow.objects.filter(following_id=user_id)[offset:offset + limit]
-    for fol in fq:
-        o = {}
-        o['user_id'] = fol.follower_id
-        o['user_avatar'] = get_avatar(fol.follower_id, size=100)
-        o['user_name'] = UserDataCache.get_user_name(fol.follower_id)
-
-        if cur_user:
-            o['follow_by_user'] = Follow.objects\
-                .filter(follower_id=cur_user, following_id=fol.follower_id)\
-                .exists()
-        else:
-            o['follow_by_user'] = False
-
-        objects_list.append(o)
-
-    data['objects'] = objects_list
+    data['objects'] = []
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
 
 
 def search(request):
-    cur_user = None
-    row_per_page = 10
-
-    offset = int(request.GET.get('offset', 0))
-
     data = {}
 
     query = request.GET.get('q', None)
@@ -763,83 +735,18 @@ def search(request):
         return HttpResponse(json_data, content_type="application/json")
 
     if query:
-        from user_profile.models import Profile
-        from haystack.query import SQ
-        from haystack.query import Raw
-
-        words = query.split()
-
-        sq = SQ()
-        for w in words:
-            sq.add(SQ(text__contains=Raw("%s*" % w)), SQ.OR)
-            sq.add(SQ(text__contains=Raw(w)), SQ.OR)
-
-        results = SearchQuerySet().models(Profile)\
-            .filter(sq)[offset:offset + 1 * row_per_page]
-
-        token = request.GET.get('token', '')
-        if token:
-            cur_user = AuthCache.id_from_token(token=token)
-
         data['objects'] = []
-        for r in results:
-            o = {}
-            r = r.object
-            o['id'] = r.user_id
-            o['avatar'] = get_avatar(r.user_id, 100)
-            o['username'] = UserDataCache.get_user_name(r.user_id)
-            try:
-                o['name'] = r.name
-            except:
-                o['name'] = ""
-
-            if cur_user:
-                o['follow_by_user'] = Follow\
-                    .get_follow_status(follower=cur_user, following=r.user_id)
-            else:
-                o['follow_by_user'] = False
-
-            data['objects'].append(o)
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
 
 
 def search2(request):
-    from user_profile.models import Profile
-    row_per_page = 20
-    cur_user = None
-
     query = request.GET.get('q', '')
-    offset = int(request.GET.get('offset', 0))
-    results = SearchQuerySet().models(Profile)\
-        .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
     data = {}
     if query:
-        token = request.GET.get('token', '')
-        if token:
-            cur_user = AuthCache.id_from_token(token=token)
-
         data['objects'] = []
-        for r in results:
-            r = r.object
-            o = {}
-            o['id'] = r['id']
-            o['avatar'] = get_avatar(r['id'], 100)
-            o['username'] = r['username_s']
-            try:
-                o['name'] = r['name_s']
-            except:
-                o['name'] = ""
-
-            if cur_user:
-                o['follow_by_user'] = Follow\
-                    .get_follow_status(follower=cur_user, following=r['id'])
-            else:
-                o['follow_by_user'] = False
-
-            data['objects'].append(o)
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
@@ -862,72 +769,16 @@ def hashtag_top(request):
 
 
 def hashtag(request):
-    row_per_page = 20
-    cur_user = None
-
     query = request.GET.get('q', '')
     query = query.replace('#', '')
-    offset = int(request.GET.get('offset', 0))
-
     data = {}
-
-    if query:
-        results = SearchQuerySet().models(Post)\
-            .filter(tags=query)\
-            .order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
-        token = request.GET.get('token', '')
-        if token:
-            cur_user = AuthCache.id_from_token(token=token)
-        posts = []
-        for p in results:
-            try:
-                pp = Post.objects\
-                    .only(*Post.NEED_KEYS2)\
-                    .get(id=p.object.id)
-
-                posts.append(pp)
-            except:
-                pass
-
-        thumb_size = request.GET.get('thumb_size', "100x100")
-
-        data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
-                                           thumb_size=thumb_size, r=request)
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
 
 
 def search_posts(request):
-    row_per_page = 20
-    cur_user = None
-
-    query = request.GET.get('q', '')
-    offset = int(request.GET.get('offset', 0))
-
     data = {}
-
-    if query:
-        results = SearchQuerySet().models(Post)\
-            .filter(content__contains=query)[offset:offset + 1 * row_per_page]
-        token = request.GET.get('token', '')
-        if token:
-            cur_user = AuthCache.id_from_token(token=token)
-        posts = []
-        for p in results:
-            try:
-                pp = Post.objects\
-                    .only(*Post.NEED_KEYS2)\
-                    .get(id=p.object.id)
-
-                posts.append(pp)
-            except:
-                pass
-
-        thumb_size = request.GET.get('thumb_size', "100x100")
-
-        data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
-                                           thumb_size=thumb_size, r=request)
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
@@ -973,6 +824,7 @@ def password_reset(request, is_admin_site=False,
 
 @csrf_exempt
 def change_password(request):
+    return HttpResponse('error in change password')
     if is_system_writable() is False:
         return HttpResponse('error in change password')
 
@@ -1033,6 +885,7 @@ def comment_delete(request, id):
 
 
 def block_user(request, user_id):
+    return HttpResponse('1')
     if is_system_writable() is False:
         return HttpResponse('1')
 
@@ -1049,6 +902,7 @@ def block_user(request, user_id):
 
 
 def unblock_user(request, user_id):
+    return HttpResponse('1')
     if is_system_writable() is False:
         return HttpResponse('1')
 
@@ -1170,6 +1024,7 @@ def user_credit(request):
 
 
 def inc_credit(request):
+    return HttpResponse("failed", content_type="text/html")
     if is_system_writable() is False:
         return HttpResponse("failed", content_type="text/html")
 
@@ -1259,6 +1114,7 @@ def inc_credit(request):
 
 @csrf_exempt
 def save_as_ads(request, post_id):
+    return HttpResponseForbidden("error in data")
     if is_system_writable() is False:
         return HttpResponseForbidden("error in data")
 
@@ -1312,15 +1168,7 @@ def save_as_ads(request, post_id):
 
 def promoted(request):
     data = {}
-
-    user = None
     token = request.GET.get('token', '')
-
-    if token:
-        user = AuthCache.user_from_token(token=token)
-
-    if not user:
-        return HttpResponseForbidden("error in token")
 
     row_per_page = 20
     offset = int(request.GET.get('offset', 0))
@@ -1335,21 +1183,6 @@ def promoted(request):
     }
 
     objects = []
-    ads = Ad.objects.filter(Q(owner=user) | Q(user=user))\
-        .order_by("-id")[offset:offset + 1 * row_per_page]
-    for ad in ads:
-        o = {}
-        o['post'] = get_objects_list([ad.post], cur_user_id=user.id, thumb_size=250)
-        o['cnt_view'] = ad.get_cnt_view()
-        o['user'] = ad.user.id
-        o['ended'] = ad.ended
-        o['owner'] = ad.owner.id
-        # o['cnt_view'] = ad.cnt_view
-        o['ads_type'] = ad.ads_type
-        o['start'] = str(ad.start)
-        o['end'] = str(ad.end)
-
-        objects.append(o)
 
     data['objects'] = objects
 
