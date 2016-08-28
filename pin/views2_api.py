@@ -683,14 +683,6 @@ def comments(request):
     limit = int(request.GET.get('limit', 20))
     object_pk = int(request.GET.get('object_pk', 0))
 
-    comment_cache_name = "com_%d" % object_pk
-    cc = cache.get(comment_cache_name)
-    pc = "%d-%d" % (offset, limit)
-    if not cc:
-        cc = {}
-    elif pc in cc:
-        return HttpResponse(cc[pc], content_type="application/json")
-
     next = {
         'url': "/pin/api/com/comments/?limit=%s&offset=%s&object_pk=%s" % (
             limit, offset + limit, object_pk)
@@ -703,36 +695,9 @@ def comments(request):
                     'previous': '',
                     'total_count': 1000}
 
-    objects_list = []
-
-    cq = Comments.objects.only(*Comments.NEED_KEYS_API)\
-        .filter(object_pk_id=object_pk)\
-        .order_by('-id')[offset:offset + limit]
-    for com in cq:
-        o = {}
-        o['id'] = com.id
-        o['object_pk'] = com.object_pk_id
-        o['score'] = com.score
-
-        com_date = com.submit_date.astimezone(timezone('Asia/Tehran'))
-        com_date = com_date.strftime('%Y-%m-%dT%H:%M:%S')
-
-        o['submit_date'] = com_date
-        o['comment'] = emoji.emojize(com.comment)
-        o['user_url'] = com.user_id
-        o['user_avatar'] = get_avatar(com.user_id, size=100)
-        o['user_name'] = com.get_username()
-        o['resource_uri'] = "/pin/api/com/comments/%d/" % com.id
-
-        objects_list.append(o)
-
-    data['objects'] = objects_list
+    data['objects'] = []
 
     json_data = json.dumps(data, cls=MyEncoder)
-
-    pc = "%d-%d" % (offset, limit)
-    cc[pc] = json_data
-    cache.set(comment_cache_name, cc, 3600)
     return HttpResponse(json_data, content_type="application/json")
 
 
