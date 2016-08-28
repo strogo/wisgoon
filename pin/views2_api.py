@@ -577,7 +577,6 @@ def likes(request):
         json_data = json.dumps(data, cls=MyEncoder)
         return HttpResponse(json_data, content_type="application/json")
 
-    post_id = request.GET.get('post_id', None)
     offset = int(request.GET.get('offset', 0))
     limit = 20
 
@@ -587,31 +586,6 @@ def likes(request):
     }
     data['meta']['next'] = next['url']
 
-    objects_list = []
-    filters = {}
-
-    if post_id:
-        filters.update(dict(post_id=post_id))
-    else:
-        return HttpResponse('fault')
-
-    from models_redis import LikesRedis
-    post_likes = LikesRedis(post_id=post_id).get_likes(offset=offset)
-
-    for p in post_likes:
-        p = int(p)
-        o = {}
-        o['post_id'] = int(post_id)
-
-        o['user_avatar'] = get_avatar(p, size=100)
-        o['user_name'] = UserDataCache.get_user_name(user_id=p)
-
-        o['user_url'] = int(p)
-        o['resource_uri'] = "/pin/api/like/likes/%d/" % p
-
-        objects_list.append(o)
-
-    data['objects'] = objects_list
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
 
