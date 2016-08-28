@@ -633,8 +633,7 @@ def notif(request):
 
 def following(request, user_id=1):
     data = {}
-    cur_user = None
-    follow_cnt = Follow.objects.filter(follower_id=user_id).count()
+    follow_cnt = 0
 
     offset = int(request.GET.get('offset', 0))
     limit = int(request.GET.get('limit', 20))
@@ -650,29 +649,7 @@ def following(request, user_id=1):
                     'previous': '',
                     'total_count': follow_cnt}
 
-    objects_list = []
-
-    token = request.GET.get('token', '')
-    if token:
-        cur_user = AuthCache.id_from_token(token=token)
-
-    fq = Follow.objects.filter(follower_id=user_id)[offset:offset + limit]
-    for fol in fq:
-        o = {}
-        o['user_id'] = fol.following_id
-        o['user_avatar'] = get_avatar(fol.following_id, size=100)
-        o['user_name'] = UserDataCache.get_user_name(fol.following_id)
-
-        if cur_user:
-            o['follow_by_user'] = Follow.objects\
-                .filter(follower_id=cur_user, following_id=fol.following_id)\
-                .exists()
-        else:
-            o['follow_by_user'] = False
-
-        objects_list.append(o)
-
-    data['objects'] = objects_list
+    data['objects'] = []
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
