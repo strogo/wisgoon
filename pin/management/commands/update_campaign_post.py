@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from haystack.query import SearchQuerySet
 from pin.models import Post, Campaign
-# from pin.search_indexes import PostIndex
+from pin.search_indexes import PostIndex
 
 
 class Command(BaseCommand):
@@ -19,9 +19,9 @@ class Command(BaseCommand):
                 .order_by('-cnt_like_i')
 
             for post in posts:
-                # post_index = PostIndex()
+                post_index = PostIndex()
                 post_obj = Post.objects.get(id=post.pk)
-                # post_index.update_object(post_obj)
-                print "solr_cnt_like: ", post.cnt_like_i
-                print "cache_cnt_like: ", post_obj.cnt_like
+                post_index.update_object(post_obj)
+                # print "post cnt_like: ", post_obj.cnt_like
+                print "post {} updated".format(post.pk)
                 print "=================================================="
