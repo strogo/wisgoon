@@ -548,27 +548,12 @@ def friends_post(request):
     cur_user = None
     before = request.GET.get('before', None)
 
-    token = request.GET.get('token', '')
-    if token:
-        cur_user = AuthCache.id_from_token(token=token)
-    else:
-        raise Http404
-
-    if before:
-        idis = Post.user_stream_latest(user_id=cur_user, pid=before)
-    else:
-        idis = Post.user_stream_latest(user_id=cur_user)
-
-    posts = Post.objects\
-        .only(*Post.NEED_KEYS2)\
-        .filter(id__in=idis)[:limit]
-
-    objects = dict([(int(obj.id), obj) for obj in posts])
     posts = []
-    for id in idis:
-        id = int(id)
-        if id in objects:
-            posts.append(objects[id])
+
+    if not before:
+        posts = Post.objects\
+            .only(*Post.NEED_KEYS2)\
+            .filter(id__in=[15877515])
 
     thumb_size = request.GET.get('thumb_size', "100x100")
 
