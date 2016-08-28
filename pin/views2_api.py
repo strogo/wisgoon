@@ -4,7 +4,6 @@ try:
 except ImportError:
     import json
 
-import emoji
 import urlparse
 import urllib2
 import hashlib
@@ -13,14 +12,12 @@ import datetime
 import time
 import redis
 from hashlib import md5
-from pytz import timezone
 
 from django.conf import settings
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.cache import cache
-from django.db.models import Q
 from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.template.response import TemplateResponse
 from django.views.decorators.cache import cache_page
@@ -31,9 +28,9 @@ from tastypie.models import ApiKey
 
 from pin.tools import AuthCache, get_user_ip, get_new_access_token,\
     get_post_user_cache
-from pin.models import Post, Category, Likes, Follow, Comments, Block,\
-    Packages, Ad, Bills2, PhoneData, BannedImei
-from pin.model_mongo import Notif, UserLocation
+from pin.models import Post, Category, Likes, Comments, Block,\
+    Ad, Bills2, PhoneData, BannedImei
+from pin.model_mongo import UserLocation
 from pin.models_redis import NotificationRedis, PostView
 from pin.cacheLayer import UserDataCache, CategoryDataCache
 from pin.api6.tools import post_item_json, is_system_writable
@@ -891,21 +888,9 @@ PACKS = {
 
 @cache_page(60 * 15)
 def packages(request):
-    # return HttpResponse("hello")
-
     data = {
         "objects": []
     }
-
-    for p in Packages.objects.all():
-        o = {
-            "name": p.name,
-            "title": p.title,
-            "price": p.price,
-            "wis": p.wis,
-            "icon": str(p.icon.url)
-        }
-        data['objects'].append(o)
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")
@@ -913,20 +898,9 @@ def packages(request):
 
 @cache_page(60 * 15)
 def packages_old(request):
-    # return HttpResponse("hello")
-
     data = {
         "objects": []
     }
-
-    o = {
-        "name": "update",
-        "title": u"لطفا نسخه ی جدید را نصب کنید - 5.0.3",
-        "price": 0,
-        "wis": 0,
-        "icon": "/media/packages/ic_credit_gold.png"
-    }
-    data['objects'].append(o)
 
     json_data = json.dumps(data, cls=MyEncoder)
     return HttpResponse(json_data, content_type="application/json")

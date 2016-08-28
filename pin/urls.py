@@ -43,7 +43,7 @@ urlpatterns = patterns('pin.views',
 
     url(r'^api1/', include(post_resource.urls)),
     url(r'^apic/', include(cat_resource.urls)),
-    url(r'^api/profile/', include(profile_resource.urls)),
+    # url(r'^api/profile/', include(profile_resource.urls)),
     url(r'^api/app/', include(app_resource.urls)),
     url(r'^api/stream/', include(stream_resource.urls)),
 )
