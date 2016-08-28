@@ -346,11 +346,15 @@ def post(request):
                     'total_count': 1000}
     data['objects'] = []
 
+    before = request.GET.get('before', None)
+    posts = []
+
     cur_user = None
 
-    posts = Post.objects\
-        .only(*Post.NEED_KEYS2)\
-        .filter(id__in=[15877515])
+    if not before:
+        posts = Post.objects\
+            .only(*Post.NEED_KEYS2)\
+            .filter(id__in=[15877515])
 
     thumb_size = int(request.GET.get('thumb_size', "236"))
 
