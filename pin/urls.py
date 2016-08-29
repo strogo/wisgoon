@@ -43,7 +43,6 @@ urlpatterns = patterns('pin.views',
 
     url(r'^api1/', include(post_resource.urls)),
     url(r'^apic/', include(cat_resource.urls)),
-    # url(r'^api/profile/', include(profile_resource.urls)),
     url(r'^api/app/', include(app_resource.urls)),
     url(r'^api/stream/', include(stream_resource.urls)),
 )
@@ -97,60 +96,16 @@ urlpatterns += patterns('pin.views_admin',
     url(r'^comment/delete/(?P<id>\d+)', 'comment_delete', name="pin-comment-delete"),
 )
 
-# urlpatterns += patterns('pin.views_device',
-    # url(r'^d_send/$', 'post_send', name="pin-direct"),
-    # url(r'^d_like/$', 'like', name='pin-device-like'),
-    # url(r'^d_post_comment/$', 'post_comment', name='pin-device-post-comment'),
-    # url(r'^d_post_report/$', 'post_report'),
-    # url(r'^d/comment/score/(?P<comment_id>\d+)/(?P<score>\d+)/$', 'comment_score'),
-    # url(r'^d/post/delete/(?P<item_id>\d+)/$', 'post_delete'),
-    # url(r'^d/post/update/(?P<item_id>\d+)/$', 'post_update'),
-    # url(r'^d/comment/report/(?P<comment_id>\d+)/$', 'comment_report'),
-    # url(r'^d/follow/(?P<following>\d+)/(?P<action>\d+)/$', 'follow'),
-# )
-
 urlpatterns += patterns('',
     url(r'^api/post/(?P<item_id>\d+)/$', 'pin.views2_api.post_item', name="post_api_item"),
     url(r'^api/post/(?P<post_id>\d+)/details/', 'pin.views2_api.post_details', name="post_api_details"),
     url(r'^api/post/', 'pin.views2_api.post', name="post_api"),
-    # url(r'^api/post2/', 'pin.views2_api.post2', name="post_api2"),
-    # url(r'^api/promoted/post/', 'pin.views2_api.promoted', name="promoted_api"),
-    # url(r'^api/hashtag/$', 'pin.views2_api.hashtag', name="api-hashtag"),
-    # url(r'^api/hashtag/top/$', 'pin.views2_api.hashtag_top', name="api-hashtag-top"),
-    # url(r'^api/com/comments/', 'pin.views2_api.comments', name="api_comments"),
-    # url(r'^api/friends_post/', 'pin.views2_api.friends_post', name="post_friends_api"),
-    # url(r'^api/like/likes/', 'pin.views2_api.likes', name="likes_api"),
     url(r'^api/notif/notify/$', 'pin.views2_api.notif', name="new_notif"),
     url(r'^api/notif/count/$', 'pin.views2_api.notif_count', name="new_notif_count"),
-    # url(r'^api/comment/delete/(?P<id>\d+)/$', 'pin.views2_api.comment_delete', name="new_comment_delete"),
-
-    # url(r'^api/following/(?P<user_id>\d+)/', 'pin.views2_api.following', name="api-following"),
-    # url(r'^api/follower/(?P<user_id>\d+)/', 'pin.views2_api.follower', name="api-follower"),
-    # url(r'^api/search/$', 'pin.views2_api.search', name="api-search"),
-    # url(r'^api/v2/search/$', 'pin.views2_api.search2', name="api-search-v2"),
-
-    # url(r'^api/search/posts/$', 'pin.views2_api.search_posts', name="api-search-posts"),
     url(r'^api/system/$', 'pin.views2_api.system', name="api-system"),
-
-    # url(r'^api/block/user/(?P<user_id>\d+)/', 'pin.views2_api.block_user', name="api-block"),
-    # url(r'^api/unblock/user/(?P<user_id>\d+)/', 'pin.views2_api.unblock_user', name="api-block"),
 
     url(r'^api/packages/$', 'pin.views2_api.packages_old', name="api-packages_old"),
     url(r'^api/packages2/$', 'pin.views2_api.packages', name="api-packages"),
 
-    # url(r'^api/promotion/prices/$', 'pin.views2_api.promotion_prices', name="api-promotion-prices"),
-    # url(r'^api/user/credit/$', 'pin.views2_api.user_credit', name="api-user-credit"),
-    # url(r'^api/user/inc/credit/$', 'pin.views2_api.inc_credit', name="api-user-inc-credit"),
-
-    # url(r'^api/save/as/ads/(?P<post_id>\d+)/$', 'pin.views2_api.save_as_ads', name="api-save-as-ads"),
-
-    # url(r'^api/gcm/get/phone/data/$', 'pin.views2_api.get_phone_data', name="api-get-phone-data"),
-    # url(r'^api/plus/get/data/$', 'pin.views2_api.get_plus_data', name="api-get-phone-data"),
     url(r'^api/logout/$', 'pin.views2_api.logout', name="api-logout"),
-
-    url(r'^api/password/reset_mobile/$', 'pin.views2_api.password_reset',
-        name='api_password_reset'),
-
-    url(r'^api/password/change_mobile/$', 'pin.views2_api.change_password',
-        name='password_change_mobile'),
 )
