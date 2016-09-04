@@ -196,6 +196,7 @@ class Category(models.Model):
     parent = models.ForeignKey(SubCategory, related_name='sub_category',
                                blank=True, null=True)
     cnt_post = models.IntegerField(default=0)
+    native_hashcode = models.CharField(max_length=255, blank=True, null=True)
 
     def __unicode__(self):
         return self.title

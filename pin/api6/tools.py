@@ -51,6 +51,7 @@ def category_get_json(cat_id):
         'id': cat.id,
         'image': media_abs_url(cat.image.url, static=True),
         'title': cat.title,
+        'native_hashcode': cat.native_hashcode
     }
     return cat_json
 

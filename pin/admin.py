@@ -230,7 +230,7 @@ class PinAdmin(admin.ModelAdmin):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'admin_image', 'parent')
+    list_display = ('id', 'title', 'admin_image', 'parent', 'native_hashcode')
 
 
 class ProfileAdmin(admin.ModelAdmin):
