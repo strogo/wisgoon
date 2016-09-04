@@ -1,6 +1,13 @@
 import os
-from datetime import datetime
 from celery import Celery
+
+from django.db.models import F
+
+from pin.model_mongo import MonthlyStats
+from pin.models import Post, Follow
+
+from user_profile.models import Profile
+from pin.models_redis import NotificationRedis
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'feedreader.settings_local')
 
@@ -8,39 +15,11 @@ app = Celery('tasks', broker='amqp://guest@localhost//')
 app.conf.CELERY_TASK_SERIALIZER = 'json'
 app.conf.CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 
-from django.db.models import F
-
-from pin.model_mongo import Notif, MonthlyStats, NotifCount
-from pin.models import Post, Follow
-
-from user_profile.models import Profile
-from pin.models_redis import NotificationRedis
-
 
 @app.task(name="tasks.notif_test")
 def notif_send(user_id, type, post, actor_id, seen=False, post_image=None):
-    NotifCount.objects(owner=user_id).update_one(inc__unread=1, upsert=True)
-
-    Notif.objects.create(owner=user_id, type=type, post=post,
-                         last_actor=actor_id,
-                         date=datetime.now,
-                         post_image=post_image)
     NotificationRedis(user_id=user_id)\
         .set_notif(ntype=type, post=post, actor=actor_id)
-
-    # NotifCas.create(owner=user_id, type=type, post=post,
-    #                 last_actor=actor_id,
-    #                 date=datetime.now(),
-    #                 seen=False,
-    #                 post_image=post_image,
-    #                 actors=[actor_id])
-
-    # Notif.objects(owner=user_id, type=type, post=post)\
-    #     .update_one(set__last_actor=actor_id,
-    #                 set__date=datetime.now,
-    #                 set__seen=False,
-    #                 set__post_image=post_image,
-    #                 add_to_set__actors=actor_id, upsert=True)
 
     return "hello notif"
 
@@ -71,7 +50,6 @@ def profile_after_dislike(user_id):
 
 @app.task(name="tasks.clear_notif")
 def clear_notif(user_id):
-    Notif.objects.filter(owner=user_id).order_by('-date')[100:].delete()
     print "clear notif"
     return "clear botif"
 

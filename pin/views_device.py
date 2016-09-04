@@ -45,6 +45,7 @@ def check_auth(request):
 
 @csrf_exempt
 def like(request):
+    return HttpResponse('+1', content_type="application/json")
     user = check_auth(request)
 
     if not user:
@@ -120,6 +121,7 @@ def post_comment(request):
 
 @csrf_exempt
 def post_report(request):
+    return HttpResponseBadRequest(0)
     user = check_auth(request)
     if not user:
         return HttpResponseForbidden(_('error in user validation'))
@@ -140,6 +142,7 @@ def post_report(request):
 
 @csrf_exempt
 def comment_report(request, comment_id):
+    return HttpResponseBadRequest(0)
     user = check_auth(request)
     if not user:
         return HttpResponseForbidden(_('error in user validation'))
@@ -155,6 +158,7 @@ def comment_report(request, comment_id):
 
 @csrf_exempt
 def comment_score(request, comment_id, score):
+    return HttpResponseBadRequest('error in scores')
     user = check_auth(request)
     if not user:
         return HttpResponseForbidden(_('error in user validation'))
@@ -189,6 +193,7 @@ def comment_score(request, comment_id, score):
 
 @csrf_exempt
 def post_delete(request, item_id):
+    return HttpResponse('1')
     user = check_auth(request)
     if not user:
         return HttpResponseForbidden(_('error in user validation'))
@@ -208,6 +213,7 @@ def post_delete(request, item_id):
 
 @csrf_exempt
 def post_update(request, item_id):
+    return HttpResponse(_('successfully updated post'))
     user = check_auth(request)
     if not user:
         return HttpResponseForbidden(_('error in user validation'))
@@ -230,6 +236,7 @@ def post_update(request, item_id):
 
 
 def follow(request, following, action):
+    return HttpResponse('1')
     user = check_auth(request)
     if not user:
         return HttpResponseForbidden(_('error in user validation'))
@@ -257,6 +264,7 @@ def follow(request, following, action):
 
 @csrf_exempt
 def post_send(request):
+    return HttpResponseBadRequest('bad request')
     user = check_auth(request)
 
     if not user:
