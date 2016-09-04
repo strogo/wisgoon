@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
-    get_list_post, get_objects_list, ad_item_json, is_system_writable
+    get_list_post, get_objects_list, ad_item_json, is_system_writable, category_get_json
 from pin.models import Post, Report, Ad, Block, ReportedPost
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
@@ -126,6 +126,10 @@ def category(request, category_id):
     pl = Post.latest(pid=before, cat_id=category_id)
     from_model = "%s_%s" % (settings.STREAM_LATEST_CAT, category_id)
     posts = get_list_post(pl, from_model=from_model)
+
+    cat_json = category_get_json(category_id)
+    hashcode = cat_json['native_hashcode'] if cat_json['native_hashcode'] else ""
+    data['meta']['native_hashcode'] = hashcode
 
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
