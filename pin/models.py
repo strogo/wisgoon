@@ -830,10 +830,11 @@ class Post(models.Model):
         home_stream = cls.HOME_QUEUE_NAME
 
         if pid == 0:
-            pl = r_server.lrange(home_stream, 0, limit)
-            return pl[:limit]
+            pl = r_server.lrange(home_stream, -20, -1)
+            return pl[:-1]
 
         pl = r_server.lrange(home_stream, 0, settings.LIST_LONG)
+        pl.reverse()
 
         if pid:
             try:
