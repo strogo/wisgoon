@@ -38,7 +38,11 @@ def check_user_agent(request):
         ip = request.META.get('REMOTE_ADDR', None)
 
     if "," in ip:
-        ip = ip.split(',')[0]
+        ipsplit = ip.split(',')
+        if ipsplit[1]:
+            ip = ipsplit[1]
+        else:
+            ip = ipsplit[0]
 
     d = {
         "x_forwarded_for": request.META.get('HTTP_X_FORWARDED_FOR', None),
