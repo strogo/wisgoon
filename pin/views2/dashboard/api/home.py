@@ -1,9 +1,16 @@
 import datetime
+import redis
+from django.conf import settings
 
 from pin.api6.http import return_json_data, return_un_auth
 from pin.views2.dashboard.api.tools import today_new_users, today_bills,\
-    today_new_posts, today_likes, today_blocks, today_follow, today_view_pages,\
+    today_new_posts, today_likes, today_blocks, today_follow,\
+    today_view_pages,\
     today_comments, check_admin
+
+from pin.models import Post
+
+r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 
 def dashboard_home(request):
@@ -18,6 +25,9 @@ def dashboard_home(request):
     data['meta'] = {'limit': '',
                     'next': '',
                     'total_count': ''}
+
+    objects['home_queue'] = {'cnt_post': r_server.llen(Post.HOME_QUEUE_NAME),
+                             'more_info': 'url'}
 
     objects['today_users'] = {'cnt_users': today_new_users(today),
                               'more_info': 'url'}
