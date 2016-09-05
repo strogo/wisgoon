@@ -198,7 +198,14 @@ def get_user_ip(request, to_int=False):
         ip = request.META.get('REMOTE_ADDR', None)
 
     if "," in ip:
-        ip = ip.split(',')[0]
+        ipsplit = ip.split(', ')
+        if ipsplit[-1]:
+            ip = ipsplit[-1]
+        else:
+            ip = ipsplit[0]
+
+    # if "," in ip:
+    #     ip = ip.split(',')[0]
 
     return ip
 
