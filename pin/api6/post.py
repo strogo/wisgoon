@@ -438,7 +438,7 @@ def user_post(request, user_id):
 def related_post(request, item_id):
     current_user = None
     hot_post = None
-    
+
     data = {
         'meta': {
             'limit': GLOBAL_LIMIT,
@@ -457,6 +457,7 @@ def related_post(request, item_id):
 
     if token:
         current_user = AuthCache.user_from_token(token=token)
+        current_user = AuthCache.id_from_token(token=token)
 
     cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
     mltis = cache.get(cache_str)
