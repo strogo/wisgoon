@@ -38,9 +38,9 @@ def check_user_agent(request):
         ip = request.META.get('REMOTE_ADDR', None)
 
     if "," in ip:
-        ipsplit = ip.split(',')
-        if ipsplit[1]:
-            ip = ipsplit[1]
+        ipsplit = ip.split(', ')
+        if ipsplit[-1]:
+            ip = ipsplit[-1]
         else:
             ip = ipsplit[0]
 
