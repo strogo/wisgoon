@@ -826,6 +826,26 @@ class Post(models.Model):
         return []
 
     @classmethod
+    def home_queue(cls, pid=0, limit=20):
+        home_stream = cls.HOME_QUEUE_NAME
+
+        if pid == 0:
+            pl = r_server.lrange(home_stream, 0, limit)
+            return pl[:limit]
+
+        pl = r_server.lrange(home_stream, 0, settings.LIST_LONG)
+
+        if pid:
+            try:
+                pid_index = pl.index(str(pid))
+                idis = pl[pid_index + 1: pid_index + limit + 1]
+                return idis
+            except ValueError:
+                return []
+
+        return []
+
+    @classmethod
     def latest(cls, pid=0, cat_id=0, limit=20):
         if cat_id:
             cat_stream = "{}_{}".format(settings.STREAM_LATEST_CAT, cat_id)
