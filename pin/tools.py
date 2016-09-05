@@ -200,13 +200,7 @@ def get_user_ip(request, to_int=False):
     if "," in ip:
         ip = ip.split(',')[0]
 
-    if to_int:
-        try:
-            ip = (ip)
-        except:
-            pass
     return ip
-    # return request.META.get('REMOTE_ADDR', None)
 
 
 class MyCache(object):

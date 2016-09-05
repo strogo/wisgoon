@@ -74,6 +74,7 @@ def latest(request):
 
 def friends(request):
     cur_user = None
+    hot_post = None
     data = {}
     data['meta'] = {'limit': 20,
                     'next': "",
@@ -90,12 +91,21 @@ def friends(request):
     if not cur_user:
         return return_bad_request()
 
+    if cur_user:
+        viewer_id = str(cur_user)
+
     if before:
         idis = Post.user_stream_latest(user_id=cur_user, pid=before)
     else:
         idis = Post.user_stream_latest(user_id=cur_user)
 
     posts = get_list_post(idis, from_model=settings.STREAM_LATEST)
+
+    ad = Ad.get_ad(user_id=viewer_id)
+    if ad:
+        hot_post = int(ad.post_id)
+    if hot_post:
+        posts = list([hot_post]) + list(posts)
 
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
