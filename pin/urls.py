@@ -34,6 +34,8 @@ urlpatterns = patterns('pin.views',
     url(r'^com/posts/(?P<post_id>\d+)/', 'get_comments', name='pin-get-comments'),
     url(r'^editor/choices/feed/', EditorPinFeed(), name="pin-latest-feed"),
 
+    url(r'^check_user_agent/', 'check_user_agent', name='pin-get-check-user-agent'),
+
     url(r'^popular/(?P<interval>\w+)/$', 'popular', name='pin-popular-offset'),
     url(r'^popular/', 'popular', name="pin-popular"),
     url(r'^topuser/$', 'topuser', name='pin-topuser'),

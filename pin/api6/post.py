@@ -436,6 +436,9 @@ def user_post(request, user_id):
 
 
 def related_post(request, item_id):
+    current_user = None
+    hot_post = None
+    
     data = {
         'meta': {
             'limit': GLOBAL_LIMIT,
@@ -452,7 +455,6 @@ def related_post(request, item_id):
     if offset > 100:
         return return_json_data(data)
 
-    current_user = None
     if token:
         current_user = AuthCache.user_from_token(token=token)
 
@@ -479,6 +481,17 @@ def related_post(request, item_id):
                     mltis.append(post_id)
     if mltis:
         last_id = mltis[-1]
+
+    if current_user:
+        viewer_id = str(current_user)
+    else:
+        viewer_id = str(get_user_ip(request, to_int=True))
+
+    ad = Ad.get_ad(user_id=viewer_id)
+    if ad:
+        hot_post = int(ad.post_id)
+    if hot_post:
+        mltis = list([hot_post]) + list(mltis)
 
     data['objects'] = get_objects_list(mltis, current_user)
     data['meta']['next'] = get_next_url(url_name='api-6-post-related',

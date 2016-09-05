@@ -29,6 +29,26 @@ MEDIA_ROOT = settings.MEDIA_ROOT
 REPORT_TYPE = settings.REPORT_TYPE
 
 
+def check_user_agent(request):
+    ip_first = get_user_ip(request)
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR', None)
+    if x_forwarded_for:
+        ip = x_forwarded_for
+    else:
+        ip = request.META.get('REMOTE_ADDR', None)
+
+    if "," in ip:
+        ip = ip.split(',')[0]
+
+    d = {
+        "x_forwarded_for": request.META.get('HTTP_X_FORWARDED_FOR', None),
+        "remote_addr": request.META.get('REMOTE_ADDR', None),
+        "ipfirst": ip_first,
+        "ip": ip
+    }
+    return HttpResponse(json.dumps(d))
+
+
 def home(request):
     pid = get_request_pid(request)
     pl = Post.home_latest(pid=pid)
