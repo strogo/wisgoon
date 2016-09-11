@@ -55,7 +55,7 @@ class UserStream(Model):
 try:
     slist = ['127.0.0.1', '79.127.125.104', '79.127.125.99']
     # slist = settings.CASSANDRA_DB
-    connection.setup(slist, "wisgoon", protocol_version=3)
+    connection.setup(slist, "wisgoon")
     management.create_keyspace_simple("wisgoon", replication_factor=1)
 
     sync_table(PostStats)
