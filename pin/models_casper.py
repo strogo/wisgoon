@@ -53,7 +53,10 @@ class UserStream(Model):
 #     user_id = columns.Integer(primary_key=True)
 
 try:
-    slist = ['127.0.0.1', '79.127.125.104', '79.127.125.99']
+    if settings.DEBUG:
+        slist = ['127.0.0.1']
+    else:
+        slist = ['79.127.125.104']
     # slist = settings.CASSANDRA_DB
     connection.setup(slist, "wisgoon")
     management.create_keyspace_simple("wisgoon", replication_factor=1)
