@@ -33,6 +33,11 @@ class UserStream(Model):
     post_owner = columns.Integer(index=True)
 
 
+# class UserFeed(Model):
+#     user_id = columns.Integer(primary_key=True)
+#     post_id = columns.Integer(primary_key=True, clustering_order="desc")
+#     post_owner = columns.Integer(index=True)
+
 # class UserLikedPosts(Model):
     # post_id = columns.Integer(primary_key=True)
     # user_id = columns.Integer(primary_key=True)
@@ -48,12 +53,14 @@ class UserStream(Model):
 #     user_id = columns.Integer(primary_key=True)
 
 try:
-    slist = ['127.0.0.1', '79.127.125.104', '79.127.125.99']
+    # slist = ['127.0.0.1', '79.127.125.104', '79.127.125.99']
+    slist = settings.CASSANDRA_DB
     connection.setup(slist, "wisgoon", protocol_version=3)
     management.create_keyspace_simple("wisgoon", replication_factor=1)
 
     sync_table(PostStats)
     sync_table(PostData)
     sync_table(UserStream)
+    # sync_table(UserFeed)
 except Exception, e:
     print str(e)
