@@ -19,7 +19,7 @@ class PostStats():
     def get_cnt_view(self):
         query = "SELECT cnt_view FROM post_stats where post_id={}"\
             .format(self.post_id)
-        row = session.execute(query)[0]
-        if not row:
+        row = session.execute(query)
+        if not row.current_rows:
             return 0
-        return row.cnt_view
+        return row[0].cnt_view
