@@ -33,28 +33,21 @@ class PostView(object):
         self.KEY_PREFIX = self.KEY_PREFIX.format(post_id)
 
     def inc_view_test(self):
-        PostStats(post_id=self.post_id).update(cnt_view=1)
+        PostStats(post_id=self.post_id).inc_view()
 
     def inc_view(self):
         from pin.api6.tools import is_system_writable
         if is_system_writable():
             try:
-                PostStats(post_id=self.post_id).update(cnt_view=1)
+                PostStats(post_id=self.post_id).inc_view()
             except Exception, e:
                 print str(e)
-            return
-            notificationRedis.incr(self.KEY_PREFIX)
 
     def get_cnt_view(self):
         try:
-            return PostStats.objects.get(post_id=self.post_id).cnt_view
+            return PostStats(post_id=self.post_id).get_cnt_view()
         except:
             return 0
-        cnt = notificationRedis.get(self.KEY_PREFIX)
-        if not cnt:
-            return 0
-        else:
-            return int(cnt)
 
 
 class NotifStruct:
