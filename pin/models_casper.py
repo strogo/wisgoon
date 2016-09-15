@@ -1,7 +1,7 @@
 from cassandra.cluster import Cluster
 
 
-cluster = Cluster(['127.0.0.1', '79.127.125.104'])
+cluster = Cluster(['127.0.0.1', '79.127.125.104', '79.127.125.99'])
 session = cluster.connect("wisgoon")
 
 
