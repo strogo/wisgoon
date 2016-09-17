@@ -556,9 +556,6 @@ class Post(models.Model):
         from models_redis import LikesRedis
         LikesRedis(post_id=self.id).delete_likes()
 
-        from models_casper import PostStats
-        PostStats.objects(post_id=self.id).delete()
-
         MonthlyStats.log_hit(MonthlyStats.DELETE_POST)
 
         post_id = self.id
