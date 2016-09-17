@@ -566,8 +566,7 @@ def fix_rotation(image_on):
             break
     try:
         exif = dict(image._getexif().items())
-    except Exception, e:
-        print str(e)
+    except Exception:
         return
 
     try:

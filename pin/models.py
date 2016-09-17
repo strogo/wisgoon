@@ -630,13 +630,6 @@ class Post(models.Model):
         r_server.lpush(user_stream, post_id)
         r_server.ltrim(user_stream, 0, 1000)
 
-        # try:
-        #     UserStream(user_id=user_id,
-        #                post_id=post_id, post_owner=post_owner)\
-        #         .ttl(86400 * 30).save()
-        # except Exception, e:
-        #     print str(e)
-
     @classmethod
     def remove_post_from_stream(cls, user_id, post_id):
         user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
@@ -1107,7 +1100,6 @@ class Likes(models.Model):
         if cp:
             hstr = "like_cache_%s%s" % (post.id, cp)
             cache.delete(hstr)
-            print "delete ", hstr, hcpstr
 
         str_likers = "web_likes_%s" % post.id
         cache.delete(str_likers)
@@ -1388,10 +1380,7 @@ class Block(models.Model):
                                             Q(following_id=blocked_id, follower_id=user_id))
             if follows:
                 for follow in follows:
-                    print "assssssss"
                     follow.delete()
-
-            print "block"
 
         except:
             pass

@@ -12,7 +12,9 @@ class PostStats():
         self.post_id = post_id
 
     def inc_view(self):
-        sql = "UPDATE post_stats SET cnt_view = cnt_view +1 WHERE post_id={};"\
+        sql = """UPDATE post_stats
+                 SET cnt_view = cnt_view + 1
+                 WHERE post_id={};"""\
             .format(self.post_id)
         session.execute_async(sql)
 
