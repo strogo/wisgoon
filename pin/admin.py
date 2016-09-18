@@ -58,7 +58,7 @@ class CreditLogAdmin(admin.ModelAdmin):
 
     search_fields = ['prof_id', ]
 
-    date_hierarchy = 'create_time'
+    # date_hierarchy = 'create_time'
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
