@@ -92,6 +92,7 @@ class AdAdmin(admin.ModelAdmin):
 
     raw_id_fields = ("post", "user")
     list_filter = ("ads_type", "ended")
+    search_fields = ['user__username', 'post__id']
 
     # date_hierarchy = 'start'
 
