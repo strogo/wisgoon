@@ -198,15 +198,16 @@ def get_user_ip(request, to_int=False):
         ip = request.META.get('REMOTE_ADDR', None)
 
     if "," in ip:
-        ip = ip.split(',')[0]
+        ipsplit = ip.split(', ')
+        if ipsplit[-1]:
+            ip = ipsplit[-1]
+        else:
+            ip = ipsplit[0]
 
-    if to_int:
-        try:
-            ip = (ip)
-        except:
-            pass
+    # if "," in ip:
+    #     ip = ip.split(',')[0]
+
     return ip
-    # return request.META.get('REMOTE_ADDR', None)
 
 
 class MyCache(object):
@@ -565,8 +566,7 @@ def fix_rotation(image_on):
             break
     try:
         exif = dict(image._getexif().items())
-    except Exception, e:
-        print str(e)
+    except Exception:
         return
 
     try:

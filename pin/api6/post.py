@@ -74,6 +74,7 @@ def latest(request):
 
 def friends(request):
     cur_user = None
+    hot_post = None
     data = {}
     data['meta'] = {'limit': 20,
                     'next': "",
@@ -90,12 +91,21 @@ def friends(request):
     if not cur_user:
         return return_bad_request()
 
+    if cur_user:
+        viewer_id = str(cur_user)
+
     if before:
         idis = Post.user_stream_latest(user_id=cur_user, pid=before)
     else:
         idis = Post.user_stream_latest(user_id=cur_user)
 
     posts = get_list_post(idis, from_model=settings.STREAM_LATEST)
+
+    ad = Ad.get_ad(user_id=viewer_id)
+    if ad:
+        hot_post = int(ad.post_id)
+    if hot_post:
+        posts = list([hot_post]) + list(posts)
 
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
@@ -108,6 +118,7 @@ def friends(request):
 
 
 def category(request, category_id):
+    hot_post = None
     cur_user = None
     data = {}
     data['meta'] = {'limit': 20,
@@ -126,6 +137,17 @@ def category(request, category_id):
     pl = Post.latest(pid=before, cat_id=category_id)
     from_model = "%s_%s" % (settings.STREAM_LATEST_CAT, category_id)
     posts = get_list_post(pl, from_model=from_model)
+
+    if cur_user:
+        viewer_id = str(cur_user)
+    else:
+        viewer_id = str(get_user_ip(request, to_int=True))
+
+    ad = Ad.get_ad(user_id=viewer_id)
+    if ad:
+        hot_post = int(ad.post_id)
+    if hot_post:
+        posts = list([hot_post]) + list(posts)
 
     cat_json = category_get_json(category_id)
     hashcode = cat_json['native_hashcode'] if cat_json['native_hashcode'] else ""
@@ -146,6 +168,7 @@ def category(request, category_id):
 
 def choices(request):
     cur_user = None
+    hot_post = None
     data = {
         'meta': {
             'limit': GLOBAL_LIMIT,
@@ -165,6 +188,17 @@ def choices(request):
 
     pl = Post.home_latest(pid=before, limit=GLOBAL_LIMIT)
     posts = get_list_post(pl)
+
+    if cur_user:
+        viewer_id = str(cur_user)
+    else:
+        viewer_id = str(get_user_ip(request, to_int=True))
+
+    ad = Ad.get_ad(user_id=viewer_id)
+    if ad:
+        hot_post = int(ad.post_id)
+    if hot_post:
+        posts = list([hot_post]) + list(posts)
 
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
@@ -402,6 +436,9 @@ def user_post(request, user_id):
 
 
 def related_post(request, item_id):
+    current_user = None
+    hot_post = None
+
     data = {
         'meta': {
             'limit': GLOBAL_LIMIT,
@@ -418,9 +455,9 @@ def related_post(request, item_id):
     if offset > 100:
         return return_json_data(data)
 
-    current_user = None
     if token:
         current_user = AuthCache.user_from_token(token=token)
+        current_user = AuthCache.id_from_token(token=token)
 
     cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
     mltis = cache.get(cache_str)
@@ -445,6 +482,17 @@ def related_post(request, item_id):
                     mltis.append(post_id)
     if mltis:
         last_id = mltis[-1]
+
+    if current_user:
+        viewer_id = str(current_user)
+    else:
+        viewer_id = str(get_user_ip(request, to_int=True))
+
+    ad = Ad.get_ad(user_id=viewer_id)
+    if ad:
+        hot_post = int(ad.post_id)
+    if hot_post:
+        mltis = list([hot_post]) + list(mltis)
 
     data['objects'] = get_objects_list(mltis, current_user)
     data['meta']['next'] = get_next_url(url_name='api-6-post-related',

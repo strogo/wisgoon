@@ -4,6 +4,7 @@ import json
 import datetime
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.cache import cache
@@ -28,6 +29,73 @@ User = get_user_model()
 MEDIA_ROOT = settings.MEDIA_ROOT
 REPORT_TYPE = settings.REPORT_TYPE
 
+
+def check_user_agent(request):
+    ip_first = get_user_ip(request)
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR', None)
+    if x_forwarded_for:
+        ip = x_forwarded_for
+    else:
+        ip = request.META.get('REMOTE_ADDR', None)
+
+    if "," in ip:
+        ipsplit = ip.split(', ')
+        if ipsplit[-1]:
+            ip = ipsplit[-1]
+        else:
+            ip = ipsplit[0]
+
+    d = {
+        "x_forwarded_for": request.META.get('HTTP_X_FORWARDED_FOR', None),
+        "remote_addr": request.META.get('REMOTE_ADDR', None),
+        "ipfirst": ip_first,
+        "ip": ip
+    }
+    return HttpResponse(json.dumps(d))
+
+
+@login_required
+def home_queue(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/')
+    pid = get_request_pid(request)
+    pl = Post.home_queue(pid=pid)
+    arp = []
+
+    last_id = None
+    next_url = None
+
+    for pll in pl:
+        pid = int(pll)
+        post_item = post_item_json(post_id=pid, cur_user_id=request.user.id)
+        if post_item:
+            if request.user.is_authenticated():
+                if not check_block(user_id=post_item['user']['id'], blocked_id=request.user.id):
+                    arp.append(post_item)
+            else:
+                arp.append(post_item)
+
+        last_id = pll
+
+    if arp:
+        next_url = reverse('pin-home-queue') + "?older=" + last_id
+
+    if request.is_ajax():
+        if arp:
+            return render(request, 'pin2/_items_2_v6.html', {
+                'latest_items': arp,
+                'cls': 'new_items',
+                'next_url': next_url,
+            })
+        else:
+            return HttpResponse(0)
+
+    return render(request, 'pin2/home_v6.html', {
+        'latest_items': arp,
+        'cls': 'new_items',
+        'next_url': next_url,
+        'page': 'home'
+    })
 
 def home(request):
     pid = get_request_pid(request)

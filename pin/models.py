@@ -34,7 +34,7 @@ from pin.tasks import delete_image
 from pin.classification_tools import normalize
 from pin.api6.cache_layer import PostCacheLayer
 from pin.models_graph import FollowUser
-from models_casper import UserStream
+# from models_casper import UserStream
 from pin.analytics import comment_act, post_act
 
 LIKE_TO_DEFAULT_PAGE = 10
@@ -556,9 +556,6 @@ class Post(models.Model):
         from models_redis import LikesRedis
         LikesRedis(post_id=self.id).delete_likes()
 
-        from models_casper import PostStats
-        PostStats.objects(post_id=self.id).delete()
-
         MonthlyStats.log_hit(MonthlyStats.DELETE_POST)
 
         post_id = self.id
@@ -632,13 +629,6 @@ class Post(models.Model):
         r_server.lrem(user_stream, post_id)
         r_server.lpush(user_stream, post_id)
         r_server.ltrim(user_stream, 0, 1000)
-
-        # try:
-        #     UserStream(user_id=user_id,
-        #                post_id=post_id, post_owner=post_owner)\
-        #         .ttl(86400 * 10).save()
-        # except Exception, e:
-        #     print str(e)
 
     @classmethod
     def remove_post_from_stream(cls, user_id, post_id):
@@ -814,6 +804,27 @@ class Post(models.Model):
             return pl[:limit]
 
         pl = r_server.lrange(home_stream, 0, settings.LIST_LONG)
+
+        if pid:
+            try:
+                pid_index = pl.index(str(pid))
+                idis = pl[pid_index + 1: pid_index + limit + 1]
+                return idis
+            except ValueError:
+                return []
+
+        return []
+
+    @classmethod
+    def home_queue(cls, pid=0, limit=20):
+        home_stream = cls.HOME_QUEUE_NAME
+
+        pl = r_server.lrange(home_stream, 0, settings.LIST_LONG)
+        pl.reverse()
+
+        if pid == 0:
+            # pl = r_server.lrange(home_stream, 0, limit)
+            return pl[:limit]
 
         if pid:
             try:
@@ -1089,7 +1100,6 @@ class Likes(models.Model):
         if cp:
             hstr = "like_cache_%s%s" % (post.id, cp)
             cache.delete(hstr)
-            print "delete ", hstr, hcpstr
 
         str_likers = "web_likes_%s" % post.id
         cache.delete(str_likers)
@@ -1247,7 +1257,7 @@ class Comments(models.Model):
             Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
 
-        self.comment = emoji.demojize(self.comment)
+        self.comment = emoji.demojize(self.comment)[:512]
 
         comment_cache_name = "com_{}".format(int(self.object_pk_id))
         cache.delete(comment_cache_name)
@@ -1370,10 +1380,7 @@ class Block(models.Model):
                                             Q(following_id=blocked_id, follower_id=user_id))
             if follows:
                 for follow in follows:
-                    print "assssssss"
                     follow.delete()
-
-            print "block"
 
         except:
             pass

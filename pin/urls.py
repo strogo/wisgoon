@@ -19,6 +19,7 @@ stream_resource = StreamResource()
 
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
+    url(r'^queue/$', 'home_queue', name='pin-home-queue'),
     url(r'^search/', 'search', name='search'),
     url(r'^(?P<item_id>\d+)/$', 'item', name="pin-item"),
     url(r'^(?P<item_id>\d+)/related/$', 'item_related', name="pin-item-related"),
@@ -33,6 +34,8 @@ urlpatterns = patterns('pin.views',
 
     url(r'^com/posts/(?P<post_id>\d+)/', 'get_comments', name='pin-get-comments'),
     url(r'^editor/choices/feed/', EditorPinFeed(), name="pin-latest-feed"),
+
+    url(r'^check_user_agent/', 'check_user_agent', name='pin-get-check-user-agent'),
 
     url(r'^popular/(?P<interval>\w+)/$', 'popular', name='pin-popular-offset'),
     url(r'^popular/', 'popular', name="pin-popular"),

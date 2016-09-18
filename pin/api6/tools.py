@@ -404,7 +404,7 @@ def comment_item_json(comment):
         return comment_dict
 
     comment_dict['id'] = comment.id
-    comment_dict['comment'] = emoji.emojize(comment.comment)
+    comment_dict['comment'] = emoji.emojize(comment.comment)[0:512]
 
     # TODO for stable
     try:

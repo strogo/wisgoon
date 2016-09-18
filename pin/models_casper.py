@@ -1,59 +1,27 @@
-# from uuid import uuid1
-from django.conf import settings
-from cassandra.cqlengine import columns
-from cassandra.cqlengine import connection
-from cassandra.cqlengine import management
-from cassandra.cqlengine.management import sync_table
-from cassandra.cqlengine.models import Model
+from cassandra.cluster import Cluster
 
 
-class PostStats(Model):
-    post_id = columns.Integer(primary_key=True)
-    cnt_view = columns.Counter()
+cluster = Cluster(['127.0.0.1', '79.127.125.104', '79.127.125.99'])
+session = cluster.connect("wisgoon")
 
 
-class PostComments(Model):
-    post_id = columns.Integer(primary_key=True)
-    create_time = columns.Integer(primary_key=True, clustering_order="desc")
-    ip_address = columns.Text()
-    comment = columns.Text()
-    user_id = columns.Integer()
-    old_comment_id = columns.Integer(index=True)
+class PostStats():
+    post_id = None
 
+    def __init__(self, post_id):
+        self.post_id = post_id
 
-class PostData(Model):
-    post_id = columns.Integer(primary_key=True)
-    creator_ip = columns.Inet()
-    create_time = columns.DateTime()
+    def inc_view(self):
+        sql = """UPDATE post_stats
+                 SET cnt_view = cnt_view + 1
+                 WHERE post_id={};"""\
+            .format(self.post_id)
+        session.execute_async(sql)
 
-
-class UserStream(Model):
-    user_id = columns.Integer(primary_key=True)
-    post_id = columns.Integer(primary_key=True, clustering_order="desc")
-    post_owner = columns.Integer(index=True)
-
-
-# class UserLikedPosts(Model):
-    # post_id = columns.Integer(primary_key=True)
-    # user_id = columns.Integer(primary_key=True)
-
-    # time = columns.TimeUUID(primary_key=True, clustering_order="desc",
-    #                         default=uuid1)
-    # user = columns.Integer(primary_key=True, index=True)
-
-
-# class UserLikedPostsOrder(Model):
-#     post_id = columns.Integer(primary_key=True)
-#     like_time = columns.Integer(primary_key=True, clustering_order="desc")
-#     user_id = columns.Integer(primary_key=True)
-
-try:
-    slist = ['79.127.125.104']
-    connection.setup(slist, "wisgoon", protocol_version=3)
-    management.create_keyspace_simple("wisgoon", replication_factor=1)
-
-    sync_table(PostStats)
-    sync_table(PostData)
-    sync_table(UserStream)
-except Exception, e:
-    print str(e)
+    def get_cnt_view(self):
+        query = "SELECT cnt_view FROM post_stats where post_id={}"\
+            .format(self.post_id)
+        row = session.execute(query)
+        if not row.current_rows:
+            return 0
+        return row[0].cnt_view
