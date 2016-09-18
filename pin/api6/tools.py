@@ -46,12 +46,12 @@ def category_get_json(cat_id):
         cat = Category.objects.get(id=cat_id)
     except Category.DoesNotExist:
         raise
-
+    hashcode = cat.native_hashcode if cat.native_hashcode else ""
     cat_json = {
         'id': cat.id,
         'image': media_abs_url(cat.image.url, static=True),
         'title': cat.title,
-        'native_hashcode': "" if cat.native_hashcode is None else cat.native_hashcode
+        'native_hashcode': hashcode
     }
     return cat_json
 
