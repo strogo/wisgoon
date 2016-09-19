@@ -472,6 +472,7 @@ def related_post(request, item_id):
             .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
 
         idis = [int(pmlt.pk) for pmlt in mlt]
+
         mltis = get_list_post(idis)
 
         if not mltis:
@@ -482,6 +483,8 @@ def related_post(request, item_id):
                     mltis.append(post_id)
     if mltis:
         last_id = mltis[-1]
+
+    cache.set(cache_str, mltis, 86400)
 
     if current_user:
         viewer_id = str(current_user)
