@@ -33,5 +33,6 @@ class Command(BaseCommand):
                     # post_index.update_object(post_obj)
                     # print "post {} updated".format(post.pk)
                     print "=================================================="
-                except:
+                except Exception as e:
+                    print str(e)
                     pass
