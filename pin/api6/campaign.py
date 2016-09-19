@@ -106,7 +106,7 @@ def campaign_posts(request, camp_id):
     data['meta']['next'] = get_next_url(url_name='api-6-campaign-posts',
                                         before=before + LIMIT,
                                         url_args={"camp_id": camp_id},
-                                        kwarge={"order": order_by_req}
+                                        kwargs={"order": order_by_req}
                                         )
     return return_json_data(data)
 
