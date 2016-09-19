@@ -103,10 +103,11 @@ def campaign_posts(request, camp_id):
         if post_json:
             data['objects'].append(post_json)
 
-    data['meta']['next'] = get_next_url(url_name='api-6-campaign-posts',
-                                        before=before + LIMIT,
-                                        url_args={"camp_id": camp_id},
-                                        kwargs={"order": order_by_req}
+    data['meta']['next'] = get_next_url('api-6-campaign-posts',
+                                        before + LIMIT,
+                                        None,
+                                        {"camp_id": camp_id},
+                                        {"order": order_by_req}
                                         )
     return return_json_data(data)
 
