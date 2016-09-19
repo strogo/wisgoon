@@ -16,21 +16,19 @@ class Command(BaseCommand):
             tags = campaign_tags.split(',')
             tags.append(campaign.primary_tag)
             start_date = campaign.start_date.strftime("%s")
-            end_date = campaign.end_date.strftime("%s")
+            # end_date = campaign.end_date.strftime("%s")
 
             posts = SearchQuerySet().models(Post)\
-                .filter(tags__in=tags,
-                        timestamp_i__lte=end_date,
-                        timestamp_i__gte=start_date)\
+                .filter(tags__in=tags, timestamp_i__gte=start_date)\
                 .order_by('-cnt_like_i')
 
             for post in posts:
-                # post_index = PostIndex()
+                post_index = PostIndex()
                 try:
                     post_obj = Post.objects.get(id=post.pk)
                     print post_obj.cnt_like
                     print post.cnt_like_i
-                    # post_index.update_object(post_obj)
+                    post_index.update_object(post_obj)
                     # print "post {} updated".format(post.pk)
                     print "=================================================="
                 except Exception as e:
