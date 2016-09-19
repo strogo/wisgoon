@@ -84,9 +84,14 @@ def campaign_posts(request, camp_id):
     start_date = campaign.start_date.strftime("%s")
     end_date = campaign.end_date.strftime("%s")
 
-    posts = SearchQuerySet().models(Post).filter(tags__in=tags)\
-        .filter(timestamp_i__lte=end_date).filter(timestamp_i__gte=start_date)\
-        .order_by('-{}'.format(order_by))[before:before + LIMIT]
+    if order_by == "timestamp_i":
+        posts = SearchQuerySet().models(Post).filter(tags__in=tags)\
+            .order_by('-{}'.format(order_by))[before:before + LIMIT]
+    else:
+        posts = SearchQuerySet().models(Post).filter(tags__in=tags)\
+            .filter(timestamp_i__lte=end_date)\
+            .filter(timestamp_i__gte=start_date)\
+            .order_by('-{}'.format(order_by))[before:before + LIMIT]
 
     for post in posts:
         if user:
