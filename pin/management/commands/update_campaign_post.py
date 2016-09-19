@@ -25,11 +25,13 @@ class Command(BaseCommand):
                 .order_by('-cnt_like_i')
 
             for post in posts:
-                post_index = PostIndex()
+                # post_index = PostIndex()
                 try:
                     post_obj = Post.objects.get(id=post.pk)
-                    post_index.update_object(post_obj)
-                    print "post {} updated".format(post.pk)
+                    print post_obj.cnt_like
+                    print post.cnt_like_i
+                    # post_index.update_object(post_obj)
+                    # print "post {} updated".format(post.pk)
                     print "=================================================="
                 except:
                     pass
