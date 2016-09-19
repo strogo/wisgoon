@@ -34,5 +34,5 @@ class Command(BaseCommand):
                     # print "post {} updated".format(post.pk)
                     print "=================================================="
                 except Exception as e:
-                    print str(e)
+                    print str(e), "post_id:{}".format(post.pk)
                     pass
