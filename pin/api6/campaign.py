@@ -1,3 +1,5 @@
+# from django.core.cache import cache
+
 from pin.models import Campaign, Post
 from pin.api6.tools import campaign_sample_json
 from pin.api6.http import return_json_data, return_not_found
@@ -10,6 +12,9 @@ from haystack.query import SQ
 from haystack.query import Raw
 
 
+LIMIT = 10
+
+
 def current_campaign(request, startup=None):
     data = {'meta': {'limit': 1,
                      'next': '',
@@ -18,7 +23,8 @@ def current_campaign(request, startup=None):
             'objects': []
             }
 
-    current = Campaign.objects.filter(is_current=True, expired=False).order_by('?').first()
+    current = Campaign.objects.filter(is_current=True, expired=False)\
+        .order_by('?').first()
     if current:
         data['objects'].append(campaign_sample_json(current))
 
@@ -80,7 +86,7 @@ def campaign_posts(request, camp_id):
 
     posts = SearchQuerySet().models(Post).filter(tags__in=tags)\
         .filter(timestamp_i__lte=end_date).filter(timestamp_i__gte=start_date)\
-        .order_by('-{}'.format(order_by))[before:before + 20]
+        .order_by('-{}'.format(order_by))[before:before + LIMIT]
 
     for post in posts:
         if user:
@@ -91,7 +97,7 @@ def campaign_posts(request, camp_id):
             data['objects'].append(post_json)
 
     data['meta']['next'] = get_next_url(url_name='api-6-campaign-posts',
-                                        before=before + 20,
+                                        before=before + LIMIT,
                                         url_args={"camp_id": camp_id}
                                         )
     return return_json_data(data)
