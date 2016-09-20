@@ -23,11 +23,13 @@ class Command(BaseCommand):
         for post in posts:
             try:
                 post_obj = Post.objects.get(id=post.pk)
-                u = post_obj.user_id
+                u = int(post_obj.user_id)
                 if u in user_obj:
-                    user_obj[u] += post_obj.cnt_like
+                    user_obj[u] += int(post_obj.cnt_like)
                 else:
-                    user_obj[u] = post_obj.cnt_like
+                    user_obj[u] = int(post_obj.cnt_like)
             except Exception:
                 pass
         print user_obj
+
+        print sorted(user_obj.items(), key=lambda x: x[1])
