@@ -133,7 +133,7 @@ def report(request, comment_id):
 
     token = request.GET.get('token', '')
     if token:
-        current_user = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.user_from_token(token=token)
         if not current_user:
             return return_un_auth()
     else:
