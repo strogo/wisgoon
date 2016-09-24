@@ -13,7 +13,8 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
-    get_list_post, get_objects_list, ad_item_json, is_system_writable, category_get_json
+    get_list_post, get_objects_list, ad_item_json, is_system_writable,\
+    category_get_json
 from pin.models import Post, Report, Ad, Block, ReportedPost
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
@@ -150,7 +151,9 @@ def category(request, category_id):
         posts = list([hot_post]) + list(posts)
 
     cat_json = category_get_json(category_id)
-    hashcode = cat_json['native_hashcode'] if cat_json['native_hashcode'] else ""
+
+    hashcode = cat_json.get('native_hashcode', '')
+
     data['meta']['native_hashcode'] = hashcode
 
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
@@ -387,7 +390,8 @@ def send(request):
 
     try:
         posts = get_list_post([post.id])
-        data = get_objects_list(posts, cur_user_id=current_user.id, r=request)[0]
+        data = get_objects_list(posts, cur_user_id=current_user.id,
+                                r=request)[0]
     except IndexError:
         # print str(e), "function send_post permission"
 
@@ -399,7 +403,7 @@ def send(request):
     if post.status == 1:
         msg = _('Your article has been sent.')
     elif post.status == 0:
-        msg = _('Your article has been sent and displayed on the site after confirmation ')
+        msg = _('Your article has been sent ')
     return return_json_data({'status': status, 'message': msg, 'post': data})
 
 
@@ -419,7 +423,8 @@ def user_post(request, user_id):
         current_user = AuthCache.id_from_token(token=token)
 
     if current_user:
-        if Block.objects.filter(user_id=user_id, blocked_id=current_user).count():
+        if Block.objects.filter(user_id=user_id,
+                                blocked_id=current_user).count():
             return return_not_found({
                 'message': _('This User Has Blocked You')
             })
@@ -437,7 +442,7 @@ def user_post(request, user_id):
 
 def related_post(request, item_id):
     current_user = None
-    hot_post = None
+    # hot_post = None
 
     data = {
         'meta': {
@@ -486,16 +491,16 @@ def related_post(request, item_id):
 
     cache.set(cache_str, mltis, 86400)
 
-    if current_user:
-        viewer_id = str(current_user)
-    else:
-        viewer_id = str(get_user_ip(request, to_int=True))
+    # if current_user:
+    #     viewer_id = str(current_user)
+    # else:
+    #     viewer_id = str(get_user_ip(request, to_int=True))
 
-    ad = Ad.get_ad(user_id=viewer_id)
-    if ad:
-        hot_post = int(ad.post_id)
-    if hot_post:
-        mltis = list([hot_post]) + list(mltis)
+    # ad = Ad.get_ad(user_id=viewer_id)
+    # if ad:
+    #     hot_post = int(ad.post_id)
+    # if hot_post:
+    #     mltis = list([hot_post]) + list(mltis)
 
     data['objects'] = get_objects_list(mltis, current_user)
     data['meta']['next'] = get_next_url(url_name='api-6-post-related',
@@ -562,7 +567,8 @@ def hashtag(request, tag_name):
 
         cur_user = AuthCache.id_from_token(token=token)
         posts = []
-        for p in results.order_by('-timestamp_i')[before:before + row_per_page]:
+        rs = results.order_by('-timestamp_i')[before:before + row_per_page]
+        for p in rs:
             try:
                 pp = int(p.object.id)
                 posts.append(pp)
@@ -683,8 +689,10 @@ def post_promote(request, post_id):
         if profile.credit >= int(mode_price):
             try:
                 Ad.objects.get(post=int(post_id), ended=False)
-                return return_json_data({"status": False,
-                                         "message": u"این پست قبلا آگهی شده است"})
+                return return_json_data({
+                    "status": False,
+                    "message": u"این پست قبلا آگهی شده است"
+                })
             except Exception, Ad.DoesNotExist:
                 profile.dec_credit(amount=int(mode_price))
                 Ad.objects.create(user_id=user.id,
@@ -692,12 +700,16 @@ def post_promote(request, post_id):
                                   ads_type=mode,
                                   start=datetime.now(),
                                   ip_address=get_user_ip(request))
-                return return_json_data({'status': True,
-                                        'message': u'مطلب مورد نظر شما با موفقیت آگهی شد.'})
+                return return_json_data({
+                    'status': True,
+                    'message': u'مطلب مورد نظر شما با موفقیت آگهی شد.'
+                })
 
         else:
-            return return_json_data({'status': False,
-                                     'message': u'موجودی حساب شما برای آگهی دادن کافی نیست.'})
+            return return_json_data({
+                'status': False,
+                'message': u'موجودی حساب شما برای آگهی دادن کافی نیست.'
+            })
 
     return return_json_data({'status': False, 'message': 'error in data'})
 
