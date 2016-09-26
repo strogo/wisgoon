@@ -34,7 +34,7 @@ from pin.tasks import delete_image
 from pin.classification_tools import normalize
 from pin.api6.cache_layer import PostCacheLayer
 from pin.models_graph import FollowUser
-# from models_casper import UserStream
+from models_casper import UserStream
 from pin.analytics import comment_act, post_act
 
 LIKE_TO_DEFAULT_PAGE = 10
@@ -630,6 +630,9 @@ class Post(models.Model):
         r_server.lpush(user_stream, post_id)
         r_server.ltrim(user_stream, 0, 1000)
 
+        us = UserStream()
+        us.add_post(user_id, post_id, post_owner)
+
     @classmethod
     def remove_post_from_stream(cls, user_id, post_id):
         user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
@@ -1024,16 +1027,16 @@ class Stream(models.Model):
             if post.status == Post.APPROVED and post.accept_for_stream():
                 Post.add_to_stream(post=post)
 
-            try:
-                from models_casper import PostData
-                PostData(post_id=post.id,
-                         creator_ip=post._user_ip,
-                         create_time=datetime.now()).save()
-                post_act(post=post.id, actor=user.id,
-                         category=post.category.title, user_ip=post._user_ip)
+            # try:
+            #     from models_casper import PostData
+            #     PostData(post_id=post.id,
+            #              creator_ip=post._user_ip,
+            #              create_time=datetime.now()).save()
+            #     post_act(post=post.id, actor=user.id,
+            #              category=post.category.title, user_ip=post._user_ip)
 
-            except:
-                pass
+            # except:
+            #     pass
 
 
 class Likes(models.Model):
