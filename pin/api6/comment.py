@@ -123,6 +123,41 @@ def delete_comment(request, comment_id):
 
 
 @csrf_exempt
+def delete_comments(request):
+    if is_system_writable() is False:
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
+    comment_ids = request.POST.getlist("comment_id", [])
+    removed_list = []
+
+    user = check_auth(request)
+    if not user:
+        return return_un_auth()
+
+    for comment_id in comment_ids:
+        try:
+            comment = Comments.objects.get(id=int(comment_id))
+        except Comments.DoesNotExist:
+            continue
+
+        if comment.user_id == user.id or comment.object_pk.user.id == user.id:
+            comment_id = comment.id
+            comment.delete()
+            removed_list.append(comment_id)
+        else:
+            continue
+
+    data = {
+        'comment_id': removed_list
+    }
+    return return_json_data(data)
+
+
+@csrf_exempt
 def report(request, comment_id):
     if is_system_writable() is False:
         data = {
@@ -133,7 +168,7 @@ def report(request, comment_id):
 
     token = request.GET.get('token', '')
     if token:
-        current_user = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.user_from_token(token=token)
         if not current_user:
             return return_un_auth()
     else:

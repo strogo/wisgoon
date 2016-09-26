@@ -2,12 +2,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import UnreadablePostError
 from django.utils.translation import ugettext as _
 
-from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
-    return_bad_request
-from pin.api6.tools import get_int, get_simple_user_object, get_next_url, is_system_writable
 from pin.models import Post
 from pin.models_redis import LikesRedis
 from pin.tools import AuthCache, get_post_user_cache
+from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
+    return_bad_request
+from pin.api6.tools import get_int, get_simple_user_object, get_next_url,\
+    is_system_writable
 
 
 def like_post(request, item_id):
@@ -20,7 +21,7 @@ def like_post(request, item_id):
 
     token = request.GET.get('token', False)
     if token:
-        current_user = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.user_from_token(token=token)
         if not current_user:
             return return_un_auth()
     else:
@@ -32,13 +33,13 @@ def like_post(request, item_id):
         return return_not_found()
 
     like, dislike, current_like = LikesRedis(post_id=item_id)\
-        .like_or_dislike(user_id=current_user,
+        .like_or_dislike(user_id=current_user.id,
                          post_owner=post.user_id,
                          category=post.category_id)
 
     if like:
         user_act = 1
-        user = get_simple_user_object(current_user, post.user_id)
+        user = get_simple_user_object(current_user.id, post.user_id)
     elif dislike:
         user_act = -1
         user = {}
@@ -63,7 +64,7 @@ def like_item(request):
         return return_bad_request()
 
     if token:
-        current_user = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.user_from_token(token=token)
         if not current_user:
             return return_un_auth()
     else:
@@ -75,13 +76,13 @@ def like_item(request):
         return return_not_found()
 
     like, dislike, current_like = LikesRedis(post_id=item_id)\
-        .like_or_dislike(user_id=current_user,
+        .like_or_dislike(user_id=current_user.id,
                          post_owner=post.user_id,
                          category=post.category_id)
 
     if like:
         user_act = 1
-        user = get_simple_user_object(current_user, post.user_id)
+        user = get_simple_user_object(current_user.id, post.user_id)
     elif dislike:
         user_act = -1
         user = {}
@@ -92,7 +93,7 @@ def like_item(request):
 
 def post_likers(request, item_id):
     data = {}
-    current_user = None
+    current_user_id = None
     data['meta'] = {'limit': 20,
                     'next': '',
                     'total_count': LikesRedis(post_id=item_id).cntlike()}
@@ -101,7 +102,9 @@ def post_likers(request, item_id):
 
     token = request.GET.get('token', False)
     if token:
-        current_user = AuthCache.id_from_token(token=token)
+        current_user_id = AuthCache.id_from_token(token=token)
+        # if current_user:
+        #     current_user_id = current_user.id
 
     if not before:
         before = 0
@@ -121,7 +124,7 @@ def post_likers(request, item_id):
     for user in likers:
         try:
             u = {
-                'user': get_simple_user_object(int(user), current_user)
+                'user': get_simple_user_object(int(user), current_user_id)
             }
             likers_list.append(u)
         except Exception as e:

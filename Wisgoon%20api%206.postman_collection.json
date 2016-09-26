@@ -36,7 +36,8 @@
 				"7960fa6f-234e-b711-8299-494ce91a44f0",
 				"6d3b7fb6-ea65-abe6-90ae-9181c3b8c35d"
 			],
-			"owner": 0
+			"owner": 0,
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5"
 		},
 		{
 			"id": "b7773fb5-1fd2-c103-a3be-4c72afc723dc",
@@ -67,7 +68,8 @@
 				"3482f7f7-54b7-66ee-3083-19ef5b93a5cb",
 				"2e5cec65-8e3b-8ca8-4ec4-464309935ca1",
 				"ba1797e2-1586-85f5-e58e-2d8a18b8b75e",
-				"2679e9dc-80bc-2011-463c-d0e0ca9ee456"
+				"2679e9dc-80bc-2011-463c-d0e0ca9ee456",
+				"59bdb228-632b-b409-f25e-a1d127befc4e"
 			],
 			"owner": 0,
 			"collectionId": "e9e26e93-f582-2847-fc0d-e6aade63dfff"
@@ -128,7 +130,6 @@
 	],
 	"timestamp": 1438073335198,
 	"owner": 0,
-	"remoteLink": "",
 	"public": false,
 	"published": false,
 	"requests": [
@@ -697,6 +698,30 @@
 			"folder": "5155c794-575f-eaa3-3fea-f7fb0c1fac29"
 		},
 		{
+			"id": "59bdb228-632b-b409-f25e-a1d127befc4e",
+			"headers": "",
+			"url": "http://127.0.0.1:8000/api/v6/comment/list/remove/?token=1234",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "comment_id",
+					"value": "147",
+					"type": "text"
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1474810850416,
+			"name": "delete comment list",
+			"description": "",
+			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5"
+		},
+		{
 			"id": "5ab84ba9-dcf8-3bec-2abe-138d7d774dcb",
 			"headers": "",
 			"url": "http://127.0.0.1:8000/api/v6/notif/count/?token=1234",
@@ -1051,7 +1076,7 @@
 		{
 			"id": "9a100384-c371-502f-aab0-a2c4d601c431",
 			"headers": "",
-			"url": "http://127.0.0.1:8000/api/v6/campaign/posts/2",
+			"url": "http://127.0.0.1:8000/api/v6/campaign/posts/2?order=cnt_like",
 			"preRequestScript": "",
 			"pathVariables": {},
 			"method": "GET",
@@ -1061,7 +1086,7 @@
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1467711233101,
+			"time": 1469359271395,
 			"name": "Campaign Posts",
 			"description": "",
 			"collectionId": "63c27999-320c-cc0d-2609-287e20cd91b5",

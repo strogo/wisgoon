@@ -138,9 +138,11 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
     user_info = {}
     user_info['id'] = current_user
     if avatar == 64:
-        user_info['avatar'] = media_abs_url(get_avatar(current_user, size=64), check_photos=True)
+        user_info['avatar'] = media_abs_url(get_avatar(current_user, size=64),
+                                            check_photos=True)
     else:
-        user_info['avatar'] = media_abs_url(get_avatar(current_user), check_photos=True)
+        user_info['avatar'] = media_abs_url(get_avatar(current_user),
+                                            check_photos=True)
     user_info['username'] = UserDataCache.get_user_name(current_user)
     user_info['related'] = {}
     user_info['follow_by_user'] = False
@@ -362,6 +364,7 @@ def get_profile_data(profile, user_id):
     data['cnt_follower'] = profile.cnt_follower
     data['cnt_following'] = profile.cnt_following
     data['banned'] = profile.banned
+    data['is_private'] = profile.is_private
     if profile.cover:
         data['cover'] = media_abs_url(profile.cover.url, check_photos=True)
     else:
@@ -456,7 +459,8 @@ def notif_simple_json(notification, user=True, post=True,
     notif_dict['is_seen'] = notification.is_seen
 
     if user:
-        notif_dict['user'] = get_simple_user_object(current_user=notification.actor_ids[-1])
+        current_user = notification.actor_ids[-1]
+        notif_dict['user'] = get_simple_user_object(current_user=current_user)
 
     if post:
         notif_dict['post'] = post_item_json(post_id=notification.object_ids[0])

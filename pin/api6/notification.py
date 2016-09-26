@@ -42,14 +42,16 @@ def notif(request):
 
     NotificationRedis(user_id=current_user).clear_notif_count()
     if offset:
-        notifs = NotificationRedis(user_id=current_user).get_notif(start=offset + 1)
+        notifs = NotificationRedis(user_id=current_user)\
+            .get_notif(start=offset + 1)
     else:
         notifs = NotificationRedis(user_id=current_user).get_notif()
 
     for notif in notifs:
         data_extra = {}
         data_extra['id'] = str(notif.id)
-        data_extra['actor'] = get_simple_user_object(notif.last_actor, current_user)
+        data_extra['actor'] = get_simple_user_object(notif.last_actor,
+                                                     current_user)
         data_extra['owner'] = get_simple_user_object(notif.owner)
 
         if isinstance(notif.date, int):
@@ -69,6 +71,10 @@ def notif(request):
         elif notif.type == Notif.FOLLOW:
             data_extra['type'] = Notif.FOLLOW
             data_extra['text'] = "شما را دنبال می کند"
+
+        elif notif.type == Notif.FOLLOW_REQUEST:
+            data_extra['type'] = Notif.FOLLOW_REQUEST
+            data_extra['text'] = "میخواهد شما را دنبال کند"
 
         elif notif.type == Notif.COMMENT:
             data_extra['type'] = Notif.COMMENT

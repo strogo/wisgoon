@@ -7,22 +7,17 @@ try:
     import simplejson as json
 except ImportError:
     import json
-from django.http import UnreadablePostError
+
 from django.conf import settings
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.db.models import Q
+from django.http import UnreadablePostError
+from django.utils.translation import ugettext as _
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login as auth_login,\
     logout as auth_logout
-from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.translation import ugettext as _
-
-from pin.models import Follow, Block, Likes, BannedImei, PhoneData, Bills2
-from pin.tools import AuthCache, get_new_access_token2
-from pin.api6.http import return_bad_request, return_json_data, return_un_auth,\
-    return_not_found
-from pin.api6.tools import get_next_url, get_simple_user_object, get_int, get_profile_data,\
-    update_follower_following, post_item_json, is_system_writable
 
 from user_profile.models import Profile
 from user_profile.forms import ProfileForm2
@@ -34,6 +29,15 @@ from tastypie.models import ApiKey
 from haystack.query import SearchQuerySet
 from haystack.query import SQ
 from haystack.query import Raw
+
+from pin.models import Follow, Block, Likes, BannedImei, PhoneData, Bills2,\
+    FollowRequest
+from pin.tools import AuthCache, get_new_access_token2
+from pin.api6.http import return_bad_request, return_json_data,\
+    return_un_auth, return_not_found
+from pin.api6.tools import get_next_url, get_simple_user_object,\
+    get_int, get_profile_data, update_follower_following, post_item_json,\
+    is_system_writable
 
 
 def followers(request, user_id):
@@ -118,24 +122,39 @@ def follow(request):
     user_id = request.GET.get('user_id', None)
 
     if token and user_id:
-        user_id = get_int(user_id)
-        user = AuthCache.user_from_token(token=token)
-        if not user:
+        target_id = get_int(user_id)
+        current_user = AuthCache.user_from_token(token=token)
+        if not current_user:
             return return_un_auth()
     else:
         return return_bad_request()
 
-    if user_id == user.id:
+    """ check correct target_id and current user id """
+    if target_id == current_user.id:
         return return_bad_request()
+
+    """ Check block status """
+    is_blocked = Block.objects.filter(Q(user=current_user,
+                                        blocked_id=target_id) |
+                                      Q(user_id=target_id,
+                                        blocked=current_user)).exists()
+    if is_blocked:
+        return return_bad_request(message=_("relations is blocked"))
 
     try:
-        following = User.objects.get(pk=user_id)
-        if not Follow.objects.filter(follower=user,
-                                     following=following).exists():
-            Follow.objects.create(follower=user, following=following)
-
+        target = User.objects.get(pk=target_id)
     except User.DoesNotExist:
         return return_bad_request()
+
+    if target.profile.is_private:
+        FollowRequest.objects.get_or_create(user=current_user, target=target)
+    else:
+        is_followed = Follow.objects\
+            .filter(follower=current_user,
+                    following=target)\
+            .exists()
+        if not is_followed:
+            Follow.objects.create(follower=current_user, following=target)
 
     data = {
         'status': True,
@@ -346,13 +365,16 @@ def profile(request, user_id):
             return return_not_found()
 
     if token:
-        current_user = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.user_from_token(token=token)
 
-    if current_user:
-        if Block.objects.filter(user_id=user_id, blocked_id=current_user).count():
-            return return_not_found({
-                'message': _('This User Has Blocked You')
-            })
+    # if current_user:
+    #     is_blocked = Block.objects\
+    #         .filter(user_id=user_id, blocked_id=current_user)\
+    #         .exists()
+    #     if is_blocked:
+    #         return return_not_found({
+    #             'message': _('This User Has Blocked You')
+    #         })
 
     try:
         profile = Profile.objects\
@@ -362,7 +384,7 @@ def profile(request, user_id):
         profile = Profile.objects.create(user_id=user_id)
 
     data = {
-        'user': get_simple_user_object(user_id, current_user, avatar=210),
+        'user': get_simple_user_object(user_id, current_user.id, avatar=210),
         'profile': get_profile_data(profile, user_id)
     }
     return return_json_data(data)
@@ -379,7 +401,8 @@ def users_top(request):
 
     ob = Profile.objects\
         .only('banned', 'user', 'score', 'cnt_post', 'cnt_like',
-              'website', 'credit', 'level', 'bio').order_by('-score')[offset:offset + limit]
+              'website', 'credit', 'level', 'bio')\
+        .order_by('-score')[offset:offset + limit]
     obj = {
         "meta": {},
         "objects": [],
@@ -389,7 +412,10 @@ def users_top(request):
     tesla = []
     for p in ob:
         if current_user:
-            if Block.objects.filter(user_id=p.user_id, blocked_id=current_user).count():
+            is_blocked = Block.objects\
+                .filter(user_id=p.user_id, blocked_id=current_user)\
+                .count()
+            if is_blocked:
                 continue
         data = {
             'user': get_simple_user_object(p.user_id, current_user, avatar=210),
@@ -417,7 +443,7 @@ def update_profile(request):
     status = False
 
     if token:
-        current_user = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.user_from_token(token=token)
         if not current_user:
             return return_un_auth()
     else:
@@ -474,8 +500,8 @@ def user_search(request):
             o['user'] = get_simple_user_object(result.id, current_user)
 
             data['objects'].append(o)
-
-            data['meta']['next'] = get_next_url(url_name='api-6-auth-user-search',
+            url_name = 'api-6-auth-user-search'
+            data['meta']['next'] = get_next_url(url_name=url_name,
                                                 token=token,
                                                 before=before + row_per_page,
                                                 q=query)
@@ -486,7 +512,8 @@ def user_search(request):
 
 def logout(request):
     auth_logout(request)
-    return return_json_data({'status': True, 'message': _('Successfully Logout')})
+    return return_json_data({'status': True,
+                             'message': _('Successfully Logout')})
 
 
 def user_like(request, user_id):
@@ -715,7 +742,8 @@ def inc_credit(request):
         user = AuthCache.user_from_token(token=token)
 
     if not user or not token or not baz_token or not package_name:
-        return return_not_found(message=_("The parameters entered is incorrect"))
+        message = "The parameters entered is incorrect"
+        return return_not_found(message=_(message))
 
     if package_name not in PACKS:
         return return_not_found(message=_("Select a package is not correct"))
@@ -753,8 +781,9 @@ def inc_credit(request):
 
             purchase_state = j.get('purchaseState', None)
             if purchase_state is None:
+                message = 'purchase state error request'
                 return return_json_data({'status': False,
-                                         'message': 'purchase state error request'})
+                                         'message': message})
 
             if purchase_state == 0:
                 b = Bills2()
@@ -782,11 +811,12 @@ def inc_credit(request):
             b.amount = PACKS[package_name]['price']
             b.status = Bills2.VALIDATE_ERROR
             b.save()
+            message = 'validation error, we correct it later'
             return return_json_data({'status': False,
-                                    'message': 'validation error, we correct it later'})
-
+                                    'message': message})
+        message = 'Increased Credit was Successful.'
         return return_json_data({'status': True,
-                                'message': _('Increased Credit was Successful.')})
+                                'message': _(message)})
 
     return return_json_data({'status': False, 'message': 'failed'})
 
@@ -872,3 +902,47 @@ def password_reset(request):
             return return_json_data(data)
 
     return return_bad_request()
+
+
+@csrf_exempt
+def accept_follow(request):
+    if is_system_writable() is False:
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+    data = {}
+    token = request.GET.get('token', None)
+    user_id = request.POST.get('user_id', None)
+    accepted = bool(int(request.POST.get('accepted', 0)))
+
+    if not user_id or not token:
+        return return_bad_request()
+
+    target_user = AuthCache.user_from_token(token=token)
+    if not target_user:
+        return return_un_auth()
+
+    is_req = FollowRequest.objects.filter(user_id=int(user_id),
+                                          target=target_user)
+    if is_req.exists():
+        if accepted:
+            Follow.objects.create(follower_id=int(user_id),
+                                  following=target_user)
+            is_req.delete()
+            status = True
+            message = 'Allow follow request'
+            accepted = 1
+        else:
+            is_req.delete()
+            status = True
+            message = 'Decline follow request'
+            accepted = 0
+
+        data = {'status': status,
+                'message': message,
+                'accepted': accepted}
+        return return_json_data(data)
+    else:
+        return return_not_found(message=_("Follow request not exists"))

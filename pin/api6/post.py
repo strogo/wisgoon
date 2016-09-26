@@ -152,10 +152,7 @@ def category(request, category_id):
 
     cat_json = category_get_json(category_id)
 
-    hashcode = cat_json.get('native_hashcode', '')
-
-    data['meta']['native_hashcode'] = hashcode
-
+    data['meta']['native_hashcode'] = cat_json['native_hashcode']
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
     if data['objects']:
@@ -277,7 +274,7 @@ def report(request, item_id):
 
     token = request.GET.get('token', False)
     if token:
-        current_user = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.user_from_token(token=token)
         if not current_user:
             return return_un_auth()
     else:
@@ -288,13 +285,13 @@ def report(request, item_id):
     except Post.DoesNotExist:
         return return_not_found()
 
-    ReportedPost.post_report(post_id=post.id, reporter_id=current_user)
+    ReportedPost.post_report(post_id=post.id, reporter_id=current_user.id)
 
     try:
-        Report.objects.get(user_id=current_user, post=post)
+        Report.objects.get(user_id=current_user.id, post=post)
         created = False
     except Report.DoesNotExist:
-        Report.objects.create(user_id=current_user, post=post)
+        Report.objects.create(user_id=current_user.id, post=post)
         created = True
 
     if created:
@@ -390,7 +387,9 @@ def send(request):
 
     try:
         posts = get_list_post([post.id])
-        data = get_objects_list(posts, cur_user_id=current_user.id,
+
+        data = get_objects_list(posts,
+                                cur_user_id=current_user.id,
                                 r=request)[0]
     except IndexError:
         # print str(e), "function send_post permission"
@@ -403,7 +402,8 @@ def send(request):
     if post.status == 1:
         msg = _('Your article has been sent.')
     elif post.status == 0:
-        msg = _('Your article has been sent ')
+        msg = _('Your article has been sent and displayed\
+                on the site after confirmation ')
     return return_json_data({'status': status, 'message': msg, 'post': data})
 
 
@@ -423,8 +423,9 @@ def user_post(request, user_id):
         current_user = AuthCache.id_from_token(token=token)
 
     if current_user:
-        if Block.objects.filter(user_id=user_id,
-                                blocked_id=current_user).count():
+        is_block = Block.objects.filter(user_id=user_id,
+                                        blocked_id=current_user).exists()
+        if is_block:
             return return_not_found({
                 'message': _('This User Has Blocked You')
             })
@@ -461,7 +462,7 @@ def related_post(request, item_id):
         return return_json_data(data)
 
     if token:
-        current_user = AuthCache.user_from_token(token=token)
+        # current_user = AuthCache.user_from_token(token=token)
         current_user = AuthCache.id_from_token(token=token)
 
     cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
@@ -684,15 +685,18 @@ def post_promote(request, post_id):
             mode_price = Ad.TYPE_PRICES[mode]
         except KeyError:
             return return_json_data({"status": False,
-                                     "message": u"عدد وارد شده اشتباه است."})
+                                     "message": u"عدد وارد شده اشتباه است."
+                                     })
 
         if profile.credit >= int(mode_price):
             try:
                 Ad.objects.get(post=int(post_id), ended=False)
+
                 return return_json_data({
                     "status": False,
                     "message": u"این پست قبلا آگهی شده است"
                 })
+
             except Exception, Ad.DoesNotExist:
                 profile.dec_credit(amount=int(mode_price))
                 Ad.objects.create(user_id=user.id,
@@ -700,16 +704,15 @@ def post_promote(request, post_id):
                                   ads_type=mode,
                                   start=datetime.now(),
                                   ip_address=get_user_ip(request))
-                return return_json_data({
-                    'status': True,
-                    'message': u'مطلب مورد نظر شما با موفقیت آگهی شد.'
-                })
+
+                msg = u'مطلب مورد نظر شما با موفقیت آگهی شد.'
+                return return_json_data({'status': True,
+                                        'message': msg})
 
         else:
-            return return_json_data({
-                'status': False,
-                'message': u'موجودی حساب شما برای آگهی دادن کافی نیست.'
-            })
+            msg = u'موجودی حساب شما برای آگهی دادن کافی نیست.'
+            return return_json_data({'status': False,
+                                     'message': msg})
 
     return return_json_data({'status': False, 'message': 'error in data'})
 
