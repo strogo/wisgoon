@@ -153,7 +153,6 @@ def category(request, category_id):
     cat_json = category_get_json(category_id)
 
     data['meta']['native_hashcode'] = cat_json['native_hashcode']
-
     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
                                        r=request)
     if data['objects']:
@@ -388,6 +387,7 @@ def send(request):
 
     try:
         posts = get_list_post([post.id])
+
         data = get_objects_list(posts,
                                 cur_user_id=current_user.id,
                                 r=request)[0]
@@ -443,7 +443,7 @@ def user_post(request, user_id):
 
 def related_post(request, item_id):
     current_user = None
-    hot_post = None
+    # hot_post = None
 
     data = {
         'meta': {
@@ -492,16 +492,16 @@ def related_post(request, item_id):
 
     cache.set(cache_str, mltis, 86400)
 
-    if current_user:
-        viewer_id = str(current_user)
-    else:
-        viewer_id = str(get_user_ip(request, to_int=True))
+    # if current_user:
+    #     viewer_id = str(current_user)
+    # else:
+    #     viewer_id = str(get_user_ip(request, to_int=True))
 
-    ad = Ad.get_ad(user_id=viewer_id)
-    if ad:
-        hot_post = int(ad.post_id)
-    if hot_post:
-        mltis = list([hot_post]) + list(mltis)
+    # ad = Ad.get_ad(user_id=viewer_id)
+    # if ad:
+    #     hot_post = int(ad.post_id)
+    # if hot_post:
+    #     mltis = list([hot_post]) + list(mltis)
 
     data['objects'] = get_objects_list(mltis, current_user)
     data['meta']['next'] = get_next_url(url_name='api-6-post-related',
@@ -568,7 +568,8 @@ def hashtag(request, tag_name):
 
         cur_user = AuthCache.id_from_token(token=token)
         posts = []
-        for p in results.order_by('-timestamp_i')[before:before + row_per_page]:
+        rs = results.order_by('-timestamp_i')[before:before + row_per_page]
+        for p in rs:
             try:
                 pp = int(p.object.id)
                 posts.append(pp)
@@ -690,9 +691,12 @@ def post_promote(request, post_id):
         if profile.credit >= int(mode_price):
             try:
                 Ad.objects.get(post=int(post_id), ended=False)
-                msg = u"این پست قبلا آگهی شده است"
-                return return_json_data({"status": False,
-                                         "message": msg})
+
+                return return_json_data({
+                    "status": False,
+                    "message": u"این پست قبلا آگهی شده است"
+                })
+
             except Exception, Ad.DoesNotExist:
                 profile.dec_credit(amount=int(mode_price))
                 Ad.objects.create(user_id=user.id,
@@ -700,6 +704,7 @@ def post_promote(request, post_id):
                                   ads_type=mode,
                                   start=datetime.now(),
                                   ip_address=get_user_ip(request))
+
                 msg = u'مطلب مورد نظر شما با موفقیت آگهی شد.'
                 return return_json_data({'status': True,
                                         'message': msg})
