@@ -24,6 +24,8 @@ class Command(BaseCommand):
             for pll in pl:
                 pll_id = int(pll)
                 ob = post_item_json(pll_id)
+                if not ob:
+                    continue
                 us.add_post(user.id, pll_id, ob['user']['id'])
 
             us.ltrim(user.id, 1000)
