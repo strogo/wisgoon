@@ -461,15 +461,15 @@ def update_profile(request):
 
     if form.is_valid():
         form.save()
-        update_follower_following(profile, current_user)
+        update_follower_following(profile, current_user.id)
         msg = _('Your Profile Was Updated')
         status = True
     else:
         msg = form.errors
     return return_json_data({
         'status': status, 'message': msg,
-        'profile': get_profile_data(profile, current_user),
-        'user': get_simple_user_object(current_user)
+        'profile': get_profile_data(profile, current_user.id),
+        'user': get_simple_user_object(current_user.id)
     })
 
 
