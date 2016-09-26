@@ -357,6 +357,7 @@ def profile_name(request, user_name):
 def profile(request, user_id):
     token = request.GET.get('token', False)
     current_user = None
+    current_user_id = None
 
     if user_id:
         try:
@@ -366,6 +367,8 @@ def profile(request, user_id):
 
     if token:
         current_user = AuthCache.user_from_token(token=token)
+        if current_user:
+            current_user_id = current_user.id
 
     # if current_user:
     #     is_blocked = Block.objects\
@@ -384,7 +387,7 @@ def profile(request, user_id):
         profile = Profile.objects.create(user_id=user_id)
 
     data = {
-        'user': get_simple_user_object(user_id, current_user.id, avatar=210),
+        'user': get_simple_user_object(user_id, current_user_id, avatar=210),
         'profile': get_profile_data(profile, user_id)
     }
     return return_json_data(data)
@@ -458,15 +461,15 @@ def update_profile(request):
 
     if form.is_valid():
         form.save()
-        update_follower_following(profile, current_user)
+        update_follower_following(profile, current_user.id)
         msg = _('Your Profile Was Updated')
         status = True
     else:
         msg = form.errors
     return return_json_data({
         'status': status, 'message': msg,
-        'profile': get_profile_data(profile, current_user),
-        'user': get_simple_user_object(current_user)
+        'profile': get_profile_data(profile, current_user.id),
+        'user': get_simple_user_object(current_user.id)
     })
 
 
