@@ -1,5 +1,5 @@
 from cassandra.cluster import Cluster
-
+from cassandra.query import BatchStatement, SimpleStatement
 
 isConnected = False
 session = None
@@ -46,3 +46,22 @@ class UserStream(CassandraModel):
         (user_id, post_id , post_owner )
         VALUES ( {}, {}, {});""".format(user_id, post_id, post_owner)
         session.execute_async(query)
+
+    def follow(self, user_id, post_id_list, post_owner):
+        batch = BatchStatement()
+        for pid in post_id_list:
+            query = "INSERT INTO user_stream (user_id, post_id , post_owner ) VALUES (%s, %s, %s);"
+            batch.add(SimpleStatement(query), (user_id, pid, post_owner))
+
+        session.execute(batch)
+
+    def unfollow(self, user_id, post_owner):
+        query = """
+        select post_id from user_stream WHERE user_id = {} and post_owner = {};
+        """.format(user_id, post_owner)
+        rows = session.execute(query)
+        batch = BatchStatement()
+        for r in rows:
+            q = "DELETE from user_stream WHERE user_id = %s AND post_id = %s;"
+            batch.add(SimpleStatement(q), (user_id, r.post_id))
+        session.execute(batch)

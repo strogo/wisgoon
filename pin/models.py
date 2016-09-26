@@ -964,6 +964,10 @@ class Follow(models.Model):
         # TO DO
         from pin.tasks import remove_from_stream
         remove_from_stream.delay(user_id=follower_id, owner_id=following_id)
+
+        from models_casper import UserStream
+        us = UserStream()
+        us.unfollow(follower_id, following_id)
         # remove_from_stream(user_id=following_id, owner_id=follower_id)
 
     def save(self, *args, **kwargs):
@@ -987,6 +991,15 @@ class Follow(models.Model):
             MonthlyStats.log_hit(MonthlyStats.FOLLOW)
             FollowUser.get_or_create(instance.follower, instance.following,
                                      "follow")
+
+            from models_casper import UserStream
+            us = UserStream()
+            pid_list = Post.objects.filter(user_id=following_id)\
+                .only("id")\
+                .values_list("id", flat=True)\
+                .order_by("-id")[:100]
+            print pid_list
+            us.follow(follower_id, pid_list, following_id)
 
 
 class Stream(models.Model):
