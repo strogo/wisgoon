@@ -357,6 +357,7 @@ def profile_name(request, user_name):
 def profile(request, user_id):
     token = request.GET.get('token', False)
     current_user = None
+    current_user_id = None
 
     if user_id:
         try:
@@ -366,6 +367,8 @@ def profile(request, user_id):
 
     if token:
         current_user = AuthCache.user_from_token(token=token)
+        if current_user:
+            current_user_id = current_user.id
 
     # if current_user:
     #     is_blocked = Block.objects\
@@ -384,7 +387,7 @@ def profile(request, user_id):
         profile = Profile.objects.create(user_id=user_id)
 
     data = {
-        'user': get_simple_user_object(user_id, current_user.id, avatar=210),
+        'user': get_simple_user_object(user_id, current_user_id, avatar=210),
         'profile': get_profile_data(profile, user_id)
     }
     return return_json_data(data)
