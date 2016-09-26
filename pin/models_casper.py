@@ -47,6 +47,28 @@ class UserStream(CassandraModel):
         VALUES ( {}, {}, {});""".format(user_id, post_id, post_owner)
         session.execute_async(query)
 
+    def ltrim(self, user_id, limit=1000):
+        query = """
+        select * from user_stream WHERE user_id = {} limit {};
+        """.format(user_id, limit)
+        rows = session.execute(query)
+        last_post_id = None
+        for r in rows:
+            last_post_id = r.post_id
+
+        if not last_post_id:
+            return
+
+        query = """
+        select post_id from user_stream WHERE user_id = {} and post_id < {};
+        """.format(user_id, last_post_id)
+        rows = session.execute(query)
+        batch = BatchStatement()
+        for r in rows:
+            q = "DELETE from user_stream WHERE user_id = %s AND post_id = %s;"
+            batch.add(SimpleStatement(q), (user_id, r.post_id))
+        session.execute(batch)
+
     def follow(self, user_id, post_id_list, post_owner):
         batch = BatchStatement()
         for pid in post_id_list:
