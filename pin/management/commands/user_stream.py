@@ -18,4 +18,4 @@ class Command(BaseCommand):
                     .values_list("id", flat=True)\
                     .order_by("-id")[:100]
                 us.follow(user.id, pid_list, f.following_id)
-            us.ltrim(user.id, 10)
+            us.ltrim(user.id, 1000)
