@@ -1,14 +1,24 @@
 from cassandra.cluster import Cluster
 
 
-cluster = Cluster(['127.0.0.1', '79.127.125.104', '79.127.125.99'])
-session = cluster.connect("wisgoon")
+isConnected = False
+session = None
 
 
-class PostStats():
+class CassandraModel():
+    def __init__(self):
+        global isConnected, session
+        if not isConnected:
+            cluster = Cluster(['127.0.0.1', '79.127.125.104', '79.127.125.99'])
+            session = cluster.connect("wisgoon")
+            isConnected = True
+
+
+class PostStats(CassandraModel):
     post_id = None
 
     def __init__(self, post_id):
+        CassandraModel.__init__(self)
         self.post_id = post_id
 
     def inc_view(self):
@@ -25,3 +35,14 @@ class PostStats():
         if not row.current_rows:
             return 0
         return row[0].cnt_view
+
+
+class UserStream(CassandraModel):
+    def __init__(self):
+        CassandraModel.__init__(self)
+
+    def add_post(self, user_id, post_id, post_owner):
+        query = """INSERT INTO user_stream
+        (user_id, post_id , post_owner )
+        VALUES ( {}, {}, {});""".format(user_id, post_id, post_owner)
+        session.execute_async(query)

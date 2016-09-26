@@ -106,6 +106,8 @@ def activity(act_type, who, post_id):
 def add_to_storage(post_id):
     from pin.models import Storages, Post
     post = Post.objects.get(id=post_id)
+    if not Storages.objects.exists():
+        return
     storage = Storages.objects.order_by('num_files')[:1][0]
 
     ssh = paramiko.SSHClient()
@@ -389,11 +391,6 @@ def post_to_followers(user_id, post_id):
             post_to_follower_single.delay(post_id=post_id,
                                           follower_id=follower_id,
                                           post_owner=user_id)
-        # try:
-        #     Post.add_to_user_stream(post_id=post_id, user_id=follower_id)
-        # except Exception, e:
-        #     print str(e)
-        #     pass
 
     return "this is post_to_followers"
 

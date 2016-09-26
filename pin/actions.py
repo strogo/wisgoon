@@ -62,8 +62,7 @@ def send_clear_notif(user_id):
 
 
 def send_post_to_followers(user_id, post_id):
-    if is_system_writable():
-        if settings.USE_CELERY_V3:
-            post_to_followers.delay(user_id=user_id, post_id=post_id)
-        else:
-            post_to_followers(user_id=user_id, post_id=post_id)
+    if settings.USE_CELERY:
+        post_to_followers.delay(user_id=user_id, post_id=post_id)
+    else:
+        post_to_followers(user_id=user_id, post_id=post_id)
