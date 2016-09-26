@@ -102,9 +102,9 @@ def post_likers(request, item_id):
 
     token = request.GET.get('token', False)
     if token:
-        current_user = AuthCache.user_from_token(token=token)
-        if current_user:
-            current_user_id = current_user.id
+        current_user_id = AuthCache.id_from_token(token=token)
+        # if current_user:
+        #     current_user_id = current_user.id
 
     if not before:
         before = 0

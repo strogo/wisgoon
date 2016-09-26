@@ -193,6 +193,7 @@ class Notif(Document):
     DELETE_POST = 4
     FOLLOW = 10
     CHOICE = 5
+    FOLLOW_REQUEST = 6
 
     last_actor = IntField()
     date = DateTimeField()
@@ -202,7 +203,8 @@ class Notif(Document):
     type = IntField()
 
     # meta = {
-    #     'indexes': ['owner', 'post', ('owner', '-date'), ('owner', 'type', 'post'), ('seen', 'owner')]
+    #     'indexes': ['owner', 'post', ('owner', '-date'),
+    #                  ('owner', 'type', 'post'), ('seen', 'owner')]
     # }
 
     meta = {

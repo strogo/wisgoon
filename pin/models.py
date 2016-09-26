@@ -1376,12 +1376,13 @@ class Block(models.Model):
         try:
             Block.objects.get_or_create(user_id=user_id, blocked_id=blocked_id)
             MonthlyStats.log_hit(MonthlyStats.BLOCK)
-            follows = Follow.objects.filter(Q(following_id=user_id, follower_id=blocked_id) |
-                                            Q(following_id=blocked_id, follower_id=user_id))
-            if follows:
-                for follow in follows:
-                    follow.delete()
+            follows = Follow.objects.filter(Q(following_id=user_id,
+                                              follower_id=blocked_id) |
+                                            Q(following_id=blocked_id,
+                                              follower_id=user_id))
 
+            for follow in follows:
+                follow.delete()
         except:
             pass
 
@@ -1672,7 +1673,8 @@ class ReportedPostReporters(models.Model):
 
 
 class UserHistory(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name="user_hiostory")
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                related_name="user_hiostory")
     pos_report = models.IntegerField(default=0)
     neg_report = models.IntegerField(default=0)
     cnt_report = models.IntegerField(default=0)
@@ -1722,7 +1724,8 @@ class UserLog(models.Model):
     create_time = models.DateTimeField(auto_now=True)
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_log")
-    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor_log")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              related_name="actor_log")
 
 
 class UserPermissions(models.Model):
@@ -1751,7 +1754,8 @@ class UserCron(models.Model):
     )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_cron")
-    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="actor_cron")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              related_name="actor_cron")
 
     due_date = models.DateTimeField(auto_now=True)
     action = models.IntegerField(choices=ACTIONS, default=ENABLE_POST)
@@ -1824,8 +1828,10 @@ class Campaign(models.Model):
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
     expired = models.BooleanField(default=False)
-    winners = models.ManyToManyField(settings.AUTH_USER_MODEL, through="WinnersList")
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='campaign_owner')
+    winners = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                     through="WinnersList")
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              related_name='campaign_owner')
     notif = models.BooleanField(default=True)
     logo = models.ImageField(default='', upload_to='pin/campaigns/')
     award = models.TextField(null=True, blank=True)
@@ -1847,6 +1853,12 @@ class SystemState(models.Model):
     def save(self, *args, **kwargs):
         super(SystemState, self).save(*args, **kwargs)
         cache.set(self.CACHE_NAME, self.writable, self.CACHE_TTL)
+
+
+class FollowRequest(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_req')
+    target = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='target')
+
 
 # class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"
@@ -1871,7 +1883,8 @@ class SystemState(models.Model):
 
 #         allow = models.IntegerField(default=None, null=True, blank=True,
 #                                     choices=ALLOW_CHOICES)
-#         ipaddr = models.GenericIPAddressField(default=None, null=True, blank=True)
+#         ipaddr = models.GenericIPAddressField(default=None,
+#                                               null=True, blank=True)
 #         username = models.CharField(default=None, null=True, blank=True,
 #                                     max_length=100)
 #         clientid = models.CharField(default=None, null=True, blank=True,

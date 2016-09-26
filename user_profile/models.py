@@ -28,7 +28,8 @@ def avatar_file_name(instance, filename):
     filestr = new_filename + fileext
     d = datetime.now()
     avatars_prefix = "avatars/%s" % settings.INSTANCE_NAME
-    return '/'.join([avatars_prefix, str(d.year), str(d.month), str(d.day), str(filestr)])
+    return '/'.join([avatars_prefix, str(d.year),
+                     str(d.month), str(d.day), str(filestr)])
 
 
 def cover_file_name(instance, filename):
@@ -40,7 +41,8 @@ def cover_file_name(instance, filename):
     filestr = new_filename + fileext
     d = datetime.now()
     avatars_prefix = "covers/%s" % settings.INSTANCE_NAME
-    return '/'.join([avatars_prefix, str(d.year), str(d.month), str(d.day), str(filestr)])
+    return '/'.join([avatars_prefix, str(d.year),
+                     str(d.month), str(d.day), str(filestr)])
 
 
 class Profile(models.Model):
@@ -85,6 +87,7 @@ class Profile(models.Model):
     level = models.IntegerField(default=1)
 
     banned = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=False)
 
     version = models.IntegerField(default=0, blank=False, null=True)
 
