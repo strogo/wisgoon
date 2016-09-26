@@ -13,7 +13,7 @@ r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        users = User.objects.only('id').all()
+        users = User.objects.filter(id__gt=465051).only('id').all()
         us = UserStream()
         for user in users:
             print "user:", user.id
