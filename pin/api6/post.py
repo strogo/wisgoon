@@ -409,35 +409,48 @@ def send(request):
 
 
 def user_post(request, user_id):
+
     before = int(request.GET.get('before', 0))
-    data = {}
+    token = request.GET.get('token', None)
+
+    current_user = None
+    current_user_id = None
     limit = 20
+    user_posts = []
+    data = {}
     data['meta'] = {'limit': limit,
                     'next': "",
                     'total_count': 1000}
 
-    token = request.GET.get('token', None)
-    current_user = None
-    current_user_id = None
-    user_posts = []
+    profile, create = Profile.objects.get_or_create(user_id=int(user_id))
 
-    """ Check is private user profile """
-    profile, create = Profile.objects.get_or_create(user_id=user_id)
-    if profile.is_private:
-
-        """ Authorize request user"""
-        if not token:
+    """ Authorize request user"""
+    if not token:
+        if profile.is_private:
             return return_json_data(data)
 
-        current_user = AuthCache.user_from_token(token=token)
-        if not current_user:
-            return return_not_found({
-                'message': _('Current user not found')
-            })
-        current_user_id = current_user.id
+        user_posts = Post.objects.values_list('id', flat=True)\
+            .filter(user=user_id)\
+            .order_by('-id')[before:before + 20]
 
-        """ check current user is admin """
-        if not current_user.is_superuser:
+    current_user = AuthCache.user_from_token(token=token)
+    if not current_user:
+        return return_not_found({
+            'message': _('Current user not found')
+        })
+
+    """ Check current user is admin """
+    if not current_user.is_superuser:
+
+        """ Check is block request user"""
+        is_block = Block.objects.filter(user_id=user_id,
+                                        blocked=current_user).exists()
+        if is_block:
+            return return_not_found({
+                'message': _('This User Has Blocked You')
+            })
+
+        if profile.is_private:
             """ Check request user is following user_id"""
             is_follow = Follow.objects\
                 .filter(follower=current_user,
@@ -446,24 +459,9 @@ def user_post(request, user_id):
             if not is_follow:
                 return return_json_data(data)
 
-            """ Check is block request user"""
-            is_block = Block.objects\
-                .filter(user_id=user_id,
-                        blocked=current_user)\
-                .exists()
-            if is_block:
-                return return_not_found({
-                    'message': _('This User Has Blocked You')
-                })
-
-        user_posts = Post.objects.values_list('id', flat=True)\
-            .filter(user=user_id)\
-            .order_by('-id')[before:before + 20]
-
-    else:
-        user_posts = Post.objects.values_list('id', flat=True)\
-            .filter(user=user_id)\
-            .order_by('-id')[before:before + 20]
+    user_posts = Post.objects.values_list('id', flat=True)\
+        .filter(user=user_id)\
+        .order_by('-id')[before:before + 20]
 
     data['objects'] = get_objects_list(user_posts, current_user_id)
     data['meta']['next'] = get_next_url(url_name='api-6-post-user',
