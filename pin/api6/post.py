@@ -455,7 +455,9 @@ def user_post(request, user_id):
                             following_id=user_id)\
                     .exists()
                 if not is_follow:
-                    return return_json_data(data)
+                    return return_not_found({
+                        'message': _('You not follow this user')
+                    })
 
     user_posts = Post.objects.values_list('id', flat=True)\
         .filter(user=user_id)\
