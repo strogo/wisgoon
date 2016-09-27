@@ -187,10 +187,9 @@ def unfollow(request):
 
     try:
         following = User.objects.get(pk=user_id)
-        if Follow.objects.filter(follower=user, following=following).exists():
-            Follow.objects.filter(follower=user, following=following).delete()
-
-    except User.DoesNotExist:
+        follow = Follow.objects.get(follower=user, following=following)
+        follow.delete()
+    except:
         return return_bad_request()
 
     data = {

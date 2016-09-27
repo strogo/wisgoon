@@ -81,7 +81,7 @@ def friends(request):
                     'next': "",
                     'total_count': 1000}
 
-    before = request.GET.get('before', None)
+    before = request.GET.get('before', 0)
     token = request.GET.get('token', None)
 
     if token:
@@ -95,10 +95,10 @@ def friends(request):
     if cur_user:
         viewer_id = str(cur_user)
 
-    if before:
-        idis = Post.user_stream_latest(user_id=cur_user, pid=before)
-    else:
-        idis = Post.user_stream_latest(user_id=cur_user)
+    idis = Post.user_stream_latest(user_id=cur_user, pid=before)
+    # if before:
+    # else:
+    #     idis = Post.user_stream_latest(user_id=cur_user)
 
     posts = get_list_post(idis, from_model=settings.STREAM_LATEST)
 
