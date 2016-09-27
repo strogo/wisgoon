@@ -3,7 +3,7 @@ from django.utils.translation import ugettext as _
 from django.http import UnreadablePostError
 
 from pin.tools import AuthCache
-from pin.models import Comments, Post
+from pin.models import Comments, Post, Follow
 from pin.api6.tools import get_int, get_next_url,\
     get_comments, comment_objects_list, comment_item_json, is_system_writable
 from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
@@ -62,11 +62,23 @@ def add_comment(request, item_id):
             'message': _('Please Enter Your Comment')
         })
 
-    if check_block(user_id=post.user_id, blocked_id=request.user.id):
+    if check_block(user_id=post.user_id, blocked_id=user.id):
         return return_json_data({
             'status': False,
             'message': _('This User Has Blocked You')
         })
+
+    if post.user.profile.is_private:
+        is_follow = Follow.objects\
+            .filter(follower_id=user.id,
+                    following_id=post.user_id)\
+            .exists()
+        if not is_follow:
+            return return_json_data({
+                'status': False,
+                'message': _('Unsuccessfully was Create Comment.')
+            })
+
     try:
         comment = Comments.objects.create(object_pk=post, comment=text,
                                           user_id=get_int(user.id),
