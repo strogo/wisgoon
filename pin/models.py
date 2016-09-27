@@ -876,6 +876,10 @@ class Post(models.Model):
 
     @classmethod
     def user_stream_latest(cls, user_id, pid=0):
+        us = UserStream()
+        pl = us.get_posts(user_id, pid)
+        return pl
+
         row_per_page = 20
         if not user_id:
             return []

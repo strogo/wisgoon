@@ -79,7 +79,9 @@ class UserStream(CassandraModel):
     def follow(self, user_id, post_id_list, post_owner):
         batch = BatchStatement()
         for pid in post_id_list:
-            query = "INSERT INTO user_stream (user_id, post_id , post_owner ) VALUES (%s, %s, %s);"
+            query = """
+            INSERT INTO user_stream (user_id, post_id , post_owner )
+            VALUES (%s, %s, %s);"""
             batch.add(SimpleStatement(query), (user_id, pid, post_owner))
 
         session.execute(batch)
@@ -94,3 +96,19 @@ class UserStream(CassandraModel):
             q = "DELETE from user_stream WHERE user_id = %s AND post_id = %s;"
             batch.add(SimpleStatement(q), (user_id, r.post_id))
         session.execute(batch)
+
+    def get_posts(self, user_id, pid):
+        if pid == 0:
+            query = """
+            SELECT post_id FROM user_stream WHERE user_id = {} LIMIT 10;
+            """.format(user_id)
+        else:
+            query = """
+            SELECT post_id FROM user_stream
+            WHERE user_id = {} AND post_id < {}
+            LIMIT 10;
+            """.format(user_id, pid)
+        rows = session.execute(query)
+        post_id_list = [int(p.post_id) for p in rows]
+
+        return post_id_list
