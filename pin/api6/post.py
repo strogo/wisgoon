@@ -417,10 +417,12 @@ def user_post(request, user_id):
     current_user_id = None
     limit = 20
     user_posts = []
-    data = {}
-    data['meta'] = {'limit': limit,
-                    'next': "",
-                    'total_count': 1000}
+    data = {
+        'meta': {'next': '',
+                 'limit': limit,
+                 'total_count': 1000},
+        'objects': []
+    }
 
     profile, create = Profile.objects.get_or_create(user_id=int(user_id))
 
@@ -436,7 +438,7 @@ def user_post(request, user_id):
             })
 
         """ Check current user is admin """
-        if not current_user.is_superuser:
+        if not current_user.is_superuser or current_user.id != int(user_id):
 
             """ Check is block request user"""
             is_block = Block.objects.filter(user_id=user_id,
