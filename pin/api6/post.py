@@ -428,36 +428,32 @@ def user_post(request, user_id):
     if not token:
         if profile.is_private:
             return return_json_data(data)
-
-        user_posts = Post.objects.values_list('id', flat=True)\
-            .filter(user=user_id)\
-            .order_by('-id')[before:before + 20]
-
-    current_user = AuthCache.user_from_token(token=token)
-    if not current_user:
-        return return_not_found({
-            'message': _('Current user not found')
-        })
-
-    """ Check current user is admin """
-    if not current_user.is_superuser:
-
-        """ Check is block request user"""
-        is_block = Block.objects.filter(user_id=user_id,
-                                        blocked=current_user).exists()
-        if is_block:
+    else:
+        current_user = AuthCache.user_from_token(token=token)
+        if not current_user:
             return return_not_found({
-                'message': _('This User Has Blocked You')
+                'message': _('Current user not found')
             })
 
-        if profile.is_private:
-            """ Check request user is following user_id"""
-            is_follow = Follow.objects\
-                .filter(follower=current_user,
-                        following_id=user_id)\
-                .exists()
-            if not is_follow:
-                return return_json_data(data)
+        """ Check current user is admin """
+        if not current_user.is_superuser:
+
+            """ Check is block request user"""
+            is_block = Block.objects.filter(user_id=user_id,
+                                            blocked=current_user).exists()
+            if is_block:
+                return return_not_found({
+                    'message': _('This User Has Blocked You')
+                })
+
+            if profile.is_private:
+                """ Check request user is following user_id"""
+                is_follow = Follow.objects\
+                    .filter(follower=current_user,
+                            following_id=user_id)\
+                    .exists()
+                if not is_follow:
+                    return return_json_data(data)
 
     user_posts = Post.objects.values_list('id', flat=True)\
         .filter(user=user_id)\
