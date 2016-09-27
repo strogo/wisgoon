@@ -5,20 +5,21 @@ from datetime import timedelta
 from haystack.query import SearchQuerySet
 
 from django.conf import settings
-from django.db.models import Q
 from django.core.cache import cache
+from django.db.models import Q
+from django.http import UnreadablePostError
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
 
+from pin.models import Post, Report, Ad, Block, ReportedPost, Follow
 from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json, is_system_writable,\
     category_get_json
-from pin.models import Post, Report, Ad, Block, ReportedPost
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
-from django.http import UnreadablePostError
+from user_profile.models import Profile
 
 
 GLOBAL_LIMIT = 10
@@ -410,31 +411,63 @@ def send(request):
 def user_post(request, user_id):
     before = int(request.GET.get('before', 0))
     data = {}
-    data['meta'] = {'limit': 20,
+    limit = 20
+    data['meta'] = {'limit': limit,
                     'next': "",
                     'total_count': 1000}
 
-    user_posts = Post.objects.values_list('id', flat=True)\
-        .filter(user=user_id).order_by('-id')[before:before + 20]
-
-    token = request.GET.get('token', False)
+    token = request.GET.get('token', None)
     current_user = None
-    if token:
-        current_user = AuthCache.id_from_token(token=token)
+    current_user_id = None
+    user_posts = []
 
-    if current_user:
-        is_block = Block.objects.filter(user_id=user_id,
-                                        blocked_id=current_user).exists()
-        if is_block:
+    """ Check is private user profile """
+    profile, create = Profile.objects.get_or_create(user_id=user_id)
+    if profile.is_private:
+
+        """ Authorize request user"""
+        if not token:
+            return return_json_data(data)
+
+        current_user = AuthCache.user_from_token(token=token)
+        if not current_user:
             return return_not_found({
-                'message': _('This User Has Blocked You')
+                'message': _('Current user not found')
             })
+        current_user_id = current_user.id
 
-    data['objects'] = get_objects_list(user_posts, current_user)
+        """ check current user is admin """
+        if not current_user.is_superuser:
+            """ Check request user is following user_id"""
+            is_follow = Follow.objects\
+                .filter(follower=current_user,
+                        following_id=user_id)\
+                .exists()
+            if not is_follow:
+                return return_json_data(data)
 
-    last_item = before + 20
+            """ Check is block request user"""
+            is_block = Block.objects\
+                .filter(user_id=user_id,
+                        blocked=current_user)\
+                .exists()
+            if is_block:
+                return return_not_found({
+                    'message': _('This User Has Blocked You')
+                })
+
+        user_posts = Post.objects.values_list('id', flat=True)\
+            .filter(user=user_id)\
+            .order_by('-id')[before:before + 20]
+
+    else:
+        user_posts = Post.objects.values_list('id', flat=True)\
+            .filter(user=user_id)\
+            .order_by('-id')[before:before + 20]
+
+    data['objects'] = get_objects_list(user_posts, current_user_id)
     data['meta']['next'] = get_next_url(url_name='api-6-post-user',
-                                        before=last_item,
+                                        before=before + limit,
                                         token=token,
                                         url_args={"user_id": user_id}
                                         )

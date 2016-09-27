@@ -54,7 +54,8 @@ def following(request):
         pll_id = int(pll)
         ob = post_item_json(pll_id, cur_user_id=request.user.id)
         if ob:
-            is_block = check_block(user_id=ob['user']['id'], blocked_id=request.user.id)
+            is_block = check_block(user_id=ob['user']['id'],
+                                   blocked_id=request.user.id)
             if not is_block:
                 arp.append(ob)
 
@@ -94,8 +95,9 @@ def follow(request, following, action):
 
     if is_system_writable():
         try:
-            follow, created = Follow.objects.get_or_create(follower=request.user,
-                                                           following=following)
+            follow, created = Follow.objects\
+                .get_or_create(follower=request.user,
+                               following=following)
         except Exception, e:
             follow = Follow.objects.filter(follower=request.user,
                                            following=following)[0]
@@ -104,7 +106,8 @@ def follow(request, following, action):
 
         if int(action) == 0 and follow:
             follow.delete()
-            Stream.objects.filter(following=following, user=request.user).delete()
+            Stream.objects.filter(following=following,
+                                  user=request.user).delete()
             message = _('Your connection was successfully shut down')
             status = False
         elif created:
@@ -117,16 +120,19 @@ def follow(request, following, action):
                 'message': message,
                 'count': following.profile.cnt_followers
             }
-            return HttpResponse(json.dumps(data), content_type='application/json')
+            return HttpResponse(json.dumps(data),
+                                content_type='application/json')
         return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
     else:
         msg = _("Website update in progress.")
         if request.is_ajax():
             data = {'status': False, 'message': msg}
-            return HttpResponse(json.dumps(data), content_type='application/json')
+            return HttpResponse(json.dumps(data),
+                                content_type='application/json')
         else:
             messages.error(request, msg)
-            return HttpResponseRedirect(reverse('pin-absuser', args=[following.username]))
+            return HttpResponseRedirect(reverse('pin-absuser',
+                                                args=[following.username]))
 
 
 @login_required
@@ -149,7 +155,8 @@ def like(request, item_id):
                              category=post['category']['id'])
 
         redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
-        key = "cnt_like:user:{}:{}".format(request.user.id, post['category']['id'])
+        key = "cnt_like:user:{}:{}".format(request.user.id,
+                                           post['category']['id'])
 
         if like:
             user_act = 1
@@ -168,7 +175,8 @@ def like(request, item_id):
         msg = _("Website update in progress.")
         if request.is_ajax():
             data = {'status': False, 'message': msg}
-            return HttpResponse(json.dumps(data), content_type='application/json')
+            return HttpResponse(json.dumps(data),
+                                content_type='application/json')
         else:
             messages.error(request, msg)
             return HttpResponseRedirect(reverse('pin-item', args=[post['id']]))
@@ -212,14 +220,16 @@ def report(request, pin_id):
 
         if request.is_ajax():
             data = {'status': status, 'message': msg}
-            return HttpResponse(json.dumps(data), content_type='application/json')
+            return HttpResponse(json.dumps(data),
+                                content_type='application/json')
         else:
             return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
     else:
         msg = _("Website update in progress.")
         if request.is_ajax():
             data = {'status': False, 'message': msg}
-            return HttpResponse(json.dumps(data), content_type='application/json')
+            return HttpResponse(json.dumps(data),
+                                content_type='application/json')
         else:
             messages.error(request, msg)
             return HttpResponseRedirect(reverse('pin-home'))
@@ -278,7 +288,8 @@ def delete(request, item_id):
         msg = _("Website update in progress.")
         if request.is_ajax():
             data = {'status': False, 'message': msg}
-            return HttpResponse(json.dumps(data), content_type='application/json')
+            return HttpResponse(json.dumps(data),
+                                content_type='application/json')
         else:
             messages.error(request, msg)
             return HttpResponseRedirect(reverse('pin-home'))
@@ -322,13 +333,15 @@ def send_comment(request):
 
             # TODO samte ui moshkel dare
             if post_json and is_system_writable():
-                if check_block(user_id=post_json['user']['id'], blocked_id=request.user.id):
+                if check_block(user_id=post_json['user']['id'],
+                               blocked_id=request.user.id):
                     return HttpResponseRedirect('/')
 
-                comment = Comments.objects.create(object_pk_id=post_json['id'],
-                                                  comment=text,
-                                                  user=request.user,
-                                                  ip_address=get_user_ip(request))
+                comment = Comments.objects\
+                    .create(object_pk_id=post_json['id'],
+                            comment=text,
+                            user=request.user,
+                            ip_address=get_user_ip(request))
                 return render(request, 'pin2/show_comment.html', {
                     'comment': comment
                 })
@@ -336,10 +349,13 @@ def send_comment(request):
                 msg = _("Website update in progress.")
                 if request.is_ajax():
                     data = {'status': False, 'message': msg}
-                    return HttpResponse(json.dumps(data), content_type='application/json')
+                    return HttpResponse(json.dumps(data),
+                                        content_type='application/json')
                 else:
                     messages.error(request, msg)
-                    return HttpResponseRedirect(reverse('pin-item', args=[post_json['id']]))
+                    return HttpResponseRedirect(reverse('pin-item',
+                                                        args=[post_json['id']])
+                                                )
 
     return HttpResponse('error')
 
@@ -406,7 +422,8 @@ def send(request):
     if is_system_writable() is False:
         if request.is_ajax():
             data = {'status': False, 'location': reverse('pin-home')}
-            return HttpResponse(json.dumps(data), content_type='application/json')
+            return HttpResponse(json.dumps(data),
+                                content_type='application/json')
         else:
             msg = _("Website update in progress.")
             messages.add_message(request, messages.WARNING, msg)
@@ -426,7 +443,8 @@ def send(request):
                     "location": next_url,
                     "status": status
                 }
-                return HttpResponse(json.dumps(data), content_type="application/json")
+                return HttpResponse(json.dumps(data),
+                                    content_type="application/json")
             else:
                 msg = _("Error sending the image.")
                 messages.add_message(request, messages.WARNING, msg)
@@ -445,7 +463,8 @@ def send(request):
                     "location": next_url,
                     "status": status
                 }
-                return HttpResponse(json.dumps(data), content_type="application/json")
+                return HttpResponse(json.dumps(data),
+                                    content_type="application/json")
             else:
                 msg = _("Error sending the image.")
                 messages.add_message(request, messages.WARNING, msg)
@@ -499,7 +518,8 @@ def send(request):
                 "location": next_url,
                 "status": status
             }
-            return HttpResponse(json.dumps(data), content_type="application/json")
+            return HttpResponse(json.dumps(data),
+                                content_type="application/json")
     else:
         form = PinForm()
 
@@ -531,7 +551,8 @@ def edit(request, post_id):
         msg = _("Website update in progress.")
         if request.is_ajax():
             data = {'status': False, 'messages': msg}
-            return HttpResponse(json.dumps(data), content_type='application/json')
+            return HttpResponse(json.dumps(data),
+                                content_type='application/json')
         else:
             messages.add_message(request, messages.WARNING, msg)
             return HttpResponseRedirect('/')
@@ -556,8 +577,9 @@ def edit(request, post_id):
 
 def save_upload(uploaded, filename, raw_data):
     try:
+        path = "%s/pin/temp/o/%s" % (MEDIA_ROOT, filename)
         from io import FileIO, BufferedWriter
-        with BufferedWriter(FileIO("%s/pin/temp/o/%s" % (MEDIA_ROOT, filename), "wb")) as dest:
+        with BufferedWriter(FileIO(path, "wb")) as dest:
 
             if raw_data:
                 foo = uploaded.read(1024)
@@ -599,7 +621,7 @@ def upload(request):
             image_th = "{}pin/temp/t/{}".format(MEDIA_URL, filename)
             image_t = "{}/pin/temp/t/{}".format(MEDIA_ROOT, filename)
 
-            image_500_th = "{}pin/temp/t/{}".format(MEDIA_URL, filename.replace('.', '_500.'))
+            image_500_th = "{}pin/temp/t/{}".format(MEDIA_URL,filename.replace('.', '_500.'))
             image_500_t = "{}/pin/temp/t/{}".format(MEDIA_ROOT, filename.replace('.', '_500.'))
 
             pin_image.resize(image_o, image_t, 99)
@@ -727,7 +749,8 @@ def inc_credit(request):
     if is_system_writable() is False:
         msg = _("Website update in progress.")
         messages.error(request, msg)
-        return HttpResponseRedirect(reverse('pin-absuser', args=[request.user.username]))
+        return HttpResponseRedirect(reverse('pin-absuser',
+                                            args=[request.user.username]))
 
     if request.method == "POST":
 
@@ -883,10 +906,12 @@ def blocked_list(request):
     older = request.POST.get('older', False)
 
     if older:
-        blocked_list = Block.objects.filter(user_id=request.user.id, id__lt=older)\
+        blocked_list = Block.objects.filter(user_id=request.user.id,
+                                            id__lt=older)\
             .order_by('-id')[:16]
     else:
-        blocked_list = Block.objects.filter(user_id=request.user.id).order_by('-id')[:16]
+        blocked_list = Block.objects.filter(user_id=request.user.id)\
+            .order_by('-id')[:16]
 
     if request.is_ajax():
         if blocked_list.exists():
@@ -910,10 +935,13 @@ def promotion_list(request):
 
     if older:
         promotion_list = Ad.objects\
-            .filter(Q(user=request.user) | Q(owner=request.user), id__lt=older).order_by('-id')[:16]
+            .filter(Q(user=request.user) |
+                    Q(owner=request.user),
+                    id__lt=older).order_by('-id')[:16]
     else:
         promotion_list = Ad.objects\
-            .filter(Q(user=request.user) | Q(owner=request.user)).order_by('-id')[:16]
+            .filter(Q(user=request.user) |
+                    Q(owner=request.user)).order_by('-id')[:16]
 
     if request.is_ajax():
         if promotion_list.exists():
@@ -951,7 +979,8 @@ def user_notif(request):
 
             elif notification.verb.infinitive == 'comment':
                 if len(notification.actor_ids) == 1:
-                    notif = notif_simple_json(notification=notification, text=True)
+                    notif = notif_simple_json(notification=notification,
+                                              text=True)
                 else:
                     notif = notif_simple_json(notification=notification)
 
