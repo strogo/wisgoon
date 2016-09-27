@@ -100,13 +100,13 @@ class UserStream(CassandraModel):
     def get_posts(self, user_id, pid):
         if pid == 0:
             query = """
-            SELECT post_id FROM user_stream WHERE user_id = {} LIMIT 10;
+            SELECT post_id FROM user_stream WHERE user_id = {} LIMIT 20;
             """.format(user_id)
         else:
             query = """
             SELECT post_id FROM user_stream
             WHERE user_id = {} AND post_id < {}
-            LIMIT 10;
+            LIMIT 20;
             """.format(user_id, pid)
         rows = session.execute(query)
         post_id_list = [int(p.post_id) for p in rows]
