@@ -616,27 +616,29 @@ class Post(models.Model):
 
     @classmethod
     def set_stream_to_redis(cls, user_id):
-        user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
-        s = Stream.objects.filter(user_id=user_id)\
-            .values_list('post_id', flat=True).order_by('-id')[:1000]
-        for ss in s:
-            r_server.rpush(user_stream, ss)
+        pass
+        # user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
+        # s = Stream.objects.filter(user_id=user_id)\
+        #     .values_list('post_id', flat=True).order_by('-id')[:1000]
+        # for ss in s:
+        #     r_server.rpush(user_stream, ss)
 
     @classmethod
     def add_to_user_stream(cls, post_id, user_id, post_owner):
-        user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
+        # user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
 
-        r_server.lrem(user_stream, post_id)
-        r_server.lpush(user_stream, post_id)
-        r_server.ltrim(user_stream, 0, 1000)
+        # r_server.lrem(user_stream, post_id)
+        # r_server.lpush(user_stream, post_id)
+        # r_server.ltrim(user_stream, 0, 1000)
 
         us = UserStream()
         us.add_post(user_id, post_id, post_owner)
 
     @classmethod
     def remove_post_from_stream(cls, user_id, post_id):
-        user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
-        r_server.lrem(user_stream, post_id)
+        pass
+        # user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
+        # r_server.lrem(user_stream, post_id)
 
     @classmethod
     def add_to_set(cls, set_name, post, set_cat=True):
