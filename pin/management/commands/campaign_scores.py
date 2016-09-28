@@ -10,7 +10,7 @@ sys.setdefaultencoding('utf8')
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        camp = Campaign.objects.get(id=4)
+        camp = Campaign.objects.get(id=5)
         print camp.id
         campaign_tags = camp.tags
         tags = campaign_tags.split(',')
@@ -24,6 +24,8 @@ class Command(BaseCommand):
                     timestamp_i__lte=end_date).order_by('-cnt_like_i')
 
         user_obj = {}
+
+        print "len post", len(posts)
 
         for post in posts:
             try:
