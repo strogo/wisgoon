@@ -43,4 +43,4 @@ class Command(BaseCommand):
             except Exception:
                 pass
 
-        print sorted(user_obj.items(), key=lambda x: getitem(x[1], 'like'))
+        print sorted(user_obj.items(), key=lambda x: getitem(-x[1], 'like'))
