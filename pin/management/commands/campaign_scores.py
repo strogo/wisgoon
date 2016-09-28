@@ -41,4 +41,4 @@ class Command(BaseCommand):
             except Exception:
                 pass
 
-        print user_obj
+        print sorted(user_obj, key=lambda x: user_obj[x]['like'])
