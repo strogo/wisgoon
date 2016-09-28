@@ -10,7 +10,7 @@ sys.setdefaultencoding('utf8')
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        camp = Campaign.objects.get(id=4)
+        camp = Campaign.objects.get(id=5)
         print camp.id
         campaign_tags = camp.tags
         tags = campaign_tags.split(',')
