@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from pin.api6.http import return_json_data, return_un_auth, return_bad_request
 from pin.api_tools import media_abs_url
-from pin.tools import AuthCache
 from pin.model_mongo import Notif
+from pin.models import FollowRequest
 from pin.models_redis import NotificationRedis
+from pin.tools import AuthCache
 from pin.api6.tools import get_simple_user_object,\
     get_next_url, post_item_json
 
@@ -25,33 +26,53 @@ def notif_count(request, startup=None):
 
 def notif(request):
     """List of user notification."""
-    data = {}
+    user_obj = {}
     token = request.GET.get('token', False)
     offset = int(request.GET.get('offset', 0))
+    data = {
+        'meta': {'next': '',
+                 'limit': 20,
+                 'total_count': 1000},
+        'objects': [],
+        'follow_requests': {}
+    }
+
     notifs_list = []
-    data['meta'] = {'limit': 20,
-                    'next': '',
-                    'total_count': 1000}
 
     if token:
-        current_user = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.user_from_token(token=token)
         if not current_user:
             return return_un_auth()
     else:
         return return_bad_request()
 
-    NotificationRedis(user_id=current_user).clear_notif_count()
+    NotificationRedis(user_id=current_user.id).clear_notif_count()
     if offset:
-        notifs = NotificationRedis(user_id=current_user)\
+        notifs = NotificationRedis(user_id=current_user.id)\
             .get_notif(start=offset + 1)
     else:
-        notifs = NotificationRedis(user_id=current_user).get_notif()
+        notifs = NotificationRedis(user_id=current_user.id).get_notif()
+
+        """ check profile is private """
+        if current_user.profile.is_private:
+
+            """ Get follow request """
+            follow_requests = FollowRequest.objects\
+                .filter(target_id=current_user.id).order_by('-id')
+
+            cnt_requests = follow_requests.count()
+            if cnt_requests > 0:
+                last_follow_req = follow_requests[0]
+                user_obj = get_simple_user_object(last_follow_req.user.id)
+
+            data['follow_requests'] = {'user': user_obj,
+                                       'cnt_requests': cnt_requests}
 
     for notif in notifs:
         data_extra = {}
         data_extra['id'] = str(notif.id)
         data_extra['actor'] = get_simple_user_object(notif.last_actor,
-                                                     current_user)
+                                                     current_user.id)
         data_extra['owner'] = get_simple_user_object(notif.owner)
 
         if isinstance(notif.date, int):
@@ -62,7 +83,9 @@ def notif(request):
         if notif.type == Notif.LIKE:
             data_extra['text'] = "تصویر شمارا پسندید"
             try:
-                post_object = post_item_json(notif.post, current_user, request)
+                post_object = post_item_json(notif.post,
+                                             current_user.id,
+                                             request)
             except:
                 post_object = {}
             data_extra['post'] = post_object
@@ -80,7 +103,9 @@ def notif(request):
             data_extra['type'] = Notif.COMMENT
             data_extra['text'] = "مطلبی را با شما به اشتراک گذاشته"
             try:
-                post_object = post_item_json(notif.post, current_user, request)
+                post_object = post_item_json(notif.post,
+                                             current_user.id,
+                                             request)
             except IndexError:
                 post_object = {}
             data_extra['post'] = post_object
