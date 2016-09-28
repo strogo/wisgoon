@@ -969,7 +969,7 @@ def follow_requests(request):
 
     follow_requests = FollowRequest.objects\
         .filter(target=target_user)\
-        .order_by(-'id')[offset:offset + limit]
+        .order_by('-id')[offset:offset + limit]
 
     for req in follow_requests:
         data['objects'].append(get_simple_user_object(req.user.id))
