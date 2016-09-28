@@ -941,3 +941,33 @@ def accept_follow(request):
         return return_json_data(data)
     else:
         return return_not_found(message=_("Follow request not exists"))
+
+
+def follow_requests(request):
+    if is_system_writable() is False:
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+    data = {
+        'meta': {'next': '',
+                 'limit': '',
+                 'total_count': ''},
+        'objects': []
+    }
+
+    token = request.GET.get('token', None)
+    if not token:
+        return return_bad_request()
+
+    target_user = AuthCache.user_from_token(token=token)
+    if not target_user:
+        return return_un_auth()
+
+    follow_requests = FollowRequest.objects.filter(target=target_user)
+
+    for req in follow_requests:
+        data['objects'].append(get_simple_user_object(req.user.id))
+
+    return return_json_data(data)
