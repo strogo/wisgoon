@@ -88,16 +88,16 @@ class NotificationRedis(object):
         nobjesct = []
         for nl in us.get_notif(self.user_id, start):
             o = {}
-            # ssplited = nl.split(":")
             post_id = nl.object_id
             notif_type = nl.type
+
             if notif_type == 4:
                 continue
+
             if not post_id:
                 post_id = 0
-            # if post_id > 0:
+
             o['id'] = nl.date
-            # else:
 
             o['type'] = nl.type
             o['post'] = nl.object_id

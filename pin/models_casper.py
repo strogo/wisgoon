@@ -11,7 +11,7 @@ class CassandraModel():
     def __init__(self):
         global isConnected, session
         if not isConnected:
-            cluster = Cluster(settings.CASSANDRA_DB)
+            cluster = Cluster(['79.127.125.104', '79.127.125.99', '127.0.0.1'])
             session = cluster.connect("wisgoon")
             isConnected = True
 
