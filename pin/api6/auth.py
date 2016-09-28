@@ -944,6 +944,8 @@ def accept_follow(request):
 
 
 def follow_requests(request):
+    offset = int(request.GET.get('offset', 0))
+    limit = 20
     if is_system_writable() is False:
         data = {
             'status': False,
@@ -952,7 +954,7 @@ def follow_requests(request):
         return return_json_data(data)
     data = {
         'meta': {'next': '',
-                 'limit': '',
+                 'limit': limit,
                  'total_count': ''},
         'objects': []
     }
@@ -965,9 +967,16 @@ def follow_requests(request):
     if not target_user:
         return return_un_auth()
 
-    follow_requests = FollowRequest.objects.filter(target=target_user)
+    follow_requests = FollowRequest.objects\
+        .filter(target=target_user)\
+        .order_by(-'id')[offset:offset + limit]
 
     for req in follow_requests:
         data['objects'].append(get_simple_user_object(req.user.id))
+
+    data['meta']['next'] = get_next_url(url_name='api-6-auth-follow-requests',
+                                        offset=offset + limit,
+                                        token=token
+                                        )
 
     return return_json_data(data)
