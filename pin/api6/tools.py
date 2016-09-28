@@ -19,6 +19,7 @@ from pin.forms import PinDirectForm
 from pin.models import Post, Follow, Comments, Block, Category, SystemState
 from pin.models_redis import LikesRedis, PostView
 from pin.tools import create_filename, fix_rotation
+from django.db.models import Q
 
 from cache_layer import PostCacheLayer
 
@@ -147,6 +148,7 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
     user_info['related'] = {}
     user_info['follow_by_user'] = False
     user_info['block_by_user'] = False
+    user_info['relation_blocked'] = False
 
     user_info['related']['posts'] = abs_url(reverse('api-6-post-user',
                                                     kwargs={
@@ -161,6 +163,13 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
 
         user_info['block_by_user'] = Block.objects\
             .filter(user_id=user_id_from_token, blocked_id=current_user)\
+            .exists()
+
+        user_info['relation_blocked'] = Block.objects\
+            .filter(Q(user_id=user_id_from_token,
+                      blocked_id=current_user) |
+                    Q(blocked_id=user_id_from_token,
+                      user_id=current_user))\
             .exists()
 
     return user_info
