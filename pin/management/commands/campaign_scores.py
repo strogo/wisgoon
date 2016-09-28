@@ -1,6 +1,9 @@
 from django.core.management.base import BaseCommand
 from haystack.query import SearchQuerySet
 from pin.models import Post, Campaign
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 
 class Command(BaseCommand):
@@ -16,7 +19,7 @@ class Command(BaseCommand):
         posts = SearchQuerySet().models(Post)\
             .filter(tags__in=tags,
                     timestamp_i__gte=start_date,
-                    timestamp_i__lte=end_date)
+                    timestamp_i__lte=end_date).order_by('-cnt_like_i')
 
         user_obj = {}
 
