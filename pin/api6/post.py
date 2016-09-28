@@ -11,15 +11,14 @@ from django.http import UnreadablePostError
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
 
-from pin.models import Post, Report, Ad, Block, ReportedPost, Follow
+from pin.models import Post, Report, Ad, ReportedPost
 from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json, is_system_writable,\
-    category_get_json
+    category_get_json, check_user_state
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
-from user_profile.models import Profile
 
 
 GLOBAL_LIMIT = 10
@@ -412,8 +411,6 @@ def user_post(request, user_id):
 
     before = int(request.GET.get('before', 0))
     token = request.GET.get('token', None)
-
-    current_user = None
     current_user_id = None
     limit = 20
     user_posts = []
@@ -424,40 +421,9 @@ def user_post(request, user_id):
         'objects': []
     }
 
-    profile, create = Profile.objects.get_or_create(user_id=int(user_id))
-
-    """ Authorize request user"""
-    if not token:
-        if profile.is_private:
-            return return_json_data(data)
-    else:
-        current_user = AuthCache.user_from_token(token=token)
-        if not current_user:
-            return return_not_found({
-                'message': _('Current user not found')
-            })
-
-        """ Check current user is admin """
-        if not current_user.is_superuser or current_user.id != int(user_id):
-
-            """ Check is block request user"""
-            is_block = Block.objects.filter(user_id=user_id,
-                                            blocked=current_user).exists()
-            if is_block:
-                return return_not_found({
-                    'message': _('This User Has Blocked You')
-                })
-
-            if profile.is_private:
-                """ Check request user is following user_id"""
-                is_follow = Follow.objects\
-                    .filter(follower=current_user,
-                            following_id=user_id)\
-                    .exists()
-                if not is_follow:
-                    return return_not_found({
-                        'message': _('You not follow this user')
-                    })
+    status, current_user_id = check_user_state(user_id=user_id, token=token)
+    if not status:
+        return return_json_data(data)
 
     user_posts = Post.objects.values_list('id', flat=True)\
         .filter(user=user_id)\

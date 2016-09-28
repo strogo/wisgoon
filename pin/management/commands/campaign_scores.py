@@ -1,6 +1,11 @@
 from django.core.management.base import BaseCommand
 from haystack.query import SearchQuerySet
 from pin.models import Post, Campaign
+import sys
+from operator import getitem
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 
 class Command(BaseCommand):
@@ -16,7 +21,7 @@ class Command(BaseCommand):
         posts = SearchQuerySet().models(Post)\
             .filter(tags__in=tags,
                     timestamp_i__gte=start_date,
-                    timestamp_i__lte=end_date)
+                    timestamp_i__lte=end_date).order_by('-cnt_like_i')
 
         user_obj = {}
 
@@ -25,7 +30,7 @@ class Command(BaseCommand):
         for post in posts:
             try:
                 post_obj = Post.objects.get(id=post.pk)
-                u = post_obj.user.username
+                u = str(post_obj.user.username)
                 if u not in user_obj:
                     dn = {
                         "count": 1,
@@ -40,4 +45,6 @@ class Command(BaseCommand):
             except Exception:
                 pass
 
-        print user_obj
+        print sorted(user_obj.items(),
+                     key=lambda x: getitem(x[1], 'like'),
+                     reverse=True)
