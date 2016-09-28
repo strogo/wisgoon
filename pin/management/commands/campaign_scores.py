@@ -26,7 +26,7 @@ class Command(BaseCommand):
         for post in posts:
             try:
                 post_obj = Post.objects.get(id=post.pk)
-                u = post_obj.user.username
+                u = str(post_obj.user.username)
                 if u not in user_obj:
                     dn = {
                         "count": 1,
