@@ -444,9 +444,7 @@ def user_post(request, user_id):
             is_block = Block.objects.filter(user_id=user_id,
                                             blocked=current_user).exists()
             if is_block:
-                return return_not_found({
-                    'message': _('This User Has Blocked You')
-                })
+                return return_json_data(data)
 
             if profile.is_private:
                 """ Check request user is following user_id"""
@@ -455,9 +453,7 @@ def user_post(request, user_id):
                             following_id=user_id)\
                     .exists()
                 if not is_follow:
-                    return return_not_found({
-                        'message': _('You not follow this user')
-                    })
+                    return return_json_data(data)
 
     user_posts = Post.objects.values_list('id', flat=True)\
         .filter(user=user_id)\
