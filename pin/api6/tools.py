@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from django.utils.timezone import localtime
 from django.core.cache import cache
+# from django.db.models import Q
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
@@ -18,8 +19,9 @@ from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
 from pin.models import Post, Follow, Comments, Block, Category, SystemState
 from pin.models_redis import LikesRedis, PostView
-from pin.tools import create_filename, fix_rotation
-from django.db.models import Q
+from pin.tools import create_filename, fix_rotation, AuthCache
+
+from user_profile.models import Profile
 
 from cache_layer import PostCacheLayer
 
@@ -524,3 +526,40 @@ def is_system_writable():
             sys_state = SystemState.objects.create(writable=True)
             state = sys_state.writable
     return bool(state)
+
+
+def check_user_state(user_id, token):
+    profile, created = Profile.objects.get_or_create(user_id=user_id)
+    status = True
+    current_user_id = None
+
+    if not token:
+        if profile.is_private:
+            status = False
+    else:
+        current_user = AuthCache.user_from_token(token=token)
+        if not current_user:
+            status = False
+            return status, current_user_id
+        current_user_id = current_user.id
+
+        """ Check current user is admin """
+        if not current_user.is_superuser or current_user.id != int(user_id):
+
+            """ Check is block request user"""
+            is_block = Block.objects.filter(user_id=user_id,
+                                            blocked=current_user).exists()
+            if is_block:
+                status = False
+                return status, current_user_id
+
+            if profile.is_private:
+                """ Check request user is following user_id"""
+                is_follow = Follow.objects\
+                    .filter(follower=current_user,
+                            following_id=user_id)\
+                    .exists()
+                if not is_follow:
+                    status = False
+                    return status, current_user_id
+    return status, current_user_id

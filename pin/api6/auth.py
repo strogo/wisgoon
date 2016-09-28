@@ -37,37 +37,35 @@ from pin.api6.http import return_bad_request, return_json_data,\
     return_un_auth, return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object,\
     get_int, get_profile_data, update_follower_following, post_item_json,\
-    is_system_writable
+    is_system_writable, check_user_state
 
 
 def followers(request, user_id):
-    data = {}
-    cur_user = None
-    follow_cnt = Follow.objects.filter(following_id=user_id).count()
-
     offset = int(request.GET.get('offset', 0))
     limit = int(request.GET.get('limit', 20))
+    token = request.GET.get('token', None)
+    follow_cnt = Follow.objects.filter(following_id=user_id).count()
+    data = {
+        'meta': {'limit': limit,
+                 'offset': offset,
+                 'previous': '',
+                 'total_count': follow_cnt,
+                 'next': ''},
+        'objects': []
+    }
+    cur_user = None
 
-    token = request.GET.get('token', '')
-    if token:
-        cur_user = AuthCache.id_from_token(token=token)
-
-    data['meta'] = {'limit': limit,
-                    'offset': offset,
-                    'previous': '',
-                    'total_count': follow_cnt,
-                    'next': ''}
-
-    objects_list = []
+    status, cur_user = check_user_state(user_id=user_id, token=token)
+    if not status:
+        return return_json_data(data)
 
     fq = Follow.objects.filter(following_id=user_id)[offset:offset + limit]
     for fol in fq:
         o = {}
         o['user'] = get_simple_user_object(fol.follower_id, cur_user)
 
-        objects_list.append(o)
+        data['objects'].append(o)
 
-    data['objects'] = objects_list
     data['meta']['next'] = get_next_url(url_name='api-6-auth-followers',
                                         offset=offset + 20, token=token,
                                         url_args={'user_id': user_id})
@@ -76,32 +74,30 @@ def followers(request, user_id):
 
 
 def following(request, user_id=1):
-    data = {}
-    objects_list = []
-    cur_user = None
     follow_cnt = Follow.objects.filter(follower_id=user_id).count()
-
+    token = request.GET.get('token', None)
     offset = int(request.GET.get('offset', 0))
     limit = int(request.GET.get('limit', 20))
+    data = {
+        'meta': {'limit': limit,
+                 'offset': offset,
+                 'previous': '',
+                 'total_count': follow_cnt,
+                 'next': ''},
+        'objects': []
+    }
 
-    token = request.GET.get('token', '')
-    if token:
-        cur_user = AuthCache.id_from_token(token=token)
-
-    data['meta'] = {'limit': limit,
-                    'offset': offset,
-                    'previous': '',
-                    'total_count': follow_cnt,
-                    'next': ''}
+    status, cur_user = check_user_state(user_id=user_id, token=token)
+    if not status:
+        return return_json_data(data)
 
     fq = Follow.objects.filter(follower_id=user_id)[offset:offset + limit]
     for fol in fq:
         o = {}
         o['user'] = get_simple_user_object(fol.following_id, cur_user)
 
-        objects_list.append(o)
+        data['objects'].append(o)
 
-    data['objects'] = objects_list
     data['meta']['next'] = get_next_url(url_name='api-6-auth-following',
                                         offset=offset + 20,
                                         token=token,
@@ -368,15 +364,6 @@ def profile(request, user_id):
         current_user = AuthCache.user_from_token(token=token)
         if current_user:
             current_user_id = current_user.id
-
-    # if current_user:
-    #     is_blocked = Block.objects\
-    #         .filter(user_id=user_id, blocked_id=current_user)\
-    #         .exists()
-    #     if is_blocked:
-    #         return return_not_found({
-    #             'message': _('This User Has Blocked You')
-    #         })
 
     try:
         profile = Profile.objects\
@@ -766,7 +753,11 @@ def inc_credit(request):
         return return_not_found(message=_("bazzar token not right"))
     else:
         access_token = get_new_access_token2()
-        url = "https://pardakht.cafebazaar.ir/api/validate/com.wisgoon.android/inapp/%s/purchases/%s/?access_token=%s" % (package_name, baz_token, access_token)
+        url = "https://pardakht.cafebazaar.ir/api/validate/\
+            com.wisgoon.android/inapp/%s/purchases/%s/?access_token=%s" % (
+            package_name,
+            baz_token,
+            access_token)
         try:
             u = urllib2.urlopen(url).read()
             j = json.loads(u)
@@ -887,12 +878,14 @@ def password_reset(request):
     if request.method == "POST":
         form = PasswordResetForm(request.POST)
         if form.is_valid():
+            email_template = 'registration/password_reset_email_pin.html'
+            subject_template = 'registration/password_reset_subject.txt'
             opts = {
                 'use_https': request.is_secure(),
                 'token_generator': default_token_generator,
                 'from_email': None,
-                'email_template_name': 'registration/password_reset_email_pin.html',
-                'subject_template_name': 'registration/password_reset_subject.txt',
+                'email_template_name': email_template,
+                'subject_template_name': subject_template,
                 'request': request,
                 'html_email_template_name': None
             }
