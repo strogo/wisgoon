@@ -436,6 +436,7 @@ def user_post(request, user_id):
             return return_not_found({
                 'message': _('Current user not found')
             })
+        current_user_id = current_user.id
 
         """ Check current user is admin """
         if not current_user.is_superuser or current_user.id != int(user_id):
