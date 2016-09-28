@@ -2,6 +2,8 @@ from django.core.management.base import BaseCommand
 from haystack.query import SearchQuerySet
 from pin.models import Post, Campaign
 import sys
+from operator import getitem
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -41,4 +43,4 @@ class Command(BaseCommand):
             except Exception:
                 pass
 
-        print sorted(user_obj, key=lambda x: user_obj[x]['like'])
+        print sorted(user_obj.items(), key=lambda x: getitem(x[1], 'like'))
