@@ -116,6 +116,7 @@ def follow(request):
 
     token = request.GET.get('token', '')
     user_id = request.GET.get('user_id', None)
+    data = {}
 
     if token and user_id:
         target_id = get_int(user_id)
@@ -144,6 +145,10 @@ def follow(request):
 
     if target.profile.is_private:
         FollowRequest.objects.get_or_create(user=current_user, target=target)
+        data = {
+            'status': True,
+            'message': _("Pending follow request")
+        }
     else:
         is_followed = Follow.objects\
             .filter(follower=current_user,
@@ -152,10 +157,10 @@ def follow(request):
         if not is_followed:
             Follow.objects.create(follower=current_user, following=target)
 
-    data = {
-        'status': True,
-        'message': _("User followed")
-    }
+        data = {
+            'status': True,
+            'message': _("User followed")
+        }
     return return_json_data(data)
 
 
