@@ -165,11 +165,9 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
             .filter(user_id=user_id_from_token, blocked_id=current_user)\
             .exists()
 
-        user_info['relation_blocked'] = Block.objects\
-            .filter(Q(user_id=user_id_from_token,
-                      blocked_id=current_user) |
-                    Q(blocked_id=user_id_from_token,
-                      user_id=current_user))\
+        user_info['user_by_block'] = Block.objects\
+            .filter(user_id=current_user,
+                    blocked_id=user_id_from_token)\
             .exists()
 
     return user_info
