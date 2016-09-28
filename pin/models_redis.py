@@ -1,6 +1,6 @@
 import redis
 import time
-import datetime
+# import datetime
 
 from django.conf import settings
 from django.db.models import F
@@ -72,18 +72,10 @@ class NotificationRedis(object):
         if is_system_writable():
             n = Notification()
             n.set_notif(self.user_id, ntype, actor, post, int(time.time()))
-            notif_str = "{}:{}:{}:{}:{}:{}"\
-                .format(ntype, post, actor, seen, post_image, int(time.time()))
 
-            np = notificationRedis.pipeline()
-            np.lpush(self.KEY_PREFIX, notif_str)
-            np.ltrim(self.KEY_PREFIX, 0, 1000)
-            np.incr(self.KEY_PREFIX_CNT)
-            np.execute()
+            notificationRedis.incr(self.KEY_PREFIX_CNT)
 
     def get_notif(self, start=0, limit=20):
-        # end = start + limit
-        # nlist = notificationRedis.lrange(self.KEY_PREFIX, start, end)
         us = Notification()
         nobjesct = []
         for nl in us.get_notif(self.user_id, start):
