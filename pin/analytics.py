@@ -1,11 +1,11 @@
 from influxdb import InfluxDBClient
 # from django.utils import timezone
-# from django.conf import settings
+from django.conf import settings
 
 # from pin.tasks import tick
 
 try:
-    client = InfluxDBClient('79.127.125.104', 8086, timeout=1)
+    client = InfluxDBClient(settings.INFLUX_HOST, 8086, timeout=1)
     client.create_database('wisgoonStats')
 except Exception, e:
     pass

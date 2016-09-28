@@ -13,7 +13,8 @@ from models import Post
 from khayyam import JalaliDate
 
 from pin.analytics import like_act
-from pin.models_casper import PostStats
+from pin.models_casper import PostStats, Notification
+
 # redis set server
 rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
 # redis list server
@@ -69,7 +70,8 @@ class NotificationRedis(object):
         from pin.api6.tools import is_system_writable
 
         if is_system_writable():
-
+            n = Notification()
+            n.set_notif(self.user_id, ntype, actor, post, int(time.time()))
             notif_str = "{}:{}:{}:{}:{}:{}"\
                 .format(ntype, post, actor, seen, post_image, int(time.time()))
 
@@ -80,33 +82,32 @@ class NotificationRedis(object):
             np.execute()
 
     def get_notif(self, start=0, limit=20):
-        end = start + limit
-        nlist = notificationRedis.lrange(self.KEY_PREFIX, start, end)
+        # end = start + limit
+        # nlist = notificationRedis.lrange(self.KEY_PREFIX, start, end)
+        us = Notification()
         nobjesct = []
-        for nl in nlist:
+        for nl in us.get_notif(self.user_id, start):
             o = {}
-            ssplited = nl.split(":")
-            post_id = eval(ssplited[1])
-            notif_type = eval(ssplited[0])
+            # ssplited = nl.split(":")
+            post_id = nl.object_id
+            notif_type = nl.type
             if notif_type == 4:
                 continue
             if not post_id:
                 post_id = 0
-            if post_id > 0:
-                o['id'] = eval("{}{}{}".format(post_id,
-                                               ssplited[2], ssplited[0]))
-            else:
-                o['id'] = eval("{}{}".format(ssplited[2], ssplited[0]))
-            o['type'] = eval(ssplited[0])
-            o['post'] = eval(ssplited[1])
-            o['last_actor'] = eval(ssplited[2])
-            o['seen'] = eval(ssplited[3])
-            o['post_image'] = eval(ssplited[4])
+            # if post_id > 0:
+            o['id'] = nl.date
+            # else:
+
+            o['type'] = nl.type
+            o['post'] = nl.object_id
+            o['last_actor'] = nl.actor
+            o['seen'] = True
+            o['post_image'] = ""
             o['owner'] = self.user_id
-            try:
-                o['date'] = eval(ssplited[5])
-            except:
-                o['date'] = datetime.datetime.now()
+
+            o['date'] = nl.date
+
             nobjesct.append(NotifStruct(**o))
 
         return nobjesct

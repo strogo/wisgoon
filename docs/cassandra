@@ -1,0 +1,6 @@
+CREATE TABLE notification ( user_id int, date int, deleted boolean, actor int, type int, object_id int, hash text, hint text, PRImary key(user_id, date)) with clustering order by (date desc);
+
+CREATE INDEX no_deleted ON notification (deleted);
+CREATE INDEX no_object_id ON notification (object_id);
+CREATE INDEX no_actor ON notification (actor);
+CREATE INDEX no_hash ON notification (hash);

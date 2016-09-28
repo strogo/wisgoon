@@ -49,7 +49,7 @@ def notif(request):
     NotificationRedis(user_id=current_user.id).clear_notif_count()
     if offset:
         notifs = NotificationRedis(user_id=current_user.id)\
-            .get_notif(start=offset + 1)
+            .get_notif(start=offset)
     else:
         notifs = NotificationRedis(user_id=current_user.id).get_notif()
 
@@ -68,7 +68,11 @@ def notif(request):
             data['follow_requests'] = {'user': user_obj,
                                        'cnt_requests': cnt_requests}
 
+    last_date = None
     for notif in notifs:
+        if notif.date:
+            last_date = notif.date
+
         data_extra = {}
         data_extra['id'] = str(notif.id)
         data_extra['actor'] = get_simple_user_object(notif.last_actor,
@@ -123,5 +127,5 @@ def notif(request):
 
     if data['objects']:
         data['meta']['next'] = get_next_url(url_name='api-6-notif-notif',
-                                            token=token, offset=offset + 20)
+                                            token=token, offset=last_date)
     return return_json_data(data)
