@@ -20,6 +20,8 @@ class Command(BaseCommand):
 
         user_obj = {}
 
+        print "len post", len(posts)
+
         for post in posts:
             try:
                 post_obj = Post.objects.get(id=post.pk)
