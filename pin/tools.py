@@ -405,19 +405,19 @@ def check_spam(value):
 
 
 PACKS = {
-    "wisgoon_pack_1": {
+    "wis_500": {
         "price": 650,
         "wis": 500
     },
-    "wisgoon_pack_2": {
+    "wis_1000": {
         "price": 1300,
         "wis": 1000
     },
-    "wisgoon_pack_3": {
+    "wis_2000": {
         "price": 2600,
         "wis": 2000
     },
-    "wisgoon_pack_4": {
+    "wis_5000": {
         "price": 6500,
         "wis": 5000
     },
