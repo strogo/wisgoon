@@ -510,12 +510,14 @@ def revalidate_bazaar(bill):
     }
     """
 
-    access_token = get_new_access_token()
+    access_token = get_new_access_token2()
 
     package_name = PACKS_WITH_AMOUNT[int(bill.amount)]['pack']
-    url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=%s" % (package_name, bill.trans_id, access_token)
+    url = "https://pardakht.cafebazaar.ir/api/validate/com.wisgoon.android/inapp/%s/purchases/%s/?access_token=%s" % (package_name, bill.trans_id, access_token)
     try:
+        print url
         u = urllib2.urlopen(url).read()
+        print u
         j = json.loads(u)
 
         if len(j) == 0:
