@@ -758,8 +758,7 @@ def inc_credit(request):
         return return_not_found(message=_("bazzar token not right"))
     else:
         access_token = get_new_access_token2()
-        url = "https://pardakht.cafebazaar.ir/api/validate/\
-            com.wisgoon.android/inapp/%s/purchases/%s/?access_token=%s" % (
+        url = "https://pardakht.cafebazaar.ir/api/validate/com.wisgoon.android/inapp/%s/purchases/%s/?access_token=%s" % (
             package_name,
             baz_token,
             access_token)
