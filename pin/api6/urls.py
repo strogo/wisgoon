@@ -42,6 +42,8 @@ urlpatterns = patterns('pin.api6.auth',
                            name="api-6-user-inc-credit"),
                        url(r'^auth/accept/follow/$', 'accept_follow',
                            name="api-6-auth-accept-follow"),
+                       url(r'^auth/follow/request/$', 'follow_requests',
+                           name="api-6-auth-follow-requests"),
                        )
 
 urlpatterns += patterns('pin.api6.post',

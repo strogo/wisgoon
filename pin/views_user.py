@@ -675,6 +675,7 @@ def notif_user(request):
     notifications = NotificationRedis(user_id=request.user.id)\
         .get_notif(start=offset)
     nl = []
+    last_date = None
     for notif in notifications:
         anl = {}
         anl['ob'] = post_item_json(post_id=notif.post)
@@ -693,17 +694,20 @@ def notif_user(request):
         anl['actor'] = notif.last_actor
         anl['pid'] = notif.id
 
+        if notif.date:
+            last_date = notif.date
+
         nl.append(anl)
 
     if request.is_ajax():
         return render(request, 'pin2/_notif.html', {
             'notif': nl,
-            'offset': offset + 20
+            'offset': last_date
         })
     else:
         return render(request, 'pin2/notif_user.html', {
             'notif': nl,
-            'offset': offset + 20
+            'offset': last_date
         })
 
 

@@ -18,7 +18,7 @@ ADMINS = (
     ('bugs', 'bugs@wisgoon.com'),
 )
 
-CASSANDRA_DB = ['79.127.125.104']
+CASSANDRA_DB = ['79.127.125.104', '79.127.125.99']
 
 DATABASES = {
     'default': {
@@ -106,7 +106,7 @@ CELERY_RESULT_BACKEND = 'amqp://guest@79.127.125.98//'
 NEO4J_DATABASE = "http://79.127.125.98:7474/db/data/"
 
 ES_HOST = "79.127.125.98"
-INFLUX_HOST = "79.127.125.99"
+INFLUX_HOST = "79.127.125.104"
 
 
 REDIS_DB = '79.127.125.146'

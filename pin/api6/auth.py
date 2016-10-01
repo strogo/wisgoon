@@ -116,6 +116,7 @@ def follow(request):
 
     token = request.GET.get('token', '')
     user_id = request.GET.get('user_id', None)
+    data = {}
 
     if token and user_id:
         target_id = get_int(user_id)
@@ -144,6 +145,10 @@ def follow(request):
 
     if target.profile.is_private:
         FollowRequest.objects.get_or_create(user=current_user, target=target)
+        data = {
+            'status': True,
+            'message': _("Pending follow request")
+        }
     else:
         is_followed = Follow.objects\
             .filter(follower=current_user,
@@ -152,10 +157,10 @@ def follow(request):
         if not is_followed:
             Follow.objects.create(follower=current_user, following=target)
 
-    data = {
-        'status': True,
-        'message': _("User followed")
-    }
+        data = {
+            'status': True,
+            'message': _("User followed")
+        }
     return return_json_data(data)
 
 
@@ -941,3 +946,42 @@ def accept_follow(request):
         return return_json_data(data)
     else:
         return return_not_found(message=_("Follow request not exists"))
+
+
+def follow_requests(request):
+    offset = int(request.GET.get('offset', 0))
+    limit = 20
+    if is_system_writable() is False:
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+    data = {
+        'meta': {'next': '',
+                 'limit': limit,
+                 'total_count': ''},
+        'objects': []
+    }
+
+    token = request.GET.get('token', None)
+    if not token:
+        return return_bad_request()
+
+    target_user = AuthCache.user_from_token(token=token)
+    if not target_user:
+        return return_un_auth()
+
+    follow_requests = FollowRequest.objects\
+        .filter(target=target_user)\
+        .order_by('-id')[offset:offset + limit]
+
+    for req in follow_requests:
+        data['objects'].append(get_simple_user_object(req.user.id))
+
+    data['meta']['next'] = get_next_url(url_name='api-6-auth-follow-requests',
+                                        offset=offset + limit,
+                                        token=token
+                                        )
+
+    return return_json_data(data)
