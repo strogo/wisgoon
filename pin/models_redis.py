@@ -77,7 +77,7 @@ class NotificationRedis(object):
 
     def get_notif(self, start=0, limit=20):
         us = Notification()
-        nobjesct = []
+        nobjects = []
         for nl in us.get_notif(self.user_id, start):
             o = {}
             post_id = nl.object_id
@@ -100,9 +100,9 @@ class NotificationRedis(object):
 
             o['date'] = nl.date
 
-            nobjesct.append(NotifStruct(**o))
+            nobjects.append(NotifStruct(**o))
 
-        return nobjesct
+        return nobjects
 
     def clear_notif_count(self):
         from pin.api6.tools import is_system_writable

@@ -1,5 +1,3 @@
-from django.conf import settings
-
 from cassandra.cluster import Cluster
 from cassandra.query import BatchStatement, SimpleStatement
 
@@ -21,7 +19,7 @@ class Notification(CassandraModel):
         CassandraModel.__init__(self)
 
     def set_notif(self, a_user_id, a_type, a_actor, a_object_id, a_date):
-        ttl = 7 * 86400
+        ttl = 30 * 86400
 
         if not a_object_id:
             a_object_id = 0
@@ -33,6 +31,7 @@ class Notification(CassandraModel):
             SELECT user_id from notification
             where user_id = {} and hash = '{}'
             """.format(a_user_id, hash_str)
+
             res = session.execute(query)
             if res.current_rows:
                 return
