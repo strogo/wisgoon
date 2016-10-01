@@ -983,7 +983,9 @@ def follow_requests(request):
     }
 
     for req in fr:
-        data['objects'].append(get_simple_user_object(req.user.id))
+        o = {}
+        o['user'] = get_simple_user_object(req.user.id)
+        data['objects'].append(o)
 
     data['meta']['next'] = get_next_url(url_name='api-6-auth-follow-requests',
                                         offset=offset + limit,
