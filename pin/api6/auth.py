@@ -956,12 +956,6 @@ def follow_requests(request):
             'message': _('Website update in progress.')
         }
         return return_json_data(data)
-    # data = {
-    #     'meta': {'next': '',
-    #              'limit': limit,
-    #              'total_count': 0},
-    #     'objects': []
-    # }
 
     token = request.GET.get('token', None)
     if not token:
