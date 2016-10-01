@@ -426,16 +426,16 @@ PACKS = {
 
 PACKS_WITH_AMOUNT = {
     650: {
-        "pack": "wisgoon_pack_1",
+        "pack": "wis_500",
     },
     1300: {
-        "pack": "wisgoon_pack_2",
+        "pack": "wis_1000",
     },
     2600: {
-        "pack": "wisgoon_pack_3",
+        "pack": "wis_2000",
     },
     6500: {
-        "pack": "wisgoon_pack_4",
+        "pack": "wis_5000",
     },
 }
 
