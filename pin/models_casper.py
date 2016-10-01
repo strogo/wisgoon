@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from cassandra.cluster import Cluster
 from cassandra.query import BatchStatement, SimpleStatement
 
@@ -9,9 +11,55 @@ class CassandraModel():
     def __init__(self):
         global isConnected, session
         if not isConnected:
-            cluster = Cluster(['127.0.0.1', '79.127.125.104', '79.127.125.99'])
+            cluster = Cluster(['79.127.125.104', '79.127.125.99', '127.0.0.1'])
             session = cluster.connect("wisgoon")
             isConnected = True
+
+
+class Notification(CassandraModel):
+    def __init__(self):
+        CassandraModel.__init__(self)
+
+    def set_notif(self, a_user_id, a_type, a_actor, a_object_id, a_date):
+        ttl = 7 * 86400
+
+        if not a_object_id:
+            a_object_id = 0
+
+        hash_str = "{}:{}:{}".format(a_actor, a_object_id, a_type)
+
+        if a_type != 2:
+            query = """
+            SELECT user_id from notification
+            where user_id = {} and hash = '{}'
+            """.format(a_user_id, hash_str)
+            res = session.execute(query)
+            if res.current_rows:
+                return
+
+        query = """INSERT INTO notification
+        (user_id, date, actor, object_id, type, deleted, hash)
+        VALUES
+        ({}, {}, {}, {}, {}, {}, '{}') USING TTL {} ;"""\
+            .format(a_user_id, a_date,
+                    a_actor, a_object_id, a_type, False, hash_str, ttl)
+        session.execute(query)
+
+    def get_notif(self, a_user_id, older=None):
+        if older:
+            query = """
+            SELECT * FROM notification
+            WHERE user_id = {}
+            AND date<{}
+            LIMIT 20""".format(a_user_id, older)
+        else:
+            query = """
+            SELECT * FROM notification
+            WHERE user_id = {}
+            LIMIT 20""".format(a_user_id)
+
+        res = session.execute(query)
+        return res
 
 
 class PostStats(CassandraModel):
