@@ -17,7 +17,8 @@ from pin.api_tools import abs_url, media_abs_url
 from pin.api6.http import return_bad_request
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
-from pin.models import Post, Follow, Comments, Block, Category, SystemState
+from pin.models import Post, Follow, Comments, Block, Category, SystemState,\
+    FollowRequest
 from pin.models_redis import LikesRedis, PostView
 from pin.tools import create_filename, fix_rotation, AuthCache
 
@@ -151,17 +152,27 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
     user_info['follow_by_user'] = False
     user_info['block_by_user'] = False
     user_info['user_blocked_me'] = False
+    user_info['request_follow'] = False
 
     user_info['related']['posts'] = abs_url(reverse('api-6-post-user',
                                                     kwargs={
                                                         'user_id': current_user
                                                     }))
-    user_info['permalink'] = abs_url(reverse("pin-absuser",
-                                             kwargs={"user_name": user_info['username']}))
+    user_name = {"user_name": user_info['username']}
+    user_info['permalink'] = abs_url(reverse("pin-absuser", kwargs=user_name))
+
     if user_id_from_token:
         user_info['follow_by_user'] = Follow.objects\
-            .filter(follower_id=user_id_from_token, following_id=current_user)\
+            .filter(follower_id=user_id_from_token,
+                    following_id=current_user)\
             .exists()
+
+        if not user_info['follow_by_user']:
+            follow_req = FollowRequest.objects\
+                .filter(user_id=user_id_from_token,
+                        target_id=current_user).exists
+            if follow_req:
+                user_info['request_follow'] = True
 
         user_info['block_by_user'] = Block.objects\
             .filter(user_id=user_id_from_token, blocked_id=current_user)\
@@ -216,7 +227,8 @@ def get_post_tags(post):
     return tags
 
 
-def post_item_json(post_id, cur_user_id=None, r=None, fields=None, exclude=None):
+def post_item_json(post_id, cur_user_id=None, r=None,
+                   fields=None, exclude=None):
 
     if not post_id:
         return {}
@@ -496,8 +508,9 @@ def campaign_sample_json(campaign):
     to_dict['help'] = campaign.help_text
     to_dict['winners'] = winners_sample_json(campaign)
     to_dict['permalink'] = {}
+    camp_id = {"camp_id": campaign.id}
     to_dict['permalink']['posts'] = abs_url(reverse("api-6-campaign-posts",
-                                                    kwargs={"camp_id": campaign.id}))
+                                                    kwargs=camp_id))
     to_dict['owner'] = get_simple_user_object(current_user=campaign.owner_id)
 
     return to_dict
