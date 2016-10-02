@@ -97,6 +97,7 @@ def home_queue(request):
         'page': 'home'
     })
 
+
 def home(request):
     pid = get_request_pid(request)
     pl = Post.home_latest(pid=pid)
@@ -105,12 +106,16 @@ def home(request):
     last_id = None
     next_url = None
 
+    request_user_id = request.user.id
+    request_user_authenticated = request.user.is_authenticated()
+
     for pll in pl:
         pid = int(pll)
-        post_item = post_item_json(post_id=pid, cur_user_id=request.user.id)
+        post_item = post_item_json(post_id=pid, cur_user_id=request_user_id)
         if post_item:
-            if request.user.is_authenticated():
-                if not check_block(user_id=post_item['user']['id'], blocked_id=request.user.id):
+            if request_user_authenticated:
+                if not check_block(user_id=post_item['user']['id'],
+                                   blocked_id=request_user_id):
                     arp.append(post_item)
             else:
                 arp.append(post_item)
