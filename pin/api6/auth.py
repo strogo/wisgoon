@@ -200,6 +200,42 @@ def unfollow(request):
     return return_json_data(data)
 
 
+def remove_follow_req(request):
+    if is_system_writable() is False:
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
+    token = request.GET.get('token', '')
+    user_id = request.GET.get('user_id', None)
+
+    if token and user_id:
+        user_id = get_int(user_id)
+        user = AuthCache.user_from_token(token=token)
+        if not user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
+
+    if user_id == user.id:
+        return return_bad_request()
+
+    try:
+        following = User.objects.get(pk=user_id)
+        follow = FollowRequest.objects.get(user=user, target=following)
+        follow.delete()
+    except:
+        return return_bad_request()
+
+    data = {
+        'status': True,
+        'message': _("User remove follow request")
+    }
+    return return_json_data(data)
+
+
 @csrf_exempt
 def login(request):
     if is_system_writable() is False:

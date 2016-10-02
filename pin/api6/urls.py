@@ -48,6 +48,9 @@ urlpatterns = patterns('pin.api6.auth',
                            name="api-6-auth-create-bill"),
                        url(r'^auth/new/user/inc/credit/$', 'inc_credit_2',
                            name="api-6-user-inc-credit-2"),
+                       url(r'^auth/remove/follow/request/$',
+                           'remove_follow_req',
+                           name="api-6-auth-remove-follow-request"),
                        )
 
 urlpatterns += patterns('pin.api6.post',
