@@ -600,7 +600,7 @@ class Post(models.Model):
 
     @classmethod
     def add_to_stream(cls, post):
-        if not post.accept_for_stream():
+        if not post.accept_for_stream() or post.user.profile.is_private:
             return
         latest_stream = settings.STREAM_LATEST
         r_server.lrem(latest_stream, post.id)
