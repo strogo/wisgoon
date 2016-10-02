@@ -168,15 +168,19 @@ def search(request):
     query = request.GET.get('q', '')
     offset = int(request.GET.get('offset', 0))
 
+    request_user_authenticated = request.user.is_authenticated()
+    ru_id = request.user.id
+
     if query:
         post_queryset = SearchQuerySet().models(Post)\
             .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
         for post in post_queryset:
-            ob = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
+            ob = post_item_json(post_id=post.pk, cur_user_id=ru_id)
             if ob:
-                if request.user.is_authenticated():
-                    if not check_block(user_id=ob['user']['id'], blocked_id=request.user.id):
+                if request_user_authenticated:
+                    ob_user_id = ob['user']['id']
+                    if not check_block(user_id=ob_user_id, blocked_id=ru_id):
                         posts.append(ob)
                 else:
                     posts.append(ob)
@@ -231,6 +235,9 @@ def result(request, label):
     query = request.GET.get('q', '')
     offset = int(request.GET.get('older', 0))
 
+    ru_id = request.user.id
+    request_user_authenticated = request.user.is_authenticated()
+
     posts = SearchQuerySet().models(Post)\
         .filter(content__contains=r.get_label_text())\
         .order_by('-timestamp_i')[offset:offset + 1 * row_per_page]
@@ -239,8 +246,8 @@ def result(request, label):
     for post in posts:
         ob = post_item_json(post.pk)
         if ob:
-            if request.user.is_authenticated():
-                if not check_block(user_id=ob['user']['id'], blocked_id=request.user.id):
+            if request_user_authenticated:
+                if not check_block(user_id=ob['user']['id'], blocked_id=ru_id):
                     ps.append(ob)
             else:
                 ps.append(ob)
@@ -276,11 +283,15 @@ def category_top(request, category_id):
         .filter(category_i=category_id)\
         .order_by('-cnt_like_i')[offset:offset + 1 * row_per_page]
 
+    ru_id = request.user.id
+    request_user_authenticated = request.user.is_authenticated()
+
     for post in posts:
-        post_json = post_item_json(post_id=post.pk, cur_user_id=request.user.id)
+        post_json = post_item_json(post_id=post.pk, cur_user_id=ru_id)
         if post_json:
-            if request.user.is_authenticated():
-                if not check_block(user_id=post_json['user']['id'], blocked_id=request.user.id):
+            if request_user_authenticated:
+                ob_user_id = post_json['user']['id']
+                if not check_block(user_id=ob_user_id, blocked_id=ru_id):
                     posts_list.append(post_json)
             else:
                 posts_list.append(post_json)
@@ -354,12 +365,16 @@ def hashtag(request, tag_name):
     posts = post_queryset\
         .order_by('-timestamp_i')[offset:offset + row_per_page]
 
+    ru_id = request.user.id
+    request_user_authenticated = request.user.is_authenticated()
+
     for post in posts:
         post_json = post_item_json(post_id=post.pk,
-                                   cur_user_id=request.user.id)
+                                   cur_user_id=ru_id)
         if post_json:
-            if request.user.is_authenticated():
-                if not check_block(user_id=post_json['user']['id'], blocked_id=request.user.id):
+            if request_user_authenticated:
+                ob_user_id = post_json['user']['id']
+                if not check_block(user_id=ob_user_id, blocked_id=ru_id):
                     posts_list.append(post_json)
             else:
                 posts_list.append(post_json)
