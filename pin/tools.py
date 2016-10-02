@@ -405,19 +405,19 @@ def check_spam(value):
 
 
 PACKS = {
-    "wisgoon_pack_1": {
+    "wis_500": {
         "price": 650,
         "wis": 500
     },
-    "wisgoon_pack_2": {
+    "wis_1000": {
         "price": 1300,
         "wis": 1000
     },
-    "wisgoon_pack_3": {
+    "wis_2000": {
         "price": 2600,
         "wis": 2000
     },
-    "wisgoon_pack_4": {
+    "wis_5000": {
         "price": 6500,
         "wis": 5000
     },
@@ -426,16 +426,16 @@ PACKS = {
 
 PACKS_WITH_AMOUNT = {
     650: {
-        "pack": "wisgoon_pack_1",
+        "pack": "wis_500",
     },
     1300: {
-        "pack": "wisgoon_pack_2",
+        "pack": "wis_1000",
     },
     2600: {
-        "pack": "wisgoon_pack_3",
+        "pack": "wis_2000",
     },
     6500: {
-        "pack": "wisgoon_pack_4",
+        "pack": "wis_5000",
     },
 }
 
@@ -510,12 +510,14 @@ def revalidate_bazaar(bill):
     }
     """
 
-    access_token = get_new_access_token()
+    access_token = get_new_access_token2()
 
     package_name = PACKS_WITH_AMOUNT[int(bill.amount)]['pack']
-    url = "https://pardakht.cafebazaar.ir/api/validate/ir.mohsennavabi.wisgoon/inapp/%s/purchases/%s/?access_token=%s" % (package_name, bill.trans_id, access_token)
+    url = "https://pardakht.cafebazaar.ir/api/validate/com.wisgoon.android/inapp/%s/purchases/%s/?access_token=%s" % (package_name, bill.trans_id, access_token)
     try:
+        print url
         u = urllib2.urlopen(url).read()
+        print u
         j = json.loads(u)
 
         if len(j) == 0:

@@ -983,12 +983,6 @@ def follow_requests(request):
             'message': _('Website update in progress.')
         }
         return return_json_data(data)
-    data = {
-        'meta': {'next': '',
-                 'limit': limit,
-                 'total_count': ''},
-        'objects': []
-    }
 
     token = request.GET.get('token', None)
     if not token:
@@ -998,12 +992,21 @@ def follow_requests(request):
     if not target_user:
         return return_un_auth()
 
-    follow_requests = FollowRequest.objects\
+    fr = FollowRequest.objects\
         .filter(target=target_user)\
         .order_by('-id')[offset:offset + limit]
 
-    for req in follow_requests:
-        data['objects'].append(get_simple_user_object(req.user.id))
+    data = {
+        'meta': {'next': '',
+                 'limit': limit,
+                 'total_count': len(fr)},
+        'objects': []
+    }
+
+    for req in fr:
+        o = {}
+        o['user'] = get_simple_user_object(req.user.id)
+        data['objects'].append(o)
 
     data['meta']['next'] = get_next_url(url_name='api-6-auth-follow-requests',
                                         offset=offset + limit,

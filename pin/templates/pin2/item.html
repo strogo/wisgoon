@@ -23,12 +23,14 @@
         {% include "pin2/items_inner.html" %}
     </div>
     <div class="pa20" id="related_posts">
-        <h3 class="wis_title">تصاویر مرتبط</h3>
-
-        {% comment %}
-        {% include "pin2/tabliq/_728x90.html" %}
-        {% endcomment %}
-
+        <div class="row">
+            <div class="col-md-3 col-sm-12 col-xs-12">
+                <h3 class="wis_title">تصاویر مرتبط</h3>
+            </div>
+            <div class="col-md-9 col-sm-12 col-xs-12">
+                {% include "pin2/tabliq/_728x90.html" %}
+            </div>
+        </div>
         <div id="feed" class="masonry">
             <a href="{{related_url}}"> مطالب مرتبط </a>
         </div>

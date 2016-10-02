@@ -28,8 +28,8 @@ class Notification(CassandraModel):
 
         if a_type != 2:
             query = """
-            SELECT user_id from notification
-            where user_id = {} and hash = '{}'
+            SELECT user_id FROM notification
+            where user_id = {} AND hash = '{}'
             """.format(a_user_id, hash_str)
 
             res = session.execute(query)
@@ -76,7 +76,7 @@ class PostStats(CassandraModel):
         session.execute_async(sql)
 
     def get_cnt_view(self):
-        query = "SELECT cnt_view FROM post_stats where post_id={}"\
+        query = "SELECT cnt_view FROM post_stats WHERE post_id={}"\
             .format(self.post_id)
         row = session.execute(query)
         if not row.current_rows:
@@ -147,7 +147,9 @@ class UserStream(CassandraModel):
     def get_posts(self, user_id, pid):
         if pid == 0:
             query = """
-            SELECT post_id FROM user_stream WHERE user_id = {} LIMIT 20;
+            SELECT post_id FROM user_stream
+            WHERE user_id = {}
+            LIMIT 20;
             """.format(user_id)
         else:
             query = """
