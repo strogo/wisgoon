@@ -223,9 +223,9 @@ def remove_follow_req(request):
         return return_bad_request()
 
     try:
-        following = User.objects.get(pk=user_id)
-        follow = FollowRequest.objects.get(user=user, target=following)
-        follow.delete()
+        target = User.objects.get(pk=user_id)
+        FollowRequest.objects\
+            .filter(user=user, target=target).delete()
     except:
         return return_bad_request()
 
