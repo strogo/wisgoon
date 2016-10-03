@@ -1,5 +1,6 @@
 import json
 from hashlib import md5
+from urlparse import urlparse
 
 from django.core.cache import cache
 from django.conf import settings
@@ -45,6 +46,12 @@ def abs_url(url, api=True):
             return settings.SITE_URL + url
 
 
+def get_domain_from_url(url):
+    parsed_uri = urlparse(url)
+    domain = parsed_uri.netloc
+    return domain
+
+
 def media_abs_url(url, check_photos=False, static=False):
     if static:
         cur_base_url = settings.STATIC_DOMAIN
@@ -61,17 +68,22 @@ def media_abs_url(url, check_photos=False, static=False):
     else:
         new_url = cur_base_url + url
 
+    base_domain = get_domain_from_url(new_url)
+
     if check_photos:
+        print "url :", new_url
         if "photos01" in new_url:
-            new_url = new_url.replace("www.wisgoon.com", "photos01.wisgoon.com")
+            new_url = new_url.replace(base_domain, "photos01.wisgoon.com")
         elif "photos02" in new_url:
-            new_url = new_url.replace("www.wisgoon.com", "photos02.wisgoon.com")
+            new_url = new_url.replace(base_domain, "photos02.wisgoon.com")
+        elif "photos03" in new_url:
+            new_url = new_url.replace(base_domain, "photos03.wisgoon.com")
         elif "saturn" in new_url:
-            new_url = new_url.replace("www.wisgoon.com", "saturn.wisgoon.com")
+            new_url = new_url.replace(base_domain, "saturn.wisgoon.com")
         elif "jupiter" in new_url:
-            new_url = new_url.replace("www.wisgoon.com", "jupiter.wisgoon.com")
+            new_url = new_url.replace(base_domain, "jupiter.wisgoon.com")
         elif "mars" in new_url:
-            new_url = new_url.replace("www.wisgoon.com", "mars.wisgoon.com")
+            new_url = new_url.replace(base_domain, "mars.wisgoon.com")
 
     return new_url
 

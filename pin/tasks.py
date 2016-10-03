@@ -110,6 +110,8 @@ def add_to_storage(post_id):
         return
     storage = Storages.objects.order_by('num_files')[:1][0]
 
+    ins_name = settings.INSTANCE_NAME
+
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(storage.host, username=storage.user)
@@ -118,7 +120,7 @@ def add_to_storage(post_id):
 
     local_path = os.path.join(settings.MEDIA_ROOT, post.image)
     image_new_path = post.image
-    image_new_path = image_new_path.replace(settings.INSTANCE_NAME, storage.name)
+    image_new_path = image_new_path.replace(ins_name, storage.name)
     remote_path = os.path.join(storage.path, image_new_path)
     remote_dir = os.path.dirname(remote_path)
 
@@ -131,7 +133,7 @@ def add_to_storage(post_id):
 
     local_path_236 = os.path.join(settings.MEDIA_ROOT, postmeta.img_236)
     image_new_path_236 = postmeta.img_236
-    image_new_path_236 = image_new_path_236.replace(settings.INSTANCE_NAME, storage.name)
+    image_new_path_236 = image_new_path_236.replace(ins_name, storage.name)
     remote_path_236 = os.path.join(storage.path, image_new_path_236)
     remote_dir = os.path.dirname(remote_path_236)
 
@@ -143,7 +145,7 @@ def add_to_storage(post_id):
 
     local_path_500 = os.path.join(settings.MEDIA_ROOT, postmeta.img_500)
     image_new_path_500 = postmeta.img_500
-    image_new_path_500 = image_new_path_500.replace(settings.INSTANCE_NAME, storage.name)
+    image_new_path_500 = image_new_path_500.replace(ins_name, storage.name)
     remote_path_500 = os.path.join(storage.path, image_new_path_500)
     remote_dir = os.path.dirname(remote_path_500)
 
@@ -175,7 +177,6 @@ def check_porn(post_id):
     import requests
     from requests.auth import HTTPBasicAuth
     import socket
-    import paho.mqtt.publish as publish
 
     socket.setdefaulttimeout(10)
 
@@ -261,9 +262,11 @@ def add_avatar_to_storage(profile_id):
     ssh.connect(storage.host, username=storage.user)
     sftp = ssh.open_sftp()
 
+    ins_name = settings.INSTANCE_NAME
+
     local_path = os.path.join(settings.MEDIA_ROOT, str(profile.avatar))
     image_new_path = str(profile.avatar)
-    image_new_path = image_new_path.replace(settings.INSTANCE_NAME, storage.name)
+    image_new_path = image_new_path.replace(ins_name, storage.name)
     remote_path = os.path.join(storage.path, image_new_path)
     remote_dir = os.path.dirname(remote_path)
 
@@ -274,7 +277,7 @@ def add_avatar_to_storage(profile_id):
 
     local_path = os.path.join(settings.MEDIA_ROOT, profile.get_avatar_64_str())
     image_new_path_64 = profile.get_avatar_64_str()
-    image_new_path_64 = image_new_path_64.replace(settings.INSTANCE_NAME, storage.name)
+    image_new_path_64 = image_new_path_64.replace(ins_name, storage.name)
     remote_path = os.path.join(storage.path, image_new_path_64)
     remote_dir = os.path.dirname(remote_path)
 
