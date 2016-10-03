@@ -9,7 +9,6 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from django.utils.timezone import localtime
 from django.core.cache import cache
-# from django.db.models import Q
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
@@ -28,8 +27,14 @@ from cache_layer import PostCacheLayer
 
 import khayyam
 
-VERB = {5: "Create post", 6: "Comment", 7: "Like",
-        8: "Follow", 9: "request follow", 10: "accept follow"}
+VERB = {
+    5: "Create post",
+    6: "Comment",
+    7: "Like",
+    8: "Follow",
+    9: "request follow",
+    10: "accept follow"
+}
 
 
 def get_next_url(url_name, offset=None, token=None, url_args={}, **kwargs):
@@ -420,10 +425,9 @@ def get_comments(post_id, limit, before):
 
 
 def comment_item_json(comment):
-
     comment_dict = {}
     try:
-        comment_dict['user'] = get_simple_user_object(comment.user.id)
+        comment_dict['user'] = get_simple_user_object(comment.user_id)
     except:
         return comment_dict
 
@@ -451,9 +455,9 @@ def comment_objects_list(comments):
 
 def ad_item_json(ad):
     ad_dict = {}
-    ad_dict['post'] = post_item_json(ad.post.id)
+    ad_dict['post'] = post_item_json(ad.post_id)
     ad_dict['cnt_view'] = ad.get_cnt_view()
-    ad_dict['user'] = get_simple_user_object(ad.user.id)
+    ad_dict['user'] = get_simple_user_object(ad.user_id)
     ad_dict['ended'] = ad.ended
     ad_dict['ads_type'] = ad.ads_type
     ad_dict['start'] = str(ad.start)
@@ -522,7 +526,7 @@ def winners_sample_json(campaign):
 
     for winner in winners:
         to_dict = {}
-        to_dict['user'] = get_simple_user_object(winner.user.id)
+        to_dict['user'] = get_simple_user_object(winner.user_id)
         to_dict['text'] = winner.text
         to_dict['rank'] = winner.rank
         winners_lsit.append(to_dict)
@@ -530,6 +534,7 @@ def winners_sample_json(campaign):
 
 
 def is_system_writable():
+    return True
     state = cache.get(SystemState.CACHE_NAME)
     if state is None:
         try:

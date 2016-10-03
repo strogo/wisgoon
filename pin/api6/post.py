@@ -402,8 +402,7 @@ def send(request):
     if post.status == 1:
         msg = _('Your article has been sent.')
     elif post.status == 0:
-        msg = _('Your article has been sent and displayed\
-                on the site after confirmation ')
+        msg = _('Your article has been sent and displayed on the site after confirmation')
     return return_json_data({'status': status, 'message': msg, 'post': data})
 
 
@@ -415,9 +414,11 @@ def user_post(request, user_id):
     limit = 20
     user_posts = []
     data = {
-        'meta': {'next': '',
-                 'limit': limit,
-                 'total_count': 1000},
+        'meta': {
+            'next': '',
+            'limit': limit,
+            'total_count': 1000
+        },
         'objects': []
     }
 

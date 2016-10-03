@@ -69,14 +69,14 @@ def get_avatar(user, size=165):
         try:
             if profile and profile.avatar:
                 url = None
-                if profile.version == Profile.AVATAR_OLD_STYLE or\
-                        profile.version == Profile.AVATAR_NEW_STYLE:
-                    profile.store_avatars(update_model=True)
-                    cache_key = "migrate_avatar_%s" % str(profile.id)
-                    if not cache.get(cache_key):
-                        from pin.tasks import migrate_avatar_storage
-                        migrate_avatar_storage.delay(profile_id=profile.id)
-                        cache.set(cache_key, 1, 60 * 5)
+                # if profile.version == Profile.AVATAR_OLD_STYLE or\
+                #         profile.version == Profile.AVATAR_NEW_STYLE:
+                #     profile.store_avatars(update_model=True)
+                #     cache_key = "migrate_avatar_%s" % str(profile.id)
+                #     if not cache.get(cache_key):
+                #         from pin.tasks import migrate_avatar_storage
+                #         migrate_avatar_storage.delay(profile_id=profile.id)
+                #         cache.set(cache_key, 1, 60 * 5)
 
                 if fit_size == 64:
                     url = '%s%s' % (url_prefix, profile.get_avatar_64_str())
