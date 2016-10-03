@@ -65,8 +65,8 @@ def notif(request):
                 last_follow_req = follow_requests[0]
                 user_obj = get_simple_user_object(last_follow_req.user.id)
 
-            data['follow_requests'] = {'user': user_obj,
-                                       'cnt_requests': cnt_requests}
+                data['follow_requests'] = {'user': user_obj,
+                                           'cnt_requests': cnt_requests}
 
     last_date = None
     for notif in notifs:
