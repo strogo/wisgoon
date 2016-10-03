@@ -187,15 +187,56 @@ def unfollow(request):
         return return_bad_request()
 
     try:
-        following = User.objects.get(pk=user_id)
-        follow = Follow.objects.get(follower=user, following=following)
+        target = User.objects.get(pk=user_id)
+    except:
+        return return_bad_request()
+
+    try:
+        follow = Follow.objects.get(follower=user, following=target)
         follow.delete()
+    except Follow.DoesNotExist:
+        FollowRequest.objects\
+            .filter(user=user, target=target).delete()
+
+    data = {
+        'status': True,
+        'message': _("User unfollowed")
+    }
+    return return_json_data(data)
+
+
+def remove_follow_req(request):
+    if is_system_writable() is False:
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
+    token = request.GET.get('token', '')
+    user_id = request.GET.get('user_id', None)
+
+    if token and user_id:
+        user_id = get_int(user_id)
+        user = AuthCache.user_from_token(token=token)
+        if not user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
+
+    if user_id == user.id:
+        return return_bad_request()
+
+    try:
+        target = User.objects.get(pk=user_id)
+        FollowRequest.objects\
+            .filter(user=user, target=target).delete()
     except:
         return return_bad_request()
 
     data = {
         'status': True,
-        'message': _("User unfollowed")
+        'message': _("User remove follow request")
     }
     return return_json_data(data)
 
@@ -732,6 +773,7 @@ def inc_credit(request):
     price = int(request.POST.get('price', 0))
     baz_token = request.POST.get("baz_token", "")
     package_name = request.POST.get("package", "")
+
     if token:
         user = AuthCache.user_from_token(token=token)
 
@@ -746,7 +788,7 @@ def inc_credit(request):
         return return_json_data({'status': False,
                                  'message': _('Price is wrong')})
 
-    # if PACKS[package_name]['price'] == price:
+    """ If user already use this trans_id """
     if Bills2.objects.filter(trans_id=str(baz_token),
                              status=Bills2.COMPLETED).count() > 0:
         b = Bills2()
@@ -799,6 +841,7 @@ def inc_credit(request):
                 b.amount = PACKS[package_name]['price']
                 b.status = Bills2.NOT_VALID
                 b.save()
+
                 return return_json_data({'status': False,
                                         'message': 'not valid purchase state'})
         except Exception:
@@ -808,6 +851,7 @@ def inc_credit(request):
             b.amount = PACKS[package_name]['price']
             b.status = Bills2.VALIDATE_ERROR
             b.save()
+
             message = 'validation error, we correct it later'
             return return_json_data({'status': False,
                                     'message': message})
@@ -987,3 +1031,130 @@ def follow_requests(request):
                                         )
 
     return return_json_data(data)
+
+
+def create_bill(request):
+
+    # parameters
+    token = request.GET.get('token', '')
+    price = int(request.POST.get('price', 0))
+    package_name = request.POST.get("package", "")
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token or not package_name:
+        message = "The parameters entered is incorrect"
+        return return_not_found(message=_(message))
+
+    if package_name not in PACKS:
+        return return_not_found(message=_("Select a package is not correct"))
+
+    if PACKS[package_name]['price'] != price:
+        return return_json_data({'status': False,
+                                 'message': _('Price is wrong')})
+
+    bill = Bills2.objects.create(user=user,
+                                 amount=PACKS[package_name]['price'],
+                                 status=Bills2.UNCOMPLETED).exists()
+
+    return return_json_data({'status': True,
+                             'message': 'Successfully created',
+                             'id': bill.id})
+
+
+@csrf_exempt
+def inc_credit_2(request):
+    if is_system_writable() is False:
+        data = {
+            'status': False,
+            'message': _('Website update in progress.')
+        }
+        return return_json_data(data)
+
+    user = None
+    token = request.GET.get('token', '')
+    baz_token = request.POST.get("baz_token", "")
+    price = request.POST.get("price", "")
+    bill_id = request.POST.get("bill_id", None)
+    package_name = request.POST.get("package", "")
+    current_bill = None
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token or not baz_token or not bill_id:
+        message = "The parameters entered is incorrect"
+        return return_not_found(message=_(message))
+
+    if package_name not in PACKS:
+        return return_not_found(message=_("Select a package is not correct"))
+
+    if PACKS[package_name]['price'] != price:
+        return return_json_data({'status': False,
+                                 'message': _('Price is wrong')})
+
+    """ Check bill """
+    try:
+        current_bill = Bills2.objects.get(id=bill_id)
+    except:
+        return return_not_found(message=_('Bill id is wrong'))
+
+    """ If user already use this trans_id """
+    if Bills2.objects.filter(trans_id=str(baz_token),
+                             status=Bills2.COMPLETED).count() > 0:
+
+        current_bill.trans_id = str(baz_token)
+        current_bill.status = Bills2.FAKERY
+        current_bill.save()
+        return return_not_found(message=_("bazzar token not right"))
+    else:
+        access_token = get_new_access_token2()
+        url = "https://pardakht.cafebazaar.ir/api/validate/com.wisgoon.android/inapp/%s/purchases/%s/?access_token=%s" % (
+            package_name,
+            baz_token,
+            access_token)
+        try:
+            u = urllib2.urlopen(url).read()
+            j = json.loads(u)
+
+            if len(j) == 0:
+                current_bill.trans_id = str(baz_token)
+                current_bill.status = Bills2.NOT_VALID
+                current_bill.save()
+                return return_json_data({'status': False,
+                                         'message': 'Not valid purchase data'})
+
+            purchase_state = j.get('purchaseState', None)
+            if purchase_state is None:
+                message = 'purchase state error request'
+                return return_json_data({'status': False,
+                                         'message': message})
+
+            if purchase_state == 0:
+                current_bill.trans_id = str(baz_token)
+                current_bill.status = Bills2.COMPLETED
+                current_bill.save()
+
+                p = user.profile
+                p.inc_credit(amount=PACKS[package_name]['wis'])
+            else:
+                current_bill.trans_id = str(baz_token)
+                current_bill.status = Bills2.NOT_VALID
+                current_bill.save()
+                return return_json_data({'status': False,
+                                        'message': 'not valid purchase state'})
+        except Exception:
+            current_bill.trans_id = str(baz_token)
+            current_bill.status = Bills2.VALIDATE_ERROR
+            current_bill.save()
+            message = 'validation error, we correct it later'
+            return return_json_data({'status': False,
+                                    'message': message})
+
+        message = 'Increased Credit was Successful.'
+
+        return return_json_data({'status': True,
+                                'message': _(message)})
+
+    return return_json_data({'status': False, 'message': 'failed'})

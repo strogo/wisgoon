@@ -62,22 +62,23 @@ def add_comment(request, item_id):
             'message': _('Please Enter Your Comment')
         })
 
-    if check_block(user_id=post.user_id, blocked_id=user.id):
-        return return_json_data({
-            'status': False,
-            'message': _('This User Has Blocked You')
-        })
-
-    if post.user.profile.is_private:
-        is_follow = Follow.objects\
-            .filter(follower_id=user.id,
-                    following_id=post.user_id)\
-            .exists()
-        if not is_follow:
+    if user.id != post.user.id:
+        if check_block(user_id=post.user_id, blocked_id=user.id):
             return return_json_data({
                 'status': False,
-                'message': _('Unsuccessfully was Create Comment.')
+                'message': _('This User Has Blocked You')
             })
+
+        if post.user.profile.is_private:
+            is_follow = Follow.objects\
+                .filter(follower_id=user.id,
+                        following_id=post.user_id)\
+                .exists()
+            if not is_follow:
+                return return_json_data({
+                    'status': False,
+                    'message': _('Unsuccessfully was Create Comment.')
+                })
 
     try:
         comment = Comments.objects.create(object_pk=post, comment=text,
