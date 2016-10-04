@@ -7,6 +7,7 @@ from pin.models_casper import CatStreams
 class Command(BaseCommand):
     def handle(self, *args, **options):
         for cat in Category.objects.all():
+            print "start", cat.id
             posts = [int(p) for p in Post.latest(0, cat.id, 10000)]
             if not posts:
                 continue
@@ -17,3 +18,5 @@ class Command(BaseCommand):
                                 p.id,
                                 p.user_id,
                                 p.timestamp)
+
+            print "end", cat.id
