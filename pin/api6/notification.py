@@ -11,16 +11,21 @@ from pin.api6.tools import get_simple_user_object,\
 
 def notif_count(request, startup=None):
     token = request.GET.get('token', '')
+    cnt_request = 0
+
     if token:
-        current_user = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.user_from_token(token=token)
         if not current_user:
             return return_un_auth()
     else:
         return return_bad_request()
 
-    notif_count = NotificationRedis(user_id=current_user).get_notif_count()
-    cnt_request = FollowRequest.objects.filter(target_id=current_user).count()
-    total_count = int(notif_count) + cnt_request
+    notif_count = NotificationRedis(user=current_user).get_notif_count()
+
+    if current_user.profile.is_private:
+        cnt_request = FollowRequest.objects.filter(target=current_user).count()
+
+    total_count = str(int(notif_count) + cnt_request)
 
     if startup:
         return total_count
