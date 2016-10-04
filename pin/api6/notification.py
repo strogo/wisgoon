@@ -20,10 +20,11 @@ def notif_count(request, startup=None):
     else:
         return return_bad_request()
 
-    notif_count = NotificationRedis(user=current_user).get_notif_count()
+    notif_count = NotificationRedis(user_id=current_user.id).get_notif_count()
 
     if current_user.profile.is_private:
-        cnt_request = FollowRequest.objects.filter(target=current_user).count()
+        cnt_request = FollowRequest.objects\
+            .filter(target=current_user).count()
 
     total_count = str(int(notif_count) + cnt_request)
 
