@@ -144,7 +144,8 @@ def follow(request):
         return return_bad_request()
 
     if target.profile.is_private:
-        FollowRequest.objects.get_or_create(user=current_user, target=target)
+        FollowRequest.objects.get_or_create(user=current_user,
+                                            target=target)
         data = {
             'status': True,
             'message': _("Pending follow request")
@@ -155,7 +156,8 @@ def follow(request):
                     following=target)\
             .exists()
         if not is_followed:
-            Follow.objects.create(follower=current_user, following=target)
+            Follow.objects.create(follower=current_user,
+                                  following=target)
 
         data = {
             'status': True,
@@ -188,15 +190,10 @@ def unfollow(request):
 
     try:
         target = User.objects.get(pk=user_id)
-    except:
-        return return_bad_request()
-
-    try:
         follow = Follow.objects.get(follower=user, following=target)
         follow.delete()
-    except Follow.DoesNotExist:
-        FollowRequest.objects\
-            .filter(user=user, target=target).delete()
+    except:
+        return return_bad_request()
 
     data = {
         'status': True,
@@ -216,21 +213,21 @@ def remove_follow_req(request):
     token = request.GET.get('token', '')
     user_id = request.GET.get('user_id', None)
 
-    if token and user_id:
-        user_id = get_int(user_id)
-        user = AuthCache.user_from_token(token=token)
-        if not user:
-            return return_un_auth()
-    else:
+    if not token or not user_id:
         return return_bad_request()
+
+    user_id = int(user_id)
+    user = AuthCache.user_from_token(token=token)
+    if not user:
+        return return_un_auth()
 
     if user_id == user.id:
         return return_bad_request()
 
     try:
         target = User.objects.get(pk=user_id)
-        FollowRequest.objects\
-            .filter(user=user, target=target).delete()
+        FollowRequest.objects.filter(user=user,
+                                     target=target).delete()
     except:
         return return_bad_request()
 
