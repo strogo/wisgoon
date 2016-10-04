@@ -20,7 +20,7 @@ def notif_count(request, startup=None):
 
     notif_count = NotificationRedis(user_id=current_user).get_notif_count()
     cnt_request = FollowRequest.objects.filter(target_id=current_user).count()
-    total_count = notif_count + cnt_request
+    total_count = int(notif_count) + cnt_request
 
     if startup:
         return total_count
