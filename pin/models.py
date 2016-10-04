@@ -34,7 +34,7 @@ from pin.tasks import delete_image
 from pin.classification_tools import normalize
 from pin.api6.cache_layer import PostCacheLayer
 from pin.models_graph import FollowUser
-from models_casper import UserStream
+from models_casper import UserStream, CatStreams
 from pin.analytics import comment_act, post_act
 
 LIKE_TO_DEFAULT_PAGE = 10
@@ -558,6 +558,9 @@ class Post(models.Model):
 
         MonthlyStats.log_hit(MonthlyStats.DELETE_POST)
 
+        cs = CatStreams()
+        cs.remove_post(self.category_id, self.id)
+
         post_id = self.id
         super(Post, self).delete(*args, **kwargs)
         if settings.TUNING_CACHE:
@@ -607,12 +610,18 @@ class Post(models.Model):
         r_server.lpush(latest_stream, post.id)
 
         cat_stream = "{}_{}"\
-            .format(settings.STREAM_LATEST_CAT, post.category.id)
+            .format(settings.STREAM_LATEST_CAT, post.category_id)
         r_server.lrem(cat_stream, post.id)
         r_server.lpush(cat_stream, post.id)
 
         r_server.ltrim(cat_stream, 0, settings.LIST_LONG)
         r_server.ltrim(latest_stream, 0, settings.LIST_LONG)
+
+        stream = CatStreams()
+        stream.add_post(post.category_id,
+                        post.id,
+                        post.user_id,
+                        post.timestamp)
 
     @classmethod
     def set_stream_to_redis(cls, user_id):

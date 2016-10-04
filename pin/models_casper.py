@@ -1,3 +1,4 @@
+from django.conf import settings
 from cassandra.cluster import Cluster
 from cassandra.query import BatchStatement, SimpleStatement
 
@@ -9,7 +10,10 @@ class CassandraModel():
     def __init__(self):
         global isConnected, session
         if not isConnected:
-            cluster = Cluster(['79.127.125.104', '79.127.125.99', '127.0.0.1'])
+            if settings.DEBUG:
+                cluster = Cluster(['127.0.0.1'])
+            else:
+                cluster = Cluster(['79.127.125.104', '79.127.125.99'])
             session = cluster.connect("wisgoon")
             isConnected = True
 
@@ -84,6 +88,36 @@ class PostStats(CassandraModel):
         return row[0].cnt_view
 
 
+class CatStreams(CassandraModel):
+    def __init__(self):
+        CassandraModel.__init__(self)
+
+    def get_cat_name(self, cat_id):
+        return "cat_{}".format(cat_id)
+
+    def add_post(self, cat_id, post_id, owner_id, timestamp):
+        cat_name = self.get_cat_name(cat_id)
+
+        query = """
+        INSERT INTO streams (name, date , owner , post_id )
+        VALUES ( '{}', {}, {}, {});
+        """.format(cat_name, int(timestamp), owner_id, post_id)
+
+        session.execute(query)
+
+    def remove_post(self, cat_id, post_id):
+        cat_name = self.get_cat_name(cat_id)
+        query = """
+        SELECT * FROM streams WHERE name='{}' AND post_id = {};
+        """.format(cat_name, post_id)
+        rows = session.execute(query)
+        for r in rows:
+            q = """
+            DELETE FROM streams WHERE name = '{}' and date = {};
+            """.format(cat_name, r.date)
+            session.execute(q)
+
+
 class UserStream(CassandraModel):
     def __init__(self):
         CassandraModel.__init__(self)
@@ -92,7 +126,7 @@ class UserStream(CassandraModel):
         query = """INSERT INTO user_stream
         (user_id, post_id , post_owner )
         VALUES ( {}, {}, {});""".format(user_id, post_id, post_owner)
-        session.execute_async(query)
+        session.execute(query)
 
     def ltrim(self, user_id, limit=1000):
         query = """
