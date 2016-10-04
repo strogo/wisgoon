@@ -171,15 +171,18 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
             .filter(follower_id=user_id_from_token,
                     following_id=current_user)\
             .exists()
+        try:
+            profile = Profile.objects.only('is_private')\
+                .get(user_id=current_user)
 
-        profile = Profile.objects.only('is_private').get(user_id=current_user)
-
-        if not user_info['follow_by_user'] and profile.is_private:
-            follow_req = FollowRequest.objects\
-                .filter(user_id=user_id_from_token,
-                        target_id=current_user).exists()
-            if follow_req:
-                user_info['request_follow'] = True
+            if not user_info['follow_by_user'] and profile.is_private:
+                follow_req = FollowRequest.objects\
+                    .filter(user_id=user_id_from_token,
+                            target_id=current_user).exists()
+                if follow_req:
+                    user_info['request_follow'] = True
+        except:
+            pass
 
         user_info['block_by_user'] = Block.objects\
             .filter(user_id=user_id_from_token, blocked_id=current_user)\
