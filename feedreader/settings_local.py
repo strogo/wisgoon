@@ -3,6 +3,9 @@ import os
 
 INSTANCE_NAME = 'moon'
 DEBUG = True
+
+DEVEL_BRANCH = False
+
 TUNING_CACHE = True
 THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG

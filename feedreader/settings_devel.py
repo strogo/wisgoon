@@ -2,6 +2,9 @@
 from settings_production import *
 
 DEBUG = True
+
+DEVEL_BRANCH = True
+
 TEMPLATE_DEBUG = True
 THUMBNAIL_DEBUG = False
 DISPLAY_AD = True
