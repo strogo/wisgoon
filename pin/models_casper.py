@@ -101,23 +101,23 @@ class CatStreams(CassandraModel):
         cat_name = self.get_cat_name(cat_id)
 
         query = """
-        INSERT INTO streams (name, date , owner , post_id )
-        VALUES ( '{}', {}, {}, {});
-        """.format(cat_name, int(timestamp), owner_id, post_id)
+        INSERT INTO streams (name, owner , post_id )
+        VALUES ( '{}', {}, {});
+        """.format(cat_name, owner_id, post_id)
 
         session.execute(query)
 
     def remove_post(self, cat_id, post_id):
         cat_name = self.get_cat_name(cat_id)
         query = """
-        SELECT * FROM streams WHERE name='{}' AND post_id = {};
+        DELETE FROM streams WHERE name='{}' AND post_id = {};
         """.format(cat_name, post_id)
-        rows = session.execute(query)
-        for r in rows:
-            q = """
-            DELETE FROM streams WHERE name = '{}' and date = {};
-            """.format(cat_name, r.date)
-            session.execute(q)
+        session.execute(query)
+        # for r in rows:
+        #     q = """
+        #     DELETE FROM streams WHERE name = '{}' and date = {};
+        #     """.format(cat_name, r.date)
+        #     session.execute(q)
 
     def get_posts(self, cat_id, pid):
         cat_name = self.get_cat_name(cat_id)
@@ -130,7 +130,7 @@ class CatStreams(CassandraModel):
         else:
             query = """
             SELECT post_id FROM streams
-            WHERE name='{}' AND date < {}
+            WHERE name='{}' AND post_id < {}
             LIMIT 20;
             """.format(cat_name, pid)
         rows = session.execute(query)
