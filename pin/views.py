@@ -30,6 +30,10 @@ MEDIA_ROOT = settings.MEDIA_ROOT
 REPORT_TYPE = settings.REPORT_TYPE
 
 
+def angular(request):
+    return render(request, 'angular/home.html') 
+
+
 def check_user_agent(request):
     ip_first = get_user_ip(request)
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR', None)

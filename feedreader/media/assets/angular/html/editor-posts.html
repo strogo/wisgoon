@@ -1,8 +1,8 @@
-<div ng-include src="'/media/angular/html/nav.html'"></div>
+<div ng-include src="'/media/assets/angular/html/nav.html'"></div>
 <div class="container-fluid">
 	<div id="feed" masonry load-images="false" reload-on-resize  infinite-scroll='brickItem.nextPage()' infinite-scroll-distance='1'style="width:1230px">
 		<div ng-show='beytItem.busy'>Loading data...</div>
-		<div  class="masonry-brick" ng-repeat="brick in brickItem.bricks">
+		<div class="masonry-brick" ng-repeat="brick in brickItem.post_list">
 			<div class="feed-item">
 				<div class="img-content">
 					<a class="pin-item-link" ui-sref="post({post_id : brick.id})">

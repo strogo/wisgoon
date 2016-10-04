@@ -2,6 +2,7 @@
 app.controller('mainController',['$scope', '$stateParams','$http', function($scope,$stateParams, $http) {
 	$scope.username = user_username;
 	$scope.avatar = user_avatar;
+	$scope.static_cdn = static_cdn;
 }]);
 
 app.controller('catController',['$http','$scope','$stateParams', function($http,$scope,$stateParams, categoryItems) {
@@ -279,7 +280,7 @@ app.controller('latestController',['$http','$scope', function($http, $scope, lat
 app.controller('EditorpostController',['$scope','$http', function($scope, $http, editorPost) {
 
 	var editorPost = function() {
-		this.bricks = [];
+		this.post_list = [];
 		this.busy = false;
 		this.after = '';
 		this.url = "http://127.0.0.1:8000/api/v6/post/choices/";
@@ -293,9 +294,9 @@ app.controller('EditorpostController',['$scope','$http', function($scope, $http,
 			if (!data.meta.next){
 				return;
 			}
-			var bricks = data.objects;
-			for (var i = 0; i < bricks.length; i++) {
-				this.bricks.push(bricks[i]);
+			var post_list = data.objects;
+			for (var i = 0; i < post_list.length; i++) {
+				this.post_list.push(post_list[i]);
 			}
 			this.busy = false;
 		}.bind(this));

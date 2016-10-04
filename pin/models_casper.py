@@ -113,11 +113,6 @@ class CatStreams(CassandraModel):
         DELETE FROM streams WHERE name='{}' AND post_id = {};
         """.format(cat_name, post_id)
         session.execute(query)
-        # for r in rows:
-        #     q = """
-        #     DELETE FROM streams WHERE name = '{}' and date = {};
-        #     """.format(cat_name, r.date)
-        #     session.execute(q)
 
     def get_posts(self, cat_id, pid):
         cat_name = self.get_cat_name(cat_id)

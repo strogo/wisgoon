@@ -144,7 +144,14 @@ def delete_comments(request):
         }
         return return_json_data(data)
 
-    comment_ids = request.POST.getlist("comment_id", [])
+    comment_ids = request.POST.get("comment_id", None)
+    if not comment_ids:
+        return return_bad_request()
+
+    comment_ids = comment_ids.split(",")
+    if not comment_ids:
+        return return_bad_request()
+
     removed_list = []
 
     user = check_auth(request)

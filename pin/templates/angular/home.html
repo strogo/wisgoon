@@ -6,38 +6,41 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/bootstrap-rtl.min.css">
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL}}v2/css/font-awesome-animation.min.css" />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL}}angular/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}v2/css/font-awesome-animation.min.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_CDN}}angular/css/style.css" />
 </head>
-<body ng-app="myApp" ng-controller="mainController">
-	<script>
-		user_id="{{request.user.id}}";
-		user_username="{{request.user.username}}";
-		user_token="{{request.user.token}}";
-		user_avatar="{{request.user.avatar}}";
-	</script>
+<body ng-app="wisgoon" ng-controller="mainController">
+
+<script>
+	var user_id="{{request.user.id}}";
+	var user_username="{{request.user.username}}";
+	var user_token="{{request.user.token}}";
+	var user_avatar="{{request.user.avatar}}";
+	var static_cdn = "{{STATIC_CDN}}";
+</script>
+
 <div ui-view></div>
 	<!-- npm node_modules  -->
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/jquery.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/jquery.bridget.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/get-style-property.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/get-size.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/EventEmitter.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/eventie.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/doc-ready.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/matches-selector.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/utils.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/item.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/outlayer.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/masonry.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/imagesloaded.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/angular.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/angular-masonry.js"></script>
-	<script src="{{ MEDIA_URL }}angular/js/node_modules/angular-ui-router.min.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/jquery.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/jquery.bridget.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/get-style-property.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/get-size.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/EventEmitter.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/eventie.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/doc-ready.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/matches-selector.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/utils.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/item.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/outlayer.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/masonry.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/imagesloaded.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/angular.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/angular-masonry.js"></script>
+	<script src="{{STATIC_CDN}}angular/js/node_modules/angular-ui-router.min.js"></script>
 
-	<!-- end npm angular/js/node_modules -->
-	<script type="text/javascript" src="{{ MEDIA_URL }}angular/js/app.js"></script>
-	<script type="text/javascript" src="{{ MEDIA_URL }}angular/js/main-controller.js"></script>
-	<script type="text/javascript" src="{{ MEDIA_URL }}angular/js/ng-infinite-scroll.min.js"></script>
+	<!-- end npm assets/angular/js/node_modules -->
+	<script src="{{STATIC_CDN}}angular/js/app.js?q=1.1.2"></script>
+	<script src="{{STATIC_CDN}}angular/js/main-controller.js?q=1.1.2"></script>
+	<script src="{{STATIC_CDN}}angular/js/ng-infinite-scroll.min.js"></script>
 </body>
 </html>

@@ -5,7 +5,5 @@ CREATE INDEX no_object_id ON notification (object_id);
 CREATE INDEX no_actor ON notification (actor);
 CREATE INDEX no_hash ON notification (hash);
 
-CREATE TABLE streams (name text, date int, post_id int, owner int , primary key(name, date)) WITH CLUSTERING ORDER BY (date desc);
-
+CREATE TABLE streams (name text, post_id int, owner int , primary key(name, post_id)) WITH CLUSTERING ORDER BY (post_id desc);
 CREATE INDEX streams_owner ON streams (owner);
-CREATE INDEX streams_post_id ON streams (post_id);

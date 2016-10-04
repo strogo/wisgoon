@@ -19,6 +19,7 @@ stream_resource = StreamResource()
 
 urlpatterns = patterns('pin.views',
     url(r'^$', 'home', name='pin-home'),
+    url(r'^angular/$', 'angular', name='pin-angular-home'),
     url(r'^queue/$', 'home_queue', name='pin-home-queue'),
     url(r'^search/', 'search', name='search'),
     url(r'^(?P<item_id>\d+)/$', 'item', name="pin-item"),
