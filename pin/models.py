@@ -985,26 +985,38 @@ class Follow(models.Model):
             from user_profile.models import Profile
             follower_id = instance.follower.id
             following_id = instance.following.id
+
+            # Delete follow request
+            FollowRequest.objects.filter(user_id=follower_id,
+                                         target_id=following_id).delete()
+
+            # Update cnt_following and cnt_follower
             Profile.objects.filter(user_id=follower_id)\
                 .update(cnt_following=F('cnt_following') + 1)
 
             Profile.objects.filter(user_id=following_id)\
                 .update(cnt_followers=F('cnt_followers') + 1)
 
+            # Send notification
             from pin.actions import send_notif_bar
             send_notif_bar(user=instance.following.id, type=10, post=None,
                            actor=instance.follower.id)
+
+            # Monthly follow log
             MonthlyStats.log_hit(MonthlyStats.FOLLOW)
+
+            # Neo4j graph
             FollowUser.get_or_create(instance.follower, instance.following,
                                      "follow")
 
+            # Add following posts to follower stream
             from models_casper import UserStream
             us = UserStream()
             pid_list = Post.objects.filter(user_id=following_id)\
                 .only("id")\
                 .values_list("id", flat=True)\
                 .order_by("-id")[:100]
-            print pid_list
+
             us.follow(follower_id, pid_list, following_id)
 
 
