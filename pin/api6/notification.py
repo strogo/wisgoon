@@ -17,11 +17,15 @@ def notif_count(request, startup=None):
             return return_un_auth()
     else:
         return return_bad_request()
+
     notif_count = NotificationRedis(user_id=current_user).get_notif_count()
+    cnt_request = FollowRequest.objects.filter(target_id=current_user).count()
+    total_count = notif_count + cnt_request
+
     if startup:
-        return notif_count
+        return total_count
     else:
-        return return_json_data({'status': True, 'notif_count': notif_count})
+        return return_json_data({'status': True, 'notif_count': total_count})
 
 
 def notif(request):
