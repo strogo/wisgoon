@@ -10,7 +10,9 @@ class CassandraModel():
     def __init__(self):
         global isConnected, session
         if not isConnected:
-            if settings.DEBUG and not settings.DEVEL_BRANCH:
+            if settings.DEVEL_BRANCH:
+                cluster = Cluster(['79.127.125.104', '79.127.125.99'])
+            if settings.DEBUG:
                 cluster = Cluster(['127.0.0.1'])
             else:
                 cluster = Cluster(['79.127.125.104', '79.127.125.99'])
