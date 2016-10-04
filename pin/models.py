@@ -853,7 +853,7 @@ class Post(models.Model):
     @classmethod
     def latest(cls, pid=0, cat_id=0, limit=20):
         if cat_id:
-            cat_stream = "{}_{}".format(settings.STREAM_LATEST_CAT, cat_id)
+            return cls.latest_cat(pid, cat_id, limit)
         else:
             cat_stream = settings.STREAM_LATEST
 
@@ -879,6 +879,12 @@ class Post(models.Model):
                 return []
 
         return []
+
+    @classmethod
+    def latest_cat(cls, pid=0, cat_id=0, limit=20):
+        cs = CatStreams()
+        return cs.get_posts(cat_id, pid)
+        # return []
 
     @classmethod
     def last_likes(cls):

@@ -10,7 +10,7 @@ class CassandraModel():
     def __init__(self):
         global isConnected, session
         if not isConnected:
-            if settings.DEBUG:
+            if settings.DEBUG and not settings.DEVEL_BRANCH:
                 cluster = Cluster(['127.0.0.1'])
             else:
                 cluster = Cluster(['79.127.125.104', '79.127.125.99'])
@@ -116,6 +116,25 @@ class CatStreams(CassandraModel):
             DELETE FROM streams WHERE name = '{}' and date = {};
             """.format(cat_name, r.date)
             session.execute(q)
+
+    def get_posts(self, cat_id, pid):
+        cat_name = self.get_cat_name(cat_id)
+        if pid == 0:
+            query = """
+            SELECT post_id FROM user_stream
+            WHERE name='{}'
+            LIMIT 20;
+            """.format(cat_name)
+        else:
+            query = """
+            SELECT post_id FROM user_stream
+            WHERE name='{}' AND date < {}
+            LIMIT 20;
+            """.format(cat_name, pid)
+        rows = session.execute(query)
+        post_id_list = [int(p.post_id) for p in rows]
+
+        return post_id_list
 
 
 class UserStream(CassandraModel):
