@@ -121,13 +121,13 @@ class CatStreams(CassandraModel):
         cat_name = self.get_cat_name(cat_id)
         if pid == 0:
             query = """
-            SELECT post_id FROM user_stream
+            SELECT post_id FROM stream
             WHERE name='{}'
             LIMIT 20;
             """.format(cat_name)
         else:
             query = """
-            SELECT post_id FROM user_stream
+            SELECT post_id FROM stream
             WHERE name='{}' AND date < {}
             LIMIT 20;
             """.format(cat_name, pid)
