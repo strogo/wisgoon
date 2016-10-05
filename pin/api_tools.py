@@ -71,7 +71,6 @@ def media_abs_url(url, check_photos=False, static=False):
     base_domain = get_domain_from_url(new_url)
 
     if check_photos:
-        print "url :", new_url
         if "photos01" in new_url:
             new_url = new_url.replace(base_domain, "photos01.wisgoon.com")
         elif "photos02" in new_url:

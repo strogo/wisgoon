@@ -171,6 +171,11 @@ def add_to_storage(post_id):
     return "add_to_storage"
 
 
+def recheck_post(post_id):
+    print "requeue post", post_id
+    check_porn.delay(post_id)
+
+
 @app.task(name="wisgoon.pin.check_porn")
 def check_porn(post_id):
     from pin.models import Post, ReportedPost
@@ -205,40 +210,21 @@ def check_porn(post_id):
                             auth=hba,
                             verify=False, data=r.content, timeout=10)
         if res.status_code != 200:
-            print "requeue post"
-            check_porn.delay(post_id)
+            recheck_post(post_id)
             return
     except requests.ConnectionError, e:
-        check_porn.delay(post_id)
-        print "requeue post", str(e)
+        recheck_post(post_id)
         return
     except requests.exceptions.Timeout, e:
-        check_porn.delay(post_id)
-        print "requeue post", str(e)
+        recheck_post(post_id)
         return
 
-    print res.content
-
     jdata = json.loads(res.content)
-    print jdata
-    d = {
-        "number": res.content,
-        "image": post.get_image_236()['url'],
-        "h": post.get_image_236()['h'],
-        "id": int(post.id)
-    }
-    print d
+
     post_val = jdata[str(post_id)][0]["BlackProbability"]
-    print post_val
+
     if float(post_val) > 0.7:
         ReportedPost.post_report(post_id=post.id, reporter_id=11253)
-        # post.report = post.report + 10
-        # post.save()
-    # try:
-    #     publish.single("wisgoon/check/porn", json.dumps(d),
-    #                    hostname="mosq.wisgoon.com", qos=2)
-    # except Exception, e:
-    #     print "mqtt ", str(e)
     print "work at ", post_id
 
 
