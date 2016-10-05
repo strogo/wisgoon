@@ -20,9 +20,12 @@ class Command(BaseCommand):
             .only('username', 'email', 'id').all()
         us = ESUsers()
         for user in users:
-            q = Profile.objects.only('name', 'bio',
-                                     'is_private', 'cnt_followers')\
-                .get(user_id=user.id)
+            try:
+                q = Profile.objects.only('name', 'bio',
+                                         'is_private', 'cnt_followers')\
+                    .get(user_id=user.id)
+            except Profile.DoesNotExist:
+                continue
             user.profile_object = q
             print "index", user.id
             us.save(user)
