@@ -199,15 +199,22 @@ def check_porn(post_id):
 
     try:
         hba = HTTPBasicAuth('wisgoon94', 'Ghavi!394YUASTTH')
-        url = "https://188.75.73.226:1509/nuditydetection?id={}".format(post_id)
+        url = "https://188.75.73.226:1509/nuditydetection?id={}"\
+            .format(post_id)
         res = requests.post(url,
                             auth=hba,
                             verify=False, data=r.content, timeout=10)
+        if res.status_code != 200:
+            print "requeue post"
+            check_porn.delay(post_id)
+            return
     except requests.ConnectionError, e:
-        print str(e)
+        check_porn.delay(post_id)
+        print "requeue post", str(e)
         return
     except requests.exceptions.Timeout, e:
-        print str(e)
+        check_porn.delay(post_id)
+        print "requeue post", str(e)
         return
 
     print res.content
