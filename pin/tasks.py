@@ -174,6 +174,7 @@ def add_to_storage(post_id):
 @app.task(name="wisgoon.pin.check_porn")
 def check_porn(post_id):
     from pin.models import Post, ReportedPost
+    from pin.api_tools import media_abs_url
     import requests
     from requests.auth import HTTPBasicAuth
     import socket
@@ -184,7 +185,8 @@ def check_porn(post_id):
         post = Post.objects.get(id=post_id)
     except Post.DoesNotExist:
         return "post does not exists"
-    img_url = post.get_image_500()['url']
+    img_url = media_abs_url(post.get_image_500()['url'], check_photos=True)
+    print img_url
 
     try:
         r = requests.get(img_url, timeout=5)
@@ -197,7 +199,8 @@ def check_porn(post_id):
 
     try:
         hba = HTTPBasicAuth('wisgoon94', 'Ghavi!394YUASTTH')
-        res = requests.post("https://188.75.73.226:1509/analyzer",
+        url = "https://188.75.73.226:1509/nuditydetection?id={}".format(post_id)
+        res = requests.post(url,
                             auth=hba,
                             verify=False, data=r.content, timeout=10)
     except requests.ConnectionError, e:
@@ -206,6 +209,11 @@ def check_porn(post_id):
     except requests.exceptions.Timeout, e:
         print str(e)
         return
+
+    print res.content
+
+    jdata = json.loads(res.content)
+    print jdata
     d = {
         "number": res.content,
         "image": post.get_image_236()['url'],
@@ -213,7 +221,9 @@ def check_porn(post_id):
         "id": int(post.id)
     }
     print d
-    if float(res.content) > 0.7:
+    post_val = jdata[str(post_id)][0]["BlackProbability"]
+    print post_val
+    if float(post_val) > 0.7:
         ReportedPost.post_report(post_id=post.id, reporter_id=11253)
         # post.report = post.report + 10
         # post.save()
