@@ -191,7 +191,6 @@ def check_porn(post_id):
     except Post.DoesNotExist:
         return "post does not exists"
     img_url = media_abs_url(post.get_image_500()['url'], check_photos=True)
-    print img_url
 
     try:
         r = requests.get(img_url, timeout=5)
