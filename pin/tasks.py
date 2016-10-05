@@ -172,7 +172,7 @@ def add_to_storage(post_id):
 
 
 def recheck_post(post_id):
-    print "requeue post", post_id
+    print "requeue post {}".format(post_id)
     check_porn.delay(post_id)
 
 
@@ -225,7 +225,7 @@ def check_porn(post_id):
 
     if float(post_val) > 0.7:
         ReportedPost.post_report(post_id=post.id, reporter_id=11253)
-    print "work at ", post_id
+    print "complete check at {} with score {}".format(post_id, post_val)
 
 
 @app.task(name="wisgoon.pin.porn_feedback")
