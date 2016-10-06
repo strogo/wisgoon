@@ -26,12 +26,13 @@ from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
 from tastypie.models import ApiKey
 
-from haystack.query import SearchQuerySet
-from haystack.query import SQ
-from haystack.query import Raw
+# from haystack.query import SearchQuerySet
+# from haystack.query import SQ
+# from haystack.query import Raw
 
 from pin.models import Follow, Block, Likes, BannedImei, PhoneData, Bills2,\
     FollowRequest
+from pin.models_es import ESUsers
 from pin.tools import AuthCache, get_new_access_token2
 from pin.api6.http import return_bad_request, return_json_data,\
     return_un_auth, return_not_found
@@ -503,39 +504,33 @@ def update_profile(request):
 
 
 def user_search(request):
-    row_per_page = 20
+    row_per_page = 10
     current_user = None
     query = request.GET.get('q', '')
     before = get_int(request.GET.get('before', 0))
     token = request.GET.get('token', '')
     data = {}
-    data['meta'] = {'limit': 20, 'next': ""}
+    data['meta'] = {'limit': 10, 'next': ""}
     data['objects'] = []
 
     if query:
         current_user = AuthCache.id_from_token(token=token)
+        new_from = before + row_per_page
 
-        words = query.split()
-        sq = SQ()
-        for w in words:
-            sq.add(SQ(text__contains=Raw("%s*" % w)), SQ.OR)
-            sq.add(SQ(text__contains=Raw(w)), SQ.OR)
+        us = ESUsers()
+        res = us.search(query, from_=before)
 
-        results = SearchQuerySet().models(Profile)\
-            .filter(sq)[before:before + row_per_page]
-
-        for result in results:
-            result = result.object.user
+        for user in res:
             o = {}
             if not current_user:
-                o['user'] = get_simple_user_object(result.id)
-            o['user'] = get_simple_user_object(result.id, current_user)
+                o['user'] = get_simple_user_object(user.id)
+            o['user'] = get_simple_user_object(user.id, current_user)
 
             data['objects'].append(o)
             url_name = 'api-6-auth-user-search'
             data['meta']['next'] = get_next_url(url_name=url_name,
                                                 token=token,
-                                                before=before + row_per_page,
+                                                before=new_from,
                                                 q=query)
         return return_json_data(data)
     else:
