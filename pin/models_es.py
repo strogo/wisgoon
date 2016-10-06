@@ -21,9 +21,9 @@ class ESUsers():
     def fetch_user(self, user_id):
         pass
 
-    def search(self, q):
+    def search(self, q, from_=0):
         users = []
-        res = es.search(index=INDEX_USER, q=q)
+        res = es.search(index=INDEX_USER, q=q, from_=from_)
         for hit in res['hits']['hits']:
             users.append(UserSearchModel(**hit["_source"]))
 
