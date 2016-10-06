@@ -16,6 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from pin.model_mongo import MonthlyStats
 from pin.models_graph import UserGraph
+from pin.models_es import ESUsers
 from pin.models import PhoneData
 
 
@@ -227,6 +228,7 @@ class Profile(models.Model):
 
     def save(self, *args, **kwargs):
         have_new_avatar = False
+        changed_es = False
         try:
             this = Profile.objects.get(id=self.id)
             if this.avatar != self.avatar and '/' not in self.avatar:
@@ -240,10 +242,17 @@ class Profile(models.Model):
                 os.remove(npath_64)
                 this.avatar.delete(save=False)
 
+            if this.bio != self.bio or this.name != self.name:
+                changed_es = True
+
         except Exception, e:
             print str(e)
 
         super(Profile, self).save(*args, **kwargs)
+
+        if changed_es:
+            us = ESUsers()
+            us.save(self.user)
 
         if have_new_avatar:
             self.delete_avatar_cache()
@@ -300,5 +309,9 @@ def create_user_profile(sender, instance, created, **kwargs):
             instance.save()
         except Exception, e:
             pass
+
+        u = ESUsers()
+        u.save(instance)
+
 
 post_save.connect(create_user_profile, sender=User)
