@@ -4,15 +4,18 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
 
-from haystack.query import Raw
-from haystack.query import SearchQuerySet
-from haystack.query import SQ
+# from haystack.query import Raw
+# from haystack.query import SearchQuerySet
+# from haystack.query import SQ
+from pin.models_es import ESUsers
 
-from pin.api6.tools import get_next_url, get_simple_user_object, is_system_writable
+from pin.api6.tools import get_next_url, get_simple_user_object,\
+    is_system_writable
 from pin.api6.http import return_json_data, return_un_auth, return_not_found,\
     return_bad_request
 from pin.api_tools import media_abs_url
-from pin.models import PhoneData, BannedImei, Log, UserLog, UserPermissions, UserCron, Comments
+from pin.models import PhoneData, BannedImei, Log, UserLog,\
+    UserPermissions, UserCron, Comments
 from pin.tools import get_user_ip
 from pin.views2.dashboard.api.tools import get_profile_data, check_admin,\
     cnt_post_deleted_by_admin
@@ -36,16 +39,11 @@ def search_user(request):
     data['meta'] = {'limit': 20, 'next': ""}
     data['objects'] = []
 
-    words = query.split()
-    sq = SQ()
-    for word in words:
-        sq.add(SQ(text__contains=Raw("%s*" % word)), SQ.OR)
-        sq.add(SQ(text__contains=Raw(word)), SQ.OR)
+    us = ESUsers()
+    results = us.search(query, from_=before)
 
-    results = SearchQuerySet().models(Profile).filter(sq)[before:before + 20]
-
-    for result in results:
-        user = result.object.user
+    for user in results:
+        # user = result.object.user
         details = {}
 
         details['username'] = user.username
