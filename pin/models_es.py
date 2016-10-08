@@ -5,7 +5,10 @@ es = Elasticsearch(settings.ES_HOSTS)
 
 INDEX_USER = 'wis-users'
 
-es.indices.create(index=INDEX_USER, ignore=[400, 111])
+try:
+    es.indices.create(index=INDEX_USER, ignore=[400, 111])
+except Exception, e:
+    print str(e)
 
 
 class UserSearchModel():

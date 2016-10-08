@@ -91,11 +91,27 @@ class PostStats(CassandraModel):
 
 
 class CatStreams(CassandraModel):
+    LATEST_CAT = "latest"
+
     def __init__(self):
         CassandraModel.__init__(self)
 
     def get_cat_name(self, cat_id):
         return "cat_{}".format(cat_id)
+
+    def add_to_latest(self, cat_id, post_id, owner_id):
+        query = """
+        INSERT INTO streams (name, owner , post_id )
+        VALUES ( '{}', {}, {});
+        """.format(self.LATEST_CAT, owner_id, post_id)
+
+        session.execute(query)
+
+    def remove_from_latest(self, post_id):
+        query = """
+        DELETE FROM streams WHERE name='{}' AND post_id = {};
+        """.format(self.LATEST_CAT, post_id)
+        session.execute(query)
 
     def add_post(self, cat_id, post_id, owner_id, timestamp):
         cat_name = self.get_cat_name(cat_id)
@@ -107,12 +123,16 @@ class CatStreams(CassandraModel):
 
         session.execute(query)
 
+        self.add_to_latest(cat_id, post_id, owner_id)
+
     def remove_post(self, cat_id, post_id):
         cat_name = self.get_cat_name(cat_id)
         query = """
         DELETE FROM streams WHERE name='{}' AND post_id = {};
         """.format(cat_name, post_id)
         session.execute(query)
+
+        self.remove_from_latest(post_id)
 
     def get_posts(self, cat_id, pid):
         cat_name = self.get_cat_name(cat_id)
