@@ -99,7 +99,7 @@ class CatStreams(CassandraModel):
     def get_cat_name(self, cat_id):
         return "cat_{}".format(cat_id)
 
-    def add_to_latest(self, cat_id, post_id, owner_id):
+    def add_to_latest(self, post_id, owner_id):
         query = """
         INSERT INTO streams (name, owner , post_id )
         VALUES ( '{}', {}, {});
@@ -123,7 +123,7 @@ class CatStreams(CassandraModel):
 
         session.execute(query)
 
-        self.add_to_latest(cat_id, post_id, owner_id)
+        self.add_to_latest(post_id, owner_id)
 
     def remove_post(self, cat_id, post_id):
         cat_name = self.get_cat_name(cat_id)
@@ -135,7 +135,11 @@ class CatStreams(CassandraModel):
         self.remove_from_latest(post_id)
 
     def get_posts(self, cat_id, pid):
-        cat_name = self.get_cat_name(cat_id)
+        if cat_id == 0:
+            cat_name = self.LATEST_CAT
+        else:
+            cat_name = self.get_cat_name(cat_id)
+
         if pid == 0:
             query = """
             SELECT post_id FROM streams

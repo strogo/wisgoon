@@ -852,6 +852,8 @@ class Post(models.Model):
 
     @classmethod
     def latest(cls, pid=0, cat_id=0, limit=20):
+        return cls.latest_cat(pid, cat_id, limit)
+
         if cat_id:
             return cls.latest_cat(pid, cat_id, limit)
         else:
