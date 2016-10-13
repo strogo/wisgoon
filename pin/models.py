@@ -543,9 +543,10 @@ class Post(models.Model):
             porn_feedback.delay(post_image=self.get_image_500()['url'],
                                 status='pos')
         try:
-            file_path = os.path.join(settings.MEDIA_ROOT, self.image)
-            delete_image.delay(file_path)
-        except:
+            delete_image.delay(self.image)
+            delete_image.delay(self.postmetadata.img_500)
+        except Exception, e:
+            print str(e)
             pass
 
         from user_profile.models import Profile
