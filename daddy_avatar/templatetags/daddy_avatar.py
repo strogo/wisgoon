@@ -61,10 +61,7 @@ def get_avatar(user, size=165):
         profile = None
 
     if profile:
-        if profile.version == Profile.AVATAT_MIGRATED and settings.DEBUG:
-            url_prefix = "http://wisgoon.com/media/"
-        else:
-            url_prefix = "/media/"
+        url_prefix = "/media/"
 
         try:
             if profile and profile.avatar:
