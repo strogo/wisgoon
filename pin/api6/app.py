@@ -26,7 +26,7 @@ def latest(request, startup=None):
 def startup_data(request):
     from pin.api6.notification import notif_count
     from pin.api6.campaign import current_campaign
-    from pin.api6.app import latest
+    # from pin.api6.app import latest
     from pin.api6.auth import get_phone_data
     import requests
 
