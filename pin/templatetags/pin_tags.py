@@ -247,7 +247,7 @@ def get_cache_avatar(user, size=30):
 
 @register.filter
 def get_userdata_avatar(user, size=30):
-    return media_abs_url(get_avatar(user), check_photos=True)
+    return media_abs_url(get_avatar(user, size), check_photos=True)
     return userdata_cache(user, 0, size=size)
 
 

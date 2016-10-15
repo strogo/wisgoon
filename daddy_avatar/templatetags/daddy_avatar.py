@@ -61,10 +61,7 @@ def get_avatar(user, size=165):
         profile = None
 
     if profile:
-        if profile.version == Profile.AVATAT_MIGRATED and settings.DEBUG:
-            url_prefix = "http://wisgoon.com/media/"
-        else:
-            url_prefix = "/media/"
+        url_prefix = "/media/"
 
         try:
             if profile and profile.avatar:
@@ -75,6 +72,8 @@ def get_avatar(user, size=165):
                 else:
                     url = '%s%s' % (url_prefix, profile.avatar)
                 if url:
+                    from pin.api_tools import media_abs_url
+                    url = media_abs_url(url, check_photos=True)
                     ava_dict[fit_size] = url
                     cache.set(ava_str, ava_dict, 86400)
                     return url
