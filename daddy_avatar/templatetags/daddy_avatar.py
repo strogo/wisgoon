@@ -7,6 +7,8 @@ from django.contrib.auth import get_user_model
 
 from user_profile.models import Profile
 
+from pin.api_tools import media_abs_url
+
 register = Library()
 User = get_user_model()
 
@@ -77,6 +79,7 @@ def get_avatar(user, size=165):
                 if url:
                     ava_dict[fit_size] = url
                     cache.set(ava_str, ava_dict, 86400)
+                    url = media_abs_url(url, check_photos=True)
                     return url
         except Exception, e:
             print str(e)
