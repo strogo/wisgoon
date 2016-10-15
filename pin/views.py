@@ -750,7 +750,7 @@ def latest(request):
         last_id = pll
 
     if arp and last_id:
-        next_url = reverse('pin-latest') + "?pid=" + last_id
+        next_url = reverse('pin-latest') + "?pid=" + str(last_id)
 
     if request.is_ajax():
         if arp:

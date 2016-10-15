@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import time
 import json
 import paramiko
 import requests
@@ -114,7 +115,14 @@ def add_to_storage(post_id):
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(storage.host, username=storage.user)
+    try:
+        ssh.connect(storage.host, username=storage.user)
+    except Exception, e:
+        print str(e)
+        time.sleep(10)
+        add_to_storage(post_id)
+        return
+
     sftp = ssh.open_sftp()
     postmeta = post.postmetadata
 
@@ -368,9 +376,15 @@ def delete_image(file_path):
             ssh.connect(storage.host, username=storage.user)
             sftp = ssh.open_sftp()
 
-            file_path = file_path.replace('./feedreader/media', storage.path)
+            file_path = os.path.join(storage.path, file_path)
+
+            # file_path = file_path.replace('./feedreader/media', storage.path)
             # file_path = file_path.replace('/feedreader/media/', storage.path)
-            sftp.remove(file_path)
+            print file_path
+            try:
+                sftp.remove(file_path)
+            except IOError, e:
+                print str(e), file_path
             sftp.close()
             ssh.close()
             exec_on_remote = True
