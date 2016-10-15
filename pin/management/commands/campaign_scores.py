@@ -59,13 +59,13 @@ class Command(BaseCommand):
             except Exception:
                 pass
 
-        if user_obj:
-            winners = sorted(user_obj.items(),
-                             key=lambda x: getitem(x[1], 'like'),
-                             reverse=True)
-            print winners
+        winners = sorted(user_obj.items(),
+                         key=lambda x: getitem(x[1], 'like'),
+                         reverse=True)
+        print winners
 
         camp_winners, created = CampaignWinners.objects\
             .get_or_create(campaign=camp)
         camp_winners.status = CampaignWinners.COMPLETED
+        camp_winners.winners = winners
         camp_winners.save()
