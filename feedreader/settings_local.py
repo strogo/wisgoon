@@ -389,7 +389,7 @@ CELERY_ROUTES.update({
     }
 })
 
-AVATAR_CACHE_KEY = "dad:avatar:{}"
+AVATAR_CACHE_KEY = "dad:av:{}"
 
 ES_HOST = "localhost"
 INFLUX_HOST = "localhost"

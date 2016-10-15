@@ -52,7 +52,6 @@ def get_avatar(user, size=165):
     ava_dict = cache.get(ava_str, {})
 
     if fit_size in ava_dict:
-        print "get avatar from cache", ava_dict, fit_size
         return ava_dict[fit_size]
 
     try:
@@ -73,11 +72,10 @@ def get_avatar(user, size=165):
                 else:
                     url = '%s%s' % (url_prefix, profile.avatar)
                 if url:
-                    ava_dict[fit_size] = url
-                    cache.set(ava_str, ava_dict, 86400)
-                    print "url:", url
                     from pin.api_tools import media_abs_url
                     url = media_abs_url(url, check_photos=True)
+                    ava_dict[fit_size] = url
+                    cache.set(ava_str, ava_dict, 86400)
                     return url
         except Exception, e:
             print str(e)
