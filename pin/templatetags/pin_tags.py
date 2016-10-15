@@ -19,9 +19,11 @@ from django.utils.safestring import mark_safe
 from pin.models import Likes as pinLikes
 # from pin.model_mongo import NotifCount
 from user_profile.models import Profile
+from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
 from pin.tools import userdata_cache
 from pin.tools import AuthCache
+from pin.api_tools import media_abs_url
 from pin.models_redis import NotificationRedis
 
 User = get_user_model()
@@ -245,6 +247,7 @@ def get_cache_avatar(user, size=30):
 
 @register.filter
 def get_userdata_avatar(user, size=30):
+    return media_abs_url(get_avatar(user), check_photos=True)
     return userdata_cache(user, 0, size=size)
 
 
