@@ -401,14 +401,15 @@ class CampaignWinnersAdmin(admin.ModelAdmin):
     raw_id_fields = ('campaign',)
 
     def campaign_id(self, obj):
-        return obj.campaign_id
+        return obj.campaign.id
 
     def winners_list(self, request, queryset):
         for obj in queryset:
-            # call_command('update_campaign_post', obj.campaign_id)
-            call_command('campaign_scores', obj.campaign_id)
+            call_command('update_campaign_post', camp_id=obj.campaign_id)
+            call_command('campaign_scores', camp_id=obj.campaign_id)
 
     winners_list.short_description = 'محاسبه نفرات برتر'
+    campaign_id.admin_order_field = 'campaign_id'
 
 
 admin.site.register(SystemState, SystemStateAdmin)

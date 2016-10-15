@@ -10,11 +10,12 @@ sys.setdefaultencoding('utf8')
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        camp_id = raw_input("Enter camp id: ")
-        try:
-            camp_id = int(camp_id)
-        except:
-            camp_id = None
+        camp_id = options['camp_id']
+        # camp_id = raw_input("Enter camp id: ")
+        # try:
+        #     camp_id = int(camp_id)
+        # except:
+        #     camp_id = None
 
         if camp_id:
             camp = Campaign.objects.get(id=camp_id)
