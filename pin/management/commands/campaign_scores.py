@@ -10,6 +10,9 @@ sys.setdefaultencoding('utf8')
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        print "camp scores"
+        print "=================================="
+
         camp_id = options['camp_id']
         # camp_id = raw_input("Enter camp id: ")
         # try:
@@ -17,50 +20,52 @@ class Command(BaseCommand):
         # except:
         #     camp_id = None
 
-        if camp_id:
-            camp = Campaign.objects.get(id=camp_id)
-            print camp.id
-            campaign_tags = camp.tags
-            tags = campaign_tags.split(',')
-            tags.append(camp.primary_tag)
-            start_date = camp.start_date.strftime("%s")
-            end_date = camp.end_date.strftime("%s")
+        if not camp_id:
+            print "Enter camp id"
+            return
 
-            posts = SearchQuerySet().models(Post)\
-                .filter(tags__in=tags,
-                        timestamp_i__gte=start_date,
-                        timestamp_i__lte=end_date).order_by('-cnt_like_i')
+        camp = Campaign.objects.get(id=camp_id)
+        print camp.id
+        campaign_tags = camp.tags
+        tags = campaign_tags.split(',')
+        tags.append(camp.primary_tag)
+        start_date = camp.start_date.strftime("%s")
+        end_date = camp.end_date.strftime("%s")
 
-            user_obj = {}
+        posts = SearchQuerySet().models(Post)\
+            .filter(tags__in=tags,
+                    timestamp_i__gte=start_date,
+                    timestamp_i__lte=end_date).order_by('-cnt_like_i')
 
-            print "len post", len(posts)
+        user_obj = {}
 
-            for post in posts:
-                try:
-                    post_obj = Post.objects.get(id=post.pk)
-                    u = str(post_obj.user.username)
-                    if u not in user_obj:
-                        dn = {
-                            "count": 1,
-                            "like": int(post_obj.cnt_like)
-                        }
-                        user_obj[u] = dn
-                    else:
-                        dn = user_obj[u]
-                        dn["like"] += int(post_obj.cnt_like)
-                        dn["count"] += 1
+        print "len post", len(posts)
 
-                except Exception:
-                    pass
+        for post in posts:
+            try:
+                post_obj = Post.objects.get(id=post.pk)
+                u = str(post_obj.user.username)
+                if u not in user_obj:
+                    dn = {
+                        "count": 1,
+                        "like": int(post_obj.cnt_like)
+                    }
+                    user_obj[u] = dn
+                else:
+                    dn = user_obj[u]
+                    dn["like"] += int(post_obj.cnt_like)
+                    dn["count"] += 1
 
-            if user_obj:
-                winners = sorted(user_obj.items(),
-                                 key=lambda x: getitem(x[1], 'like'),
-                                 reverse=True)
+            except Exception:
+                pass
 
-                camp_winners, created = CampaignWinners.objects\
-                    .get_or_create(campaign=camp)
-                camp_winners.winners = winners
-                camp_winners.save()
+        if user_obj:
+            winners = sorted(user_obj.items(),
+                             key=lambda x: getitem(x[1], 'like'),
+                             reverse=True)
+            print winners
 
-                print winners
+        camp_winners, created = CampaignWinners.objects\
+            .get_or_create(campaign=camp)
+        camp_winners.status = CampaignWinners.COMPLETED
+        camp_winners.save()

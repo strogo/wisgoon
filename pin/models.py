@@ -1913,10 +1913,20 @@ class FollowRequest(models.Model):
 
 
 class CampaignWinners(models.Model):
+    COMPLETED = 2
+    IN_PROGRESS = 1
+    NOT_CALCULATE = 0
+
+    STATUS_CHOICES = (
+        (COMPLETED, _("completed")),
+        (IN_PROGRESS, _("in progress")),
+        (NOT_CALCULATE, _("not calculate")),
+    )
     campaign = models.ForeignKey(Campaign)
     winners = models.TextField(null=True, blank=True)
-
-# class Acl(models.Model):
+    status = models.IntegerField(default=NOT_CALCULATE, blank=True,
+                                 verbose_name=_("Status"),
+                                 choices=STATUS_CHOICES)# class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"
 
 #         ALLOW_TYPE_DENY = 0

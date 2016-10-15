@@ -9,10 +9,11 @@ from user_profile.models import Profile, CreditLog
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
-    Results, Storages, Lable, UserActivitiesSample, UserLable, UserActivities, Campaign, SystemState, CampaignWinners
+    Results, Storages, Lable, UserActivitiesSample, UserLable,\
+    UserActivities, Campaign, SystemState, CampaignWinners
 from pin.actions import send_notif
 from pin.tools import revalidate_bazaar
-from django.core.management import call_command
+from pin.tasks import update_camp_post, camp_scores
 
 
 class StoragesAdmin(admin.ModelAdmin):
@@ -395,7 +396,7 @@ class SystemStateAdmin(admin.ModelAdmin):
 
 
 class CampaignWinnersAdmin(admin.ModelAdmin):
-    list_display = ('id', 'campaign_id', 'winners')
+    list_display = ('id', 'campaign_id', 'winners', 'status')
     actions = ['winners_list']
     search_fields = ['campaign']
     raw_id_fields = ('campaign',)
@@ -405,8 +406,10 @@ class CampaignWinnersAdmin(admin.ModelAdmin):
 
     def winners_list(self, request, queryset):
         for obj in queryset:
-            # call_command('update_campaign_post', camp_id=obj.campaign_id)
-            call_command('campaign_scores', camp_id=obj.campaign_id)
+            camp_id = obj.campaign_id
+            obj.status = 1
+            obj.save()
+            update_camp_post.delay(camp_id=camp_id)
 
     winners_list.short_description = 'محاسبه نفرات برتر'
     campaign_id.admin_order_field = 'campaign_id'
