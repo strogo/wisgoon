@@ -1912,6 +1912,10 @@ class FollowRequest(models.Model):
     target = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='target')
 
 
+class CampaignWinners(models.Model):
+    campaign = models.ForeignKey(Campaign)
+    winners = models.TextField(null=True, blank=True)
+
 # class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"
 

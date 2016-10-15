@@ -9,9 +9,10 @@ from user_profile.models import Profile, CreditLog
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
-    Results, Storages, Lable, UserActivitiesSample, UserLable, UserActivities, Campaign, SystemState
+    Results, Storages, Lable, UserActivitiesSample, UserLable, UserActivities, Campaign, SystemState, CampaignWinners
 from pin.actions import send_notif
 from pin.tools import revalidate_bazaar
+from django.core.management import call_command
 
 
 class StoragesAdmin(admin.ModelAdmin):
@@ -391,6 +392,21 @@ class CampaignAdmin(admin.ModelAdmin):
 
 class SystemStateAdmin(admin.ModelAdmin):
     list_display = ('id', 'writable')
+
+
+class CampaignWinnersAdmin(admin.ModelAdmin):
+    list_display = ('id', 'campaign_id', 'winners')
+    actions = ['winners_list']
+
+    def campaign_id(self, obj):
+        return obj.campaign_id
+
+    def winners_list(self, request, queryset):
+        for obj in queryset:
+            call_command('update_campaign_post', obj.campaign_id)
+            call_command('campaign_scores', obj.campaign_id)
+
+    winners_list.short_description = 'محاسبه نفرات برتر'
 
 
 admin.site.register(SystemState, SystemStateAdmin)

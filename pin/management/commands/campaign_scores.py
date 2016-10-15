@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from haystack.query import SearchQuerySet
-from pin.models import Post, Campaign
+from pin.models import Post, Campaign, CampaignWinners
 import sys
 from operator import getitem
 
@@ -52,6 +52,14 @@ class Command(BaseCommand):
                 except Exception:
                     pass
 
-            print sorted(user_obj.items(),
-                         key=lambda x: getitem(x[1], 'like'),
-                         reverse=True)
+            if user_obj:
+                winners = sorted(user_obj.items(),
+                                 key=lambda x: getitem(x[1], 'like'),
+                                 reverse=True)
+
+                camp_winners, created = CampaignWinners.objects\
+                    .get_or_create(campaign=camp)
+                camp_winners.winners = winners
+                camp_winners.save()
+
+                print winners
