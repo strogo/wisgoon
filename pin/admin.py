@@ -397,6 +397,7 @@ class SystemStateAdmin(admin.ModelAdmin):
 class CampaignWinnersAdmin(admin.ModelAdmin):
     list_display = ('id', 'campaign_id', 'winners')
     actions = ['winners_list']
+    search_fields = ['campaign']
 
     def campaign_id(self, obj):
         return obj.campaign_id
