@@ -405,7 +405,7 @@ class CampaignWinnersAdmin(admin.ModelAdmin):
 
     def winners_list(self, request, queryset):
         for obj in queryset:
-            call_command('update_campaign_post', obj.campaign_id)
+            # call_command('update_campaign_post', obj.campaign_id)
             call_command('campaign_scores', obj.campaign_id)
 
     winners_list.short_description = 'محاسبه نفرات برتر'
