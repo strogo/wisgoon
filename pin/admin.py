@@ -395,11 +395,12 @@ class SystemStateAdmin(admin.ModelAdmin):
 
 
 class CampaignWinnersAdmin(admin.ModelAdmin):
-    list_display = ('id', 'campaign_id', 'winners')
+    list_display = ('id', 'campaign', 'winners')
     actions = ['winners_list']
     search_fields = ['campaign']
+    raw_id_fields = ('campaign',)
 
-    def campaign_id(self, obj):
+    def campaign(self, obj):
         return obj.campaign_id
 
     def winners_list(self, request, queryset):
