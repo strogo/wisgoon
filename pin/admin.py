@@ -401,7 +401,7 @@ class CampaignWinnersAdmin(admin.ModelAdmin):
     raw_id_fields = ('campaign',)
 
     def campaign(self, obj):
-        return obj.campaign_id
+        return obj.campaign.id
 
     def winners_list(self, request, queryset):
         for obj in queryset:
