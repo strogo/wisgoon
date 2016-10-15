@@ -42,6 +42,7 @@ class Command(BaseCommand):
         print "len post", len(posts)
 
         for post in posts:
+            print post.pk
             try:
                 post_obj = Post.objects.get(id=post.pk)
                 u = str(post_obj.user.username)
@@ -57,7 +58,7 @@ class Command(BaseCommand):
                     dn["count"] += 1
 
             except Exception:
-                pass
+                continue
 
         winners = sorted(user_obj.items(),
                          key=lambda x: getitem(x[1], 'like'),
