@@ -52,6 +52,7 @@ def get_avatar(user, size=165):
     ava_dict = cache.get(ava_str, {})
 
     if fit_size in ava_dict:
+        print "get avatar from cache", ava_dict, fit_size
         return ava_dict[fit_size]
 
     try:
