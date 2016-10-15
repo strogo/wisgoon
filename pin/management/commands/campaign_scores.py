@@ -10,41 +10,48 @@ sys.setdefaultencoding('utf8')
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        camp = Campaign.objects.get(id=6)
-        print camp.id
-        campaign_tags = camp.tags
-        tags = campaign_tags.split(',')
-        tags.append(camp.primary_tag)
-        start_date = camp.start_date.strftime("%s")
-        end_date = camp.end_date.strftime("%s")
+        camp_id = raw_input("Enter camp id: ")
+        try:
+            camp_id = int(camp_id)
+        except:
+            camp_id = None
 
-        posts = SearchQuerySet().models(Post)\
-            .filter(tags__in=tags,
-                    timestamp_i__gte=start_date,
-                    timestamp_i__lte=end_date).order_by('-cnt_like_i')
+        if camp_id:
+            camp = Campaign.objects.get(id=camp_id)
+            print camp.id
+            campaign_tags = camp.tags
+            tags = campaign_tags.split(',')
+            tags.append(camp.primary_tag)
+            start_date = camp.start_date.strftime("%s")
+            end_date = camp.end_date.strftime("%s")
 
-        user_obj = {}
+            posts = SearchQuerySet().models(Post)\
+                .filter(tags__in=tags,
+                        timestamp_i__gte=start_date,
+                        timestamp_i__lte=end_date).order_by('-cnt_like_i')
 
-        print "len post", len(posts)
+            user_obj = {}
 
-        for post in posts:
-            try:
-                post_obj = Post.objects.get(id=post.pk)
-                u = str(post_obj.user.username)
-                if u not in user_obj:
-                    dn = {
-                        "count": 1,
-                        "like": int(post_obj.cnt_like)
-                    }
-                    user_obj[u] = dn
-                else:
-                    dn = user_obj[u]
-                    dn["like"] += int(post_obj.cnt_like)
-                    dn["count"] += 1
+            print "len post", len(posts)
 
-            except Exception:
-                pass
+            for post in posts:
+                try:
+                    post_obj = Post.objects.get(id=post.pk)
+                    u = str(post_obj.user.username)
+                    if u not in user_obj:
+                        dn = {
+                            "count": 1,
+                            "like": int(post_obj.cnt_like)
+                        }
+                        user_obj[u] = dn
+                    else:
+                        dn = user_obj[u]
+                        dn["like"] += int(post_obj.cnt_like)
+                        dn["count"] += 1
 
-        print sorted(user_obj.items(),
-                     key=lambda x: getitem(x[1], 'like'),
-                     reverse=True)
+                except Exception:
+                    pass
+
+            print sorted(user_obj.items(),
+                         key=lambda x: getitem(x[1], 'like'),
+                         reverse=True)
