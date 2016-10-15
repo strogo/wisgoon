@@ -74,6 +74,7 @@ def get_avatar(user, size=165):
                 if url:
                     ava_dict[fit_size] = url
                     cache.set(ava_str, ava_dict, 86400)
+                    print "url:", url
                     from pin.api_tools import media_abs_url
                     url = media_abs_url(url, check_photos=True)
                     return url
