@@ -8,6 +8,7 @@ import requests
 from feedreader.celery import app
 from django.conf import settings
 from django.core.cache import cache
+from django.core.management import call_command
 
 
 def make_like_data(post, actor, timestamp):
@@ -435,3 +436,13 @@ def remove_from_stream(user_id, owner_id):
             Post.remove_post_from_stream(user_id, post_id)
 
     return "remove posts from stream user {}".format(user_id)
+
+
+@app.task(name="tasks.update_camp_post")
+def update_camp_post(camp_id):
+    call_command('update_campaign_post', camp_id=camp_id)
+
+
+@app.task(name="tasks.camp_scores")
+def camp_scores(camp_id):
+    call_command('campaign_scores', camp_id=camp_id)

@@ -9,9 +9,11 @@ from user_profile.models import Profile, CreditLog
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
-    Results, Storages, Lable, UserActivitiesSample, UserLable, UserActivities, Campaign, SystemState
+    Results, Storages, Lable, UserActivitiesSample, UserLable,\
+    UserActivities, Campaign, SystemState, CampaignWinners
 from pin.actions import send_notif
 from pin.tools import revalidate_bazaar
+from pin.tasks import update_camp_post, camp_scores
 
 
 class StoragesAdmin(admin.ModelAdmin):
@@ -393,6 +395,26 @@ class SystemStateAdmin(admin.ModelAdmin):
     list_display = ('id', 'writable')
 
 
+class CampaignWinnersAdmin(admin.ModelAdmin):
+    list_display = ('id', 'campaign_id', 'winners', 'status')
+    actions = ['winners_list']
+    search_fields = ['campaign']
+    raw_id_fields = ('campaign',)
+
+    def campaign_id(self, obj):
+        return obj.campaign.id
+
+    def winners_list(self, request, queryset):
+        for obj in queryset:
+            camp_id = obj.campaign_id
+            obj.status = 1
+            obj.save()
+            update_camp_post.delay(camp_id=camp_id)
+
+    winners_list.short_description = 'محاسبه نفرات برتر'
+    campaign_id.admin_order_field = 'campaign_id'
+
+
 admin.site.register(SystemState, SystemStateAdmin)
 admin.site.register(Comments, SearchCommentAdmin)
 admin.site.register(Post, PinAdmin)
@@ -419,3 +441,4 @@ admin.site.register(UserActivitiesSample, UserActivitiesSampleAdmin)
 admin.site.register(UserLable, UserLableAdmin)
 admin.site.register(UserActivities, UserActivitiesAdmin)
 admin.site.register(Campaign, CampaignAdmin)
+admin.site.register(CampaignWinners, CampaignWinnersAdmin)
