@@ -313,7 +313,7 @@
         {% if DISPLAY_AD %}
         {% include "pin2/tabliq/_468x60.html" %}
         {% endif %}
-        
+
 
         {% if not request.user_agent.is_mobile %}
         <div class="only_mobile_view">
@@ -325,7 +325,7 @@
 
         {% if user.is_authenticated and user.is_active %}
         <div id="submit_comment" class="box">
-            {% include "pin2/__comment_submit.html" %}  
+            {% include "pin2/__comment_submit.html" %}
             <div class="clear"></div>
         </div>
         {% endif %}

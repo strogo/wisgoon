@@ -13,18 +13,13 @@ class Command(BaseCommand):
         print "camp scores"
         print "=================================="
 
-        # camp_id = options['camp_id']
-        # camp_id = raw_input("Enter camp id: ")
-        # try:
-        #     camp_id = int(camp_id)
-        # except:
-        #     camp_id = None
+        camp_id = options['camp_id']
 
-        # if not camp_id:
-        #     print "Enter camp id"
-        #     return
+        if not camp_id:
+            print "Enter camp id"
+            return
 
-        camp = Campaign.objects.get(id=6)
+        camp = Campaign.objects.get(id=camp_id)
         print camp.id
         campaign_tags = camp.tags
         tags = campaign_tags.split(',')
@@ -63,7 +58,7 @@ class Command(BaseCommand):
         winners = sorted(user_obj.items(),
                          key=lambda x: getitem(x[1], 'like'),
                          reverse=True)
-        print winners
+        # print winners
 
         camp_winners, created = CampaignWinners.objects\
             .get_or_create(campaign=camp)

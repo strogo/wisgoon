@@ -10,7 +10,7 @@
 		<div class="expand_post">عکس بلند</div>
 		{% endif %}
 	</div>
-	
+
 	<div class="clearfix"></div>
 
 	<div class="post-action">
@@ -43,7 +43,7 @@
 				<i class="fa fa-times red"></i>
 			</a>
 			{% else %}
-			<a href="{% url 'pin-item-goto-index' item.id 1%}" class="item-to-index pa10 f-black user-action-btn" data-toggle="tooltip" data-placement="bottom" title="ارسال به صفحه اول"> 
+			<a href="{% url 'pin-item-goto-index' item.id 1%}" class="item-to-index pa10 f-black user-action-btn" data-toggle="tooltip" data-placement="bottom" title="ارسال به صفحه اول">
 				<i class="fa fa-check green"></i>
 			</a>
 			{% endif %}
@@ -87,11 +87,11 @@
 	<div class="avatar-box">
 		<div class="avatar post-avatar">
 			<a href="{% url 'pin-absuser' item.user.username %}">
-				<img src="{{item.user.avatar}}" style="display: inline;" > 
+				<img src="{{item.user.avatar}}" style="display: inline;" >
 			</a>
 		</div>
 		<span class=''>
-			
+
 		</span>
 		{% if user.is_authenticated %}
 		<div class="dropdown three-dot">
@@ -105,7 +105,7 @@
 
 				{% if user.id == item.user.id or user.is_superuser %}
 				<li>
-					<a href="{% url 'pin-item-edit' item.id %}" class="" data-toggle="modal" data-target="#postModal"> 
+					<a href="{% url 'pin-item-edit' item.id %}" class="" data-toggle="modal" data-target="#postModal">
 						ویرایش <i class="fa fa-pencil"></i>
 					</a>
 				</li>
@@ -125,7 +125,7 @@
 			<a href="{% url 'pin-absuser' item.user.username %}" data-toggle="tooltip" data-placement="bottom" title="{{item.user.username}}">
 				{{item.user.username|truncatechars:"18"}}
 			</a>
-		</div>	
+		</div>
 
 	</div>
 </div>

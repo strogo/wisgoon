@@ -18,7 +18,7 @@
 <div class="modal fade" id="postModal">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
-			
+
 		</div>
 	</div>
 </div><!-- /.modal -->
@@ -56,6 +56,7 @@
 <script type="text/javascript">
 	var profile_url = '{% url "pin-absuser" request.user %}';
 	var profile_avatar = '{{request.user|get_avatar:41}}';
+	var system_status = "{{WRITABLE}}";
 </script>
 <script type="text/javascript" src="{{STATIC_CDN}}v2/js/jquery.form.min.js"></script>
 <script type="text/javascript" src="{{STATIC_CDN}}js2/pin-user.js?ver={{STATIC_VERSION}}"></script>

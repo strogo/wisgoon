@@ -84,7 +84,7 @@ def global_values(request):
     }
 
 
-def is_system_writable(request):
+def system_writable(request):
     state = cache.get(SystemState.CACHE_NAME)
     if state is None:
         try:
@@ -93,4 +93,4 @@ def is_system_writable(request):
         except SystemState.DoesNotExist:
             sys_state = SystemState.objects.create(writable=True)
             state = sys_state.writable
-    return {'WRITABLE': state}
+    return {'WRITABLE': int(state)}

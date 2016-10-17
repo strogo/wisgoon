@@ -113,7 +113,7 @@ $('body').on('change', '#image_upload_input', function(event) {
     $('.filters').show();
     $('button[disabled]').removeAttr('disabled');
     $('#image_upload_input').val('');
-    
+
 });
 
 $('body').on('click', '.img_reset_btn', function(event) {
@@ -159,20 +159,22 @@ $('body').on('click', '.del-comment', function(){
                 // pr = pp - $('.post-sidebar').height();
                 // $(".post-page .post-sidebar").trigger('detach.ScrollToFixed');
                 // $(".post-page .post-sidebar").scrollToFixed({
-                //     marginTop:15, 
+                //     marginTop:15,
                 //     limit:  pr
                 // });
                 // $(window).resize();
                 // sticky_sidebar(0);
                 $("#"+row_name).slideUp('fast');
+                alertify.success(resp.message);
+            }else{
+                alertify.error(resp.message);
             }
-            alertify.success(resp.message);
         },
         complete: function(){
             reload_sticky();
         }
     });
-    
+
     return false;
 });
 
@@ -187,6 +189,7 @@ $('#pin_form').ajaxForm({
     success: function(res) {
         if (res.status === true) {
             window.location.href = res.location;
+
         }else{
             $('#pin_form .sub_btn').removeAttr('disabled').text('ذخیره');
             alertify.error('خطا. دوباره تلاش کنید!');
@@ -195,7 +198,7 @@ $('#pin_form').ajaxForm({
     complete: function(msg) {
         // console.log(msg);
     }
-}); 
+});
 
 $('body').on('click', '.filters #PresetFilters a', function(event) {
     event.preventDefault();
@@ -218,7 +221,7 @@ $('body').on('click', '.filters #PresetFilters a', function(event) {
         this.render(function(){
             $('.uploaded-image').children('*').remove();
             $('#img_clone').appendTo('.uploaded-image');
-            $('#img_clone').show().attr('id', 'rendered');            
+            $('#img_clone').show().attr('id', 'rendered');
             t.children('.filter_loader').remove();
         });
     });
@@ -294,29 +297,32 @@ $('body').on('click', '.comment-down', function(event) {
 
 $("body").on('click', ".delpost", function(){
     if (confirm('این مطلب حذف شود؟')){
-        var obj = $(this); 
+        var obj = $(this);
         var parent_to_del = $(obj).parents("div.feed-item");
-        
+
         obj.addClass('disabled');
         var like_url=obj.attr('href');
         $.ajax({
             url: like_url,
             success: function(html) {
                 ret = html;
-                if (ret==1){
+                if (ret.status){
                     $(parent_to_del).remove();
                     feedobj.masonry('reload');
+                    alertify.success(ret.message);
+                }else{
+                    alertify.error(ret.message);
+                    console.log(system_status);
                 }
-                alertify.success('تصویر با موفقیت حذف شد');
             }
         });
     }
     return false;
 });
 $( "body" ).on('click', ".noppost", function(){
-    var obj = $(this); 
+    var obj = $(this);
     var parent_to_del = $(obj).parents("div.feed-item");
-    
+
     obj.addClass('disabled');
     var like_url=obj.attr('href');
     $.ajax({
@@ -341,11 +347,11 @@ $("body").on('click', '.btn_report, .report-btn',function(){
             url: u,
             success: function(resp) {
                 if (resp.status){
-                    alertify.success(resp.message);                    
+                    alertify.success(resp.message);
                 }else{
                     alertify.error(resp.message);
                 }
-                $('body').click();                
+                $('body').click();
             }
         });
     }
@@ -376,7 +382,7 @@ $('body').on('click', '.btn_like',function(){
         }else{
             obj.parent().addClass('user-liked');
             obj.children('span.count').text(pn(n + 1));
-        }        
+        }
     }
 
     $.ajax({
@@ -419,29 +425,41 @@ $('body').on('click', '.topuser-hover-btn',function(){
 $('body').on('click', '.block_btn', function(event) {
     event.preventDefault();
     var t = $(this);
-    if (t.hasClass('unblock')) {
-        var action = 'unblock';
-        t.children('span').text('بلاک کاربر');
-        t.children('i').removeClass('fa-user').addClass('fa-ban');
-        t.removeClass('unblock');
-        alertify.success('با موفقیت رفع بلاک شد');
-    }else{
+
+    if (system_status == 0) {
         var action = 'block';
-        t.children('span').text('رفع بلاک');
-        t.children('i').removeClass('fa-ban').addClass('fa-user');
-        t.addClass('unblock');
-        alertify.success('کاربر با موفقیت بلاک شد');
+    }else{
+        if (t.hasClass('unblock')) {
+            var action = 'unblock';
+            t.children('span').text('بلاک کاربر');
+            t.children('i').removeClass('fa-user').addClass('fa-ban');
+            t.removeClass('unblock');
+            // alertify.success('با موفقیت رفع بلاک شد');
+        }else{
+            var action = 'block';
+            t.children('span').text('رفع بلاک');
+            t.children('i').removeClass('fa-ban').addClass('fa-user');
+            t.addClass('unblock');
+            // alertify.success('کاربر با موفقیت بلاک شد');
+        }
     }
-    
+
     $.ajax({
         url: t.attr('href'),
         data: {action: action},
+    })
+    .done(function(response) {
+        if (response.status) {
+            alertify.success(response.message);
+        }else{
+            alertify.error(response.message);
+        }
     })
     .fail(function(d) {
         alertify.error('خطا در بلاک کردن. با مدیریت تماس بگیرید');
     });
     return false;
-    
+
 });
 
 $('body').on('click', '.ajax-follow', function(event) {
@@ -455,17 +473,22 @@ $('body').on('click', '.ajax-follow', function(event) {
     })
     .done(function(response) {
         if (response.status) {
-            alertify.success(response.message);
-            t.attr('href', '/pin/follow/' + t.data('user-id') + '/0/');
-            t.html('<i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i>').removeClass('green').addClass('red');
-        } else {
-            alertify.success(response.message);
-            t.attr('href', '/pin/follow/' + t.data('user-id') + '/1/');
-            t.html('<i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i>').removeClass('red').addClass('green');
+            if (response.is_follow){
+                alertify.success(response.message);
+                t.attr('href', '/pin/follow/' + t.data('user-id') + '/0/');
+                t.html('<i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i>').removeClass('green').addClass('red');
+
+            }else{
+                alertify.success(response.message);
+                t.attr('href', '/pin/follow/' + t.data('user-id') + '/1/');
+                t.html('<i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i>').removeClass('red').addClass('green');
+            }
+            if (t.parents('.follow_box')) {
+                t.parents('.follow_box').find('.follower_count strong').text(pn(response.count));
+            }
+        }else{
+            alertify.error(response.message);
         }
-        if (t.parents('.follow_box')) {
-            t.parents('.follow_box').find('.follower_count strong').text(pn(response.count));
-        };
     })
     .fail(function(response) {
         alertify.error(response.message);
@@ -479,6 +502,10 @@ $('#fromImageModal, #fromUrlModal').on('show.bs.modal', function (e) {
 
 $('body').on('click', '.reply-comment', function(event) {
     event.preventDefault();
+    if (system_status == 0) {
+        alertify.error("وب سایت در حال بروزرسانی است");
+        return false;
+    }
     var t = $(this);
     $('#id_comment').val($('#id_comment').val() + ' @' + t.data('user'));
     $('#id_comment').focus();
@@ -489,4 +516,44 @@ $('body').on('click', '.modal_buttons.actions li', function(event) {
     var t = $(this);
     $('.modal_buttons.actions li').removeClass('active');
     t.addClass('active');
+});
+
+$('body').on('click', '.btn_edit', function(event) {
+    if (system_status == 0) {
+        event.preventDefault();
+        alertify.error("وب سایت در حال بروزرسانی است");
+        return false;
+    }
+});
+
+$('body').on('click', '.btn_promote', function(event) {
+    if (system_status == 0) {
+        event.preventDefault();
+        alertify.error("وب سایت در حال بروزرسانی است");
+        return false;
+    }
+});
+
+$('body').on('click', '#comment-submit-btn', function(event) {
+    if (system_status == 0) {
+        event.preventDefault();
+        alertify.error("وب سایت در حال بروزرسانی است");
+        return false;
+    }
+});
+
+$('body').on('click', '#active_user', function(event) {
+    if (system_status == 0) {
+        event.preventDefault();
+        alertify.error("وب سایت در حال بروزرسانی است");
+        return false;
+    }
+});
+
+$('body').on('click', '#deactive_user', function(event) {
+    if (system_status == 0) {
+        event.preventDefault();
+        alertify.error("وب سایت در حال بروزرسانی است");
+        return false;
+    }
 });

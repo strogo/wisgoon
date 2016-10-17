@@ -3,9 +3,9 @@ $('body').on('click', ".item-to-index", function(){
     var like_url=obj.attr('href');
     $.ajax({
         url: like_url,
-        success: function(data) {                
+        success: function(data) {
             var o = jQuery.parseJSON(data)[0];
-            
+
             if (o.status == 1){
                 obj.html('<i class="fa fa-times red"></i>');
                 obj.attr('href', o.url);
@@ -20,9 +20,9 @@ $('body').on('click', ".item-to-index", function(){
 
 $( "body" ).on('click', ".postfault", function(){
     if (confirm('این مطلب تخلف محصوب می شود؟')){
-        var obj = $(this); 
+        var obj = $(this);
         var parent_to_del = $(obj).parents("div.feed-item");
-        
+
         obj.addClass('disabled');
         var like_url=obj.attr('href');
         $.ajax({
@@ -54,6 +54,6 @@ $( "body" ).on('click', ".postfault", function(){
 //             }
 //         }
 //     });
-    
+
 //     return false;
 // });

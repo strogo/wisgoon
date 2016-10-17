@@ -336,6 +336,7 @@ class Post(models.Model):
         Post.objects.filter(pk=post_id).update(show_in_default=True)
         PostCacheLayer(post_id=post_id).show_in_default_change(status=True)
         post = PostCacheLayer(post_id=post_id).get()
+        print post
         if post:
             from pin.actions import send_notif_bar
             send_notif_bar(user=post['user']['id'], type=5, post=post_id,
@@ -900,33 +901,33 @@ class Post(models.Model):
         pl = us.get_posts(user_id, pid)
         return pl
 
-        row_per_page = 20
-        if not user_id:
-            return []
-        user_stream = "{}_{}".format(settings.USER_STREAM, int(user_id))
-        pl = r_server.lrange(user_stream, 0, 1000)
-        if not pl:
-            Post.set_stream_to_redis(user_id=user_id)
-            pl = r_server.lrange(user_stream, 0, 1000)
+        # row_per_page = 20
+        # if not user_id:
+        #     return []
+        # user_stream = "{}_{}".format(settings.USER_STREAM, int(user_id))
+        # pl = r_server.lrange(user_stream, 0, 1000)
+        # if not pl:
+        #     Post.set_stream_to_redis(user_id=user_id)
+        #     pl = r_server.lrange(user_stream, 0, 1000)
 
-        if pid == 0:
-            import collections
-            dups = [x for x, y in collections.Counter(pl).items() if y > 1]
+        # if pid == 0:
+        #     import collections
+        #     dups = [x for x, y in collections.Counter(pl).items() if y > 1]
 
-            for dup in dups:
-                r_server.lrem(user_stream, dup)
+        #     for dup in dups:
+        #         r_server.lrem(user_stream, dup)
 
-            return pl[:row_per_page]
+        #     return pl[:row_per_page]
 
-        if pid:
-            try:
-                pid_index = pl.index(str(pid))
-                idis = pl[pid_index + 1: pid_index + row_per_page]
-                return idis
-            except:
-                return []
+        # if pid:
+        #     try:
+        #         pid_index = pl.index(str(pid))
+        #         idis = pl[pid_index + 1: pid_index + row_per_page]
+        #         return idis
+        #     except:
+        #         return []
 
-        return []
+        # return []
 
 
 class Bills2(models.Model):
@@ -986,8 +987,8 @@ class Follow(models.Model):
         super(Follow, self).delete(*args, **kwargs)
 
         # TO DO
-        from pin.tasks import remove_from_stream
-        remove_from_stream.delay(user_id=follower_id, owner_id=following_id)
+        # from pin.tasks import remove_from_stream
+        # remove_from_stream.delay(user_id=follower_id, owner_id=following_id)
 
         from models_casper import UserStream
         us = UserStream()
@@ -1024,7 +1025,8 @@ class Follow(models.Model):
             MonthlyStats.log_hit(MonthlyStats.FOLLOW)
 
             # Neo4j graph
-            FollowUser.get_or_create(instance.follower, instance.following,
+            FollowUser.get_or_create(instance.follower,
+                                     instance.following,
                                      "follow")
 
             # Add following posts to follower stream

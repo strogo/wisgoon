@@ -5,9 +5,9 @@ import base64
 import json
 import datetime
 import urllib
-from django.db.models import Q
 from shutil import copyfile
 
+from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
@@ -21,23 +21,22 @@ from django.http import HttpResponse, HttpResponseRedirect,\
     HttpResponseBadRequest, Http404, JsonResponse, UnreadablePostError
 
 
+from pin.decorators import system_writable
+from pin.api6.tools import post_item_json, notif_simple_json
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
-from pin.models import Post, Stream, Follow, Ad, Block,\
-    Report, Comments, Comments_score, Category, Bills2 as Bills, ReportedPost
-
 from pin.model_mongo import Notif
 from pin.models_redis import ActivityRedis, NotificationRedis
+from pin.notification_models import UserNotification, MyNotificationFeed
+from pin.tasks import porn_feedback
 import pin_image
+from pin.models import Post, Stream, Follow, Ad, Block,\
+    Report, Comments, Comments_score, Category, Bills2 as Bills, ReportedPost
 from pin.tools import create_filename, get_user_ip, get_request_pid,\
     check_block, post_after_delete, get_post_user_cache
-from pin.tasks import porn_feedback
-from pin.api6.tools import post_item_json, notif_simple_json, is_system_writable
-from pin.notification_models import UserNotification, MyNotificationFeed
 
 from suds.client import Client
 
-# User = get_user_model()
 MEDIA_ROOT = settings.MEDIA_ROOT
 MEDIA_URL = settings.MEDIA_URL
 MERCHANT_ID = settings.MERCHANT_ID
@@ -79,9 +78,10 @@ def following(request):
 
 
 @login_required
+@system_writable
 def follow(request, following, action):
     message = ''
-    status = ''
+    is_follow = False
     if int(following) == request.user.id:
         return HttpResponseRedirect(reverse('pin-home'))
 
@@ -93,96 +93,78 @@ def follow(request, following, action):
     except User.DoesNotExist:
         return HttpResponseRedirect('/')
 
-    if is_system_writable():
-        try:
-            follow, created = Follow.objects\
-                .get_or_create(follower=request.user,
-                               following=following)
-        except Exception, e:
-            follow = Follow.objects.filter(follower=request.user,
-                                           following=following)[0]
-            created = False
-            print str(e)
+    try:
+        follow, created = Follow.objects\
+            .get_or_create(follower=request.user,
+                           following=following)
+    except Exception, e:
+        follow = Follow.objects.filter(follower=request.user,
+                                       following=following)[0]
+        created = False
+        print str(e)
 
-        if int(action) == 0 and follow:
-            follow.delete()
-            Stream.objects.filter(following=following,
-                                  user=request.user).delete()
-            message = _('Your connection was successfully shut down')
-            status = False
-        elif created:
-            message = _('Your connection successfully established.')
-            status = True
+    if int(action) == 0 and follow:
+        follow.delete()
+        Stream.objects.filter(following=following,
+                              user=request.user).delete()
+        message = _('Your connection was successfully shut down')
+        is_follow = False
+    elif created:
+        message = _('Your connection successfully established.')
+        is_follow = True
 
-        if request.is_ajax():
-            data = {
-                'status': status,
-                'message': message,
-                'count': following.profile.cnt_followers
-            }
-            return HttpResponse(json.dumps(data),
-                                content_type='application/json')
-        return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
-    else:
-        msg = _("Website update in progress.")
-        if request.is_ajax():
-            data = {'status': False, 'message': msg}
-            return HttpResponse(json.dumps(data),
-                                content_type='application/json')
-        else:
-            messages.error(request, msg)
-            return HttpResponseRedirect(reverse('pin-absuser',
-                                                args=[following.username]))
+    if request.is_ajax():
+        data = {
+            'status': True,
+            'is_follow': is_follow,
+            'message': message,
+            'count': following.profile.cnt_followers
+        }
+        return HttpResponse(json.dumps(data),
+                            content_type='application/json')
+    return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
 
 
 @login_required
+@system_writable
 def like(request, item_id):
     post = post_item_json(post_id=int(item_id))
     if not post:
         return HttpResponseRedirect('/')
 
     # TODO samte ui moshkel dare
-    if is_system_writable():
-        import redis
-        if check_block(user_id=post['user']['id'], blocked_id=request.user.id):
-            return HttpResponseRedirect('/')
+    import redis
+    if check_block(user_id=post['user']['id'], blocked_id=request.user.id):
+        return HttpResponseRedirect('/')
 
-        from models_redis import LikesRedis
-        like, dislike, current_like = LikesRedis(post_id=item_id)\
-            .like_or_dislike(user_id=request.user.id,
-                             post_owner=post['user']['id'],
-                             user_ip=get_user_ip(request),
-                             category=post['category']['id'])
+    from models_redis import LikesRedis
+    like, dislike, current_like = LikesRedis(post_id=item_id)\
+        .like_or_dislike(user_id=request.user.id,
+                         post_owner=post['user']['id'],
+                         user_ip=get_user_ip(request),
+                         category=post['category']['id'])
 
-        redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
-        key = "cnt_like:user:{}:{}".format(request.user.id,
-                                           post['category']['id'])
+    redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
+    key = "cnt_like:user:{}:{}".format(request.user.id,
+                                       post['category']['id'])
 
-        if like:
-            user_act = 1
-            redis_server.incr(key, 1)
+    if like:
+        user_act = 1
+        redis_server.incr(key, 1)
 
-        elif dislike:
-            user_act = -1
-            redis_server.incr(key, -1)
+    elif dislike:
+        user_act = -1
+        redis_server.incr(key, -1)
 
-        if request.is_ajax():
-            data = [{'likes': current_like, 'user_act': user_act}]
-            return HttpResponse(json.dumps(data), content_type="text/html")
-        else:
-            return HttpResponseRedirect(reverse('pin-item', args=[post['id']]))
+    if request.is_ajax():
+        data = [{'likes': current_like, 'user_act': user_act}]
+        return HttpResponse(json.dumps(data), content_type="text/html")
     else:
-        msg = _("Website update in progress.")
-        if request.is_ajax():
-            data = {'status': False, 'message': msg}
-            return HttpResponse(json.dumps(data),
-                                content_type='application/json')
-        else:
-            messages.error(request, msg)
-            return HttpResponseRedirect(reverse('pin-item', args=[post['id']]))
+        return HttpResponseRedirect(reverse('pin-item', args=[post['id']]))
 
 
 @login_required
+@system_writable
 def report(request, pin_id):
 
     try:
@@ -191,48 +173,38 @@ def report(request, pin_id):
         return HttpResponseRedirect('/')
 
     # TODO samte ui moshkel dare
-    if is_system_writable():
-        if check_block(user_id=post.user_id, blocked_id=request.user.id):
-            return HttpResponseRedirect('/')
+    if check_block(user_id=post.user_id, blocked_id=request.user.id):
+        return HttpResponseRedirect('/')
 
-        try:
-            Report.objects.get(user=request.user, post_id=post.id)
-            created = False
-        except Report.DoesNotExist:
-            Report.objects.create(user=request.user, post_id=post.id)
-            created = True
+    try:
+        Report.objects.get(user=request.user, post_id=post.id)
+        created = False
+    except Report.DoesNotExist:
+        Report.objects.create(user=request.user, post_id=post.id)
+        created = True
 
-        if created:
-            if post.report == 9:
-                post.status = 0
-            post.report = post.report + 1
-            post.save()
-            status = True
-            msg = _('Your report was saved.')
-        else:
-            status = False
-            msg = _("You 've already reported this matter.")
-
-        # TODO: add new report here @hossein
-        # ridi azizam :D
-        ReportedPost.post_report(post_id=post.id, reporter_id=request.user.id)
-        # End of hosseing work
-
-        if request.is_ajax():
-            data = {'status': status, 'message': msg}
-            return HttpResponse(json.dumps(data),
-                                content_type='application/json')
-        else:
-            return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
+    if created:
+        if post.report == 9:
+            post.status = 0
+        post.report = post.report + 1
+        post.save()
+        status = True
+        msg = _('Your report was saved.')
     else:
-        msg = _("Website update in progress.")
-        if request.is_ajax():
-            data = {'status': False, 'message': msg}
-            return HttpResponse(json.dumps(data),
-                                content_type='application/json')
-        else:
-            messages.error(request, msg)
-            return HttpResponseRedirect(reverse('pin-home'))
+        status = False
+        msg = _("You 've already reported this matter.")
+
+    # TODO: add new report here @hossein
+    # ridi azizam :D
+    ReportedPost.post_report(post_id=post.id, reporter_id=request.user.id)
+    # End of hosseing work
+
+    if request.is_ajax():
+        data = {'status': status, 'message': msg}
+        return HttpResponse(json.dumps(data),
+                            content_type='application/json')
+    else:
+        return HttpResponseRedirect(reverse('pin-item', args=[post.id]))
 
 
 @login_required
@@ -266,33 +238,32 @@ def comment_score(request, comment_id, score):
 
 
 @login_required
+@system_writable
 def delete(request, item_id):
     try:
         post = Post.objects.get(pk=item_id)
     except Post.DoesNotExist:
-        return HttpResponse('0')
+        msg = _("Post not found.")
+        data = {'status': False, 'message': msg}
+        return HttpResponse(json.dumps(data),
+                            content_type='application/json')
+        # return HttpResponse('0')
 
     # TODO samte ui moshkel dare
-    if is_system_writable():
-        if request.user.is_superuser or post.user == request.user:
-            post_after_delete(post=post,
-                              user=request.user,
-                              ip_address=get_user_ip(request))
-            post.delete()
-            if request.is_ajax():
-                return HttpResponse('1')
-            return HttpResponseRedirect('/')
-
-        return HttpResponse('0')
-    else:
-        msg = _("Website update in progress.")
+    if request.user.is_superuser or post.user == request.user:
+        post_after_delete(post=post,
+                          user=request.user,
+                          ip_address=get_user_ip(request))
+        post.delete()
         if request.is_ajax():
-            data = {'status': False, 'message': msg}
+            msg = _("Successfully deleted post.")
+            data = {'status': True, 'message': msg}
             return HttpResponse(json.dumps(data),
                                 content_type='application/json')
-        else:
-            messages.error(request, msg)
-            return HttpResponseRedirect(reverse('pin-home'))
+            # return HttpResponse('1')
+        return HttpResponseRedirect('/')
+
+    return HttpResponse('0')
 
 
 @login_required
@@ -316,6 +287,7 @@ def nop(request, item_id):
 
 @csrf_exempt
 @login_required
+@system_writable
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 def send_comment(request):
 
@@ -332,30 +304,19 @@ def send_comment(request):
                 return HttpResponse(_('Post not found'))
 
             # TODO samte ui moshkel dare
-            if post_json and is_system_writable():
-                if check_block(user_id=post_json['user']['id'],
-                               blocked_id=request.user.id):
-                    return HttpResponseRedirect('/')
+            is_block = check_block(user_id=post_json['user']['id'],
+                                   blocked_id=request.user.id)
+            if is_block:
+                return HttpResponseRedirect('/')
 
-                comment = Comments.objects\
-                    .create(object_pk_id=post_json['id'],
-                            comment=text,
-                            user=request.user,
-                            ip_address=get_user_ip(request))
-                return render(request, 'pin2/show_comment.html', {
-                    'comment': comment
-                })
-            else:
-                msg = _("Website update in progress.")
-                if request.is_ajax():
-                    data = {'status': False, 'message': msg}
-                    return HttpResponse(json.dumps(data),
-                                        content_type='application/json')
-                else:
-                    messages.error(request, msg)
-                    return HttpResponseRedirect(reverse('pin-item',
-                                                        args=[post_json['id']])
-                                                )
+            comment = Comments.objects\
+                .create(object_pk_id=post_json['id'],
+                        comment=text,
+                        user=request.user,
+                        ip_address=get_user_ip(request))
+            return render(request, 'pin2/show_comment.html', {
+                'comment': comment
+            })
 
     return HttpResponse('error')
 
@@ -417,18 +378,9 @@ def a_sendurl(request):
 @login_required
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 @csrf_exempt
+@system_writable
 def send(request):
     # TODO samte ui moshkel dare
-    if is_system_writable() is False:
-        if request.is_ajax():
-            data = {'status': False, 'location': reverse('pin-home')}
-            return HttpResponse(json.dumps(data),
-                                content_type='application/json')
-        else:
-            msg = _("Website update in progress.")
-            messages.add_message(request, messages.WARNING, msg)
-            return HttpResponseRedirect('/')
-
     fpath = None
     filename = None
     status = False
@@ -536,6 +488,7 @@ def send(request):
 
 
 @login_required
+@system_writable
 def edit(request, post_id):
     try:
         post = Post.objects.get(pk=int(post_id))
@@ -545,17 +498,6 @@ def edit(request, post_id):
     if not request.user.is_superuser:
         if post.user.id != request.user.id:
             return HttpResponseRedirect('/pin/')
-
-    # TODO samte ui moshkel dare
-    if is_system_writable() is False:
-        msg = _("Website update in progress.")
-        if request.is_ajax():
-            data = {'status': False, 'messages': msg}
-            return HttpResponse(json.dumps(data),
-                                content_type='application/json')
-        else:
-            messages.add_message(request, messages.WARNING, msg)
-            return HttpResponseRedirect('/')
 
     if request.method == "POST":
         post_values = request.POST.copy()
@@ -621,7 +563,7 @@ def upload(request):
             image_th = "{}pin/temp/t/{}".format(MEDIA_URL, filename)
             image_t = "{}/pin/temp/t/{}".format(MEDIA_ROOT, filename)
 
-            image_500_th = "{}pin/temp/t/{}".format(MEDIA_URL,filename.replace('.', '_500.'))
+            image_500_th = "{}pin/temp/t/{}".format(MEDIA_URL, filename.replace('.', '_500.'))
             image_500_t = "{}/pin/temp/t/{}".format(MEDIA_ROOT, filename.replace('.', '_500.'))
 
             pin_image.resize(image_o, image_t, 99)
@@ -735,10 +677,7 @@ def notif_all(request):
                 idis.append(po)
             else:
                 continue
-        # try:
-            # po = anl['po'] = Post.objects.values('image').get(pk=n.post)['image']
-        # except Post.DoesNotExist:
-            # continue
+
         anl['id'] = n.post
         anl['type'] = n.type
         anl['actors'] = n.last_actors
@@ -749,12 +688,8 @@ def notif_all(request):
 
 
 @login_required
+@system_writable
 def inc_credit(request):
-    if is_system_writable() is False:
-        msg = _("Website update in progress.")
-        messages.error(request, msg)
-        return HttpResponseRedirect(reverse('pin-absuser',
-                                            args=[request.user.username]))
 
     if request.method == "POST":
 
@@ -782,7 +717,8 @@ def inc_credit(request):
             url = 'https://www.zarinpal.com/pg/StartPay/%s' % str(result['Authority'])
             return HttpResponseRedirect(url)
         else:
-            messages.error(request, _('Error when connecting to the database server'))
+            msg = 'Error when connecting to the database server'
+            messages.error(request, _(msg))
             return HttpResponseRedirect(reverse('pin-inc-credit'))
     return render(request, 'pin2/credit/inc_credit.html', {
 
@@ -833,17 +769,10 @@ def verify_payment(request, bill_id):
 
 
 @login_required
+@system_writable
 def save_as_ads(request, post_id):
 
-    # p = Post.objects.get(id=post_id)
     p = post_item_json(post_id=post_id)
-
-    # TODO samte ui moshkel dare
-    if is_system_writable() is False:
-        msg = _("Website update in progress.")
-        messages.error(request, msg)
-        return HttpResponseRedirect('/')
-
     profile = request.user.profile
 
     if request.method == "POST":
@@ -861,13 +790,12 @@ def save_as_ads(request, post_id):
                                   ads_type=mode,
                                   start=datetime.datetime.now(),
                                   ip_address=get_user_ip(request))
-
-                messages.success(request,
-                                 _("Post of you was advertised successfully ."))
+                msg = "Post of you was advertised successfully ."
+                messages.success(request, _(msg))
 
         else:
-            messages.error(request,
-                           _("Your account credit is not enough for advertise "))
+            msg = "Your account credit is not enough for advertise "
+            messages.error(request, _(msg))
 
     return render(request, 'pin2/credit/save_as_ads.html', {
         'post': p,
@@ -878,28 +806,32 @@ def save_as_ads(request, post_id):
 
 
 @login_required
+@system_writable
 def block_action(request, user_id):
-    # TODO samte ui moshkel dare
-    if is_system_writable() is False:
-        data = {'status': False, 'type': 'None', 'message': _("Website update in progress.")}
-        return HttpResponse(json.dumps(data), content_type='application/json')
 
     user = request.user
     action = request.GET.get('action', False)
 
     if not action:
-        data = {'status': False, 'type': 'None', 'message': _('There is no action')}
+        data = {'status': False,
+                'type': 'None',
+                'message': _('There is no action')}
     else:
         if action == "block":
             Block.block_user(user_id=user.id, blocked_id=user_id)
-            data = {'status': True, 'type': 'block',
+            data = {'status': True,
+                    'type': 'block',
                     'message': _('This user was blocked successfully')}
+
         elif action == "unblock":
             Block.unblock_user(user_id=user.id, blocked_id=user_id)
-            data = {'status': True, 'type': 'unblock',
+            data = {'status': True,
+                    'type': 'unblock',
                     'message': _('This user was unblocked successfully')}
+
         else:
-            data = {'status': False, 'type': 'None',
+            data = {'status': False,
+                    'type': 'None',
                     'message': _('The data entered is not valid')}
 
     return HttpResponse(json.dumps(data), content_type="application/json")
@@ -970,16 +902,19 @@ def user_notif(request):
 
     notifications = UserNotification(user_id=11)\
         .get_obj_notif(before=before)
-
+    follow_list = ['follow', 'request follow', 'accept follow']
     if notifications:
         for notification in notifications:
 
             '''update notification is_seen
-                mark_activities(self, activity_ids, seen=True, read=False) by default'''
-            MyNotificationFeed(request.user.id).mark_activities(notification.activity_ids)
+                mark_activities(self, activity_ids, seen=True, read=False) by
+                default'''
+            notif_ids = notification.activity_ids
+            MyNotificationFeed(request.user.id).mark_activities(notif_ids)
 
             if notification.verb.infinitive == 'create':
-                notif = notif_simple_json(notification=notification, user=False)
+                notif = notif_simple_json(notification=notification,
+                                          user=False)
 
             elif notification.verb.infinitive == 'comment':
                 if len(notification.actor_ids) == 1:
@@ -991,8 +926,9 @@ def user_notif(request):
             elif notification.verb.infinitive == 'like':
                 notif = notif_simple_json(notification=notification)
 
-            elif notification.verb.infinitive in ['follow', 'request follow', 'accept follow']:
-                notif = notif_simple_json(notification=notification, post=False)
+            elif notification.verb.infinitive in follow_list:
+                notif = notif_simple_json(notification=notification,
+                                          post=False)
 
             notif_list.append(notif)
 

@@ -39,9 +39,9 @@
                     {% else %}
 
                         {% if request.user.is_superuser %}
-                        
+
                             {% if profile.user.is_active %}
-                            <div class="dropdown pull-left">
+                            <div class="dropdown pull-left" id="deactive_user">
                                 <a href="" class="wis_btn dropdown-toggle orange ma0 pa0"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-ban"></i></a>
                                 <ul class="dropdown-menu" aria-labelledby="ban_config">
                                     <li class="dropdown-header">توهین به</li>
@@ -71,7 +71,7 @@
                                 </ul>
                             </div>
                             {% else %}
-                            <a href="{% url 'activate-user' profile.user_id 1 %}" class="wis_btn green_o pull-left" data-toggle="tooltip" data-placement="bottom" title="{% if ban_by_admin != False %}{{ban_by_admin|get_ban}}{% endif %}">فعال‌سازی</a>
+                            <a href="{% url 'activate-user' profile.user_id 1 %}" class="wis_btn green_o pull-left" data-toggle="tooltip" data-placement="bottom" title="{% if ban_by_admin != False %}{{ban_by_admin|get_ban}}{% endif %}" id="active_user">فعال‌سازی</a>
                             {% endif %}
                         {% endif %}
 
@@ -164,6 +164,6 @@
         </div>
         <div class="clear"></div>
     </div>
-    
+
     <div class="clear"></div>
 </div>

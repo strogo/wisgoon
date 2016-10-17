@@ -55,7 +55,13 @@
             </div>
         </div>
         <div class="clear"></div>
-
+        <div class="row">
+            {{form.is_private.value}}
+            <div class="col-sm-6">
+                <label class="control-label" for="">{{form.is_private.label}}</label>
+                {{form.is_private}}
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm-6">
                 <label class="control-label" for="">{{form.location.label}}</label>
