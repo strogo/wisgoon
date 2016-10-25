@@ -253,6 +253,7 @@ def get_userdata_avatar(user, size=30):
 
 @register.filter
 def get_userdata_name(user, size=30):
+    user = int(user)
     return userdata_cache(user, 1)
 
 
@@ -348,14 +349,35 @@ def date_filter(index, time=False):
 @register.filter
 def get_follow_status(user_id, following_id):
     from pin.models import Follow
-    fstatus = Follow.objects.filter(follower_id=user_id, following_id=following_id).exists()
+    fstatus = Follow.objects.filter(follower_id=user_id,
+                                    following_id=following_id).exists()
+    return fstatus
+
+
+@register.filter
+def follow_rq_status(cur_user_id, follower_id):
+    from pin.models import FollowRequest
+    from user_profile.models import Profile
+    fstatus = False
+    try:
+        p = Profile.objects.only('is_private').get(user_id=follower_id)
+        if p.is_private:
+            fstatus = FollowRequest.objects\
+                .filter(user_id=cur_user_id,
+                        target_id=follower_id)\
+                .exists()
+    except:
+        pass
+
     return fstatus
 
 
 @register.filter
 def get_user_posts(user_id):
     from pin.models import Post
-    user_posts = Post.objects.only(*Post.NEED_KEYS_WEB).filter(user=user_id).order_by('-id')[:4]
+    user_posts = Post.objects.only(*Post.NEED_KEYS_WEB)\
+        .filter(user=user_id)\
+        .order_by('-id')[:4]
     html = '<div class="flw_posts">'
     for x in xrange(4):
         try:

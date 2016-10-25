@@ -1,0 +1,34 @@
+{% load pin_tags%}
+{% load humanize %}
+{% load daddy_avatar%}
+
+{% spaceless %}
+{% for follow_req in follow_requests %}
+    {% with follow_req.user.id as user_id %}
+    {% with follow_req.user.username as username %}
+    <div class="notif-item">
+        <div class="notif-actors col-md-2 col-sm-2 col-xs-2 pull-right">
+            <div>
+                <a target="_blank" href="{% url 'pin-absuser' user_id|get_absusername %}" class="user-avatar" data-toggle="tooltip" data-placement="bottom" title="{{user_id|get_absusername}}">
+                    <img class="nav-avatar" src="{{user_id|get_userdata_avatar:50}}">
+                </a>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-2">
+            {{username}}
+        </div>
+        <div class="col-sm-2 col-md-1 col-xs-2 pull-left">
+            <a href="{% url 'pin-accept-follow-request' %}" class="accept-follow" data-userid="{{user_id}}" data-accepted="1"><i class="glyphicon glyphicon-ok"></i>
+            </a>
+        </div>
+        <div class="col-sm-2 col-md-1 col-xs-2 pull-left" >
+            <a href="{% url 'pin-accept-follow-request' %}" class="remove-follow" data-userid="{{user_id}}" data-accepted="0"><i class="glyphicon glyphicon-remove"></i>
+            </a>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+    {% endwith %}
+    {% endwith %}
+{%endfor%}
+{% endspaceless %}

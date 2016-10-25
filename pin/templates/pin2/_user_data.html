@@ -74,11 +74,14 @@
                             <a href="{% url 'activate-user' profile.user_id 1 %}" class="wis_btn green_o pull-left" data-toggle="tooltip" data-placement="bottom" title="{% if ban_by_admin != False %}{{ban_by_admin|get_ban}}{% endif %}" id="active_user">فعال‌سازی</a>
                             {% endif %}
                         {% endif %}
-
                         {% if profile.user_id != request.user.id and request.user.is_authenticated %}
                             {% if not request.user.id|allow_follow:profile.user_id%}
                                 {% if follow_status == 0 %}
-                                    <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" profile.user_id 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
+                                    {% if is_private and follow_req %}
+                                        <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left gray mabo10 ajax-follow" href='{% url "remove-follow-request" profile.user_id %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-clock-o"></i></a>
+                                    {% else %}
+                                        <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" profile.user_id 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
+                                    {% endif %}
                                 {% else %}
                                     <a data-user-id="{{profile.user_id}}" class="wis_btn pull-left mabo10 red ajax-follow" href='{% url "pin-follow" profile.user_id 0 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i></a>
                                 {%endif%}

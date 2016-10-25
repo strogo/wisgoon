@@ -113,7 +113,7 @@ $('body').on('change', '#image_upload_input', function(event) {
     $('.filters').show();
     $('button[disabled]').removeAttr('disabled');
     $('#image_upload_input').val('');
-    
+
 });
 
 $('body').on('click', '.img_reset_btn', function(event) {
@@ -159,7 +159,7 @@ $('body').on('click', '.del-comment', function(){
                 // pr = pp - $('.post-sidebar').height();
                 // $(".post-page .post-sidebar").trigger('detach.ScrollToFixed');
                 // $(".post-page .post-sidebar").scrollToFixed({
-                //     marginTop:15, 
+                //     marginTop:15,
                 //     limit:  pr
                 // });
                 // $(window).resize();
@@ -172,7 +172,7 @@ $('body').on('click', '.del-comment', function(){
             reload_sticky();
         }
     });
-    
+
     return false;
 });
 
@@ -195,7 +195,7 @@ $('#pin_form').ajaxForm({
     complete: function(msg) {
         // console.log(msg);
     }
-}); 
+});
 
 $('body').on('click', '.filters #PresetFilters a', function(event) {
     event.preventDefault();
@@ -218,7 +218,7 @@ $('body').on('click', '.filters #PresetFilters a', function(event) {
         this.render(function(){
             $('.uploaded-image').children('*').remove();
             $('#img_clone').appendTo('.uploaded-image');
-            $('#img_clone').show().attr('id', 'rendered');            
+            $('#img_clone').show().attr('id', 'rendered');
             t.children('.filter_loader').remove();
         });
     });
@@ -294,9 +294,9 @@ $('body').on('click', '.comment-down', function(event) {
 
 $("body").on('click', ".delpost", function(){
     if (confirm('این مطلب حذف شود؟')){
-        var obj = $(this); 
+        var obj = $(this);
         var parent_to_del = $(obj).parents("div.feed-item");
-        
+
         obj.addClass('disabled');
         var like_url=obj.attr('href');
         $.ajax({
@@ -314,9 +314,9 @@ $("body").on('click', ".delpost", function(){
     return false;
 });
 $( "body" ).on('click', ".noppost", function(){
-    var obj = $(this); 
+    var obj = $(this);
     var parent_to_del = $(obj).parents("div.feed-item");
-    
+
     obj.addClass('disabled');
     var like_url=obj.attr('href');
     $.ajax({
@@ -341,11 +341,11 @@ $("body").on('click', '.btn_report, .report-btn',function(){
             url: u,
             success: function(resp) {
                 if (resp.status){
-                    alertify.success(resp.message);                    
+                    alertify.success(resp.message);
                 }else{
                     alertify.error(resp.message);
                 }
-                $('body').click();                
+                $('body').click();
             }
         });
     }
@@ -376,7 +376,7 @@ $('body').on('click', '.btn_like',function(){
         }else{
             obj.parent().addClass('user-liked');
             obj.children('span.count').text(pn(n + 1));
-        }        
+        }
     }
 
     $.ajax({
@@ -432,7 +432,7 @@ $('body').on('click', '.block_btn', function(event) {
         t.addClass('unblock');
         alertify.success('کاربر با موفقیت بلاک شد');
     }
-    
+
     $.ajax({
         url: t.attr('href'),
         data: {action: action},
@@ -441,7 +441,7 @@ $('body').on('click', '.block_btn', function(event) {
         alertify.error('خطا در بلاک کردن. با مدیریت تماس بگیرید');
     });
     return false;
-    
+
 });
 
 

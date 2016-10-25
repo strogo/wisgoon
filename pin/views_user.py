@@ -21,6 +21,7 @@ from django.http import HttpResponse, HttpResponseRedirect,\
     HttpResponseBadRequest, Http404, JsonResponse, UnreadablePostError
 
 
+import pin_image
 from pin.decorators import system_writable
 from pin.api6.tools import post_item_json, notif_simple_json
 from pin.crawler import get_images
@@ -29,9 +30,10 @@ from pin.model_mongo import Notif
 from pin.models_redis import ActivityRedis, NotificationRedis
 from pin.notification_models import UserNotification, MyNotificationFeed
 from pin.tasks import porn_feedback
-import pin_image
+from pin.api6.tools import get_simple_user_object
 from pin.models import Post, Stream, Follow, Ad, Block,\
-    Report, Comments, Comments_score, Category, Bills2 as Bills, ReportedPost
+    Report, Comments, Comments_score, Category, Bills2 as Bills, ReportedPost,\
+    FollowRequest
 from pin.tools import create_filename, get_user_ip, get_request_pid,\
     check_block, post_after_delete, get_post_user_cache
 
@@ -82,10 +84,13 @@ def following(request):
 def follow(request, following, action):
     message = ''
     is_follow = False
-    if int(following) == request.user.id:
+    pending = False
+    current_user_id = request.user.id
+
+    if int(following) == current_user_id:
         return HttpResponseRedirect(reverse('pin-home'))
 
-    if check_block(user_id=int(following), blocked_id=request.user.id):
+    if check_block(user_id=int(following), blocked_id=current_user_id):
         return HttpResponseRedirect('/')
 
     try:
@@ -93,37 +98,59 @@ def follow(request, following, action):
     except User.DoesNotExist:
         return HttpResponseRedirect('/')
 
-    try:
-        follow, created = Follow.objects\
-            .get_or_create(follower=request.user,
-                           following=following)
-    except Exception, e:
-        follow = Follow.objects.filter(follower=request.user,
-                                       following=following)[0]
-        created = False
-        print str(e)
+    if int(action) == 1:
+        if following.profile.is_private:
+            FollowRequest.objects.get_or_create(user_id=current_user_id,
+                                                target=following)
+            message = _('Your follow request successfully send.')
+            pending = True
+        else:
+            follow, created = Follow.objects\
+                .get_or_create(follower_id=current_user_id,
+                               following=following)
+            message = _('Your connection successfully established.')
+            is_follow = True
+    else:
+        try:
+            follow = Follow.objects.get(follower_id=current_user_id,
+                                        following=following)
+            follow.delete()
+            message = _('Your connection was successfully shut down')
+        except Exception, e:
+            message = _('Your connection was successfully shut down')
+            print str(e)
 
-    if int(action) == 0 and follow:
-        follow.delete()
-        Stream.objects.filter(following=following,
-                              user=request.user).delete()
-        message = _('Your connection was successfully shut down')
-        is_follow = False
-    elif created:
-        message = _('Your connection successfully established.')
-        is_follow = True
+    # try:
+    #     follow, created = Follow.objects\
+    #         .get_or_create(follower=request.user,
+    #                        following=following)
+    # except Exception, e:
+    #     follow = Follow.objects.filter(follower=request.user,
+    #                                    following=following)[0]
+    #     created = False
+    #     print str(e)
+
+    # if int(action) == 0 and follow:
+    #     follow.delete()
+    #     Stream.objects.filter(following=following,
+    #                           user=request.user).delete()
+    #     message = _('Your connection was successfully shut down')
+    #     is_follow = False
+    # elif created:
+    #     message = _('Your connection successfully established.')
+    #     is_follow = True
 
     if request.is_ajax():
         data = {
             'status': True,
             'is_follow': is_follow,
             'message': message,
+            'pending': pending,
             'count': following.profile.cnt_followers
         }
         return HttpResponse(json.dumps(data),
                             content_type='application/json')
     return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
-
 
 @login_required
 @system_writable
@@ -613,8 +640,11 @@ def show_notify(request):
 @login_required
 def notif_user(request):
     offset = int(request.GET.get('older', 0))
-
-    notifications = NotificationRedis(user_id=request.user.id)\
+    follow_requests = {}
+    user = request.user
+    user_id = user.id
+    is_private = user.profile.is_private
+    notifications = NotificationRedis(user_id=user_id)\
         .get_notif(start=offset)
     nl = []
     last_date = None
@@ -640,16 +670,32 @@ def notif_user(request):
             last_date = notif.date
 
         nl.append(anl)
+    if is_private:
+        """ Get follow request """
+        follow_requests = FollowRequest.objects\
+            .filter(target_id=user_id).order_by('-id')
+
+        cnt_requests = follow_requests.count()
+        if cnt_requests > 0:
+            last_follow_req = follow_requests[0]
+            user_obj = get_simple_user_object(last_follow_req.user.id)
+
+            follow_requests = {'user': user_obj,
+                               'cnt_requests': cnt_requests}
 
     if request.is_ajax():
         return render(request, 'pin2/_notif.html', {
             'notif': nl,
-            'offset': last_date
+            'offset': last_date,
+            'is_private': is_private,
+            'follow_requests': follow_requests
         })
     else:
         return render(request, 'pin2/notif_user.html', {
             'notif': nl,
-            'offset': last_date
+            'offset': last_date,
+            'is_private': is_private,
+            'follow_requests': follow_requests
         })
 
 
@@ -660,6 +706,99 @@ def notif_following(request):
         'notif': notif_data,
         'page': 'follow_notif',
     })
+
+
+@login_required
+def follow_requests(request):
+    offset = int(request.GET.get('offset', 0))
+    limit = 20
+    follow_req = []
+
+    follow_request = FollowRequest.objects\
+        .filter(target=request.user)\
+        .order_by('-id')[offset:offset + limit]
+
+    for req in follow_request:
+        data = {}
+        data['user'] = get_simple_user_object(req.user.id)
+        follow_req.append(data)
+
+    if request.is_ajax():
+        return render(request, 'pin2/_follow_requests.html', {
+            'offset': offset + limit,
+            'follow_requests': follow_req
+        })
+    else:
+        return render(request, 'pin2/user_follow_requests.html', {
+            'offset': offset + limit,
+            'follow_requests': follow_req
+        })
+
+
+@system_writable
+@login_required
+def remove_follow_req(request, following):
+
+    current_user_id = request.user.id
+    cnt_followers = 0
+    if int(following) == current_user_id:
+        return HttpResponseRedirect(reverse('pin-home'))
+    try:
+        target = User.objects.get(pk=int(following))
+        FollowRequest.objects\
+            .filter(user_id=current_user_id,
+                    target=target)\
+            .delete()
+        cnt_followers = target.profile.cnt_followers
+    except:
+        pass
+    data = {
+        'status': True,
+        'is_follow': False,
+        'message': _("Successfully remove your follow request"),
+        'pending': False,
+        'count': cnt_followers
+    }
+    return HttpResponse(json.dumps(data),
+                        content_type='application/json')
+
+
+@csrf_exempt
+@system_writable
+@login_required
+def accept_follow(request):
+
+    data = {}
+    user_id = request.POST.get('user_id', None)
+    accepted = bool(int(request.POST.get('accepted', 0)))
+    target_user = request.user
+
+    is_req = FollowRequest.objects.filter(user_id=int(user_id),
+                                          target=target_user)
+    if is_req.exists():
+        if accepted:
+            Follow.objects.create(follower_id=int(user_id),
+                                  following=target_user)
+            is_req.delete()
+            status = True
+            message = _('Your connection successfully established.')
+            accepted = 1
+        else:
+            is_req.delete()
+            status = True
+            message = _('Decline follow request')
+            accepted = 0
+
+        data = {'status': status,
+                'message': message,
+                'accepted': accepted}
+        return HttpResponse(json.dumps(data), content_type='application/json')
+    else:
+        msg = "Follow request not exists"
+        return HttpResponse(json.dumps({'message': msg,
+                                        'status': False}),
+                            status=404,
+                            content_type='application/json')
 
 
 @login_required

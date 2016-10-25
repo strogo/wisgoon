@@ -479,9 +479,22 @@ $('body').on('click', '.ajax-follow', function(event) {
                 t.html('<i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i>').removeClass('green').addClass('red');
 
             }else{
-                alertify.success(response.message);
-                t.attr('href', '/pin/follow/' + t.data('user-id') + '/1/');
-                t.html('<i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i>').removeClass('red').addClass('green');
+                if (response.pending){
+                    alertify.success(response.message);
+                    t.attr('href', '/pin/remove/follow/request/' + t.data('user-id'));
+                    t.html('<i class="glyphicon glyphicon-user"></i> <i class="fa fa-clock-o"></i>').removeClass('green').addClass('gray');
+                }
+                else{
+                    alertify.success(response.message);
+                    t.attr('href', '/pin/follow/' + t.data('user-id') + '/1/');
+                    if (t.hasClass('gray')){
+                        t.removeClass(gray);
+                    }
+                    if (t.hasClass('red')){
+                        t.removeClass('red');
+                    }
+                    t.html('<i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i>').addClass('green');
+                }
             }
             if (t.parents('.follow_box')) {
                 t.parents('.follow_box').find('.follower_count strong').text(pn(response.count));
@@ -556,4 +569,79 @@ $('body').on('click', '#deactive_user', function(event) {
         alertify.error("وب سایت در حال بروزرسانی است");
         return false;
     }
+});
+
+$('body').on('click', '.send-photo', function(event) {
+    if (system_status == 0) {
+        event.preventDefault();
+        alertify.error("وب سایت در حال بروزرسانی است");
+        return false;
+    }
+});
+
+$('body').on('click', '.credit_btn', function(event) {
+    if (system_status == 0) {
+        event.preventDefault();
+        alertify.error("وب سایت در حال بروزرسانی است");
+        return false;
+    }
+});
+
+$('body').on('click', '.profile_config', function(event) {
+    if (system_status == 0) {
+        event.preventDefault();
+        alertify.error("وب سایت در حال بروزرسانی است");
+        return false;
+    }
+});
+
+$('body').on('click', '.accept-follow', function(event) {
+    event.preventDefault();
+    if (system_status == 0) {
+        event.preventDefault();
+        alertify.error("وب سایت در حال بروزرسانی است");
+        return false;
+    }
+
+    var obj = $(this);
+    var user_id = obj.data('userid');
+    var accepted = obj.data('accepted');
+    var url = obj.attr('href');
+
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: {'user_id': user_id, 'accepted': accepted},
+        success: function(data) {
+            obj.parents('div.notif-item').remove();
+            alertify.success(data.message);
+
+        }
+    });
+});
+
+
+$('body').on('click', '.remove-follow', function(event) {
+    event.preventDefault();
+    if (system_status == 0) {
+        event.preventDefault();
+        alertify.error("وب سایت در حال بروزرسانی است");
+        return false;
+    }
+
+    var obj = $(this);
+    var user_id = obj.data('userid');
+    var accepted = obj.data('accepted');
+    var url = obj.attr('href');
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: {'user_id': user_id, 'accepted': accepted},
+        success: function(data) {
+            obj.parents('div.notif-item').remove();
+            alertify.success(data.message);
+        }
+    });
 });

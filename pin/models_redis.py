@@ -12,7 +12,7 @@ from pin.api6.cache_layer import PostCacheLayer
 from models import Post
 from khayyam import JalaliDate
 
-from pin.analytics import like_act
+# from pin.analytics import like_act
 from pin.models_casper import PostStats, Notification
 
 # redis set server
@@ -210,6 +210,7 @@ class LikesRedis(object):
     def dislike(self, user_id, post_owner):
         rListServer.lrem(self.keyNameList, user_id)
         rSetServer.srem(self.keyNameSet, str(user_id))
+
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') - 1)
 
@@ -241,7 +242,7 @@ class LikesRedis(object):
         from pin.model_mongo import MonthlyStats
         MonthlyStats.log_hit(object_type=MonthlyStats.LIKE)
 
-        like_act(post=self.postId, actor=user_id, user_ip=user_ip)
+        # like_act(post=self.postId, actor=user_id, user_ip=user_ip)
 
         if user_id != post_owner:
             from pin.actions import send_notif_bar

@@ -1349,8 +1349,8 @@ class Comments(models.Model):
 
             actors_list.append(post.user_id)
 
-        comment_act(comment.object_pk_id, comment.user_id,
-                    user_ip=comment.ip_address)
+        # comment_act(comment.object_pk_id, comment.user_id,
+        #             user_ip=comment.ip_address)
         if post.user_id == 11253:
             return
 
