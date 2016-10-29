@@ -907,6 +907,7 @@ def absuser(request, user_name=None):
     ban_by_admin = False
     follow_status = False
     following_status = False
+    show_posts = True
 
     try:
         profile = Profile.objects.get(user_id=user_id)
@@ -952,13 +953,16 @@ def absuser(request, user_name=None):
                 follow_req = FollowRequest.objects\
                     .filter(user_id=cur_user_id,
                             target_id=user_id).exists()
+
+                show_posts = False
+
             if check_block(user_id=profile.user_id, blocked_id=cur_user_id):
                 is_block = True
 
     else:
         follow_status = True
 
-    if not is_block and follow_status:
+    if not is_block and show_posts:
         for li in lt:
             pob = post_item_json(li.id, cur_user_id=cur_user_id)
             if pob:
