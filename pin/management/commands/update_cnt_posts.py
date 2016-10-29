@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        users = User.objects.only('id').filter(id__lt=1743656).order_by('-id')
+        users = User.objects.only('id').order_by('-id')
         for user in users:
             cnt_post = Post.objects.only('id')\
                 .filter(user_id=user.id)\
