@@ -1,23 +1,17 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import UnreadablePostError
-from django.utils.translation import ugettext as _
 
+from pin.api6.tools import get_int, get_simple_user_object, get_next_url
+from pin.decorators import system_writable
 from pin.models import Post
 from pin.models_redis import LikesRedis
 from pin.tools import AuthCache, get_post_user_cache
 from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
     return_bad_request
-from pin.api6.tools import get_int, get_simple_user_object, get_next_url,\
-    is_system_writable
 
 
+@system_writable
 def like_post(request, item_id):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     token = request.GET.get('token', False)
     if token:
@@ -49,13 +43,8 @@ def like_post(request, item_id):
 
 
 @csrf_exempt
+@system_writable
 def like_item(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     try:
         token = request.POST.get('token', False)

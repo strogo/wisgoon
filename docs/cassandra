@@ -1,12 +1,333 @@
-CREATE TABLE notification ( user_id int, date int, deleted boolean, actor int, type int, object_id int, hash text, hint text, PRImary key(user_id, date)) with clustering order by (date desc);
+CREATE KEYSPACE wisgoon WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'}  AND durable_writes = true;
 
-CREATE INDEX no_deleted ON notification (deleted);
-CREATE INDEX no_object_id ON notification (object_id);
-CREATE INDEX no_actor ON notification (actor);
-CREATE INDEX no_hash ON notification (hash);
+CREATE TABLE wisgoon.user_stream2 (
+    user_id int,
+    post_owner int,
+    post_id int,
+    PRIMARY KEY ((user_id, post_owner), post_id)
+) WITH CLUSTERING ORDER BY (post_id DESC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
 
-CREATE TABLE streams (name text, post_id int, owner int , primary key(name, post_id)) WITH CLUSTERING ORDER BY (post_id desc);
-CREATE INDEX streams_owner ON streams (owner);
+CREATE TABLE wisgoon.like (
+    post_id int,
+    user_id int,
+    PRIMARY KEY (post_id, user_id)
+) WITH CLUSTERING ORDER BY (user_id ASC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
 
-CREATE TABLE user_stream (user_id int, post_id int, post_owner int, PRIMARY KEY (user_id, post_id)) WITH CLUSTERING ORDER BY (post_id DESC);
-CREATE INDEX index_user_stream_post_owner ON user_stream (post_owner);
+CREATE TABLE wisgoon.post_comments (
+    post_id int,
+    create_time int,
+    comment text,
+    ip_address text,
+    old_comment_id int,
+    user_id int,
+    PRIMARY KEY (post_id, create_time)
+) WITH CLUSTERING ORDER BY (create_time DESC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+CREATE INDEX post_comments_old_comment_id_idx ON wisgoon.post_comments (old_comment_id);
+
+CREATE TABLE wisgoon.notification (
+    user_id int,
+    date int,
+    actor int,
+    deleted boolean,
+    hash text,
+    hint text,
+    object_id int,
+    type int,
+    PRIMARY KEY (user_id, date)
+) WITH CLUSTERING ORDER BY (date DESC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+CREATE INDEX no_actor ON wisgoon.notification (actor);
+CREATE INDEX no_deleted ON wisgoon.notification (deleted);
+CREATE INDEX no_hash ON wisgoon.notification (hash);
+CREATE INDEX no_object_id ON wisgoon.notification (object_id);
+
+CREATE TABLE wisgoon.user_liked_posts (
+    post_id int,
+    user_id int,
+    like_time int,
+    PRIMARY KEY (post_id, user_id)
+) WITH CLUSTERING ORDER BY (user_id ASC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+
+CREATE TABLE wisgoon.comments (
+    post_id int,
+    time int,
+    user_id int,
+    PRIMARY KEY (post_id, time)
+) WITH CLUSTERING ORDER BY (time DESC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+CREATE INDEX userid ON wisgoon.comments (user_id);
+
+CREATE TABLE wisgoon.user_feed (
+    user_id int,
+    post_id int,
+    post_owner int,
+    PRIMARY KEY (user_id, post_id)
+) WITH CLUSTERING ORDER BY (post_id DESC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+CREATE INDEX user_feed_post_owner_idx ON wisgoon.user_feed (post_owner);
+
+CREATE TABLE wisgoon.post_data (
+    post_id int PRIMARY KEY,
+    create_time timestamp,
+    creator_ip inet
+) WITH bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+
+CREATE TABLE wisgoon.post_likes (
+    post_id int,
+    user_id int,
+    PRIMARY KEY (post_id, user_id)
+) WITH CLUSTERING ORDER BY (user_id ASC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+
+CREATE TABLE wisgoon.act (
+    user_id int,
+    time int,
+    actor int,
+    actors list<int>,
+    type int,
+    PRIMARY KEY (user_id, time)
+) WITH CLUSTERING ORDER BY (time DESC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+CREATE INDEX act_actor ON wisgoon.act (actor);
+CREATE INDEX act_type ON wisgoon.act (type);
+
+CREATE TABLE wisgoon.streams (
+    name text,
+    post_id int,
+    owner int,
+    PRIMARY KEY (name, post_id)
+) WITH CLUSTERING ORDER BY (post_id DESC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+CREATE INDEX streams_owner ON wisgoon.streams (owner);
+
+CREATE TABLE wisgoon.system_stream (
+    name text,
+    date int,
+    post_id int,
+    PRIMARY KEY (name, date)
+) WITH CLUSTERING ORDER BY (date DESC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+
+CREATE TABLE wisgoon.post_stats (
+    post_id int PRIMARY KEY,
+    cnt_view counter
+) WITH bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+
+CREATE TABLE wisgoon.likes_model (
+    post_id int PRIMARY KEY,
+    likers set<int>
+) WITH bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+CREATE INDEX likes_model_likers_idx ON wisgoon.likes_model (likers);
+
+CREATE TABLE wisgoon.user_liked_posts_order (
+    post_id int,
+    like_time int,
+    user_id int,
+    PRIMARY KEY (post_id, like_time, user_id)
+) WITH CLUSTERING ORDER BY (like_time DESC, user_id ASC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+
+CREATE TABLE wisgoon.user_stream (
+    user_id int,
+    post_id int,
+    post_owner int,
+    PRIMARY KEY (user_id, post_id)
+) WITH CLUSTERING ORDER BY (post_id DESC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+    AND comment = ''
+    AND compaction = {'min_threshold': '4', 'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32'}
+    AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99.0PERCENTILE';
+CREATE INDEX user_stream_post_owner_idx ON wisgoon.user_stream (post_owner);

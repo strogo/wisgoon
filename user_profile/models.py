@@ -88,7 +88,8 @@ class Profile(models.Model):
     level = models.IntegerField(default=1)
 
     banned = models.BooleanField(default=False)
-    is_private = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=False,
+                                     verbose_name=_('Private'))
 
     version = models.IntegerField(default=0, blank=False, null=True)
 

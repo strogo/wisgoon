@@ -29,7 +29,7 @@ from tastypie.models import ApiKey
 # from haystack.query import SearchQuerySet
 # from haystack.query import SQ
 # from haystack.query import Raw
-
+from pin.decorators import system_writable
 from pin.models import Follow, Block, Likes, BannedImei, PhoneData, Bills2,\
     FollowRequest
 from pin.models_es import ESUsers
@@ -38,7 +38,7 @@ from pin.api6.http import return_bad_request, return_json_data,\
     return_un_auth, return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object,\
     get_int, get_profile_data, update_follower_following, post_item_json,\
-    is_system_writable, check_user_state
+    check_user_state
 
 
 def followers(request, user_id):
@@ -107,13 +107,8 @@ def following(request, user_id=1):
     return return_json_data(data)
 
 
+@system_writable
 def follow(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     token = request.GET.get('token', '')
     user_id = request.GET.get('user_id', None)
@@ -167,13 +162,8 @@ def follow(request):
     return return_json_data(data)
 
 
+@system_writable
 def unfollow(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     token = request.GET.get('token', '')
     user_id = request.GET.get('user_id', None)
@@ -203,13 +193,8 @@ def unfollow(request):
     return return_json_data(data)
 
 
+@system_writable
 def remove_follow_req(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     token = request.GET.get('token', '')
     user_id = request.GET.get('user_id', None)
@@ -240,13 +225,8 @@ def remove_follow_req(request):
 
 
 @csrf_exempt
+@system_writable
 def login(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     try:
         username = request.POST.get("username", '')
@@ -298,13 +278,8 @@ def login(request):
 
 
 @csrf_exempt
+@system_writable
 def register(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
     username = request.POST.get("username", '')
     password = request.POST.get("password", 'False')
     req_token = request.POST.get("token", '')
@@ -464,13 +439,8 @@ def users_top(request):
 
 
 @csrf_exempt
+@system_writable
 def update_profile(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     token = request.GET.get('token', False)
     status = False
@@ -594,13 +564,9 @@ def user_like(request, user_id):
 
 
 @csrf_exempt
+@system_writable
 def password_change(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
+
     user = None
     token = request.GET.get('token', '')
     if token:
@@ -653,13 +619,8 @@ def password_change(request):
 
 
 @csrf_exempt
+@system_writable
 def get_phone_data(request, startup=None):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     if request.method != "POST":
         return return_bad_request()
@@ -752,13 +713,8 @@ PACKS = {
 
 
 @csrf_exempt
+@system_writable
 def inc_credit(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     user = None
     token = request.GET.get('token', '')
@@ -855,15 +811,8 @@ def inc_credit(request):
 
 
 @csrf_exempt
+@system_writable
 def block_user(request, user_id):
-    # TODO implement checking user_id
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
-
     user = None
     token = request.POST.get('token', '')
     if token:
@@ -881,14 +830,9 @@ def block_user(request, user_id):
 
 
 @csrf_exempt
+@system_writable
 def unblock_user(request, user_id):
     # TODO implement checking user_id
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     user = None
     token = request.POST.get('token', '')
@@ -907,13 +851,8 @@ def unblock_user(request, user_id):
 
 
 @csrf_exempt
+@system_writable
 def password_reset(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     if request.method == "POST":
         form = PasswordResetForm(request.POST)
@@ -940,13 +879,9 @@ def password_reset(request):
 
 
 @csrf_exempt
+@system_writable
 def accept_follow(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
+
     data = {}
     token = request.GET.get('token', None)
     user_id = request.POST.get('user_id', None)
@@ -983,15 +918,10 @@ def accept_follow(request):
         return return_not_found(message=_("Follow request not exists"))
 
 
+@system_writable
 def follow_requests(request):
     offset = int(request.GET.get('offset', 0))
     limit = 20
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     token = request.GET.get('token', None)
     if not token:
@@ -1056,13 +986,8 @@ def create_bill(request):
 
 
 @csrf_exempt
+@system_writable
 def inc_credit_2(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     user = None
     token = request.GET.get('token', '')

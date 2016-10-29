@@ -5,11 +5,12 @@ from django.http import UnreadablePostError
 from pin.tools import AuthCache
 from pin.models import Comments, Post, Follow
 from pin.api6.tools import get_int, get_next_url,\
-    get_comments, comment_objects_list, comment_item_json, is_system_writable
+    get_comments, comment_objects_list, comment_item_json
 from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
     return_bad_request
 from pin.tools import check_block, get_post_user_cache
 from pin.toolkit import check_auth
+from pin.decorators import system_writable
 
 
 def comment_post(request, item_id):
@@ -30,13 +31,8 @@ def comment_post(request, item_id):
 
 
 @csrf_exempt
+@system_writable
 def add_comment(request, item_id):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     user = check_auth(request)
     if not user:
@@ -95,13 +91,8 @@ def add_comment(request, item_id):
         })
 
 
+@system_writable
 def delete_comment(request, comment_id):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     user = check_auth(request)
     if not user:
@@ -136,13 +127,8 @@ def delete_comment(request, comment_id):
 
 
 @csrf_exempt
+@system_writable
 def delete_comments(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     comment_ids = request.POST.get("comment_id", None)
     if not comment_ids:
@@ -178,14 +164,8 @@ def delete_comments(request):
 
 
 @csrf_exempt
+@system_writable
 def report(request, comment_id):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
-
     token = request.GET.get('token', '')
     if token:
         current_user = AuthCache.user_from_token(token=token)

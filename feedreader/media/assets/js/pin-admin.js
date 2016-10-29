@@ -1,18 +1,24 @@
 $('body').on('click', ".item-to-index", function(){
     var obj = $(this);
     var like_url=obj.attr('href');
+
     $.ajax({
         url: like_url,
-        success: function(data) {                
-            var o = jQuery.parseJSON(data)[0];
-            
-            if (o.status == 1){
-                obj.html('<i class="fa fa-times red"></i>');
-                obj.attr('href', o.url);
+        success: function(data) {
+            if (data.status == true){
+                if (data.type == 1){
+                    obj.html('<i class="fa fa-times red"></i>');
+                    obj.attr('href', data.url);
+                    obj.attr('data-original-title', "حذف از صفحه اول");
+
+                }else{
+                    obj.html('<i class="fa fa-check green"></i>');
+                    obj.attr('href', data.url);
+                }
             }else{
-                obj.html('<i class="fa fa-check green"></i>');
-                obj.attr('href', o.url);
+                alertify.error(data.message);
             }
+
         }
     });
     return false;
@@ -20,9 +26,9 @@ $('body').on('click', ".item-to-index", function(){
 
 $( "body" ).on('click', ".postfault", function(){
     if (confirm('این مطلب تخلف محصوب می شود؟')){
-        var obj = $(this); 
+        var obj = $(this);
         var parent_to_del = $(obj).parents("div.feed-item");
-        
+
         obj.addClass('disabled');
         var like_url=obj.attr('href');
         $.ajax({
@@ -54,6 +60,6 @@ $( "body" ).on('click', ".postfault", function(){
 //             }
 //         }
 //     });
-    
+
 //     return false;
 // });

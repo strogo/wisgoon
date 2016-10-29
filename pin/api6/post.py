@@ -11,11 +11,12 @@ from django.http import UnreadablePostError
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
 
+from pin.decorators import system_writable
 from pin.models import Post, Report, Ad, ReportedPost
 from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
-    get_list_post, get_objects_list, ad_item_json, is_system_writable,\
+    get_list_post, get_objects_list, ad_item_json,\
     category_get_json, check_user_state
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
@@ -264,13 +265,8 @@ def item(request, item_id):
     return return_json_data(data)
 
 
+@system_writable
 def report(request, item_id):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     token = request.GET.get('token', False)
     if token:
@@ -308,13 +304,8 @@ def report(request, item_id):
 
 
 @csrf_exempt
+@system_writable
 def edit(request, item_id):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     from pin.forms import PinUpdateForm
 
@@ -365,13 +356,8 @@ def edit(request, item_id):
 
 
 @csrf_exempt
+@system_writable
 def send(request):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
     # Get User From Token
     token = request.GET.get('token', False)
     if token:
@@ -588,13 +574,8 @@ def hashtag(request, tag_name):
 
 
 @csrf_exempt
+@system_writable
 def delete(request, item_id):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     """Delete post."""
     # Get User From Token
@@ -650,13 +631,8 @@ def promotion_prices(request):
 
 
 @csrf_exempt
+@system_writable
 def post_promote(request, post_id):
-    if is_system_writable() is False:
-        data = {
-            'status': False,
-            'message': _('Website update in progress.')
-        }
-        return return_json_data(data)
 
     try:
         Post.objects.get(id=int(post_id))

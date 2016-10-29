@@ -186,7 +186,7 @@ hr{border-color: #d0d9e2 !important;}
 	padding-right: 0px;
 }
 .nav_user_avatar ul li{
-	position: relative;	
+	position: relative;
 }
 #top-userinfo > ul > li {
 	float: left;
@@ -347,7 +347,7 @@ hr{border-color: #d0d9e2 !important;}
 }
 a, a:link, a:hover, a:visited {
 	/*color: #fff;*/
-	
+
 }
 /* notification */
 .notification{
@@ -384,7 +384,7 @@ a, a:link, a:hover, a:visited {
 }
 .setting{
 	position: relative;
-} 
+}
 .setting > a{
 	padding: 25px 20px;
 	display: block;
@@ -422,7 +422,7 @@ a, a:link, a:hover, a:visited {
 #top-categories{
 	background-color: #f0f2f5;
 	color: #888;
-	border-bottom: 1px solid #b6bcc7; 
+	border-bottom: 1px solid #b6bcc7;
 }
 #top-categories a{
 	color: #656d78;
@@ -449,7 +449,7 @@ a, a:link, a:hover, a:visited {
 	text-align: center;
 }
 .cat-border-left{
-	border-left: 2px solid #fffff9;	
+	border-left: 2px solid #fffff9;
 }
 .cat-border-right{
 
@@ -485,7 +485,7 @@ a, a:link, a:hover, a:visited {
 }
 
 .feed-item{
-	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); 
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 	background-color: #fff;
 	border-radius: 10px 10px 15px 15px;
 	float: right;
@@ -556,7 +556,7 @@ a, a:link, a:hover, a:visited {
 .feed-item .username a{
 	color: #656d78;
 	font-size: 13px;
-	
+
 }
 .feed-item .avatar-box{
 	/*border-top: 1px solid #d5d7e4;*/
@@ -640,7 +640,7 @@ i.cnt_view_icon{
 	color: #434a54;
 }
 .post-action .likes:hover span.count{
-	color: 
+	color:
 }
 span.like_icon,
 .post-action .likes span.like_icon{
@@ -733,7 +733,7 @@ span.cmnt_icon,
 	padding: 10px;
 	text-align: right;
 	overflow: hidden;
-	
+
 }
 .post-tags a,
 .feed-item .tags a{
@@ -789,7 +789,7 @@ span.cmnt_icon,
 	padding-bottom: 10px;
 	padding-left: 6px;
 	padding-right: 4px !important;
-	padding-top: 10px;	
+	padding-top: 10px;
 }
 .footer-nav a{
 	color: #aab2bd;
@@ -853,7 +853,7 @@ a.btn.btn-primary {
 	padding: 5px 0;
 	text-align: left;
 
-	
+
 }
 .sidebar .profile .username a{
 	color: #656d78;
@@ -934,10 +934,10 @@ a.btn.btn-primary {
 	background: #FF002A;
 	border-color: #FF002A;
 }
-.wis_btn.red, 
+.wis_btn.red,
 .wis_btn.red *{
 	color: #fff;
-} 
+}
 .wis_btn.red:hover{
 	background: #D80827;
 	border-color: #D80827;
@@ -1930,7 +1930,7 @@ div.comment div div.row:hover .del-comment{
 	width: 100%;
 }
 #load-more #comment_load_more.nob{
-	border-top: 0;	
+	border-top: 0;
 }
 #comment_load_more > div{
 	height: 25px;
@@ -1948,7 +1948,7 @@ div.comment div div.row:hover .del-comment{
 	margin-bottom: 20px;
 }
 .category-title{
-	background: rgb(67, 74, 84); 
+	background: rgb(67, 74, 84);
 	color: rgb(255, 255, 255);
 	margin-top: 20px;
 }
@@ -1956,10 +1956,10 @@ div.comment div div.row:hover .del-comment{
 	color:#d39e00;
 }
 .category-title > a{
-	margin: 18px 10px; 
-	display: inline-block; 
-	font-size: 18px; 
-	padding: 11px; 
+	margin: 18px 10px;
+	display: inline-block;
+	font-size: 18px;
+	padding: 11px;
 	color: rgb(255, 255, 255);
 	float:left;
 }
@@ -2234,7 +2234,7 @@ div.comment div div.row:hover .del-comment{
 	display: block !important;
 }
 .nav_user_avatar .dropdown-menu li a{
-	
+
 }
 .nav_user_avatar .dropdown-menu li a:hover{
 	color: #FFAF00 !important;
@@ -2449,7 +2449,7 @@ div.comment div div.row:hover .del-comment{
 
 /* profile */
 .profile_header{
-	color: 
+	color:
 }
 .profile_header .user_stats .badge{
 	background-color: #E9E9E9;
@@ -3041,7 +3041,7 @@ div.comment div div.row:hover .del-comment{
 .alert,
 .alert *{
 	color: #fff !important;
-	opacity: 1;	
+	opacity: 1;
 }
 .feed-item .alert-warning {
 	color: #555 !important;
@@ -3120,7 +3120,7 @@ div.comment div div.row:hover .del-comment{
 }
 
 .sticky_top{
-	
+
 }
 .sticky_top .fa.fa-times{
 	left: 0;
@@ -3166,7 +3166,7 @@ div.comment div div.row:hover .del-comment{
 	.error_page{
 		width: 100%;
 	}
-	
+
 }
 @media (max-width: 838px) {
 	.navbar-header img {
@@ -3205,7 +3205,7 @@ div.comment div div.row:hover .del-comment{
 	.wis_form.logout .logo_box{
 		width: 100%;
 	}
-	
+
 	.notif_page #feed .notif-item,
 	.notif_page #feed{
 		width: 100% !important;
@@ -3295,7 +3295,7 @@ div.comment div div.row:hover .del-comment{
 	.post-content #submit_comment .avatar {
 		float: initial;
 	}
-	
+
 	.post-sidebar {
 		float: initial;
 		width: 100%;
@@ -3327,7 +3327,7 @@ div.comment div div.row:hover .del-comment{
 	.post-sidebar .user-posts .user-post-item img{
 		height: auto !important;
 	}
-	
+
 	.mohrama-eleman {
 		float: right;
 		right: 0;
@@ -3335,7 +3335,7 @@ div.comment div div.row:hover .del-comment{
 	.top-search{
 		margin:0;
 	}
-	
+
 	.mohrama-eleman,
 	#wis_navbar,
 	.navbar-toggle{
@@ -3352,7 +3352,7 @@ div.comment div div.row:hover .del-comment{
 	.alertify-notifier{
 		margin-bottom: 70px;
 	}
-	
+
 }
 
 @media (max-width: 600px) {
@@ -3486,3 +3486,4 @@ div.comment div div.row:hover .del-comment{
 		width: 100%;
 	}
 }
+

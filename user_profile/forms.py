@@ -6,7 +6,7 @@ class ProfileForm(ModelForm):
     class Meta:
         model = Profile
         fields = ('name', 'location', 'website',
-                  'bio', 'avatar', 'jens')
+                  'bio', 'avatar', 'jens', 'is_private')
 
 
 class ProfileForm2(ModelForm):

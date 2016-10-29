@@ -14,11 +14,6 @@ class Command(BaseCommand):
         print "=================================="
 
         camp_id = options['camp_id']
-        # camp_id = raw_input("Enter camp id: ")
-        # try:
-        #     camp_id = int(camp_id)
-        # except:
-        #     camp_id = None
 
         if not camp_id:
             print "Enter camp id"
@@ -42,6 +37,7 @@ class Command(BaseCommand):
         print "len post", len(posts)
 
         for post in posts:
+            print post.pk
             try:
                 post_obj = Post.objects.get(id=post.pk)
                 u = str(post_obj.user.username)
@@ -57,12 +53,12 @@ class Command(BaseCommand):
                     dn["count"] += 1
 
             except Exception:
-                pass
+                continue
 
         winners = sorted(user_obj.items(),
                          key=lambda x: getitem(x[1], 'like'),
                          reverse=True)
-        print winners
+        # print winners
 
         camp_winners, created = CampaignWinners.objects\
             .get_or_create(campaign=camp)

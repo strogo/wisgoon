@@ -12,7 +12,8 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
-from pin.models import Post, Follow, Likes, Category, Comments, Results
+from pin.models import Post, Follow, Likes, Category, Comments, Results,\
+    FollowRequest
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
     get_user_ip, get_delta_timestamp, AuthCache
 
@@ -31,7 +32,7 @@ REPORT_TYPE = settings.REPORT_TYPE
 
 
 def angular(request):
-    return render(request, 'angular/home.html') 
+    return render(request, 'angular/home.html')
 
 
 def check_user_agent(request):
@@ -582,18 +583,24 @@ def absuser_followers(request, user_namefl):
 
         if not check_block(user_id=user.id, blocked_id=request.user.id):
             if older:
-                friends = Follow.objects.filter(following_id=user_id, id__lt=older)\
+                friends = Follow.objects\
+                    .filter(following_id=user_id, id__lt=older)\
                     .order_by('-id')[:16]
             else:
-                friends = Follow.objects.filter(following_id=user_id)\
+                friends = Follow.objects\
+                    .filter(following_id=user_id)\
                     .order_by('-id')[:16]
     else:
         if older:
-            friends = Follow.objects.filter(following_id=user_id, id__lt=older)\
+            friends = Follow.objects\
+                .filter(following_id=user_id,
+                        id__lt=older)\
                 .order_by('-id')[:16]
         else:
-            friends = Follow.objects.filter(following_id=user_id)\
+            friends = Follow.objects\
+                .filter(following_id=user_id)\
                 .order_by('-id')[:16]
+
     if request.is_ajax():
         if friends and friends.exists():
             return render(request, 'pin2/_user_followers.html', {
@@ -609,6 +616,7 @@ def absuser_followers(request, user_namefl):
                                                   following=user.id).exists()
             following_status = Follow.objects.filter(following=request.user.id,
                                                      follower=user.id).exists()
+
         else:
             follow_status = 0
             following_status = 0
@@ -620,7 +628,7 @@ def absuser_followers(request, user_namefl):
             'profile': profile,
             'follow_status': follow_status,
             'following_status': following_status,
-            'user': user
+            'user': user,
         })
 
 
@@ -890,6 +898,7 @@ def absuser(request, user_name=None):
         raise Http404
 
     user_id = user.id
+    follow_req = False
 
     try:
         profile = Profile.objects.get(user_id=user_id)
@@ -946,6 +955,10 @@ def absuser(request, user_name=None):
                                               following=user.id).exists()
         following_status = Follow.objects.filter(following=request.user.id,
                                                  follower=user.id).exists()
+        if profile.is_private and not follow_status:
+                follow_req = FollowRequest.objects\
+                    .filter(user_id=request.user.id,
+                            target_id=user.id).exists()
     else:
         follow_status = 0
         following_status = 0
@@ -959,6 +972,8 @@ def absuser(request, user_name=None):
         'user_id': int(user_id),
         'profile': profile,
         'page': "profile",
+        'follow_req': follow_req,
+        'is_private': profile.is_private
     })
 
 

@@ -3,6 +3,29 @@
 {% load daddy_avatar%}
 
 {% spaceless %}
+{% if is_private %}
+	{% if follow_requests %}
+		{% with follow_requests.user.id as user_id %}
+		{% with follow_requests.cnt_requests as cnt_requests %}
+		<div class="notif-item">
+
+			<div class="notif-actors col-md-2 col-sm-2 col-xs-2 pull-right">
+				<div>
+					<a target="_blank" href="{% url 'pin-absuser' user_id|get_absusername %}" class="user-avatar" data-toggle="tooltip" data-placement="bottom" title="{{user_id|get_absusername}}">
+						<img class="nav-avatar" src="{{user_id|get_userdata_avatar:50}}">
+					</a>
+				</div>
+			</div>
+			<div class="notif-type col-md-5 col-sm-5 col-xs-8">
+				<a href="{% url 'pin-follow-request'%}">{{cnt_requests}} درخواست دوستی </a>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="clear"></div>
+		{% endwith %}
+		{% endwith %}
+	{% endif %}
+{% endif %}
 {% for item in notif %}
 <div class="notif-item">
 	{% if item.type != 10 %}
