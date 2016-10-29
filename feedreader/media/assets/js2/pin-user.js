@@ -488,7 +488,7 @@ $('body').on('click', '.ajax-follow', function(event) {
                     alertify.success(response.message);
                     t.attr('href', '/pin/follow/' + t.data('user-id') + '/1/');
                     if (t.hasClass('gray')){
-                        t.removeClass(gray);
+                        t.removeClass('gray');
                     }
                     if (t.hasClass('red')){
                         t.removeClass('red');
