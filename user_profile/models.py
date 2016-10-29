@@ -89,7 +89,7 @@ class Profile(models.Model):
 
     banned = models.BooleanField(default=False)
     is_private = models.BooleanField(default=False,
-                                     verbose_name=_('شخصی'))
+                                     verbose_name=_('Private'))
 
     version = models.IntegerField(default=0, blank=False, null=True)
 
