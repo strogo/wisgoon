@@ -844,7 +844,7 @@ msgstr "شما یک پیام جدید دارید"
 
 #: views_user.py:105
 msgid "Your follow request successfully send."
-msgstr "درخواست دوستی شما با موفقس"
+msgstr "درخواست دوستی شما با موفقیت ارسال شد"
 
 #: views_user.py:111 views_user.py:784
 msgid "Your connection successfully established."
@@ -902,7 +902,7 @@ msgstr "آپلود ناموفق"
 
 #: views_user.py:758
 msgid "Successfully remove your follow request"
-msgstr "درخواست دوستی شما با موفقت حذف گردید"
+msgstr "درخواست دوستی شما با موفقیت حذف گردید"
 
 #: views_user.py:789
 msgid "Decline follow request"
