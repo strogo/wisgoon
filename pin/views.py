@@ -936,23 +936,27 @@ def absuser(request, user_name=None):
 
     # profile.cnt_follower = Follow.objects.filter(following_id=user.id).count()
     # profile.cnt_following = Follow.objects.filter(follower_id=user.id).count()
+    if cur_user_id != user_id:
+        if is_authenticated:
+            # check follow status
+            follow_status = Follow.objects\
+                .filter(follower_id=cur_user_id,
+                        following_id=user_id).exists()
 
-    if is_authenticated:
+            following_status = Follow.objects\
+                .filter(following_id=cur_user_id,
+                        follower_id=user_id).exists()
 
-        # check follow status
-        follow_status = Follow.objects.filter(follower_id=cur_user_id,
-                                              following_id=user_id).exists()
-        following_status = Follow.objects.filter(following_id=cur_user_id,
-                                                 follower_id=user_id).exists()
+            # check private profile
+            if profile.is_private and not follow_status:
+                follow_req = FollowRequest.objects\
+                    .filter(user_id=cur_user_id,
+                            target_id=user_id).exists()
+            if check_block(user_id=profile.user_id, blocked_id=cur_user_id):
+                is_block = True
 
-        # check private profile
-        if profile.is_private and not follow_status:
-            follow_req = FollowRequest.objects\
-                .filter(user_id=cur_user_id,
-                        target_id=user_id).exists()
-
-        if check_block(user_id=profile.user_id, blocked_id=cur_user_id):
-            is_block = True
+    else:
+        follow_status = True
 
     if not is_block and follow_status:
         for li in lt:
