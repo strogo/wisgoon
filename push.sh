@@ -3,6 +3,10 @@
 send(){
 	# git add .
 	# git commit -m "changes"
+    
+    ## git remote add gitlab git@gitlab.com:vchakoshy/wisgoon.git
+    git push gitlab master
+
 	git push new devel
 	ssh wisgoon@79.127.125.104 "cd /home/wisgoon/new/ && git merge devel && touch reload-new"
 }
