@@ -41,14 +41,6 @@ DATABASES = {
         'PASSWORD': 'somaye',
         'HOST': 'localhost',
     },
-    'postgres': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'wisgoon',
-        'USER': 'wisgoon_user',
-        'PASSWORD': 'nN7E9M0rAYiuE',
-        'HOST': 'localhost',
-        'PORT': '',
-    },
 }
 
 NEO4J_DATABASE = "http://localhost:7474/db/data/"

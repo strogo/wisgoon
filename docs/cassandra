@@ -7,3 +7,6 @@ CREATE INDEX no_hash ON notification (hash);
 
 CREATE TABLE streams (name text, post_id int, owner int , primary key(name, post_id)) WITH CLUSTERING ORDER BY (post_id desc);
 CREATE INDEX streams_owner ON streams (owner);
+
+CREATE TABLE user_stream (user_id int, post_id int, post_owner int, PRIMARY KEY (user_id, post_id)) WITH CLUSTERING ORDER BY (post_id DESC);
+CREATE INDEX index_user_stream_post_owner ON user_stream (post_owner);
