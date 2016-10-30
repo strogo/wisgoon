@@ -26,20 +26,32 @@ class Notification(CassandraModel):
 
     def set_notif(self, a_user_id, a_type, a_actor, a_object_id, a_date):
         ttl = 30 * 86400
-
+        status = True
         if not a_object_id:
             a_object_id = 0
 
         hash_str = "{}:{}:{}".format(a_actor, a_object_id, a_type)
 
+        # if notif was not comment
         if a_type != 2:
             query = """
-            SELECT user_id FROM notification
+            SELECT user_id, deleted, date FROM notification
             where user_id = {} AND hash = '{}'
             """.format(a_user_id, hash_str)
 
             res = session.execute(query)
+
+            # if exists row, update deleted=True
             if res.current_rows:
+                status = False
+                deleted = res.current_rows[0].deleted
+                date = res.current_rows[0].date
+                if not deleted:
+                    query = """
+                            UPDATE notification SET deleted={}
+                            WHERE user_id = {} AND date = {}
+                            """.format(True, a_user_id, date)
+                    session.execute(query)
                 return
 
         query = """INSERT INTO notification
@@ -49,18 +61,19 @@ class Notification(CassandraModel):
             .format(a_user_id, a_date,
                     a_actor, a_object_id, a_type, False, hash_str, ttl)
         session.execute(query)
+        return status
 
     def get_notif(self, a_user_id, older=None):
         if older:
             query = """
             SELECT * FROM notification
             WHERE user_id = {}
-            AND date<{}
+            AND date<{} AND deleted=False
             LIMIT 20""".format(a_user_id, older)
         else:
             query = """
             SELECT * FROM notification
-            WHERE user_id = {}
+            WHERE user_id = {} AND deleted=False
             LIMIT 20""".format(a_user_id)
 
         res = session.execute(query)

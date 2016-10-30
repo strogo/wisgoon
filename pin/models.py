@@ -990,8 +990,17 @@ class Follow(models.Model):
         # from pin.tasks import remove_from_stream
         # remove_from_stream.delay(user_id=follower_id, owner_id=following_id)
 
-        from models_casper import UserStream
+        from models_casper import UserStream, Notification
         us = UserStream()
+        notif = Notification()
+        notif.set_notif(a_user_id=following_id, a_type=10,
+                        a_object_id=None, a_actor=follower_id,
+                        a_date=int(time.time()))
+
+        # decrement_cnt_notif on redis
+        from models_redis import NotificationRedis
+        NotificationRedis(user_id=following_id).decrement_cnt_notif()
+
         us.unfollow(follower_id, following_id)
         # remove_from_stream(user_id=following_id, owner_id=follower_id)
 

@@ -7,10 +7,9 @@
 
 	<title>{{SITE_NAME_FA}} {% block title%}{% endblock title%}</title>
 	<meta name="description" content="{%block description%}{{SITE_DESC}}{%endblock%}" />
-	
+
 	{% block opengraph %} {% endblock %}
 	{% include "pin2/all_header.html" %}
-
 	<script type="text/javascript">
 		var media_url = "{{MEDIA_URL}}";
 		var upload_url = "{% url 'pin-upload' %}";
@@ -19,7 +18,7 @@
 	{% include "base/analytics.html"%}
 </head>
 <body class="{{page}} {% if request.user_agent.is_mobile %}mobile_page{% endif %}">
-	
+
 	{% if not request.COOKIES.no_download %}
 	{% include "pin2/includes/_sticky_download.html" %}
 	{% endif %}
@@ -33,7 +32,7 @@
 		{% include "base/tabliq.html" %}
 	</div>
 	{% endif %}
-	
+
 	{% block content %}{% endblock content%}
 
 	{% if next_url %}
@@ -61,10 +60,10 @@
 	{% include "pin2/footer.html" %}
 
 	{% block footer_script %}{% endblock %}
-	
+
 	{% block footer_ex_js %}
 	{% endblock footer_ex_js %}
-	
+
 	{% block js %}
 	{% endblock js %}
 

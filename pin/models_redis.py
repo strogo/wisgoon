@@ -71,9 +71,13 @@ class NotificationRedis(object):
 
         if is_system_writable():
             n = Notification()
-            n.set_notif(self.user_id, ntype, actor, post, int(time.time()))
-
-            notificationRedis.incr(self.KEY_PREFIX_CNT)
+            status = n.set_notif(self.user_id,
+                                 ntype,
+                                 actor,
+                                 post,
+                                 int(time.time()))
+            if status:
+                notificationRedis.incr(self.KEY_PREFIX_CNT)
 
     def get_notif(self, start=0, limit=20):
         us = Notification()
@@ -115,6 +119,13 @@ class NotificationRedis(object):
         if not cnt:
             cnt = 0
         return cnt
+
+    def decrement_cnt_notif(self):
+        cnt = notificationRedis.get(self.KEY_PREFIX_CNT)
+        if not cnt:
+            cnt = 0
+        if int(cnt) > 0:
+            notificationRedis.decr(self.KEY_PREFIX_CNT)
 
 
 class ActivityRedis(object):
@@ -211,9 +222,11 @@ class LikesRedis(object):
         rListServer.lrem(self.keyNameList, user_id)
         rSetServer.srem(self.keyNameSet, str(user_id))
 
+        # post update cnt like
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') - 1)
 
+        # update post last liker
         user_last_likes = "{}_{}".\
             format(settings.USER_LAST_LIKES, int(user_id))
         rListServer.lrem(user_last_likes, self.postId)
@@ -222,6 +235,17 @@ class LikesRedis(object):
 
         from pin.model_mongo import MonthlyStats
         MonthlyStats.log_hit(object_type=MonthlyStats.DISLIKE)
+
+        # remove notif on cassandra
+        notif = Notification()
+        notif.set_notif(post_owner,
+                        settings.NOTIFICATION_TYPE_LIKE,
+                        user_id,
+                        self.postId,
+                        int(time.time()))
+
+        # decrement_cnt_notif on redis
+        NotificationRedis(user_id=post_owner).decrement_cnt_notif()
 
     def like(self, user_id, post_owner, user_ip):
         rSetServer.sadd(self.keyNameSet, str(user_id))

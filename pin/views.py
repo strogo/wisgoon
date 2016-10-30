@@ -965,8 +965,6 @@ def absuser(request, user_name=None):
     if not is_block and show_posts:
         for li in lt:
             pob = post_item_json(li.id, cur_user_id=cur_user_id)
-            print pob
-            print "=============="
             if pob:
                 latest_items.append(pob)
 
