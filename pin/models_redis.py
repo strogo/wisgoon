@@ -103,7 +103,13 @@ class NotificationRedis(object):
             o['id'] = nl.date
 
             o['type'] = nl.type
-            o['post'] = nl.object_id
+
+            if notif_type == 2:
+                hash_str = nl.hash.split(':')
+                o['post'] = hash_str[1]
+            else:
+                o['post'] = nl.object_id
+
             o['last_actor'] = nl.actor
             o['seen'] = True
             o['post_image'] = ""
