@@ -68,7 +68,7 @@ class NotificationRedis(object):
 
     def set_notif(self, ntype, post, actor, seen=False, post_image=None):
         from pin.api6.tools import is_system_writable
-
+        from pin.tasks import gcm_push
         if is_system_writable():
             n = Notification()
             status = n.set_notif(self.user_id,
@@ -77,6 +77,7 @@ class NotificationRedis(object):
                                  post,
                                  int(time.time()))
             if status:
+                gcm_push(self.user_id, ntype, post, actor, time.time(), None)
                 notificationRedis.incr(self.KEY_PREFIX_CNT)
 
     def get_notif(self, start=0, limit=20):
@@ -236,13 +237,12 @@ class LikesRedis(object):
         from pin.model_mongo import MonthlyStats
         MonthlyStats.log_hit(object_type=MonthlyStats.DISLIKE)
 
-        # remove notif on cassandra
+        # Update notif on cassandra
         notif = Notification()
-        notif.set_notif(post_owner,
-                        settings.NOTIFICATION_TYPE_LIKE,
-                        user_id,
-                        self.postId,
-                        int(time.time()))
+        notif.update_notif(a_user_id=post_owner,
+                           a_type=settings.NOTIFICATION_TYPE_LIKE,
+                           a_actor=user_id,
+                           a_object_id=self.postId)
 
         # decrement_cnt_notif on redis
         NotificationRedis(user_id=post_owner).decrement_cnt_notif()

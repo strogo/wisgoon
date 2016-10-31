@@ -1167,10 +1167,10 @@ class Likes(models.Model):
         str_likers = "web_likes_%s" % post.id
         cache.delete(str_likers)
 
-        from pin.actions import send_notif_bar
+        # from pin.actions import send_notif_bar
 
-        send_notif_bar(user=post.user_id, type=1, post=post.id,
-                       actor=sender.id)
+        # send_notif_bar(user=post.user_id, type=1, post=post.id,
+        #                actor=sender.id)
 
     @classmethod
     def user_likes(cls, user_id, pid=0):
@@ -1352,18 +1352,17 @@ class Comments(models.Model):
         post = get_post_user_cache(post_id=comment.object_pk_id)
         actors_list = []
 
+        # Push notif for post owner
         if comment.user_id != post.user_id:
             send_notif_bar(user=post.user_id, type=Notif.COMMENT, post=post.id,
                            actor=comment.user_id, comment=comment.comment)
 
             actors_list.append(post.user_id)
 
-        # comment_act(comment.object_pk_id, comment.user_id,
-        #             user_ip=comment.ip_address)
         if post.user_id == 11253:
             return
 
-        # mention = re.compile(ur'(?i)(?<=\@)\w+', re.UNICODE)
+        # Push notif for user metioned
         mention = re.compile("(?:^|\s)[＠ @]{1}([^\s#<>[\]|{}]+)", re.UNICODE)
         mentions = mention.findall(comment.comment)
         if mentions:
@@ -1378,16 +1377,6 @@ class Comments(models.Model):
                                    comment=comment.comment)
             return
 
-        # users = Comments.objects.filter(object_pk=post.id)\
-        #     .values_list('user_id', flat=True)
-        # for act in users:
-        #     if act in actors_list:
-        #         continue
-        #     actors_list.append(act)
-        #     if act != comment.user_id:
-        #         send_notif_bar(user=act, type=2, post=post.id,
-        #                        actor=comment.user_id)
-
     def delete(self, *args, **kwargs):
         Post.objects.filter(pk=self.object_pk.id)\
             .update(cnt_comment=F('cnt_comment') - 1)
@@ -1395,8 +1384,22 @@ class Comments(models.Model):
         comment_cache_name = "com_%d" % self.object_pk.id
         cache.delete(comment_cache_name)
         super(Comments, self).delete(*args, **kwargs)
+
+        # Remove notification
+        # from pin.models_casper import Notification
+        # notif = Notification()
+        # post_owner = self.object_pk.user_id
+        post_id = self.object_pk_id
+        # actor = self.user_id
+
+        # notif.set_notif(a_user_id=post_owner,
+        #                 a_type=Notif.COMMENT,
+        #                 a_actor=actor,
+        #                 a_object_id=post_id,
+        #                 a_date=int(time.time()))
+
         if settings.TUNING_CACHE:
-            PostCacheLayer(post_id=self.object_pk.id)\
+            PostCacheLayer(post_id=post_id)\
                 .delete_comment(self.object_pk.cnt_comment)
 
     @models.permalink
