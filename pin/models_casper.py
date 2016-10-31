@@ -24,14 +24,15 @@ class Notification(CassandraModel):
     def __init__(self):
         CassandraModel.__init__(self)
 
-    def set_notif(self, a_user_id, a_type, a_actor, a_object_id, a_date):
+    def set_notif(self, a_user_id, a_type, a_actor,
+                  a_object_id, a_date, comment=None):
         ttl = 30 * 86400
         status = True
         if not a_object_id:
             a_object_id = 0
 
         hash_str = "{}:{}:{}".format(a_actor, a_object_id, a_type)
-
+        print a_type, "type"
         # if notif was not comment
         if a_type != 2:
             query = """
@@ -46,6 +47,8 @@ class Notification(CassandraModel):
                 status = False
                 date = res.current_rows[0].date
                 self.remove_notif(a_user_id, date)
+        else:
+            a_object_id = int(comment.id)
 
         self.create_notif(a_user_id=a_user_id,
                           a_type=a_type,
@@ -121,19 +124,15 @@ class Notification(CassandraModel):
                         .format(a_user_id, date)
         session.execute(query)
 
-    def remove_comment_notif(self, a_user_id, a_type, a_actor, a_object_id):
-        if not a_object_id:
-            a_object_id = 0
+    def remove_comment_notif(self, a_user_id, comment_id):
 
-        hash_str = "{}:{}:{}".format(a_actor, a_object_id, a_type)
+        # hash_str = "{}:{}:{}".format(a_actor, a_object_id, a_type)
 
         # if notif was not comment
-
         query = """
         SELECT date FROM notification
-        where user_id = {} AND hash = '{}'
-        """.format(a_user_id, hash_str)
-
+        where user_id = {} AND object_id = {}
+        """.format(a_user_id, comment_id)
         res = session.execute(query)
 
         # if exists row, remove row

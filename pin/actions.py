@@ -20,7 +20,8 @@ def send_notif(user, type, post, actor, seen=False):
     return True
 
 
-def send_notif_bar(user, type, post, actor, seen=False, post_image=None,
+def send_notif_bar(user, type, post, actor,
+                   seen=False, post_image=None,
                    comment=None):
     if is_system_writable():
         try:

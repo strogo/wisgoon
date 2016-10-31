@@ -77,11 +77,12 @@ class NotificationRedis(object):
                                  ntype,
                                  actor,
                                  post,
-                                 int(time.time()))
+                                 int(time.time()),
+                                 comment)
             if status:
                 gcm_push(user_id=self.user_id, action_type=ntype,
                          post_id=post, actor_id=actor,
-                         timestamp=time.time(), comment=comment)
+                         timestamp=time.time(), comment=comment.comment)
 
                 notificationRedis.incr(self.KEY_PREFIX_CNT)
 

@@ -1353,14 +1353,14 @@ class Comments(models.Model):
         actors_list = []
 
         # Push notif for post owner
-        if comment.user_id != post.user_id:
-            send_notif_bar(user=post.user_id, type=Notif.COMMENT,
-                           post=comment.id, actor=comment.user_id,
-                           comment=comment.comment)
+        print comment.id, "models"
+        if comment.user_id != post.user.id:
+            send_notif_bar(user=post.user.id, type=Notif.COMMENT, post=post.id,
+                           actor=comment.user.id, comment=comment)
 
-            actors_list.append(post.user_id)
+            actors_list.append(post.user.id)
 
-        if post.user_id == 11253:
+        if post.user.id == 11253:
             return
 
         # Push notif for user metioned
@@ -1372,12 +1372,10 @@ class Comments(models.Model):
                     u = User.objects.only('id').get(username=username)
                 except User.DoesNotExist:
                     continue
-                if u.id != comment.user_id and u.id != post.user_id:
-                    send_notif_bar(user=u.id,
-                                   type=Notif.COMMENT,
-                                   post=comment.id,
+                if u.id != comment.user_id and u.id != post.user.id:
+                    send_notif_bar(user=u.id, type=Notif.COMMENT, post=post.id,
                                    actor=comment.user_id,
-                                   comment=comment.comment)
+                                   comment=comment)
             return
 
     def delete(self, *args, **kwargs):
@@ -1408,9 +1406,7 @@ class Comments(models.Model):
         for user_id in actors_list:
             notif = Notification()
             notif.remove_comment_notif(a_user_id=user_id,
-                                       a_type=Notif.COMMENT,
-                                       a_actor=self.user_id,
-                                       a_object_id=comment_id)
+                                       comment_id=comment_id)
 
         if settings.TUNING_CACHE:
             post_id = self.object_pk_id
