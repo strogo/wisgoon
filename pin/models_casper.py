@@ -121,6 +121,26 @@ class Notification(CassandraModel):
                         .format(a_user_id, date)
         session.execute(query)
 
+    def remove_comment_notif(self, a_user_id, a_type, a_actor, a_object_id):
+        if not a_object_id:
+            a_object_id = 0
+
+        hash_str = "{}:{}:{}".format(a_actor, a_object_id, a_type)
+
+        # if notif was not comment
+
+        query = """
+        SELECT date FROM notification
+        where user_id = {} AND hash = '{}'
+        """.format(a_user_id, hash_str)
+
+        res = session.execute(query)
+
+        # if exists row, remove row
+        if res.current_rows:
+            date = res.current_rows[0].date
+            self.remove_notif(a_user_id, date)
+
 
 class PostStats(CassandraModel):
     post_id = None

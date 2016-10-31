@@ -67,7 +67,8 @@ class NotificationRedis(object):
         self.KEY_PREFIX_CNT = self.KEY_PREFIX_CNT.format(user_id)
 
     def set_notif(self, ntype, post, actor,
-                  seen=False, post_image=None, comment=None):
+                  seen=False, post_image=None,
+                  comment=None):
         from pin.api6.tools import is_system_writable
         from pin.tasks import gcm_push
         if is_system_writable():

@@ -1354,8 +1354,9 @@ class Comments(models.Model):
 
         # Push notif for post owner
         if comment.user_id != post.user_id:
-            send_notif_bar(user=post.user_id, type=Notif.COMMENT, post=post.id,
-                           actor=comment.user_id, comment=comment.comment)
+            send_notif_bar(user=post.user_id, type=Notif.COMMENT,
+                           post=comment.id, actor=comment.user_id,
+                           comment=comment.comment)
 
             actors_list.append(post.user_id)
 
@@ -1372,33 +1373,47 @@ class Comments(models.Model):
                 except User.DoesNotExist:
                     continue
                 if u.id != comment.user_id and u.id != post.user_id:
-                    send_notif_bar(user=u.id, type=Notif.COMMENT, post=post.id,
+                    send_notif_bar(user=u.id,
+                                   type=Notif.COMMENT,
+                                   post=comment.id,
                                    actor=comment.user_id,
                                    comment=comment.comment)
             return
 
     def delete(self, *args, **kwargs):
+        from pin.models_casper import Notification
+
         Post.objects.filter(pk=self.object_pk.id)\
             .update(cnt_comment=F('cnt_comment') - 1)
 
         comment_cache_name = "com_%d" % self.object_pk.id
         cache.delete(comment_cache_name)
+        comment_id = self.id
         super(Comments, self).delete(*args, **kwargs)
 
-        # Remove notification
-        # from pin.models_casper import Notification
-        # notif = Notification()
-        # post_owner = self.object_pk.user_id
-        post_id = self.object_pk_id
-        # actor = self.user_id
+        """ Get mention user id """
+        actors_list = [self.object_pk.user_id]
+        mention = re.compile("(?:^|\s)[＠ @]{1}([^\s#<>[\]|{}]+)", re.UNICODE)
+        mentions = mention.findall(self.comment)
+        if mentions:
+            for username in mentions:
+                try:
+                    u = User.objects.only('id').get(username=username)
+                except User.DoesNotExist:
+                    continue
+                if u.id != self.user_id and u.id != self.object_pk.user_id:
+                    actors_list.append(u.id)
 
-        # notif.set_notif(a_user_id=post_owner,
-        #                 a_type=Notif.COMMENT,
-        #                 a_actor=actor,
-        #                 a_object_id=post_id,
-        #                 a_date=int(time.time()))
+        """ Remove notification from cassandra """
+        for user_id in actors_list:
+            notif = Notification()
+            notif.remove_comment_notif(a_user_id=user_id,
+                                       a_type=Notif.COMMENT,
+                                       a_actor=self.user_id,
+                                       a_object_id=comment_id)
 
         if settings.TUNING_CACHE:
+            post_id = self.object_pk_id
             PostCacheLayer(post_id=post_id)\
                 .delete_comment(self.object_pk.cnt_comment)
 
