@@ -26,12 +26,22 @@ def send_notif_bar(user, type, post, actor, seen=False, post_image=None,
         try:
             if settings.USE_CELERY:
                 # gcm_push(user, type, post, actor, time.time(), comment)
-                notif_send.delay(user, type, post, actor, seen=False,
-                                 post_image=post_image, comment=comment)
+                notif_send.delay(user_id=user,
+                                 type=type,
+                                 post=post,
+                                 actor_id=actor,
+                                 seen=False,
+                                 post_image=post_image,
+                                 comment=comment)
             else:
                 # gcm_push(user, type, post, actor, time.time(), comment)
-                notif_send(user, type, post, actor, seen=False,
-                           post_image=post_image, comment=comment)
+                notif_send(user_id=user,
+                           type=type,
+                           post=post,
+                           actor_id=actor,
+                           seen=False,
+                           post_image=post_image,
+                           comment=comment)
         except Exception, e:
             print str(e)
     return None
