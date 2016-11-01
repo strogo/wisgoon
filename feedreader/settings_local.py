@@ -386,6 +386,9 @@ CELERY_ROUTES.update({
     },
     'wisgoon.gcm.send': {
         'queue': 'wisgoon.gcm.send'
+    },
+    'wisgoon.pin.ltrim_user_stream': {
+        'queue': 'wisgoon.pin.ltrim_user_stream'
     }
 })
 

@@ -446,3 +446,10 @@ def update_camp_post(camp_id):
 @app.task(name="tasks.camp_scores")
 def camp_scores(camp_id):
     call_command('campaign_scores', camp_id=camp_id)
+
+
+@app.task(name="tasks.ltrim_user_stream")
+def ltrim_user_stream(user_id):
+    from pin.models_casper import UserStream
+    us = UserStream()
+    us.ltrim(user_id)

@@ -1,7 +1,9 @@
+import redis
+
 from django.conf import settings
 from cassandra.cluster import Cluster
 from cassandra.query import BatchStatement, SimpleStatement
-import redis
+from pin.tasks import ltrim_user_stream
 
 isConnected = False
 session = None
@@ -245,12 +247,13 @@ class UserStream(CassandraModel):
         VALUES ( {}, {}, {});""".format(user_id, post_id, post_owner)
         session.execute(query)
 
+        # Ltrim user straem
         key = "ltrim:user:{}".format(user_id)
         get_key = redis_server.get(key)
         if not get_key:
             print "start ltrim user_id {}".format(user_id)
             try:
-                self.ltrim(user_id)
+                ltrim_user_stream.delay(user_id=user_id)
             except Exception as e:
                 print str(e)
             redis_server.set(key, 1, 3600)
