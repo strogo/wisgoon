@@ -939,6 +939,7 @@ def absuser(request, user_name=None):
     # profile.cnt_following = Follow.objects.filter(follower_id=user.id).count()
     if cur_user_id != user_id:
         if is_authenticated:
+            # get_simple_user_object(user_id, cur_user_id)
             # check follow status
             follow_status = Follow.objects\
                 .filter(follower_id=cur_user_id,

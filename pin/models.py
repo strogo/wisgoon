@@ -642,6 +642,7 @@ class Post(models.Model):
         # r_server.lpush(user_stream, post_id)
         # r_server.ltrim(user_stream, 0, 1000)
 
+        # print "add to stream {}".format(user_id)
         us = UserStream()
         us.add_post(user_id, post_id, post_owner)
 
