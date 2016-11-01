@@ -1,9 +1,12 @@
 from django.conf import settings
 from cassandra.cluster import Cluster
 from cassandra.query import BatchStatement, SimpleStatement
+import redis
 
 isConnected = False
 session = None
+
+redis_server = redis.Redis(settings.REDIS_DB_2)
 
 
 class CassandraModel():
@@ -241,6 +244,13 @@ class UserStream(CassandraModel):
         (user_id, post_id , post_owner )
         VALUES ( {}, {}, {});""".format(user_id, post_id, post_owner)
         session.execute(query)
+
+        key = "ltrim:user:{}".format(user_id)
+        get_key = redis_server.get(key)
+        if not get_key:
+            # print "start ltrim user_id {}".format(user_id)
+            self.ltrim(user_id)
+            redis_server.set(key, 1, 3600)
 
     def ltrim(self, user_id, limit=1000):
         query = """
