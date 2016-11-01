@@ -269,8 +269,9 @@ class UserStream(CassandraModel):
             return
 
         query = """
-        select post_id from user_stream WHERE user_id = {} and post_id < {};
-        """.format(user_id, last_post_id)
+        select post_id from user_stream
+        WHERE user_id = {} and post_id < {} limit {};
+        """.format(user_id, last_post_id, limit)
         rows = session.execute(query)
         cnt = 0
         batch = BatchStatement()
