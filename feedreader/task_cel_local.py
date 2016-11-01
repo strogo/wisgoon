@@ -17,9 +17,10 @@ app.conf.CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 
 
 @app.task(name="tasks.notif_test")
-def notif_send(user_id, type, post, actor_id, seen=False, post_image=None):
+def notif_send(user_id, type, post, actor_id,
+               seen=False, post_image=None, comment=None):
     NotificationRedis(user_id=user_id)\
-        .set_notif(ntype=type, post=post, actor=actor_id)
+        .set_notif(ntype=type, post=post, actor=actor_id, comment=comment)
 
     return "hello notif"
 

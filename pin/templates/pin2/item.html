@@ -28,7 +28,9 @@
                 <h3 class="wis_title">تصاویر مرتبط</h3>
             </div>
             <div class="col-md-9 col-sm-12 col-xs-12">
+            {% if DISPLAY_AD %}
                 {% include "pin2/tabliq/_728x90.html" %}
+            {%endif%}
             </div>
         </div>
         <div id="feed" class="masonry">
@@ -79,7 +81,7 @@
                 }else{
                     if (typeof curObj.images.thumbnail !== 'undefined') {
                         var width = curObj.images.thumbnail.width;
-                        var height = curObj.images.thumbnail.height;                    
+                        var height = curObj.images.thumbnail.height;
                     }else {
                         if (typeof curObj.images.original !== 'undefined') {
                             var width = curObj.images.original.width;

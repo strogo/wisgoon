@@ -898,21 +898,31 @@ def absuser(request, user_name=None):
         raise Http404
 
     user_id = user.id
+    cur_user = request.user
+    cur_user_id = request.user.id
     follow_req = False
+    is_authenticated = request.user.is_authenticated()
+    latest_items = []
+    is_block = False
+    ban_by_admin = False
+    follow_status = False
+    following_status = False
+    show_posts = True
 
     try:
         profile = Profile.objects.get(user_id=user_id)
     except Profile.DoesNotExist:
         profile = Profile.objects.create(user_id=user_id)
 
-    if profile.banned and not request.user.is_authenticated():
+    if profile.banned and not is_authenticated:
         return render(request, 'pin2/samandehi.html')
 
-    ban_by_admin = False
-    if request.user.is_superuser and not user.is_active:
+    if cur_user.is_superuser and not user.is_active:
         from pin.models import Log
-        ban_by_admin = Log.objects.filter(object_id=user_id,
-                                          content_type=Log.USER).order_by('-id')
+        ban_by_admin = Log.objects\
+            .filter(object_id=user_id,
+                    content_type=Log.USER)\
+            .order_by('-id')
         if ban_by_admin:
             ban_by_admin = ban_by_admin[0].text
 
@@ -927,17 +937,34 @@ def absuser(request, user_name=None):
 
     # profile.cnt_follower = Follow.objects.filter(following_id=user.id).count()
     # profile.cnt_following = Follow.objects.filter(follower_id=user.id).count()
+    if cur_user_id != user_id:
+        if is_authenticated:
+            # check follow status
+            follow_status = Follow.objects\
+                .filter(follower_id=cur_user_id,
+                        following_id=user_id).exists()
 
-    latest_items = []
-    is_block = False
+            following_status = Follow.objects\
+                .filter(following_id=cur_user_id,
+                        follower_id=user_id).exists()
 
-    if request.user.is_authenticated():
-        if check_block(user_id=profile.user.id, blocked_id=request.user.id):
-            is_block = True
+            # check private profile
+            if profile.is_private and not follow_status:
+                follow_req = FollowRequest.objects\
+                    .filter(user_id=cur_user_id,
+                            target_id=user_id).exists()
 
-    if not is_block:
+                show_posts = False
+
+            if check_block(user_id=profile.user_id, blocked_id=cur_user_id):
+                is_block = True
+
+    else:
+        follow_status = True
+
+    if not is_block and show_posts:
         for li in lt:
-            pob = post_item_json(li.id, cur_user_id=request.user.id)
+            pob = post_item_json(li.id, cur_user_id=cur_user_id)
             if pob:
                 latest_items.append(pob)
 
@@ -949,19 +976,6 @@ def absuser(request, user_name=None):
             })
         else:
             return HttpResponse(0)
-
-    if request.user.id:
-        follow_status = Follow.objects.filter(follower=request.user.id,
-                                              following=user.id).exists()
-        following_status = Follow.objects.filter(following=request.user.id,
-                                                 follower=user.id).exists()
-        if profile.is_private and not follow_status:
-                follow_req = FollowRequest.objects\
-                    .filter(user_id=request.user.id,
-                            target_id=user.id).exists()
-    else:
-        follow_status = 0
-        following_status = 0
 
     return render(request, 'pin2/user.html', {
         'latest_items': latest_items,
@@ -979,6 +993,9 @@ def absuser(request, user_name=None):
 
 def item(request, item_id):
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
+    pending = False
+    follow_status = False
+    cur_user_id = request.user.id
 
     try:
         # post = Post.objects.get(id=item_id)
@@ -988,33 +1005,39 @@ def item(request, item_id):
     except Post.DoesNotExist:
         raise Http404("Post does not exist")
 
-    # if int(item_id) == 14470480:
-    #     from models_redis import PostView
-    #     PostView(14470480).inc_view_test()
-
-    # mlts = []
-
-    # post["mlt"] = mlts
-
-    follow_status = 0
-    if request.user.is_authenticated():
-        if post and check_block(user_id=post["user"]["id"], blocked_id=request.user.id):
-            return HttpResponseRedirect('/')
-
-        follow_status = Follow.objects.filter(follower=request.user.id,
-                                              following=post["user"]["id"]).count()
-    # post["tag"] = []
-
-    # post["likes"] = LikesRedis(post_id=post["id"])\
-    #     .get_likes(offset=0, limit=5, as_user_object=True)
-
     comments_url = reverse('pin-get-comments', args=[post["id"]])
     related_url = reverse('pin-item-related', args=[post["id"]])
 
-    # try:
-    #     permission = UserPermissions.objects.get(user=request.user)
-    # except Exception, e:
-    #     print str(e), "function post_item permission"
+    try:
+        profile = Profile.objects\
+            .only('is_private')\
+            .get(user_id=post["user"]["id"])
+    except Profile.DoesNotExist:
+        profile = Profile.objects.create(user_id=post["user"]["id"])
+
+    # check profile is_private
+    if profile.is_private:
+
+        # if login user
+        if request.user.is_authenticated():
+            is_block = check_block(user_id=post["user"]["id"],
+                                   blocked_id=cur_user_id)
+            if is_block:
+                return HttpResponseRedirect('/')
+
+            follow_status = Follow.objects\
+                .filter(follower=cur_user_id,
+                        following=post["user"]["id"])\
+                .exists()
+
+            # Check exist pending follow request
+            if not follow_status:
+                pending = FollowRequest.objects\
+                    .filter(user_id=cur_user_id,
+                            target_id=post["user"]["id"])\
+                    .exists()
+        else:
+            raise Http404
 
     if request.is_ajax():
         return render(request, 'pin2/items_inner.html', {
@@ -1027,6 +1050,7 @@ def item(request, item_id):
         'comments_url': comments_url,
         'page': 'item',
         'related_url': related_url,
+        'pending': pending
         # 'comment_status': permission.comment
     }, content_type="text/html")
 

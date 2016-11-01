@@ -24,47 +24,121 @@ class Notification(CassandraModel):
     def __init__(self):
         CassandraModel.__init__(self)
 
-    def set_notif(self, a_user_id, a_type, a_actor, a_object_id, a_date):
+    def set_notif(self, a_user_id, a_type, a_actor,
+                  a_object_id, a_date, comment=None):
         ttl = 30 * 86400
-
+        status = True
         if not a_object_id:
             a_object_id = 0
 
         hash_str = "{}:{}:{}".format(a_actor, a_object_id, a_type)
-
+        print a_type, "type"
+        # if notif was not comment
         if a_type != 2:
             query = """
-            SELECT user_id FROM notification
+            SELECT date FROM notification
             where user_id = {} AND hash = '{}'
             """.format(a_user_id, hash_str)
 
             res = session.execute(query)
-            if res.current_rows:
-                return
 
-        query = """INSERT INTO notification
-        (user_id, date, actor, object_id, type, deleted, hash)
-        VALUES
-        ({}, {}, {}, {}, {}, {}, '{}') USING TTL {} ;"""\
-            .format(a_user_id, a_date,
-                    a_actor, a_object_id, a_type, False, hash_str, ttl)
-        session.execute(query)
+            # if exists row, remove row
+            if res.current_rows:
+                status = False
+                date = res.current_rows[0].date
+                self.remove_notif(a_user_id, date)
+        else:
+            a_object_id = int(comment.id)
+
+        self.create_notif(a_user_id=a_user_id,
+                          a_type=a_type,
+                          a_actor=a_actor,
+                          a_object_id=a_object_id,
+                          a_date=a_date,
+                          hash_str=hash_str,
+                          ttl=ttl)
+        return status
 
     def get_notif(self, a_user_id, older=None):
         if older:
             query = """
             SELECT * FROM notification
             WHERE user_id = {}
-            AND date<{}
+            AND date<{} AND deleted=False
             LIMIT 20""".format(a_user_id, older)
         else:
             query = """
             SELECT * FROM notification
-            WHERE user_id = {}
+            WHERE user_id = {} AND deleted=False
             LIMIT 20""".format(a_user_id)
 
         res = session.execute(query)
         return res
+
+    def remove_notif(self, a_user_id, a_date):
+        query = """
+                DELETE FROM Notification
+                where user_id={} and date={}
+                """.format(a_user_id, a_date)
+        session.execute(query)
+
+    def create_notif(self, a_user_id, a_type,
+                     a_actor, a_object_id, a_date,
+                     hash_str, ttl):
+
+        query = """INSERT INTO notification
+        (user_id, date, actor, object_id, type, deleted, hash)
+        VALUES
+        ({}, {}, {}, {}, {}, {}, '{}') USING TTL {} ;"""\
+            .format(a_user_id,
+                    a_date,
+                    a_actor,
+                    a_object_id,
+                    a_type,
+                    False,
+                    hash_str,
+                    ttl)
+        session.execute(query)
+
+    # Set deleted field True
+    def update_notif(self, a_user_id, a_type, a_actor, a_object_id):
+
+        if not a_object_id:
+            a_object_id = 0
+
+        hash_str = "{}:{}:{}".format(a_actor, a_object_id, a_type)
+
+        # if notif was not comment
+        query = """
+        SELECT date FROM notification
+        where user_id = {} AND hash = '{}'
+        """.format(a_user_id, hash_str)
+
+        res = session.execute(query)
+
+        # if exists row, remove row
+        if res.current_rows:
+            date = res.current_rows[0].date
+            query = """UPDATE notification SET deleted=True
+                    WHERE user_id={} and date={}"""\
+                        .format(a_user_id, date)
+        session.execute(query)
+
+    def remove_comment_notif(self, a_user_id, comment_id):
+
+        # hash_str = "{}:{}:{}".format(a_actor, a_object_id, a_type)
+
+        # if notif was not comment
+        query = """
+        SELECT date FROM notification
+        where user_id = {} AND object_id = {}
+        """.format(a_user_id, comment_id)
+        res = session.execute(query)
+
+        # if exists row, remove row
+        if res.current_rows:
+            date = res.current_rows[0].date
+            self.remove_notif(a_user_id, date)
 
 
 class PostStats(CassandraModel):

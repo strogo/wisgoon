@@ -8,9 +8,10 @@ from user_profile.models import Profile
 # from pin.my_notif import NotifCas
 
 
-def notif_send(user_id, type, post, actor_id, seen=False, post_image=None):
+def notif_send(user_id, type, post, actor_id,
+               seen=False, post_image=None, comment=None):
     NotificationRedis(user_id=user_id)\
-        .set_notif(ntype=type, post=post, actor=actor_id)
+        .set_notif(ntype=type, post=post, actor=actor_id, comment=comment)
 
     return "hello notif"
 

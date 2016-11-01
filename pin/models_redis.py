@@ -66,14 +66,28 @@ class NotificationRedis(object):
         self.KEY_PREFIX = self.KEY_PREFIX.format(user_id)
         self.KEY_PREFIX_CNT = self.KEY_PREFIX_CNT.format(user_id)
 
-    def set_notif(self, ntype, post, actor, seen=False, post_image=None):
+    def set_notif(self, ntype, post, actor,
+                  seen=False, post_image=None,
+                  comment=None):
         from pin.api6.tools import is_system_writable
-
+        from pin.tasks import gcm_push
         if is_system_writable():
             n = Notification()
-            n.set_notif(self.user_id, ntype, actor, post, int(time.time()))
+            status = n.set_notif(self.user_id,
+                                 ntype,
+                                 actor,
+                                 post,
+                                 int(time.time()),
+                                 comment)
+            if status:
+                text = None
+                if comment:
+                    text = comment.comment
+                gcm_push(user_id=self.user_id, action_type=ntype,
+                         post_id=post, actor_id=actor,
+                         timestamp=time.time(), comment=text)
 
-            notificationRedis.incr(self.KEY_PREFIX_CNT)
+                notificationRedis.incr(self.KEY_PREFIX_CNT)
 
     def get_notif(self, start=0, limit=20):
         us = Notification()
@@ -92,7 +106,13 @@ class NotificationRedis(object):
             o['id'] = nl.date
 
             o['type'] = nl.type
-            o['post'] = nl.object_id
+
+            if notif_type == 2:
+                hash_str = nl.hash.split(':')
+                o['post'] = hash_str[1]
+            else:
+                o['post'] = nl.object_id
+
             o['last_actor'] = nl.actor
             o['seen'] = True
             o['post_image'] = ""
@@ -115,6 +135,13 @@ class NotificationRedis(object):
         if not cnt:
             cnt = 0
         return cnt
+
+    def decrement_cnt_notif(self):
+        cnt = notificationRedis.get(self.KEY_PREFIX_CNT)
+        if not cnt:
+            cnt = 0
+        if int(cnt) > 0:
+            notificationRedis.decr(self.KEY_PREFIX_CNT)
 
 
 class ActivityRedis(object):
@@ -211,9 +238,11 @@ class LikesRedis(object):
         rListServer.lrem(self.keyNameList, user_id)
         rSetServer.srem(self.keyNameSet, str(user_id))
 
+        # post update cnt like
         Post.objects.filter(pk=int(self.postId))\
             .update(cnt_like=F('cnt_like') - 1)
 
+        # update post last liker
         user_last_likes = "{}_{}".\
             format(settings.USER_LAST_LIKES, int(user_id))
         rListServer.lrem(user_last_likes, self.postId)
@@ -222,6 +251,16 @@ class LikesRedis(object):
 
         from pin.model_mongo import MonthlyStats
         MonthlyStats.log_hit(object_type=MonthlyStats.DISLIKE)
+
+        # Update notif on cassandra
+        notif = Notification()
+        notif.update_notif(a_user_id=post_owner,
+                           a_type=settings.NOTIFICATION_TYPE_LIKE,
+                           a_actor=user_id,
+                           a_object_id=self.postId)
+
+        # decrement_cnt_notif on redis
+        NotificationRedis(user_id=post_owner).decrement_cnt_notif()
 
     def like(self, user_id, post_owner, user_ip):
         rSetServer.sadd(self.keyNameSet, str(user_id))

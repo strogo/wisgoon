@@ -33,15 +33,19 @@
 	<div class="clear"></div>
 	{% if post.user.id != request.user.id and user.is_authenticated %}
 
-		{% if follow_status == 0 %}
-		<a class="wis_btn green w100 mabo10 mato10 ajax-follow" data-user-id="{{post.user.id}}" href='{% url "pin-follow" post.user.id 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
+		{% if not follow_status%}
+			{% if pending %}
+				<a class="wis_btn gray w100 mabo10 mato10 ajax-follow" data-user-id="{{post.user.id}}" href='{% url "remove-follow-request" post.user.id%}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-clock-o"></i></a>
+			{% else %}
+				<a class="wis_btn green w100 mabo10 mato10 ajax-follow" data-user-id="{{post.user.id}}" href='{% url "pin-follow" post.user.id 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
+			{% endif %}
 		{% else %}
 		<a class="wis_btn red w100 mabo10  mato10 ajax-follow" data-user-id="{{post.user.id}}" href='{% url "pin-follow" post.user.id 0 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i></a>
 		{%endif%}
 
 	{% endif %}
 	{% endif %}
-	
+
 
 	<div class="clear"></div>
 
@@ -72,7 +76,7 @@
 {% endif %}
 
 {% comment %}
-    
+
 {% if DISPLAY_AD %}
 {% include "pin2/tabliq/_300x100.html" %}
 {% endif %}
@@ -86,14 +90,14 @@
 		<script type="text/javascript">
 		var agahist_pram = agahist_pram || [];
 		agahist_pram["aduser"] = "6";
-		agahist_pram["category"] = "{{post.category_id}}"; 
+		agahist_pram["category"] = "{{post.category_id}}";
 		agahist_pram["adheight"] = "250";
-		agahist_pram["adwidth"] = "250";			
-		</script> 
+		agahist_pram["adwidth"] = "250";
+		</script>
 		<script type="text/javascript" src="http://agahist.com/media/js/pubBanner.js"></script>
 	</div>
 </div>
-	
+
 <br />
 {% include "base/ad-290x170.html" %}
 <br />

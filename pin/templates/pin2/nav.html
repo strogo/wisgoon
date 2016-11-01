@@ -17,13 +17,13 @@
 				<a href="{% url "home" %}" class="header-brand">
 					<img src="{{STATIC_CDN}}v2/images/logo.png" alt="{{SITE_NAME_FA}} {{SITE_NAME_EN}}">
 				</a>
-				
+
 			</div>
 			<div class="col-md-9 col-sm-8 navbar-collapse collapse">
 				<div class="row">
 					<div class="pull-left" id="top-userinfo">
 						<ul>
-							
+
 							{% if request.user.is_authenticated %}
 							<li>
 								<div class="hidden-xs nav_user_avatar">
@@ -46,8 +46,8 @@
 							</li>
 							<li>
 								<div class="notification">
-									<a href="javascript:;" data-load="{% url 'show_notify' %}" title="اعلانات" class="popnotify" >  
-										{{request.user.id|get_user_notify|pn}} 
+									<a href="javascript:;" data-load="{% url 'show_notify' %}" title="اعلانات" class="popnotify" >
+										{{request.user.id|get_user_notify|pn}}
 										<i class="notif_icon"></i>
 									</a>
 									<img src="{{STATIC_CDN}}v2/images/top-loading.gif" alt="..." class="loading-img" />

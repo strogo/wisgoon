@@ -21,6 +21,12 @@
     <br>
     <br>
 
+    {% if offset %}
+        <span data-next="{{offset}}" ></span>
+    {%else%}
+        <span data-next="0" ></span>
+    {%endif%}
+
 {% endblock content %}
 {% block js %}
     <script>
