@@ -254,6 +254,7 @@ class UserStream(CassandraModel):
             except Exception as e:
                 print str(e)
             redis_server.set(key, 1, 3600)
+            print "end ltrim user_id {}".format(user_id)
 
     def ltrim(self, user_id, limit=1000):
         query = """
