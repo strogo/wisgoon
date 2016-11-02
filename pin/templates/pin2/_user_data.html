@@ -17,7 +17,7 @@
                             <a href='{% url "pin-absuser" profile.user_id|get_user_name %}'>{{profile.name}}</a>
                             {% if request.user.is_superuser and is_private %}
                             <small class="badge">
-                                <img src="{{MEDIA_URL}}Private 2-20.png" alt="">
+                                <img src="{{STATIC_CDN}}Private_20.png" alt="">
                             </small>
                             {% endif %}
                         </h2>
