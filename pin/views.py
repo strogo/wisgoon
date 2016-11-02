@@ -20,7 +20,7 @@ from pin.tools import get_request_timestamp, get_request_pid, check_block,\
 from pin.model_mongo import Ads, MonthlyStats
 from pin.models_redis import LikesRedis
 
-from pin.api6.tools import post_item_json
+from pin.api6.tools import post_item_json, get_simple_user_object
 
 from user_profile.models import Profile
 
@@ -578,10 +578,29 @@ def absuser_followers(request, user_namefl):
     profile, created = Profile.objects.get_or_create(user_id=user_id)
     older = request.POST.get('older', False)
     friends = None
+    is_authenticated = request.user.is_authenticated()
+    follow_status = False
 
-    if request.user.is_authenticated():
+    if is_authenticated:
+        cur_user_id = request.user.id
+        if cur_user_id != user_id:
+            user_object = get_simple_user_object(user_id, cur_user_id)
 
-        if not check_block(user_id=user.id, blocked_id=request.user.id):
+            follow_status = user_object['follow_by_user']
+            following_status = Follow.objects\
+                .filter(following_id=cur_user_id,
+                        follower_id=user_id).exists()
+        else:
+            user_object = get_simple_user_object(user_id)
+            follow_status = True
+    else:
+        user_object = get_simple_user_object(user_id)
+
+    is_block = user_object['user_blocked_me']
+
+    if is_authenticated:
+
+        if not is_block:
             if older:
                 friends = Follow.objects\
                     .filter(following_id=user_id, id__lt=older)\
@@ -892,7 +911,6 @@ def user(request, user_id, user_name=None):
 
 
 def absuser(request, user_name=None):
-    from pin.api6.tools import get_simple_user_object
 
     try:
         user = AuthCache.user_from_name(username=user_name)

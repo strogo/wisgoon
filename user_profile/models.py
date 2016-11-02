@@ -52,7 +52,9 @@ class Profile(models.Model):
     AVATAR_NEW_STYLE = 1
     AVATAT_MIGRATED = 2
 
-    name = models.CharField(max_length=250, verbose_name=_("Name"))
+    name = models.CharField(max_length=250,
+                            verbose_name=_("Name"),
+                            null=True, blank=True)
     location = models.CharField(max_length=250, verbose_name=_("Location"),
                                 blank=True)
     website = models.URLField(verbose_name=_('Website'), blank=True)
