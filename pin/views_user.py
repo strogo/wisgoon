@@ -996,11 +996,12 @@ def blocked_list(request):
             })
         else:
             return HttpResponse(0)
-
+    profile = request.user.profile
     return render(request, 'pin2/profile/blocked_list.html', {
         'blocked_list': blocked_list,
-        'profile': request.user.profile,
-        'cur_user': request.user
+        'profile': profile,
+        'cur_user': request.user,
+        'is_private': profile.is_private
     })
 
 
@@ -1026,11 +1027,12 @@ def promotion_list(request):
             })
         else:
             return HttpResponse(0)
-
+    profile = request.user.profile
     return render(request, 'pin2/profile/promotion.html', {
         'promotion_list': promotion_list,
-        'profile': request.user.profile,
-        'cur_user': request.user
+        'profile': profile,
+        'cur_user': request.user,
+        'is_private': profile.is_private
     })
 
 

@@ -896,6 +896,13 @@ a.btn.btn-primary {
 	text-align: right;
 }
 
+.box_info{
+	background-color: #fff;
+	border-radius: 10px;
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+	margin-bottom: 10px;
+	text-align: center;
+}
 /* wis btn */
 .wis_btn a,
 .wis_btn{

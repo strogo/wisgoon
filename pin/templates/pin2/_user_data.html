@@ -15,6 +15,11 @@
                     <div class="user_stats">
                         <h2>
                             <a href='{% url "pin-absuser" profile.user_id|get_user_name %}'>{{profile.name}}</a>
+                            {% if request.user.is_superuser and is_private %}
+                            <small class="badge">
+                                <img src="{{MEDIA_URL}}Private 2-20.png" alt="">
+                            </small>
+                            {% endif %}
                         </h2>
                         <small>{{profile.user.username}}</small> {% if following_status %}<small class="badge">  شما را دنبال می کند</small>{% endif %}
                         <p>{{profile.bio|linebreaksbr}}</p>
@@ -107,7 +112,6 @@
                     {% endif %}
                     {% endif %}
                 </div>
-
             </div>
             <div class="user_avtivity">
                 <div class="profile_item">
