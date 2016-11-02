@@ -23,7 +23,6 @@
 		<div class="action">
 			{% if u.follower.id != request.user.id and request.user.is_authenticated%}
                 {% if request.user.id|get_follow_status:u.follower.id == False %}
-                    {{request.user.id|follow_rq_status:u.follower.id}}
                     {% if request.user.id|follow_rq_status:u.follower.id == True %}
                         <a data-user-id="{{u.follower.id}}" class="wis_btn gray mabo10 ajax-follow" href='{% url "remove-follow-request" u.follower.id %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-clock-o"></i></a>
                     {% else %}
