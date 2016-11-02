@@ -569,7 +569,7 @@ def check_user_state(user_id, token):
         current_user_id = current_user.id
 
         """ Check current user is admin """
-        if not current_user.is_superuser or current_user.id != int(user_id):
+        if not current_user.is_superuser and current_user.id != int(user_id):
 
             """ Check is block request user"""
             is_block = Block.objects.filter(user_id=user_id,
