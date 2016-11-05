@@ -1066,8 +1066,10 @@ def item(request, item_id):
     follow_status = status['follow_status']
     pending = status['pending']
 
-    if not show_post:
-        raise Http404
+    # dahaneto gaeedam amir jan!!!
+    # bazam bi deghati :D
+    # if not show_post:
+    #     raise Http404
 
     if request.is_ajax():
         return render(request, 'pin2/items_inner.html', {
