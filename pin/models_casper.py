@@ -287,7 +287,7 @@ class UserStream(CassandraModel):
 
                 session.execute(batch)
 
-            if len(rows.current_rows) == 0:
+            elif len(rows.current_rows) == 0:
                 print "zero box"
                 return
 
