@@ -251,13 +251,11 @@ class UserStream(CassandraModel):
         key = "ltrim:user:{}".format(user_id)
         get_key = redis_server.get(key)
         if not get_key:
-            print "start ltrim user_id {}".format(user_id)
             try:
                 ltrim_user_stream.delay(user_id=user_id)
             except Exception as e:
                 print str(e)
-            redis_server.set(key, 1, 3600)
-            print "end ltrim user_id {}".format(user_id)
+            redis_server.set(key, 1, 86400)
 
     def ltrim(self, user_id, limit=1000):
         query = """
