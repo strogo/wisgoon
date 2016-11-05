@@ -278,7 +278,7 @@ class UserStream(CassandraModel):
 
             print "{}, {}".format(user_id, last_post_id)
 
-            rows = session.execute(query)
+            rows = session.execute(query, timeout=120)
             if len(rows.current_rows) != 0:
                 batch = BatchStatement()
                 for r in rows:
