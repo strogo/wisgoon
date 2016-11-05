@@ -302,7 +302,12 @@ class UserStream(CassandraModel):
 
         session.execute(batch)
 
-        ltrim_user_stream.delay(user_id=user_id)
+        # Ltrim user straem
+        key = "lt:u:{}".format(user_id)
+        get_key = redis_server.get(key)
+        if not get_key:
+            ltrim_user_stream.delay(user_id=user_id)
+            redis_server.set(key, 1, 3600)
 
     def unfollow(self, user_id, post_owner):
         query = """
