@@ -276,16 +276,11 @@ class UserStream(CassandraModel):
         WHERE user_id = {} and post_id < {} limit {};
         """.format(user_id, last_post_id, limit)
         rows = session.execute(query)
-        cnt = 0
+
         batch = BatchStatement()
         for r in rows:
-            cnt += 1
             q = "DELETE from user_stream WHERE user_id = %s AND post_id = %s;"
             batch.add(SimpleStatement(q), (user_id, r.post_id))
-            if cnt == 1000:
-                session.execute(batch)
-                batch = BatchStatement()
-                cnt = 0
 
         session.execute(batch)
 
