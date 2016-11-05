@@ -255,7 +255,7 @@ class UserStream(CassandraModel):
                 ltrim_user_stream.delay(user_id=user_id)
             except Exception as e:
                 print str(e)
-            redis_server.set(key, 1, 86400)
+            redis_server.set(key, 1, 3600)
 
     def ltrim(self, user_id, limit=1000):
         query = """
