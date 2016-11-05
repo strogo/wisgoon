@@ -248,7 +248,7 @@ class UserStream(CassandraModel):
         session.execute(query)
 
         # Ltrim user straem
-        key = "ltrim:user:{}".format(user_id)
+        key = "lt:u:{}".format(user_id)
         get_key = redis_server.get(key)
         if not get_key:
             try:
