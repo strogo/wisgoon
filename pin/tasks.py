@@ -451,5 +451,7 @@ def camp_scores(camp_id):
 @app.task(name="wisgoon.pin.ltrim_user_stream")
 def ltrim_user_stream(user_id):
     from pin.models_casper import UserStream
+    print "start ltrim", user_id
     us = UserStream()
     us.ltrim(user_id)
+    print "end ltrim", user_id
