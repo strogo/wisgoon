@@ -259,7 +259,7 @@ class UserStream(CassandraModel):
 
     def ltrim(self, user_id, limit=1000):
         query = """
-        select * from user_stream WHERE user_id = {} limit {};
+        SELECT * FROM user_stream WHERE user_id = {} LIMIT {};
         """.format(user_id, limit)
         rows = session.execute(query)
         last_post_id = None
@@ -270,14 +270,14 @@ class UserStream(CassandraModel):
             return
 
         query = """
-        select post_id from user_stream
-        WHERE user_id = {} and post_id < {} limit {};
+        SELECT post_id FROM user_stream
+        WHERE user_id = {} and post_id < {} LIMIT {};
         """.format(user_id, last_post_id, limit)
         rows = session.execute(query)
 
         batch = BatchStatement()
         for r in rows:
-            q = "DELETE from user_stream WHERE user_id = %s AND post_id = %s;"
+            q = "DELETE FROM user_stream WHERE user_id = %s AND post_id = %s;"
             batch.add(SimpleStatement(q), (user_id, r.post_id))
 
         session.execute(batch)
@@ -294,7 +294,7 @@ class UserStream(CassandraModel):
 
     def unfollow(self, user_id, post_owner):
         query = """
-        select post_id from user_stream WHERE user_id = {} and post_owner = {};
+        SELECT post_id FROM user_stream WHERE user_id = {} and post_owner = {};
         """.format(user_id, post_owner)
         rows = session.execute(query)
         batch = BatchStatement()
