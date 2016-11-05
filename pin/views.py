@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from pin.models import Post, Follow, Likes, Category, Comments, Results,\
     FollowRequest
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
-    get_user_ip, get_delta_timestamp, AuthCache
+    get_user_ip, get_delta_timestamp, AuthCache, check_user_state
 
 from pin.model_mongo import Ads, MonthlyStats
 from pin.models_redis import LikesRedis
@@ -1047,12 +1047,9 @@ def absuser(request, user_name=None):
 
 def item(request, item_id):
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
-    pending = False
-    follow_status = False
-    cur_user_id = request.user.id
+    current_user = request.user
 
     try:
-        # post = Post.objects.get(id=item_id)
         post = post_item_json(post_id=item_id)
         if not post:
             raise Post.DoesNotExist
@@ -1061,41 +1058,22 @@ def item(request, item_id):
 
     comments_url = reverse('pin-get-comments', args=[post["id"]])
     related_url = reverse('pin-item-related', args=[post["id"]])
+    user_id = post["user"]["id"]
 
-    try:
-        profile = Profile.objects\
-            .only('is_private')\
-            .get(user_id=post["user"]["id"])
-    except Profile.DoesNotExist:
-        profile = Profile.objects.create(user_id=post["user"]["id"])
+    status = check_user_state(user_id=user_id,
+                              current_user=current_user)
+    show_post = status['status']
+    follow_status = status['follow_status']
+    pending = status['pending']
 
-    # check profile is_private
-    if profile.is_private:
-
-        # if login user
-        if request.user.is_authenticated():
-            is_block = check_block(user_id=post["user"]["id"],
-                                   blocked_id=cur_user_id)
-            if is_block:
-                return HttpResponseRedirect('/')
-
-            follow_status = Follow.objects\
-                .filter(follower=cur_user_id,
-                        following=post["user"]["id"])\
-                .exists()
-
-            # Check exist pending follow request
-            if not follow_status:
-                pending = FollowRequest.objects\
-                    .filter(user_id=cur_user_id,
-                            target_id=post["user"]["id"])\
-                    .exists()
-        else:
-            raise Http404
+    if not show_post:
+        raise Http404
 
     if request.is_ajax():
         return render(request, 'pin2/items_inner.html', {
-            'post': post, 'follow_status': follow_status
+            'post': post,
+            'follow_status': follow_status,
+            'pending': pending
         })
 
     return render(request, 'pin2/item.html', {

@@ -23,7 +23,8 @@ from django.http import Http404
 from tastypie.models import ApiKey
 
 from user_profile.models import Profile
-from pin.models import Category, Block, Log, Post, Bills2
+from pin.models import Category, Block, Log, Post, Bills2, Follow,\
+    FollowRequest
 from pin.model_mongo import UserMeta, FixedAds
 
 from daddy_avatar.templatetags import daddy_avatar
@@ -582,3 +583,52 @@ def fix_rotation(image_on):
         return
 
     image.save(image_on)
+
+
+def check_user_state(user_id, current_user):
+    try:
+        profile = Profile.objects.only('is_private')\
+            .get(user_id=user_id)
+    except Profile.DoesNotExist:
+        profile = Profile.objects.create(user_id=user_id)
+
+    status = True
+    follow_status = False
+    pending = False
+    current_user_id = current_user.id
+
+    if not current_user_id:
+        if profile.is_private:
+            status = False
+    else:
+        """ Check current user is admin """
+        if not current_user.is_superuser and current_user_id != user_id:
+
+            """ Check is block request user"""
+            is_block = Block.objects\
+                .filter(user_id=user_id,
+                        blocked_id=current_user_id)\
+                .exists()
+            if is_block:
+                status = False
+
+        if current_user_id != user_id:
+            follow_status = Follow.objects\
+                .filter(follower_id=current_user_id,
+                        following_id=user_id)\
+                .exists()
+
+            if not follow_status:
+                status = False
+
+            if profile.is_private and not follow_status:
+                """ Check request user is following user_id"""
+                pending = FollowRequest.objects\
+                    .filter(user_id=current_user_id,
+                            target_id=user_id)\
+                    .exists()
+    data = {'status': status,
+            'follow_status': follow_status,
+            'pending': pending,
+            'profile': profile}
+    return data
