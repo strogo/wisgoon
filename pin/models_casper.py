@@ -277,14 +277,14 @@ class UserStream(CassandraModel):
             """.format(user_id, last_post_id, limit)
             print query
             rows = session.execute(query)
+            if len(rows.current_rows) != 0:
+                batch = BatchStatement()
+                for r in rows:
+                    q = "DELETE FROM user_stream WHERE user_id = %s AND post_id = %s;"
+                    batch.add(SimpleStatement(q), (user_id, r.post_id))
+                    last_post_id = r.post_id
 
-            batch = BatchStatement()
-            for r in rows:
-                q = "DELETE FROM user_stream WHERE user_id = %s AND post_id = %s;"
-                batch.add(SimpleStatement(q), (user_id, r.post_id))
-                last_post_id = r.post_id
-
-            session.execute(batch)
+                session.execute(batch)
 
             if len(rows.current_rows) == 0:
                 return
