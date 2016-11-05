@@ -302,6 +302,8 @@ class UserStream(CassandraModel):
 
         session.execute(batch)
 
+        ltrim_user_stream.delay(user_id=user_id)
+
     def unfollow(self, user_id, post_owner):
         query = """
         SELECT post_id FROM user_stream WHERE user_id = {} and post_owner = {};
