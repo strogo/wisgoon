@@ -273,7 +273,7 @@ class UserStream(CassandraModel):
         while True:
             query = """
             SELECT post_id FROM user_stream
-            WHERE user_id = {} and post_id < {} LIMIT 10;
+            WHERE user_id = {} and post_id < {} LIMIT 100;
             """.format(user_id, last_post_id, limit)
             print query
             rows = session.execute(query)
@@ -281,7 +281,7 @@ class UserStream(CassandraModel):
                 batch = BatchStatement()
                 for r in rows:
                     q = "DELETE FROM user_stream WHERE user_id = %s AND post_id = %s;"
-                    print q
+                    
                     batch.add(SimpleStatement(q), (user_id, r.post_id))
                     last_post_id = r.post_id
 
