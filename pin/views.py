@@ -1066,7 +1066,8 @@ def item_related(request, item_id):
         post_ids = Post.latest(cat_id=post.category_id)
         for post_id in post_ids:
             if post.id != post_id:
-                post_json = post_item_json(post_id=int(post_id), cur_user_id=request.user.id)
+                post_json = post_item_json(post_id=int(post_id),
+                                           cur_user_id=request.user.id)
                 if post_json:
                     related_posts.append(post_json)
                     mltis.append(post_id)

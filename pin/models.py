@@ -1314,9 +1314,9 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
-        if Block.objects.filter(user_id=self.object_pk.user_id,
-                                blocked_id=self.user_id).exists():
-            return
+        # if Block.objects.filter(user_id=self.object_pk.user_id,
+        #                         blocked_id=self.user_id).exists():
+        #     return
 
         if not self.pk:
             Post.objects.filter(pk=self.object_pk_id)\
@@ -1355,13 +1355,13 @@ class Comments(models.Model):
         actors_list = []
 
         # Push notif for post owner
-        print comment.id, "models"
         if comment.user_id != post.user.id:
             send_notif_bar(user=post.user.id, type=Notif.COMMENT, post=post.id,
                            actor=comment.user.id, comment=comment)
 
             actors_list.append(post.user.id)
 
+        # Wisgoon account
         if post.user.id == 11253:
             return
 
@@ -1412,6 +1412,7 @@ class Comments(models.Model):
 
         if settings.TUNING_CACHE:
             post_id = self.object_pk_id
+            print self.object_pk.cnt_comment, "cnt_comment"
             PostCacheLayer(post_id=post_id)\
                 .delete_comment(self.object_pk.cnt_comment)
 
