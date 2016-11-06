@@ -304,6 +304,13 @@ class UserStream(CassandraModel):
         except Exception as e:
             print str(e)
 
+        # Ltrim user straem
+        key = "lt:u:{}".format(user_id)
+        get_key = redis_server.get(key)
+        if not get_key:
+            ltrim_user_stream.delay(user_id=user_id)
+            redis_server.set(key, 1, 3600)
+
     def unfollow(self, user_id, post_owner):
         query = """
         SELECT post_id FROM user_stream WHERE user_id = {} and post_owner = {};
