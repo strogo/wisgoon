@@ -157,16 +157,6 @@ $('body').on('click', '.del-comment', function(){
                 $('#main').css('height', h - bh);
                 cnt_comment = document.getElementById('cnt_comment');
                 cnt_comment.innerHTML=pn(resp.cnt_comments - 1);
-                console.log('ss');
-                // pp = $('#related_posts').offset().top;
-                // pr = pp - $('.post-sidebar').height();
-                // $(".post-page .post-sidebar").trigger('detach.ScrollToFixed');
-                // $(".post-page .post-sidebar").scrollToFixed({
-                //     marginTop:15,
-                //     limit:  pr
-                // });
-                // $(window).resize();
-                // sticky_sidebar(0);
                 $("#"+row_name).slideUp('fast');
                 alertify.success(resp.message);
             }else{
