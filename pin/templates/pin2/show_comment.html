@@ -12,7 +12,7 @@
 	<div class="cmnt_text">
 		<div class="cmnt_header">
 			<h5 class="pull-right username">
-				<a href="{% url "pin-absuser" comment.user.username %}">{{comment.user.username}}</a> 
+				<a href="{% url "pin-absuser" comment.user.username %}">{{comment.user.username}}</a>
 			</h5>
 			<span class="cmnt_time pull-left">{% if request.user.is_superuser or request.user.id == comment.object_pk.user.id or request.user.id == comment.user.id %}
 				{% if comment.id %}

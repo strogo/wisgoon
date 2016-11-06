@@ -292,7 +292,7 @@ def post_item_json(post_id, cur_user_id=None, r=None,
         pi['cache'] = "Miss"
         pi['id'] = post.id
         pi['text'] = emoji.emojize(post.text).strip()
-        pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
+        pi['cnt_comment'] = 0 if post.cnt_comment < 0 else post.cnt_comment
         pi['timestamp'] = post.timestamp
         pi['show_in_default'] = post.show_in_default
 

@@ -106,9 +106,11 @@ def comment_delete(request, id):
         if comment.user.id != request.user.id:
             if comment.object_pk.user.id != request.user.id:
                 return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
-
+    cnt_comment = comment.object_pk.cnt_comment
     comment.delete()
     if request.is_ajax():
-        data = {'status': True, 'message': _("Comment removed")}
+        data = {'status': True,
+                'message': _("Comment removed"),
+                'cnt_comments': cnt_comment}
         return HttpResponse(json.dumps(data), content_type="application/json")
     return HttpResponseRedirect(reverse('pin-item', args=[post_id]))
