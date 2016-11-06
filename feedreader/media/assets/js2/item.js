@@ -62,7 +62,7 @@ $(function () {
         // feedobj.masonry('reload');
     });
 
-    
+
 
     var frm = $("#add-comment-form");
     frm.submit(function(e) {
@@ -76,7 +76,7 @@ $(function () {
         })
         .done(function(response) {
             if (response == 'error'){
-                console.log('Method Not Allowed');
+                alertify.error("خطا! با مدیریت سایت تماس بگیرید");
             }else{
                 $('#comments_box').prepend(response);
                 $('#comments_box').find('.no-comment').hide('fast');

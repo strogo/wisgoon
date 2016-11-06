@@ -23,19 +23,19 @@ from django.http import HttpResponse, HttpResponseRedirect,\
 
 import pin_image
 from pin.decorators import system_writable
-from pin.api6.tools import post_item_json, notif_simple_json
+from pin.api6.tools import post_item_json, notif_simple_json,\
+    get_simple_user_object
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
 from pin.model_mongo import Notif
 from pin.models_redis import ActivityRedis, NotificationRedis
 from pin.notification_models import UserNotification, MyNotificationFeed
 from pin.tasks import porn_feedback
-from pin.api6.tools import get_simple_user_object
-from pin.models import Post, Stream, Follow, Ad, Block,\
+from pin.models import Post, Follow, Ad, Block,\
     Report, Comments, Comments_score, Category, Bills2 as Bills, ReportedPost,\
     FollowRequest
 from pin.tools import create_filename, get_user_ip, get_request_pid,\
-    check_block, post_after_delete, get_post_user_cache
+    check_block, post_after_delete, check_user_state
 
 from suds.client import Client
 
@@ -152,6 +152,7 @@ def follow(request, following, action):
                             content_type='application/json')
     return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
 
+
 @login_required
 @system_writable
 def like(request, item_id):
@@ -159,20 +160,27 @@ def like(request, item_id):
     if not post:
         return HttpResponseRedirect('/')
 
-    # TODO samte ui moshkel dare
     import redis
-    if check_block(user_id=post['user']['id'], blocked_id=request.user.id):
+    cur_user = request.user
+    cur_user_id = request.user.id
+
+    """ Check current user status """
+    status = check_user_state(user_id=post['user']['id'],
+                              current_user=cur_user)
+    allow_like = status['status']
+
+    if not allow_like:
         return HttpResponseRedirect('/')
 
     from models_redis import LikesRedis
     like, dislike, current_like = LikesRedis(post_id=item_id)\
-        .like_or_dislike(user_id=request.user.id,
+        .like_or_dislike(user_id=cur_user_id,
                          post_owner=post['user']['id'],
                          user_ip=get_user_ip(request),
                          category=post['category']['id'])
 
     redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
-    key = "cnt_like:user:{}:{}".format(request.user.id,
+    key = "cnt_like:user:{}:{}".format(cur_user_id,
                                        post['category']['id'])
 
     if like:
@@ -195,19 +203,26 @@ def like(request, item_id):
 def report(request, pin_id):
 
     try:
-        post = Post.objects.only('id', 'user_id').get(id=pin_id)
+        post = Post.objects.only('id', 'user_id', 'report').get(id=pin_id)
     except Post.DoesNotExist:
         return HttpResponseRedirect('/')
 
-    # TODO samte ui moshkel dare
-    if check_block(user_id=post.user_id, blocked_id=request.user.id):
+    cur_user = request.user
+    cur_user_id = request.user.id
+
+    """ Check current user status """
+    status = check_user_state(user_id=post.user_id,
+                              current_user=cur_user)
+    allow_report = status['status']
+
+    if not allow_report:
         return HttpResponseRedirect('/')
 
     try:
-        Report.objects.get(user=request.user, post_id=post.id)
+        Report.objects.get(user=cur_user, post_id=post.id)
         created = False
     except Report.DoesNotExist:
-        Report.objects.create(user=request.user, post_id=post.id)
+        Report.objects.create(user=cur_user, post_id=post.id)
         created = True
 
     if created:
@@ -223,7 +238,7 @@ def report(request, pin_id):
 
     # TODO: add new report here @hossein
     # ridi azizam :D
-    ReportedPost.post_report(post_id=post.id, reporter_id=request.user.id)
+    ReportedPost.post_report(post_id=post.id, reporter_id=cur_user_id)
     # End of hosseing work
 
     if request.is_ajax():
@@ -317,29 +332,32 @@ def nop(request, item_id):
 @system_writable
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 def send_comment(request):
+    cur_user = request.user
 
     if request.method == 'POST':
         try:
             text = request.POST.get('text', None)
             post = int(request.POST.get('post', None))
         except UnreadablePostError:
-            return HttpResponse(_('There is no post and text'))
+            return HttpResponse('error')
 
         if text and post:
             post_json = post_item_json(post_id=post)
             if not post_json:
-                return HttpResponse(_('Post not found'))
+                return HttpResponse('error')
 
-            # TODO samte ui moshkel dare
-            is_block = check_block(user_id=post_json['user']['id'],
-                                   blocked_id=request.user.id)
-            if is_block:
-                return HttpResponseRedirect('/')
+            """ Check current user status """
+            status = check_user_state(user_id=post_json['user']['id'],
+                                      current_user=cur_user)
+            allow_comment = status['status']
+
+            if not allow_comment:
+                return HttpResponse('error')
 
             comment = Comments.objects\
                 .create(object_pk_id=post_json['id'],
                         comment=text,
-                        user=request.user,
+                        user=cur_user,
                         ip_address=get_user_ip(request))
             return render(request, 'pin2/show_comment.html', {
                 'comment': comment
@@ -914,6 +932,16 @@ def save_as_ads(request, post_id):
     p = post_item_json(post_id=post_id)
     profile = request.user.profile
 
+    """ Check current user status """
+    cur_user = request.user
+    cur_user_id = request.user.id
+    status = check_user_state(user_id=p['user']['id'],
+                              current_user=cur_user)
+    allow_promote = status['status']
+
+    if not allow_promote:
+        return HttpResponseRedirect('/')
+
     if request.method == "POST":
         mode = int(request.POST.get('mode'))
         mode_price = Ad.TYPE_PRICES[mode]
@@ -924,7 +952,7 @@ def save_as_ads(request, post_id):
             except Exception, Ad.DoesNotExist:
                 profile.dec_credit(amount=int(mode_price))
 
-                Ad.objects.create(user_id=request.user.id,
+                Ad.objects.create(user_id=cur_user_id,
                                   post_id=int(post_id),
                                   ads_type=mode,
                                   start=datetime.datetime.now(),

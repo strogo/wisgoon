@@ -474,47 +474,34 @@ def user_friends(request, user_id):
 def absuser_following(request, user_namefg):
     user = get_object_or_404(User, username=user_namefg)
     user_id = int(user.id)
-    profile, created = Profile.objects.get_or_create(user_id=user_id)
+
     older = request.POST.get('older', False)
-    following = None
-    show_followeing = True
-    follow_status = False
-    following_status = False
     is_authenticated = request.user.is_authenticated()
+    cur_user = request.user
+    cur_user_id = request.user.id
 
-    """ Get user status"""
-    if is_authenticated:
-        cur_user_id = request.user.id
-        if cur_user_id != user_id:
-            user_object = get_simple_user_object(user_id, cur_user_id)
+    """ Check current user status """
+    status = check_user_state(user_id=user_id, current_user=cur_user)
+    show_followeing = status['status']
+    follow_status = status['follow_status']
+    profile = status['profile']
+    following_status = False
+    following = None
 
-            follow_status = user_object['follow_by_user']
-            following_status = Follow.objects\
-                .filter(following_id=cur_user_id,
-                        follower_id=user_id).exists()
-        else:
-            user_object = get_simple_user_object(user_id)
-            follow_status = True
-    else:
-        user_object = get_simple_user_object(user_id)
+    """ Get following status """
+    if is_authenticated and cur_user_id != user_id:
+        following_status = Follow.objects\
+            .filter(following_id=cur_user_id,
+                    follower_id=user_id).exists()
 
-    """ check block user """
-    if is_authenticated and request.user.is_superuser:
-        is_block = False
-    else:
-        is_block = user_object['user_blocked_me']
-
-    """ Check private profile """
-    if profile.is_private:
-        if not request.user.is_superuser and not follow_status:
-            show_followeing = False
-
-    if not is_block and show_followeing:
+    if show_followeing:
         if older:
             following = Follow.objects\
-                .filter(follower_id=user_id, id__lt=older).order_by('-id')[:16]
+                .filter(follower_id=user_id,
+                        id__lt=older).order_by('-id')[:16]
         else:
-            following = Follow.objects.filter(follower_id=user_id)\
+            following = Follow.objects\
+                .filter(follower_id=user_id)\
                 .order_by('-id')[:16]
 
     if request.is_ajax():
@@ -593,41 +580,27 @@ def user_followers(request, user_id):
 def absuser_followers(request, user_namefl):
     user = get_object_or_404(User, username=user_namefl)
     user_id = user.id
-    profile, created = Profile.objects.get_or_create(user_id=user_id)
+
     older = request.POST.get('older', False)
-    friends = None
     is_authenticated = request.user.is_authenticated()
-    follow_status = False
-    show_followers = True
+    cur_user_id = request.user.id
+    cur_user = request.user
+
+    """ Check current user status """
+    status = check_user_state(user_id=user_id, current_user=cur_user)
+    show_followers = status['status']
+    follow_status = status['follow_status']
+    profile = status['profile']
     following_status = False
+    friends = None
 
-    """ Get user status"""
-    if is_authenticated:
-        cur_user_id = request.user.id
-        if cur_user_id != user_id:
-            user_object = get_simple_user_object(user_id, cur_user_id)
+    """ Get following status """
+    if is_authenticated and cur_user_id != user_id:
+        following_status = Follow.objects\
+            .filter(following_id=cur_user_id,
+                    follower_id=user_id).exists()
 
-            follow_status = user_object['follow_by_user']
-            following_status = Follow.objects\
-                .filter(following_id=cur_user_id,
-                        follower_id=user_id).exists()
-        else:
-            user_object = get_simple_user_object(user_id)
-            follow_status = True
-    else:
-        user_object = get_simple_user_object(user_id)
-
-    """ check block user """
-    if is_authenticated and request.user.is_superuser:
-        is_block = False
-    else:
-        is_block = user_object['user_blocked_me']
-
-    if profile.is_private:
-        if not request.user.is_superuser and not follow_status:
-            show_followers = False
-
-    if not is_block and show_followers:
+    if show_followers:
         if older:
             friends = Follow.objects\
                 .filter(following_id=user_id, id__lt=older)\
@@ -700,60 +673,39 @@ def absuser_like(request, user_namel):
     except User.DoesNotExist:
         raise Http404
 
-    status = True
+    # Prameters
     user_id = user.id
-    show_likes = True
-    follow_status = False
-    following_status = False
+    cur_user = request.user
+    cur_user_id = request.user.id
     is_authenticated = request.user.is_authenticated()
+    latest_items = []
 
-    profile, created = Profile.objects.get_or_create(user_id=user_id)
+    """ Check current user status """
+    status = check_user_state(user_id=user_id, current_user=cur_user)
+    show_likes = status['status']
+    follow_status = status['follow_status']
+    profile = status['profile']
+    following_status = False
+
     if profile.banned:
         return render(request, 'pin2/samandehi.html')
 
-    # if is_authenticated:
-    #     if check_block(user_id=user.id, blocked_id=request.user.id):
-    #         status = False
-
     pid = get_request_pid(request)
-    arp = []
 
-    """ Get user status"""
-    if is_authenticated:
-        cur_user_id = request.user.id
-        if cur_user_id != user_id:
-            user_object = get_simple_user_object(user_id, cur_user_id)
+    """ Get following_status"""
+    if is_authenticated and cur_user_id != user_id:
+        following_status = Follow.objects\
+            .filter(following_id=cur_user_id,
+                    follower_id=user_id).exists()
 
-            follow_status = user_object['follow_by_user']
-            following_status = Follow.objects\
-                .filter(following_id=cur_user_id,
-                        follower_id=user_id).exists()
-        else:
-            user_object = get_simple_user_object(user_id)
-            follow_status = True
-    else:
-        user_object = get_simple_user_object(user_id)
-
-    """ check block user """
-    if is_authenticated and request.user.is_superuser:
-        is_block = False
-    else:
-        is_block = user_object['user_blocked_me']
-
-    if profile.is_private:
-        if not request.user.is_superuser and not follow_status:
-            show_likes = False
-
-    if not is_block and show_likes:
+    if show_likes:
         pl = Likes.user_likes(user_id=user_id, pid=pid)
         r_user_id = request.user.id
         if status:
             for pll in pl:
                 ob = post_item_json(post_id=int(pll), cur_user_id=r_user_id)
                 if ob:
-                    arp.append(ob)
-
-    latest_items = arp
+                    latest_items.append(ob)
 
     if request.is_ajax():
         if latest_items:
@@ -956,14 +908,12 @@ def absuser(request, user_name=None):
     latest_items = []
     ban_by_admin = False
     following_status = False
-    show_posts = True
-    follow_status = False
 
-    """ Get user profile"""
-    try:
-        profile = Profile.objects.get(user_id=user_id)
-    except Profile.DoesNotExist:
-        profile = Profile.objects.create(user_id=user_id)
+    status = check_user_state(user_id=user_id, current_user=cur_user)
+    show_post = status['status']
+    follow_status = status['follow_status']
+    pending = status['pending']
+    profile = status['profile']
 
     if profile.banned and not is_authenticated:
         return render(request, 'pin2/samandehi.html')
@@ -978,36 +928,14 @@ def absuser(request, user_name=None):
         if ban_by_admin:
             ban_by_admin = ban_by_admin[0].text
 
-    """ Get user object"""
-    if is_authenticated:
-        if cur_user_id != user_id:
-            user_object = get_simple_user_object(user_id, cur_user_id)
+    """ Get following_status"""
+    if is_authenticated and cur_user_id != user_id:
+        following_status = Follow.objects\
+            .filter(following_id=cur_user_id,
+                    follower_id=user_id).exists()
 
-            follow_status = user_object['follow_by_user']
-            following_status = Follow.objects\
-                .filter(following_id=cur_user_id,
-                        follower_id=user_id).exists()
-        else:
-            user_object = get_simple_user_object(user_id)
-            follow_status = True
-    else:
-        user_object = get_simple_user_object(user_id)
-
-    """ check block user """
-    if is_authenticated and request.user.is_superuser:
-        is_block = False
-    else:
-        is_block = user_object['user_blocked_me']
-
-    follow_req = user_object['request_follow']
-
-    """ check private profile """
-    if profile.is_private:
-        if not request.user.is_superuser and not follow_status:
-            show_posts = False
-
-    if not is_block and show_posts:
-        """ Get user posts id """
+    if show_post:
+        """ Get user posts """
         timestamp = get_request_timestamp(request)
         if timestamp == 0:
             lt = Post.objects.only('id').filter(user=user_id)\
@@ -1016,6 +944,7 @@ def absuser(request, user_name=None):
             lt = Post.objects.only('id').filter(user=user_id)\
                 .extra(where=['timestamp<%s'], params=[timestamp])\
                 .order_by('-timestamp')[:20]
+
         for li in lt:
             pob = post_item_json(li.id, cur_user_id=cur_user_id)
             if pob:
@@ -1039,9 +968,9 @@ def absuser(request, user_name=None):
         'user_id': int(user_id),
         'profile': profile,
         'page': "profile",
-        'follow_req': follow_req,
+        'follow_req': pending,
         'is_private': profile.is_private,
-        'show_posts': show_posts
+        'show_posts': show_post
     })
 
 
