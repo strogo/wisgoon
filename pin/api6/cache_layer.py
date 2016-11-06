@@ -53,7 +53,11 @@ class PostCacheLayer(object):
             return
         from tools import get_last_comments
         self.data['last_comments'] = get_last_comments(post_id=self.POST_ID)
-        self.data['cnt_comment'] = cnt_comment
+        total_comment = cnt_comment - 1
+        if total_comment > 0:
+            self.data['cnt_comment'] = total_comment
+        else:
+            self.data['cnt_comment'] = 0
         self.set(self.data)
 
     def post_change(self, post):
