@@ -75,7 +75,7 @@ $(function () {
             data: frm.serialize(),
         })
         .done(function(res) {
-            if (res.status == 'false'){
+            if (res.status == false){
                 alertify.error(res.message);
             }else{
                 var cnt_comment;
