@@ -994,9 +994,10 @@ class Follow(models.Model):
         from models_casper import UserStream, Notification
         us = UserStream()
         notif = Notification()
-        notif.set_notif(a_user_id=following_id, a_type=10,
-                        a_object_id=None, a_actor=follower_id,
-                        a_date=int(time.time()))
+        notif.update_notif(a_user_id=following_id,
+                           a_type=10,
+                           a_actor=follower_id,
+                           a_object_id=None)
 
         # decrement_cnt_notif on redis
         from models_redis import NotificationRedis

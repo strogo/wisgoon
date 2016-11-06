@@ -37,14 +37,12 @@ class Notification(CassandraModel):
             a_object_id = 0
 
         hash_str = "{}:{}:{}".format(a_actor, a_object_id, a_type)
-        print a_type, "type"
         # if notif was not comment
         if a_type != 2:
             query = """
             SELECT date FROM notification
             where user_id = {} AND hash = '{}'
             """.format(a_user_id, hash_str)
-
             res = session.execute(query)
 
             # if exists row, remove row
@@ -269,7 +267,6 @@ class UserStream(CassandraModel):
         if not last_post_id:
             return
 
-
         while True:
             query = """
             SELECT post_id FROM user_stream
@@ -282,7 +279,8 @@ class UserStream(CassandraModel):
             if len(rows.current_rows) != 0:
                 batch = BatchStatement()
                 for r in rows:
-                    q = "DELETE FROM user_stream WHERE user_id = %s AND post_id = %s;"
+                    q = """DELETE FROM user_stream
+                           WHERE user_id = %s AND post_id = %s;"""
                     batch.add(SimpleStatement(q), (user_id, r.post_id))
                     last_post_id = r.post_id
 
@@ -301,6 +299,10 @@ class UserStream(CassandraModel):
             batch.add(SimpleStatement(query), (user_id, pid, post_owner))
 
         session.execute(batch)
+        try:
+            ltrim_user_stream.delay(user_id=user_id)
+        except Exception as e:
+            print str(e)
 
     def unfollow(self, user_id, post_owner):
         query = """

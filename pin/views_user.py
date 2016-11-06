@@ -673,11 +673,11 @@ def notif_user(request):
     if is_private:
         """ Get follow request """
         follow_requests = FollowRequest.objects\
-            .filter(target_id=user_id).order_by('-id')
+            .filter(target_id=user_id)
 
         cnt_requests = follow_requests.count()
         if cnt_requests > 0:
-            last_follow_req = follow_requests[0]
+            last_follow_req = follow_requests.order_by('-id')[0]
             user_obj = get_simple_user_object(last_follow_req.user.id)
 
             follow_requests = {'user': user_obj,
