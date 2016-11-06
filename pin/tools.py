@@ -618,15 +618,14 @@ def check_user_state(user_id, current_user):
                         following_id=user_id)\
                 .exists()
 
-            if not follow_status:
-                status = False
-
             if profile.is_private and not follow_status:
                 """ Check request user is following user_id"""
                 pending = FollowRequest.objects\
                     .filter(user_id=current_user_id,
                             target_id=user_id)\
                     .exists()
+                status = False
+
     data = {'status': status,
             'follow_status': follow_status,
             'pending': pending,
