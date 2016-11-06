@@ -246,14 +246,14 @@ class UserStream(CassandraModel):
         session.execute(query)
 
         # Ltrim user straem
-        key = "ltrim:user:{}".format(user_id)
+        key = "lt:u:{}".format(user_id)
         get_key = redis_server.get(key)
         if not get_key:
             try:
                 ltrim_user_stream.delay(user_id=user_id)
             except Exception as e:
                 print str(e)
-            redis_server.set(key, 1, 86400)
+            redis_server.set(key, 1, 3600)
 
     def ltrim(self, user_id, limit=1000):
         query = """
@@ -275,7 +275,7 @@ class UserStream(CassandraModel):
 
             print "{}, {}".format(user_id, last_post_id)
 
-            rows = session.execute(query)
+            rows = session.execute(query, timeout=120)
             if len(rows.current_rows) != 0:
                 batch = BatchStatement()
                 for r in rows:
