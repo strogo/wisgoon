@@ -888,12 +888,13 @@ def password_reset_2(request):
         """Validate email """
         email = request.POST.get('email')
         if not email:
-            return return_bad_request(message=_('Email is not correct'))
-        try:
-            User.objects.only('email').get(email=email)
-        except User.DoesNotExist:
+            return return_bad_request(message=_('Email is not correct'),
+                                      status=False)
+
+        exist_user = User.objects.filter(email=email).exists()
+        if not exist_user:
             msg = _("User account with this email does not exist")
-            return return_not_found(message=msg)
+            return return_not_found(message=msg, status=False)
 
         if form.is_valid():
             email_template = 'registration/password_reset_email_pin.html'
@@ -914,7 +915,8 @@ def password_reset_2(request):
             }
             return return_json_data(data)
 
-    return return_bad_request()
+    return return_bad_request(message=_('Method not allowed'),
+                              status=False)
 
 
 @csrf_exempt
