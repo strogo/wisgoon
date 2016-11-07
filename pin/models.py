@@ -336,7 +336,7 @@ class Post(models.Model):
         Post.objects.filter(pk=post_id).update(show_in_default=True)
         PostCacheLayer(post_id=post_id).show_in_default_change(status=True)
         post = PostCacheLayer(post_id=post_id).get()
-        print post
+
         if post:
             from pin.actions import send_notif_bar
             send_notif_bar(user=post['user']['id'], type=5, post=post_id,

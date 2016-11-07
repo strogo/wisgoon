@@ -113,9 +113,9 @@ def home(request):
 
     request_user_id = request.user.id
     request_user_authenticated = request.user.is_authenticated()
+
     for pll in pl:
         pid = int(pll)
-
         post_item = post_item_json(post_id=pid, cur_user_id=request_user_id)
         if post_item:
             if request_user_authenticated:

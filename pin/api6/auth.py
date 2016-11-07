@@ -880,6 +880,45 @@ def password_reset(request):
 
 @csrf_exempt
 @system_writable
+def password_reset_2(request):
+
+    if request.method == "POST":
+        form = PasswordResetForm(request.POST)
+
+        """Validate email """
+        email = request.POST.get('email')
+        if not email:
+            return return_bad_request(message=_('Email is not correct'))
+        try:
+            User.objects.only('email').get(email=email)
+        except User.DoesNotExist:
+            msg = _("User account with this email does not exist")
+            return return_not_found(message=msg)
+
+        if form.is_valid():
+            email_template = 'registration/password_reset_email_pin.html'
+            subject_template = 'registration/password_reset_subject.txt'
+            opts = {
+                'use_https': request.is_secure(),
+                'token_generator': default_token_generator,
+                'from_email': None,
+                'email_template_name': email_template,
+                'subject_template_name': subject_template,
+                'request': request,
+                'html_email_template_name': None
+            }
+            form.save(**opts)
+            data = {
+                'status': True,
+                'message': _('Email sent')
+            }
+            return return_json_data(data)
+
+    return return_bad_request()
+
+
+@csrf_exempt
+@system_writable
 def accept_follow(request):
 
     data = {}
