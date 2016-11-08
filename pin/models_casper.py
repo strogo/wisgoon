@@ -252,7 +252,7 @@ class UserStream(CassandraModel):
             VALUES ( %s, %s, %s);"""
             batch.add(SimpleStatement(query), (u, post_id, post_owner))
             count += 1
-            if count > 5000:
+            if count > 1000:
                 count = 0
                 session.execute(batch)
                 batch = BatchStatement()

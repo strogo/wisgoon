@@ -1094,9 +1094,11 @@ class Stream(models.Model):
             Post.add_to_user_stream(post_id=post.id, user_id=user.id,
                                     post_owner=user.id)
 
-            from pin.actions import send_post_to_followers
+            # from pin.actions import send_post_to_followers
+            from pin.tasks import post_to_followers
 
-            send_post_to_followers(user_id=user.id, post_id=post.id)
+            # send_post_to_followers(user_id=user.id, post_id=post.id)
+            post_to_followers.delay(user_id=user_id, post_id=post_id)
 
             if post.status == Post.APPROVED and post.accept_for_stream():
                 Post.add_to_stream(post=post)

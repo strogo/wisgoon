@@ -404,16 +404,6 @@ def post_to_followers(user_id, post_id):
 
     Post.add_to_users_stream(post_id, followers, user_id)
 
-    # for follower_id in followers:
-    #     if settings.DEBUG:
-    #         post_to_follower_single(post_id=post_id,
-    #                                 follower_id=follower_id,
-    #                                 post_owner=user_id)
-    #     else:
-    #         post_to_follower_single.delay(post_id=post_id,
-    #                                       follower_id=follower_id,
-    #                                       post_owner=user_id)
-
     return "this is post_to_followers"
 
 
