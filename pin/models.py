@@ -1098,7 +1098,7 @@ class Stream(models.Model):
             from pin.tasks import post_to_followers
 
             # send_post_to_followers(user_id=user.id, post_id=post.id)
-            post_to_followers.delay(user_id=user.id, post_id=post_id)
+            post_to_followers.delay(user_id=user.id, post_id=post.id)
 
             if post.status == Post.APPROVED and post.accept_for_stream():
                 Post.add_to_stream(post=post)
