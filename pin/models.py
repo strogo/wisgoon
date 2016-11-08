@@ -1489,6 +1489,7 @@ class PhoneData(models.Model):
 
     logged_out = models.BooleanField(default=False)
     hash_data = models.CharField(max_length=32, default="")
+    exrea_data = models.TextField()
 
     def get_need_fields(self):
         fields = self._meta.get_all_field_names()

@@ -626,6 +626,7 @@ def get_phone_data(request, startup=None):
         return return_bad_request()
     try:
         os = request.POST.get("os", "")
+        extra_data = request.POST.get("extra_data", "")
         app_version = request.POST.get("app_version", "")
         google_token = request.POST.get("google_token", "")
         token = request.POST.get("user_wisgoon_token", None)
@@ -671,7 +672,7 @@ def get_phone_data(request, startup=None):
 
     except PhoneData.DoesNotExist:
         pass
-
+    print extra_data
     upd, created = PhoneData.objects.get_or_create(user=user)
     upd.imei = imei
     upd.os = os
@@ -681,6 +682,7 @@ def get_phone_data(request, startup=None):
     upd.app_version = app_version
     upd.google_token = google_token
     upd.logged_out = False
+    upd.extra_data = extra_data
     upd.save()
 
     if startup:
