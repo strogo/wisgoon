@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect,\
@@ -333,18 +333,25 @@ def nop(request, item_id):
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 def send_comment(request):
     cur_user = request.user
-
+    from django.template.loader import render_to_string
+    from django.template import RequestContext
     if request.method == 'POST':
         try:
             text = request.POST.get('text', None)
             post = int(request.POST.get('post', None))
         except UnreadablePostError:
-            return HttpResponse('error')
+            data = {'status': False,
+                    'cnt_comments': 0,
+                    'message': "Invalid parameters"}
+            return JsonResponse(data)
 
         if text and post:
             post_json = post_item_json(post_id=post)
             if not post_json:
-                return HttpResponse('error')
+                data = {'status': False,
+                        'cnt_comments': 0,
+                        'message': "Post doest not exists"}
+                return JsonResponse(data)
 
             """ Check current user status """
             status = check_user_state(user_id=post_json['user']['id'],
@@ -352,18 +359,28 @@ def send_comment(request):
             allow_comment = status['status']
 
             if not allow_comment:
-                return HttpResponse('error')
+                data = {'status': False,
+                        'cnt_comments': post_json['cnt_comment'],
+                        'message': "You do not have access to this post"}
+                return JsonResponse(data)
 
             comment = Comments.objects\
                 .create(object_pk_id=post_json['id'],
                         comment=text,
                         user=cur_user,
                         ip_address=get_user_ip(request))
-            return render(request, 'pin2/show_comment.html', {
-                'comment': comment
-            })
+            html = render_to_string('pin2/show_comment.html',
+                                    {'comment': comment},
+                                    context_instance=RequestContext(request))
+            data = {'status': True,
+                    'cnt_comments': post_json['cnt_comment'],
+                    'message': html}
+            return JsonResponse(data)
 
-    return HttpResponse('error')
+    data = {'status': False,
+            'cnt_comments': 0,
+            'message': "Post doest not exists"}
+    return JsonResponse(data)
 
 
 def you_are_deactive(request):

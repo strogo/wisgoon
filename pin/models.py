@@ -336,7 +336,7 @@ class Post(models.Model):
         Post.objects.filter(pk=post_id).update(show_in_default=True)
         PostCacheLayer(post_id=post_id).show_in_default_change(status=True)
         post = PostCacheLayer(post_id=post_id).get()
-        print post
+
         if post:
             from pin.actions import send_notif_bar
             send_notif_bar(user=post['user']['id'], type=5, post=post_id,
@@ -1326,9 +1326,9 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
-        if Block.objects.filter(user_id=self.object_pk.user_id,
-                                blocked_id=self.user_id).exists():
-            return
+        # if Block.objects.filter(user_id=self.object_pk.user_id,
+        #                         blocked_id=self.user_id).exists():
+        #     return
 
         if not self.pk:
             Post.objects.filter(pk=self.object_pk_id)\
@@ -1367,13 +1367,13 @@ class Comments(models.Model):
         actors_list = []
 
         # Push notif for post owner
-        print comment.id, "models"
         if comment.user_id != post.user.id:
             send_notif_bar(user=post.user.id, type=Notif.COMMENT, post=post.id,
                            actor=comment.user.id, comment=comment)
 
             actors_list.append(post.user.id)
 
+        # Wisgoon account
         if post.user.id == 11253:
             return
 
@@ -1500,6 +1500,7 @@ class PhoneData(models.Model):
 
     logged_out = models.BooleanField(default=False)
     hash_data = models.CharField(max_length=32, default="")
+    exrea_data = models.TextField(null=True, blank=True)
 
     def get_need_fields(self):
         fields = self._meta.get_all_field_names()

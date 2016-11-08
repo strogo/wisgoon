@@ -273,7 +273,9 @@ def post_item_json(post_id, cur_user_id=None, r=None,
         cache_post = cp.get()
         pi['cnt_view'] = PostView(post_id=post_id).get_cnt_view()
         PostView(post_id=post_id).inc_view()
+
         if cache_post:
+            cache_post['like_with_user'] = False
             if cur_user_id:
                 cache_post['like_with_user'] = LikesRedis(post_id=post_id)\
                     .user_liked(user_id=cur_user_id)
@@ -289,10 +291,11 @@ def post_item_json(post_id, cur_user_id=None, r=None,
             post = Post.objects.get(id=post_id)
         except Post.DoesNotExist:
             return None
+
         pi['cache'] = "Miss"
         pi['id'] = post.id
         pi['text'] = emoji.emojize(post.text).strip()
-        pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
+        pi['cnt_comment'] = 0 if post.cnt_comment < 0 else post.cnt_comment
         pi['timestamp'] = post.timestamp
         pi['show_in_default'] = post.show_in_default
 
@@ -304,7 +307,6 @@ def post_item_json(post_id, cur_user_id=None, r=None,
         pi['url'] = post.url
 
         pi['cnt_like'] = post.cnt_like
-        pi['like_with_user'] = False
         pi['status'] = post.status
 
         pi['tags'] = get_post_tags(post)

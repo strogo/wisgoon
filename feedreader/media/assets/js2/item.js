@@ -74,12 +74,15 @@ $(function () {
             url: frm.attr('action'),
             data: frm.serialize(),
         })
-        .done(function(response) {
-            if (response == 'error'){
-                alertify.error("خطا! با مدیریت سایت تماس بگیرید");
+        .done(function(res) {
+            if (res.status == false){
+                alertify.error(res.message);
             }else{
-                $('#comments_box').prepend(response);
+                var cnt_comment;
+                $('#comments_box').prepend($.parseHTML(res.message));
                 $('#comments_box').find('.no-comment').hide('fast');
+                cnt_comment = document.getElementById('cnt_comment');
+                cnt_comment.innerHTML=pn(res.cnt_comments + 1);
                 alertify.success("دیدگاه شما با موفقیت ثبت شد");
             }
         })
