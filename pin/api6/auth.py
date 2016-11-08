@@ -1118,3 +1118,5 @@ def inc_credit_2(request):
                                 'message': _(message)})
 
     return return_json_data({'status': False, 'message': 'failed'})
+
+

@@ -1412,7 +1412,6 @@ class Comments(models.Model):
 
         if settings.TUNING_CACHE:
             post_id = self.object_pk_id
-            print self.object_pk.cnt_comment, "cnt_comment"
             PostCacheLayer(post_id=post_id)\
                 .delete_comment(self.object_pk.cnt_comment)
 
