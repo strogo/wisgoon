@@ -239,13 +239,28 @@ class UserStream(CassandraModel):
     def __init__(self):
         CassandraModel.__init__(self)
 
-    def add_post(self, user_id, post_id, post_owner):
-        query = """INSERT INTO user_stream
-        (user_id, post_id , post_owner )
-        VALUES ( {}, {}, {});""".format(user_id, post_id, post_owner)
-        session.execute(query)
+    def add_post_batch(self, user_ids, post_id, post_owner):
+        if not user_ids:
+            return 
 
-        # Ltrim user straem
+        print "this is batch"
+        batch = BatchStatement()
+        count = 0
+        for u in user_ids:
+            query = """INSERT INTO user_stream
+            (user_id, post_id , post_owner )
+            VALUES ( %s, %s, %s);"""
+            batch.add(SimpleStatement(query), (u, post_id, post_owner))
+            count += 1
+            if count >50000:
+                session.execute(batch)
+                batch = BatchStatement()
+
+            self.ltrim_ltrim_command(u)
+
+        session.execute(batch)
+
+    def ltrim_ltrim_command(self, user_id):
         key = "lt:u:{}".format(user_id)
         get_key = redis_server.get(key)
         if not get_key:
@@ -254,6 +269,16 @@ class UserStream(CassandraModel):
             except Exception as e:
                 print str(e)
             redis_server.set(key, 1, 3600)
+
+    def add_post(self, user_id, post_id, post_owner):
+        query = """INSERT INTO user_stream
+        (user_id, post_id , post_owner )
+        VALUES ( {}, {}, {});""".format(user_id, post_id, post_owner)
+        session.execute(query)
+
+        # Ltrim user straem
+        self.ltrim_ltrim_command(user_id)
+        
 
     def ltrim(self, user_id, limit=1000):
         query = """

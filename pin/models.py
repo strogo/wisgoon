@@ -647,6 +647,18 @@ class Post(models.Model):
         us.add_post(user_id, post_id, post_owner)
 
     @classmethod
+    def add_to_users_stream(cls, post_id, user_ids, post_owner):
+        # user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
+
+        # r_server.lrem(user_stream, post_id)
+        # r_server.lpush(user_stream, post_id)
+        # r_server.ltrim(user_stream, 0, 1000)
+
+        # print "add to stream {}".format(user_id)
+        us = UserStream()
+        us.add_post_batch(user_ids, post_id, post_owner)
+
+    @classmethod
     def remove_post_from_stream(cls, user_id, post_id):
         pass
         # user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
