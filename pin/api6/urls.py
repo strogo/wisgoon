@@ -53,8 +53,10 @@ urlpatterns = patterns('pin.api6.auth',
                        url(r'^auth/remove/follow/request/$',
                            'remove_follow_req',
                            name="api-6-auth-remove-follow-request"),
+                       url(r'^auth/phone/send/verify/code/$',
+                           'send_verify_code',
+                           name="api-6-auth-send-verify-code"),
                        )
-
 urlpatterns += patterns('pin.api6.post',
                         url(r'post/latest/$', 'latest',
                             name='api-6-post-latest'),

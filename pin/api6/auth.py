@@ -16,6 +16,7 @@ from django.db.models import Q
 from django.http import UnreadablePostError
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
 from django.contrib.auth import authenticate, login as auth_login,\
     logout as auth_logout
 
@@ -31,14 +32,15 @@ from tastypie.models import ApiKey
 # from haystack.query import Raw
 from pin.decorators import system_writable
 from pin.models import Follow, Block, Likes, BannedImei, PhoneData, Bills2,\
-    FollowRequest
+    FollowRequest, VerifyCode
 from pin.models_es import ESUsers
 from pin.tools import AuthCache, get_new_access_token2
 from pin.api6.http import return_bad_request, return_json_data,\
     return_un_auth, return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object,\
     get_int, get_profile_data, update_follower_following, post_item_json,\
-    check_user_state
+    check_user_state, normalize_phone, validate_mobile, email_is_valid,\
+    get_random_int
 
 
 def followers(request, user_id):
@@ -1119,4 +1121,42 @@ def inc_credit_2(request):
 
     return return_json_data({'status': False, 'message': 'failed'})
 
+
+@csrf_exempt
+def send_verify_code(request):
+    phone = request.POST.get('phone', None)
+    if not phone:
+        return return_bad_request(message=_("Invalid phone number"),
+                                  status=False)
+    phone = phone.strip()
+    norm_phone = normalize_phone(phone)
+    if not validate_mobile(norm_phone):
+        return return_bad_request(message=_("Invalid phone number"),
+                                  status=False)
+    try:
+        profile = Profile.objects.only('phone', 'user').get(phone=phone)
+        user_id = profile.user_id
+    except:
+        return return_not_found(message="User does not exists")
+
+    # send_sms
+    code = VerifyCode.objects.filter(user_id=user_id)
+    if code.exists():
+        code.delete()
+    code = get_random_int()
+    VerifyCode.objects.create(user_id=user_id)
+
+    data = {
+        "message": _("Verification sms sent!"),
+        "status": True,
+        "user_id": user_id
+    }
+
+    return return_json_data(data)
+
+
+# @csrf_exempt
+# def verify_code(request):
+#     code = request.POST.get('code', None)
+#     user_id = request.POST.get('user_id', None)
 

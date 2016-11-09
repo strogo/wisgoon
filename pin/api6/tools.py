@@ -1,9 +1,10 @@
 import ast
+import re
 import emoji
 import urllib
 from io import FileIO, BufferedWriter
 from time import time
-
+import random
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
@@ -24,7 +25,6 @@ from pin.tools import create_filename, fix_rotation, AuthCache
 from user_profile.models import Profile
 
 from cache_layer import PostCacheLayer
-
 import khayyam
 
 VERB = {
@@ -590,3 +590,36 @@ def check_user_state(user_id, token):
                     status = False
                     return status, current_user_id
     return status, current_user_id
+
+
+def normalize_phone(number):
+    """
+    convert   09195308965 -> 989195308965
+            +989195308965 -> 989195308965
+           00989195308965 -> 989195308965
+    """
+
+    if number.startswith("00"):
+        number = number.replace("0", "98")
+
+    elif number.startswith("0"):
+        number = number.replace("0", "98", 1)
+
+    elif number.startswith("+"):
+        number = number.replace("+", "")
+    else:
+        number = "0"
+    return str(int(float(number)))
+    # return number
+
+
+def validate_mobile(value):
+    status = False
+    rule = re.compile(r'^\+?(989)\d{9}$')
+    if rule.search(value):
+        status = True
+    return status
+
+
+def get_random_int():
+    return random.randint(1000, 9999)

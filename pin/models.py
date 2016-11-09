@@ -37,6 +37,7 @@ from pin.models_graph import FollowUser
 from models_casper import UserStream, CatStreams
 from pin.analytics import comment_act, post_act
 
+
 LIKE_TO_DEFAULT_PAGE = 10
 r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
 r_server4 = redis.Redis(settings.REDIS_DB_2, db=4)
@@ -1954,7 +1955,15 @@ class CampaignWinners(models.Model):
     winners = models.TextField(null=True, blank=True)
     status = models.IntegerField(default=NOT_CALCULATE, blank=True,
                                  verbose_name=_("Status"),
-                                 choices=STATUS_CHOICES)# class Acl(models.Model):
+                                 choices=STATUS_CHOICES)
+
+
+class VerifyCode(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    code = models.IntegerField()
+    create_time = models.DateTimeField(auto_now_add=True)
+
+# class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"
 
 #         ALLOW_TYPE_DENY = 0
