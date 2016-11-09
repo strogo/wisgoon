@@ -593,7 +593,6 @@ def get_user_with_imei(request, imei):
     phone_data = PhoneData.objects.filter(imei=imei)
     for data in phone_data:
         users.append(get_simple_user_object(data.user.id))
-        print users
 
     result['objects'] = users
     return return_json_data(result)

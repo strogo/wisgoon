@@ -1974,8 +1974,8 @@ class CampaignWinners(models.Model):
 
 class VerifyCode(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    code = models.IntegerField()
-    create_time = models.DateTimeField(auto_now_add=True)
+    code = models.IntegerField(unique=True)
+    create_at = models.DateTimeField(auto_now_add=True)
 
 # class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"

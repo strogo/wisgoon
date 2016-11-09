@@ -117,7 +117,7 @@ def post_likers(request, item_id):
             }
             likers_list.append(u)
         except Exception as e:
-            print e
+            print str(e)
 
     data['objects'] = likers_list
     if data['objects']:

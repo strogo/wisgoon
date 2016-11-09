@@ -2,7 +2,7 @@
 import re
 import hashlib
 import urllib2
-
+from datetime import datetime
 try:
     import simplejson as json
 except ImportError:
@@ -16,7 +16,6 @@ from django.db.models import Q
 from django.http import UnreadablePostError
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
-from django.core.mail import send_mail
 from django.contrib.auth import authenticate, login as auth_login,\
     logout as auth_logout
 
@@ -39,8 +38,7 @@ from pin.api6.http import return_bad_request, return_json_data,\
     return_un_auth, return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object,\
     get_int, get_profile_data, update_follower_following, post_item_json,\
-    check_user_state, normalize_phone, validate_mobile, email_is_valid,\
-    get_random_int
+    check_user_state, normalize_phone, validate_mobile, get_random_int
 
 
 def followers(request, user_id):
@@ -674,7 +672,7 @@ def get_phone_data(request, startup=None):
 
     except PhoneData.DoesNotExist:
         pass
-    print extra_data
+
     upd, created = PhoneData.objects.get_or_create(user=user)
     upd.imei = imei
     upd.os = os
@@ -1123,18 +1121,17 @@ def inc_credit_2(request):
 
 
 @csrf_exempt
-def send_verify_code(request):
+def send_code(request):
     phone = request.POST.get('phone', None)
     if not phone:
-        return return_bad_request(message=_("Invalid phone number"),
-                                  status=False)
+        return return_bad_request(message=_("Invalid phone number"))
+
     phone = phone.strip()
     norm_phone = normalize_phone(phone)
     if not validate_mobile(norm_phone):
-        return return_bad_request(message=_("Invalid phone number"),
-                                  status=False)
+        return return_bad_request(message=_("Invalid phone number"))
     try:
-        profile = Profile.objects.only('phone', 'user').get(phone=phone)
+        profile = Profile.objects.only('phone', 'user').get(phone=norm_phone)
         user_id = profile.user_id
     except:
         return return_not_found(message="User does not exists")
@@ -1144,7 +1141,7 @@ def send_verify_code(request):
     if code.exists():
         code.delete()
     code = get_random_int()
-    VerifyCode.objects.create(user_id=user_id)
+    VerifyCode.objects.create(user_id=user_id, code=code)
 
     data = {
         "message": _("Verification sms sent!"),
@@ -1155,8 +1152,49 @@ def send_verify_code(request):
     return return_json_data(data)
 
 
-# @csrf_exempt
-# def verify_code(request):
-#     code = request.POST.get('code', None)
-#     user_id = request.POST.get('user_id', None)
+@csrf_exempt
+def verify_code(request):
+    code = request.POST.get('code', None)
+    user_id = int(request.POST.get('user_id', None))
 
+    if not code or not user_id:
+        return return_bad_request(message=_("Invalid parameters"))
+
+    try:
+        code = VerifyCode.objects.get(user_id=user_id,
+                                      code=code)
+
+        date_diff = (datetime.now() - code.create_at).seconds / 60
+        code.delete()
+        if date_diff > 2:
+            return return_bad_request(message=_("Invalid code"))
+
+    except:
+        return return_not_found(message=_("Code is wrong"))
+
+    message = _('Successfully verify code')
+    data = {'status': True,
+            'message': message,
+            'user_id': user_id}
+    return return_json_data(data)
+
+
+@csrf_exempt
+def reset_pass(request):
+    password = request.POST.get('password', None)
+    user_id = request.POST.get('user_id', None)
+
+    if not password or not user_id:
+        return return_bad_request(message=_("Invalid parameters"))
+
+    try:
+        user = User.objects.only('password').get(id=user_id)
+        user.set_password(password)
+    except:
+        return return_not_found(message=_("User does not exists"))
+
+    message = _('Successfully reset password')
+    data = {'status': True,
+            'message': message,
+            'user_id': user_id}
+    return return_json_data(data)
