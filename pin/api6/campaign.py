@@ -16,12 +16,14 @@ LIMIT = 10
 
 
 def current_campaign(request, startup=None):
-    data = {'meta': {'limit': 1,
-                     'next': '',
-                     'total_count': 0
-                     },
-            'objects': []
-            }
+    data = {
+        'meta': {
+            'limit': 1,
+            'next': '',
+            'total_count': 0
+        },
+        'objects': []
+    }
 
     current = Campaign.objects.filter(is_current=True, expired=False)\
         .order_by('?').first()
