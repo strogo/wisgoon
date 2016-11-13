@@ -2,9 +2,12 @@ import ast
 import re
 import emoji
 import urllib
+import random
+
 from io import FileIO, BufferedWriter
 from time import time
-import random
+import datetime as dt
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
@@ -18,7 +21,7 @@ from pin.api6.http import return_bad_request
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
 from pin.models import Post, Follow, Comments, Block, Category, SystemState,\
-    FollowRequest
+    FollowRequest, VerifyCode
 from pin.models_redis import LikesRedis, PostView
 from pin.tools import create_filename, fix_rotation, AuthCache
 
@@ -566,7 +569,8 @@ def check_user_state(user_id, token):
     else:
         current_user = AuthCache.user_from_token(token=token)
         if not current_user:
-            status = False
+            if profile.is_private:
+                status = False
             return status, current_user_id
         current_user_id = current_user.id
 
@@ -623,3 +627,29 @@ def validate_mobile(value):
 
 def get_random_int():
     return random.randint(1000, 9999)
+
+
+def code_is_valid(code, user_id):
+    status = False
+    verify_code = VerifyCode.objects.filter(user_id=user_id, code=code)
+
+    if verify_code.exists():
+        code = verify_code[0]
+        convert_date = code.create_at.replace(tzinfo=None)
+        date_diff = (dt.datetime.utcnow() - convert_date).seconds / 60
+        if date_diff > 2:
+            status = True
+    return status
+
+
+def allow_reset(user_id):
+    today_min = dt.datetime.combine(dt.date.today(), dt.time.min)
+    today_max = dt.datetime.combine(dt.date.today(), dt.time.max)
+    status = True
+
+    cnt_try = VerifyCode.objects\
+        .filter(user_id=user_id,
+                create_at__range=(today_min, today_max)).count()
+    if cnt_try > 5:
+        status = False
+    return status
