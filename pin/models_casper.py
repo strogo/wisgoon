@@ -17,10 +17,13 @@ class CassandraModel():
         if not isConnected:
             if settings.DEVEL_BRANCH:
                 cluster = Cluster(['79.127.125.99'])
+                cluster = Cluster(['79.127.125.104'])
             elif settings.DEBUG:
                 cluster = Cluster(['127.0.0.1'])
             else:
                 cluster = Cluster(['79.127.125.99'])
+                cluster = Cluster(['79.127.125.104'])
+
             session = cluster.connect("wisgoon")
             isConnected = True
 
