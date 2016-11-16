@@ -1039,7 +1039,8 @@ def post_likers(request, post_id, offset=0):
 
 
 def item_related(request, item_id):
-    offset = int(request.GET.get('offset', 0))
+    offset = int(request.GET.get('older', 0))
+    new_offset = 0
 
     try:
         post = Post.objects.get(id=item_id)
@@ -1048,7 +1049,9 @@ def item_related(request, item_id):
 
     cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
     mltis = cache.get(cache_str)
+    # print "mltis"
     if not mltis:
+        # print "not mltis"
         mlt = SearchQuerySet().models(Post)\
             .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
 
@@ -1060,11 +1063,15 @@ def item_related(request, item_id):
         ob = post_item_json(post_id=pmlt, cur_user_id=request.user.id)
         if ob:
             related_posts.append(ob)
+    new_offset = offset + 20
 
     ''' age related_posts khali bud az category miyarim'''
     if not related_posts:
-        post_ids = Post.latest(cat_id=post.category_id)
+        # print offset
+        post_ids = Post.latest(cat_id=post.category_id, pid=offset)
         for post_id in post_ids:
+            new_offset = post_id
+            print post_id
             if post.id != post_id:
                 post_json = post_item_json(post_id=int(post_id),
                                            cur_user_id=request.user.id)
@@ -1073,14 +1080,18 @@ def item_related(request, item_id):
                     mltis.append(post_id)
 
     post.mlt = related_posts
+    # if arp:
+    #     next_url = reverse('home') + "?older=" + last_id
 
     if request.is_ajax():
         return render(request, 'pin2/_items_related.html', {
-            'post': post
+            'post': post,
+            'offset': new_offset
         })
 
     return render(request, 'pin2/item_related.html', {
         'post': post,
+        'offset': new_offset
     }, content_type="text/html")
 
 

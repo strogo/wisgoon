@@ -1,11 +1,14 @@
 {% extends "pin2/flat.base.html" %}
 {% load pin_tags %}
 
-
 {% block title%} - {{post.text|striptags|remove_newlines|truncatechars:20}}{% endblock title%}
 {%block description%}{{post.text|striptags|remove_newlines|truncatewords:60}}{%endblock%}
 
 {% block content %}
+<script>
+    var start_loading=0;
+    var a_url="{{related_url}}";
+</script>
 <div id="main">
 	<div class="container-fluid">
 		<div id="feed" class="masonry">

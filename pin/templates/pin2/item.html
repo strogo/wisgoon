@@ -17,6 +17,8 @@
 <script>
     var comments_url = "{{comments_url}}";
     var related_url = "{{related_url}}";
+    var start_loading=0;
+    var a_url="{{related_url}}";
 </script>
 <div id="main">
 	<div class="container">
@@ -34,7 +36,7 @@
             </div>
         </div>
         <div id="feed" class="masonry">
-            <a href="{{related_url}}"> مطالب مرتبط </a>
+            <a href="{{related_url}}">مطالب مرتبط </a>
         </div>
     </div>
     {% if DISPLAY_AD and request.user_agent.is_mobile %}
