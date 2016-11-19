@@ -1039,7 +1039,7 @@ def post_likers(request, post_id, offset=0):
 
 
 def item_related(request, item_id):
-    offset = int(request.GET.get('older', 0))
+    offset = int(request.GET.get('offset', 0))
     new_offset = 0
 
     try:
@@ -1068,7 +1068,7 @@ def item_related(request, item_id):
     ''' age related_posts khali bud az category miyarim'''
     if not related_posts:
         # print offset
-        post_ids = Post.latest(cat_id=post.category_id, pid=offset)
+        post_ids = Post.latest(cat_id=post.category_id)
         for post_id in post_ids:
             new_offset = post_id
             print post_id
