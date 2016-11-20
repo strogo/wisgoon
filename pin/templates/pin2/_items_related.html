@@ -5,9 +5,9 @@
 			{% include "pin2/__items_base_v6.html" %}
 	{% endif %}
     {% if offset %}
-    	<span data-next="{{offset}}" ></span>
+    	<span data-next="{{offset}}" data-lastId="{{item.id}}"></span>
     {%else%}
-    	<span data-next="{{item.id}}" ></span>
+    	<span data-next="{{item.id}}" data-lastId="{{item.id}}"></span>
     {%endif%}
 
 {%endfor%}

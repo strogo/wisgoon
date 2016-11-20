@@ -190,7 +190,9 @@ $(window).scroll(function() {
     var break_point = $(document).height() - ($(window).height() * 2.02);
     if ($(window).scrollTop() >= break_point) {
         var next_page = $('#feed span:last').attr('data-next');
-        if (next_page && start_loading==0) {
+        var last_id = $('#feed span:last').attr('data-lastId');
+        extend_query = 'last_id=' + last_id
+        if ((last_id || next_page) && start_loading==0) {
             start_loading=1;
             loadingobj.show();
             load_posts(next_page);
