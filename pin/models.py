@@ -919,7 +919,8 @@ class Post(models.Model):
     @classmethod
     def user_stream_latest(cls, user_id, pid=0):
         rus = RedisUserStream()
-        rus.get_posts(user_id)
+        pl = rus.get_stream_posts(user_id, pid)
+        # return pl
 
         us = UserStream()
         pl = us.get_posts(user_id, pid)
@@ -1029,6 +1030,10 @@ class Follow(models.Model):
         us.unfollow(follower_id, following_id)
         # remove_from_stream(user_id=following_id, owner_id=follower_id)
 
+        from models_stream import RedisUserStream
+        rus = RedisUserStream()
+        rus.unfollow(follower_id, following_id)
+
     def save(self, *args, **kwargs):
         super(Follow, self).save(*args, **kwargs)
 
@@ -1072,6 +1077,10 @@ class Follow(models.Model):
                 .order_by("-id")[:100]
 
             us.follow(follower_id, pid_list, following_id)
+
+            from models_stream import RedisUserStream
+            rus = RedisUserStream()
+            rus.follow(follower_id, pid_list, following_id)
 
 
 class Stream(models.Model):
