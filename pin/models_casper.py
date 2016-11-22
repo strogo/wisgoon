@@ -282,6 +282,7 @@ class UserStream(CassandraModel):
         
 
     def ltrim(self, user_id, limit=1000):
+        return 
         query = """
         SELECT * FROM user_stream WHERE user_id = {} LIMIT {};
         """.format(user_id, limit)
