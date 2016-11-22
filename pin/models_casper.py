@@ -21,6 +21,7 @@ class CassandraModel():
                 cluster = Cluster(['127.0.0.1'])
             else:
                 cluster = Cluster(['79.127.125.99'])
+
             session = cluster.connect("wisgoon")
             isConnected = True
 
@@ -241,7 +242,7 @@ class UserStream(CassandraModel):
 
     def add_post_batch(self, user_ids, post_id, post_owner):
         if not user_ids:
-            return 
+            return
 
         print "this is batch"
         batch = BatchStatement()
@@ -279,7 +280,6 @@ class UserStream(CassandraModel):
 
         # Ltrim user straem
         self.ltrim_ltrim_command(user_id)
-        
 
     def ltrim(self, user_id, limit=1000):
         query = """

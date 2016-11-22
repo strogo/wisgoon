@@ -7,7 +7,7 @@ from django.utils.translation import ugettext as _
 from django.http import HttpResponse
 
 
-def return_bad_request(message=_("Bad request"), status=400):
+def return_bad_request(message=_("Bad request"), status=False):
     data = {
         'status': status,
         'message': message,
@@ -17,7 +17,7 @@ def return_bad_request(message=_("Bad request"), status=400):
                         status=400)
 
 
-def return_not_found(status=404, message=_("Not found")):
+def return_not_found(status=False, message=_("Not found")):
     data = {
         'status': status,
         'message': message,
@@ -27,7 +27,7 @@ def return_not_found(status=404, message=_("Not found")):
                         status=404)
 
 
-def return_un_auth(message=_("authentication failed"), status=403):
+def return_un_auth(message=_("authentication failed"), status=False):
     data = {
         'status': status,
         'message': message,

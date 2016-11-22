@@ -32,7 +32,7 @@ def execute_sql_cache(self, result_type=MULTI):
     if hasattr(_thread_locals, 'query_cache'):
 
         sql = get_sql(self)  # ('SELECT * FROM ...', (50)) <= sql string, args tuple
-        print sql
+
         if sql[0][:6].upper() == 'SELECT':
 
             # uses the tuple of sql + args as the cache key

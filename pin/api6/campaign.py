@@ -64,12 +64,12 @@ def campaign_posts(request, camp_id):
     token = request.GET.get('token', False)
     order_by_req = request.GET.get('order', False)
 
-    if order_by_req == "cnt_like":
+    if order_by_req == "timestamp_i":
+        order_by = "timestamp_i"
+    else:
+        # order_by_req = "timestamp_i"
         order_by_req = "cnt_like"
         order_by = "cnt_like_i"
-    else:
-        order_by_req = "timestamp_i"
-        order_by = "timestamp_i"
 
     user = False
     if token:
@@ -93,8 +93,8 @@ def campaign_posts(request, camp_id):
             .order_by('-{}'.format(order_by))[before:before + LIMIT]
     else:
         posts = SearchQuerySet().models(Post).filter(tags__in=tags)\
-            .filter(timestamp_i__lte=end_date)\
-            .filter(timestamp_i__gte=start_date)\
+            .filter(timestamp_i__gte=start_date,
+                    timestamp_i__lte=end_date)\
             .order_by('-{}'.format(order_by))[before:before + LIMIT]
 
     for post in posts:

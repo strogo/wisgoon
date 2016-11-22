@@ -12,15 +12,14 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
-from pin.models import Post, Follow, Likes, Category, Comments, Results,\
-    FollowRequest
+from pin.models import Post, Follow, Likes, Category, Comments, Results
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
     get_user_ip, get_delta_timestamp, AuthCache, check_user_state
 
 from pin.model_mongo import Ads, MonthlyStats
 from pin.models_redis import LikesRedis
 
-from pin.api6.tools import post_item_json, get_simple_user_object
+from pin.api6.tools import post_item_json
 
 from user_profile.models import Profile
 
@@ -75,7 +74,9 @@ def home_queue(request):
         post_item = post_item_json(post_id=pid, cur_user_id=request.user.id)
         if post_item:
             if request.user.is_authenticated():
-                if not check_block(user_id=post_item['user']['id'], blocked_id=request.user.id):
+                is_block = check_block(user_id=post_item['user']['id'],
+                                       blocked_id=request.user.id)
+                if not is_block:
                     arp.append(post_item)
             else:
                 arp.append(post_item)
@@ -753,7 +754,9 @@ def latest(request):
         ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
         if ob:
             if request.user.is_authenticated():
-                if not check_block(user_id=ob['user']['id'], blocked_id=request.user.id):
+                is_block = check_block(user_id=ob['user']['id'],
+                                       blocked_id=request.user.id)
+                if not is_block:
                     arp.append(ob)
             else:
                 arp.append(ob)
@@ -792,7 +795,9 @@ def category(request, cat_id):
         ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
         if ob:
             if request.user.is_authenticated():
-                if not check_block(user_id=ob['user']['id'], blocked_id=request.user.id):
+                is_block = check_block(user_id=ob['user']['id'],
+                                       blocked_id=request.user.id)
+                if not is_block:
                     arp.append(ob)
             else:
                 arp.append(ob)
@@ -846,7 +851,9 @@ def popular(request, interval=""):
         post_json = post_item_json(post_id=post.pk)
         if post_json:
             if request.user.is_authenticated():
-                if not check_block(user_id=post_json['user']['id'], blocked_id=request.user.id):
+                is_block = check_block(user_id=post_json['user']['id'],
+                                       blocked_id=request.user.id)
+                if not is_block:
                     ps.append(post_json)
             else:
                 ps.append(post_json)
@@ -1039,7 +1046,9 @@ def post_likers(request, post_id, offset=0):
 
 
 def item_related(request, item_id):
-    offset = int(request.GET.get('offset', 0))
+    offset = int(request.GET.get('older', 0))
+    last_id = int(request.GET.get('last_id', 0))
+    related_posts = []
 
     try:
         post = Post.objects.get(id=item_id)
@@ -1048,6 +1057,7 @@ def item_related(request, item_id):
 
     cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
     mltis = cache.get(cache_str)
+
     if not mltis:
         mlt = SearchQuerySet().models(Post)\
             .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
@@ -1055,7 +1065,6 @@ def item_related(request, item_id):
         mltis = [int(pmlt.pk) for pmlt in mlt]
         cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
 
-    related_posts = []
     for pmlt in mltis:
         ob = post_item_json(post_id=pmlt, cur_user_id=request.user.id)
         if ob:
@@ -1063,24 +1072,25 @@ def item_related(request, item_id):
 
     ''' age related_posts khali bud az category miyarim'''
     if not related_posts:
-        post_ids = Post.latest(cat_id=post.category_id)
+        post_ids = Post.latest(cat_id=post.category_id, pid=last_id)
         for post_id in post_ids:
             if post.id != post_id:
                 post_json = post_item_json(post_id=int(post_id),
                                            cur_user_id=request.user.id)
                 if post_json:
                     related_posts.append(post_json)
-                    mltis.append(post_id)
 
     post.mlt = related_posts
 
     if request.is_ajax():
         return render(request, 'pin2/_items_related.html', {
-            'post': post
+            'post': post,
+            'offset': offset + 20
         })
 
     return render(request, 'pin2/item_related.html', {
         'post': post,
+        'offset': offset + 20,
     }, content_type="text/html")
 
 
@@ -1126,7 +1136,7 @@ def stats(request):
     for m in ms:
         if m.date.day not in op['dates']:
             op['dates'].append(m.date.day)
-    print op
+
     return render(request, 'pin2/stats.html', {'op': op})
 
 

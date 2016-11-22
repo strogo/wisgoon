@@ -90,6 +90,7 @@ class Profile(models.Model):
     level = models.IntegerField(default=1)
 
     banned = models.BooleanField(default=False)
+    phone = models.CharField(max_length=255, null=True, blank=True)
     is_private = models.BooleanField(default=False,
                                      verbose_name=_('Private'))
 

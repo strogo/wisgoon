@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
+from __future__ import division
 import re
 import hashlib
 import urllib2
-
 try:
     import simplejson as json
 except ImportError:
@@ -31,14 +31,15 @@ from tastypie.models import ApiKey
 # from haystack.query import Raw
 from pin.decorators import system_writable
 from pin.models import Follow, Block, Likes, BannedImei, PhoneData, Bills2,\
-    FollowRequest
+    FollowRequest, VerifyCode
 from pin.models_es import ESUsers
 from pin.tools import AuthCache, get_new_access_token2
 from pin.api6.http import return_bad_request, return_json_data,\
     return_un_auth, return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object,\
     get_int, get_profile_data, update_follower_following, post_item_json,\
-    check_user_state
+    check_user_state, normalize_phone, validate_mobile, get_random_int,\
+    code_is_valid, allow_reset
 
 
 def followers(request, user_id):
@@ -405,7 +406,7 @@ def users_top(request):
     current_user = None
 
     if token:
-        current_user = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.user_from_token(token=token)
 
     ob = Profile.objects\
         .only('banned', 'user', 'score', 'cnt_post', 'cnt_like',
@@ -672,7 +673,7 @@ def get_phone_data(request, startup=None):
 
     except PhoneData.DoesNotExist:
         pass
-    print extra_data
+
     upd, created = PhoneData.objects.get_or_create(user=user)
     upd.imei = imei
     upd.os = os
@@ -1120,3 +1121,98 @@ def inc_credit_2(request):
     return return_json_data({'status': False, 'message': 'failed'})
 
 
+@csrf_exempt
+def send_code(request):
+    phone = request.POST.get('phone', None)
+    if not phone:
+        return return_bad_request(message=_("Invalid phone number"))
+
+    phone = phone.strip()
+    norm_phone = normalize_phone(phone)
+    if not validate_mobile(norm_phone):
+        return return_bad_request(message=_("Invalid phone number"))
+    try:
+        profile = Profile.objects.only('phone', 'user').get(phone=norm_phone)
+        user_id = profile.user_id
+    except:
+        return return_not_found(message="User does not exists")
+
+    if not allow_reset(user_id=user_id):
+        return return_bad_request(message=_('invalid'))
+
+    code = get_random_int()
+    VerifyCode.objects.create(user_id=user_id, code=code)
+    # send_sms
+    try:
+        api_key = ApiKey.objects.get(user_id=user_id)
+        token = api_key.key
+    except:
+        token = None
+
+    data = {
+        "message": _("Verification sms sent!"),
+        "status": True,
+        "token": token
+    }
+
+    return return_json_data(data)
+
+
+@csrf_exempt
+def verify_code(request):
+    code = request.POST.get('code', None)
+    token = request.POST.get('token', None)
+
+    if not code or not token:
+        return return_bad_request(message=_("Invalid parameters"))
+
+    user = AuthCache.user_from_token(token=token)
+    if not user:
+        return return_un_auth()
+
+    user_id = user.id
+    if not allow_reset(user_id=user_id):
+        return return_bad_request(message=_('invalid'))
+
+    if not code_is_valid(code=code, user_id=user_id):
+        return return_bad_request(message=_("Invalid code"))
+
+    message = _('Successfully verify code')
+    data = {'status': True,
+            'message': message,
+            'token': token,
+            'code': code}
+    return return_json_data(data)
+
+
+@csrf_exempt
+def reset_pass(request):
+    password = request.POST.get('password', None)
+    token = request.POST.get('token', None)
+    code = request.POST.get('code', None)
+
+    if not password or not token or not code:
+        return return_bad_request(message=_("Invalid parameters"))
+
+    user = AuthCache.user_from_token(token=token)
+    if not user:
+        return return_un_auth()
+
+    user_id = user.id
+    if not allow_reset(user_id=user_id):
+        return return_bad_request(message=_('invalid'))
+
+    if not code_is_valid(code=code, user_id=user_id):
+        return return_bad_request(message=_("Invalid code"))
+
+    try:
+        user = User.objects.only('password').get(id=user_id)
+        user.set_password(password)
+    except:
+        return return_not_found(message=_("User does not exists"))
+
+    message = _('Successfully reset password')
+    data = {'status': True,
+            'message': message,
+            'token': token}
+    return return_json_data(data)

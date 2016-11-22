@@ -213,7 +213,6 @@ def get_ads(before, date):
             ads = Ad.objects\
                 .filter(start__startswith=str(date))[before: (before + 1) * 20]
         else:
-            print date
             ads = Ad.objects.filter(start__startswith=str(date))[:20]
     except:
         ads = []
@@ -387,7 +386,6 @@ def delet_post_new(request):
         try:
             reported_posts = ReportedPost.objects.filter(post_id__in=post_ids)
             post = Post.objects.get(id__in=post_ids)
-            print post
 
             for posts in reported_posts:
 

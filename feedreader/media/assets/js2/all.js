@@ -96,7 +96,7 @@ function reload_sticky(){
     // pr = pp - $('.post-sidebar').height();
     // console.log(pr);
     // $(".post-page .post-sidebar").scrollToFixed({
-    //     marginTop:15, 
+    //     marginTop:15,
     //     limit:  pr
     // });
     // var c = $('.post-page .post-content').height();
@@ -112,7 +112,7 @@ function sticky_sidebar(s){
             pp = $('#related_posts').offset().top;
             pr = pp - $('.post-sidebar').height();
             $(".post-page .post-sidebar").scrollToFixed({
-                marginTop:15, 
+                marginTop:15,
                 limit:  pr
             });
         }, s);
@@ -190,7 +190,9 @@ $(window).scroll(function() {
     var break_point = $(document).height() - ($(window).height() * 2.02);
     if ($(window).scrollTop() >= break_point) {
         var next_page = $('#feed span:last').attr('data-next');
-        if (next_page && start_loading==0) {
+        var last_id = $('#feed span:last').attr('data-lastId');
+        extend_query = 'last_id=' + last_id
+        if ((last_id || next_page) && start_loading==0) {
             start_loading=1;
             loadingobj.show();
             load_posts(next_page);
@@ -254,11 +256,11 @@ $(".popnotify").bind('click', function(){
             });
         }else{
             el.unbind('click').popover({
-                content: notifCache, 
+                content: notifCache,
                 title: "notifications",
                 placement:'bottom',
                 html:true
-            }).popover('show');    
+            }).popover('show');
             el.parent().children('.loading-img').hide(0);
         }
     }
@@ -397,7 +399,7 @@ $(function () {
             success: function(data, status) {
                 alert(data);
                 $('#pinitem').modal('hide').children('.modal-body').html('');
-                
+
             }
         });
 
@@ -473,7 +475,7 @@ $(function () {
     $('body').on('mouseleave', '#wis_navbar', function(event) {
         $(".marker").hide();
     });
-    
+
     $('body').on('mouseenter', '#wis_navbar > ul > li', function(event) {
         event.preventDefault();
         var t = $(this);

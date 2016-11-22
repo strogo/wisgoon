@@ -13,7 +13,7 @@ from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     UserActivities, Campaign, SystemState, CampaignWinners
 from pin.actions import send_notif
 from pin.tools import revalidate_bazaar
-from pin.tasks import update_camp_post, camp_scores
+# from pin.tasks import update_camp_post, camp_scores
 
 
 class StoragesAdmin(admin.ModelAdmin):
@@ -409,7 +409,7 @@ class CampaignWinnersAdmin(admin.ModelAdmin):
             camp_id = obj.campaign_id
             obj.status = 1
             obj.save()
-            update_camp_post.delay(camp_id=camp_id)
+            # update_camp_post.delay(camp_id=camp_id)
 
     winners_list.short_description = 'محاسبه نفرات برتر'
     campaign_id.admin_order_field = 'campaign_id'
