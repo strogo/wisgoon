@@ -920,7 +920,7 @@ class Post(models.Model):
     def user_stream_latest(cls, user_id, pid=0):
         rus = RedisUserStream()
         pl = rus.get_stream_posts(user_id, pid)
-        # return pl
+        return pl
 
         us = UserStream()
         pl = us.get_posts(user_id, pid)
