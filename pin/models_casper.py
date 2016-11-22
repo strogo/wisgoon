@@ -21,7 +21,6 @@ class CassandraModel():
                 cluster = Cluster(['127.0.0.1'])
             else:
                 cluster = Cluster(['79.127.125.99'])
-
             session = cluster.connect("wisgoon")
             isConnected = True
 
@@ -242,7 +241,7 @@ class UserStream(CassandraModel):
 
     def add_post_batch(self, user_ids, post_id, post_owner):
         if not user_ids:
-            return
+            return 
 
         print "this is batch"
         batch = BatchStatement()
@@ -280,6 +279,7 @@ class UserStream(CassandraModel):
 
         # Ltrim user straem
         self.ltrim_ltrim_command(user_id)
+        
 
     def ltrim(self, user_id, limit=1000):
         query = """
@@ -348,20 +348,36 @@ class UserStream(CassandraModel):
             batch.add(SimpleStatement(q), (user_id, r.post_id))
         session.execute(batch)
 
-    def get_posts(self, user_id, pid):
+    def get_posts(self, user_id, pid, limit= 20):
         if pid == 0:
             query = """
             SELECT post_id FROM user_stream
             WHERE user_id = {}
-            LIMIT 20;
-            """.format(user_id)
+            LIMIT {};
+            """.format(user_id, limit)
         else:
             query = """
             SELECT post_id FROM user_stream
             WHERE user_id = {} AND post_id < {}
-            LIMIT 20;
-            """.format(user_id, pid)
+            LIMIT {};
+            """.format(user_id, pid, limit)
         rows = session.execute(query)
         post_id_list = [int(p.post_id) for p in rows]
 
         return post_id_list
+
+    def get_post_data(self, user_id, pid, limit= 20):
+        if pid == 0:
+            query = """
+            SELECT * FROM user_stream
+            WHERE user_id = {}
+            LIMIT {};
+            """.format(user_id, limit)
+        else:
+            query = """
+            SELECT * FROM user_stream
+            WHERE user_id = {} AND post_id < {}
+            LIMIT {};
+            """.format(user_id, pid, limit)
+        rows = session.execute(query)
+        return rows
