@@ -79,7 +79,6 @@ class RedisUserStream(object):
         al = []
         for pl in post_l:
             post_id, post_owner = pl.split(":")
-            # al.append({"post_id":int(post_id), "post_owner": int(post_owner)})
             al.append({int(post_id): int(post_owner)})
         return al
 
@@ -95,11 +94,13 @@ class RedisUserStream(object):
             cpitem = cp.items()[0]
             newitem = "{}:{}".format(cpitem[0], cpitem[1])
             al.append(newitem)
-        ss.delete(skey)
+        sspipe = ss.pipeline()
+        sspipe.delete(skey)
         al.reverse()
         if al:
-            ss.lpush(skey, *al)
-        ss.ltrim(skey, 0, stream_limit - 1)
+            sspipe.lpush(skey, *al)
+        sspipe.ltrim(skey, 0, stream_limit - 1)
+        sspipe.execute()
 
     def unfollow(self, user_id, target_id):
         skey = stream_key.format(user_id)
