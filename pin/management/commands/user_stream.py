@@ -20,7 +20,7 @@ class Command(BaseCommand):
         us = RedisUserStream()
         for user in users:
             us.migrate_user_stream(user.id)
-            # print "user:", user.id
+            print "user:", user.id
             # user_stream = "{}_{}".format(settings.USER_STREAM, int(user.id))
             # pl = r_server.lrange(user_stream, 0, 1000)
             # if not pl:
