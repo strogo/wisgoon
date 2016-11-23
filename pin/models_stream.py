@@ -2,13 +2,14 @@ import redis
 from django.conf import settings
 from pin.models_casper import UserStream
 
-# stream server 
+# stream server
 ss = redis.Redis(settings.REDIS_DB_104)
 
 # user stream production
 stream_key = "us_p:{}"
 
 stream_limit = 500
+
 
 class RedisUserStream(object):
     def __init__(self):
@@ -36,11 +37,10 @@ class RedisUserStream(object):
 
         sspipe = ss.pipeline()
         for uid in user_ids:
-            skey = stream_key.format(uid)           
+            skey = stream_key.format(uid)
             sspipe.lpush(skey, post_hash)
             sspipe.ltrim(skey, 0, stream_limit - 1)
         sspipe.execute()
-
 
     def convert_posts(self, post_list):
         pass
@@ -50,7 +50,7 @@ class RedisUserStream(object):
         self.migrate_user_stream(user_id)
 
         if pid == 0:
-            pl = ss.lrange(skey, 0, limit-1)
+            pl = ss.lrange(skey, 0, limit - 1)
         else:
             pid_index = None
             key_stand = "{}:".format(pid)
@@ -63,7 +63,7 @@ class RedisUserStream(object):
                 pl = pl[pid_index + 1: pid_index + limit]
             else:
                 return []
-        
+
         idis = []
         for pid in pl:
             idis.append(pid.split(":")[0])
@@ -82,7 +82,6 @@ class RedisUserStream(object):
             # al.append({"post_id":int(post_id), "post_owner": int(post_owner)})
             al.append({int(post_id): int(post_owner)})
         return al
-
 
     def follow(self, user_id, post_list, post_owner):
         skey = stream_key.format(user_id)
@@ -111,5 +110,3 @@ class RedisUserStream(object):
             if key_stand in p:
                 sspipe.lrem(skey, p, 0)
         sspipe.execute()
-
-    
