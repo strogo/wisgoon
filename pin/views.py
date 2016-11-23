@@ -1055,30 +1055,32 @@ def item_related(request, item_id):
     except Post.DoesNotExist:
         raise Http404
 
-    cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
-    mltis = cache.get(cache_str)
+    if offset < 100:
 
-    if not mltis:
-        mlt = SearchQuerySet().models(Post)\
-            .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
+        cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
+        mltis = cache.get(cache_str)
 
-        mltis = [int(pmlt.pk) for pmlt in mlt]
-        cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
+        if not mltis:
+            mlt = SearchQuerySet().models(Post)\
+                .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
 
-    for pmlt in mltis:
-        ob = post_item_json(post_id=pmlt, cur_user_id=request.user.id)
-        if ob:
-            related_posts.append(ob)
+            mltis = [int(pmlt.pk) for pmlt in mlt]
+            cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
 
-    ''' age related_posts khali bud az category miyarim'''
-    if not related_posts:
-        post_ids = Post.latest(cat_id=post.category_id, pid=last_id)
-        for post_id in post_ids:
-            if post.id != post_id:
-                post_json = post_item_json(post_id=int(post_id),
-                                           cur_user_id=request.user.id)
-                if post_json:
-                    related_posts.append(post_json)
+        for pmlt in mltis:
+            ob = post_item_json(post_id=pmlt, cur_user_id=request.user.id)
+            if ob:
+                related_posts.append(ob)
+
+        ''' age related_posts khali bud az category miyarim'''
+        if not related_posts:
+            post_ids = Post.latest(cat_id=post.category_id, pid=last_id)
+            for post_id in post_ids:
+                if post.id != post_id:
+                    post_json = post_item_json(post_id=int(post_id),
+                                               cur_user_id=request.user.id)
+                    if post_json:
+                        related_posts.append(post_json)
 
     post.mlt = related_posts
 
