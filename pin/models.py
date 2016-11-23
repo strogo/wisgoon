@@ -35,7 +35,7 @@ from pin.classification_tools import normalize
 from pin.api6.cache_layer import PostCacheLayer
 from pin.models_graph import FollowUser
 from pin.models_stream import RedisUserStream
-from models_casper import UserStream, CatStreams
+from models_casper import CatStreams
 from pin.analytics import comment_act, post_act
 
 
@@ -648,8 +648,8 @@ class Post(models.Model):
         # r_server.ltrim(user_stream, 0, 1000)
 
         # print "add to stream {}".format(user_id)
-        us = UserStream()
-        us.add_post(user_id, post_id, post_owner)
+        # us = UserStream()
+        # us.add_post(user_id, post_id, post_owner)
 
     @classmethod
     def add_to_users_stream(cls, post_id, user_ids, post_owner):
@@ -663,8 +663,8 @@ class Post(models.Model):
         # r_server.ltrim(user_stream, 0, 1000)
 
         # print "add to stream {}".format(user_id)
-        us = UserStream()
-        us.add_post_batch(user_ids, post_id, post_owner)
+        # us = UserStream()
+        # us.add_post_batch(user_ids, post_id, post_owner)
 
     @classmethod
     def remove_post_from_stream(cls, user_id, post_id):
@@ -922,9 +922,9 @@ class Post(models.Model):
         pl = rus.get_stream_posts(user_id, pid)
         return pl
 
-        us = UserStream()
-        pl = us.get_posts(user_id, pid)
-        return pl
+        # us = UserStream()
+        # pl = us.get_posts(user_id, pid)
+        # return pl
 
         # row_per_page = 20
         # if not user_id:
@@ -1015,8 +1015,8 @@ class Follow(models.Model):
         # from pin.tasks import remove_from_stream
         # remove_from_stream.delay(user_id=follower_id, owner_id=following_id)
 
-        from models_casper import UserStream, Notification
-        us = UserStream()
+        from models_casper import Notification
+        # us = UserStream()
         notif = Notification()
         notif.update_notif(a_user_id=following_id,
                            a_type=10,
@@ -1027,7 +1027,7 @@ class Follow(models.Model):
         from models_redis import NotificationRedis
         NotificationRedis(user_id=following_id).decrement_cnt_notif()
 
-        us.unfollow(follower_id, following_id)
+        # us.unfollow(follower_id, following_id)
         # remove_from_stream(user_id=following_id, owner_id=follower_id)
 
         from models_stream import RedisUserStream
@@ -1069,14 +1069,14 @@ class Follow(models.Model):
                                      "follow")
 
             # Add following posts to follower stream
-            from models_casper import UserStream
-            us = UserStream()
+            # from models_casper import UserStream
+            # us = UserStream()
             pid_list = Post.objects.filter(user_id=following_id)\
                 .only("id")\
                 .values_list("id", flat=True)\
                 .order_by("-id")[:100]
 
-            us.follow(follower_id, pid_list, following_id)
+            # us.follow(follower_id, pid_list, following_id)
 
             from models_stream import RedisUserStream
             rus = RedisUserStream()
