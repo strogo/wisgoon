@@ -241,7 +241,7 @@ class UserStream(CassandraModel):
 
     def add_post_batch(self, user_ids, post_id, post_owner):
         if not user_ids:
-            return 
+            return
 
         print "this is batch"
         batch = BatchStatement()
@@ -279,10 +279,9 @@ class UserStream(CassandraModel):
 
         # Ltrim user straem
         self.ltrim_ltrim_command(user_id)
-        
 
     def ltrim(self, user_id, limit=1000):
-        return 
+        return
         query = """
         SELECT * FROM user_stream WHERE user_id = {} LIMIT {};
         """.format(user_id, limit)
@@ -349,7 +348,7 @@ class UserStream(CassandraModel):
             batch.add(SimpleStatement(q), (user_id, r.post_id))
         session.execute(batch)
 
-    def get_posts(self, user_id, pid, limit= 20):
+    def get_posts(self, user_id, pid, limit=20):
         if pid == 0:
             query = """
             SELECT post_id FROM user_stream
@@ -367,7 +366,7 @@ class UserStream(CassandraModel):
 
         return post_id_list
 
-    def get_post_data(self, user_id, pid, limit= 20):
+    def get_post_data(self, user_id, pid, limit=20):
         if pid == 0:
             query = """
             SELECT * FROM user_stream
