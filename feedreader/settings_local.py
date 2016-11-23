@@ -56,6 +56,8 @@ NEO4J_DATABASE = "http://localhost:7474/db/data/"
 REDIS_DB = 'wisgoon.db'
 REDIS_DB_NUMBER = 11
 
+REDIS_DB_104 = "127.0.0.1"
+
 REDIS_DB_2 = 'wisgoon.db.2'
 REDIS_DB_NUMBER_2 = 10
 

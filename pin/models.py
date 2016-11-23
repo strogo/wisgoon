@@ -34,6 +34,7 @@ from pin.tasks import delete_image
 from pin.classification_tools import normalize
 from pin.api6.cache_layer import PostCacheLayer
 from pin.models_graph import FollowUser
+from pin.models_stream import RedisUserStream
 from models_casper import UserStream, CatStreams
 from pin.analytics import comment_act, post_act
 
@@ -637,6 +638,9 @@ class Post(models.Model):
 
     @classmethod
     def add_to_user_stream(cls, post_id, user_id, post_owner):
+        from pin.models_stream import RedisUserStream
+        rus = RedisUserStream()
+        rus.add_post([user_id], post_id, post_owner)
         # user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
 
         # r_server.lrem(user_stream, post_id)
@@ -649,6 +653,9 @@ class Post(models.Model):
 
     @classmethod
     def add_to_users_stream(cls, post_id, user_ids, post_owner):
+        from pin.models_stream import RedisUserStream
+        rus = RedisUserStream()
+        rus.add_post(user_ids, post_id, post_owner)
         # user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
 
         # r_server.lrem(user_stream, post_id)
@@ -911,6 +918,10 @@ class Post(models.Model):
 
     @classmethod
     def user_stream_latest(cls, user_id, pid=0):
+        rus = RedisUserStream()
+        pl = rus.get_stream_posts(user_id, pid)
+        return pl
+
         us = UserStream()
         pl = us.get_posts(user_id, pid)
         return pl
@@ -1019,6 +1030,10 @@ class Follow(models.Model):
         us.unfollow(follower_id, following_id)
         # remove_from_stream(user_id=following_id, owner_id=follower_id)
 
+        from models_stream import RedisUserStream
+        rus = RedisUserStream()
+        rus.unfollow(follower_id, following_id)
+
     def save(self, *args, **kwargs):
         super(Follow, self).save(*args, **kwargs)
 
@@ -1063,6 +1078,10 @@ class Follow(models.Model):
 
             us.follow(follower_id, pid_list, following_id)
 
+            from models_stream import RedisUserStream
+            rus = RedisUserStream()
+            rus.follow(follower_id, pid_list, following_id)
+
 
 class Stream(models.Model):
     following = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -1095,25 +1114,11 @@ class Stream(models.Model):
             Post.add_to_user_stream(post_id=post.id, user_id=user.id,
                                     post_owner=user.id)
 
-            # from pin.actions import send_post_to_followers
             from pin.tasks import post_to_followers
-
-            # send_post_to_followers(user_id=user.id, post_id=post.id)
             post_to_followers.delay(user_id=user.id, post_id=post.id)
 
             if post.status == Post.APPROVED and post.accept_for_stream():
                 Post.add_to_stream(post=post)
-
-            # try:
-            #     from models_casper import PostData
-            #     PostData(post_id=post.id,
-            #              creator_ip=post._user_ip,
-            #              create_time=datetime.now()).save()
-            #     post_act(post=post.id, actor=user.id,
-            #              category=post.category.title, user_ip=post._user_ip)
-
-            # except:
-            #     pass
 
 
 class Likes(models.Model):

@@ -55,16 +55,16 @@ def clear_notif(user_id):
     return "clear botif"
 
 
-@app.task(name="tasks.post_to_followers")
-def post_to_followers(user_id, post_id):
-    # Get the users follow owner of post
-    followers = Follow.objects.filter(following_id=user_id)\
-        .values_list('follower_id', flat=True)
-    # print followers
-    for follower_id in followers:
-        # print follower
-        try:
-            Post.add_to_user_stream(post_id=post_id, user_id=follower_id)
-        except Exception, e:
-            print str(e)
-            pass
+# @app.task(name="tasks.post_to_followers")
+# def post_to_followers(user_id, post_id):
+#     # Get the users follow owner of post
+#     followers = Follow.objects.filter(following_id=user_id)\
+#         .values_list('follower_id', flat=True)
+#     # print followers
+#     for follower_id in followers:
+#         # print follower
+#         try:
+#             Post.add_to_user_stream(post_id=post_id, user_id=follower_id)
+#         except Exception, e:
+#             print str(e)
+#             pass
