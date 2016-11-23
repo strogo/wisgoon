@@ -15,13 +15,23 @@ class RedisUserStream(object):
     def __init__(self):
         pass
 
+    def get_post_hash(self, post_id, post_owner):
+        post_hash = "{}:{}".format(post_id, post_owner)
+        return post_hash
+
+    def get_post_dict(self, post_id, post_owner):
+        d = {
+            int(post_id): int(post_owner)
+        }
+        return d
+
     def migrate_user_stream(self, user_id):
         skey = stream_key.format(user_id)
         if not ss.exists(skey):
             us = UserStream()
             uslist = []
             for r in us.get_post_data(user_id, 0, stream_limit):
-                post_hash = "{}:{}".format(r.post_id, r.post_owner)
+                post_hash = self.get_post_hash(r.post_id, r.post_owner)
                 uslist.append(post_hash)
 
             uslist.reverse()
@@ -31,7 +41,7 @@ class RedisUserStream(object):
             sspipe.execute()
 
     def add_post(self, user_ids, post_id, post_owner):
-        post_hash = "{}:{}".format(post_id, post_owner)
+        post_hash = self.get_post_hash(post_id, post_owner)
         for uid in user_ids:
             self.migrate_user_stream(uid)
 
@@ -79,20 +89,22 @@ class RedisUserStream(object):
         al = []
         for pl in post_l:
             post_id, post_owner = pl.split(":")
-            al.append({int(post_id): int(post_owner)})
+            post_dict = self.get_post_dict(post_id, post_owner)
+            al.append(post_dict)
         return al
 
     def follow(self, user_id, post_list, post_owner):
         skey = stream_key.format(user_id)
         cur_posts = self.get_posts(post_owner, 0, -1)
         for p in post_list:
-            if {int(p): int(post_owner)} not in cur_posts:
-                cur_posts.append({int(p): int(post_owner)})
+            post_dict = self.get_post_dict(p, post_owner)
+            if post_dict not in cur_posts:
+                cur_posts.append(post_dict)
         cur_posts = sorted(cur_posts, reverse=True)
         al = []
         for cp in cur_posts:
             cpitem = cp.items()[0]
-            newitem = "{}:{}".format(cpitem[0], cpitem[1])
+            newitem = self.get_post_hash(cpitem[0], cpitem[1])
             al.append(newitem)
         sspipe = ss.pipeline()
         sspipe.delete(skey)
