@@ -98,7 +98,8 @@ class RedisUserStream(object):
             al.append(newitem)
         ss.delete(skey)
         al.reverse()
-        ss.lpush(skey, *al)
+        if al:
+            ss.lpush(skey, *al)
         ss.ltrim(skey, 0, stream_limit - 1)
 
     def unfollow(self, user_id, target_id):
