@@ -198,6 +198,7 @@ def search(request):
     else:
         facets = cache.get("search_facet")
         if not facets:
+            facets = {}
             stdlogger.info("cache empty")
             today_stamp = get_delta_timestamp(days=0)
             week_statmp = get_delta_timestamp(days=7)
