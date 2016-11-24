@@ -26,6 +26,7 @@ class RedisUserStream(object):
         return d
 
     def migrate_user_stream(self, user_id):
+        return
         skey = stream_key.format(user_id)
         if not ss.exists(skey):
             us = UserStream()
