@@ -17,7 +17,7 @@ from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json,\
-    category_get_json, check_user_state
+    category_get_json, check_user_state, post_item_json
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
 
@@ -35,11 +35,14 @@ def latest(request):
             'limit': GLOBAL_LIMIT,
             'next': '',
             'total_count': 1000
-        }
+        },
+        'objects': []
     }
 
     before = request.GET.get('before', None)
     token = request.GET.get('token', '')
+    # objects = []
+    ad_post_json = None
 
     if token:
         cur_user = AuthCache.id_from_token(token=token)
@@ -56,14 +59,20 @@ def latest(request):
         viewer_id = str(get_user_ip(request, to_int=True))
 
     ad = Ad.get_ad(user_id=viewer_id)
+
     if ad:
         hot_post = int(ad.post_id)
     if hot_post:
-        posts = list([hot_post]) + list(posts)
+        ad_post_json = post_item_json(hot_post,
+                                      cur_user_id=cur_user,
+                                      r=request)
 
-    data['objects'] = get_objects_list(posts,
+    data['objects'] = get_objects_list(list(posts),
                                        cur_user_id=cur_user,
                                        r=request)
+    if ad_post_json:
+        ad_post_json['is_ad'] = True
+        data['objects'].append(ad_post_json)
 
     if data['objects']:
         last_item = data['objects'][-1]['id']
