@@ -96,7 +96,7 @@ class RedisUserStream(object):
 
     def follow(self, user_id, post_list, post_owner):
         skey = stream_key.format(user_id)
-        cur_posts = self.get_posts(post_owner, 0, -1)
+        cur_posts = self.get_posts(user_id, 0, -1)
         for p in post_list:
             post_dict = self.get_post_dict(p, post_owner)
             if post_dict not in cur_posts:
