@@ -41,7 +41,6 @@ def latest(request):
 
     before = request.GET.get('before', None)
     token = request.GET.get('token', '')
-    # objects = []
     ad_post_json = None
 
     if token:
@@ -58,8 +57,8 @@ def latest(request):
     else:
         viewer_id = str(get_user_ip(request, to_int=True))
 
+    # Get ads
     ad = Ad.get_ad(user_id=viewer_id)
-
     if ad:
         hot_post = int(ad.post_id)
     if hot_post:
@@ -308,7 +307,7 @@ def report(request, item_id):
         status = False
         msg = _('Your Report Already Exists.')
 
-    data = {'status': status, 'msg': msg}
+    data = {'status': status, 'message': msg}
     return return_json_data(data)
 
 
