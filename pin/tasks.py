@@ -200,6 +200,7 @@ def check_porn(post_id):
     except Post.DoesNotExist:
         return "post does not exists"
     img_url = media_abs_url(post.get_image_500()['url'], check_photos=True)
+    print img_url
 
     try:
         r = requests.get(img_url, timeout=5)
@@ -207,6 +208,9 @@ def check_porn(post_id):
         print str(e)
         return
     except requests.exceptions.Timeout, e:
+        print str(e)
+        return
+    except Exception,e :
         print str(e)
         return
 
@@ -218,13 +222,16 @@ def check_porn(post_id):
                             auth=hba,
                             verify=False, data=r.content, timeout=10)
         if res.status_code != 200:
+            print res.status_code
             recheck_post(post_id)
             return
     except requests.ConnectionError, e:
         recheck_post(post_id)
+        print str(e)
         return
     except requests.exceptions.Timeout, e:
         recheck_post(post_id)
+        print str(e)
         return
 
     jdata = json.loads(res.content)
