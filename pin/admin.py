@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import time
+# import time
 
 from django.contrib import admin
 from haystack.admin import SearchModelAdmin
@@ -11,7 +11,7 @@ from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     BannedImei, CommentClassification, CommentClassificationTags,\
     Results, Storages, Lable, UserActivitiesSample, UserLable,\
     UserActivities, Campaign, SystemState, CampaignWinners
-from pin.actions import send_notif
+# from pin.actions import send_notif
 from pin.tools import revalidate_bazaar
 from pin.tasks import update_camp_post
 
@@ -396,13 +396,13 @@ class SystemStateAdmin(admin.ModelAdmin):
 
 
 class CampaignWinnersAdmin(admin.ModelAdmin):
-    list_display = ('id', 'campaign_id', 'winners', 'status')
+    list_display = ['id', 'get_campaign_id', 'winners', 'status']
     actions = ['winners_list']
     search_fields = ['campaign']
-    raw_id_fields = ('campaign',)
+    raw_id_fields = ("campaign",)
 
-    def campaign_id(self, obj):
-        return obj.campaign.id
+    def get_campaign_id(self, obj):
+        return obj.campaign.title
 
     def winners_list(self, request, queryset):
         for obj in queryset:
@@ -412,7 +412,8 @@ class CampaignWinnersAdmin(admin.ModelAdmin):
             update_camp_post.delay(camp_id=camp_id)
 
     winners_list.short_description = 'محاسبه نفرات برتر'
-    campaign_id.admin_order_field = 'campaign_id'
+    get_campaign_id.admin_order_field = 'campaign'
+    get_campaign_id.short_description = 'Campaign'
 
 
 admin.site.register(SystemState, SystemStateAdmin)
