@@ -30,6 +30,7 @@ def latest(request):
     cur_user = None
     last_item = None
     hot_post = None
+    ad_post_json = None
     data = {
         'meta': {
             'limit': GLOBAL_LIMIT,
@@ -41,7 +42,6 @@ def latest(request):
 
     before = request.GET.get('before', None)
     token = request.GET.get('token', '')
-    ad_post_json = None
 
     if token:
         cur_user = AuthCache.id_from_token(token=token)
@@ -85,6 +85,7 @@ def latest(request):
 def friends(request):
     cur_user = None
     hot_post = None
+    ad_post_json = None
     data = {}
     data['meta'] = {'limit': 20,
                     'next': "",
@@ -115,10 +116,17 @@ def friends(request):
     if ad:
         hot_post = int(ad.post_id)
     if hot_post:
-        posts = list([hot_post]) + list(posts)
+        ad_post_json = post_item_json(hot_post,
+                                      cur_user_id=cur_user,
+                                      r=request)
 
-    data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
+    data['objects'] = get_objects_list(list(posts),
+                                       cur_user_id=cur_user,
                                        r=request)
+    if ad_post_json:
+        ad_post_json['is_ad'] = True
+        data['objects'].append(ad_post_json)
+
     if data['objects']:
         last_item = data['objects'][-1]['id']
         data['meta']['next'] = get_next_url(url_name='api-6-post-friends',
