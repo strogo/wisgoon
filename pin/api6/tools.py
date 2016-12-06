@@ -161,6 +161,7 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
     user_info['block_by_user'] = False
     user_info['user_blocked_me'] = False
     user_info['request_follow'] = False
+    user_info['is_private'] = False
 
     user_info['related']['posts'] = abs_url(reverse('api-6-post-user',
                                                     kwargs={
@@ -177,6 +178,8 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
         try:
             profile = Profile.objects.only('is_private')\
                 .get(user_id=current_user)
+
+            user_info['is_private'] = profile.is_private
 
             if not user_info['follow_by_user'] and profile.is_private:
                 follow_req = FollowRequest.objects\
