@@ -31,6 +31,7 @@ def latest(request):
     last_item = None
     hot_post = None
     ad_post_json = None
+    posts_list = []
     data = {
         'meta': {
             'limit': GLOBAL_LIMIT,
@@ -50,7 +51,7 @@ def latest(request):
         before = 0
 
     pl = Post.latest(pid=before, limit=GLOBAL_LIMIT)
-    posts = get_list_post(pl, from_model=settings.STREAM_LATEST)
+    post_ids = get_list_post(pl, from_model=settings.STREAM_LATEST)
 
     if cur_user:
         viewer_id = str(cur_user)
@@ -66,12 +67,15 @@ def latest(request):
                                       cur_user_id=cur_user,
                                       r=request)
 
-    data['objects'] = get_objects_list(list(posts),
-                                       cur_user_id=cur_user,
-                                       r=request)
     if ad_post_json:
         ad_post_json['is_ad'] = True
         data['objects'].append(ad_post_json)
+
+    posts_list = get_objects_list(list(post_ids),
+                                  cur_user_id=cur_user,
+                                  r=request)
+
+    data['objects'] = data['objects'] + posts_list
 
     if data['objects']:
         last_item = data['objects'][-1]['id']
@@ -86,10 +90,15 @@ def friends(request):
     cur_user = None
     hot_post = None
     ad_post_json = None
-    data = {}
-    data['meta'] = {'limit': 20,
-                    'next': "",
-                    'total_count': 1000}
+    posts_list = []
+    data = {
+        'meta': {
+            'limit': 20,
+            'next': '',
+            'total_count': 1000
+        },
+        'objects': []
+    }
 
     before = request.GET.get('before', 0)
     token = request.GET.get('token', None)
@@ -110,7 +119,7 @@ def friends(request):
     # else:
     #     idis = Post.user_stream_latest(user_id=cur_user)
 
-    posts = get_list_post(idis, from_model=settings.STREAM_LATEST)
+    post_ids = get_list_post(idis, from_model=settings.STREAM_LATEST)
 
     ad = Ad.get_ad(user_id=viewer_id)
     if ad:
@@ -120,12 +129,14 @@ def friends(request):
                                       cur_user_id=cur_user,
                                       r=request)
 
-    data['objects'] = get_objects_list(list(posts),
-                                       cur_user_id=cur_user,
-                                       r=request)
     if ad_post_json:
         ad_post_json['is_ad'] = True
         data['objects'].append(ad_post_json)
+
+    posts_list = get_objects_list(list(post_ids),
+                                  cur_user_id=cur_user,
+                                  r=request)
+    data['objects'] = data['objects'] + posts_list
 
     if data['objects']:
         last_item = data['objects'][-1]['id']
@@ -138,10 +149,16 @@ def friends(request):
 def category(request, category_id):
     hot_post = None
     cur_user = None
-    data = {}
-    data['meta'] = {'limit': 20,
-                    'next': "",
-                    'total_count': 1000}
+    ad_post_json = None
+    posts_list = []
+    data = {
+        'meta': {
+            'limit': 20,
+            'next': '',
+            'total_count': 1000
+        },
+        'objects': []
+    }
 
     before = request.GET.get('before', None)
     token = request.GET.get('token', None)
@@ -154,7 +171,7 @@ def category(request, category_id):
 
     pl = Post.latest(pid=before, cat_id=category_id)
     from_model = "%s_%s" % (settings.STREAM_LATEST_CAT, category_id)
-    posts = get_list_post(pl, from_model=from_model)
+    post_ids = get_list_post(pl, from_model=from_model)
 
     if cur_user:
         viewer_id = str(cur_user)
@@ -165,13 +182,25 @@ def category(request, category_id):
     if ad:
         hot_post = int(ad.post_id)
     if hot_post:
-        posts = list([hot_post]) + list(posts)
+        ad_post_json = post_item_json(hot_post,
+                                      cur_user_id=cur_user,
+                                      r=request)
+
+    if ad_post_json:
+        ad_post_json['is_ad'] = True
+        data['objects'].append(ad_post_json)
 
     cat_json = category_get_json(category_id)
 
     data['meta']['native_hashcode'] = cat_json['native_hashcode']
-    data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
-                                       r=request)
+
+    # Create objects
+    posts_list = get_objects_list(post_ids,
+                                  cur_user_id=cur_user,
+                                  r=request)
+    data['objects'] = data['objects'] + posts_list
+
+    # Create next link
     if data['objects']:
         last_item = data['objects'][-1]['id']
         data['meta']['next'] = get_next_url(url_name='api-6-post-category',
@@ -186,12 +215,15 @@ def category(request, category_id):
 def choices(request):
     cur_user = None
     hot_post = None
+    ad_post_json = None
+    posts_list = []
     data = {
         'meta': {
-            'limit': GLOBAL_LIMIT,
-            'next': "",
+            'limit': 20,
+            'next': '',
             'total_count': 1000
-        }
+        },
+        'objects': []
     }
 
     before = request.GET.get('before', None)
@@ -204,7 +236,7 @@ def choices(request):
         before = 0
 
     pl = Post.home_latest(pid=before, limit=GLOBAL_LIMIT)
-    posts = get_list_post(pl)
+    post_ids = get_list_post(pl)
 
     if cur_user:
         viewer_id = str(cur_user)
@@ -215,10 +247,19 @@ def choices(request):
     if ad:
         hot_post = int(ad.post_id)
     if hot_post:
-        posts = list([hot_post]) + list(posts)
+        ad_post_json = post_item_json(hot_post,
+                                      cur_user_id=cur_user,
+                                      r=request)
 
-    data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
-                                       r=request)
+    if ad_post_json:
+        ad_post_json['is_ad'] = True
+        data['objects'].append(ad_post_json)
+
+    posts_list = get_objects_list(post_ids,
+                                  cur_user_id=cur_user,
+                                  r=request)
+    data['objects'] = data['objects'] + posts_list
+
     if data['objects']:
         last_item = data['objects'][-1]['id']
         data['meta']['next'] = get_next_url(url_name='api-6-post-choices',
