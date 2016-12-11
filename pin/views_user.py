@@ -27,6 +27,7 @@ from pin.api6.tools import post_item_json, notif_simple_json,\
     get_simple_user_object
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
+from user_profile.models import Profile
 from pin.model_mongo import Notif
 from pin.models_redis import ActivityRedis, NotificationRedis
 from pin.notification_models import UserNotification, MyNotificationFeed
@@ -36,7 +37,6 @@ from pin.models import Post, Follow, Ad, Block,\
     FollowRequest
 from pin.tools import create_filename, get_user_ip, get_request_pid,\
     check_block, post_after_delete, check_user_state
-
 from suds.client import Client
 
 MEDIA_ROOT = settings.MEDIA_ROOT
@@ -950,13 +950,25 @@ def save_as_ads(request, post_id):
     profile = request.user.profile
 
     """ Check current user status """
-    cur_user = request.user
-    cur_user_id = request.user.id
-    status = check_user_state(user_id=p['user']['id'],
-                              current_user=cur_user)
-    allow_promote = status['status']
+    # cur_user = request.user
+    # status = check_user_state(user_id=p['user']['id'],
+    #                           current_user=cur_user)
+    # allow_promote = status['status']
 
-    if not allow_promote:
+    # if not allow_promote:
+    #     return HttpResponseRedirect('/')
+    cur_user_id = request.user.id
+
+    try:
+        post_owner_profile = Profile.objects.only('is_private')\
+            .get(user_id=p['user']['id'])
+        is_private = post_owner_profile.is_private
+    except:
+        is_private = False
+
+    if is_private:
+        msg = _('This profile is private')
+        messages.error(request, _(msg))
         return HttpResponseRedirect('/')
 
     if request.method == "POST":
