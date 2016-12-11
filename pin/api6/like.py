@@ -1,11 +1,13 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import UnreadablePostError
+from django.utils.translation import ugettext as _
 
-from pin.api6.tools import get_int, get_simple_user_object, get_next_url
-from pin.decorators import system_writable
 from pin.models import Post
 from pin.models_redis import LikesRedis
+from pin.decorators import system_writable
 from pin.tools import AuthCache, get_post_user_cache
+from pin.api6.tools import get_int, get_simple_user_object, get_next_url,\
+    check_user_state
 from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
     return_bad_request
 
@@ -14,26 +16,28 @@ from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
 def like_post(request, item_id):
 
     token = request.GET.get('token', False)
-    if token:
-        current_user = AuthCache.user_from_token(token=token)
-        if not current_user:
-            return return_un_auth()
-    else:
-        return return_bad_request()
 
     try:
         post = get_post_user_cache(post_id=get_int(item_id))
     except Post.DoesNotExist:
         return return_not_found()
 
+    if token:
+        status, current_user_id = check_user_state(user_id=post.user_id,
+                                                   token=token)
+        if not current_user_id or not status:
+            return return_un_auth()
+    else:
+        return return_bad_request()
+
     like, dislike, current_like = LikesRedis(post_id=item_id)\
-        .like_or_dislike(user_id=current_user.id,
+        .like_or_dislike(user_id=current_user_id,
                          post_owner=post.user_id,
                          category=post.category_id)
 
     if like:
         user_act = 1
-        user = get_simple_user_object(current_user.id, post.user_id)
+        user = get_simple_user_object(current_user_id, post.user_id)
     elif dislike:
         user_act = -1
         user = {}
@@ -52,26 +56,30 @@ def like_item(request):
     except UnreadablePostError:
         return return_bad_request()
 
-    if token:
-        current_user = AuthCache.user_from_token(token=token)
-        if not current_user:
-            return return_un_auth()
-    else:
-        return return_bad_request()
-
     try:
         post = get_post_user_cache(post_id=get_int(item_id))
     except Post.DoesNotExist:
         return return_not_found()
 
+    if token:
+        # current_user = AuthCache.user_from_token(token=token)
+        status, current_user_id = check_user_state(user_id=post.user_id,
+                                                   token=token)
+        if not current_user_id or not status:
+            msg = _('You do not have access to this post')
+            return return_un_auth(message=msg)
+
+    else:
+        return return_bad_request()
+
     like, dislike, current_like = LikesRedis(post_id=item_id)\
-        .like_or_dislike(user_id=current_user.id,
+        .like_or_dislike(user_id=current_user_id,
                          post_owner=post.user_id,
                          category=post.category_id)
 
     if like:
         user_act = 1
-        user = get_simple_user_object(current_user.id, post.user_id)
+        user = get_simple_user_object(current_user_id, post.user_id)
     elif dislike:
         user_act = -1
         user = {}

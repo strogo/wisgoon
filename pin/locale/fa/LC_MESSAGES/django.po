@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wisgoon 6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-11 13:10+0330\n"
-"PO-Revision-Date: 2016-12-11 13:12+0330\n"
+"POT-Creation-Date: 2016-12-11 15:14+0330\n"
+"PO-Revision-Date: 2016-12-11 15:15+0330\n"
 "Last-Translator: amir <a.abbasghorbani@gmail.com>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -240,6 +240,10 @@ msgstr "مطلب یافت نشد"
 msgid "authentication failed"
 msgstr "هویت سنجی ناموفق بود"
 
+#: api6/like.py:69
+msgid "You do not have access to this post"
+msgstr "شما به این پست دسترسی ندارید"
+
 #: api6/post.py:355
 msgid "Successfully Add Report."
 msgstr "گزارش با موفقیت ثبت شد"
@@ -276,7 +280,7 @@ msgstr "مطلب حذف گردید"
 msgid "post not exists or not yours"
 msgstr "مطلب وجود ندارد و یا متعلق به شما نیست"
 
-#: api6/post.py:720
+#: api6/post.py:720 views_user.py:970
 msgid "This profile is private"
 msgstr "این حساب کاربری شخصی است"
 
@@ -284,7 +288,7 @@ msgstr "این حساب کاربری شخصی است"
 msgid "The number entered is incorrect."
 msgstr "عدد وارد شده معتبر نیست"
 
-#: api6/post.py:744 views_user.py:968
+#: api6/post.py:744 views_user.py:980
 msgid "This post has been advertised"
 msgstr "این پست آکهی شده"
 
@@ -968,24 +972,21 @@ msgstr "عدم پذیرش درخواست دوستی"
 msgid "bill payment"
 msgstr "پرداخت قبض"
 
-#: views_user.py:1002
+#: views_user.py:1014
 msgid "There is no action"
 msgstr "هیچ اکشنی موجود نمی باشد"
 
-#: views_user.py:1008
+#: views_user.py:1020
 msgid "This user was blocked successfully"
 msgstr "کاربر با موفقیت مسدود شد"
 
-#: views_user.py:1014
+#: views_user.py:1026
 msgid "This user was unblocked successfully"
 msgstr "کاربر با موفقیت رفع انسداد شد"
 
-#: views_user.py:1019
+#: views_user.py:1031
 msgid "The data entered is not valid"
 msgstr "داده های وارد شده معتبر نیست"
-
-#~ msgid "You do not have access to this post"
-#~ msgstr "شما اجازه دیدن این پست را ندارید"
 
 #, fuzzy
 #~| msgid "There is no post id"
