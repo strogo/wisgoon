@@ -37,12 +37,19 @@ class Command(BaseCommand):
             "chakavakane",
             "z.we"
         ]
-        users = User.objects.only('id')\
+        users = User.objects.only('id', 'username')\
             .filter(username__in=username_list)
+        result = []
         for user in users:
+            data = {}
             posts = Post.objects.only('id').filter(user_id=user.id)
+
             total_view = 0
             for post in posts:
                 p = post_item_json(post_id=post.id, fields=['cnt_view'])
                 total_view += p['cnt_view']
+
+            data['total_view'] = total_view
+            data['username'] = user.username
+            result.append(data)
             print "user {} cnt_view total_view {}".format(user.id, total_view)
