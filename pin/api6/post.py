@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from pin.decorators import system_writable
 from pin.models import Post, Report, Ad, ReportedPost
+from user_profile.models import Profile
 from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
@@ -705,6 +706,20 @@ def post_promote(request, post_id):
     if not user or not token:
         return return_un_auth()
 
+    # Check user allow promote this post
+    post = post_item_json(post_id=int(post_id), fields=['user'])
+    post_owner_id = post['user']['id']
+    try:
+        p = Profile.objects.only('is_private')\
+            .get(user_id=post_owner_id)
+        is_private = p.is_private
+    except:
+        is_private = False
+
+    if is_private:
+        msg = _('This profile is private')
+        return return_json_data({'status': False, 'message': msg})
+
     profile = user.profile
 
     if request.method == "POST":
@@ -715,8 +730,9 @@ def post_promote(request, post_id):
         try:
             mode_price = Ad.TYPE_PRICES[mode]
         except KeyError:
+            msg = _("The number entered is incorrect.")
             return return_json_data({"status": False,
-                                     "message": u"عدد وارد شده اشتباه است."
+                                     "message": msg
                                      })
 
         if profile.credit >= int(mode_price):
@@ -725,7 +741,7 @@ def post_promote(request, post_id):
 
                 return return_json_data({
                     "status": False,
-                    "message": u"این پست قبلا آگهی شده است"
+                    "message": _("This post has been advertised")
                 })
 
             except Exception, Ad.DoesNotExist:
@@ -736,16 +752,16 @@ def post_promote(request, post_id):
                                   start=datetime.now(),
                                   ip_address=get_user_ip(request))
 
-                msg = u'مطلب مورد نظر شما با موفقیت آگهی شد.'
+                msg = _("Your post has been advertised successfully")
                 return return_json_data({'status': True,
                                         'message': msg})
 
         else:
-            msg = u'موجودی حساب شما برای آگهی دادن کافی نیست.'
+            msg = _("Your account credit is not enough to advertise")
             return return_json_data({'status': False,
                                      'message': msg})
 
-    return return_json_data({'status': False, 'message': 'error in data'})
+    return return_json_data({'status': False, 'message': _('error in data')})
 
 
 def tops(request, period):
