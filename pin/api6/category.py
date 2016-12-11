@@ -43,4 +43,9 @@ def all_category(request):
         category_list.append(o)
 
     data['objects'] = category_list
-    return return_json_data(data)
+    headers={
+        "Cache-Control":"public"
+    }
+    rjd = return_json_data(data)
+    rjd['Cache-Control'] = 'public'
+    return rjd
