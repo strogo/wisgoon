@@ -52,4 +52,4 @@ class Command(BaseCommand):
             data['total_view'] = total_view
             data['username'] = user.username
             result.append(data)
-            print "user {} cnt_view total_view {}".format(user.id, total_view)
+        print result
