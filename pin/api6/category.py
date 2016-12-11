@@ -2,6 +2,7 @@ from pin.tools import AuthCache
 from pin.api_tools import media_abs_url
 from pin.api6.http import return_json_data, return_un_auth, return_bad_request
 from pin.api6.tools import get_int, category_get_json
+from pin.api6.decorators import cache_days
 from pin.models import Category, SubCategory
 
 
@@ -20,6 +21,7 @@ def show_category(request, cat_id):
     return return_json_data(data)
 
 
+@cache_days(1)
 def all_category(request):
     data = {}
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
@@ -43,9 +45,7 @@ def all_category(request):
         category_list.append(o)
 
     data['objects'] = category_list
-    headers={
-        "Cache-Control":"public"
-    }
-    rjd = return_json_data(data)
-    rjd['Cache-Control'] = 'public'
-    return rjd
+    
+    return return_json_data(data)
+
+
