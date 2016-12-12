@@ -133,7 +133,7 @@
                 </a>
                 {% endif %}
 
-                <a href="{{MEDIA_URL}}{{post.images.original.url}}" title="دانلود" class="wis_btn green_o pull-left btn_download" data-toggle="tooltip" data-placement="bottom">
+                <a href="{{post.images.original.url}}" title="دانلود" class="wis_btn green_o pull-left btn_download" data-toggle="tooltip" data-placement="bottom">
                     <span class="download_icon"></span>
                 </a>
 
@@ -153,8 +153,8 @@
 
             <!-- img -->
             <div class="post-img">
-                <a href="{{MEDIA_URL}}{{post.images.original.url}}" >
-                    <img src="{{MEDIA_URL}}{{ post.images.low_resolution.url }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
+                <a href="{{post.images.original.url}}" >
+                    <img src="{{ post.images.low_resolution.url }}" alt="عکس و تصویر {{post.text|remove_newlines|truncatewords:15}}">
                 </a>
             </div>
             <!-- text -->

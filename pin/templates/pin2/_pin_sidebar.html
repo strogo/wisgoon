@@ -19,8 +19,7 @@
 			<div class="username">
 				<h3>
 					<a href="{% url "pin-absuser" post.user.id|get_user_name %}">
-						{# {{post.user.profile.name|truncatechars:"20"}} #}
-						sfsd
+						{{post.user.profile.name|truncatechars:"20"}}
 					</a>
 				</h3>
 			</div>
