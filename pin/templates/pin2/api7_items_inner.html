@@ -233,7 +233,7 @@
                 <div class="liker_avatars">
                     {% for liker in post.last_likers %}
                     <a href="{% url "pin-absuser" liker.username %}" {% if liker.id == request.user.id %}class="my_avatar"{% endif %}>
-                        <img src="{{liker|get_avatar:50}}">
+                        <img src="{{liker.avatar}}">
                     </a>
                     {% endfor %}
 
