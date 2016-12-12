@@ -1019,7 +1019,6 @@ def item(request, item_id):
     #         raise Post.DoesNotExist
     # except Post.DoesNotExist:
     #     raise Http404("Post does not exist")
-    print res.status_code
     if res.status_code == 200:
         post = json.loads(res.content)
     else:
