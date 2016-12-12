@@ -63,11 +63,13 @@ def millify(n):
                   int(math.floor(0 if n == 0 else math.log10(abs(n)) / 3))))
 
     return '{:.0f}{}'.format(n / 10**(3 * millidx), millnames[millidx])
+    # return n
 
 
 @register.filter
 def millify_int(number):
     return millify(number).replace(" ", "")
+    # return millify(number)
 
 
 def hashtag_urlize(m):

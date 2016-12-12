@@ -994,37 +994,52 @@ def absuser(request, user_name=None):
 
 
 def item(request, item_id):
+    import requests
+    url = "http://api.wisgoon.com/v7/post/item/{}/".format(item_id)
+    res = requests.get(url)
+
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
     current_user = request.user
 
-    try:
-        post = post_item_json(post_id=item_id)
-        if not post:
-            raise Post.DoesNotExist
-    except Post.DoesNotExist:
+    # try:
+    #     post = post_item_json(post_id=item_id)
+    #     if not post:
+    #         raise Post.DoesNotExist
+    # except Post.DoesNotExist:
+    #     raise Http404("Post does not exist")
+    print res.status_code
+    if res.status_code == 200:
+        post = json.loads(res.content)
+    else:
         raise Http404("Post does not exist")
 
-    comments_url = reverse('pin-get-comments', args=[post["id"]])
-    related_url = reverse('pin-item-related', args=[post["id"]])
+    # Get user id
     user_id = post["user"]["id"]
 
+    # Check show_post
     status = check_user_state(user_id=user_id,
                               current_user=current_user)
     show_post = status['status']
     follow_status = status['follow_status']
     pending = status['pending']
 
-    # mamnon az shoma :D
     if not show_post:
         raise Http404
 
     if request.is_ajax():
-        return render(request, 'pin2/items_inner.html', {
+        # return render(request, 'pin2/items_inner.html', {
+        #     'post': post,
+        #     'follow_status': follow_status,
+        #     'pending': pending
+        # })
+        return render(request, 'pin2/api7_items_inner.html', {
             'post': post,
             'follow_status': follow_status,
             'pending': pending
         })
 
+    comments_url = reverse('pin-get-comments', args=[post["id"]])
+    related_url = reverse('pin-item-related', args=[post["id"]])
     return render(request, 'pin2/item.html', {
         'post': post,
         'follow_status': follow_status,
