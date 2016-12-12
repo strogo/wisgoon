@@ -338,17 +338,17 @@
             <div class="col-md-12 col-sm-12 col-xs-12 pa0">
 
                 <div id="comments_box" class="pa10">
-                    {% if post.cnt_comment < 1 %}
+                    {% if post.comment_count < 1 %}
                     <div class="no-comment">هنوز دیدگاهی ثبت نشده است</div>
                     {% endif %}
                 </div>
 
                 <div id="load-more" class="">
-                    {% if post.cnt_comment > 10 %}
+                    {% if post.comment_count > 10 %}
                     <span class="fa fa-angle-down"></span>
                     {% endif %}
-                    <div class="{% if post.cnt_comment < 10 %}nob{% endif %}" id="comment_load_more">
-                        {% if post.cnt_comment > 10 %}
+                    <div class="{% if post.comment_count < 10 %}nob{% endif %}" id="comment_load_more">
+                        {% if post.comment_count > 10 %}
                         <div class="txt">ادامه‌ی دیدگاه ها</div>
                         {% endif %}
                         <div class="loader" style="">
