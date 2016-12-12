@@ -997,17 +997,17 @@ def item(request, item_id):
     import requests
     from tastypie.models import ApiKey
 
+    # url = "http://api.wisgoon.com/v7/post/item/{}/".format(item_id)
+    url = "http://127.0.0.1:8801/v7/post/item/{}/".format(item_id)
     payload = {}
     try:
-        token = ApiKey.objects.only('key').get(user_id=request.user.id)
+        api_key = ApiKey.objects.only('key').get(user_id=request.user.id)
     except:
-        token = None
+        api_key = None
 
-    if token:
+    if api_key:
+        token = api_key.key
         payload = {'token': token}
-    url = "http://api.wisgoon.com/v7/post/item/{}/"\
-        .format(item_id)
-    # url = "http://127.0.0.1:8801/api/v7/post/item/{}/".format(item_id)
     res = requests.get(url, params=payload)
 
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
