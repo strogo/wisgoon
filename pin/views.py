@@ -1009,8 +1009,7 @@ def item(request, item_id):
         token = api_key.key
         payload = {'token': token}
     s = requests.Session()
-    s.config['keep_alive'] = False
-    res = s.get(url, params=payload)
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
     current_user = request.user
 
