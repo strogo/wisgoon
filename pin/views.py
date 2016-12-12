@@ -1008,8 +1008,9 @@ def item(request, item_id):
     if api_key:
         token = api_key.key
         payload = {'token': token}
-    res = requests.get(url, params=payload)
-
+    s = requests.Session()
+    s.config['keep_alive'] = False
+    res = s.get(url, params=payload)
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
     current_user = request.user
 
