@@ -114,8 +114,8 @@ def home_queue(request):
 
 def home(request):
     pid = get_request_pid(request)
-    # url = "http://api.wisgoon.com/v7/post/choices/"
-    url = "http://127.0.0.1:8801/v7/post/choices/"
+    url = "http://api.wisgoon.com/v7/post/choices/"
+    # url = "http://127.0.0.1:8801/v7/post/choices/"
     payload = {}
     arp = []
     next_url = None
