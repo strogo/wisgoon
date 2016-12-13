@@ -648,7 +648,7 @@ def user_state(data, current_user):
         if not current_user.is_superuser and current_user_id != data['id']:
 
             """ Check is block request user"""
-            if not data['is_blocked_me']:
+            if data['is_blocked_me']:
                 status = False
 
         if current_user_id != data['id']:

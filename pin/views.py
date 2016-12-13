@@ -999,6 +999,7 @@ def absuser(request, user_name=None):
 
 def item(request, item_id):
 
+    # url = "http://127.0.0.1:8801/v7/post/item/{}/".format(item_id)
     url = "http://api.wisgoon.com/v7/post/item/{}/".format(item_id)
     payload = {}
 
