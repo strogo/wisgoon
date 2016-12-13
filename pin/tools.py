@@ -663,5 +663,5 @@ def user_state(data, current_user):
 
     result = {'status': status,
               'follow_status': follow_status,
-              'ending': pending}
+              'pending': pending}
     return result
