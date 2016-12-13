@@ -648,11 +648,11 @@ def user_state(data, current_user):
         if not current_user.is_superuser and current_user_id != data['id']:
 
             """ Check is block request user"""
-            if data['is_blocked_me']:
+            if data['user_blocked_me']:
                 status = False
 
         if current_user_id != data['id']:
-            follow_status = data['follow_by_me']
+            follow_status = data['follow_by_user']
 
             if (data['is_private'] and not follow_status and
                     not current_user.is_superuser):

@@ -114,8 +114,8 @@ def home_queue(request):
 
 def home(request):
     pid = get_request_pid(request)
-    url = "http://api.wisgoon.com/v7/post/choices/"
-    # url = "http://127.0.0.1:8801/v7/post/choices/"
+    # url = "http://api.wisgoon.com/v7/post/choices/"
+    url = "http://127.0.0.1:8801/v7/post/choices/"
     payload = {}
     arp = []
     next_url = None
@@ -174,21 +174,22 @@ def home(request):
     if request.is_ajax():
         if arp:
             return render(request,
-                          # 'pin2/_items_2_v6.html',
-                          'pin2/_api7_items_2_v6.html',
+                          'pin2/_items_2_v6.html',
+                          # 'pin2/_api7_items_2_v6.html',
                           {'latest_items': arp,
                            'cls': 'new_items',
-                           'next_url': next_url,
+                           'next_url': next_url
                            })
         else:
             return HttpResponse(0)
 
-    return render(request, 'pin2/api7_home_v6.html', {
-        'latest_items': arp,
-        'cls': 'new_items',
-        'next_url': next_url,
-        'page': 'home'
-    })
+    return render(request,
+                  # 'pin2/api7_home_v6.html',
+                  'pin2/home_v6.html',
+                  {'latest_items': arp,
+                   'cls': 'new_items',
+                   'next_url': next_url,
+                   'page': 'home'})
 
 
 def leaderboard(request):
@@ -1046,8 +1047,8 @@ def item(request, item_id):
     # status = check_user_state(user_id=user_id,
     #                           current_user=current_user)
 
-    # url = "http://127.0.0.1:8801/v7/post/item/{}/".format(item_id)
-    url = "http://api.wisgoon.com/v7/post/item/{}/".format(item_id)
+    url = "http://127.0.0.1:8801/v7/post/item/{}/".format(item_id)
+    # url = "http://api.wisgoon.com/v7/post/item/{}/".format(item_id)
     payload = {}
 
     try:
@@ -1078,16 +1079,16 @@ def item(request, item_id):
         raise Http404
 
     if request.is_ajax():
-        # return render(request, 'pin2/items_inner.html', {
-        #     'post': post,
-        #     'follow_status': follow_status,
-        #     'pending': pending
-        # })
-        return render(request, 'pin2/api7_items_inner.html', {
+        return render(request, 'pin2/items_inner.html', {
             'post': post,
             'follow_status': follow_status,
             'pending': pending
         })
+        # return render(request, 'pin2/api7_items_inner.html', {
+        #     'post': post,
+        #     'follow_status': follow_status,
+        #     'pending': pending
+        # })
 
     comments_url = reverse('pin-get-comments', args=[post["id"]])
     related_url = reverse('pin-item-related', args=[post["id"]])
