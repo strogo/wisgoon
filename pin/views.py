@@ -3,6 +3,8 @@ import logging
 from time import mktime, time
 import json
 import datetime
+import requests
+
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -15,7 +17,9 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
 from pin.models import Post, Follow, Likes, Category, Comments, Results
 from pin.tools import get_request_timestamp, get_request_pid, check_block,\
-    get_user_ip, get_delta_timestamp, AuthCache, check_user_state
+    get_user_ip, get_delta_timestamp, AuthCache, check_user_state, user_state
+
+from tastypie.models import ApiKey
 
 from pin.model_mongo import Ads, MonthlyStats
 from pin.models_redis import LikesRedis
@@ -994,12 +998,10 @@ def absuser(request, user_name=None):
 
 
 def item(request, item_id):
-    import requests
-    from tastypie.models import ApiKey
 
     url = "http://api.wisgoon.com/v7/post/item/{}/".format(item_id)
-    # url = "http://127.0.0.1:8801/v7/post/item/{}/".format(item_id)
     payload = {}
+
     try:
         api_key = ApiKey.objects.only('key').get(user_id=request.user.id)
     except:
@@ -1008,6 +1010,7 @@ def item(request, item_id):
     if api_key:
         token = api_key.key
         payload = {'token': token}
+
     s = requests.Session()
     res = s.get(url, params=payload, headers={'Connection': 'close'})
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
@@ -1025,11 +1028,12 @@ def item(request, item_id):
         raise Http404("Post does not exist")
 
     # Get user id
-    user_id = post["user"]["id"]
+    # user_id = post["user"]["id"]
 
     # Check show_post
-    status = check_user_state(user_id=user_id,
-                              current_user=current_user)
+    # status = check_user_state(user_id=user_id,
+    #                           current_user=current_user)
+    status = user_state(data=post['user'], current_user=current_user)
     show_post = status['status']
     follow_status = status['follow_status']
     pending = status['pending']

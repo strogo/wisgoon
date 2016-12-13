@@ -632,3 +632,36 @@ def check_user_state(user_id, current_user):
             'pending': pending,
             'profile': profile}
     return data
+
+
+def user_state(data, current_user):
+    status = True
+    follow_status = False
+    pending = False
+    current_user_id = current_user.id
+
+    if not current_user_id:
+        if data['is_private']:
+            status = False
+    else:
+        """ Check current user is admin """
+        if not current_user.is_superuser and current_user_id != data['id']:
+
+            """ Check is block request user"""
+            if not data['is_blocked_me']:
+                status = False
+
+        if current_user_id != data['id']:
+            follow_status = data['follow_by_me']
+
+            if (data['is_private'] and not follow_status and
+                    not current_user.is_superuser):
+
+                """ Check request user is following user_id"""
+                pending = data['request_follow']
+                status = False
+
+    result = {'status': status,
+              'follow_status': follow_status,
+              'ending': pending}
+    return result
