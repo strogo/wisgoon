@@ -114,38 +114,70 @@ def home_queue(request):
 
 def home(request):
     pid = get_request_pid(request)
-    pl = Post.home_latest(pid=pid)
+    url = "http://api.wisgoon.com/v7/post/choices/"
+    payload = {}
     arp = []
-
-    last_id = None
     next_url = None
-
-    request_user_id = request.user.id
+    cur_user = request.user
     request_user_authenticated = request.user.is_authenticated()
 
-    for pll in pl:
-        pid = int(pll)
-        post_item = post_item_json(post_id=pid, cur_user_id=request_user_id)
-        if post_item:
+    # Get request user token
+    try:
+        api_key = ApiKey.objects.only('key').get(user_id=request.user.id)
+    except:
+        api_key = None
+
+    if api_key:
+        token = api_key.key
+        payload = {'token': token, 'before': pid}
+
+    # Get choices post
+    s = requests.Session()
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+    if res.status_code == 200:
+        try:
+            data = json.loads(res.content)
+        except:
+            data = {}
+    else:
+        data = {}
+
+    # pl = Post.home_latest(pid=pid)
+    # request_user_id = request.user.id
+    # for pll in pl:
+    #     pid = int(pll)
+    #     post_item = post_item_json(post_id=pid, cur_user_id=request_user_id)
+    #     if post_item:
+    #         if request_user_authenticated:
+    #             if not check_block(user_id=post_item['user']['id'],
+    #                                blocked_id=request_user_id):
+    #                 arp.append(post_item)
+    #         else:
+    #             arp.append(post_item)
+
+    #     last_id = pll
+    # if arp:
+        # next_url = reverse('home') + "?older=" + last_id
+        # next_url = data['meta']['next']
+    if data:
+        for post in data['objects']:
             if request_user_authenticated:
-                if not check_block(user_id=post_item['user']['id'],
-                                   blocked_id=request_user_id):
-                    arp.append(post_item)
+                status = user_state(data=post['user'], current_user=cur_user)
+                if not status['status']:
+                    continue
+                arp.append(post)
             else:
-                arp.append(post_item)
-
-        last_id = pll
-
-    if arp:
-        next_url = reverse('home') + "?older=" + last_id
+                arp.append(post)
 
     if request.is_ajax():
         if arp:
-            return render(request, 'pin2/_items_2_v6.html', {
-                'latest_items': arp,
-                'cls': 'new_items',
-                'next_url': next_url,
-            })
+            return render(request,
+                          'pin2/_items_2_v6.html',
+                          {'latest_items': arp,
+                           'cls': 'new_items',
+                           'next_url': next_url,
+                           })
         else:
             return HttpResponse(0)
 
@@ -1000,6 +1032,19 @@ def absuser(request, user_name=None):
 def item(request, item_id):
 
     # url = "http://127.0.0.1:8801/v7/post/item/{}/".format(item_id)
+    # try:
+    #     post = post_item_json(post_id=item_id)
+    #     if not post:
+    #         raise Post.DoesNotExist
+    # except Post.DoesNotExist:
+    #     raise Http404("Post does not exist")
+    # Get user id
+    # user_id = post["user"]["id"]
+
+    # Check show_post
+    # status = check_user_state(user_id=user_id,
+    #                           current_user=current_user)
+
     url = "http://api.wisgoon.com/v7/post/item/{}/".format(item_id)
     payload = {}
 
@@ -1017,23 +1062,11 @@ def item(request, item_id):
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
     current_user = request.user
 
-    # try:
-    #     post = post_item_json(post_id=item_id)
-    #     if not post:
-    #         raise Post.DoesNotExist
-    # except Post.DoesNotExist:
-    #     raise Http404("Post does not exist")
     if res.status_code == 200:
         post = json.loads(res.content)
     else:
         raise Http404("Post does not exist")
 
-    # Get user id
-    # user_id = post["user"]["id"]
-
-    # Check show_post
-    # status = check_user_state(user_id=user_id,
-    #                           current_user=current_user)
     status = user_state(data=post['user'], current_user=current_user)
     show_post = status['status']
     follow_status = status['follow_status']
