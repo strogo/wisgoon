@@ -1,0 +1,39 @@
+{% extends "pin2/flat.base.html"%}
+{% load pin_tags %}
+
+{% block extra_js %}
+ <script src="{{STATIC_CDN}}js/jquery.masonry.min.js"></script>
+<!-- <script src="{{STATIC_CDN}}js/masonry.pkgd.min.js"></script>-->
+{% endblock extra_js %}
+
+{% block content %}
+
+<script type="text/javascript">
+var start_loading=0;
+var next_pref = '?pid=';
+</script>
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Organization",
+  "name" : "Wisgoon",
+  "url" : "http://www.wisgoon.com",
+  "logo": "http://static.wisgoon.com/media/v2/images/logo_moharam.png",
+  "sameAs" : [
+    "http://www.facebook.com/Wisgoon"
+  ]
+}
+</script>
+
+<!-- {% include "base/app.html" %} -->
+
+<div id="main">
+	<div class="pa20 pato0">
+		<div id="feed" class="masonry">
+			{% include "pin2/_api7_items_2_v6.html" %}
+		</div>
+	</div>
+</div>
+
+{% endblock content %}

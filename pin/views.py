@@ -114,7 +114,8 @@ def home_queue(request):
 
 def home(request):
     pid = get_request_pid(request)
-    url = "http://api.wisgoon.com/v7/post/choices/"
+    # url = "http://api.wisgoon.com/v7/post/choices/"
+    url = "http://127.0.0.1:8801/v7/post/choices/"
     payload = {}
     arp = []
     next_url = None
@@ -173,7 +174,8 @@ def home(request):
     if request.is_ajax():
         if arp:
             return render(request,
-                          'pin2/_items_2_v6.html',
+                          # 'pin2/_items_2_v6.html',
+                          'pin2/_api7_items_2_v6.html',
                           {'latest_items': arp,
                            'cls': 'new_items',
                            'next_url': next_url,
@@ -181,7 +183,7 @@ def home(request):
         else:
             return HttpResponse(0)
 
-    return render(request, 'pin2/home_v6.html', {
+    return render(request, 'pin2/api7_home_v6.html', {
         'latest_items': arp,
         'cls': 'new_items',
         'next_url': next_url,
