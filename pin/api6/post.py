@@ -22,6 +22,8 @@ from pin.api6.tools import get_next_url, get_int, save_post,\
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
 
+from pin.api6.decorators import cache_days
+
 
 GLOBAL_LIMIT = 10
 
@@ -664,6 +666,7 @@ def delete(request, item_id):
     return return_bad_request()
 
 
+@cache_days(1)
 def promotion_prices(request):
     data = {
         "objects": [
