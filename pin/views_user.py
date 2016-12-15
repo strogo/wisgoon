@@ -5,6 +5,7 @@ import base64
 import json
 import datetime
 import urllib
+import requests
 from shutil import copyfile
 
 from django.db.models import Q
@@ -38,6 +39,8 @@ from pin.models import Post, Follow, Ad, Block,\
 from pin.tools import create_filename, get_user_ip, get_request_pid,\
     check_block, post_after_delete, check_user_state
 from suds.client import Client
+from tastypie.models import ApiKey
+
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 MEDIA_URL = settings.MEDIA_URL
@@ -47,35 +50,64 @@ SITE_URL = settings.SITE_URL
 
 @login_required
 def following(request):
+    # pid = get_request_pid(request)
+    # pl = Post.user_stream_latest(pid=pid, user_id=request.user.id)
+
+    # arp = []
+    # for pll in pl:
+    #     pll_id = int(pll)
+    #     ob = post_item_json(pll_id, cur_user_id=request.user.id)
+    #     if ob:
+    #         is_block = check_block(user_id=ob['user']['id'],
+    #                                blocked_id=request.user.id)
+    #         if not is_block:
+    #             arp.append(ob)
+
+    # latest_items = arp
+
+    # sorted_objects = latest_items
+    # cur_user = request.user
+    # request_user_authenticated = request.user.is_authenticated()
+
     pid = get_request_pid(request)
-    pl = Post.user_stream_latest(pid=pid, user_id=request.user.id)
-
+    # url = "http://127.0.0.1:8801/v7/post/friends/"
+    url = "http://api.wisgoon.com/v7/post/friends/"
+    payload = {}
     arp = []
-    for pll in pl:
-        pll_id = int(pll)
-        ob = post_item_json(pll_id, cur_user_id=request.user.id)
-        if ob:
-            is_block = check_block(user_id=ob['user']['id'],
-                                   blocked_id=request.user.id)
-            if not is_block:
-                arp.append(ob)
 
-    latest_items = arp
+    # Get request user token
+    try:
+        api_key = ApiKey.objects.only('key').get(user_id=request.user.id)
+    except:
+        api_key = None
 
-    sorted_objects = latest_items
+    if api_key:
+        token = api_key.key
+        payload = {'token': token, 'before': pid}
+
+    # Get following post
+    s = requests.Session()
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+    if res.status_code == 200:
+        try:
+            data = json.loads(res.content)
+            arp = data['objects']
+        except:
+            pass
 
     if request.is_ajax():
-        if latest_items:
+        if arp:
             return render(request,
                           'pin2/_items_2_v6.html',
-                          {'latest_items': sorted_objects})
+                          {'latest_items': arp})
         else:
             return HttpResponse(0)
     else:
         return render(request,
                       'pin2/following.html', {
                           'page': 'following',
-                          'latest_items': sorted_objects
+                          'latest_items': arp
                       })
 
 

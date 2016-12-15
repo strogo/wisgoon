@@ -781,41 +781,68 @@ def absuser_like(request, user_namel):
 
 def latest(request):
     pid = get_request_pid(request)
-
-    pl = Post.latest(pid=pid)
+    # url = "http://127.0.0.1:8801/v7/post/latest/"
+    url = "http://api.wisgoon.com/v7/post/latest/"
+    payload = {}
     arp = []
-    last_id = None
     next_url = None
+    # cur_user = request.user
+    # request_user_authenticated = request.user.is_authenticated()
 
-    if request.user.id:
-        viewer_id = str(request.user.id)
-    else:
-        viewer_id = str(get_user_ip(request, to_int=True))
+    # Get request user token
+    try:
+        api_key = ApiKey.objects.only('key').get(user_id=request.user.id)
+    except:
+        api_key = None
 
-    ad = Ads.get_ad(user_id=viewer_id)
-    if ad:
+    if api_key:
+        token = api_key.key
+        payload = {'token': token, 'before': pid}
+
+    # Get choices post
+    s = requests.Session()
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+    if res.status_code == 200:
         try:
-            if ad.post not in pl:
-                pl.append(str(ad.post.id))
+            data = json.loads(res.content)
+            arp = data['objects']
         except:
             pass
 
-    for pll in pl:
-        pll_id = int(pll)
-        ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
-        if ob:
-            if request.user.is_authenticated():
-                is_block = check_block(user_id=ob['user']['id'],
-                                       blocked_id=request.user.id)
-                if not is_block:
-                    arp.append(ob)
-            else:
-                arp.append(ob)
+    # pl = Post.latest(pid=pid)
+    # last_id = None
+    # next_url = None
 
-        last_id = pll
+    # if request.user.id:
+    #     viewer_id = str(request.user.id)
+    # else:
+    #     viewer_id = str(get_user_ip(request, to_int=True))
 
-    if arp and last_id:
-        next_url = reverse('pin-latest') + "?pid=" + str(last_id)
+    # ad = Ads.get_ad(user_id=viewer_id)
+    # if ad:
+    #     try:
+    #         if ad.post not in pl:
+    #             pl.append(str(ad.post.id))
+    #     except:
+    #         pass
+
+    # for pll in pl:
+    #     pll_id = int(pll)
+    #     ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
+    #     if ob:
+    #         if request.user.is_authenticated():
+    #             is_block = check_block(user_id=ob['user']['id'],
+    #                                    blocked_id=request.user.id)
+    #             if not is_block:
+    #                 arp.append(ob)
+    #         else:
+    #             arp.append(ob)
+
+    #     last_id = pll
+
+    # if arp and last_id:
+    #     next_url = reverse('pin-latest') + "?pid=" + str(last_id)
 
     if request.is_ajax():
         if arp:
@@ -1047,8 +1074,8 @@ def item(request, item_id):
     # status = check_user_state(user_id=user_id,
     #                           current_user=current_user)
 
-    # url = "http://127.0.0.1:8801/v7/post/item/{}/".format(item_id)
-    url = "http://api.wisgoon.com/v7/post/item/{}/".format(item_id)
+    url = "http://127.0.0.1:8801/v7/post/item/{}/".format(item_id)
+    # url = "http://api.wisgoon.com/v7/post/item/{}/".format(item_id)
     payload = {}
 
     try:
@@ -1063,21 +1090,23 @@ def item(request, item_id):
     s = requests.Session()
     res = s.get(url, params=payload, headers={'Connection': 'close'})
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
-    current_user = request.user
+    # current_user = request.user
 
     if res.status_code == 200:
         post = json.loads(res.content)
     else:
         raise Http404("Post does not exist")
 
-    status = user_state(data=post['user'], current_user=current_user)
-    show_post = status['status']
-    follow_status = status['follow_status']
-    pending = status['pending']
+    # status = user_state(data=post['user'], current_user=current_user)
+    # show_post = status['status']
+    # follow_status = status['follow_status']
+    # pending = status['pending']
 
-    if not show_post:
-        raise Http404
+    # if not show_post:
+    #     raise Http404
 
+    follow_status = post['user']['follow_by_user']
+    pending = post['user']['request_follow']
     if request.is_ajax():
         return render(request, 'pin2/items_inner.html', {
             'post': post,
