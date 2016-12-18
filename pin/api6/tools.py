@@ -170,25 +170,26 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
     user_name = {"user_name": user_info['username']}
     user_info['permalink'] = abs_url(reverse("pin-absuser", kwargs=user_name))
 
+    try:
+        profile = Profile.objects.only('is_private')\
+            .get(user_id=current_user)
+
+        user_info['is_private'] = profile.is_private
+    except:
+        pass
+
     if user_id_from_token:
         user_info['follow_by_user'] = Follow.objects\
             .filter(follower_id=user_id_from_token,
                     following_id=current_user)\
             .exists()
-        try:
-            profile = Profile.objects.only('is_private')\
-                .get(user_id=current_user)
 
-            user_info['is_private'] = profile.is_private
-
-            if not user_info['follow_by_user'] and profile.is_private:
-                follow_req = FollowRequest.objects\
-                    .filter(user_id=user_id_from_token,
-                            target_id=current_user).exists()
-                if follow_req:
-                    user_info['request_follow'] = True
-        except:
-            pass
+        if not user_info['follow_by_user'] and user_info['is_private']:
+            follow_req = FollowRequest.objects\
+                .filter(user_id=user_id_from_token,
+                        target_id=current_user).exists()
+            if follow_req:
+                user_info['request_follow'] = True
 
         user_info['block_by_user'] = Block.objects\
             .filter(user_id=user_id_from_token, blocked_id=current_user)\
