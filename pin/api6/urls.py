@@ -99,6 +99,9 @@ urlpatterns += patterns('pin.api6.post',
                         url(r'^post/promotion/(?P<post_id>\d+)/$',
                             'post_promote',
                             name="api-6-post-promote"),
+
+                        url(r'post/new/item/(?P<item_id>\d+)/$', 'item_2',
+                            name='api-6-post-new-item'),
                         )
 
 urlpatterns += patterns('pin.api6.comment',

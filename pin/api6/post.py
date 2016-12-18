@@ -325,6 +325,30 @@ def item(request, item_id):
     return return_json_data(data)
 
 
+def item_2(request, item_id):
+    cur_user = None
+    data = {}
+    token = request.GET.get('token', None)
+
+    # if token:
+    #     cur_user = AuthCache.id_from_token(token=token)
+    posts = get_list_post([item_id])
+    try:
+        data = get_objects_list(posts,
+                                cur_user_id=cur_user,
+                                r=request)[0]
+    except IndexError:
+        return return_not_found()
+
+    user_id = data['user']['id']
+    status, cur_user = check_user_state(user_id=user_id, token=token)
+    if not status:
+        msg = _('You do not have access to this content')
+        return return_un_auth(message=msg)
+
+    return return_json_data(data)
+
+
 @system_writable
 def report(request, item_id):
 
