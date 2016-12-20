@@ -167,6 +167,8 @@ class RedisTopPostStream(object):
         return keys
 
     def get_posts(self, key, offset):
+        if offset != 0:
+            offset = offset + 1
         post_ids = ss.zrevrange(key, offset, offset + 20)
         return post_ids
 
