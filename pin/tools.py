@@ -61,7 +61,8 @@ def get_post_user_cache(post_id):
     if cache_data:
         return cache_data
     try:
-        post = Post.objects.only('user', 'category').get(pk=post_id)
+        post = Post.objects.only('user', 'category', 'timestamp')\
+            .get(pk=post_id)
         cache.set(cache_str, post, 86400)
         return post
     except Post.DoesNotExist:
