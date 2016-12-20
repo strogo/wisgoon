@@ -291,7 +291,8 @@ class LikesRedis(object):
                            actor=user_id)
 
     def like_or_dislike(self, user_id, post_owner,
-                        user_ip="127.0.0.1", category=1):
+                        user_ip="127.0.0.1", category=1,
+                        date=None):
         leader_category = self.KEY_LEADERBORD_GROUPS.format(category)
         lbs = leaderBoardServer.pipeline()
         if self.user_liked(user_id=user_id):
@@ -318,6 +319,12 @@ class LikesRedis(object):
             disliked = False
 
         lbs.execute()
+        if date:
+            from pin.models_stream import RedisTopPostStream
+            top_stream = RedisTopPostStream()
+            top_stream.add_post(post_id=self.postId,
+                                cnt_like=self.cntlike(),
+                                date=date)
 
         return liked, disliked, self.cntlike()
 

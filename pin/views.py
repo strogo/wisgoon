@@ -948,6 +948,57 @@ def popular(request, interval=""):
     })
 
 
+def popular_2(request, interval=""):
+    from pin.models_stream import RedisTopPostStream
+
+    try:
+        offset = int(request.GET.get('offset', 0))
+    except ValueError:
+        offset = 0
+
+    top_post = RedisTopPostStream()
+    if interval and interval in ['month', 'lastday', 'lasteigth', 'lastweek']:
+        if interval == 'month':
+            redis_key = "top_last_month"
+
+        elif interval == 'lastday':
+            redis_key = "top_last_day"
+
+        elif interval == 'lastweek':
+            redis_key = "top_last_week"
+
+        elif interval == 'lasteigth':
+            redis_key = "top_today"
+
+        post_ids = top_post.get_posts(key=redis_key, offset=offset)
+    else:
+        post_ids = top_post.get_posts(key="top_all", offset=offset)
+
+    ps = []
+    for post_id in post_ids:
+        post_json = post_item_json(post_id=post_id)
+        if post_json:
+            if request.user.is_authenticated():
+                status = user_state(data=post_json['user'],
+                                    current_user=request.user)
+                if not status['status']:
+                    continue
+                ps.append(post_json)
+            else:
+                ps.append(post_json)
+
+    if request.is_ajax():
+        return render(request, 'pin2/__search.html', {
+            'posts': ps,
+            'offset': offset + 20
+        })
+
+    return render(request, 'pin2/popular.html', {
+        'posts': ps,
+        'offset': offset + 20
+    })
+
+
 def topuser(request):
     top_user = Profile.objects.all().order_by('-score')[:48]
     for tu in top_user:

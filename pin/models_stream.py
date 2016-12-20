@@ -1,4 +1,7 @@
 import redis
+import datetime
+import calendar
+
 from django.conf import settings
 from pin.models_casper import UserStream
 
@@ -124,3 +127,74 @@ class RedisUserStream(object):
             if key_stand in p:
                 sspipe.lrem(skey, p, 0)
         sspipe.execute()
+
+
+class RedisTopPostStream(object):
+    def __init__(self):
+        pass
+
+    def add_post(self, post_id, cnt_like, date):
+        keys = self.get_keys(date)
+        for key in keys:
+            ss.zadd(key, post_id, cnt_like)
+            if ss.zcard(key) > 1000:
+                self.trim_stream(key)
+
+    def trim_stream(self, key):
+        ss.zremrangebyrank(key, 0, 0)
+
+    def get_keys(self, date):
+        keys = []
+        dt_now = datetime.datetime.now()
+
+        # Last month
+        if self.in_last_moth_range(cur_date=dt_now, date=date):
+            keys.append("top_last_month")
+
+        # Last week
+        first_last_week = dt_now - datetime.timedelta(days=7)
+        if date >= first_last_week:
+            keys.append("top_last_week")
+
+        # Last day
+        if self.in_last_day_range(cur_date=dt_now, date=date):
+            keys.append("top_last_day")
+
+        # today
+        if self.in_today_range(cur_date=dt_now, date=date):
+            keys.append("top_today")
+
+        return keys
+
+    def get_posts(self, key, offset):
+        post_ids = ss.zrevrange(key, offset, offset + 20)
+        return post_ids
+
+    def in_last_moth_range(self, cur_date, date):
+        year = cur_date.year
+        month = cur_date.month - 1
+        status = False
+
+        _, num_days = calendar.monthrange(year, month)
+        first_day = datetime.datetime(year, month, 1)
+        last_day = datetime.datetime(year, month, num_days, 23, 59)
+        if first_day <= date <= last_day:
+            status = True
+        return status
+
+    def in_last_day_range(self, cur_date, date):
+        status = False
+        start = cur_date - datetime.timedelta(days=1)
+        start_day = start.replace(hour=0, minute=0, second=0)
+        end_day = start.replace(hour=23, minute=59, second=59)
+        if start_day <= date <= end_day:
+            status = True
+        return status
+
+    def in_today_range(self, cur_date, date):
+        status = False
+        start_day = cur_date.replace(hour=0, minute=0, second=0)
+        end_day = cur_date.replace(hour=23, minute=59, second=59)
+        if start_day <= date <= end_day:
+            status = True
+        return status
