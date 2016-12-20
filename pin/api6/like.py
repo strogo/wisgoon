@@ -31,7 +31,7 @@ def like_post(request, item_id):
             return return_un_auth()
     else:
         return return_bad_request()
-    date = datetime.datetime.fromtimestamp(int(post['timestamp']))
+    date = datetime.datetime.fromtimestamp(int(post.timestamp))
     like, dislike, current_like = LikesRedis(post_id=item_id)\
         .like_or_dislike(user_id=current_user_id,
                          post_owner=post.user_id,
@@ -74,7 +74,7 @@ def like_item(request):
 
     else:
         return return_bad_request()
-    date = datetime.datetime.fromtimestamp(int(post['timestamp']))
+    date = datetime.datetime.fromtimestamp(int(post.timestamp))
 
     like, dislike, current_like = LikesRedis(post_id=item_id)\
         .like_or_dislike(user_id=current_user_id,
