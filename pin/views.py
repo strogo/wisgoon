@@ -407,6 +407,7 @@ def hashtag(request, tag_name):
     posts_list = []
     query = tag_name
     related_tags = []
+    result = []
     total_count = 0
     tags = ['کربلا']
 
@@ -437,12 +438,11 @@ def hashtag(request, tag_name):
                 posts_list.append(post_json)
 
     ''' related tags query '''
-    tags_facet = post_queryset.facet_counts()
-
-    result = tags_facet['fields']['tags']
-
-    if not result:
-        result = []
+    try:
+        tags_facet = post_queryset.facet_counts()
+        result = tags_facet['fields']['tags']
+    except:
+        pass
 
     for key, val in result[:10]:
         if key != tag_name:
