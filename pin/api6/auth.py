@@ -477,7 +477,7 @@ def update_profile(request):
 def user_search(request):
     row_per_page = 10
     current_user = None
-    query = str(request.GET.get('q', ''))
+    query = request.GET.get('q', '')
     before = get_int(request.GET.get('before', 0))
     token = request.GET.get('token', '')
     data = {}
@@ -489,7 +489,10 @@ def user_search(request):
         new_from = before + row_per_page
 
         us = ESUsers()
-        res = us.search(query, from_=before)
+        try:
+            res = us.search(query, from_=before)
+        except:
+            res = []
 
         for user in res:
             o = {}
