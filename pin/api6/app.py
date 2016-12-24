@@ -27,8 +27,8 @@ def startup_data(request):
     from pin.api6.notification import notif_count
     from pin.api6.campaign import current_campaign
     # from pin.api6.app import latest
-    from pin.api6.auth import get_phone_data
-    import requests
+    # from pin.api6.auth import get_phone_data
+    # import requests
 
     token = request.GET.get('token', False)
     data = {}
@@ -39,16 +39,16 @@ def startup_data(request):
         }
     }
 
-    get_phone_data(request, startup=None)
+    # get_phone_data(request, startup=None)
 
-    try:
-        response = requests.get('http://agahist.com/mobileAdStatus/wisgoonv6/', timeout=0.15)
-        if response.status_code == 200:
-            ads = response.json()
-    except requests.exceptions.Timeout:
-        pass
-    except requests.exceptions.ConnectionError:
-        pass
+    # try:
+    #     response = requests.get('http://agahist.com/mobileAdStatus/wisgoonv6/', timeout=0.15)
+    #     if response.status_code == 200:
+    #         ads = response.json()
+    # except requests.exceptions.Timeout:
+    #     pass
+    # except requests.exceptions.ConnectionError:
+    #     pass
 
     data['campaign'] = current_campaign(request, startup=True)
 

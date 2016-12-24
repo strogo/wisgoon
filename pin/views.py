@@ -443,7 +443,6 @@ def hashtag(request, tag_name):
         result = tags_facet['fields']['tags']
     except:
         pass
-
     for key, val in result[:10]:
         if key != tag_name:
             related_tags.append(key)
