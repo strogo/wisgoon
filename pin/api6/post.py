@@ -345,8 +345,8 @@ def item_2(request, item_id):
     status, _ = check_user_state(user_id=user_id, token=token)
 
     if not status:
-        msg = _("You do not have access to this content")
-        return return_un_auth(message=msg)
+        # msg = _("You do not have access to this content")
+        return return_un_auth()
 
     return return_json_data(data)
 
