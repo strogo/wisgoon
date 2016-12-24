@@ -477,7 +477,7 @@ def update_profile(request):
 def user_search(request):
     row_per_page = 10
     current_user = None
-    query = request.GET.get('q', '')
+    query = str(request.GET.get('q', ''))
     before = get_int(request.GET.get('before', 0))
     token = request.GET.get('token', '')
     data = {}
