@@ -12,12 +12,16 @@ from pin.api6.tools import get_simple_user_object,\
 def notif_count(request, startup=None):
     token = request.GET.get('token', '')
     cnt_request = 0
-
+    total_count = 0
     if token:
         current_user = AuthCache.user_from_token(token=token)
         if not current_user:
+            if startup:
+                return total_count
             return return_un_auth()
     else:
+        if startup:
+            return total_count
         return return_bad_request()
 
     notif_count = NotificationRedis(user_id=current_user.id).get_notif_count()
