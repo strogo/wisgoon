@@ -13,11 +13,9 @@ User = get_user_model()
 
 @register.filter
 def daddy_avatar(user_email, size=165):
-    if settings.DEBUG:
-        media_avatar = os.path.join(settings.MEDIA_URL,
-                                    'assets/img/default_avatar1.jpg')
-    else:
-        media_avatar = "photos03.wisgoon.com/media/avatars/photos03/default_avatar1.jpg"
+
+    media_avatar = os.path.join(settings.MEDIA_URL,
+                                'assets/img/default_avatar1.jpg')
     return media_avatar
 
 
