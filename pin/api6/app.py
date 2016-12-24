@@ -42,7 +42,8 @@ def startup_data(request):
     # get_phone_data(request, startup=None)
 
     # try:
-    #     response = requests.get('http://agahist.com/mobileAdStatus/wisgoonv6/', timeout=0.15)
+    #     url = "http://agahist.com/mobileAdStatus/wisgoonv6/"
+    #     response = requests.get(url, timeout=0.15)
     #     if response.status_code == 200:
     #         ads = response.json()
     # except requests.exceptions.Timeout:

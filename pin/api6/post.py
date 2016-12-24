@@ -330,8 +330,9 @@ def item_2(request, item_id):
     data = {}
     token = request.GET.get('token', None)
 
-    # if token:
-    #     cur_user = AuthCache.id_from_token(token=token)
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
+
     posts = get_list_post([item_id])
     try:
         data = get_objects_list(posts,
@@ -341,7 +342,8 @@ def item_2(request, item_id):
         return return_not_found()
 
     user_id = data['user']['id']
-    status, cur_user = check_user_state(user_id=user_id, token=token)
+    status, _ = check_user_state(user_id=user_id, token=token)
+
     if not status:
         msg = _('You do not have access to this content')
         return return_un_auth(message=msg)
