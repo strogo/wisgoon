@@ -954,6 +954,7 @@ def popular_2(request, interval=""):
         offset = int(request.GET.get('offset', 0))
     except ValueError:
         offset = 0
+    cur_user_id = request.user.id
 
     top_post = RedisTopPostStream()
     if interval and interval in ['month', 'lastday', 'lasteigth', 'lastweek']:
@@ -975,7 +976,7 @@ def popular_2(request, interval=""):
 
     ps = []
     for post_id in post_ids:
-        post_json = post_item_json(post_id=post_id)
+        post_json = post_item_json(post_id=post_id, cur_user_id=cur_user_id)
         if post_json:
             if request.user.is_authenticated():
                 status = user_state(data=post_json['user'],

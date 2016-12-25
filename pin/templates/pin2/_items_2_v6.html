@@ -3,7 +3,11 @@
 {% for item in latest_items %}
 	{% if item.images.thumbnail.url %}
 		{% include "pin2/__items_base_v6.html" %}
-		{# {% include "pin2/__api7_items_base_v6.html" %} #}
+		{% comment %}
+			{% include "pin2/__api7_items_base_v6.html" %}
+		{% endcomment %}
+
+
 	{% endif %}
 
 	{% if offset %}
