@@ -15,7 +15,7 @@ from pin.decorators import system_writable
 from pin.models import Post, Report, Ad, ReportedPost
 from user_profile.models import Profile
 from pin.api6.http import return_json_data, return_bad_request,\
-    return_not_found, return_un_auth, return_data
+    return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json,\
     category_get_json, check_user_state, post_item_json
@@ -98,6 +98,8 @@ def latest(request):
 
 def latest_2(request):
     import requests
+    import json
+
     before = request.GET.get('before', 0)
     token = request.GET.get('token', '')
 
@@ -115,10 +117,15 @@ def latest_2(request):
 
     if res.status_code == 200:
         try:
-            data = res.content
+            data = json.loads(res.content)
         except:
             pass
-    return return_data(data)
+    if data:
+        last_item = data['objects'][-1]['id']
+        data['meta']['next'] = get_next_url(url_name='api-6-post-latest',
+                                            token=token,
+                                            before=last_item)
+    return return_json_data(data)
 
 
 def friends(request):
