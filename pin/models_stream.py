@@ -135,13 +135,23 @@ class RedisTopPostStream(object):
 
     def add_post(self, post_id, cnt_like, date):
         keys = self.get_keys(date)
+        keys_list = ["top_last_month", "top_last_week",
+                     "top_last_day", "top_today"]
         for key in keys:
             ss.zadd(key, post_id, cnt_like)
+
+            # Remove from other stream
+            keys_list.remove(key)
+            self.remove_from_stream(keys=keys_list, value=post_id)
             if ss.zcard(key) > 1000:
                 self.trim_stream(key)
 
     def trim_stream(self, key):
         ss.zremrangebyrank(key, 0, 0)
+
+    def remove_from_stream(self, keys, value):
+        for key in keys:
+            ss.zrem(key, value)
 
     def get_keys(self, date):
         keys = []
