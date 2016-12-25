@@ -82,7 +82,9 @@ def latest(request):
         if not post:
             continue
 
-        post_item = post_item_json(post=post, cur_user_id=cur_user, r=request)
+        post_item = post_item_json(post_id=post,
+                                   cur_user_id=cur_user,
+                                   r=request)
         if post_item and post_item['id'] != hot_post:
             data['objects'].append(post_item)
 
@@ -151,7 +153,9 @@ def friends(request):
         if not post:
             continue
 
-        post_item = post_item_json(post=post, cur_user_id=cur_user, r=request)
+        post_item = post_item_json(post_id=post,
+                                   cur_user_id=cur_user,
+                                   r=request)
         if post_item and int(post_item['id']) != hot_post:
             data['objects'].append(post_item)
 
@@ -220,7 +224,9 @@ def category(request, category_id):
         if not post:
             continue
 
-        post_item = post_item_json(post=post, cur_user_id=cur_user, r=request)
+        post_item = post_item_json(post_id=post,
+                                   cur_user_id=cur_user,
+                                   r=request)
         if post_item and int(post_item['id']) != hot_post:
             data['objects'].append(post_item)
 
@@ -288,7 +294,9 @@ def choices(request):
         if not post:
             continue
 
-        post_item = post_item_json(post=post, cur_user_id=cur_user, r=request)
+        post_item = post_item_json(post_id=post,
+                                   cur_user_id=cur_user,
+                                   r=request)
         if post_item and int(post_item['id']) != hot_post:
             data['objects'].append(post_item)
 
