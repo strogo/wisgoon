@@ -843,6 +843,12 @@ def accept_follow(request):
     accepted = bool(int(request.POST.get('accepted', 0)))
     target_user = request.user
 
+    if not user_id:
+        msg = _("Invalid parameters")
+        return HttpResponse(json.dumps({'message': msg,
+                                        'status': False}),
+                            status=404,
+                            content_type='application/json')
     is_req = FollowRequest.objects.filter(user_id=int(user_id),
                                           target=target_user)
     if is_req.exists():
