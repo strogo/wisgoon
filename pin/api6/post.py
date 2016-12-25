@@ -34,7 +34,7 @@ def latest(request):
     last_item = None
     hot_post = None
     ad_post_json = None
-    posts_list = []
+
     data = {
         'meta': {
             'limit': GLOBAL_LIMIT,
@@ -74,11 +74,17 @@ def latest(request):
         ad_post_json['is_ad'] = True
         data['objects'].append(ad_post_json)
 
-    posts_list = get_objects_list(list(post_ids),
-                                  cur_user_id=cur_user,
-                                  r=request)
+    # posts_list = get_objects_list(list(post_ids),
+    #                               cur_user_id=cur_user,
+    #                               r=request)
 
-    data['objects'] = data['objects'] + posts_list
+    for post in list(post_ids):
+        if not post:
+            continue
+
+        post_item = post_item_json(post=post, cur_user_id=cur_user, r=request)
+        if post_item and post_item['id'] != hot_post:
+            data['objects'].append(post_item)
 
     if data['objects']:
         last_item = data['objects'][-1]['id']
@@ -93,7 +99,7 @@ def friends(request):
     cur_user = None
     hot_post = None
     ad_post_json = None
-    posts_list = []
+    # posts_list = []
     data = {
         'meta': {
             'limit': 20,
@@ -136,10 +142,18 @@ def friends(request):
         ad_post_json['is_ad'] = True
         data['objects'].append(ad_post_json)
 
-    posts_list = get_objects_list(list(post_ids),
-                                  cur_user_id=cur_user,
-                                  r=request)
-    data['objects'] = data['objects'] + posts_list
+    # posts_list = get_objects_list(list(post_ids),
+    #                               cur_user_id=cur_user,
+    #                               r=request)
+    # data['objects'] = data['objects'] + posts_list
+
+    for post in list(post_ids):
+        if not post:
+            continue
+
+        post_item = post_item_json(post=post, cur_user_id=cur_user, r=request)
+        if post_item and int(post_item['id']) != hot_post:
+            data['objects'].append(post_item)
 
     if data['objects']:
         last_item = data['objects'][-1]['id']
@@ -153,7 +167,7 @@ def category(request, category_id):
     hot_post = None
     cur_user = None
     ad_post_json = None
-    posts_list = []
+    # posts_list = []
     data = {
         'meta': {
             'limit': 20,
@@ -198,10 +212,17 @@ def category(request, category_id):
     data['meta']['native_hashcode'] = cat_json['native_hashcode']
 
     # Create objects
-    posts_list = get_objects_list(post_ids,
-                                  cur_user_id=cur_user,
-                                  r=request)
-    data['objects'] = data['objects'] + posts_list
+    # posts_list = get_objects_list(post_ids,
+    #                               cur_user_id=cur_user,
+    #                               r=request)
+    # data['objects'] = data['objects'] + posts_list
+    for post in list(post_ids):
+        if not post:
+            continue
+
+        post_item = post_item_json(post=post, cur_user_id=cur_user, r=request)
+        if post_item and int(post_item['id']) != hot_post:
+            data['objects'].append(post_item)
 
     # Create next link
     if data['objects']:
@@ -219,7 +240,7 @@ def choices(request):
     cur_user = None
     hot_post = None
     ad_post_json = None
-    posts_list = []
+    # posts_list = []
     data = {
         'meta': {
             'limit': 20,
@@ -258,10 +279,18 @@ def choices(request):
         ad_post_json['is_ad'] = True
         data['objects'].append(ad_post_json)
 
-    posts_list = get_objects_list(post_ids,
-                                  cur_user_id=cur_user,
-                                  r=request)
-    data['objects'] = data['objects'] + posts_list
+    # posts_list = get_objects_list(post_ids,
+    #                               cur_user_id=cur_user,
+    #                               r=request)
+    # data['objects'] = data['objects'] + posts_list
+
+    for post in list(post_ids):
+        if not post:
+            continue
+
+        post_item = post_item_json(post=post, cur_user_id=cur_user, r=request)
+        if post_item and int(post_item['id']) != hot_post:
+            data['objects'].append(post_item)
 
     if data['objects']:
         last_item = data['objects'][-1]['id']
