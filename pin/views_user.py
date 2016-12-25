@@ -205,14 +205,13 @@ def like(request, item_id):
         return HttpResponseRedirect('/')
 
     from models_redis import LikesRedis
-    date = datetime.datetime.fromtimestamp(int(post['timestamp']))
 
     like, dislike, current_like = LikesRedis(post_id=item_id)\
         .like_or_dislike(user_id=cur_user_id,
                          post_owner=post['user']['id'],
                          user_ip=get_user_ip(request),
                          category=post['category']['id'],
-                         date=date)
+                         date=post['timestamp'])
 
     redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
     key = "cnt_like:user:{}:{}".format(cur_user_id,

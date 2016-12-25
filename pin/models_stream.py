@@ -1,8 +1,10 @@
 import redis
-import datetime
 import calendar
+import datetime
+import time
 
 from django.conf import settings
+
 from pin.models_casper import UserStream
 
 # stream server
@@ -154,8 +156,10 @@ class RedisTopPostStream(object):
             ss.zrem(key, value)
 
     def get_keys(self, date):
+        from pin.api6.tools import timestamp_to_local_datetime
         keys = []
-        dt_now = datetime.datetime.now()
+
+        dt_now = timestamp_to_local_datetime(int(time.time()))
 
         # Last month
         if self.in_last_moth_range(cur_date=dt_now, date=date):

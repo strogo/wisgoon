@@ -3,6 +3,7 @@ import re
 import emoji
 import urllib
 import random
+import pytz
 
 from io import FileIO, BufferedWriter
 from time import time
@@ -657,3 +658,11 @@ def allow_reset(user_id):
     if cnt_try > 5:
         status = False
     return status
+
+
+def timestamp_to_local_datetime(timestamp):
+
+    tz = pytz.timezone('Asia/Tehran')
+    converted = tz.localize(dt.datetime.fromtimestamp(int(timestamp)))
+    t1 = converted.astimezone(tz).replace(tzinfo=None)
+    return t1
