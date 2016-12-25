@@ -15,7 +15,7 @@ from pin.decorators import system_writable
 from pin.models import Post, Report, Ad, ReportedPost
 from user_profile.models import Profile
 from pin.api6.http import return_json_data, return_bad_request,\
-    return_not_found, return_un_auth
+    return_not_found, return_un_auth, return_data
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json,\
     category_get_json, check_user_state, post_item_json
@@ -29,7 +29,6 @@ GLOBAL_LIMIT = 10
 
 
 def latest(request):
-
     cur_user = None
     last_item = None
     hot_post = None
@@ -95,6 +94,31 @@ def latest(request):
                                             before=last_item)
 
     return return_json_data(data)
+
+
+def latest_2(request):
+    import requests
+    before = request.GET.get('before', 0)
+    token = request.GET.get('token', '')
+
+    url = "http://api.wisgoon.com/v7/post/latest/"
+    payload = {}
+    data = {}
+    payload['before'] = before
+
+    if token:
+        payload['token'] = token
+
+    # Get latest post
+    s = requests.Session()
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+    if res.status_code == 200:
+        try:
+            data = res.content
+        except:
+            pass
+    return return_data(data)
 
 
 def friends(request):

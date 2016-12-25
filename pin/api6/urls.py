@@ -102,6 +102,8 @@ urlpatterns += patterns('pin.api6.post',
 
                         url(r'post/new/item/(?P<item_id>\d+)/$', 'item_2',
                             name='api-6-post-new-item'),
+                        url(r'post/new/latest/$', 'latest_2',
+                            name='api-6-post-latest-2'),
                         )
 
 urlpatterns += patterns('pin.api6.comment',
