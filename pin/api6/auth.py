@@ -22,7 +22,7 @@ from django.contrib.auth import authenticate, login as auth_login,\
 from user_profile.models import Profile
 from user_profile.forms import ProfileForm2
 
-from daddy_avatar.templatetags.daddy_avatar import get_avatar
+# from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
 from tastypie.models import ApiKey
 
@@ -256,7 +256,8 @@ def login(request):
                 'message': _('Login successfully'),
                 'profile': get_profile_data(user.profile, user.id)
             }
-            data['user'] = get_simple_user_object(current_user=user.id)
+            data['user'] = get_simple_user_object(current_user=user.id,
+                                                  avatar=210)
             data['user']['token'] = api_key.key
             return return_json_data(data)
 
@@ -339,7 +340,8 @@ def register(request):
             'message': _('User created successfully'),
             'profile': get_profile_data(user.profile, user.id)
         }
-        data['user'] = get_simple_user_object(current_user=user.id)
+        data['user'] = get_simple_user_object(current_user=user.id,
+                                              avatar=210)
         data['user']['token'] = api_key.key
 
         return return_json_data(data)

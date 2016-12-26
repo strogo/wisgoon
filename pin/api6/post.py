@@ -104,6 +104,7 @@ def latest_2(request):
     token = request.GET.get('token', '')
 
     url = "http://api.wisgoon.com/v7/post/latest/"
+    # url = "http://127.0.0.1:8801/v7/post/latest/"
     payload = {}
     data = {}
     payload['before'] = before
