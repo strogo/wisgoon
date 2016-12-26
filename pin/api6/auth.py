@@ -250,18 +250,14 @@ def login(request):
     if user:
         if user.is_active:
             auth_login(request, user)
-
             api_key, created = ApiKey.objects.get_or_create(user=user)
-
             data = {
                 'status': True,
                 'message': _('Login successfully'),
-                'user': {
-                    'token': api_key.key,
-                    'id': user.id,
-                    'avatar': get_avatar(user)
-                }
+                'profile': get_profile_data(user.profile, user.id)
             }
+            data['user'] = get_simple_user_object(current_user=user.id)
+            data['user']['token'] = api_key.key
             return return_json_data(data)
 
         else:
@@ -340,17 +336,12 @@ def register(request):
 
         data = {
             'status': True,
-            'message': _("User created successfully"),
-            'user': {
-                'token': api_key.key,
-                'id': user.id,
-                'avatar': get_avatar(user)
-            }
+            'message': _('User created successfully'),
+            'profile': get_profile_data(user.profile, user.id)
         }
-        # data = {
-        #     'status': True,
-        #     'message': _("User created successfully")
-        # }
+        data['user'] = get_simple_user_object(current_user=user.id)
+        data['user']['token'] = api_key.key
+
         return return_json_data(data)
     else:
         data = {
