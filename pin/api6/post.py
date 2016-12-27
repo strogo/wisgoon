@@ -2,8 +2,8 @@
 import time
 from datetime import datetime
 from datetime import timedelta
-import requests
-import json
+# import requests
+# import json
 from haystack.query import SearchQuerySet
 
 from django.conf import settings
@@ -30,102 +30,102 @@ from pin.api6.decorators import cache_days
 GLOBAL_LIMIT = 10
 
 
-# def latest(request):
-#     cur_user = None
-#     last_item = None
-#     hot_post = None
-#     ad_post_json = None
-
-#     data = {
-#         'meta': {
-#             'limit': GLOBAL_LIMIT,
-#             'next': '',
-#             'total_count': 1000
-#         },
-#         'objects': []
-#     }
-
-#     before = request.GET.get('before', None)
-#     token = request.GET.get('token', '')
-
-#     if token:
-#         cur_user = AuthCache.id_from_token(token=token)
-
-#     if not before:
-#         before = 0
-
-#     pl = Post.latest(pid=before, limit=GLOBAL_LIMIT)
-#     post_ids = get_list_post(pl, from_model=settings.STREAM_LATEST)
-
-#     if cur_user:
-#         viewer_id = str(cur_user)
-#     else:
-#         viewer_id = str(get_user_ip(request, to_int=True))
-
-#     # Get ads
-#     ad = Ad.get_ad(user_id=viewer_id)
-#     if ad:
-#         hot_post = int(ad.post_id)
-#     if hot_post:
-#         ad_post_json = post_item_json(hot_post,
-#                                       cur_user_id=cur_user,
-#                                       r=request)
-
-#     if ad_post_json:
-#         ad_post_json['is_ad'] = True
-#         data['objects'].append(ad_post_json)
-
-#     # posts_list = get_objects_list(list(post_ids),
-#     #                               cur_user_id=cur_user,
-#     #                               r=request)
-
-#     for post in list(post_ids):
-#         if not post:
-#             continue
-
-#         post_item = post_item_json(post_id=post,
-#                                    cur_user_id=cur_user,
-#                                    r=request)
-#         if post_item and post_item['id'] != hot_post:
-#             data['objects'].append(post_item)
-
-#     if data['objects']:
-#         last_item = data['objects'][-1]['id']
-#         data['meta']['next'] = get_next_url(url_name='api-6-post-latest',
-#                                             token=token,
-#                                             before=last_item)
-
-#     return return_json_data(data)
-
 def latest(request):
+    cur_user = None
+    last_item = None
+    hot_post = None
+    ad_post_json = None
 
-    before = request.GET.get('before', 0)
+    data = {
+        'meta': {
+            'limit': GLOBAL_LIMIT,
+            'next': '',
+            'total_count': 1000
+        },
+        'objects': []
+    }
+
+    before = request.GET.get('before', None)
     token = request.GET.get('token', '')
 
-    url = "http://api.wisgoon.com/v7/post/latest/"
-    # url = "http://127.0.0.1:8801/v7/post/latest/"
-    payload = {}
-    data = {}
-    payload['before'] = before
-
     if token:
-        payload['token'] = token
+        cur_user = AuthCache.id_from_token(token=token)
 
-    # Get latest post
-    s = requests.Session()
-    res = s.get(url, params=payload, headers={'Connection': 'close'})
+    if not before:
+        before = 0
 
-    if res.status_code == 200:
-        try:
-            data = json.loads(res.content)
-        except:
-            pass
-    if data:
+    pl = Post.latest(pid=before, limit=GLOBAL_LIMIT)
+    post_ids = get_list_post(pl, from_model=settings.STREAM_LATEST)
+
+    if cur_user:
+        viewer_id = str(cur_user)
+    else:
+        viewer_id = str(get_user_ip(request, to_int=True))
+
+    # Get ads
+    ad = Ad.get_ad(user_id=viewer_id)
+    if ad:
+        hot_post = int(ad.post_id)
+    if hot_post:
+        ad_post_json = post_item_json(hot_post,
+                                      cur_user_id=cur_user,
+                                      r=request)
+
+    if ad_post_json:
+        ad_post_json['is_ad'] = True
+        data['objects'].append(ad_post_json)
+
+    # posts_list = get_objects_list(list(post_ids),
+    #                               cur_user_id=cur_user,
+    #                               r=request)
+
+    for post in list(post_ids):
+        if not post:
+            continue
+
+        post_item = post_item_json(post_id=post,
+                                   cur_user_id=cur_user,
+                                   r=request)
+        if post_item and post_item['id'] != hot_post:
+            data['objects'].append(post_item)
+
+    if data['objects']:
         last_item = data['objects'][-1]['id']
         data['meta']['next'] = get_next_url(url_name='api-6-post-latest',
                                             token=token,
                                             before=last_item)
+
     return return_json_data(data)
+
+# def latest(request):
+
+#     before = request.GET.get('before', 0)
+#     token = request.GET.get('token', '')
+
+#     url = "http://api.wisgoon.com/v7/post/latest/"
+#     # url = "http://127.0.0.1:8801/v7/post/latest/"
+#     payload = {}
+#     data = {}
+#     payload['before'] = before
+
+#     if token:
+#         payload['token'] = token
+
+#     # Get latest post
+#     s = requests.Session()
+#     res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+#     if res.status_code == 200:
+#         try:
+#             data = json.loads(res.content)
+#         except:
+#             pass
+#     if data:
+#         last_item = data['objects'][-1]['id']
+#         data['meta']['next'] = get_next_url(url_name='api-6-post-latest',
+#                                             token=token,
+#                                             before=last_item)
+#     return return_json_data(data)
 
 
 def latest_2(request):
