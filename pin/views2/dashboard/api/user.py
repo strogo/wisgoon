@@ -610,9 +610,9 @@ def delete_user_avatar(request, user_id):
         print str(e), "func :dashboard/api/ delete user profile"
         return return_not_found()
 
-    # profile.avatar = None
-    # profile.delete_avatar_cache()
-    # profile.save()
+    profile.avatar = None
+    profile.delete_avatar_cache()
+    profile.save()
     data = {'status': True, 'message': _('Successfully removed.')}
     return return_json_data(data)
 

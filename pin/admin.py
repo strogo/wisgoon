@@ -244,9 +244,9 @@ class ProfileAdmin(admin.ModelAdmin):
 
     raw_id_fields = ("user", "trusted_by")
 
-    def save_model(self, request, obj, form, change):
-        if obj.user == request.user:
-            obj.save()
+    # def save_model(self, request, obj, form, change):
+    #     if obj.user == request.user:
+    #         obj.save()
 
 
 class AppAdmin(admin.ModelAdmin):
