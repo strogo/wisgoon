@@ -67,8 +67,13 @@ def gcm_push(user_id, action_type, post_id, actor_id, timestamp, comment=None):
     timestamp = int(timestamp)
     try:
         up = PhoneData.objects.get(user_id=user_id)
+
+        if up.logged_out:
+            return
+
         if up.app_version < settings.GCM_VERSION:
             return
+
         if not up.google_token or up.google_token == 'NONE':
             return
     except PhoneData.DoesNotExist:

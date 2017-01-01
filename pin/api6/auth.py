@@ -505,6 +505,16 @@ def user_search(request):
 
 
 def logout(request):
+    token = request.GET.get('token', None)
+    if token:
+        current_user = AuthCache.user_from_token(token=token)
+        if current_user:
+            try:
+                PhoneData.objects\
+                    .filter(user=current_user)\
+                    .update(logged_out=True)
+            except:
+                pass
     auth_logout(request)
     return return_json_data({'status': True,
                              'message': _('Successfully Logout')})

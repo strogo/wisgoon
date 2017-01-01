@@ -187,8 +187,12 @@ class RedisTopPostStream(object):
         return post_ids
 
     def in_last_moth_range(self, cur_date, date):
-        year = cur_date.year
-        month = cur_date.month - 1
+        if cur_date.month == 1:
+            month = 12
+            year = cur_date.year - 1
+        else:
+            year = cur_date.year
+            month = cur_date.month - 1
         status = False
 
         _, num_days = calendar.monthrange(year, month)
