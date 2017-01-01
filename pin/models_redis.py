@@ -319,15 +319,15 @@ class LikesRedis(object):
             disliked = False
 
         lbs.execute()
-        if date:
-            from pin.api6.tools import timestamp_to_local_datetime
-            from pin.models_stream import RedisTopPostStream
+        # if date:
+        #     from pin.api6.tools import timestamp_to_local_datetime
+        #     from pin.models_stream import RedisTopPostStream
 
-            convert_date = timestamp_to_local_datetime(int(date))
-            top_stream = RedisTopPostStream()
-            top_stream.add_post(post_id=self.postId,
-                                cnt_like=self.cntlike(),
-                                date=convert_date)
+        #     convert_date = timestamp_to_local_datetime(int(date))
+        #     top_stream = RedisTopPostStream()
+        #     top_stream.add_post(post_id=self.postId,
+        #                         cnt_like=self.cntlike(),
+        #                         date=convert_date)
 
         return liked, disliked, self.cntlike()
 
