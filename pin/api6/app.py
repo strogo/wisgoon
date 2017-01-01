@@ -60,5 +60,4 @@ def startup_data(request):
     data['app_version'] = latest(request, startup=True)
     data['ads'] = ads
     data['read_only'] = is_system_writable()
-    print data
     return return_json_data(data)
