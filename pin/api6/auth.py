@@ -952,12 +952,12 @@ def accept_follow(request):
                                   following=target_user)
             is_req.delete()
             status = True
-            message = 'Allow follow request'
+            message = _("User followed")
             accepted = 1
         else:
             is_req.delete()
             status = True
-            message = 'Decline follow request'
+            message = _('Decline follow request')
             accepted = 0
 
         data = {'status': status,
