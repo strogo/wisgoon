@@ -822,15 +822,22 @@ def inc_credit(request):
 @csrf_exempt
 @system_writable
 def block_user(request, user_id):
-    user = None
+    cur_user = None
     token = request.POST.get('token', '')
     if token:
-        user = AuthCache.user_from_token(token=token)
+        cur_user = AuthCache.user_from_token(token=token)
 
-    if not user or not token:
+    if not cur_user or not token:
         return return_un_auth()
 
-    Block.block_user(user_id=user.id, blocked_id=user_id)
+    Block.block_user(user_id=cur_user.id, blocked_id=user_id)
+
+    FollowRequest.objects\
+        .filter(Q(user_id=user_id,
+                  target_id=cur_user.id) |
+                Q(user_id=cur_user.id,
+                  target_id=user_id)).delete()
+
     data = {
         'success': True,
         'message': _('User blocked')
