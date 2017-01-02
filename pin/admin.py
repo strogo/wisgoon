@@ -48,7 +48,8 @@ class PhoneDataAdmin(admin.ModelAdmin):
         'phone_model',
         'phone_serial',
         'android_version',
-        'app_version'
+        'app_version',
+        'logged_out'
     )
     raw_id_fields = ("user",)
     search_fields = ["=imei", "=user__username"]
