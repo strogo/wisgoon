@@ -508,11 +508,13 @@ def logout(request):
     token = request.GET.get('token', None)
     if token:
         current_user = AuthCache.user_from_token(token=token)
+        print current_user.username
         if current_user:
             try:
                 PhoneData.objects\
                     .filter(user=current_user)\
                     .update(logged_out=True)
+                print current_user.username
             except:
                 pass
     auth_logout(request)
