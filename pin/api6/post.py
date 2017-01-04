@@ -519,10 +519,12 @@ def edit(request, item_id):
             form = PinUpdateForm(request.POST.copy(), instance=post)
         except UnreadablePostError:
             return return_bad_request()
+
         if form.is_valid():
             form.save()
         else:
-            return return_json_data({'status': False, 'errors': form.errors})
+            return return_json_data({'status': False,
+                                     'message': _('Error in category')})
 
         # Get Post Object
         try:
