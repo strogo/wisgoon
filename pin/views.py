@@ -130,7 +130,9 @@ def home(request):
 
     if api_key:
         token = api_key.key
-        payload = {'token': token, 'before': pid}
+        payload['token'] = token
+
+    payload['before'] = pid
 
     # Get choices post
     s = requests.Session()
@@ -796,7 +798,9 @@ def latest(request):
 
     if api_key:
         token = api_key.key
-        payload = {'token': token, 'before': pid}
+        payload['token'] = token
+
+    payload['before'] = pid
 
     # Get choices post
     s = requests.Session()

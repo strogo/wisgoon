@@ -83,7 +83,9 @@ def following(request):
 
     if api_key:
         token = api_key.key
-        payload = {'token': token, 'before': pid}
+        payload['token'] = token
+
+    payload['before'] = pid
 
     # Get following post
     s = requests.Session()
