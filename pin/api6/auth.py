@@ -939,6 +939,7 @@ def follow_requests(request):
     return return_json_data(data)
 
 
+@csrf_exempt
 def create_bill(request):
 
     # parameters
