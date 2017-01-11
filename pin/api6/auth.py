@@ -467,6 +467,31 @@ def update_profile(request):
     })
 
 
+def remove_avatar(request):
+    token = request.GET.get('token', False)
+
+    if token:
+        current_user = AuthCache.user_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
+    try:
+        profile, create = Profile.objects.get_or_create(user=current_user)
+        if profile.avatar:
+            profile.avatar = None
+            profile.save()
+
+        profile.delete_avatar_cache()
+    except Exception as e:
+        print str(e), "remove avatar function error"
+        return return_bad_request(message=_("Please try again"))
+
+    return return_json_data({
+        'user': get_simple_user_object(current_user.id)
+    })
+
+
 def user_search(request):
     row_per_page = 10
     current_user = None

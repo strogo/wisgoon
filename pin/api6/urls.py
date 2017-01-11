@@ -62,6 +62,10 @@ urlpatterns = patterns('pin.api6.auth',
                        url(r'^auth/phone/password/reset/$',
                            'reset_pass',
                            name="api-6-auth-phone-reset-pass"),
+
+                       url(r'^auth/user/remove/avatar/$',
+                           'remove_avatar',
+                           name="api-6-auth-remove-avatar"),
                        )
 urlpatterns += patterns('pin.api6.post',
                         url(r'post/latest/$', 'latest',
