@@ -963,10 +963,10 @@ def create_bill(request):
 
     bill = Bills2.objects.create(user=user,
                                  amount=PACKS[package_name]['price'],
-                                 status=Bills2.UNCOMPLETED).exists()
+                                 status=Bills2.UNCOMPLETED)
 
     return return_json_data({'status': True,
-                             'message': 'Successfully created',
+                             'message': _('Successfully created'),
                              'id': bill.id})
 
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wisgoon 6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-11 16:05+0330\n"
-"PO-Revision-Date: 2017-01-11 16:07+0330\n"
+"POT-Creation-Date: 2017-01-11 17:08+0330\n"
+"PO-Revision-Date: 2017-01-11 17:10+0330\n"
 "Last-Translator: amir <a.abbasghorbani@gmail.com>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -145,87 +145,91 @@ msgstr "عدم پذیرش درخواست دوستی"
 msgid "Follow request not exists"
 msgstr "درخواست دوستی وجود ندارد"
 
-#: api6/auth.py:957 api6/auth.py:990 api6/auth.py:1092
+#: api6/auth.py:958 api6/auth.py:991 api6/auth.py:1093
 msgid "Select a package is not correct"
 msgstr "بسته صحیح انتخاب نشده است"
 
-#: api6/auth.py:961 api6/auth.py:994 api6/auth.py:1096
+#: api6/auth.py:962 api6/auth.py:995 api6/auth.py:1097
 msgid "Price is wrong"
 msgstr "قیمت صحیح نمی باشد"
 
-#: api6/auth.py:1005 api6/auth.py:1111
+#: api6/auth.py:969
+msgid "Successfully created"
+msgstr "با موفقیت ایجاد شد"
+
+#: api6/auth.py:1006 api6/auth.py:1112
 msgid "bazzar token not right"
 msgstr "توکن بازار صحیح نیست"
 
-#: api6/auth.py:1025 api6/auth.py:1128
+#: api6/auth.py:1026 api6/auth.py:1129
 msgid "Not valid purchase data"
 msgstr "اطلاعات خرید اشتباه است"
 
-#: api6/auth.py:1029
+#: api6/auth.py:1030
 msgid "purchase state error request"
 msgstr "خطا در درخواست خرید"
 
-#: api6/auth.py:1053
+#: api6/auth.py:1054
 msgid "not valid purchase state"
 msgstr "خطا در پارامترهای ارسالی"
 
-#: api6/auth.py:1062 api6/auth.py:1154
+#: api6/auth.py:1063 api6/auth.py:1155
 msgid "validation error, we correct it later"
 msgstr "خطای اعتبار سنجی"
 
-#: api6/auth.py:1065 api6/auth.py:1158
+#: api6/auth.py:1066 api6/auth.py:1159
 msgid "Increased Credit was Successful."
 msgstr "حساب شما با موفقیت شارژ شد"
 
-#: api6/auth.py:1069
+#: api6/auth.py:1070
 msgid "failed"
 msgstr ""
 
-#: api6/auth.py:1102
+#: api6/auth.py:1103
 msgid "Bill id is wrong"
 msgstr "فاکتور صحیح نمی باشد"
 
-#: api6/auth.py:1132
+#: api6/auth.py:1133
 msgid "The requested purchase is not found"
 msgstr "خرید درخواست شده پیدا نشد"
 
-#: api6/auth.py:1149
+#: api6/auth.py:1150
 msgid "Problem exists in your purchase"
 msgstr "مشکل در خرید شما وجود دارد"
 
-#: api6/auth.py:1163
+#: api6/auth.py:1164
 msgid "Buy failed"
 msgstr "خرید با موفقیت انجام نشد"
 
-#: api6/auth.py:1170 api6/auth.py:1175
+#: api6/auth.py:1171 api6/auth.py:1176
 msgid "Invalid phone number"
 msgstr "شماره تلفن وارد شده معتبر نیست"
 
-#: api6/auth.py:1183 api6/auth.py:1217 api6/auth.py:1245
+#: api6/auth.py:1184 api6/auth.py:1218 api6/auth.py:1246
 msgid "invalid"
 msgstr "نامعتبر"
 
-#: api6/auth.py:1195
+#: api6/auth.py:1196
 msgid "Verification sms sent!"
 msgstr "پبامک تایید ارسال شد"
 
-#: api6/auth.py:1209 api6/auth.py:1237 views_user.py:848
+#: api6/auth.py:1210 api6/auth.py:1238 views_user.py:848
 msgid "Invalid parameters"
 msgstr "خطا در پارامترهای ارسالی"
 
-#: api6/auth.py:1220 api6/auth.py:1248
+#: api6/auth.py:1221 api6/auth.py:1249
 msgid "Invalid code"
 msgstr "کد معتبر نسیت"
 
-#: api6/auth.py:1222
+#: api6/auth.py:1223
 msgid "Successfully verify code"
 msgstr " با موفقیت تایید گردید"
 
-#: api6/auth.py:1254
+#: api6/auth.py:1255
 msgid "User does not exists"
 msgstr "کاربر وجود ندارد"
 
-#: api6/auth.py:1256
+#: api6/auth.py:1257
 msgid "Successfully reset password"
 msgstr "پسورد شما با موفقیت تغییر به روز رسانی گردید"
 
