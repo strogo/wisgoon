@@ -263,7 +263,8 @@ class Profile(models.Model):
 
             from pin.tasks import add_avatar_to_storage
             self.store_avatars(update_model=False)
-            add_avatar_to_storage.delay(self.id)
+            # add_avatar_to_storage.delay(self.id)
+            add_avatar_to_storage(self.id)
 
         user_id = int(self.user_id)
         user_str = "user_name_%d" % (user_id)
