@@ -463,7 +463,8 @@ def update_profile(request):
     return return_json_data({
         'status': status, 'message': msg,
         'profile': get_profile_data(profile, current_user.id),
-        'user': get_simple_user_object(current_user.id)
+        'user': get_simple_user_object(current_user=current_user.id,
+                                       avatar=210)
     })
 
 
