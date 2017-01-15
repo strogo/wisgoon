@@ -399,9 +399,9 @@ def get_objects_list(posts, cur_user_id=None, r=None):
 
         post_item = post_item_json(post, cur_user_id, r)
         if post_item:
-            print type(post_item['user']['user_blocked_me'])
-            if not post_item['user']['user_blocked_me']:
-                continue
+            # print type(post_item['user']['user_blocked_me']), post_item['user']['user_blocked_me'], "bug"
+            # if not post_item['user']['user_blocked_me']:
+            #     continue
             objects_list.append(post_item)
 
     return objects_list
