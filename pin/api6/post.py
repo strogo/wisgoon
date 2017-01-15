@@ -73,7 +73,8 @@ def latest(request):
 
     if ad_post_json:
         ad_post_json['is_ad'] = True
-        data['objects'].append(ad_post_json)
+        if not ad_post_json['user']['user_blocked_me']:
+            data['objects'].append(ad_post_json)
 
     # posts_list = get_objects_list(list(post_ids),
     #                               cur_user_id=cur_user,
@@ -86,6 +87,8 @@ def latest(request):
         post_item = post_item_json(post_id=post,
                                    cur_user_id=cur_user,
                                    r=request)
+        if post_item and not post_item['user']['user_blocked_me']:
+            continue
         if post_item and post_item['id'] != hot_post:
             data['objects'].append(post_item)
 
@@ -206,7 +209,8 @@ def friends(request):
 
     if ad_post_json:
         ad_post_json['is_ad'] = True
-        data['objects'].append(ad_post_json)
+        if not ad_post_json['user']['user_blocked_me']:
+            data['objects'].append(ad_post_json)
 
     # posts_list = get_objects_list(list(post_ids),
     #                               cur_user_id=cur_user,
@@ -220,6 +224,9 @@ def friends(request):
         post_item = post_item_json(post_id=post,
                                    cur_user_id=cur_user,
                                    r=request)
+        if post_item and not post_item['user']['user_blocked_me']:
+            continue
+
         if post_item and int(post_item['id']) != hot_post:
             data['objects'].append(post_item)
 
@@ -273,7 +280,8 @@ def category(request, category_id):
 
     if ad_post_json:
         ad_post_json['is_ad'] = True
-        data['objects'].append(ad_post_json)
+        if not ad_post_json['user']['user_blocked_me']:
+            data['objects'].append(ad_post_json)
 
     cat_json = category_get_json(category_id)
 
@@ -291,6 +299,8 @@ def category(request, category_id):
         post_item = post_item_json(post_id=post,
                                    cur_user_id=cur_user,
                                    r=request)
+        if post_item and post_item['user']['user_blocked_me']:
+            continue
 
         if post_item and int(post_item['id']) != hot_post:
             data['objects'].append(post_item)
@@ -348,7 +358,8 @@ def choices(request):
 
     if ad_post_json:
         ad_post_json['is_ad'] = True
-        data['objects'].append(ad_post_json)
+        if not ad_post_json['user']['user_blocked_me']:
+            data['objects'].append(ad_post_json)
 
     # posts_list = get_objects_list(post_ids,
     #                               cur_user_id=cur_user,
@@ -362,6 +373,10 @@ def choices(request):
         post_item = post_item_json(post_id=post,
                                    cur_user_id=cur_user,
                                    r=request)
+
+        if post_item and not post_item['user']['user_blocked_me']:
+            continue
+
         if post_item and int(post_item['id']) != hot_post:
             data['objects'].append(post_item)
 
