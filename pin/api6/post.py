@@ -88,6 +88,7 @@ def latest(request):
                                    cur_user_id=cur_user,
                                    r=request)
         if post_item and not post_item['user']['user_blocked_me']:
+            print type(post_item['user']['user_blocked_me']), post_item['user']['user_blocked_me'], "bug"
             continue
         if post_item and post_item['id'] != hot_post:
             data['objects'].append(post_item)
