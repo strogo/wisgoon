@@ -14,7 +14,7 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
 
 from pin.decorators import system_writable
-from pin.models import Post, Report, Ad, ReportedPost
+from pin.models import Post, Report, Ad, ReportedPost, Block
 from user_profile.models import Profile
 from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
@@ -291,6 +291,11 @@ def category(request, category_id):
         post_item = post_item_json(post_id=post,
                                    cur_user_id=cur_user,
                                    r=request)
+        is_block = Block.objects.filter(user_id=post_item['user']['id'],
+                                        blocked_id=cur_user).exists()
+        if is_block:
+            continue
+
         if post_item and int(post_item['id']) != hot_post:
             data['objects'].append(post_item)
 

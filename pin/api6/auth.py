@@ -1076,8 +1076,8 @@ def inc_credit(request):
 def inc_credit_2(request):
 
     user = None
-    token = request.GET.get('token', '')
-    baz_token = request.POST.get("baz_token", "")
+    token = request.GET.get('token', None)
+    baz_token = request.POST.get("baz_token", None)
     price = int(request.POST.get("price", ""))
     bill_id = request.POST.get("bill_id", None)
     package_name = request.POST.get("package", "")
