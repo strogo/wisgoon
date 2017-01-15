@@ -827,18 +827,28 @@ def password_reset(request):
 def password_reset_2(request):
 
     if request.method == "POST":
-        form = PasswordResetForm(request.POST)
+        user = None
 
         """Validate email """
-        email = request.POST.get('email')
+        email = request.POST.get('email', None)
         if not email:
             return return_bad_request(message=_('Email is not correct'),
                                       status=False)
+        text = email.strip()
 
-        exist_user = User.objects.filter(email=email).exists()
-        if not exist_user:
-            msg = _("User account with this email does not exist")
-            return return_not_found(message=msg, status=False)
+        mention = re.compile("(?:^|\s)[＠ @]{1}([^\s#<>[\]|{}]+)", re.UNICODE)
+        mentions = mention.findall(text)
+        if mentions:
+            for username in mentions:
+                try:
+                    user = User.objects.only('email').get(username=username)
+                except User.DoesNotExist:
+                    continue
+                break
+        if user:
+            form = PasswordResetForm(initial={'email': user.email})
+        else:
+            form = PasswordResetForm(request.POST)
 
         if form.is_valid():
             email_template = 'registration/password_reset_email_pin.html'
