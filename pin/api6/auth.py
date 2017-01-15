@@ -835,16 +835,18 @@ def password_reset_2(request):
             return return_bad_request(message=_('Email is not correct'),
                                       status=False)
         text = email.strip()
+        if text.startswith('@'):
+            user = User.objects.only('email').get(username=text)
 
-        mention = re.compile("(?:^|\s)[＠ @]{1}([^\s#<>[\]|{}]+)", re.UNICODE)
-        mentions = mention.findall(text)
-        if mentions:
-            for username in mentions:
-                try:
-                    user = User.objects.only('email').get(username=username)
-                except User.DoesNotExist:
-                    continue
-                break
+        # mention = re.compile("(?:^|\s)[＠ @]{1}([^\s#<>[\]|{}]+)", re.UNICODE)
+        # mentions = mention.findall(text)
+        # if mentions:
+        #     for username in mentions:
+        #         try:
+        #             user = User.objects.only('email').get(username=username)
+        #         except User.DoesNotExist:
+        #             continue
+        #         break
         if user:
             form = PasswordResetForm(initial={'email': user.email})
         else:
