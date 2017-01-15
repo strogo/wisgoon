@@ -284,14 +284,23 @@ def post_item_json(post_id, cur_user_id=None, r=None,
 
         if cache_post:
             cache_post['like_with_user'] = False
+            post_user_id = cache_post['user']['id']
             if cur_user_id:
                 cache_post['like_with_user'] = LikesRedis(post_id=post_id)\
                     .user_liked(user_id=cur_user_id)
+
+                cache_post['user'] = get_simple_user_object(
+                    current_user=post_user_id,
+                    user_id_from_token=cur_user_id
+                )
+            else:
+                cache_post['user'] = get_simple_user_object(
+                    current_user=post_user_id,
+                )
+
             cache_post['cnt_view'] = pi['cnt_view']
             cache_post['cache'] = "Hit"
             cache_post['text'] = emoji.emojize(cache_post['text'])
-            post_user_id = cache_post['user']['id']
-            cache_post['user'] = get_simple_user_object(post_user_id)
             cache_post = need_fields(cache_post)
             return cache_post
 
