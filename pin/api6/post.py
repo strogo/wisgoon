@@ -87,9 +87,9 @@ def latest(request):
         post_item = post_item_json(post_id=post,
                                    cur_user_id=cur_user,
                                    r=request)
-        if post_item and not post_item['user']['user_blocked_me']:
-            print type(post_item['user']['user_blocked_me']), post_item['user']['user_blocked_me'], "bug"
+        if post_item and post_item['user']['user_blocked_me']:
             continue
+
         if post_item and post_item['id'] != hot_post:
             data['objects'].append(post_item)
 
@@ -225,7 +225,7 @@ def friends(request):
         post_item = post_item_json(post_id=post,
                                    cur_user_id=cur_user,
                                    r=request)
-        if post_item and not post_item['user']['user_blocked_me']:
+        if post_item and post_item['user']['user_blocked_me']:
             continue
 
         if post_item and int(post_item['id']) != hot_post:
@@ -375,7 +375,7 @@ def choices(request):
                                    cur_user_id=cur_user,
                                    r=request)
 
-        if post_item and not post_item['user']['user_blocked_me']:
+        if post_item and post_item['user']['user_blocked_me']:
             continue
 
         if post_item and int(post_item['id']) != hot_post:
