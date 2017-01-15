@@ -106,6 +106,10 @@ def notif(request):
                                              request)
             except:
                 post_object = {}
+
+            if not post_object:
+                continue
+
             data_extra['post'] = post_object
             data_extra['type'] = Notif.LIKE
 
@@ -126,6 +130,10 @@ def notif(request):
                                              request)
             except IndexError:
                 post_object = {}
+
+            if not post_object:
+                continue
+
             data_extra['post'] = post_object
 
         elif notif.type == Notif.DELETE_POST:
