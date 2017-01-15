@@ -374,7 +374,9 @@ def choices(request):
 
 def search(request):
     limit = 20
-    query = request.GET.get('q', '')
+    query = request.GET.get('q', None)
+    if query:
+        query = query.strip()
 
     cur_user = None
     data = {}
@@ -388,17 +390,20 @@ def search(request):
     if token:
         cur_user = AuthCache.id_from_token(token=token)
 
-    posts = SearchQuerySet().models(Post)\
-        .filter(content__contains=query)[offset:offset + limit]
+    if query:
+        posts = SearchQuerySet().models(Post)\
+            .filter(content__contains=query)[offset:offset + limit]
 
-    idis = []
-    for pmlt in posts:
-        idis.append(pmlt.pk)
+        idis = []
+        for pmlt in posts:
+            idis.append(pmlt.pk)
 
-    posts = Post.objects.values_list('id', flat=True).filter(id__in=idis)
+        posts = Post.objects.values_list('id', flat=True).filter(id__in=idis)
 
-    data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
-                                       r=request)
+        data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
+                                           r=request)
+    else:
+        data['objects'] = []
 
     data['meta']['next'] = get_next_url(url_name='api-6-post-search',
                                         token=token, offset=offset + limit,
@@ -725,7 +730,7 @@ def promoted(request):
 
 def hashtag(request, tag_name):
     token = request.GET.get('token', '')
-    query = tag_name
+    query = tag_name.strip()
     before = get_int(request.GET.get('before', 0))
 
     row_per_page = 20

@@ -1149,7 +1149,8 @@ def inc_credit_2(request):
                 return return_json_data(
                     {'status': False,
                      'message': _('Problem exists in your purchase')})
-        except Exception:
+        except Exception as e:
+            print str(e), "function inc_credit_2 error"
             current_bill.trans_id = str(baz_token)
             current_bill.status = Bills2.VALIDATE_ERROR
             current_bill.save()
