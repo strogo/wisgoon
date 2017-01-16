@@ -117,6 +117,10 @@ def notif(request):
             data_extra['type'] = Notif.FOLLOW
             data_extra['text'] = "شما را دنبال می کند"
 
+        # elif notif.type == Notif.ACCEPT_FOLLOW_REQUEST:
+        #     data_extra['type'] = Notif.ACCEPT_FOLLOW_REQUEST
+        #     data_extra['text'] = "در خواست شما را برای دنبال کردن پذیرفت"
+
         elif notif.type == Notif.FOLLOW_REQUEST:
             data_extra['type'] = Notif.FOLLOW_REQUEST
             data_extra['text'] = "میخواهد شما را دنبال کند"

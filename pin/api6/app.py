@@ -59,6 +59,7 @@ def startup_data(request):
 
     if token:
         data['notif_count'] = notif_count(request, startup=True)
+
         current_user = AuthCache.user_from_token(token=token)
         if current_user:
             now = datetime.now()

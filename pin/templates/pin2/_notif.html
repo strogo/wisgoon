@@ -28,13 +28,7 @@
 {% endif %}
 {% for item in notif %}
 <div class="notif-item">
-	{% if item.type != 10 %}
-		<div class="notif-img pull-left">
-			<a class="pin-item-link" style="float:right" href="{% url "pin-item" item.id%}">
-				<img src="{{item.ob.images.thumbnail.url }}" class="img img-circle" style="width:40px;height:40px;" />
-			</a>
-		</div>
-	{% else %}
+	{% if item.type == 10 or item.type == 7 %}
 		<div class="notif-img pull-left">
 		{% if request.user.id|get_follow_status:item.actor == False  %}
 	        <a data-user-id="{{item.actor}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" item.actor 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
@@ -42,6 +36,13 @@
 	        <a data-user-id="{{item.actor}}" class="wis_btn pull-left mabo10 red ajax-follow" href='{% url "pin-follow" item.actor 0 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i></a>
 	   {%endif%}
 	  </div>
+
+	{% else %}
+		<div class="notif-img pull-left">
+			<a class="pin-item-link" style="float:right" href="{% url "pin-item" item.id%}">
+				<img src="{{item.ob.images.thumbnail.url }}" class="img img-circle" style="width:40px;height:40px;" />
+			</a>
+		</div>
 	{% endif %}
 
 	<div class="notif-actors col-md-2 col-sm-2 col-xs-2 pull-right">
@@ -69,7 +70,9 @@
 		{% elif item.type == 10 %}
 			<i class="icon-user"></i> شما را دنبال می کند
 		{% elif item.type == 5 %}
-    	<i class="glyphicon glyphicon-ok"></i> پست شما برگزیده شد
+    		<i class="glyphicon glyphicon-ok"></i> پست شما برگزیده شد
+    	{% elif item.type == 7 %}
+    		<i class="glyphicon glyphicon-ok"></i> درخواست دوستی شما را پذیرفت
 		{% endif %}
 
 		{% comment %}

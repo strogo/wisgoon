@@ -897,6 +897,12 @@ def accept_follow(request):
         if accepted:
             Follow.objects.create(follower_id=int(user_id),
                                   following=target_user)
+            # Send notification
+            # from pin.actions import send_notif_bar
+            # send_notif_bar(user=instance.follower_id,
+            #                type=7,
+            #                post=None,
+            #                actor=instance.following_id)
             is_req.delete()
             status = True
             message = _("User followed")
@@ -1014,8 +1020,8 @@ def create_subscription(request):
         )
 
     try:
-        subscription = Subscription.objects.create(user=user,
-                                                   package_id=int(package_id))
+        Subscription.objects.create(user=user,
+                                    package_id=int(package_id))
         user.profile.dec_credit(package.price)
     except Exception as e:
         print str(e), "function create_subscription error"
@@ -1023,8 +1029,7 @@ def create_subscription(request):
         return return_bad_request(message=_(message))
 
     return return_json_data({'status': True,
-                             'message': _('Successfully created'),
-                             'sub_id': subscription.id})
+                             'message': _('Successfully created')})
 
 
 @csrf_exempt

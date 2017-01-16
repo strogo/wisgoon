@@ -727,6 +727,8 @@ def notif_user(request):
                 anl['po'] = notif.post_image
             elif notif.type == 10:
                 anl['po'] = notif.last_actor
+            # elif notif.type == 7:
+            #     anl['po'] = notif.last_actor
             else:
                 continue
         # try:
@@ -856,6 +858,12 @@ def accept_follow(request):
         if accepted:
             Follow.objects.create(follower_id=int(user_id),
                                   following=target_user)
+            # Send notification
+            # from pin.actions import send_notif_bar
+            # send_notif_bar(user=instance.follower_id,
+            #                type=7,
+            #                post=None,
+            #                actor=instance.following_id)
             is_req.delete()
             status = True
             message = _('Your connection successfully established.')
