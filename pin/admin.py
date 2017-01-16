@@ -4,7 +4,7 @@
 from django.contrib import admin
 from haystack.admin import SearchModelAdmin
 
-from user_profile.models import Profile, CreditLog
+from user_profile.models import Profile, CreditLog, Package, Subscription
 
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
@@ -14,6 +14,17 @@ from pin.models import Post, Category, App_data, Comments, InstaAccount,\
 # from pin.actions import send_notif
 from pin.tools import revalidate_bazaar
 from pin.tasks import update_camp_post
+
+
+class PackageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'price', 'day')
+
+
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'end_date', 'user', 'package', 'create_at', 'expire')
+    raw_id_fields = ["user", "package"]
+    search_fields = ["user"]
+    exclude = ('end_date',)
 
 
 class StoragesAdmin(admin.ModelAdmin):
@@ -448,3 +459,5 @@ admin.site.register(UserLable, UserLableAdmin)
 admin.site.register(UserActivities, UserActivitiesAdmin)
 admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(CampaignWinners, CampaignWinnersAdmin)
+admin.site.register(Subscription, SubscriptionAdmin)
+admin.site.register(Package, PackageAdmin)

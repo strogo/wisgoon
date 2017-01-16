@@ -5,6 +5,8 @@ from pin.api6.http import return_json_data
 from pin.api_tools import media_abs_url
 from pin.models import App_data
 from pin.api6.tools import is_system_writable
+from pin.tools import AuthCache
+from user_profile.models import Package
 
 
 def latest(request, startup=None):
@@ -51,11 +53,17 @@ def startup_data(request):
     #     pass
 
     data['campaign'] = current_campaign(request, startup=True)
+    data['packages'] = Package.all_packages()
 
     if token:
         data['notif_count'] = notif_count(request, startup=True)
+        current_user = AuthCache.user_from_token(token=token)
+        if current_user:
+            data['show_ads'] = current_user.profile.show_ads
+
     else:
         data['notif_count'] = 0
+        data['show_ads'] = True
 
     data['app_version'] = latest(request, startup=True)
     data['ads'] = ads

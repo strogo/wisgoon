@@ -19,7 +19,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login as auth_login,\
     logout as auth_logout
 
-from user_profile.models import Profile
+from user_profile.models import Profile, Subscription, Package
 from user_profile.forms import ProfileForm2
 
 # from daddy_avatar.templatetags.daddy_avatar import get_avatar
@@ -981,6 +981,50 @@ def create_bill(request):
     return return_json_data({'status': True,
                              'message': _('Successfully created'),
                              'id': bill.id})
+
+
+@csrf_exempt
+def create_subscription(request):
+
+    # parameters
+    token = request.GET.get('token', None)
+    package_id = request.POST.get("package_id", None)
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token or not package_id:
+        message = "The parameters entered is incorrect"
+        return return_bad_request(message=_(message))
+    try:
+        package = Package.objects.only('price').get(id=int(package_id))
+    except:
+        message = "The parameters entered is incorrect"
+        return return_bad_request(message=_(message))
+
+    if user.profile.credit < package.price:
+        return return_bad_request(message=_('your credit is not enough'))
+
+    exists_sub = Subscription.objects.only('id')\
+        .filter(user=user, expire=False).exists()
+
+    if exists_sub:
+        return return_bad_request(
+            message=_('Your subscription is not finished')
+        )
+
+    try:
+        subscription = Subscription.objects.create(user=user,
+                                                   package_id=int(package_id))
+        user.profile.dec_credit(package.price)
+    except Exception as e:
+        print str(e), "function create_subscription error"
+        message = "subscription creation error"
+        return return_bad_request(message=_(message))
+
+    return return_json_data({'status': True,
+                             'message': _('Successfully created'),
+                             'sub_id': subscription.id})
 
 
 @csrf_exempt

@@ -4,7 +4,7 @@ import time
 
 from PIL import Image, ImageOps
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.core.cache import cache
@@ -93,6 +93,8 @@ class Profile(models.Model):
     phone = models.CharField(max_length=255, null=True, blank=True)
     is_private = models.BooleanField(default=False,
                                      verbose_name=_('Private'))
+    show_ads = models.BooleanField(default=True,
+                                   verbose_name=_('Show ads'))
 
     version = models.IntegerField(default=0, blank=False, null=True)
 
@@ -297,6 +299,39 @@ class CreditLog(models.Model):
         super(CreditLog, self).save(*args, **kwargs)
 
 
+class Package(models.Model):
+    title = models.CharField(max_length=255)
+    price = models.CharField(max_length=255)
+    day = models.IntegerField(default=0)
+
+    def __unicode__(self):
+        return self.title
+
+    def get_json(self):
+        data = {}
+        data['id'] = self.id
+        data['title'] = self.title
+        data['price'] = self.price
+        return data
+
+    @classmethod
+    def all_packages(cls):
+        packs = cls.objects.only('id').all()
+        pack_list = []
+        for pack in packs:
+            pack_list.append(pack.get_json())
+        return pack_list
+
+
+class Subscription(models.Model):
+
+    end_date = models.DateTimeField(null=True, blank=True)
+    expire = models.BooleanField(default=False)
+    user = models.ForeignKey(User)
+    package = models.ForeignKey(Package)
+    create_at = models.DateTimeField(auto_now_add=True)
+
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         MonthlyStats.log_hit(object_type=MonthlyStats.USER)
@@ -319,4 +354,12 @@ def create_user_profile(sender, instance, created, **kwargs):
         u.save(instance)
 
 
+def claculate_end_date(sender, instance, created, **kwargs):
+    if created:
+        end_date = instance.create_at + timedelta(days=instance.package.day)
+        instance.end_date = end_date
+        instance.save()
+
+
 post_save.connect(create_user_profile, sender=User)
+post_save.connect(claculate_end_date, sender=Subscription)

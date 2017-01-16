@@ -66,6 +66,10 @@ urlpatterns = patterns('pin.api6.auth',
                        url(r'^auth/user/remove/avatar/$',
                            'remove_avatar',
                            name="api-6-auth-remove-avatar"),
+
+                       url(r'^auth/create/subscription/$',
+                           'create_subscription',
+                           name="api-6-auth-create-subscription"),
                        )
 urlpatterns += patterns('pin.api6.post',
                         url(r'post/latest/$', 'latest',
