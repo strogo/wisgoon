@@ -1001,7 +1001,7 @@ def create_subscription(request):
     except:
         message = "The parameters entered is incorrect"
         return return_bad_request(message=_(message))
-
+    print user.profile.credit, package.price
     if user.profile.credit < package.price:
         return return_bad_request(message=_('your credit is not enough'))
 
