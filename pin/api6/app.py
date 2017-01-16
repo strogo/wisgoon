@@ -65,16 +65,16 @@ def startup_data(request):
             now = datetime.now()
 
             # Check subscription end_date
-            subscription = Subscription.objects\
-                .filter(user=current_user).order_by('-id')
+            # subscription = Subscription.objects\
+            #     .filter(user=current_user).order_by('-id')
 
-            if subscription:
-                end_date = subscription[0].end_date
-                if now >= end_date:
-                    subscription.expire = True
-                    subscription.save()
-                else:
-                    data['show_ads'] = False
+            # if subscription:
+            #     end_date = subscription[0].end_date
+            #     if now >= end_date:
+            #         subscription.expire = True
+            #         subscription.save()
+            #     else:
+            #         data['show_ads'] = False
     else:
         data['notif_count'] = 0
 
