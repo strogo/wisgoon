@@ -31,7 +31,11 @@
 	{% if item.type == 10 or item.type == 7 %}
 		<div class="notif-img pull-left">
 		{% if request.user.id|get_follow_status:item.actor == False  %}
-	        <a data-user-id="{{item.actor}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" item.actor 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
+			{% if item.pending %}
+				<a data-user-id="{{item.actor}}" class="wis_btn pull-left gray mabo10 ajax-follow" href='{% url "remove-follow-request" item.actor%}'><i class="glyphicon glyphicon-user"></i><i class="fa fa-clock-o"></i></a>
+			{% else %}
+	        	<a data-user-id="{{item.actor}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" item.actor 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
+			{% endif %}
 	   {% else %}
 	        <a data-user-id="{{item.actor}}" class="wis_btn pull-left mabo10 red ajax-follow" href='{% url "pin-follow" item.actor 0 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i></a>
 	   {%endif%}
