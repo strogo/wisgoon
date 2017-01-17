@@ -10,21 +10,31 @@
 
 {% for noti in notif %}
 <div class="notif popover_notif notif_{{noti.type}}" style="">
-{# {{forloop.counter}} -- {{noti.type}} -- {{noti.po.get_image_236.url}} <br> #}
+
     <a target="_blank" href="{% url 'pin-user' noti.actor %}" class="pull-right actor">
         <img src="{{noti.actor|get_avatar:60}}">
     </a>
-    {% if noti.type != 10 %}
-    <a class="notif_img pull-left" href="{% url "pin-item" noti.id %}">
-        <img src="{{noti.ob.images.thumbnail.url }}" />
-    </a>
-    {% else %}
+    {% if noti.type == 10 or noti.type == 7 %}
+        <div class="notif-img pull-left">
         {% if request.user.id|get_follow_status:noti.actor == False  %}
-            <a data-user-id="{{noti.actor}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" noti.actor 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
-        {% else %}
+            {% if noti.pending %}
+                <a data-user-id="{{noti.actor}}" class="wis_btn pull-left gray mabo10 ajax-follow" href='{% url "remove-follow-request" noti.actor%}'><i class="glyphicon glyphicon-user"></i><i class="fa fa-clock-o"></i></a>
+            {% else %}
+                <a data-user-id="{{noti.actor}}" class="wis_btn pull-left green mabo10 ajax-follow" href='{% url "pin-follow" noti.actor 1 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-plus"></i></a>
+            {% endif %}
+       {% else %}
             <a data-user-id="{{noti.actor}}" class="wis_btn pull-left mabo10 red ajax-follow" href='{% url "pin-follow" noti.actor 0 %}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-minus"></i></a>
        {%endif%}
+      </div>
+
+    {% else %}
+        <div class="notif-img pull-left">
+            <a class="pin-item-link" style="float:right" href="{% url "pin-item" noti.id%}">
+                <img src="{{noti.ob.images.thumbnail.url }}" class="img img-circle" style="width:40px;height:40px;" />
+            </a>
+        </div>
     {% endif %}
+
     <div class="notif_text pull-right">
         {% if noti.type == 1 %}
         <i class="glyphicon glyphicon-heart"></i> تصویر شما را پسندید
@@ -36,6 +46,8 @@
         <i class="glyphicon glyphicon-user"></i> شما را دنبال می‌کند
         {% elif noti.type == 5 %}
         <i class="glyphicon glyphicon-ok"></i> پست شما برگزیده شد
+        {% elif noti.type == 7 %}
+            <i class="glyphicon glyphicon-user"></i> درخواست شما را پذیرفت
         {% endif %}
     </div>
 {% comment %}

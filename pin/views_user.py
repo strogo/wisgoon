@@ -681,8 +681,9 @@ def upload(request):
 
 @login_required
 def show_notify(request):
-    NotificationRedis(user_id=request.user.id).clear_notif_count()
-    notif = NotificationRedis(user_id=request.user.id)\
+    user_id = request.user.id
+    NotificationRedis(user_id=user_id).clear_notif_count()
+    notif = NotificationRedis(user_id=user_id)\
         .get_notif()
 
     nl = []
@@ -692,8 +693,12 @@ def show_notify(request):
         if not anl['ob']:
             if n.type == 4:
                 anl['po'] = n.post_image
-            elif n.type == 10:
+            elif n.type in [10, 7]:
                 anl['po'] = n.last_actor
+                anl['pending'] = FollowRequest.objects\
+                    .filter(user_id=user_id,
+                            target_id=n.last_actor)\
+                    .exists()
             else:
                 continue
         # try:
