@@ -895,14 +895,14 @@ def accept_follow(request):
                                           target=target_user)
     if is_req.exists():
         if accepted:
-            Follow.objects.create(follower_id=int(user_id),
-                                  following=target_user)
+            instance = Follow.objects.create(follower_id=int(user_id),
+                                             following=target_user)
             # Send notification
-            # from pin.actions import send_notif_bar
-            # send_notif_bar(user=instance.follower_id,
-            #                type=7,
-            #                post=None,
-            #                actor=instance.following_id)
+            from pin.actions import send_notif_bar
+            send_notif_bar(user=instance.follower_id,
+                           type=7,
+                           post=None,
+                           actor=instance.following_id)
             is_req.delete()
             status = True
             message = _("User followed")
