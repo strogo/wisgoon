@@ -56,6 +56,7 @@ def startup_data(request):
     data['campaign'] = current_campaign(request, startup=True)
     data['packages'] = Package.all_packages()
     data['show_ads'] = True
+    data['show_native_ads'] = True
 
     if token:
         data['notif_count'] = notif_count(request, startup=True)
@@ -71,12 +72,14 @@ def startup_data(request):
             if subscription:
                 end_date = (subscription[0].end_date).replace(tzinfo=None)\
                     .strftime("%s")
-                print end_date, now
+
                 if now >= end_date:
                     subscription.expire = True
                     subscription.save()
                 else:
                     data['show_ads'] = False
+                    data['show_native_ads'] = False
+
     else:
         data['notif_count'] = 0
 
