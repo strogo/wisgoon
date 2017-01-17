@@ -306,7 +306,7 @@ def post_item_json(post_id, cur_user_id=None, r=None,
 
         try:
             post = Post.objects.get(id=post_id)
-        except Post.DoesNotExist:
+        except (AttributeError, Post.DoesNotExist):
             return None
 
         pi['cache'] = "Miss"
