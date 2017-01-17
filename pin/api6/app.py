@@ -71,6 +71,7 @@ def startup_data(request):
             if subscription:
                 end_date = (subscription[0].end_date).replace(tzinfo=None)\
                     .strftime("%s")
+                print end_date, now
                 if now >= end_date:
                     subscription.expire = True
                     subscription.save()
