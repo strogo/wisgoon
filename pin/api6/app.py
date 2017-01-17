@@ -62,15 +62,15 @@ def startup_data(request):
 
         current_user = AuthCache.user_from_token(token=token)
         if current_user:
-            now = datetime.now().strftime("%s")
+            now = datetime.utcnow().strftime("%s")
 
             # Check subscription end_date
             subscription = Subscription.objects\
                 .filter(user=current_user).order_by('-id')
 
             if subscription:
-                end_date = (subscription[0].end_date).strftime("%s")
-                print now, end_date
+                end_date = (subscription[0].end_date).replace(tzinfo=None)\
+                    .strftime("%s")
                 if now >= end_date:
                     subscription.expire = True
                     subscription.save()
