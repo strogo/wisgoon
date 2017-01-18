@@ -62,6 +62,7 @@ class Profile(models.Model):
     cnt_post = models.IntegerField(default=0)
     cnt_like = models.IntegerField(default=0)
     score = models.IntegerField(default=0, db_index=True)
+    rank = models.IntegerField(default=0, db_index=True)
     count_flag = models.IntegerField(default=0)
     trusted = models.IntegerField(default=0)
     trusted_by = models.ForeignKey(User, related_name='trusted_by',
