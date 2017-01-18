@@ -31,9 +31,9 @@ from tastypie.models import ApiKey
 # from haystack.query import Raw
 from pin.decorators import system_writable
 from pin.models import Follow, Block, Likes, BannedImei, PhoneData, Bills2,\
-    FollowRequest, VerifyCode
+    FollowRequest, VerifyCode, Log
 from pin.models_es import ESUsers
-from pin.tools import AuthCache, get_new_access_token2
+from pin.tools import AuthCache, get_new_access_token2, get_user_ip
 from pin.api6.http import return_bad_request, return_json_data,\
     return_un_auth, return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object,\
@@ -454,8 +454,13 @@ def update_profile(request):
         return return_bad_request()
 
     if form.is_valid():
-        form.save()
+        p = form.save()
         update_follower_following(profile, current_user.id)
+        Log.update_profile(actor=current_user,
+                           user_id=current_user.id,
+                           text=_("update profile"),
+                           image=p.avatar,
+                           ip_address=get_user_ip(request=request))
         msg = _('Your Profile Was Updated')
         status = True
     else:

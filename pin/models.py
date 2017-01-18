@@ -36,7 +36,7 @@ from pin.api6.cache_layer import PostCacheLayer
 from pin.models_graph import FollowUser
 from pin.models_stream import RedisUserStream
 from models_casper import CatStreams
-from pin.analytics import comment_act, post_act
+# from pin.analytics import comment_act, post_act
 
 
 LIKE_TO_DEFAULT_PAGE = 10
@@ -1057,7 +1057,9 @@ class Follow(models.Model):
 
             # Send notification
             from pin.actions import send_notif_bar
-            send_notif_bar(user=instance.following.id, type=10, post=None,
+            send_notif_bar(user=instance.following.id,
+                           type=10,
+                           post=None,
                            actor=instance.follower.id)
 
             # Monthly follow log
@@ -1156,7 +1158,7 @@ class Likes(models.Model):
 
         like = instance
         post = like.post
-        sender = like.user
+        # sender = like.user
 
         Post.objects.filter(pk=post.id).update(cnt_like=F('cnt_like') + 1)
 
@@ -1594,6 +1596,7 @@ class Log(models.Model):
     BAN_PROFILE = 9
     UNBAN_PROFILE = 10
     UNBAN_IMEI = 11
+    UPDATE_PROFILE = 12
 
     ACTIONS = (
         (DELETE, _("delete")),
@@ -1605,7 +1608,8 @@ class Log(models.Model):
         (DEACTIVE_USER, _("Deactive user")),
         (ACTIVE_USER, _("activated")),
         (BAN_PROFILE, _("ban profile")),
-        (UNBAN_PROFILE, _("unban profile"))
+        (UNBAN_PROFILE, _("unban profile")),
+        (UPDATE_PROFILE, _("update profile"))
     )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -1738,6 +1742,17 @@ class Log(models.Model):
                            post_image=post.get_image_236()["url"],
                            ip_address=ip_address,
                            )
+
+    @classmethod
+    def update_profile(cls, actor, user_id,
+                       text="", ip_address="127.0.0.1", image=None):
+        Log.objects.create(user=actor,
+                           action=cls.UPDATE_PROFILE,
+                           object_id=user_id,
+                           content_type=cls.USER,
+                           text=text,
+                           post_image=image,
+                           ip_address=ip_address)
 
 
 class ReportTypes(models.Model):

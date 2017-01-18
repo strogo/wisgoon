@@ -10,8 +10,11 @@ from django.core.urlresolvers import reverse
 
 from user_profile.forms import ProfileForm
 from user_profile.models import Profile
-from pin.api6.tools import is_system_writable
+
+from pin.api6.tools import is_system_writable, update_follower_following
 from pin.decorators import system_writable
+from pin.models import Log
+from pin.tools import get_user_ip
 
 from tastypie.models import ApiKey
 
@@ -26,9 +29,14 @@ def change(request):
             return HttpResponse(msg)
         else:
             messages.error(request, msg)
-            return HttpResponseRedirect(reverse('pin-absuser', args=[request.user.username]))
+            return HttpResponseRedirect(
+                reverse('pin-absuser',
+                        args=[request.user.username])
+            )
 
-    profile, create = Profile.objects.get_or_create(user=request.user)
+    current_user = request.user
+    current_user_id = current_user.id
+    profile, create = Profile.objects.get_or_create(user=current_user)
     if request.method == "POST":
         try:
             form = ProfileForm(request.POST, request.FILES, instance=profile)
@@ -36,8 +44,14 @@ def change(request):
             return HttpResponse(_('Error sending the image.'))
 
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/pin/user/%d' % request.user.id)
+            p = form.save()
+            update_follower_following(profile, current_user_id)
+            Log.update_profile(actor=current_user,
+                               user_id=current_user_id,
+                               text=_("update profile"),
+                               image=p.avatar,
+                               ip_address=get_user_ip(request=request))
+            return HttpResponseRedirect('/pin/user/%d' % current_user_id)
     else:
         form = ProfileForm(instance=profile)
         if request.is_ajax():

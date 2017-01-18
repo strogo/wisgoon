@@ -2,18 +2,20 @@
 # import time
 
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
+
 from haystack.admin import SearchModelAdmin
 
 from user_profile.models import Profile, CreditLog, Package, Subscription
 
+from pin.tools import revalidate_bazaar, get_user_ip
+from pin.tasks import update_camp_post
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
     Results, Storages, Lable, UserActivitiesSample, UserLable,\
     UserActivities, Campaign, SystemState, CampaignWinners
 # from pin.actions import send_notif
-from pin.tools import revalidate_bazaar
-from pin.tasks import update_camp_post
 
 
 class PackageAdmin(admin.ModelAdmin):
@@ -80,7 +82,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 
 class LogAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'owner', 'user_id', 'action', 'object_id',
+    list_display = ('id', 'user', 'owner', 'action', 'object_id',
                     'content_type', '_get_thumbnail', 'create_time',
                     'ip_address', 'text')
 
@@ -96,8 +98,8 @@ class LogAdmin(admin.ModelAdmin):
         return u''
     _get_thumbnail.allow_tags = True
 
-    def user_id(self, instance):
-        return instance.user_id
+    # def user_id(self, instance):
+    #     return instance.user_id
 
 
 class AdAdmin(admin.ModelAdmin):
@@ -256,9 +258,13 @@ class ProfileAdmin(admin.ModelAdmin):
 
     raw_id_fields = ("user", "trusted_by")
 
-    # def save_model(self, request, obj, form, change):
-    #     if obj.user == request.user:
-    #         obj.save()
+    def save_model(self, request, obj, form, change):
+        obj.save()
+        Log.update_profile(actor=request.user,
+                           user_id=obj.user_id,
+                           text=_("update profile"),
+                           image=obj.avatar,
+                           ip_address=get_user_ip(request=request))
 
 
 class AppAdmin(admin.ModelAdmin):

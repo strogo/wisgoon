@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wisgoon 6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-16 13:42+0330\n"
-"PO-Revision-Date: 2017-01-16 13:43+0330\n"
+"POT-Creation-Date: 2017-01-18 11:51+0330\n"
+"PO-Revision-Date: 2017-01-18 11:53+0330\n"
 "Last-Translator: amir <a.abbasghorbani@gmail.com>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -16,6 +16,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.7.1\n"
+
+#: admin.py:265 api6/auth.py:461 models.py:1612
+msgid "update profile"
+msgstr "بروزرسانی پروفایل"
 
 #: api6/auth.py:136
 msgid "relations is blocked"
@@ -25,7 +29,7 @@ msgstr "این کاربر شما را بلاک کرده است"
 msgid "Pending follow request"
 msgstr "منتظر تایید"
 
-#: api6/auth.py:161 api6/auth.py:902 api7/auth.py:116
+#: api6/auth.py:161 api6/auth.py:913 api7/auth.py:116
 msgid "User followed"
 msgstr "ارتباط شما با موفقیت برقرار شد."
 
@@ -53,7 +57,7 @@ msgstr "کاربر فعال نمی باشد"
 msgid "Username or password not valid"
 msgstr "نام کاربری یا کلمه عبور معتبر نمی باشد"
 
-#: api6/auth.py:297 api6/auth.py:618 api6/auth.py:650
+#: api6/auth.py:297 api6/auth.py:623 api6/auth.py:655
 msgid "Error in parameters"
 msgstr "خطا در پارامترهای ارسالی"
 
@@ -77,163 +81,163 @@ msgstr "خطا در ساخت کاربر"
 msgid "User created successfully"
 msgstr "کاربر با موفقیت ساخته شد"
 
-#: api6/auth.py:459 api7/auth.py:194
+#: api6/auth.py:464 api7/auth.py:194
 msgid "Your Profile Was Updated"
 msgstr "پروفایل شما با موفقیت به روزرسانی گردید."
 
-#: api6/auth.py:489
+#: api6/auth.py:494
 msgid "Please try again"
 msgstr "حذف تصویر ناموفق بود"
 
-#: api6/auth.py:546
+#: api6/auth.py:551
 msgid "Successfully Logout"
 msgstr "شما با موفقیت خارج شدید"
 
-#: api6/auth.py:624 api6/auth.py:632
+#: api6/auth.py:629 api6/auth.py:637
 msgid "password dismatched"
 msgstr "پسورد ها مشابه نیستند"
 
-#: api6/auth.py:637
+#: api6/auth.py:642
 msgid "Incorrect password."
 msgstr "کلمه عبور صحیح نیست"
 
-#: api6/auth.py:645
+#: api6/auth.py:650
 msgid "Password changed"
 msgstr "رمز عبور تغییر کرد"
 
-#: api6/auth.py:680
+#: api6/auth.py:685
 msgid "user not found"
 msgstr "کاربر یافت نشد"
 
-#: api6/auth.py:703
+#: api6/auth.py:708
 msgid "updated"
 msgstr "به روز رسانی گردید."
 
-#: api6/auth.py:726
+#: api6/auth.py:731
 msgid "accepted"
 msgstr "پذیرفته شد."
 
-#: api6/auth.py:771 api7/auth.py:298
+#: api6/auth.py:776 api7/auth.py:298
 msgid "User blocked"
 msgstr "کاربر مسدود شده"
 
-#: api6/auth.py:792 api7/auth.py:322
+#: api6/auth.py:797 api7/auth.py:322
 msgid "User unblocked"
 msgstr "رفع انسداد کاربر"
 
-#: api6/auth.py:818 api6/auth.py:870
+#: api6/auth.py:823 api6/auth.py:875
 msgid "Email sent"
 msgstr "ایمیل ارسال شد."
 
-#: api6/auth.py:835
+#: api6/auth.py:840
 msgid "Email is not correct"
 msgstr "پست الکترونیکی صحیح نمی باشد"
 
-#: api6/auth.py:874
+#: api6/auth.py:879
 msgid "Method not allowed"
 msgstr "مجاز به اجرای این درخواست نمی باشید"
 
-#: api6/auth.py:907 views_user.py:866
+#: api6/auth.py:918 views_user.py:882
 msgid "Decline follow request"
 msgstr "عدم پذیرش درخواست دوستی"
 
-#: api6/auth.py:915
+#: api6/auth.py:926
 msgid "Follow request not exists"
 msgstr "درخواست دوستی وجود ندارد"
 
-#: api6/auth.py:971 api6/auth.py:1048 api6/auth.py:1150
+#: api6/auth.py:982 api6/auth.py:1058 api6/auth.py:1160
 msgid "Select a package is not correct"
 msgstr "بسته صحیح انتخاب نشده است"
 
-#: api6/auth.py:975 api6/auth.py:1052 api6/auth.py:1154
+#: api6/auth.py:986 api6/auth.py:1062 api6/auth.py:1164
 msgid "Price is wrong"
 msgstr "قیمت صحیح نمی باشد"
 
-#: api6/auth.py:982 api6/auth.py:1026
+#: api6/auth.py:993 api6/auth.py:1037
 msgid "Successfully created"
 msgstr "با موفقیت ایجاد شد"
 
-#: api6/auth.py:1006
+#: api6/auth.py:1017
 msgid "your credit is not enough"
 msgstr "اعتبار حساب شما به اندازه کافی نیست"
 
-#: api6/auth.py:1013
+#: api6/auth.py:1024
 msgid "Your subscription is not finished"
 msgstr "اشتراک شما به اتمام نرسیده است"
 
-#: api6/auth.py:1063 api6/auth.py:1169
+#: api6/auth.py:1073 api6/auth.py:1179
 msgid "bazzar token not right"
 msgstr "توکن بازار صحیح نیست"
 
-#: api6/auth.py:1083 api6/auth.py:1186
+#: api6/auth.py:1093 api6/auth.py:1196
 msgid "Not valid purchase data"
 msgstr "اطلاعات خرید اشتباه است"
 
-#: api6/auth.py:1087
+#: api6/auth.py:1097
 msgid "purchase state error request"
 msgstr "خطا در درخواست خرید"
 
-#: api6/auth.py:1111
+#: api6/auth.py:1121
 msgid "not valid purchase state"
 msgstr "خطا در پارامترهای ارسالی"
 
-#: api6/auth.py:1120 api6/auth.py:1213
+#: api6/auth.py:1130 api6/auth.py:1223
 msgid "validation error, we correct it later"
 msgstr "خطای اعتبار سنجی"
 
-#: api6/auth.py:1123 api6/auth.py:1217
+#: api6/auth.py:1133 api6/auth.py:1227
 msgid "Increased Credit was Successful."
 msgstr "حساب شما با موفقیت شارژ شد"
 
-#: api6/auth.py:1127
+#: api6/auth.py:1137
 msgid "failed"
 msgstr "ناموفق"
 
-#: api6/auth.py:1160
+#: api6/auth.py:1170
 msgid "Bill id is wrong"
 msgstr "فاکتور صحیح نمی باشد"
 
-#: api6/auth.py:1190
+#: api6/auth.py:1200
 msgid "The requested purchase is not found"
 msgstr "خرید درخواست شده پیدا نشد"
 
-#: api6/auth.py:1207
+#: api6/auth.py:1217
 msgid "Problem exists in your purchase"
 msgstr "مشکل در خرید شما وجود دارد"
 
-#: api6/auth.py:1222
+#: api6/auth.py:1232
 msgid "Buy failed"
 msgstr "خرید با موفقیت انجام نشد"
 
-#: api6/auth.py:1229 api6/auth.py:1234
+#: api6/auth.py:1239 api6/auth.py:1244
 msgid "Invalid phone number"
 msgstr "شماره تلفن وارد شده معتبر نیست"
 
-#: api6/auth.py:1242 api6/auth.py:1276 api6/auth.py:1304
+#: api6/auth.py:1252 api6/auth.py:1286 api6/auth.py:1314
 msgid "invalid"
 msgstr "نامعتبر"
 
-#: api6/auth.py:1254
+#: api6/auth.py:1264
 msgid "Verification sms sent!"
 msgstr "پبامک تایید ارسال شد"
 
-#: api6/auth.py:1268 api6/auth.py:1296 views_user.py:848
+#: api6/auth.py:1278 api6/auth.py:1306 views_user.py:858
 msgid "Invalid parameters"
 msgstr "خطا در پارامترهای ارسالی"
 
-#: api6/auth.py:1279 api6/auth.py:1307
+#: api6/auth.py:1289 api6/auth.py:1317
 msgid "Invalid code"
 msgstr "کد معتبر نسیت"
 
-#: api6/auth.py:1281
+#: api6/auth.py:1291
 msgid "Successfully verify code"
 msgstr " با موفقیت تایید گردید"
 
-#: api6/auth.py:1313
+#: api6/auth.py:1323
 msgid "User does not exists"
 msgstr "کاربر وجود ندارد"
 
-#: api6/auth.py:1315
+#: api6/auth.py:1325
 msgid "Successfully reset password"
 msgstr "پسورد شما با موفقیت تغییر به روز رسانی گردید"
 
@@ -340,7 +344,7 @@ msgstr "مطلب حذف گردید"
 msgid "post not exists or not yours"
 msgstr "مطلب وجود ندارد و یا متعلق به شما نیست"
 
-#: api6/post.py:876 views_user.py:1012
+#: api6/post.py:876 views_user.py:1028
 msgid "This profile is private"
 msgstr "این حساب کاربری شخصی است"
 
@@ -348,7 +352,7 @@ msgstr "این حساب کاربری شخصی است"
 msgid "The number entered is incorrect."
 msgstr "عدد وارد شده معتبر نیست"
 
-#: api6/post.py:900 views_user.py:1022
+#: api6/post.py:900 views_user.py:1038
 msgid "This post has been advertised"
 msgstr "این پست آکهی شده"
 
@@ -404,7 +408,7 @@ msgstr "متن"
 msgid "Picture"
 msgstr "تصویر"
 
-#: models.py:293 models.py:1976
+#: models.py:293 models.py:1991
 msgid "Status"
 msgstr "وضعیت"
 
@@ -440,148 +444,148 @@ msgstr "خطا در توکن"
 msgid "not valid"
 msgstr "نامعتبر"
 
-#: models.py:1247 models.py:1269
+#: models.py:1249 models.py:1271
 msgid "like"
 msgstr "پسندیدن"
 
-#: models.py:1248 models.py:1270 models.py:1581
+#: models.py:1250 models.py:1272 models.py:1583
 msgid "comment"
 msgstr "نظر"
 
-#: models.py:1249 models.py:1271
+#: models.py:1251 models.py:1273
 msgid "approve"
 msgstr "تایید"
 
-#: models.py:1250 models.py:1272
+#: models.py:1252 models.py:1274
 msgid "fault"
 msgstr "خطا"
 
-#: models.py:1444
+#: models.py:1446
 msgid "Seeing"
 msgstr "مشاهده"
 
-#: models.py:1550
+#: models.py:1552
 msgid "created"
 msgstr "ایجاد شده"
 
 # full image was create
-#: models.py:1551
+#: models.py:1553
 msgid "full image create"
 msgstr "تصویر کامل ایجاد شد"
 
-#: models.py:1552
+#: models.py:1554
 msgid "error in original image"
 msgstr "خطا در تصویر اصلی"
 
-#: models.py:1580
+#: models.py:1582
 msgid "post"
 msgstr "پست"
 
-#: models.py:1582
+#: models.py:1584
 msgid "user"
 msgstr "کاربر"
 
-#: models.py:1583
+#: models.py:1585
 msgid "comment test"
 msgstr "نظر آزمایشی"
 
-#: models.py:1599
+#: models.py:1602
 msgid "delete"
 msgstr "مطلب حذف گردید"
 
-#: models.py:1600
+#: models.py:1603
 msgid "pending"
 msgstr "منتظر تایید"
 
-#: models.py:1601
+#: models.py:1604
 msgid "bad comment"
 msgstr "نظر مشکل دار"
 
-#: models.py:1602
+#: models.py:1605
 msgid "bad post"
 msgstr "پست مشکل دار"
 
-#: models.py:1603
+#: models.py:1606
 msgid "ban imei"
 msgstr "مسدود شده با imei"
 
-#: models.py:1604
+#: models.py:1607
 msgid "ban by admin"
 msgstr "مسدود شده توسط ادمین"
 
-#: models.py:1605
+#: models.py:1608
 msgid "Deactive user"
 msgstr "غیر فعال کردن کاربر"
 
-#: models.py:1606
+#: models.py:1609
 msgid "activated"
 msgstr "فعال شده"
 
-#: models.py:1607
+#: models.py:1610
 msgid "ban profile"
 msgstr "انسداد پروفایل"
 
-#: models.py:1608
+#: models.py:1611
 msgid "unban profile"
 msgstr "رفع انسداد پروفایل"
 
-#: models.py:1808
+#: models.py:1823
 msgid "BAN IMEI"
 msgstr "انسداد imei"
 
-#: models.py:1809
+#: models.py:1824
 msgid "DEBAN IMEI"
 msgstr "رفع انسداد imei"
 
-#: models.py:1810
+#: models.py:1825
 msgid "BAN PROFILE"
 msgstr "انسداد پروفایل"
 
-#: models.py:1811
+#: models.py:1826
 msgid "DEBAN PROFILE"
 msgstr "رفع انسداد پروفایل"
 
-#: models.py:1812
+#: models.py:1827
 msgid "DEACTIVE"
 msgstr "غیرفعال"
 
-#: models.py:1813
+#: models.py:1828
 msgid "ACTIVE"
 msgstr "فعال"
 
-#: models.py:1814 models.py:1848
+#: models.py:1829 models.py:1863
 msgid "ENABLE POST"
 msgstr "پست فعال"
 
-#: models.py:1815 models.py:1849
+#: models.py:1830 models.py:1864
 msgid "DISABLE POST"
 msgstr "پست غیر فعال"
 
-#: models.py:1816 models.py:1850
+#: models.py:1831 models.py:1865
 msgid "ENABLE REPORT"
 msgstr "گزارش دهی فعال"
 
-#: models.py:1817 models.py:1851
+#: models.py:1832 models.py:1866
 msgid "DISABLE REPORT"
 msgstr "گزارش دهی غیر فعال"
 
-#: models.py:1818 models.py:1852
+#: models.py:1833 models.py:1867
 msgid "ENABLE COMMENT"
 msgstr "فعال کردن ارسال نظر"
 
-#: models.py:1819 models.py:1853
+#: models.py:1834 models.py:1868
 msgid "DISABLE COMMENT"
 msgstr "غیر فعال کردن ارسال نظر"
 
-#: models.py:1969
+#: models.py:1984
 msgid "completed"
 msgstr "تکمیل شده"
 
-#: models.py:1970
+#: models.py:1985
 msgid "in progress"
 msgstr "در حال پردازش"
 
-#: models.py:1971
+#: models.py:1986
 msgid "not calculate"
 msgstr "محاسبه نشده"
 
@@ -976,7 +980,7 @@ msgstr "شما یک پیام جدید دارید"
 msgid "Your follow request successfully send."
 msgstr "درخواست دوستی شما با موفقیت ارسال شد"
 
-#: views_user.py:145 views_user.py:861
+#: views_user.py:145 views_user.py:877
 msgid "Your connection successfully established."
 msgstr "ارتباط شما با موفقیت برقرار شد"
 
@@ -1020,27 +1024,27 @@ msgstr "درخواست نامعتبر"
 msgid "Bad Upload"
 msgstr "آپلود ناموفق"
 
-#: views_user.py:829
+#: views_user.py:839
 msgid "Successfully remove your follow request"
 msgstr "درخواست دوستی شما با موفقیت حذف گردید"
 
-#: views_user.py:921
+#: views_user.py:937
 msgid "bill payment"
 msgstr "پرداخت قبض"
 
-#: views_user.py:1056
+#: views_user.py:1072
 msgid "There is no action"
 msgstr "هیچ اکشنی موجود نمی باشد"
 
-#: views_user.py:1062
+#: views_user.py:1078
 msgid "This user was blocked successfully"
 msgstr "کاربر با موفقیت مسدود شد"
 
-#: views_user.py:1068
+#: views_user.py:1084
 msgid "This user was unblocked successfully"
 msgstr "کاربر با موفقیت رفع انسداد شد"
 
-#: views_user.py:1073
+#: views_user.py:1089
 msgid "The data entered is not valid"
 msgstr "داده های وارد شده معتبر نیست"
 
