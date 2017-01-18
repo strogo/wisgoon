@@ -620,7 +620,7 @@ def user_post(request, user_id):
         },
         'objects': []
     }
-    if not user_id:
+    if user_id == 0:
         return return_json_data(data)
 
     status, current_user_id = check_user_state(user_id=user_id, token=token)
