@@ -1,4 +1,5 @@
 # from django.core.cache import cache
+from django.db.models import Q
 
 from pin.models import Campaign, Post
 from pin.api6.tools import campaign_sample_json
@@ -46,7 +47,9 @@ def list(request):
 
     before = int(request.GET.get('before', 0))
 
-    campaigns = Campaign.objects.filter(is_current=True, expired=False)\
+    campaigns = Campaign.objects\
+        .filter(Q(is_current=True, expired=False) |
+                Q(expired=True))\
         .order_by('-id')[before:before + 20]
 
     for campaign in campaigns:
