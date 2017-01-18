@@ -482,6 +482,8 @@ def send(request):
     fpath = None
     filename = None
     status = False
+    image_data = None
+    image_type = None
     if request.method == "POST":
         try:
             post_values = request.POST.copy()
@@ -503,8 +505,24 @@ def send(request):
         data_url_pattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
         image_data_post = post_values['image']
         if image_data_post:
-            image_data = data_url_pattern.match(image_data_post).group(2)
-            image_type = data_url_pattern.match(image_data_post).group(1)
+            is_match = data_url_pattern.match(image_data_post)
+            if is_match:
+                image_data = is_match.group(2)
+                image_type = is_match.group(1)
+            else:
+                if request.is_ajax():
+                    status = False
+                    next_url = reverse('pin-home')
+                    data = {
+                        "location": next_url,
+                        "status": status
+                    }
+                    return HttpResponse(json.dumps(data),
+                                        content_type="application/json")
+                else:
+                    msg = _("Error sending the image.")
+                    messages.add_message(request, messages.WARNING, msg)
+                    return HttpResponseRedirect('/')
         else:
             if request.is_ajax():
                 status = False
