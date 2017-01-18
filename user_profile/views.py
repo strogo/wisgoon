@@ -44,12 +44,12 @@ def change(request):
             return HttpResponse(_('Error sending the image.'))
 
         if form.is_valid():
-            p = form.save()
+            form.save()
             update_follower_following(profile, current_user_id)
             Log.update_profile(actor=current_user,
                                user_id=current_user_id,
                                text=_("update profile"),
-                               image=p.avatar,
+                               # image=p.avatar,
                                ip_address=get_user_ip(request=request))
             return HttpResponseRedirect('/pin/user/%d' % current_user_id)
     else:

@@ -1745,13 +1745,13 @@ class Log(models.Model):
 
     @classmethod
     def update_profile(cls, actor, user_id,
-                       text="", ip_address="127.0.0.1", image=None):
+                       text="", ip_address="127.0.0.1"):
         Log.objects.create(user=actor,
                            action=cls.UPDATE_PROFILE,
                            object_id=user_id,
                            content_type=cls.USER,
                            text=text,
-                           post_image=image,
+                           # post_image=image,
                            ip_address=ip_address)
 
 

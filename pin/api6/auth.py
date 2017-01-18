@@ -454,12 +454,12 @@ def update_profile(request):
         return return_bad_request()
 
     if form.is_valid():
-        p = form.save()
+        form.save()
         update_follower_following(profile, current_user.id)
         Log.update_profile(actor=current_user,
                            user_id=current_user.id,
                            text=_("update profile"),
-                           image=p.avatar,
+                           # image=p.avatar,
                            ip_address=get_user_ip(request=request))
         msg = _('Your Profile Was Updated')
         status = True
