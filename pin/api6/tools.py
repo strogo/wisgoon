@@ -72,7 +72,7 @@ def category_get_json(cat_id):
 def get_int(number):
     try:
         post_id = int(number)
-    except ValueError:
+    except:
         post_id = 0
     return post_id
 
