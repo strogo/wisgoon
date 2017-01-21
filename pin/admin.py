@@ -263,7 +263,7 @@ class ProfileAdmin(admin.ModelAdmin):
         Log.update_profile(actor=request.user,
                            user_id=obj.user_id,
                            text=_("update profile"),
-                           # image=obj.avatar,
+                           image=obj.avatar,
                            ip_address=get_user_ip(request=request))
 
 
