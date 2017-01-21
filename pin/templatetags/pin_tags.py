@@ -16,7 +16,7 @@ from django.template.defaultfilters import stringfilter
 from django.utils.text import normalize_newlines
 from django.utils.safestring import mark_safe
 
-from pin.models import Likes as pinLikes
+from pin.models import Likes as pinLikes, App_data
 # from pin.model_mongo import NotifCount
 from user_profile.models import Profile
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
@@ -294,6 +294,19 @@ def jalali_mysql_date(value):
 @register.filter
 def check_official(user_id):
     pass
+
+
+@register.filter
+def get_link(value):
+    latest_app_file = None
+    if value == 'latest':
+        try:
+            latest_app = App_data.objects.get(current=True)
+            latest_app_file = latest_app.file
+        except:
+            latest_app_file = None
+
+    return latest_app_file
 
 
 @register.filter

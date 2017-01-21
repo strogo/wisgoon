@@ -1,11 +1,12 @@
 {% extends "pin2/flat.base.box.html" %}
 {% load i18n %}
 {% load widget_tweaks %}
+{% load pin_tags %}
 
 {% block title %} {% trans "Log in" %} {% endblock%}
 
 {% block content %}
-
+{% with "latest"|get_link  as latest_app_link%}
 <div class="login wis_form box ofh mato50">
 	<div class="logo_box">
 		<div class="wis_new_logo w100">
@@ -14,7 +15,7 @@
 			<div class="download_app mato20 mabo50">
 				<p>{%trans "Android software download"%}</p>
 				<a class="wis_btn green" href="https://cafebazaar.ir/app/com.wisgoon.android/?l=fa">{%trans "Download from bazzar"%}</a>
-				<a class="wis_btn orange" href="http://static.wisgoon.com/media/app/latest.apk">{%trans "Direct download"%}</a>
+				<a class="wis_btn orange" href="http://static.wisgoon.com/media/{{latest_app_link}}">{%trans "Direct download"%}</a>
 
 			</div>
 		</div>
@@ -40,7 +41,7 @@
 			<p>
 				<a href="/accounts/register/">{%trans "If you have not registered ,click here"%}</a>
 			</p>
-			
+
 			<div class="tace">
 				<input type="submit" value='{%trans "log in"%}' class="wis_btn orange mato50 mabo50 w50">
 			</div>
@@ -49,5 +50,5 @@
 	<div class="clear"></div>
 
 </div>
-
+{% endwith%}
 {% endblock %}
