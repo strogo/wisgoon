@@ -970,7 +970,7 @@ def create_bill(request):
     token = request.GET.get('token', '')
     price = int(request.POST.get('price', 0))
     package_name = request.POST.get("package", "")
-
+    user = None
     if token:
         user = AuthCache.user_from_token(token=token)
 
@@ -1000,7 +1000,7 @@ def create_subscription(request):
     # parameters
     token = request.GET.get('token', None)
     package_id = request.POST.get("package_id", None)
-
+    user = None
     if token:
         user = AuthCache.user_from_token(token=token)
 
@@ -1144,7 +1144,7 @@ def inc_credit_2(request):
     user = None
     token = request.GET.get('token', None)
     baz_token = request.POST.get("baz_token", None)
-    price = int(request.POST.get("price", ""))
+    price = int(request.POST.get("price", 0))
     bill_id = request.POST.get("bill_id", None)
     package_name = request.POST.get("package", "")
     current_bill = None
