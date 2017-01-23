@@ -161,21 +161,20 @@ class RedisTopPostStream(object):
 
         dt_now = timestamp_to_local_datetime(int(time.time()))
 
-        # Last month
-        if self.in_last_moth_range(cur_date=dt_now, date=date):
+        diff = dt_now - date
+        days = abs(diff.days)
+
+        # first_last_week = dt_now - datetime.timedelta(days=7)
+        if 7 < days <= 30:
             keys.append("top_last_month")
 
-        # Last week
-        # first_last_week = dt_now - datetime.timedelta(days=7)
-        if self.in_week_range(cur_date=dt_now, date=date):
+        elif 1 < days <= 7:
             keys.append("top_last_week")
 
-        # Last day
-        if self.in_last_day_range(cur_date=dt_now, date=date):
+        elif days == 1:
             keys.append("top_last_day")
 
-        # today
-        if self.in_today_range(cur_date=dt_now, date=date):
+        elif days == 0:
             keys.append("top_today")
 
         return keys
@@ -186,51 +185,52 @@ class RedisTopPostStream(object):
         post_ids = ss.zrevrange(key, offset, offset + 20)
         return post_ids
 
-    def in_last_moth_range(self, cur_date, date):
-        # if cur_date.month == 1:
-        #     month = 12
-        #     year = cur_date.year - 1
-        # else:
-        #     year = cur_date.year
-        #     month = cur_date.month - 1
-        # status = False
+    # def in_last_moth_range(self, cur_date, date):
+    #     # if cur_date.month == 1:
+    #     #     month = 12
+    #     #     year = cur_date.year - 1
+    #     # else:
+    #     #     year = cur_date.year
+    #     #     month = cur_date.month - 1
+    #     # status = False
 
-        # _, num_days = calendar.monthrange(year, month)
-        # first_day = datetime.datetime(year, month, 1)
-        # last_day = datetime.datetime(year, month, num_days, 23, 59)
-        # if first_day <= date <= last_day:
-        diff = cur_date - date
-        if 7 < abs(diff.days) <= 30:
-            status = True
-        return status
+    #     # _, num_days = calendar.monthrange(year, month)
+    #     # first_day = datetime.datetime(year, month, 1)
+    #     # last_day = datetime.datetime(year, month, num_days, 23, 59)
+    #     # if first_day <= date <= last_day:
+    #     status = False
+    #     diff = cur_date - date
+    #     if 7 < abs(diff.days) <= 30:
+    #         status = True
+    #     return status
 
-    def in_last_day_range(self, cur_date, date):
-        status = False
-        # start = cur_date - datetime.timedelta(days=1)
-        # start_day = start.replace(hour=0, minute=0, second=0)
-        # end_day = start.replace(hour=23, minute=59, second=59)
-        # if start_day <= date <= end_day:
-        diff = cur_date - date
-        if abs(diff.days) == 1:
-            status = True
-        return status
+    # def in_last_day_range(self, cur_date, date):
+    #     status = False
+    #     # start = cur_date - datetime.timedelta(days=1)
+    #     # start_day = start.replace(hour=0, minute=0, second=0)
+    #     # end_day = start.replace(hour=23, minute=59, second=59)
+    #     # if start_day <= date <= end_day:
+    #     diff = cur_date - date
+    #     if abs(diff.days) == 1:
+    #         status = True
+    #     return status
 
-    def in_today_range(self, cur_date, date):
-        status = False
-        # start_day = cur_date.replace(hour=0, minute=0, second=0)
-        # end_day = cur_date.replace(hour=23, minute=59, second=59)
-        # if start_day <= date <= end_day:
-        diff = cur_date - date
-        if abs(diff.days) > 0:
-            status = True
-        return status
+    # def in_today_range(self, cur_date, date):
+    #     status = False
+    #     # start_day = cur_date.replace(hour=0, minute=0, second=0)
+    #     # end_day = cur_date.replace(hour=23, minute=59, second=59)
+    #     # if start_day <= date <= end_day:
+    #     diff = cur_date - date
+    #     if abs(diff.days) > 0:
+    #         status = True
+    #     return status
 
-    def in_week_range(self, cur_date, date):
-        status = False
-        # start_day = cur_date.replace(hour=0, minute=0, second=0)
-        # end_day = cur_date.replace(hour=23, minute=59, second=59)
-        # if start_day <= date <= end_day:
-        diff = cur_date - date
-        if 1 < abs(diff.days) <= 7:
-            status = True
-        return status
+    # def in_week_range(self, cur_date, date):
+    #     status = False
+    #     # start_day = cur_date.replace(hour=0, minute=0, second=0)
+    #     # end_day = cur_date.replace(hour=23, minute=59, second=59)
+    #     # if start_day <= date <= end_day:
+    #     diff = cur_date - date
+    #     if 1 < abs(diff.days) <= 7:
+    #         status = True
+    #     return status
