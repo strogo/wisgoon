@@ -1064,6 +1064,7 @@ def absuser(request, user_name=None):
         ban_by_admin = Log.objects\
             .filter(object_id=user_id,
                     content_type=Log.USER)\
+            .exclude(action=Log.UPDATE_PROFILE)\
             .order_by('-id')
         if ban_by_admin:
             ban_by_admin = ban_by_admin[0].text
