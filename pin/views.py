@@ -1041,7 +1041,7 @@ def absuser(request, user_name=None):
     except User.DoesNotExist:
         raise Http404
     page = request.GET.get('page', 1)
-
+    items = []
     user_id = user.id
     cur_user = request.user
     cur_user_id = request.user.id
