@@ -33,6 +33,36 @@
 {% endif %}
 
 <div class="pa20 pato0">
+    <div class="paginationAlign">
+        {% if latest_items.has_other_pages %}
+
+          <ul class="pagination">
+            {% if latest_items.has_previous %}
+              <li><a href="?page={{ latest_items.previous_page_number }}">&laquo;</a></li>
+
+            {% else %}
+              <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+
+            {% for i in latest_items.paginator.page_range %}
+
+              {% if latest_items.number == i %}
+                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+
+              {% else %}
+                <li><a href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+
+            {% if latest_items.has_next %}
+              <li><a href="?page={{ latest_items.next_page_number }}">&raquo;</a></li>
+            {% else %}
+              <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+          </ul>
+        {% endif %}
+    </div>
+
     <div id="feed" class="masonry">
         {% include "pin2/_items_2_v6.html"%}
     </div>

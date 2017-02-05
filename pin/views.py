@@ -1040,6 +1040,7 @@ def absuser(request, user_name=None):
         user = AuthCache.user_from_name(username=user_name)
     except User.DoesNotExist:
         raise Http404
+    page = request.GET.get('page', 1)
 
     user_id = user.id
     cur_user = request.user
@@ -1077,31 +1078,41 @@ def absuser(request, user_name=None):
 
     if show_post:
         """ Get user posts """
-        timestamp = get_request_timestamp(request)
-        if timestamp == 0:
-            lt = Post.objects.only('id').filter(user=user_id)\
-                .order_by('-timestamp')[:20]
-        else:
-            lt = Post.objects.only('id').filter(user=user_id)\
-                .extra(where=['timestamp<%s'], params=[timestamp])\
-                .order_by('-timestamp')[:20]
+        # timestamp = get_request_timestamp(request)
+        # if timestamp == 0:
+        #     lt = Post.objects.only('id').filter(user=user_id)\
+        #         .order_by('-timestamp')[:20]
+        # else:
+        #     lt = Post.objects.only('id').filter(user=user_id)\
+        #         .extra(where=['timestamp<%s'], params=[timestamp])\
+        #         .order_by('-timestamp')[:20]
 
+        lt = Post.objects.only('id').filter(user=user_id)\
+            .order_by('-timestamp')
         for li in lt:
             pob = post_item_json(li.id, cur_user_id=cur_user_id)
             if pob:
                 latest_items.append(pob)
 
+        paginator = Paginator(latest_items, 20)
+        try:
+            items = paginator.page(page)
+        except PageNotAnInteger:
+            items = paginator.page(1)
+        except EmptyPage:
+            items = paginator.page(paginator.num_pages)
+
     if request.is_ajax():
         if latest_items:
             return render(request, 'pin2/_items_2_v6.html', {
-                'latest_items': latest_items,
+                'latest_items': items,
                 'ptime': True,
             })
         else:
             return HttpResponse(0)
 
     return render(request, 'pin2/user.html', {
-        'latest_items': latest_items,
+        'latest_items': items,
         'ptime': True,
         'follow_status': follow_status,
         'following_status': following_status,
