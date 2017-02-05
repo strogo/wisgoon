@@ -1040,8 +1040,8 @@ def absuser(request, user_name=None):
         user = AuthCache.user_from_name(username=user_name)
     except User.DoesNotExist:
         raise Http404
-    page = request.GET.get('page', 1)
-    items = []
+    # page = request.GET.get('page', 1)
+    # items = []
     user_id = user.id
     cur_user = request.user
     cur_user_id = request.user.id
@@ -1049,7 +1049,7 @@ def absuser(request, user_name=None):
     latest_items = []
     ban_by_admin = False
     following_status = False
-    page_range = []
+    # page_range = []
 
     status = check_user_state(user_id=user_id, current_user=cur_user)
     show_post = status['status']
@@ -1079,47 +1079,45 @@ def absuser(request, user_name=None):
 
     if show_post:
         """ Get user posts """
-        # timestamp = get_request_timestamp(request)
-        # if timestamp == 0:
-        #     lt = Post.objects.only('id').filter(user=user_id)\
-        #         .order_by('-timestamp')[:20]
-        # else:
-        #     lt = Post.objects.only('id').filter(user=user_id)\
-        #         .extra(where=['timestamp<%s'], params=[timestamp])\
-        #         .order_by('-timestamp')[:20]
+        timestamp = get_request_timestamp(request)
+        if timestamp == 0:
+            lt = Post.objects.only('id').filter(user=user_id)\
+                .order_by('-timestamp')[:20]
+        else:
+            lt = Post.objects.only('id').filter(user=user_id)\
+                .extra(where=['timestamp<%s'], params=[timestamp])\
+                .order_by('-timestamp')[:20]
 
-        lt = Post.objects.only('id').filter(user=user_id)\
-            .order_by('-timestamp')
+        # lt = Post.objects.only('id').filter(user=user_id)\
+        #     .order_by('-timestamp')
         for li in lt:
             pob = post_item_json(li.id, cur_user_id=cur_user_id)
             if pob:
                 latest_items.append(pob)
 
-        paginator = Paginator(latest_items, 20)
-        try:
-            items = paginator.page(page)
-        except (PageNotAnInteger, EmptyPage):
-            items = paginator.page(1)
-        # except EmptyPage:
-        #     items = paginator.page(paginator.num_pages)
+        # paginator = Paginator(latest_items, 20)
+        # try:
+        #     items = paginator.page(page)
+        # except (PageNotAnInteger, EmptyPage):
+        #     items = paginator.page(1)
 
-        index = items.number - 1
-        max_index = len(paginator.page_range)
-        start_index = index - 5 if index >= 5 else 0
-        end_index = index + 5 if index <= max_index - 5 else max_index
-        page_range = paginator.page_range[start_index:end_index]
+        # index = items.number - 1
+        # max_index = len(paginator.page_range)
+        # start_index = index - 5 if index >= 5 else 0
+        # end_index = index + 5 if index <= max_index - 5 else max_index
+        # page_range = paginator.page_range[start_index:end_index]
 
     if request.is_ajax():
         if latest_items:
             return render(request, 'pin2/_items_2_v6.html', {
-                'latest_items': items,
+                'latest_items': latest_items,
                 'ptime': True,
             })
         else:
             return HttpResponse(0)
 
     return render(request, 'pin2/user.html', {
-        'latest_items': items,
+        'latest_items': latest_items,
         'ptime': True,
         'follow_status': follow_status,
         'following_status': following_status,
@@ -1130,7 +1128,7 @@ def absuser(request, user_name=None):
         'follow_req': pending,
         'is_private': profile.is_private,
         'show_posts': show_post,
-        'page_range': page_range
+        # 'page_range': page_range
     })
 
 

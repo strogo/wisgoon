@@ -10,8 +10,6 @@
 
 	{% endif %}
 
-{% comment %}
-
 	{% if offset %}
 		<span data-next="{{offset}}" ></span>
 	{% elif ptime %}
@@ -19,6 +17,8 @@
 	{%else%}
 		<span data-next="{{item.id}}" ></span>
 	{%endif%}
+{% comment %}
+
 {% endcomment %}
 
 {%endfor%}
