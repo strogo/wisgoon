@@ -1049,6 +1049,7 @@ def absuser(request, user_name=None):
     latest_items = []
     ban_by_admin = False
     following_status = False
+    page_range = []
 
     status = check_user_state(user_id=user_id, current_user=cur_user)
     show_post = status['status']
@@ -1097,10 +1098,16 @@ def absuser(request, user_name=None):
         paginator = Paginator(latest_items, 20)
         try:
             items = paginator.page(page)
-        except PageNotAnInteger:
+        except (PageNotAnInteger, EmptyPage):
             items = paginator.page(1)
-        except EmptyPage:
-            items = paginator.page(paginator.num_pages)
+        # except EmptyPage:
+        #     items = paginator.page(paginator.num_pages)
+
+        index = items.number - 1
+        max_index = len(paginator.page_range)
+        start_index = index - 5 if index >= 5 else 0
+        end_index = index + 5 if index <= max_index - 5 else max_index
+        page_range = paginator.page_range[start_index:end_index]
 
     if request.is_ajax():
         if latest_items:
@@ -1122,7 +1129,8 @@ def absuser(request, user_name=None):
         'page': "profile",
         'follow_req': pending,
         'is_private': profile.is_private,
-        'show_posts': show_post
+        'show_posts': show_post,
+        'page_range': page_range
     })
 
 
