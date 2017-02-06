@@ -1090,6 +1090,7 @@ def absuser(request, user_name=None):
 
         # lt = Post.objects.only('id').filter(user=user_id)\
         #     .order_by('-timestamp')
+
         for li in lt:
             pob = post_item_json(li.id, cur_user_id=cur_user_id)
             if pob:

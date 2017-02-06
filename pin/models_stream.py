@@ -147,6 +147,13 @@ class RedisTopPostStream(object):
             self.remove_from_stream(keys=keys_list, value=post_id)
             if ss.zcard(key) > 1000:
                 self.trim_stream(key)
+        self.add_top_all_stream(post_id=post_id, cnt_like=cnt_like)
+
+    def add_top_all_stream(self, post_id, cnt_like):
+        key = 'top_all'
+        ss.zadd(key, post_id, cnt_like)
+        if ss.zcard(key) > 1000:
+                self.trim_stream(key)
 
     def trim_stream(self, key):
         ss.zremrangebyrank(key, 0, 0)
