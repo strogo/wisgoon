@@ -926,21 +926,23 @@ def post_promote(request, post_id):
 
 
 def tops(request, period):
+    from pin.models_stream import RedisTopPostStream
+
     cur_user = None
-    periods = {
-        'monthly': {
-            'days': 30
-        },
-        'daily': {
-            'days': 1
-        },
-        'weekly': {
-            'days': 7
-        },
-        'new': {
-            'hours': 8
-        }
-    }
+    # periods = {
+    #     'monthly': {
+    #         'days': 30
+    #     },
+    #     'daily': {
+    #         'days': 1
+    #     },
+    #     'weekly': {
+    #         'days': 7
+    #     },
+    #     'new': {
+    #         'hours': 8
+    #     }
+    # }
 
     data = {
         'meta': {
@@ -956,33 +958,51 @@ def tops(request, period):
     if token:
         cur_user = AuthCache.id_from_token(token=token)
 
-    if period in periods:
-        dt_now = datetime.now().replace(minute=0, second=0, microsecond=0)
+    if period and period in ['new', 'daily', 'week', 'month', 'all']:
+        if period == 'month':
+            redis_key = "top_last_month"
 
-        date_from = dt_now - timedelta(**periods[period])
+        elif period == 'daily':
+            redis_key = "top_last_day"
 
-        if date_from:
-            start_from = time.mktime(date_from.timetuple())
-            pop_posts = SearchQuerySet().models(Post)\
-                .filter(timestamp_i__gt=int(start_from))\
-                .order_by('-cnt_like_i')[offset:offset + GLOBAL_LIMIT]
+        elif period == 'week':
+            redis_key = "top_last_week"
 
+        elif period == 'new':
+            redis_key = "top_today"
+        else:
+            redis_key = "top_all"
+
+        top_post = RedisTopPostStream()
+        post_ids = top_post.get_posts(key=redis_key, offset=offset)
+
+        posts = get_list_post(post_ids)
+
+        data['objects'] = get_objects_list(posts,
+                                           cur_user_id=cur_user,
+                                           r=request)
+        data['meta']['next'] = get_next_url(url_name='api-6-post-tops',
+                                            token=token,
+                                            offset=offset + GLOBAL_LIMIT,
+                                            url_args={"period": period})
     else:
-        pop_posts = SearchQuerySet().models(Post)\
-            .order_by('-cnt_like_i')[offset:offset + GLOBAL_LIMIT]
+        data['objects'] = []
+    # if period in periods:
+    #     dt_now = datetime.now().replace(minute=0, second=0, microsecond=0)
 
-    idis = [int(ps.pk) for ps in pop_posts]
-    posts = get_list_post(idis)
+    #     date_from = dt_now - timedelta(**periods[period])
 
-    data['objects'] = get_objects_list(posts,
-                                       cur_user_id=cur_user,
-                                       r=request)
+    #     if date_from:
+    #         start_from = time.mktime(date_from.timetuple())
+    #         pop_posts = SearchQuerySet().models(Post)\
+    #             .filter(timestamp_i__gt=int(start_from))\
+    #             .order_by('-cnt_like_i')[offset:offset + GLOBAL_LIMIT]
 
-    data['meta']['next'] = get_next_url(url_name='api-6-post-tops',
-                                        token=token,
-                                        offset=offset + GLOBAL_LIMIT,
-                                        url_args={
-                                            "period": period
-                                        })
+    # else:
+    #     pop_posts = SearchQuerySet().models(Post)\
+    #         .order_by('-cnt_like_i')[offset:offset + GLOBAL_LIMIT]
+
+    # idis = [int(ps.pk) for ps in pop_posts]
+    # posts = get_list_post(idis)
 
     return return_json_data(data)
