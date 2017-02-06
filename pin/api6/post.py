@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import time
+# import time
 from datetime import datetime
-from datetime import timedelta
+# from datetime import timedelta
 # import requests
 # import json
 from haystack.query import SearchQuerySet

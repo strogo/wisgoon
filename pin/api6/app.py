@@ -57,12 +57,14 @@ def startup_data(request):
     data['packages'] = Package.all_packages()
     data['show_ads'] = True
     data['show_native_ads'] = True
+    data['credit'] = 0
 
     if token:
         data['notif_count'] = notif_count(request, startup=True)
 
         current_user = AuthCache.user_from_token(token=token)
         if current_user:
+            data['credit'] = current_user.profile.credit
             now = datetime.utcnow().strftime("%s")
 
             # Check subscription end_date
