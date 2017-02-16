@@ -74,7 +74,7 @@ def startup_data(request):
                 .filter(user=current_user).order_by('-id').first()
 
             if subscription:
-                end_date = (subscription[0].end_date).replace(tzinfo=None)\
+                end_date = (subscription.end_date).replace(tzinfo=None)\
                     .strftime("%s")
 
                 if now >= end_date:
