@@ -12,7 +12,9 @@ from datetime import datetime
 
 def latest(request, startup=None):
     """Return latest version data."""
-    app = App_data.objects.filter(current=True)[0]
+    app = App_data.objects.filter(current=True).first()
+    if not app:
+        return {}
 
     data = {
         "name": app.name,
@@ -69,7 +71,7 @@ def startup_data(request):
 
             # Check subscription end_date
             subscription = Subscription.objects\
-                .filter(user=current_user).order_by('-id')
+                .filter(user=current_user).order_by('-id').first()
 
             if subscription:
                 end_date = (subscription[0].end_date).replace(tzinfo=None)\
