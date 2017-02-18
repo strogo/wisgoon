@@ -355,7 +355,7 @@ def register(request):
 
 def profile_name(request, user_name):
     try:
-        user = User.objects.only('id').get(username=user_name)
+        user = User.objects.only('id').get(username=str(user_name))
     except User.DoesNotExist:
         return return_not_found()
 
