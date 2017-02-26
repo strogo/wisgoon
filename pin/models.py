@@ -2107,7 +2107,7 @@ class RemoveImage(models.Model):
 
                 else:
                     if (slices[-1].startswith("500") or
-                            slices[-1].startswith("256")):
+                            slices[-1].startswith("236")):
                         timestamp = slices[-1][8:18]
                         image_name = slices[-1][8:]
                     else:
