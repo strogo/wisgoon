@@ -2054,8 +2054,6 @@ class RemoveImage(models.Model):
                     cls.delete_ssh(folder_path, filename, servers, server_name)
                     continue
 
-                # slices = post.image.split("/")
-                # server_name = slices[1]
                 server_name = info["server_name"]
                 folder_path = servers[server_name]["path"] + info["image_path"]
                 filename = info['image_name']
@@ -2119,12 +2117,12 @@ class RemoveImage(models.Model):
 
         # Create command an run
         cmd = "cd {} && rm *{}".format(folder_path, filename)
-        print "cmd: ", cmd
-        # try:
-        #     ssh.exec_command(cmd)
-        # except Exception as e:
-        #     print "error in run {}".format(cmd)
-        #     print str(e)
+        try:
+            ssh.exec_command(cmd)
+            # ssh.exec_command(cmd1)
+        except Exception as e:
+            print "error in run {}".format(cmd)
+            print str(e)
 
 
 # class Acl(models.Model):
