@@ -2095,19 +2095,23 @@ class RemoveImage(models.Model):
             data = {}
             if len(link) > 0:
                 slices = link.strip().split("/")
+
                 if slices[-5] == 'avatars':
-                    timestamp = slices[-1][0:10]
+
                     if slices[-1].startswith("64"):
+                        timestamp = slices[-1][3:13]
                         image_name = slices[-1][3:]
                     else:
+                        timestamp = slices[-1][0:10]
                         image_name = slices[-1]
 
                 else:
-                    timestamp = slices[-1][0:10]
                     if (slices[-1].startswith("500") or
                             slices[-1].startswith("256")):
+                        timestamp = slices[-1][8:18]
                         image_name = slices[-1][8:]
                     else:
+                        timestamp = slices[-1][0:10]
                         image_name = slices[-1]
 
                 server_name = slices[2].split(".")[0]
