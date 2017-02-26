@@ -1998,6 +1998,110 @@ class VerifyCode(models.Model):
     code = models.IntegerField(unique=True)
     create_at = models.DateTimeField(auto_now_add=True)
 
+
+class RemoveImage(models.Model):
+    PENDING = 0
+    IN_PROGRESS = 1
+    COMPLETED = 2
+
+    STATUS_CHOICES = (
+        (COMPLETED, _("completed")),
+        (IN_PROGRESS, _("in progress")),
+        (PENDING, _("pending")),
+    )
+    text = models.TextField()
+    status = models.IntegerField(choices=STATUS_CHOICES, default=PENDING)
+
+    @classmethod
+    def remove_links(cls, sender, instance, created, *args, **kwargs):
+        if created:
+            links = instance.text.splitlines()
+            servers = {
+                'photos01': {'ip': '79.127.125.98',
+                             'user': 'root',
+                             'path': '/mnt/wisgoon/photos01/'},
+                'photos02': {'ip': '79.127.125.99',
+                             'user': 'root',
+                             'path': '/mnt/wisgoon/photos02/'},
+                'photos03': {'ip': '79.127.125.104',
+                             'user': 'root',
+                             'path': '/mnt/wisgoon/photos03/'},
+                # 'moon': {'ip': '127.0.0.1',
+                #          'user': 'amir',
+                #          'path': '/home/amir/work/projects/wisgoon/feedreader/media/'}
+            }
+
+            # Create image list [{'timestamp': '1234567890', 'image_name':}]
+            image_list = cls.get_image_list(links=links)
+
+            # Change status
+            instance.status = cls.IN_PROGRESS
+            instance.save()
+            print "change status"
+            # Remove image from storage and db
+            for info in image_list:
+                try:
+                    post = Post.objects.only('image')\
+                        .get(timestamp=info["timestamp"])
+                except:
+                    print "error: ", info
+                    continue
+
+                slices = post.image.split("/")
+                server_name = slices[1]
+                folder_path = servers[server_name]["path"] + post.image[:-20]
+                # server_name = 'local'
+                # folder_path = servers[server_name]["path"] + "log"
+                filename = info['image_name']
+
+                # Connect to server
+                ssh = cls.connect_to_server(
+                    ip=servers[server_name]["ip"],
+                    username=servers[server_name]["user"])
+
+                # Create command an run
+                cmd = "cd {} && rm *{}".format(folder_path, filename)
+                try:
+                    ssh.exec_command(cmd)
+                except Exception as e:
+                    print "error in run {}".format(cmd)
+                    print str(e)
+
+                # Remove post
+                post.delete()
+            print "delete image"
+            # Change status
+            instance.status = cls.COMPLETED
+            instance.save()
+
+    @classmethod
+    def connect_to_server(cls, ip, username):
+        import paramiko
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        try:
+            ssh.connect(ip, username=username)
+        except Exception, e:
+            print str(e)
+            time.sleep(10)
+            cls.connect_to_server(ip, username)
+        return ssh
+
+    @classmethod
+    def get_image_list(cls, links=[]):
+        image_list = []
+        for link in links:
+            data = {}
+            if len(link) > 0:
+                timestamp = link[-20:-10]
+                image_name = link[-20:]
+                data['image_name'] = image_name
+                data['timestamp'] = int(timestamp)
+                image_list.append(data)
+        return image_list
+
+
 # class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"
 
@@ -2059,3 +2163,4 @@ post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
 post_save.connect(Comments.add_comment, sender=Comments)
 post_save.connect(Follow.new_follow, sender=Follow)
+post_save.connect(RemoveImage.remove_links, sender=RemoveImage)
