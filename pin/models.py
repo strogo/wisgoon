@@ -2037,7 +2037,7 @@ class RemoveImage(models.Model):
             # Change status
             instance.status = cls.IN_PROGRESS
             instance.save()
-
+            link_list = []
             # Remove image from server and db
             for info in image_list:
                 server_name = info["server_name"]
@@ -2045,26 +2045,29 @@ class RemoveImage(models.Model):
                 filename = info["image_name"]
                 link = info["link"]
                 folder_path = servers[server_name]["path"] + image_path
-
+                link_list.append(link)
                 try:
                     post = Post.objects.only('image')\
                         .get(timestamp=info["timestamp"])
                 except:
                     print "Post not found. error: ", info
-
+                    print "---------------------------------"
                     # Remove file from server
                     cls.delete_ssh(folder_path, filename,
-                                   servers, server_name, link)
+                                   servers, server_name)
                     continue
 
                 # Remove file from server
                 cls.delete_ssh(folder_path, filename,
-                               servers, server_name, link)
+                               servers, server_name)
 
                 # Remove post
                 post_id = post.id
                 post.delete()
                 print "delete post {}".format(post_id)
+
+            # Purge request for delete image linke
+            cls.purge_request(link_list)
 
             # Change status
             instance.status = cls.COMPLETED
@@ -2112,8 +2115,7 @@ class RemoveImage(models.Model):
 
     @classmethod
     def delete_ssh(cls, folder_path, filename,
-                   servers_info, server_name, link):
-        links = []
+                   servers_info, server_name):
         ssh = cls.connect_to_server(
             ip=servers_info[server_name]["ip"],
             username=servers_info[server_name]["user"])
@@ -2122,11 +2124,10 @@ class RemoveImage(models.Model):
         cmd = "cd {} && rm *{}".format(folder_path, filename)
         try:
             ssh.exec_command(cmd)
-            links.append(link)
         except Exception as e:
             print "error in run {}".format(cmd)
             print str(e)
-        cls.purge_request(links)
+            print "=================================="
 
     @classmethod
     def purge_request(cls, links=[]):
