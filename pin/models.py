@@ -2037,32 +2037,34 @@ class RemoveImage(models.Model):
             # Change status
             instance.status = cls.IN_PROGRESS
             instance.save()
-            print "change status"
 
-            # Remove image from storage and db
+            # Remove image from server and db
             for info in image_list:
+                server_name = info["server_name"]
+                image_path = info["image_path"]
+                filename = info["image_name"]
+                link = info["link"]
+                folder_path = servers[server_name]["path"] + image_path
+
                 try:
                     post = Post.objects.only('image')\
                         .get(timestamp=info["timestamp"])
                 except:
                     print "Post not found. error: ", info
-                    server_name = info["server_name"]
-                    image_path = info["image_path"]
-                    filename = info["image_name"]
-                    folder_path = servers[server_name]["path"] + image_path
 
-                    cls.delete_ssh(folder_path, filename, servers, server_name)
+                    # Remove file from server
+                    cls.delete_ssh(folder_path, filename,
+                                   servers, server_name, link)
                     continue
 
-                server_name = info["server_name"]
-                folder_path = servers[server_name]["path"] + info["image_path"]
-                filename = info['image_name']
-
-                cls.delete_ssh(folder_path, filename, servers, server_name)
+                # Remove file from server
+                cls.delete_ssh(folder_path, filename,
+                               servers, server_name, link)
 
                 # Remove post
+                post_id = post.id
                 post.delete()
-            print "delete image"
+                print "delete post {}".format(post_id)
 
             # Change status
             instance.status = cls.COMPLETED
@@ -2085,9 +2087,7 @@ class RemoveImage(models.Model):
     @classmethod
     def get_image_list(cls, links=[]):
         image_list = []
-        print links
         for link in links:
-            print link
             data = {}
             if len(link) > 0:
                 slices = link.strip().split("/")
@@ -2106,11 +2106,14 @@ class RemoveImage(models.Model):
                 data['timestamp'] = int(timestamp)
                 data['server_name'] = server_name
                 data['image_path'] = image_path
+                data['link'] = link
                 image_list.append(data)
         return image_list
 
     @classmethod
-    def delete_ssh(cls, folder_path, filename, servers_info, server_name):
+    def delete_ssh(cls, folder_path, filename,
+                   servers_info, server_name, link):
+        links = []
         ssh = cls.connect_to_server(
             ip=servers_info[server_name]["ip"],
             username=servers_info[server_name]["user"])
@@ -2119,11 +2122,27 @@ class RemoveImage(models.Model):
         cmd = "cd {} && rm *{}".format(folder_path, filename)
         try:
             ssh.exec_command(cmd)
-            # ssh.exec_command(cmd1)
+            links.append(link)
         except Exception as e:
             print "error in run {}".format(cmd)
             print str(e)
+        cls.purge_request(links)
 
+    @classmethod
+    def purge_request(cls, links=[]):
+        import requests
+        import json
+        payload = {"files": links}
+        headers = {'content-type': 'application/json',
+                   'X-Auth-Email': 'vchakoshy@gmail.com',
+                   'X-Auth-Key': '403fa50d139f603444f912ced5e2945064668'
+                   }
+        url = "https://api.cloudflare.com/client/v4/zones/06953b8ef5dce7efbac4e52797a9a908/purge_cache"
+        res = requests.request("DELETE",
+                               url,
+                               data=json.dumps(payload),
+                               headers=headers)
+        print res.text
 
 # class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"
