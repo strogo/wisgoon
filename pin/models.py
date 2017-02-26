@@ -2101,7 +2101,7 @@ class RemoveImage(models.Model):
                     image_name = slices[-1][-20:]
 
                 server_name = slices[2].split(".")[0]
-                image_path = "/".join(slices[4:10])
+                image_path = "/".join(slices[4:-1])
 
                 data['image_name'] = image_name
                 data['timestamp'] = int(timestamp)
