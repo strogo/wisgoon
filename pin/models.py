@@ -2118,6 +2118,7 @@ class RemoveImage(models.Model):
 
         # Create command an run
         cmd = "cd {} && rm *{}".format(folder_path, filename)
+        print "cmd: ", cmd
         try:
             ssh.exec_command(cmd)
         except Exception as e:
