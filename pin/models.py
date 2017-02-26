@@ -2038,38 +2038,33 @@ class RemoveImage(models.Model):
             instance.status = cls.IN_PROGRESS
             instance.save()
             print "change status"
+
             # Remove image from storage and db
             for info in image_list:
                 try:
                     post = Post.objects.only('image')\
                         .get(timestamp=info["timestamp"])
                 except:
-                    print "error: ", info
+                    print "Post not found. error: ", info
+                    server_name = info["server_name"]
+                    image_path = info["image_path"]
+                    filename = info["image_name"]
+                    folder_path = servers[server_name]["path"] + image_path
+
+                    cls.delete_ssh(folder_path, filename, servers, server_name)
                     continue
 
                 slices = post.image.split("/")
                 server_name = slices[1]
-                folder_path = servers[server_name]["path"] + post.image[:-20]
-                # server_name = 'local'
-                # folder_path = servers[server_name]["path"] + "log"
+                folder_path = servers[server_name]["path"] + info["image_path"]
                 filename = info['image_name']
 
-                # Connect to server
-                ssh = cls.connect_to_server(
-                    ip=servers[server_name]["ip"],
-                    username=servers[server_name]["user"])
-
-                # Create command an run
-                cmd = "cd {} && rm *{}".format(folder_path, filename)
-                try:
-                    ssh.exec_command(cmd)
-                except Exception as e:
-                    print "error in run {}".format(cmd)
-                    print str(e)
+                cls.delete_ssh(folder_path, filename, servers, server_name)
 
                 # Remove post
                 post.delete()
             print "delete image"
+
             # Change status
             instance.status = cls.COMPLETED
             instance.save()
@@ -2091,15 +2086,43 @@ class RemoveImage(models.Model):
     @classmethod
     def get_image_list(cls, links=[]):
         image_list = []
+        print links
         for link in links:
+            print link
             data = {}
             if len(link) > 0:
-                timestamp = link[-20:-10]
-                image_name = link[-20:]
+                slices = link.lower().strip().replace("jpeg", "jpg").split("/")
+                if slices[-5] == 'avatars':
+                    timestamp = slices[-1][-16:-6]
+                    image_name = slices[-1][-16:]
+
+                else:
+                    timestamp = slices[-1][-20:-10]
+                    image_name = slices[-1][-20:]
+
+                server_name = slices[2].split(".")[0]
+                image_path = "/".join(slices[4:10])
+
                 data['image_name'] = image_name
                 data['timestamp'] = int(timestamp)
+                data['server_name'] = server_name
+                data['image_path'] = image_path
                 image_list.append(data)
         return image_list
+
+    @classmethod
+    def delete_ssh(cls, folder_path, filename, servers_info, server_name):
+        ssh = cls.connect_to_server(
+            ip=servers_info[server_name]["ip"],
+            username=servers_info[server_name]["user"])
+
+        # Create command an run
+        cmd = "cd {} && rm *{}".format(folder_path, filename)
+        try:
+            ssh.exec_command(cmd)
+        except Exception as e:
+            print "error in run {}".format(cmd)
+            print str(e)
 
 
 # class Acl(models.Model):
