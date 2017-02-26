@@ -2024,7 +2024,7 @@ class RemoveImage(models.Model):
                              'user': 'root',
                              'path': '/mnt/wisgoon/photos02/'},
                 'photos03': {'ip': '79.127.125.104',
-                             'user': 'root',
+                             'user': 'wisgoon',
                              'path': '/mnt/wisgoon/photos03/'},
                 # 'moon': {'ip': '127.0.0.1',
                 #          'user': 'amir',
