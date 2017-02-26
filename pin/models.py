@@ -2091,14 +2091,14 @@ class RemoveImage(models.Model):
             print link
             data = {}
             if len(link) > 0:
-                slices = link.lower().strip().replace("jpeg", "jpg").split("/")
+                slices = link.strip().split("/")
                 if slices[-5] == 'avatars':
-                    timestamp = slices[-1][-16:-6]
-                    image_name = slices[-1][-16:]
+                    timestamp = slices[-1][0:10]
+                    image_name = slices[-1]
 
                 else:
-                    timestamp = slices[-1][-20:-10]
-                    image_name = slices[-1][-20:]
+                    timestamp = slices[-1][0:10]
+                    image_name = slices[-1]
 
                 server_name = slices[2].split(".")[0]
                 image_path = "/".join(slices[4:-1])
