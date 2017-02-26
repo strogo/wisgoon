@@ -2068,6 +2068,7 @@ class RemoveImage(models.Model):
 
             # Purge request for delete image linke
             cls.purge_request(link_list)
+            print link_list
 
             # Change status
             instance.status = cls.COMPLETED
@@ -2096,11 +2097,18 @@ class RemoveImage(models.Model):
                 slices = link.strip().split("/")
                 if slices[-5] == 'avatars':
                     timestamp = slices[-1][0:10]
-                    image_name = slices[-1]
+                    if slices[-1].startswith("64"):
+                        image_name = slices[-1][3:]
+                    else:
+                        image_name = slices[-1]
 
                 else:
                     timestamp = slices[-1][0:10]
-                    image_name = slices[-1]
+                    if (slices[-1].startswith("500") or
+                            slices[-1].startswith("256")):
+                        image_name = slices[-1][8:]
+                    else:
+                        image_name = slices[-1]
 
                 server_name = slices[2].split(".")[0]
                 image_path = "/".join(slices[4:-1])
