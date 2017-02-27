@@ -548,6 +548,7 @@ class Post(models.Model):
         try:
             delete_image.delay(self.image)
             delete_image.delay(self.postmetadata.img_500)
+            self.move_file()
         except Exception, e:
             print str(e)
             pass
@@ -569,6 +570,42 @@ class Post(models.Model):
         super(Post, self).delete(*args, **kwargs)
         if settings.TUNING_CACHE:
             PostCacheLayer(post_id=post_id).delete()
+
+    def move_file(self):
+        path = self.postmetadata.img_236
+
+        if path:
+            slices = path.split("/")
+            server_name = slices[1]
+            filename = slices[-1]
+            storage = None
+            try:
+                storage = Storages.objects.get(name=server_name)
+            except Exception, e:
+                str(e)
+
+            if storage:
+                src = "{}/{}".format(storage.path, path)
+                dest_folder = "{}/removed_image".format(storage.path)
+                dest = "{}/{}".format(dest_folder, filename)
+                if not os.path.exists(dest_folder):
+                    os.makedirs(dest_folder)
+
+                os.rename(src, dest)
+
+    def get_removed_image_path(self):
+        path = self.postmetadata.img_236
+        url = ""
+        if path:
+            slices = path.split("/")
+            filename = slices[-1]
+            folder_path = "{}/removed_image/".format(settings.MEDIA_ROOT)
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+
+            url = "{}/media/removed_image/{}"\
+                .format(settings.MEDIA_PREFIX, filename)
+        return url
 
     def date_lt(self, date, how_many_days=15):
         lt_date = datetime.now() - timedelta(days=how_many_days)
@@ -1629,7 +1666,8 @@ class Log(models.Model):
     @classmethod
     def post_delete(cls, post, actor, ip_address="127.0.0.1"):
         try:
-            img_url = post.get_image_236()["url"]
+            # img_url = post.get_image_236()["url"]
+            img_url = post.get_removed_image_path()
         except:
             img_url = ""
         Log.objects.create(user_id=actor.id,
@@ -2084,7 +2122,7 @@ class RemoveImage(models.Model):
             ssh.connect(ip, username=username)
         except Exception, e:
             print str(e)
-            time.sleep(10)
+            time.sleep(3)
             cls.connect_to_server(ip, username)
         return ssh
 
@@ -2136,6 +2174,7 @@ class RemoveImage(models.Model):
         cmd = "cd {} && rm *{}".format(folder_path, filename)
         try:
             ssh.exec_command(cmd)
+            ssh.close()
         except Exception as e:
             print "error in run {}".format(cmd)
             print str(e)

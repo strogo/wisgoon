@@ -21,6 +21,7 @@
 /feedreader/*media*/packages/
 /feedreader/media/v2/test_data/
 /feedreader/*media*/product/
+/feedreader/*media*/removed_image/
 wenv/
 feedreader/*media*/cache2/
 /src/
