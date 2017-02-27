@@ -590,8 +590,6 @@ class Post(models.Model):
                 dest = "{}/{}".format(dest_folder, filename)
                 if not os.path.exists(dest_folder):
                     os.makedirs(dest_folder)
-                print src
-                print dest
                 os.rename(src, dest)
 
     def get_removed_image_path(self):
