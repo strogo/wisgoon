@@ -600,12 +600,14 @@ class Post(models.Model):
         if path:
             slices = path.split("/")
             filename = slices[-1]
-            folder_path = "{}/removed_image/".format(settings.MEDIA_ROOT)
+            server_name = slices[1]
+
+            folder_path = "/mnt/wisgoon/{}/removed_image/".format(server_name)
             if not os.path.exists(folder_path):
                 os.makedirs(folder_path)
 
-            url = "{}/media/removed_image/{}"\
-                .format(settings.MEDIA_PREFIX, filename)
+            url = "{}/media/removed/{}/{}"\
+                .format(settings.MEDIA_PREFIX, server_name, filename)
         return url
 
     def date_lt(self, date, how_many_days=15):
