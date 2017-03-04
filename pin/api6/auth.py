@@ -676,6 +676,7 @@ def get_phone_data(request, startup=None):
     except UnreadablePostError:
         return return_bad_request()
 
+    print extra_data, "extra_data"
     if not token:
         return return_un_auth()
 
@@ -1129,10 +1130,10 @@ def inc_credit(request):
 
             message = _('validation error, we correct it later')
             return return_json_data({'status': False,
-                                    'message': message})
+                                     'message': message})
         message = _('Increased Credit was Successful.')
         return return_json_data({'status': True,
-                                'message': _(message)})
+                                 'message': _(message)})
 
     return return_json_data({'status': False, 'message': _('failed')})
 
@@ -1222,12 +1223,12 @@ def inc_credit_2(request):
             current_bill.save()
             message = _('validation error, we correct it later')
             return return_json_data({'status': False,
-                                    'message': message})
+                                     'message': message})
 
         message = _('Increased Credit was Successful.')
 
         return return_json_data({'status': True,
-                                'message': _(message)})
+                                 'message': _(message)})
 
     return return_json_data({'status': False, 'message': _('Buy failed')})
 
