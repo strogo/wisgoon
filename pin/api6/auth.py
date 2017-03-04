@@ -676,7 +676,6 @@ def get_phone_data(request, startup=None):
     except UnreadablePostError:
         return return_bad_request()
 
-    print extra_data, "extra_data"
     if not token:
         return return_un_auth()
 
@@ -723,6 +722,7 @@ def get_phone_data(request, startup=None):
     upd.logged_out = False
     upd.extra_data = extra_data
     upd.save()
+    print upd.extra_data, extra_data
 
     if startup:
         return True
