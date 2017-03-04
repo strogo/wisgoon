@@ -722,7 +722,6 @@ def get_phone_data(request, startup=None):
     upd.logged_out = False
     upd.extra_data = extra_data
     upd.save()
-    print upd.id, upd.user.username, upd.extra_data
 
     if startup:
         return True
