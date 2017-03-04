@@ -60,6 +60,7 @@ def startup_data(request):
     data['show_ads'] = True
     data['show_native_ads'] = True
     data['credit'] = 0
+    data['invite_code'] = ""
 
     if token:
         data['notif_count'] = notif_count(request, startup=True)
@@ -84,6 +85,13 @@ def startup_data(request):
                     data['show_ads'] = False
                     data['show_native_ads'] = False
 
+            # User invite code
+            invite_code = current_user.profile.invite_code
+            if invite_code:
+                data['invite_code'] = invite_code
+            else:
+                invite_code = current_user.profile.create_invite_code()
+                data['invite_code'] = invite_code
     else:
         data['notif_count'] = 0
 

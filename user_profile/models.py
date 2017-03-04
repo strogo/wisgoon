@@ -1,7 +1,8 @@
 # coding: utf-8
 import os
 import time
-
+import uuid
+from md5 import md5
 from PIL import Image, ImageOps
 
 from datetime import datetime, timedelta
@@ -98,6 +99,16 @@ class Profile(models.Model):
                                    verbose_name=_('Show ads'))
 
     version = models.IntegerField(default=0, blank=False, null=True)
+    invite_code = models.CharField(max_length=255, null=True, blank=True)
+
+    def create_invite_code(self):
+        str1 = uuid.uuid4().hex
+        str2 = str(self.user.id)
+        random_string = str1 + str2
+        code = md5(random_string).hexdigest()
+        self.invite_code = code
+        self.save()
+        return code
 
     def get_cnt_following(self):
         if self.cnt_following == -1 or self.cnt_following is None:
@@ -339,6 +350,11 @@ def create_user_profile(sender, instance, created, **kwargs):
 
         profile, created = Profile.objects\
             .get_or_create(user=instance, name=instance.username)
+
+        # Create user invite code
+        if created:
+            profile.create_invite_code()
+
         try:
             UserGraph.get_or_create("Person", instance.username,
                                     instance.profile.name, instance.id)
