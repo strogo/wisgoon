@@ -339,7 +339,7 @@ def register(request):
 
     if user:
         api_key, created = ApiKey.objects.get_or_create(user=user)
-        update_score(imei, gsf_id, code, user.id)
+        update_score(user.id, imei, gsf_id, code)
 
         data = {
             'status': True,
