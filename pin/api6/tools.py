@@ -686,12 +686,9 @@ def update_imei(imei, new_imei):
     # PhoneData.objects.filter(imei=imei).update(imei=new_imei)
 
 
-def update_score(cur_user_id, imei=None, gsf_id=None, code=None):
-    if imei and gsf_id and code:
-        exists = PhoneData.objects.filter(
-            Q(imei=imei) | Q(imei=gsf_id)).exists()
-        if not exists:
-            Profile.objects.filter(invite_code=code).update(
-                score=F('score') + 2000)
-            Profile.objects.filter(user_id=cur_user_id)\
-                .update(score=F('score') + 5000)
+def update_score(cur_user_id, code):
+
+    Profile.objects.filter(invite_code=code).update(
+        score=F('score') + 2000)
+    Profile.objects.filter(user_id=cur_user_id)\
+        .update(score=F('score') + 5000)

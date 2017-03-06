@@ -288,6 +288,7 @@ def register(request):
     gsf_id = request.POST.get("gsf_id", '')
     code = request.POST.get("code", '')
     app_token = settings.APP_TOKEN_KEY
+    exists = True
 
     if req_token != app_token:
         data = {
@@ -327,6 +328,9 @@ def register(request):
         return return_json_data(data)
 
     try:
+        if imei and gsf_id and code:
+            exists = PhoneData.objects.filter(
+                Q(imei=imei) | Q(imei=gsf_id)).exists()
         user = User.objects.create_user(username=username,
                                         email=email,
                                         password=password)
@@ -339,7 +343,10 @@ def register(request):
 
     if user:
         api_key, created = ApiKey.objects.get_or_create(user=user)
-        update_score(user.id, imei, gsf_id, code)
+
+        # Update score
+        if not exists:
+            update_score(user.id, code)
 
         data = {
             'status': True,
