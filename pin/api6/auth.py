@@ -345,7 +345,9 @@ def register(request):
         api_key, created = ApiKey.objects.get_or_create(user=user)
 
         # Update score
+        print exists, "exists"
         if not exists:
+            print exists, "inja"
             update_score(user.id, code)
 
         data = {
