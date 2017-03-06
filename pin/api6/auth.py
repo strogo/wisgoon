@@ -350,6 +350,7 @@ def register(request):
 
         # Update score
         if not exists:
+            print "update score"
             update_score(user.id, code)
             try:
                 profile = Profile.objects.get(user=user)
