@@ -690,7 +690,5 @@ def update_score(cur_user_id, code):
 
     Profile.objects.filter(invite_code=code).update(
         score=F('score') + 2000)
-    p = Profile.objects.get(user_id=cur_user_id)
-    print p.id, "      profile id  \n"
     Profile.objects.filter(user_id=cur_user_id)\
         .update(score=F('score') + 5000)
