@@ -691,7 +691,7 @@ def update_score(cur_user_id, imei=None, gsf_id=None, code=None):
         exists = PhoneData.objects.filter(
             Q(imei=imei) | Q(imei=gsf_id)).exists()
         if not exists:
-            Profile.objects.get(invite_code=code).update(
+            Profile.objects.filter(invite_code=code).update(
                 score=F('score') + 2000)
-            Profile.objects.get(user_id=cur_user_id)\
+            Profile.objects.filter(user_id=cur_user_id)\
                 .update(score=F('score') + 5000)
