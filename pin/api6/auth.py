@@ -349,6 +349,7 @@ def register(request):
         profile = user.profile
 
         # Update score
+        print "exists", exists
         if not exists:
             print "update score"
             update_score(user.id, code)
