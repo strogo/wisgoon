@@ -1,8 +1,9 @@
 # coding: utf-8
 import os
 import time
-import uuid
-from md5 import md5
+import string
+import random
+
 from PIL import Image, ImageOps
 
 from datetime import datetime, timedelta
@@ -102,12 +103,18 @@ class Profile(models.Model):
     invite_code = models.CharField(max_length=255, null=True, blank=True)
 
     def create_invite_code(self):
-        str1 = uuid.uuid4().hex
-        str2 = str(self.user.id)
-        random_string = str1 + str2
-        code = md5(random_string).hexdigest()
-        self.invite_code = code
-        self.save()
+        str1 = str(self.user.id)
+        size = 16
+        status = True
+        code = None
+        while status:
+            chars = str1 + string.ascii_uppercase
+            code = ''.join(random.choice(chars) for _ in range(size))
+            exists_code = Profile.objects.filter(invite_code=code).exists()
+            if not exists_code:
+                self.invite_code = code
+                self.save()
+                status = False
         return code
 
     def get_cnt_following(self):
