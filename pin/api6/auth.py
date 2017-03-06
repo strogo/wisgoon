@@ -291,6 +291,8 @@ def register(request):
     exists = True
     profile = None
 
+    print request.POST
+
     if req_token != app_token:
         data = {
             'status': False,

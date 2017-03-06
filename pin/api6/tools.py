@@ -12,7 +12,7 @@ import datetime as dt
 from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
-from django.db.models import Q, F
+from django.db.models import F
 from django.utils.timezone import localtime
 from django.utils.translation import ugettext as _
 
@@ -23,7 +23,7 @@ from pin.api6.http import return_bad_request
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
 from pin.models import Post, Follow, Comments, Block, Category, SystemState,\
-    FollowRequest, VerifyCode, BannedImei, PhoneData
+    FollowRequest, VerifyCode, BannedImei
 from pin.models_redis import LikesRedis, PostView
 from pin.tools import create_filename, fix_rotation, AuthCache
 
@@ -690,7 +690,5 @@ def update_score(cur_user_id, code):
 
     Profile.objects.filter(invite_code=code).update(
         score=F('score') + 2000)
-    p = Profile.objects.get(user_id=cur_user_id)
-    print p.id
     Profile.objects.filter(user_id=cur_user_id)\
         .update(score=F('score') + 5000)
