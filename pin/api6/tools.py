@@ -10,10 +10,11 @@ from time import time
 import datetime as dt
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext as _
-from django.utils.timezone import localtime
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
+from django.db.models import Q, F
+from django.utils.timezone import localtime
+from django.utils.translation import ugettext as _
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
@@ -22,7 +23,7 @@ from pin.api6.http import return_bad_request
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
 from pin.models import Post, Follow, Comments, Block, Category, SystemState,\
-    FollowRequest, VerifyCode
+    FollowRequest, VerifyCode, BannedImei, PhoneData
 from pin.models_redis import LikesRedis, PostView
 from pin.tools import create_filename, fix_rotation, AuthCache
 
@@ -333,10 +334,10 @@ def post_item_json(post_id, cur_user_id=None, r=None,
         pi['permalink'] = {}
 
         pi['permalink']['api'] = abs_url(reverse("api-6-post-item",
-                                         kwargs={"item_id": post.id}))
+                                                 kwargs={"item_id": post.id}))
 
         pi['permalink']['web'] = abs_url(reverse("pin-item",
-                                         kwargs={"item_id": post.id}),
+                                                 kwargs={"item_id": post.id}),
                                          api=False)
 
         if cur_user_id:
@@ -678,3 +679,19 @@ def timestamp_to_local_datetime(timestamp):
     converted = tz.localize(dt.datetime.fromtimestamp(int(timestamp)))
     t1 = converted.astimezone(tz).replace(tzinfo=None)
     return t1
+
+
+def update_imei(imei, new_imei):
+    BannedImei.objects.filter(imei=imei).update(imei=new_imei)
+    # PhoneData.objects.filter(imei=imei).update(imei=new_imei)
+
+
+def update_score(cur_user_id, imei=None, gsf_id=None, code=None):
+    if imei and gsf_id and code:
+        exists = PhoneData.objects.filter(
+            Q(imei=imei) | Q(imei=gsf_id)).exists()
+        if not exists:
+            Profile.objects.get(invite_code=code).update(
+                score=F('score') + 2000)
+            Profile.objects.get(user_id=cur_user_id)\
+                .update(score=F('score') + 5000)

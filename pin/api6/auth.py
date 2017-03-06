@@ -3,6 +3,8 @@ from __future__ import division
 import re
 import hashlib
 import urllib2
+import ast
+
 try:
     import simplejson as json
 except ImportError:
@@ -39,7 +41,7 @@ from pin.api6.http import return_bad_request, return_json_data,\
 from pin.api6.tools import get_next_url, get_simple_user_object,\
     get_int, get_profile_data, update_follower_following, post_item_json,\
     check_user_state, normalize_phone, validate_mobile, get_random_int,\
-    code_is_valid, allow_reset
+    code_is_valid, allow_reset, update_imei, update_score
 
 
 def followers(request, user_id):
@@ -282,6 +284,9 @@ def register(request):
     password = request.POST.get("password", 'False')
     req_token = request.POST.get("token", '')
     email = request.POST.get("email", '')
+    imei = request.POST.get("imei", '')
+    gsf_id = request.POST.get("gsf_id", '')
+    code = request.POST.get("code", '')
     app_token = settings.APP_TOKEN_KEY
 
     if req_token != app_token:
@@ -334,6 +339,7 @@ def register(request):
 
     if user:
         api_key, created = ApiKey.objects.get_or_create(user=user)
+        update_score(imei, gsf_id, code, user.id)
 
         data = {
             'status': True,
@@ -684,8 +690,22 @@ def get_phone_data(request, startup=None):
     if not user:
         return return_un_auth(message=_("user not found"))
 
+    try:
+        extra = ast.literal_eval(extra_data)
+        gsf_id = extra['gsf_id']
+    except Exception as e:
+        print str(e)
+        gsf_id = None
+
     if imei:
-        if BannedImei.objects.filter(imei=imei).exists():
+
+        if gsf_id:
+            banned = BannedImei.objects.filter(
+                Q(imei=imei) | Q(imei=gsf_id)).exists()
+        else:
+            banned = BannedImei.objects.filter(imei=imei).exists()
+
+        if banned:
             u = User.objects.get(pk=user.id)
             if u.is_active:
                 u.is_active = False
@@ -712,7 +732,10 @@ def get_phone_data(request, startup=None):
         pass
 
     upd, created = PhoneData.objects.get_or_create(user=user)
-    upd.imei = imei
+    if gsf_id:
+        upd.imei = gsf_id
+    else:
+        upd.imei = imei
     upd.os = os
     upd.phone_model = phone_model
     upd.phone_serial = phone_serial
@@ -722,6 +745,9 @@ def get_phone_data(request, startup=None):
     upd.logged_out = False
     upd.extra_data = extra_data
     upd.save()
+
+    if gsf_id:
+        update_imei(imei=imei, new_imei=gsf_id)
 
     if startup:
         return True
