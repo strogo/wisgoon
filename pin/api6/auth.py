@@ -289,6 +289,7 @@ def register(request):
     code = request.POST.get("code", '')
     app_token = settings.APP_TOKEN_KEY
     exists = True
+    profile = None
 
     if req_token != app_token:
         data = {
@@ -343,17 +344,20 @@ def register(request):
 
     if user:
         api_key, created = ApiKey.objects.get_or_create(user=user)
+        profile = user.profile
 
         # Update score
-        print exists, "exists"
         if not exists:
-            print exists, "inja"
             update_score(user.id, code)
+            try:
+                profile = Profile.objects.get(user=user)
+            except:
+                pass
 
         data = {
             'status': True,
             'message': _('User created successfully'),
-            'profile': get_profile_data(user.profile, user.id)
+            'profile': get_profile_data(profile, user.id)
         }
         data['user'] = get_simple_user_object(current_user=user.id,
                                               avatar=210)
