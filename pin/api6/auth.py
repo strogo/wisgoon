@@ -284,9 +284,9 @@ def register(request):
     password = request.POST.get("password", 'False')
     req_token = request.POST.get("token", '')
     email = request.POST.get("email", '')
-    imei = request.POST.get("imei", '')
-    gsf_id = request.POST.get("gsf_id", '')
-    code = request.POST.get("code", '')
+    imei = request.POST.get("imei", None)
+    gsf_id = request.POST.get("gsf_id", None)
+    code = request.POST.get("code", None)
     app_token = settings.APP_TOKEN_KEY
     exists = True
 
@@ -326,6 +326,15 @@ def register(request):
             'message': _('Email already exists')
         }
         return return_json_data(data)
+
+    if code:
+        exist_code = Profile.objects.filter(invite_code=code).exists()
+        if not exist_code:
+            data = {
+                'status': False,
+                'message': _('Invite code is wrong')
+            }
+            return return_json_data(data)
 
     try:
         if imei and gsf_id and code:
