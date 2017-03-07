@@ -14,8 +14,15 @@ from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
     Results, Storages, Lable, UserActivitiesSample, UserLable,\
-    UserActivities, Campaign, SystemState, CampaignWinners, RemoveImage
+    UserActivities, Campaign, SystemState, CampaignWinners, RemoveImage,\
+    InviteLog
 # from pin.actions import send_notif
+
+
+class InviteLogAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'code']
+    raw_id_fields = ["user"]
+    search_fields = ["user", "code"]
 
 
 class RemoveImageAdmin(admin.ModelAdmin):
@@ -472,3 +479,4 @@ admin.site.register(CampaignWinners, CampaignWinnersAdmin)
 admin.site.register(Subscription, SubscriptionAdmin)
 admin.site.register(Package, PackageAdmin)
 admin.site.register(RemoveImage, RemoveImageAdmin)
+admin.site.register(InviteLog, InviteLogAdmin)
