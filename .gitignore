@@ -14,7 +14,7 @@
 /feedreader/*media*/cache2
 /feedreader/*media*/daddy_avatar/
 /feedreader/*media*/favicon/
-# /feedreader/*media*/ads/
+/feedreader/*media*/ads/
 /feedreader/*media*/static_cache/
 /feedreader/*media*/avatars/
 /feedreader/*media*/app/

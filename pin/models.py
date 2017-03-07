@@ -2038,6 +2038,16 @@ class VerifyCode(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
 
 
+class InviteLog(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    code = models.CharField(max_length=255, db_index=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+
+    @classmethod
+    def log(cls, user_id, code):
+        cls.objects.create(user_id=user_id, code=code)
+
+
 class RemoveImage(models.Model):
     PENDING = 0
     IN_PROGRESS = 1

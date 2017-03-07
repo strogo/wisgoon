@@ -100,7 +100,8 @@ class Profile(models.Model):
                                    verbose_name=_('Show ads'))
 
     version = models.IntegerField(default=0, blank=False, null=True)
-    invite_code = models.CharField(max_length=255, null=True, blank=True)
+    invite_code = models.CharField(
+        max_length=255, null=True, blank=True, db_index=True)
 
     def create_invite_code(self):
         str1 = str(self.user.id)

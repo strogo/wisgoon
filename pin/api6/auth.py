@@ -33,7 +33,7 @@ from tastypie.models import ApiKey
 # from haystack.query import Raw
 from pin.decorators import system_writable
 from pin.models import Follow, Block, Likes, BannedImei, PhoneData, Bills2,\
-    FollowRequest, VerifyCode, Log
+    FollowRequest, VerifyCode, Log, InviteLog
 from pin.models_es import ESUsers
 from pin.tools import AuthCache, get_new_access_token2, get_user_ip
 from pin.api6.http import return_bad_request, return_json_data,\
@@ -347,6 +347,7 @@ def register(request):
         # Update score
         if not exists:
             update_score(user.id, code)
+            InviteLog.log(user.id, code)
 
         data = {
             'status': True,
