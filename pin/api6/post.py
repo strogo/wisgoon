@@ -20,7 +20,7 @@ from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json,\
-    category_get_json, check_user_state, post_item_json
+    category_get_json, check_user_state, post_item_json, retry_fetch_posts
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
 
@@ -217,10 +217,11 @@ def friends(request):
     #                               cur_user_id=cur_user,
     #                               r=request)
     # data['objects'] = data['objects'] + posts_list
-
+    last_pid = None
     for post in list(post_ids):
         if not post:
             continue
+        last_pid = post
 
         post_item = post_item_json(post_id=post,
                                    cur_user_id=cur_user,
@@ -230,6 +231,12 @@ def friends(request):
 
         if post_item and int(post_item['id']) != hot_post:
             data['objects'].append(post_item)
+
+    if len(data['objects']) == 0:
+        status = True
+        while status:
+            status, data['objects'] = retry_fetch_posts(
+                cur_user, last_pid, hot_post, request)
 
     if data['objects']:
         last_item = data['objects'][-1]['id']
@@ -601,7 +608,8 @@ def send(request):
     if post.status == 1:
         msg = _('Your article has been sent.')
     elif post.status == 0:
-        msg = _('Your article has been sent and displayed on the site after confirmation')
+        msg = _(
+            'Your article has been sent and displayed on the site after confirmation')
     return return_json_data({'status': status, 'message': msg, 'post': data})
 
 
@@ -794,7 +802,6 @@ def hashtag(request, tag_name):
 @csrf_exempt
 @system_writable
 def delete(request, item_id):
-
     """Delete post."""
     # Get User From Token
     token = request.GET.get('token', False)
@@ -915,7 +922,7 @@ def post_promote(request, post_id):
 
                 msg = _("Your post has been advertised successfully")
                 return return_json_data({'status': True,
-                                        'message': msg})
+                                         'message': msg})
 
         else:
             msg = _("Your account credit is not enough to advertise")

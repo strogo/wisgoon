@@ -692,3 +692,26 @@ def update_score(cur_user_id, code):
         score=F('score') + 2000)
     Profile.objects.filter(user_id=cur_user_id)\
         .update(score=F('score') + 5000)
+
+
+def retry_fetch_posts(user_id, pid, hot_post_id, request):
+    status = True
+    idis = Post.user_stream_latest(user_id=user_id, pid=pid)
+    post_ids = get_list_post(idis, from_model=settings.STREAM_LATEST)
+    data = []
+
+    if len(post_ids) == 0:
+        status = False
+        return status, data
+
+    for post in list(post_ids):
+        post_item = post_item_json(post_id=post,
+                                   cur_user_id=user_id,
+                                   r=request)
+        if post_item and post_item['user']['user_blocked_me']:
+            continue
+
+        if post_item and int(post_item['id']) != hot_post_id:
+            data.append(post_item)
+            status = False
+    return status, data
