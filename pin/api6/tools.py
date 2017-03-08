@@ -247,7 +247,7 @@ def get_post_tags(post):
 
 
 def post_item_json(post_id, cur_user_id=None, r=None,
-                   fields=None, exclude=None):
+                   fields=None, exclude=None, is_truncate=False):
 
     if not post_id:
         return {}
@@ -301,7 +301,12 @@ def post_item_json(post_id, cur_user_id=None, r=None,
 
             cache_post['cnt_view'] = pi['cnt_view']
             cache_post['cache'] = "Hit"
-            cache_post['text'] = emoji.emojize(cache_post['text'][:2048])
+
+            if is_truncate:
+                cache_post['text'] = emoji.emojize(cache_post['text'][:2048])
+            else:
+                cache_post['text'] = emoji.emojize(cache_post['text'])
+
             cache_post = need_fields(cache_post)
             return cache_post
 
@@ -398,7 +403,9 @@ def get_objects_list(posts, cur_user_id=None, r=None):
         if not post:
             continue
 
-        post_item = post_item_json(post, cur_user_id, r)
+        post_item = post_item_json(
+            post_id=post, cur_user_id=cur_user_id, r=r, is_truncate=True)
+
         if post_item:
             if post_item['user']['user_blocked_me']:
                 continue
