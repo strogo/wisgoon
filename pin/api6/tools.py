@@ -301,7 +301,7 @@ def post_item_json(post_id, cur_user_id=None, r=None,
 
             cache_post['cnt_view'] = pi['cnt_view']
             cache_post['cache'] = "Hit"
-            cache_post['text'] = emoji.emojize(cache_post['text'])
+            cache_post['text'] = emoji.emojize(cache_post['text'][:2048])
             cache_post = need_fields(cache_post)
             return cache_post
 

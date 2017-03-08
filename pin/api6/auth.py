@@ -748,6 +748,8 @@ def get_phone_data(request, startup=None):
     except PhoneData.DoesNotExist:
         pass
 
+    print "extra_data:", extra_data, "\n"
+
     upd, created = PhoneData.objects.get_or_create(user=user)
     if gsf_id:
         upd.imei = gsf_id
