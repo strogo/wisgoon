@@ -76,7 +76,7 @@ class PhoneDataAdmin(admin.ModelAdmin):
         'logged_out'
     )
     raw_id_fields = ("user",)
-    search_fields = ["=imei", "=user__username"]
+    search_fields = ["=imei", "=user__username", "=phone_serial"]
 
 
 class CreditLogAdmin(admin.ModelAdmin):
