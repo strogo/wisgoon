@@ -1,3 +1,4 @@
+{% load pin_tags %}
 <p class="mabo20 pa20 tace" style="background: rgb(255, 110, 2) none repeat scroll 0% 0%; border: 50px none; border-radius: 50px; color: rgb(255, 255, 255); font-size: 18px; font-weight: bold;">مشکلات ویسگون را با ایمیل <span style="color: #272E38;">support@wisgoon.com</span> در میان بگذارید</p>
 
 <div>
@@ -7,9 +8,9 @@
 
 <p>
     گروه نرم‌افزاری رخ از سال ۱۳۹۰ فعالیت‌های خود را زمینه شبکه‌های اجتماعی آغاز کرده و با ارائه شبکه‌های اجتماعی در زمینه‌های عکس، صدا و تصویر، سعی در غنی‌سازی این بستر در داخل کشور داشته و هم‌اکنون با توسعه این شبکه‌ها جایگاه مناسبی در بین مخاطبان داخل و خارج از کشور پیدا کرده است.
-    
+
     گروه نرم‌افزاری رخ با تیم حرفه‌ای و تخصصی خود در تمامی زمینه‌های مورد نیاز برای راه‌اندازی یک شبکه اجتماعی موفق اعم از برنامه نویسی، مدیریت سرور و طراحی رابط کاربری، سعی در حفظ جایگاه خود و تلاش برای استفاده از جدیدترین تکنولوژی‌های روز دنیا داشته و تا به حال به زعم صدهاهزار کاربر که از این شبکه‌ها استفاده می کنند موفق بوده است.
-    
+
     این گروه در سال ۱۳۹۲ نیز در جشنواره وب ایران در زمینه شبکه‌های اجتماعی برنده جایزه «برترین نرم‌افزار شبکه‌های اجتماعی» شد.
 </p>
 
@@ -35,9 +36,12 @@
             <td>
                 <a class="wis_btn green ma0 mato10" href="https://cafebazaar.ir/app/com.wisgoon.android/?l=fa">دانلود</a>
             </td>
+            {% with "latest"|get_link  as latest_app_link%}
             <td>
-                <a class="wis_btn orange ma0 mato10" href="http://static.wisgoon.com/media/app/latest.apk">دانلود</a>
+                <a class="wis_btn orange ma0 mato10" href="http://static.wisgoon.com/media/{{latest_app_link}}">دانلود</a>
             </td>
+            {% endwith%}
+
         </tr>
         <tr>
             <td>
@@ -91,6 +95,8 @@
     </table>
 </div>
 
+
+{% comment %}
 <hr class="mato50">
 
 <h1>رینگتون</h1>
@@ -128,3 +134,4 @@
         </tr>
     </table>
 </div>
+{% endcomment %}
