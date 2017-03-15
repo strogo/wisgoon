@@ -410,7 +410,7 @@ def delete_image(file_path):
         try:
             os.remove(file_path)
         except Exception as e:
-            return string(e), file_path
+            return str(e), file_path
     return "delete post", file_path
 
 
