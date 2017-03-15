@@ -40,7 +40,8 @@ from models_casper import CatStreams
 
 
 LIKE_TO_DEFAULT_PAGE = 10
-r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
+# r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
+r_server = redis.Redis(settings.REDIS_DB_2, db=settings.REDIS_DB_NUMBER)
 r_server4 = redis.Redis(settings.REDIS_DB_2, db=4)
 
 
