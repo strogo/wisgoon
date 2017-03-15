@@ -112,7 +112,10 @@ def activity(act_type, who, post_id):
 @app.task(name="wisgoon.pin.add_to_storage")
 def add_to_storage(post_id):
     from pin.models import Storages, Post
-    post = Post.objects.get(id=post_id)
+    try:
+        post = Post.objects.get(id=post_id)
+    except Exception as e:
+        return
     if not Storages.objects.exists():
         return
     storage = Storages.objects.order_by('num_files')[:1][0]
@@ -404,7 +407,10 @@ def delete_image(file_path):
             break
 
     if not exec_on_remote:
-        os.remove(file_path)
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            return string(e), file_path
     return "delete post", file_path
 
 
