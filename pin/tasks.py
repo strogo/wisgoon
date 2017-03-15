@@ -407,7 +407,10 @@ def delete_image(file_path):
             break
 
     if not exec_on_remote:
-        os.remove(file_path)
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            return string(e), file_path
     return "delete post", file_path
 
 
