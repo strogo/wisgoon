@@ -327,7 +327,7 @@ APP_TOKEN_KEY = 'e622c330c77a17c8426e638d7a85da6c2ec9f455'
 # DECIMAL_SEPARATOR = ','
 # NUMBER_GROUPING = 3
 
-HAYSTACK_SIGNAL_PROCESSOR = 'pin.signals.MySignalProcessor'
+# HAYSTACK_SIGNAL_PROCESSOR = 'pin.signals.MySignalProcessor'
 
 COMPRESS_CSS_FILTERS = [
     'compressor.filters.css_default.CssAbsoluteFilter',
