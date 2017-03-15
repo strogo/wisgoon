@@ -418,6 +418,8 @@ def search(request):
                     'next': "",
                     'total_count': 1000}
 
+    data['objects'] = []
+
     return return_json_data(data)
 
     offset = int(request.GET.get('offset', 0))
