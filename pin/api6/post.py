@@ -408,6 +408,8 @@ def search(request):
                     'next': "",
                     'total_count': 1000}
 
+    return return_json_data(data)
+
     offset = int(request.GET.get('offset', 0))
     token = request.GET.get('token', None)
 
