@@ -348,7 +348,17 @@ def choices(request):
     if not before:
         before = 0
 
-    pl = Post.home_latest(pid=before, limit=GLOBAL_LIMIT)
+    # pl = Post.home_latest(pid=before, limit=GLOBAL_LIMIT)
+    if before == 0:
+        pl = Post.objects\
+            .values_list('id', flat=True)\
+            .filter(show_in_default=True).order_by('-id')[:GLOBAL_LIMIT]
+    else:
+        pl = Post.objects\
+            .values_list('id', flat=True)\
+            .filter(show_in_default=True, id__lt=before)\
+            .order_by('-id')[:GLOBAL_LIMIT]
+
     post_ids = get_list_post(pl)
 
     if cur_user:
