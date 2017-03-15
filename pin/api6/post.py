@@ -782,35 +782,36 @@ def hashtag(request, tag_name):
     data['meta'] = {'limit': 20,
                     'next': "",
                     'total_count': 0}
+    data['objects'] = []
     return return_json_data(data)
 
-    if query:
+    # if query:
 
-        results = SearchQuerySet().models(Post).filter(tags=query)
+    #     results = SearchQuerySet().models(Post).filter(tags=query)
 
-        data['meta']['total_count'] = results.count()
+    #     data['meta']['total_count'] = results.count()
 
-        cur_user = AuthCache.id_from_token(token=token)
-        posts = []
-        rs = results.order_by('-timestamp_i')[before:before + row_per_page]
-        for p in rs:
-            try:
-                pp = int(p.object.id)
-                posts.append(pp)
-            except:
-                pass
+    #     cur_user = AuthCache.id_from_token(token=token)
+    #     posts = []
+    #     rs = results.order_by('-timestamp_i')[before:before + row_per_page]
+    #     for p in rs:
+    #         try:
+    #             pp = int(p.object.id)
+    #             posts.append(pp)
+    #         except:
+    #             pass
 
-        data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
-                                           r=request)
+    #     data['objects'] = get_objects_list(posts, cur_user_id=cur_user,
+    #                                        r=request)
 
-        data['meta']['next'] = get_next_url(url_name='api-6-post-hashtag',
-                                            before=before + row_per_page,
-                                            token=token,
-                                            url_args={'tag_name': query}
-                                            )
-        return return_json_data(data)
-    else:
-        return return_bad_request()
+    #     data['meta']['next'] = get_next_url(url_name='api-6-post-hashtag',
+    #                                         before=before + row_per_page,
+    #                                         token=token,
+    #                                         url_args={'tag_name': query}
+    #                                         )
+    #     return return_json_data(data)
+    # else:
+    #     return return_bad_request()
 
 
 @csrf_exempt
