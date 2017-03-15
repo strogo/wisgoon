@@ -64,6 +64,8 @@ def campaign_posts(request, camp_id):
                      },
             'objects': []
             }
+    return return_json_data(data)
+
     token = request.GET.get('token', False)
     order_by_req = request.GET.get('order', False)
 
@@ -120,6 +122,8 @@ def search(request, camp):
     data = {}
     data['meta'] = {'limit': 20, 'next': ""}
     data['objects'] = []
+    return return_json_data(data)
+
     words = camp.split()
     sq = SQ()
     for w in words:
