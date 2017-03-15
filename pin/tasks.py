@@ -112,7 +112,10 @@ def activity(act_type, who, post_id):
 @app.task(name="wisgoon.pin.add_to_storage")
 def add_to_storage(post_id):
     from pin.models import Storages, Post
-    post = Post.objects.get(id=post_id)
+    try:
+        post = Post.objects.get(id=post_id)
+    except Exception as e:
+        return
     if not Storages.objects.exists():
         return
     storage = Storages.objects.order_by('num_files')[:1][0]
