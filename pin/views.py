@@ -338,9 +338,11 @@ def category_top(request, category_id):
     posts_list = []
     offset = int(request.GET.get('offset', 0))
 
-    posts = SearchQuerySet().models(Post)\
-        .filter(category_i=category_id)\
-        .order_by('-cnt_like_i')[offset:offset + 1 * row_per_page]
+    # posts = SearchQuerySet().models(Post)\
+    #     .filter(category_i=category_id)\
+    #     .order_by('-cnt_like_i')[offset:offset + 1 * row_per_page]
+
+    posts = []
 
     ru_id = request.user.id
     request_user_authenticated = request.user.is_authenticated()
