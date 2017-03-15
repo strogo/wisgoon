@@ -9,9 +9,9 @@ from pin.models import Post, Campaign
 class MySignalProcessor(signals.BaseSignalProcessor):
 
     def setup(self):
+        pass
         # models.signals.post_save.connect(self.handle_save, sender=Post)
         # models.signals.post_save.connect(self.handle_save, sender=Campaign)
-
         # models.signals.post_save.connect(self.handle_save, sender=Profile)
         # models.signals.post_save.connect(self.handle_save, sender=Comments)
 
