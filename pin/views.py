@@ -222,49 +222,49 @@ def search(request):
     request_user_authenticated = request.user.is_authenticated()
     ru_id = request.user.id
 
-    if query:
-        post_queryset = SearchQuerySet().models(Post)\
-            .filter(content__contains=query)[offset:offset + 1 * row_per_page]
+    # if query:
+    #     post_queryset = SearchQuerySet().models(Post)\
+    #         .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
-        for post in post_queryset:
-            ob = post_item_json(post_id=post.pk, cur_user_id=ru_id)
-            if ob:
-                if request_user_authenticated:
-                    ob_user_id = ob['user']['id']
-                    if not check_block(user_id=ob_user_id, blocked_id=ru_id):
-                        posts.append(ob)
-                else:
-                    posts.append(ob)
+    #     for post in post_queryset:
+    #         ob = post_item_json(post_id=post.pk, cur_user_id=ru_id)
+    #         if ob:
+    #             if request_user_authenticated:
+    #                 ob_user_id = ob['user']['id']
+    #                 if not check_block(user_id=ob_user_id, blocked_id=ru_id):
+    #                     posts.append(ob)
+    #             else:
+    #                 posts.append(ob)
 
-    else:
-        facets = cache.get("search_facet")
-        if not facets:
-            facets = {}
-            stdlogger.info("cache empty")
-            today_stamp = get_delta_timestamp(days=0)
-            week_statmp = get_delta_timestamp(days=7)
-            month_statmp = get_delta_timestamp(days=30)
+    # else:
+    #     facets = cache.get("search_facet")
+    #     if not facets:
+    #         facets = {}
+    #         stdlogger.info("cache empty")
+    #         today_stamp = get_delta_timestamp(days=0)
+    #         week_statmp = get_delta_timestamp(days=7)
+    #         month_statmp = get_delta_timestamp(days=30)
 
-            cur_time = int(time())
+    #         cur_time = int(time())
 
-            facets['facet_all'] = SearchQuerySet().models(Post)\
-                .facet('tags', limit=6)
+    #         facets['facet_all'] = SearchQuerySet().models(Post)\
+    #             .facet('tags', limit=6)
 
-            facets['facet_today'] = SearchQuerySet().models(Post)\
-                .narrow("timestamp_i:[{} TO {}]".format(today_stamp, cur_time))\
-                .facet('tags', limit=6)
+    #         facets['facet_today'] = SearchQuerySet().models(Post)\
+    #             .narrow("timestamp_i:[{} TO {}]".format(today_stamp, cur_time))\
+    #             .facet('tags', limit=6)
 
-            facets['facet_week'] = SearchQuerySet().models(Post)\
-                .narrow("timestamp_i:[{} TO {}]".format(week_statmp, cur_time))\
-                .facet('tags', limit=6)
+    #         facets['facet_week'] = SearchQuerySet().models(Post)\
+    #             .narrow("timestamp_i:[{} TO {}]".format(week_statmp, cur_time))\
+    #             .facet('tags', limit=6)
 
-            facets['facet_month'] = SearchQuerySet().models(Post)\
-                .narrow("timestamp_i:[{} TO {}]".format(month_statmp, cur_time))\
-                .facet('tags', limit=6)
+    #         facets['facet_month'] = SearchQuerySet().models(Post)\
+    #             .narrow("timestamp_i:[{} TO {}]".format(month_statmp, cur_time))\
+    #             .facet('tags', limit=6)
 
-            cache.set("search_facet", facets, 3600)
-        else:
-            stdlogger.debug("get from cache")
+    #         cache.set("search_facet", facets, 3600)
+    #     else:
+    #         stdlogger.debug("get from cache")
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
