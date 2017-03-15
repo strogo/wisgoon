@@ -1237,6 +1237,18 @@ def item_related(request, item_id):
     except Post.DoesNotExist:
         raise Http404
 
+    post.mlt = related_posts
+    if request.is_ajax():
+        return render(request, 'pin2/_items_related.html', {
+            'post': post,
+            'offset': offset + 20
+        })
+
+    return render(request, 'pin2/item_related.html', {
+        'post': post,
+        'offset': offset + 20,
+    }, content_type="text/html")
+
     if offset < 100:
 
         cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
