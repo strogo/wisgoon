@@ -771,6 +771,7 @@ def hashtag(request, tag_name):
     data['meta'] = {'limit': 20,
                     'next': "",
                     'total_count': 0}
+    return return_json_data(data)
 
     if query:
 
