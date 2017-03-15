@@ -665,6 +665,7 @@ def related_post(request, item_id):
         },
         'objects': [],
     }
+    return return_json_data(data)
 
     token = request.GET.get('token', False)
     offset = int(request.GET.get('offset', 0))
