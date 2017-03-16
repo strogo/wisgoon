@@ -199,7 +199,7 @@ class ESPosts():
         except Exception as e:
             print str(e)
 
-    def related_post(self, text, offset=0, limit=5):
+    def related_post(self, text, offset=0, limit=20):
         try:
             posts = []
             res = es.search(index=INDEX_POST,

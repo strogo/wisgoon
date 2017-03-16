@@ -683,7 +683,6 @@ def related_post(request, item_id):
         },
         'objects': [],
     }
-    return return_json_data(data)
 
     token = request.GET.get('token', False)
     offset = int(request.GET.get('offset', 0))
@@ -705,10 +704,15 @@ def related_post(request, item_id):
         except Post.DoesNotExist:
             return return_not_found()
 
-        mlt = SearchQuerySet().models(Post)\
-            .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
+        # mlt = SearchQuerySet().models(Post)\
+        #     .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
+        ps = ESPosts()
+        mlt = ps.related_post(post.text,
+                              offset=offset,
+                              limit=Post.GLOBAL_LIMIT)
+        print mlt
 
-        idis = [int(pmlt.pk) for pmlt in mlt]
+        idis = [int(pmlt.id) for pmlt in mlt]
 
         mltis = get_list_post(idis)
 

@@ -1271,28 +1271,21 @@ def item_related(request, item_id):
     except Post.DoesNotExist:
         raise Http404
 
-    post.mlt = related_posts
-    if request.is_ajax():
-        return render(request, 'pin2/_items_related.html', {
-            'post': post,
-            'offset': offset + 20
-        })
-
-    return render(request, 'pin2/item_related.html', {
-        'post': post,
-        'offset': offset + 20,
-    }, content_type="text/html")
-
     if offset < 100:
 
         cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
         mltis = cache.get(cache_str)
 
         if not mltis:
-            mlt = SearchQuerySet().models(Post)\
-                .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
+            # mlt = SearchQuerySet().models(Post)\
+            #     .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
 
-            mltis = [int(pmlt.pk) for pmlt in mlt]
+            ps = ESPosts()
+            mlt = ps.related_post(post.text,
+                                  offset=offset,
+                                  limit=Post.GLOBAL_LIMIT)
+
+            mltis = [int(pmlt.id) for pmlt in mlt]
             cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
 
         for pmlt in mltis:
