@@ -673,7 +673,7 @@ def user_post(request, user_id):
 
 def related_post(request, item_id):
     current_user = None
-    # hot_post = None
+    hot_post = None
 
     data = {
         'meta': {
