@@ -572,13 +572,9 @@ class Post(models.Model):
         post_id = self.id
         super(Post, self).delete(*args, **kwargs)
 
-        # Remove from elastic
-        ps = ESPosts()
-        ps.delete(post_obj=post_id)
-
         # Delete post from elastic
-        # ps = ESPosts()
-        # ps.delete(post_id=post_id)
+        ps = ESPosts()
+        ps.delete(post_id=post_id)
 
         # Delete post from cache
         if settings.TUNING_CACHE:
