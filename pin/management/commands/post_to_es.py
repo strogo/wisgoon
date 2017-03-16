@@ -16,3 +16,4 @@ class Command(BaseCommand):
             for p in posts:
                 ps.save(p)
             offset = offset + limit
+            print offset
