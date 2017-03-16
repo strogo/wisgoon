@@ -13,6 +13,7 @@ from django.http import UnreadablePostError
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
 
+from pin.models_es import ESPosts
 from pin.decorators import system_writable
 from pin.models import Post, Report, Ad, ReportedPost
 from user_profile.models import Profile
@@ -418,10 +419,6 @@ def search(request):
                     'next': "",
                     'total_count': 1000}
 
-    data['objects'] = []
-
-    return return_json_data(data)
-
     offset = int(request.GET.get('offset', 0))
     token = request.GET.get('token', None)
 
@@ -429,12 +426,21 @@ def search(request):
         cur_user = AuthCache.id_from_token(token=token)
 
     if query:
-        posts = SearchQuerySet().models(Post)\
-            .filter(content__contains=query)[offset:offset + limit]
+        # posts = SearchQuerySet().models(Post)\
+        #     .filter(content__contains=query)[offset:offset + limit]
+        # for pmlt in posts:
+        #     idis.append(pmlt.pk)
+
+        ps = ESPosts()
+        try:
+            posts = ps.search(query, from_=offset)
+        except:
+            posts = []
 
         idis = []
-        for pmlt in posts:
-            idis.append(pmlt.pk)
+
+        for post in posts:
+            idis.append(post.id)
 
         posts = Post.objects.values_list('id', flat=True).filter(id__in=idis)
 
