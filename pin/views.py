@@ -18,7 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from tastypie.models import ApiKey
 
-from pin.models_es import ESPosts
+# from pin.models_es import ESPosts
 from pin.model_mongo import Ads, MonthlyStats
 from pin.models_redis import LikesRedis
 from pin.models import Post, Follow, Likes, Category, Comments, Results
