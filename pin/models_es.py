@@ -5,13 +5,16 @@ import re
 from django.conf import settings
 
 from elasticsearch import Elasticsearch
+from elasticsearch import exceptions
 
 from pin.preprocessing import normalize_tags
+
 
 es = Elasticsearch(settings.ES_HOSTS)
 
 INDEX_USER = 'wis-users'
 INDEX_POST = 'wis-posts'
+
 try:
     es.indices.create(index=INDEX_USER, ignore=[400, 111])
     es.indices.create(index=INDEX_POST, ignore=[400, 111])
@@ -102,6 +105,36 @@ class ESPosts():
         except Exception as e:
             print str(e)
 
+    def add_post(self, post_id):
+        from pin.models import Post
+
+        try:
+            post_obj = Post.objects.only("id", "text", "timestamp", "status",
+                                         "category", "cnt_like", "cnt_comment",
+                                         "hash", "user")\
+                .get(id=post_id)
+        except:
+            post_obj = None
+
+        if post_obj:
+            doc = {
+                'id': post_obj.id,
+                'text': post_obj.text,
+                'timestamp': post_obj.timestamp,
+                'status': post_obj.status,
+                'category': post_obj.category_id,
+                'cnt_like': post_obj.cnt_like,
+                'cnt_comment': post_obj.cnt_comment,
+                'hash': post_obj.hash,
+                'author': post_obj.user_id,
+                'tags': self.prepare_tags(post_obj)
+            }
+            try:
+                es.index(index=INDEX_POST, doc_type='post',
+                         id=post_obj.id, body=doc)
+            except Exception as e:
+                print str(e)
+
     def prepare_tags(self, post_obj):
         tags_list = []
 
@@ -128,6 +161,8 @@ class ESPosts():
                       doc_type='post',
                       index=INDEX_POST,
                       body={"script": "ctx._source.cnt_like+=1"})
+        except exceptions.TransportError:
+            self.add_post(post_id=post_id)
         except Exception as e:
             print str(e)
 
@@ -137,6 +172,8 @@ class ESPosts():
                       doc_type='post',
                       index=INDEX_POST,
                       body={"script": "ctx._source.cnt_like-=1"})
+        except exceptions.TransportError:
+            self.add_post(post_id=post_id)
         except Exception as e:
             print str(e)
 
@@ -146,6 +183,8 @@ class ESPosts():
                       doc_type='post',
                       index=INDEX_POST,
                       body={"script": "ctx._source.cnt_comment+=1"})
+        except exceptions.TransportError:
+            self.add_post(post_id=post_id)
         except Exception as e:
             print str(e)
 
@@ -155,6 +194,8 @@ class ESPosts():
                       doc_type='post',
                       index=INDEX_POST,
                       body={"script": "ctx._source.cnt_comment-=1"})
+        except exceptions.TransportError:
+            self.add_post(post_id=post_id)
         except Exception as e:
             print str(e)
 
