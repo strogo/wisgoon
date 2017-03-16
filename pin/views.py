@@ -5,7 +5,6 @@ import json
 import datetime
 import requests
 
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
@@ -15,14 +14,16 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
-from pin.models import Post, Follow, Likes, Category, Comments, Results
-from pin.tools import get_request_timestamp, get_request_pid, check_block,\
-    get_user_ip, get_delta_timestamp, AuthCache, check_user_state, user_state
+
 
 from tastypie.models import ApiKey
 
+from pin.models_es import ESPosts
 from pin.model_mongo import Ads, MonthlyStats
 from pin.models_redis import LikesRedis
+from pin.models import Post, Follow, Likes, Category, Comments, Results
+from pin.tools import get_request_timestamp, get_request_pid, check_block,\
+    get_user_ip, get_delta_timestamp, AuthCache, check_user_state, user_state
 
 from pin.api6.tools import post_item_json
 
@@ -114,8 +115,12 @@ def home_queue(request):
 
 def home(request):
     pid = get_request_pid(request)
-    url = "http://api.wisgoon.com/v7/post/choices/"
-    # url = "http://127.0.0.1:8801/v7/post/choices/"
+
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/post/choices/"
+    else:
+        url = "http://api.wisgoon.com/v7/post/choices/"
+
     payload = {}
     arp = []
     next_url = None
@@ -223,18 +228,23 @@ def search(request):
     ru_id = request.user.id
 
     # if query:
+    #     ps = ESPosts()
+    #     try:
+    #         post_queryset = ps.search(query, from_=offset)
+    #     except:
+    #         post_queryset = []
     #     post_queryset = SearchQuerySet().models(Post)\
     #         .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
-    #     for post in post_queryset:
-    #         ob = post_item_json(post_id=post.pk, cur_user_id=ru_id)
-    #         if ob:
-    #             if request_user_authenticated:
-    #                 ob_user_id = ob['user']['id']
-    #                 if not check_block(user_id=ob_user_id, blocked_id=ru_id):
-    #                     posts.append(ob)
-    #             else:
+    # for post in post_queryset:
+    #     ob = post_item_json(post_id=post.id, cur_user_id=ru_id)
+    #     if ob:
+    #         if request_user_authenticated:
+    #             ob_user_id = ob['user']['id']
+    #             if not check_block(user_id=ob_user_id, blocked_id=ru_id):
     #                 posts.append(ob)
+    #         else:
+    #             posts.append(ob)
 
     # else:
     #     facets = cache.get("search_facet")
@@ -414,50 +424,7 @@ def hashtag(request, tag_name):
     result = []
     total_count = 0
     tags = ['کربلا']
-
-    if query in [u'عروس', u'عاشقانه'] and not request.user.is_authenticated():
-        return render(request, 'pin2/samandehi.html')
-
     offset = int(request.GET.get('offset', 0))
-
-    post_queryset = SearchQuerySet().models(Post)\
-        .filter(tags=tag_name).facet('tags', mincount=1)
-
-    ''' select posts'''
-    posts = post_queryset\
-        .order_by('-timestamp_i')[offset:offset + row_per_page]
-
-    ru_id = request.user.id
-    request_user_authenticated = request.user.is_authenticated()
-
-    for post in posts:
-        post_json = post_item_json(post_id=post.pk,
-                                   cur_user_id=ru_id)
-        if post_json:
-            if request_user_authenticated:
-                ob_user_id = post_json['user']['id']
-                if not check_block(user_id=ob_user_id, blocked_id=ru_id):
-                    posts_list.append(post_json)
-            else:
-                posts_list.append(post_json)
-
-    ''' related tags query '''
-    try:
-        tags_facet = post_queryset.facet_counts()
-        result = tags_facet['fields']['tags']
-    except:
-        pass
-    for key, val in result[:10]:
-        if key != tag_name:
-            related_tags.append(key)
-        else:
-            total_count = val
-
-    if not query:
-        return render(request, 'pin2/tags.html', {
-            'tags': tags,
-            'total_count': total_count
-        })
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
@@ -476,6 +443,65 @@ def hashtag(request, tag_name):
         'total_count': total_count,
         'related_tags': related_tags
     })
+    # if query in [u'عروس', u'عاشقانه'] and not request.user.is_authenticated():
+    #     return render(request, 'pin2/samandehi.html')
+
+    # post_queryset = SearchQuerySet().models(Post)\
+    #     .filter(tags=tag_name).facet('tags', mincount=1)
+
+    # ''' select posts'''
+    # posts = post_queryset\
+    #     .order_by('-timestamp_i')[offset:offset + row_per_page]
+
+    # ru_id = request.user.id
+    # request_user_authenticated = request.user.is_authenticated()
+
+    # for post in posts:
+    #     post_json = post_item_json(post_id=post.pk,
+    #                                cur_user_id=ru_id)
+    #     if post_json:
+    #         if request_user_authenticated:
+    #             ob_user_id = post_json['user']['id']
+    #             if not check_block(user_id=ob_user_id, blocked_id=ru_id):
+    #                 posts_list.append(post_json)
+    #         else:
+    #             posts_list.append(post_json)
+
+    # ''' related tags query '''
+    # try:
+    #     tags_facet = post_queryset.facet_counts()
+    #     result = tags_facet['fields']['tags']
+    # except:
+    #     pass
+    # for key, val in result[:10]:
+    #     if key != tag_name:
+    #         related_tags.append(key)
+    #     else:
+    #         total_count = val
+
+    # if not query:
+    #     return render(request, 'pin2/tags.html', {
+    #         'tags': tags,
+    #         'total_count': total_count
+    #     })
+
+    # if request.is_ajax():
+    #     return render(request, 'pin2/__search.html', {
+    #         'posts': posts_list,
+    #         'query': query,
+    #         'offset': offset + row_per_page,
+    #         'total_count': total_count,
+    #         'related_tags': related_tags
+    #     })
+
+    # return render(request, 'pin2/tag.html', {
+    #     'posts': posts_list,
+    #     'query': query,
+    #     'page_title': tag_name,
+    #     'offset': offset + row_per_page,
+    #     'total_count': total_count,
+    #     'related_tags': related_tags
+    # })
 
 
 def user_friends(request, user_id):
@@ -784,8 +810,12 @@ def absuser_like(request, user_namel):
 
 def latest(request):
     pid = get_request_pid(request)
-    # url = "http://127.0.0.1:8801/v7/post/latest/"
-    url = "http://api.wisgoon.com/v7/post/latest/"
+
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/post/latest/"
+    else:
+        url = "http://api.wisgoon.com/v7/post/latest/"
+
     payload = {}
     arp = []
     next_url = None
@@ -1150,8 +1180,10 @@ def item(request, item_id):
     # status = check_user_state(user_id=user_id,
     #                           current_user=current_user)
 
-    # url = "http://127.0.0.1:8801/v7/post/item/{}/".format(item_id)
-    url = "http://api.wisgoon.com/v7/post/item/{}/".format(item_id)
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/post/item/{}/".format(item_id)
+    else:
+        url = "http://api.wisgoon.com/v7/post/item/{}/".format(item_id)
     payload = {}
 
     try:
