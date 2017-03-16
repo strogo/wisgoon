@@ -1270,7 +1270,10 @@ def item_related(request, item_id):
                                   offset=offset,
                                   limit=Post.GLOBAL_LIMIT)
 
-            mltis = [int(pmlt.id) for pmlt in mlt]
+            # mltis = [int(pmlt.id) for pmlt in mlt]
+            for pmlt in mlt:
+                if post.id != int(pmlt.id):
+                    mltis.append(int(pmlt.id))
             cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
 
         for pmlt in mltis:
