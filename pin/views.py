@@ -236,15 +236,15 @@ def search(request):
     #     post_queryset = SearchQuerySet().models(Post)\
     #         .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
-    for post in post_queryset:
-        ob = post_item_json(post_id=post.id, cur_user_id=ru_id)
-        if ob:
-            if request_user_authenticated:
-                ob_user_id = ob['user']['id']
-                if not check_block(user_id=ob_user_id, blocked_id=ru_id):
+        for post in post_queryset:
+            ob = post_item_json(post_id=post.id, cur_user_id=ru_id)
+            if ob:
+                if request_user_authenticated:
+                    ob_user_id = ob['user']['id']
+                    if not check_block(user_id=ob_user_id, blocked_id=ru_id):
+                        posts.append(ob)
+                else:
                     posts.append(ob)
-            else:
-                posts.append(ob)
 
     # else:
     #     facets = cache.get("search_facet")
