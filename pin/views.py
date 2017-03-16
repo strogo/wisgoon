@@ -421,31 +421,16 @@ def hashtag(request, tag_name):
     posts_list = []
     query = tag_name
     related_tags = []
-    result = []
+    # result = []
     total_count = 0
-    tags = ['کربلا']
+    # tags = ['کربلا']
     offset = int(request.GET.get('offset', 0))
 
-    if request.is_ajax():
-        return render(request, 'pin2/__search.html', {
-            'posts': posts_list,
-            'query': query,
-            'offset': offset + row_per_page,
-            'total_count': total_count,
-            'related_tags': related_tags
-        })
+    if query in [u'عروس', u'عاشقانه'] and not request.user.is_authenticated():
+        return render(request, 'pin2/samandehi.html')
 
-    return render(request, 'pin2/tag.html', {
-        'posts': posts_list,
-        'query': query,
-        'page_title': tag_name,
-        'offset': offset + row_per_page,
-        'total_count': total_count,
-        'related_tags': related_tags
-    })
-    # if query in [u'عروس', u'عاشقانه'] and not request.user.is_authenticated():
-    #     return render(request, 'pin2/samandehi.html')
-
+    ps = ESPosts()
+    posts = ps.search_tags(text=query, offset=offset, limit=row_per_page)
     # post_queryset = SearchQuerySet().models(Post)\
     #     .filter(tags=tag_name).facet('tags', mincount=1)
 
@@ -453,19 +438,19 @@ def hashtag(request, tag_name):
     # posts = post_queryset\
     #     .order_by('-timestamp_i')[offset:offset + row_per_page]
 
-    # ru_id = request.user.id
-    # request_user_authenticated = request.user.is_authenticated()
+    ru_id = request.user.id
+    request_user_authenticated = request.user.is_authenticated()
 
-    # for post in posts:
-    #     post_json = post_item_json(post_id=post.pk,
-    #                                cur_user_id=ru_id)
-    #     if post_json:
-    #         if request_user_authenticated:
-    #             ob_user_id = post_json['user']['id']
-    #             if not check_block(user_id=ob_user_id, blocked_id=ru_id):
-    #                 posts_list.append(post_json)
-    #         else:
-    #             posts_list.append(post_json)
+    for post in posts:
+        post_json = post_item_json(post_id=post.id,
+                                   cur_user_id=ru_id)
+        if post_json:
+            if request_user_authenticated:
+                ob_user_id = post_json['user']['id']
+                if not check_block(user_id=ob_user_id, blocked_id=ru_id):
+                    posts_list.append(post_json)
+            else:
+                posts_list.append(post_json)
 
     # ''' related tags query '''
     # try:
@@ -485,23 +470,23 @@ def hashtag(request, tag_name):
     #         'total_count': total_count
     #     })
 
-    # if request.is_ajax():
-    #     return render(request, 'pin2/__search.html', {
-    #         'posts': posts_list,
-    #         'query': query,
-    #         'offset': offset + row_per_page,
-    #         'total_count': total_count,
-    #         'related_tags': related_tags
-    #     })
+    if request.is_ajax():
+        return render(request, 'pin2/__search.html', {
+            'posts': posts_list,
+            'query': query,
+            'offset': offset + row_per_page,
+            'total_count': total_count,
+            'related_tags': related_tags
+        })
 
-    # return render(request, 'pin2/tag.html', {
-    #     'posts': posts_list,
-    #     'query': query,
-    #     'page_title': tag_name,
-    #     'offset': offset + row_per_page,
-    #     'total_count': total_count,
-    #     'related_tags': related_tags
-    # })
+    return render(request, 'pin2/tag.html', {
+        'posts': posts_list,
+        'query': query,
+        'page_title': tag_name,
+        'offset': offset + row_per_page,
+        'total_count': total_count,
+        'related_tags': related_tags
+    })
 
 
 def user_friends(request, user_id):

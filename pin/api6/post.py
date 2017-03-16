@@ -795,7 +795,7 @@ def hashtag(request, tag_name):
                     'next': "",
                     'total_count': 0}
     data['objects'] = []
-    return return_json_data(data)
+    # return return_json_data(data)
 
     # if query:
 
@@ -824,6 +824,36 @@ def hashtag(request, tag_name):
     #     return return_json_data(data)
     # else:
     #     return return_bad_request()
+
+    if query:
+
+        ps = ESPosts()
+        results = ps.search_tags(text=query, offset=before, limit=row_per_page)
+
+        data['meta']['total_count'] = ps.count_tags(text=query)
+
+        cur_user = AuthCache.id_from_token(token=token)
+        posts = []
+        for p in results:
+            try:
+                pp = int(p.id)
+                posts.append(pp)
+            except:
+                pass
+
+        if posts:
+            data['objects'] = get_objects_list(posts,
+                                               cur_user_id=cur_user,
+                                               r=request)
+
+            data['meta']['next'] = get_next_url(url_name='api-6-post-hashtag',
+                                                before=before + row_per_page,
+                                                token=token,
+                                                url_args={'tag_name': query}
+                                                )
+        return return_json_data(data)
+    else:
+        return return_bad_request()
 
 
 @csrf_exempt

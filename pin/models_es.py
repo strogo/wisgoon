@@ -200,8 +200,8 @@ class ESPosts():
             print str(e)
 
     def related_post(self, text, offset=0, limit=20):
+        posts = []
         try:
-            posts = []
             res = es.search(index=INDEX_POST,
                             body={
                                 "query": {
@@ -212,9 +212,52 @@ class ESPosts():
                                         "max_query_terms": 12
                                     }
                                 }
-                            }, from_=offset, filter_path=['hits.hits._source'])
+                            },
+                            from_=offset,
+                            filter_path=['hits.hits._source'],
+                            sort='timestamp:desc')
             for hit in res['hits']['hits']:
                 posts.append(PostSearchModel(**hit["_source"]))
-            return posts
         except Exception, e:
             print str(e)
+        return posts
+
+    def search_tags(self, text, offset=0, limit=20):
+        posts = []
+        try:
+
+            q = {
+                "query": {
+                    "bool": {
+                        "filter": [
+                            {"term": {"tags": text}}
+                        ]
+                    }
+                }
+            }
+            res = es.search(index=INDEX_POST, body=q,
+                            from_=offset, sort='timestamp:desc')
+            for hit in res['hits']['hits']:
+                posts.append(PostSearchModel(**hit["_source"]))
+        except Exception, e:
+            print str(e)
+
+        return posts
+
+    def count_tags(self, text):
+        count = 0
+        try:
+            q = {
+                "query": {
+                    "bool": {
+                        "filter": [
+                            {"term": {"tags": text}}
+                        ]
+                    }
+                }
+            }
+            res = es.count(index=INDEX_POST, body=q, filter_path=['count'])
+            count = res['count']
+        except Exception, e:
+            print str(e)
+        return count
