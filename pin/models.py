@@ -1395,6 +1395,10 @@ class Comments(models.Model):
             Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
 
+            # Elastic update
+            ps = ESPosts()
+            ps.inc_cnt_comment(post_id=self.object_pk_id)
+
         # self.comment = emoji.demojize(self.comment)[:2048]
         self.comment = emoji.demojize(self.comment[:2048])
 
@@ -1488,6 +1492,10 @@ class Comments(models.Model):
             post_id = self.object_pk_id
             PostCacheLayer(post_id=post_id)\
                 .delete_comment(self.object_pk.cnt_comment)
+
+        # Elastic update
+        ps = ESPosts()
+        ps.decr_cnt_comment(post_id=self.object_pk_id)
 
     @models.permalink
     def get_absolute_url(self):
