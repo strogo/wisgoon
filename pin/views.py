@@ -18,7 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from tastypie.models import ApiKey
 
-# from pin.models_es import ESPosts
+from pin.models_es import ESPosts
 from pin.model_mongo import Ads, MonthlyStats
 from pin.models_redis import LikesRedis
 from pin.models import Post, Follow, Likes, Category, Comments, Results
@@ -227,24 +227,24 @@ def search(request):
     request_user_authenticated = request.user.is_authenticated()
     ru_id = request.user.id
 
-    # if query:
-    #     ps = ESPosts()
-    #     try:
-    #         post_queryset = ps.search(query, from_=offset)
-    #     except:
-    #         post_queryset = []
+    if query:
+        ps = ESPosts()
+        try:
+            post_queryset = ps.search(query, from_=offset)
+        except:
+            post_queryset = []
     #     post_queryset = SearchQuerySet().models(Post)\
     #         .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
-    # for post in post_queryset:
-    #     ob = post_item_json(post_id=post.id, cur_user_id=ru_id)
-    #     if ob:
-    #         if request_user_authenticated:
-    #             ob_user_id = ob['user']['id']
-    #             if not check_block(user_id=ob_user_id, blocked_id=ru_id):
-    #                 posts.append(ob)
-    #         else:
-    #             posts.append(ob)
+    for post in post_queryset:
+        ob = post_item_json(post_id=post.id, cur_user_id=ru_id)
+        if ob:
+            if request_user_authenticated:
+                ob_user_id = ob['user']['id']
+                if not check_block(user_id=ob_user_id, blocked_id=ru_id):
+                    posts.append(ob)
+            else:
+                posts.append(ob)
 
     # else:
     #     facets = cache.get("search_facet")
