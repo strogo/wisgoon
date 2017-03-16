@@ -36,7 +36,7 @@ from pin.api6.cache_layer import PostCacheLayer
 from pin.models_graph import FollowUser
 from pin.models_stream import RedisUserStream
 from models_casper import CatStreams
-# from pin.models_es import ESPosts
+from pin.models_es import ESPosts
 
 # from pin.analytics import comment_act, post_act
 
@@ -1170,8 +1170,8 @@ class Stream(models.Model):
                 Post.add_to_stream(post=post)
 
             # Add to elastic
-            # ps = ESPosts()
-            # ps.save(post_obj=instance)
+            ps = ESPosts()
+            ps.save(post_obj=instance)
 
 
 class Likes(models.Model):
