@@ -14,6 +14,7 @@ from khayyam import JalaliDate
 
 # from pin.analytics import like_act
 from pin.models_casper import PostStats, Notification
+from pin.models_es import ESPosts
 
 # redis set server
 rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
@@ -52,6 +53,7 @@ class PostView(object):
 
 
 class NotifStruct:
+
     def __init__(self, **entries):
         self.__dict__.update(entries)
 
@@ -252,6 +254,10 @@ class LikesRedis(object):
         from pin.model_mongo import MonthlyStats
         MonthlyStats.log_hit(object_type=MonthlyStats.DISLIKE)
 
+        # inc like in elastic
+        ps = ESPosts()
+        ps.decr_cnt_like(post_id=self.postId)
+
         # Update notif on cassandra
         notif = Notification()
         notif.update_notif(a_user_id=post_owner,
@@ -282,6 +288,10 @@ class LikesRedis(object):
         MonthlyStats.log_hit(object_type=MonthlyStats.LIKE)
 
         # like_act(post=self.postId, actor=user_id, user_ip=user_ip)
+
+        # inc like in elastic
+        ps = ESPosts()
+        ps.inc_cnt_like(post_id=self.postId)
 
         if user_id != post_owner:
             from pin.actions import send_notif_bar
