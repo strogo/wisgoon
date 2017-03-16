@@ -1271,6 +1271,7 @@ def item_related(request, item_id):
                                   limit=Post.GLOBAL_LIMIT)
 
             # mltis = [int(pmlt.id) for pmlt in mlt]
+            mltis = []
             for pmlt in mlt:
                 if post.id != int(pmlt.id):
                     mltis.append(int(pmlt.id))
