@@ -106,7 +106,7 @@ def campaign_posts(request, camp_id):
         # posts = SearchQuerySet().models(Post).filter(tags__in=tags)\
         #     .order_by('-{}'.format(order_by))[before:before + LIMIT]
     else:
-        print "2"
+        print "3"
         posts = ps.search_campaign(text=tags,
                                    range_date=[start_date, end_date],
                                    offset=before,
