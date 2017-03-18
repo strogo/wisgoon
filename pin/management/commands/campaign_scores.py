@@ -48,7 +48,7 @@ class Command(BaseCommand):
                                        limit=limit,
                                        order=order_by)
 
-            # print "len post", len(posts)
+            print "len post", len(posts)
             if len(posts) == 0:
                 status = False
 

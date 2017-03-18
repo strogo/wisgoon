@@ -87,9 +87,9 @@ def campaign_posts(request, camp_id):
 
     before = int(request.GET.get('before', 0))
 
-    campaign_tags = str(campaign.tags)
+    campaign_tags = campaign.tags
     tags = campaign_tags.split(',')
-    tags.append(str(campaign.primary_tag))
+    tags.append(campaign.primary_tag)
     start_date = campaign.start_date.strftime("%s")
     end_date = campaign.end_date.strftime("%s")
 
