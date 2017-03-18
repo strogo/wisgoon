@@ -233,10 +233,8 @@ class ESPosts():
 
             q = {
                 "query": {
-                    "bool": {
-                        "filter": [
-                            {"terms": {"tags": text}}
-                        ]
+                    "match": {
+                        {"tags": text}
                     }
                 }
             }
@@ -274,10 +272,8 @@ class ESPosts():
             else:
                 q = {
                     "query": {
-                        "bool": {
-                            "filter": [
-                                {"terms": {"tags": text}}
-                            ]
+                        "match": {
+                            {"tags": text}
                         }
                     }
                 }
