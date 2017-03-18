@@ -160,7 +160,9 @@ class ESPosts():
             es.update(id=post_id,
                       doc_type='post',
                       index=INDEX_POST,
-                      body={"script": "ctx._source.cnt_like+=1"})
+                      body={"script": "ctx._source.cnt_like+=count",
+                            "params": {'count': 1}}
+                      )
         except exceptions.TransportError:
             self.add_post(post_id=post_id)
         except Exception as e:
