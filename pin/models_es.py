@@ -251,7 +251,7 @@ class ESPosts():
 
         return posts
 
-    def search_campaign(self, text, range_date=[],
+    def search_campaign(self, text, range_date=None,
                         order="timestamp", offset=0, limit=20):
         posts = []
         try:

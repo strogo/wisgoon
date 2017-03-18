@@ -93,7 +93,6 @@ def campaign_posts(request, camp_id):
     start_date = campaign.start_date.strftime("%s")
     end_date = campaign.end_date.strftime("%s")
 
-    print tags
     ps = ESPosts()
     if order_by == "timestamp":
 
