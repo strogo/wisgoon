@@ -68,7 +68,6 @@ def campaign_posts(request, camp_id):
 
     token = request.GET.get('token', False)
     order_by_req = request.GET.get('order', False)
-    print "1"
     if order_by_req == "timestamp_i":
         # order_by = "timestamp_i"
         order_by = "timestamp"
@@ -94,9 +93,9 @@ def campaign_posts(request, camp_id):
     start_date = campaign.start_date.strftime("%s")
     end_date = campaign.end_date.strftime("%s")
 
+    print tags
     ps = ESPosts()
     if order_by == "timestamp":
-        print "2"
 
         posts = ps.search_campaign(text=tags,
                                    offset=before,
@@ -106,7 +105,6 @@ def campaign_posts(request, camp_id):
         # posts = SearchQuerySet().models(Post).filter(tags__in=tags)\
         #     .order_by('-{}'.format(order_by))[before:before + LIMIT]
     else:
-        print "3"
         posts = ps.search_campaign(text=tags,
                                    range_date=[start_date, end_date],
                                    offset=before,
