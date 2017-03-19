@@ -244,7 +244,7 @@ class ESPosts():
         except Exception, e:
             print str(e)
 
-        return posts
+        return posts, res["hits"]["total"]
 
     def search_campaign(self, text, range_date=None,
                         order="timestamp", offset=0, limit=20):
