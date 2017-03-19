@@ -230,12 +230,9 @@ class ESPosts():
     def search_tags(self, text, offset=0, limit=20):
         posts = []
         try:
-
             q = {
                 "query": {
-                    "match": {
-                        {"tags": text}
-                    }
+                    "match": {"tags": text}
                 }
             }
             res = es.search(index=INDEX_POST, body=q,
@@ -272,9 +269,7 @@ class ESPosts():
             else:
                 q = {
                     "query": {
-                        "match": {
-                            {"tags": text}
-                        }
+                        "match": {"tags": text}
                     }
                 }
 
