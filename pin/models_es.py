@@ -230,14 +230,9 @@ class ESPosts():
     def search_tags(self, text, offset=0, limit=20):
         posts = []
         try:
-
             q = {
                 "query": {
-                    "bool": {
-                        "filter": [
-                            {"terms": {"tags": text}}
-                        ]
-                    }
+                    "match": {"tags": text}
                 }
             }
             res = es.search(index=INDEX_POST, body=q,
@@ -249,7 +244,7 @@ class ESPosts():
         except Exception, e:
             print str(e)
 
-        return posts
+        return posts, res["hits"]["total"]
 
     def search_campaign(self, text, range_date=None,
                         order="timestamp", offset=0, limit=20):
@@ -274,11 +269,7 @@ class ESPosts():
             else:
                 q = {
                     "query": {
-                        "bool": {
-                            "filter": [
-                                {"terms": {"tags": text}}
-                            ]
-                        }
+                        "match": {"tags": text}
                     }
                 }
 

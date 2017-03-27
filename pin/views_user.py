@@ -70,8 +70,10 @@ def following(request):
     # request_user_authenticated = request.user.is_authenticated()
 
     pid = get_request_pid(request)
-    # url = "http://127.0.0.1:8801/v7/post/friends/"
-    url = "http://api.wisgoon.com/v7/post/friends/"
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/post/friends/"
+    else:
+        url = "http://api.wisgoon.com/v7/post/friends/"
     payload = {}
     arp = []
 
@@ -679,8 +681,10 @@ def upload(request):
             image_th = "{}pin/temp/t/{}".format(MEDIA_URL, filename)
             image_t = "{}/pin/temp/t/{}".format(MEDIA_ROOT, filename)
 
-            image_500_th = "{}pin/temp/t/{}".format(MEDIA_URL, filename.replace('.', '_500.'))
-            image_500_t = "{}/pin/temp/t/{}".format(MEDIA_ROOT, filename.replace('.', '_500.'))
+            image_500_th = "{}pin/temp/t/{}".format(
+                MEDIA_URL, filename.replace('.', '_500.'))
+            image_500_t = "{}/pin/temp/t/{}".format(
+                MEDIA_ROOT, filename.replace('.', '_500.'))
 
             pin_image.resize(image_o, image_t, 99)
             pin_image.resize(image_o, image_500_t, 500)
@@ -948,7 +952,8 @@ def inc_credit(request):
             return HttpResponseRedirect(reverse('pin-inc-credit'))
 
         bill = Bills.objects.create(user=request.user, amount=amount)
-        call_back_url = '%s%s' % (SITE_URL, reverse('pin-verify-payment', args=[bill.id]))
+        call_back_url = '%s%s' % (SITE_URL, reverse(
+            'pin-verify-payment', args=[bill.id]))
 
         url = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'
         client = Client(url)
@@ -964,7 +969,8 @@ def inc_credit(request):
         result = client.service.PaymentRequest(**data)
 
         if result['Status'] == 100:
-            url = 'https://www.zarinpal.com/pg/StartPay/%s' % str(result['Authority'])
+            url = 'https://www.zarinpal.com/pg/StartPay/%s' % str(result[
+                                                                  'Authority'])
             return HttpResponseRedirect(url)
         else:
             msg = 'Error when connecting to the database server'
@@ -1000,7 +1006,8 @@ def verify_payment(request, bill_id):
             # UserMeta.objects(user=bill.user).update(inc__credit=bill.amount)
             p = bill.user.profile
             p.inc_credit(amount=bill.amount)
-            message = "Payment was successful. Your tracking code %s" % str(result['RefID'])
+            message = "Payment was successful. Your tracking code %s" % str(result[
+                                                                            'RefID'])
             messages.success(request, _(message))
 
             from pin.model_mongo import MonthlyStats
