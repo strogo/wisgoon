@@ -442,7 +442,8 @@ class CampaignWinnersAdmin(admin.ModelAdmin):
             camp_id = obj.campaign_id
             obj.status = 1
             obj.save()
-            update_camp_post.delay(camp_id=camp_id)
+            # update_camp_post.delay(camp_id=camp_id)
+            update_camp_post(camp_id=camp_id)
 
     winners_list.short_description = 'محاسبه نفرات برتر'
     get_campaign_id.admin_order_field = 'campaign'
