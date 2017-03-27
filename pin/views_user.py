@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse, HttpResponseRedirect,\
@@ -952,8 +952,8 @@ def inc_credit(request):
             return HttpResponseRedirect(reverse('pin-inc-credit'))
 
         bill = Bills.objects.create(user=request.user, amount=amount)
-        call_back_url = '%s%s' % (SITE_URL, reverse(
-            'pin-verify-payment', args=[bill.id]))
+        call_back_url = '{}{}'.format(
+            SITE_URL, reverse('pin-verify-payment', args=[bill.id]))
 
         url = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'
         client = Client(url)
@@ -969,8 +969,8 @@ def inc_credit(request):
         result = client.service.PaymentRequest(**data)
 
         if result['Status'] == 100:
-            url = 'https://www.zarinpal.com/pg/StartPay/%s' % str(result[
-                                                                  'Authority'])
+            url = 'https://www.zarinpal.com/pg/StartPay/{}'\
+                .format(str(result['Authority']))
             return HttpResponseRedirect(url)
         else:
             msg = 'Error when connecting to the database server'
@@ -1006,8 +1006,8 @@ def verify_payment(request, bill_id):
             # UserMeta.objects(user=bill.user).update(inc__credit=bill.amount)
             p = bill.user.profile
             p.inc_credit(amount=bill.amount)
-            message = "Payment was successful. Your tracking code %s" % str(result[
-                                                                            'RefID'])
+            message = "Payment was successful. Your tracking code {}"\
+                .format(str(result['RefID']))
             messages.success(request, _(message))
 
             from pin.model_mongo import MonthlyStats
