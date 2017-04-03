@@ -1,14 +1,16 @@
 from django.core.management.base import BaseCommand
-from haystack.query import SearchQuerySet
+# from haystack.query import SearchQuerySet
 from pin.models import Post, Campaign, CampaignWinners
 import sys
 from operator import getitem
+from pin.models_es import ESPosts
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 
 class Command(BaseCommand):
+
     def handle(self, *args, **options):
         print "camp scores"
         print "=================================="
@@ -27,33 +29,49 @@ class Command(BaseCommand):
         start_date = camp.start_date.strftime("%s")
         end_date = camp.end_date.strftime("%s")
 
-        posts = SearchQuerySet().models(Post)\
-            .filter(tags__in=tags,
-                    timestamp_i__gte=start_date,
-                    timestamp_i__lte=end_date).order_by('-cnt_like_i')
-
+        # posts = SearchQuerySet().models(Post)\
+        #     .filter(tags__in=tags,
+        #             timestamp_i__gte=start_date,
+        #             timestamp_i__lte=end_date).order_by('-cnt_like_i')
+        ps = ESPosts()
         user_obj = {}
+        status = True
+        offset = 0
+        limit = 100
+        order_by = "cnt_like"
 
-        print "len post", len(posts)
+        while status:
 
-        for post in posts:
-            print post.pk
-            try:
-                post_obj = Post.objects.get(id=post.pk)
-                u = str(post_obj.user.username)
-                if u not in user_obj:
-                    dn = {
-                        "count": 1,
-                        "like": int(post_obj.cnt_like)
-                    }
-                    user_obj[u] = dn
-                else:
-                    dn = user_obj[u]
-                    dn["like"] += int(post_obj.cnt_like)
-                    dn["count"] += 1
+            posts = ps.search_campaign(text=tags,
+                                       range_date=[start_date, end_date],
+                                       offset=offset,
+                                       limit=limit,
+                                       order=order_by)
 
-            except Exception:
-                continue
+            print "len post", len(posts)
+            if len(posts) == 0:
+                status = False
+
+            offset = offset + limit
+
+            for post in posts:
+                print post.id
+                try:
+                    post_obj = Post.objects.get(id=post.id)
+                    u = str(post_obj.user.username)
+                    if u not in user_obj:
+                        dn = {
+                            "count": 1,
+                            "like": int(post_obj.cnt_like)
+                        }
+                        user_obj[u] = dn
+                    else:
+                        dn = user_obj[u]
+                        dn["like"] += int(post_obj.cnt_like)
+                        dn["count"] += 1
+
+                except Exception:
+                    continue
 
         winners = sorted(user_obj.items(),
                          key=lambda x: getitem(x[1], 'like'),

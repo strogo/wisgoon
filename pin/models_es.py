@@ -160,7 +160,8 @@ class ESPosts():
             es.update(id=post_id,
                       doc_type='post',
                       index=INDEX_POST,
-                      body={"script": "ctx._source.cnt_like+=1"})
+                      body={"script": "ctx._source.cnt_like+=1"},
+                      retry_on_conflict=5)
         except exceptions.TransportError:
             self.add_post(post_id=post_id)
         except Exception as e:
@@ -171,7 +172,8 @@ class ESPosts():
             es.update(id=post_id,
                       doc_type='post',
                       index=INDEX_POST,
-                      body={"script": "ctx._source.cnt_like-=1"})
+                      body={"script": "ctx._source.cnt_like-=1"},
+                      retry_on_conflict=5)
         except exceptions.TransportError:
             self.add_post(post_id=post_id)
         except Exception as e:
@@ -182,7 +184,8 @@ class ESPosts():
             es.update(id=post_id,
                       doc_type='post',
                       index=INDEX_POST,
-                      body={"script": "ctx._source.cnt_comment+=1"})
+                      body={"script": "ctx._source.cnt_comment+=1"},
+                      retry_on_conflict=5)
         except exceptions.TransportError:
             self.add_post(post_id=post_id)
         except Exception as e:
@@ -193,7 +196,8 @@ class ESPosts():
             es.update(id=post_id,
                       doc_type='post',
                       index=INDEX_POST,
-                      body={"script": "ctx._source.cnt_comment-=1"})
+                      body={"script": "ctx._source.cnt_comment-=1"},
+                      retry_on_conflict=5)
         except exceptions.TransportError:
             self.add_post(post_id=post_id)
         except Exception as e:
@@ -215,7 +219,8 @@ class ESPosts():
                             },
                             from_=offset,
                             filter_path=['hits.hits._source'],
-                            sort='timestamp:desc')
+                            sort='timestamp:desc',
+                            size=limit)
             for hit in res['hits']['hits']:
                 posts.append(PostSearchModel(**hit["_source"]))
         except Exception, e:
@@ -225,18 +230,55 @@ class ESPosts():
     def search_tags(self, text, offset=0, limit=20):
         posts = []
         try:
-
             q = {
                 "query": {
-                    "bool": {
-                        "filter": [
-                            {"term": {"tags": text}}
-                        ]
-                    }
+                    "match": {"tags": text}
                 }
             }
             res = es.search(index=INDEX_POST, body=q,
-                            from_=offset, sort='timestamp:desc')
+                            from_=offset,
+                            sort='timestamp:desc',
+                            size=limit)
+            for hit in res['hits']['hits']:
+                posts.append(PostSearchModel(**hit["_source"]))
+        except Exception, e:
+            print str(e)
+
+        return posts, res["hits"]["total"]
+
+    def search_campaign(self, text, range_date=None,
+                        order="timestamp", offset=0, limit=20):
+        posts = []
+        try:
+            if range_date:
+                q = {
+                    "query": {
+                        "bool": {
+                            "filter": [
+                                {"terms": {"tags": text}},
+                                {"range": {
+                                    "timestamp": {
+                                        "gte": range_date[0],
+                                        "lte": range_date[1],
+                                    }
+                                }}
+                            ]
+                        }
+                    }
+                }
+            else:
+                q = {
+                    "query": {
+                        "match": {"tags": text}
+                    }
+                }
+
+            order = "{}:{}".format(order, "desc")
+            res = es.search(index=INDEX_POST,
+                            body=q,
+                            from_=offset,
+                            sort=order,
+                            size=limit)
             for hit in res['hits']['hits']:
                 posts.append(PostSearchModel(**hit["_source"]))
         except Exception, e:

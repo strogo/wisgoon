@@ -430,7 +430,9 @@ def hashtag(request, tag_name):
         return render(request, 'pin2/samandehi.html')
 
     ps = ESPosts()
-    posts = ps.search_tags(text=query, offset=offset, limit=row_per_page)
+    posts, total_count = ps.search_tags(text=query,
+                                        offset=offset,
+                                        limit=row_per_page)
     # post_queryset = SearchQuerySet().models(Post)\
     #     .filter(tags=tag_name).facet('tags', mincount=1)
 

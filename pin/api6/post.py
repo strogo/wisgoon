@@ -830,9 +830,11 @@ def hashtag(request, tag_name):
     if query:
 
         ps = ESPosts()
-        results = ps.search_tags(text=query, offset=before, limit=row_per_page)
+        results, total_count = ps.search_tags(text=query,
+                                              offset=before,
+                                              limit=row_per_page)
 
-        data['meta']['total_count'] = ps.count_tags(text=query)
+        data['meta']['total_count'] = total_count
 
         cur_user = AuthCache.id_from_token(token=token)
         posts = []
@@ -840,7 +842,7 @@ def hashtag(request, tag_name):
             try:
                 pp = int(p.id)
                 posts.append(pp)
-            except:
+            except Exception:
                 pass
 
         if posts:
