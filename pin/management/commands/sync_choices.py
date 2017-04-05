@@ -11,10 +11,9 @@ r_server = redis.Redis(settings.REDIS_DB_2, db=settings.REDIS_DB_NUMBER)
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        print "tuning execute"
         post_ids = Post.objects.values_list('id', flat=True)\
             .filter(show_in_default=True)\
-            .order_by("-timestamp")[:1000]
+            .order_by("-id")[:1000]
         add_to_home(post_ids)
 
 
