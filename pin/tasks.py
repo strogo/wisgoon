@@ -425,13 +425,13 @@ def post_to_followers(user_id, post_id):
     return "this is post_to_followers"
 
 
-# @app.task(name="wisgoon.pin.post_to_follower_single")
-# def post_to_follower_single(post_id, follower_id, post_owner):
-#     from pin.models import Post
-#     Post.add_to_user_stream(post_id=post_id, user_id=follower_id,
-#                             post_owner=post_owner)
+@app.task(name="wisgoon.pin.post_to_follower_single")
+def post_to_follower_single(post_id, follower_id, post_owner):
+    from pin.models import Post
+    Post.add_to_user_stream(post_id=post_id, user_id=follower_id,
+                            post_owner=post_owner)
 
-#     return "this is post_to_followers"
+    return "this is post_to_followers"
 
 
 @app.task(name="tasks.remove_from_stream")
