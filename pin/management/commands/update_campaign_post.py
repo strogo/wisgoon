@@ -46,4 +46,4 @@ class Command(BaseCommand):
         #     except Exception as e:
         #         print str(e), "post_id:{}".format(post.pk)
         #         pass
-        camp_scores.delay(camp_id=camp_id)
+        camp_scores(camp_id=camp_id)
