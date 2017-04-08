@@ -212,8 +212,8 @@ class ESPosts():
                                     "more_like_this": {
                                         "fields": ["text"],
                                         "like": text,
-                                        "min_term_freq": 1,
-                                        "max_query_terms": 12
+                                        "min_term_freq": 2,
+                                        "max_query_terms": 25
                                     }
                                 }
                             },
