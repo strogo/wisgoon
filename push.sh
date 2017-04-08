@@ -3,11 +3,11 @@
 send(){
 	# git add .
 	# git commit -m "changes"
-	git push origin devel
+	git push new devel
 	ssh wisgoon@79.127.125.104 "cd /home/wisgoon/new/ && git merge devel && touch reload-new"
 }
 
-case $1 in    
+case $1 in
     send)
         send
         ;;

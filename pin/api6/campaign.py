@@ -8,9 +8,9 @@ from pin.api6.http import return_json_data, return_not_found
 from pin.api6.tools import post_item_json, get_next_url
 from pin.tools import AuthCache
 from pin.models_es import ESPosts
-from haystack.query import SearchQuerySet
-from haystack.query import SQ
-from haystack.query import Raw
+# from haystack.query import SearchQuerySet
+# from haystack.query import SQ
+# from haystack.query import Raw
 
 
 LIMIT = 10
@@ -135,18 +135,16 @@ def search(request, camp):
     data = {}
     data['meta'] = {'limit': 20, 'next': ""}
     data['objects'] = []
-    return return_json_data(data)
+    # return return_json_data(data)
 
-    words = camp.split()
-    sq = SQ()
-    for w in words:
-        sq.add(SQ(text__contains=Raw("%s*" % w)), SQ.OR)
-        sq.add(SQ(text__contains=Raw(w)), SQ.OR)
+    # words = camp.split()
+    # sq = SQ()
+    # for w in words:
+    #     sq.add(SQ(text__contains=Raw("%s*" % w)), SQ.OR)
+    #     sq.add(SQ(text__contains=Raw(w)), SQ.OR)
 
-    results = SearchQuerySet().models(Campaign).filter(sq)
-
+    # results = SearchQuerySet().models(Campaign).filter(sq)
+    results = Campaign.objects.filter(tags__icontains=camp)
     for result in results:
-        campaign = result.object
-        data['objects'].append(campaign_sample_json(campaign))
-
+        data['objects'].append(campaign_sample_json(result))
     return return_json_data(data)
