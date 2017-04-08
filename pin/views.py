@@ -1271,14 +1271,12 @@ def item_related(request, item_id):
             mlt = ps.related_post(post.text,
                                   offset=offset,
                                   limit=Post.GLOBAL_LIMIT)
-
             # mltis = [int(pmlt.id) for pmlt in mlt]
             mltis = []
             for pmlt in mlt:
                 if post.id != int(pmlt.id):
                     mltis.append(int(pmlt.id))
-            # cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
-            cache.set(cache_str, mltis, 1)
+            cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
 
         for pmlt in mltis:
             ob = post_item_json(post_id=pmlt, cur_user_id=request.user.id)

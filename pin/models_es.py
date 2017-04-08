@@ -212,8 +212,9 @@ class ESPosts():
                                     "more_like_this": {
                                         "fields": ["text"],
                                         "like": text,
-                                        "min_term_freq": 2,
-                                        "max_query_terms": 25
+                                        "min_term_freq": 1,
+                                        "max_query_terms": 12
+                                        # "boost": 20
                                     }
                                 }
                             },
@@ -221,6 +222,7 @@ class ESPosts():
                             filter_path=['hits.hits._source'],
                             sort='timestamp:desc',
                             size=limit)
+
             for hit in res['hits']['hits']:
                 posts.append(PostSearchModel(**hit["_source"]))
         except Exception, e:
