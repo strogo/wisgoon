@@ -247,11 +247,14 @@ class ESPosts():
         return posts, res["hits"]["total"]
 
     def search_campaign(self, text, range_date=None,
-                        order="timestamp", offset=0, limit=20):
+                        order="timestamp", offset=0, limit=20, sort="asc"):
         posts = []
         try:
             if range_date:
                 q = {
+                    "sort": [
+                        {"timestamp": {"order": sort}},
+                    ],
                     "query": {
                         "bool": {
                             "filter": [
@@ -268,6 +271,9 @@ class ESPosts():
                 }
             else:
                 q = {
+                    "sort": [
+                        {"timestamp": {"order": sort}},
+                    ],
                     "query": {
                         "match": {"tags": text}
                     }

@@ -458,6 +458,11 @@ def camp_scores(camp_id):
     call_command('campaign_scores', camp_id=camp_id)
 
 
+@app.task(name="tasks.camp_scores_2")
+def camp_scores_2(camp_id):
+    call_command('campaign_scores_2', camp_id=camp_id)
+
+
 @app.task(name="wisgoon.pin.ltrim_user_stream")
 def ltrim_user_stream(user_id):
     from pin.models_casper import UserStream

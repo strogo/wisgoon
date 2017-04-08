@@ -9,7 +9,7 @@ from haystack.admin import SearchModelAdmin
 from user_profile.models import Profile, CreditLog, Package, Subscription
 
 from pin.tools import revalidate_bazaar, get_user_ip
-from pin.tasks import update_camp_post
+from pin.tasks import update_camp_post, camp_scores_2
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
@@ -430,7 +430,7 @@ class SystemStateAdmin(admin.ModelAdmin):
 
 class CampaignWinnersAdmin(admin.ModelAdmin):
     list_display = ['id', 'get_campaign_id', 'winners', 'status']
-    actions = ['winners_list']
+    actions = ['winners_list', 'winners_list_2']
     search_fields = ['campaign']
     raw_id_fields = ("campaign",)
 
@@ -445,7 +445,16 @@ class CampaignWinnersAdmin(admin.ModelAdmin):
             # update_camp_post.delay(camp_id=camp_id)
             update_camp_post(camp_id=camp_id)
 
+    def winners_list_2(self, request, queryset):
+        for obj in queryset:
+            camp_id = obj.campaign_id
+            obj.status = 1
+            obj.save()
+            # update_camp_post.delay(camp_id=camp_id)
+            camp_scores_2(camp_id=camp_id)
+
     winners_list.short_description = 'محاسبه نفرات برتر'
+    winners_list_2.short_description = 'محاسبه نفرات برتر جدید'
     get_campaign_id.admin_order_field = 'campaign'
     get_campaign_id.short_description = 'Campaign'
 
