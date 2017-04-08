@@ -1277,7 +1277,8 @@ def item_related(request, item_id):
             for pmlt in mlt:
                 if post.id != int(pmlt.id):
                     mltis.append(int(pmlt.id))
-            cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
+            # cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
+            cache.set(cache_str, mltis, 1)
 
         for pmlt in mltis:
             ob = post_item_json(post_id=pmlt, cur_user_id=request.user.id)
