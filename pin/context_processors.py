@@ -17,6 +17,9 @@ def static_version(request):
 def static_cdn(request):
     return {'STATIC_CDN': settings.STATIC_CDN}
 
+def static_media(request):
+    return {'STATIC_MEDIA': settings.STATIC_MEDIA}
+
 
 def pin_form(request):
     return {'pin_form': PinForm}

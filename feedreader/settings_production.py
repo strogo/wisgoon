@@ -10,6 +10,8 @@ MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
 STATIC_DOMAIN = "http://static.wisgoon.com/"
 
+STATIC_MEDIA = STATIC_DOMAIN + "media/"
+
 IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT, 'image_cache')
 COMPRESS_URL = MEDIA_URL
 COMPRESS_ROOT = MEDIA_ROOT

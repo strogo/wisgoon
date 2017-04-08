@@ -13,6 +13,8 @@ DISPLAY_AD = False
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
 STATIC_VERSION = '5.10.8'
 
+STATIC_MEDIA = "media/"
+
 SITE_ROOT = os.path.dirname(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -152,6 +154,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'pin.context_processors.global_values',
     'pin.context_processors.static_version',
     'pin.context_processors.static_cdn',
+    'pin.context_processors.static_media',
     'pin.context_processors.system_writable',
 ]
 
