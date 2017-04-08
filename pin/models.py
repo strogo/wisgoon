@@ -2012,6 +2012,7 @@ class Campaign(models.Model):
     logo = models.ImageField(default='', upload_to='pin/campaigns/')
     award = models.TextField(null=True, blank=True)
     help_text = models.TextField(null=True, blank=True)
+    limit = models.IntegerField(default=0)
 
 
 class WinnersList(models.Model):

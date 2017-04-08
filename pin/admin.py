@@ -421,7 +421,7 @@ class CampaignAdmin(admin.ModelAdmin):
     search_fields = ['winners']
     raw_id_fields = ('owner',)
     list_display = ('id', 'description', 'primary_tag', 'tags', 'is_current',
-                    'start_date', 'end_date', 'expired', 'title')
+                    'start_date', 'end_date', 'expired', 'title', 'limit')
 
 
 class SystemStateAdmin(admin.ModelAdmin):

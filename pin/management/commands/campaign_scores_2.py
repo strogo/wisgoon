@@ -28,6 +28,7 @@ class Command(BaseCommand):
         tags.append(camp.primary_tag)
         start_date = camp.start_date.strftime("%s")
         end_date = camp.end_date.strftime("%s")
+        camp_limit = camp.limit
 
         # posts = SearchQuerySet().models(Post)\
         #     .filter(tags__in=tags,
@@ -67,7 +68,11 @@ class Command(BaseCommand):
                         user_obj[u] = dn
                     else:
                         dn = user_obj[u]
-                        if dn["count"] < 20:
+                        if camp_limit > 0:
+                            if dn["count"] < camp_limit:
+                                dn["like"] += int(post_obj.cnt_like)
+                                dn["count"] += 1
+                        else:
                             dn["like"] += int(post_obj.cnt_like)
                             dn["count"] += 1
 
