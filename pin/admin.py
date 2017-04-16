@@ -114,7 +114,7 @@ class LogAdmin(admin.ModelAdmin):
 
 
 class AdAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user_id', 'ended', 'get_cnt_view',
+    list_display = ('id', 'user_id', 'ended', 'cnt_view',
                     'ads_type', 'start', 'end', 'get_owner', 'ip_address')
 
     raw_id_fields = ("post", "user")
