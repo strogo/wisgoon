@@ -274,23 +274,23 @@ def category(request, category_id):
     from_model = "%s_%s" % (settings.STREAM_LATEST_CAT, category_id)
     post_ids = get_list_post(pl, from_model=from_model)
 
-    if cur_user:
-        viewer_id = str(cur_user)
-    else:
-        viewer_id = str(get_user_ip(request, to_int=True))
+    # if cur_user:
+    #     viewer_id = str(cur_user)
+    # else:
+    #     viewer_id = str(get_user_ip(request, to_int=True))
 
-    ad = Ad.get_ad(user_id=viewer_id)
-    if ad:
-        hot_post = int(ad.post_id)
-    if hot_post:
-        ad_post_json = post_item_json(hot_post,
-                                      cur_user_id=cur_user,
-                                      r=request)
+    # ad = Ad.get_ad(user_id=viewer_id)
+    # if ad:
+    #     hot_post = int(ad.post_id)
+    # if hot_post:
+    #     ad_post_json = post_item_json(hot_post,
+    #                                   cur_user_id=cur_user,
+    #                                   r=request)
 
-    if ad_post_json:
-        ad_post_json['is_ad'] = True
-        if not ad_post_json['user']['user_blocked_me']:
-            data['objects'].append(ad_post_json)
+    # if ad_post_json:
+    #     ad_post_json['is_ad'] = True
+    #     if not ad_post_json['user']['user_blocked_me']:
+    #         data['objects'].append(ad_post_json)
 
     cat_json = category_get_json(category_id)
 
