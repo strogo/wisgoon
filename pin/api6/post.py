@@ -729,16 +729,16 @@ def related_post(request, item_id):
 
     cache.set(cache_str, mltis, 86400)
 
-    if current_user:
-        viewer_id = str(current_user)
-    else:
-        viewer_id = str(get_user_ip(request, to_int=True))
+    # if current_user:
+    #     viewer_id = str(current_user)
+    # else:
+    #     viewer_id = str(get_user_ip(request, to_int=True))
 
-    ad = Ad.get_ad(user_id=viewer_id)
-    if ad:
-        hot_post = int(ad.post_id)
-    if hot_post:
-        mltis = list([hot_post]) + list(mltis)
+    # ad = Ad.get_ad(user_id=viewer_id)
+    # if ad:
+    #     hot_post = int(ad.post_id)
+    # if hot_post:
+    #     mltis = list([hot_post]) + list(mltis)
 
     data['objects'] = get_objects_list(mltis, current_user)
     data['meta']['next'] = get_next_url(url_name='api-6-post-related',
