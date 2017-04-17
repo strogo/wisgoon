@@ -458,7 +458,7 @@ def search(request):
 
 def item(request, item_id):
     cur_user = None
-    data = []
+    data = {}
     token = request.GET.get('token', None)
 
     if token:
@@ -482,7 +482,7 @@ def item(request, item_id):
 
         if post_item:
             if not post_item['user']['user_blocked_me']:
-                data.append(post_item)
+                data = post_item
     except:
         return return_not_found()
 
@@ -497,23 +497,33 @@ def item_2(request, item_id):
     if token:
         cur_user = AuthCache.id_from_token(token=token)
 
-    posts = get_list_post([item_id])
+    # posts = get_list_post([item_id])
+    # try:
+    #     data = get_objects_list(posts,
+    #                             cur_user_id=cur_user,
+    #                             r=request)[0]
+    # except IndexError:
+    #     return return_not_found()
+
     try:
-        data = get_objects_list(posts,
-                                cur_user_id=cur_user,
-                                r=request)[0]
-    except IndexError:
+        item_id = int(item_id)
+        post_item = post_item_json(
+            post_id=item_id,
+            cur_user_id=cur_user,
+            r=request
+        )
+
+        if post_item:
+            data = post_item
+    except:
         return return_not_found()
 
-    user_id = data['user']['id']
-    status, _ = check_user_state(user_id=user_id, token=token)
+    if data:
+        user_id = data['user']['id']
+        status, _ = check_user_state(user_id=user_id, token=token)
 
-    if not status:
-        return return_un_auth()
-        # return return_un_auth(
-        #     message=_("You do not have access to this content")
-        # )
-
+        if not status:
+            return return_un_auth()
     return return_json_data(data)
 
 
