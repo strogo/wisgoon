@@ -24,32 +24,46 @@ leaderBoardServer = redis.Redis(settings.REDIS_DB_2, db=0)
 activityServer = redis.Redis(settings.REDIS_DB_3)
 
 notificationRedis = redis.Redis(settings.REDIS_DB_4)
+viewCon = redis.Redis(settings.REDIS_DB_104)
 
 
 class PostView(object):
     post_id = None
-    KEY_PREFIX = "pv:1:{}"
+    KEY_PREFIX = "view:{}"
+    view = 0
 
     def __init__(self, post_id):
         self.post_id = int(post_id)
         self.KEY_PREFIX = self.KEY_PREFIX.format(post_id)
 
     def inc_view_test(self):
-        PostStats(post_id=self.post_id).inc_view()
+        viewCon.incr(self.KEY_PREFIX)
+        # PostStats(post_id=self.post_id).inc_view()
 
     def inc_view(self):
-        from pin.api6.tools import is_system_writable
-        if is_system_writable():
-            try:
-                PostStats(post_id=self.post_id).inc_view()
-            except Exception, e:
-                print str(e)
+        if not viewCon.exists(self.KEY_PREFIX):
+            vc = PostStats(post_id=self.post_id).get_cnt_view()
+            self.view = viewCon.incrby(self.KEY_PREFIX, vc)
+            return self.view
+        else:
+            self.view = viewCon.incr(self.KEY_PREFIX)
+            return self.view
+        # from pin.api6.tools import is_system_writable
+        # if is_system_writable():
+        #     try:
+        #         PostStats(post_id=self.post_id).inc_view()
+        #     except Exception, e:
+        #         print str(e)
 
     def get_cnt_view(self):
-        try:
-            return PostStats(post_id=self.post_id).get_cnt_view()
-        except:
-            return 0
+        if self.view != 0:
+            return self.view
+        return viewCon.get(self.KEY_PREFIX)
+        
+        # try:
+        #     return PostStats(post_id=self.post_id).get_cnt_view()
+        # except:
+        #     return 0
 
 
 class NotifStruct:

@@ -280,8 +280,10 @@ def post_item_json(post_id, cur_user_id=None, r=None,
         cp = PostCacheLayer(post_id=post_id)
 
         cache_post = cp.get()
-        pi['cnt_view'] = PostView(post_id=post_id).get_cnt_view()
-        PostView(post_id=post_id).inc_view()
+
+        pi['cnt_view'] = PostView(post_id=post_id).inc_view()
+        # PostView(post_id=post_id).inc_view()
+        # pi['cnt_view'] = 56
 
         if cache_post:
             cache_post['like_with_user'] = False
