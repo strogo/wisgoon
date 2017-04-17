@@ -464,12 +464,26 @@ def item(request, item_id):
     if token:
         cur_user = AuthCache.id_from_token(token=token)
 
-    posts = get_list_post([item_id])
+    # posts = get_list_post([item_id])
+
+    # try:
+    #     data = get_objects_list(posts, cur_user_id=cur_user,
+    #                             r=request)[0]
+    # except IndexError:
+    #     return return_not_found()
 
     try:
-        data = get_objects_list(posts, cur_user_id=cur_user,
-                                r=request)[0]
-    except IndexError:
+        item_id = int(item_id)
+        post_item = post_item_json(
+            post_id=item_id,
+            cur_user_id=cur_user,
+            r=request
+        )
+
+        if post_item:
+            if not post_item['user']['user_blocked_me']:
+                data = post_item
+    except:
         return return_not_found()
 
     return return_json_data(data)
