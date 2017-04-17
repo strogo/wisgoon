@@ -458,7 +458,7 @@ def search(request):
 
 def item(request, item_id):
     cur_user = None
-    data = {}
+    data = []
     token = request.GET.get('token', None)
 
     if token:
@@ -482,7 +482,7 @@ def item(request, item_id):
 
         if post_item:
             if not post_item['user']['user_blocked_me']:
-                data = post_item
+                data.append(post_item)
     except:
         return return_not_found()
 
