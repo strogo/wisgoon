@@ -11,22 +11,51 @@ from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
 from pin.tools import check_block, get_post_user_cache
 from pin.toolkit import check_auth
 from pin.decorators import system_writable
+from django.conf import settings
+import requests
+import json
 
 
 def comment_post(request, item_id):
+
     limit = 20
     data = {}
     data['objects'] = {}
     data['meta'] = {'limit': limit, 'next': '', 'total_count': 1000}
     before = int(request.GET.get('before', 0))
 
-    comments = get_comments(item_id, limit, before)
-    data['objects'] = comment_objects_list(comments)
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/comment/post/{}/"
+    else:
+        url = "http://api.wisgoon.com/v7/comment/post/{}/"
 
-    data['meta']['next'] = get_next_url(url_name='api-6-comment-post',
-                                        before=before + limit,
-                                        url_args={"item_id": item_id}
-                                        )
+    url = url.format(item_id)
+    payload = {}
+    payload['before'] = before
+
+    # Get choices post
+    s = requests.Session()
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+    if res.status_code == 200:
+        try:
+            data = json.loads(res.content)
+        except:
+            pass
+
+    # limit = 20
+    # data = {}
+    # data['objects'] = {}
+    # data['meta'] = {'limit': limit, 'next': '', 'total_count': 1000}
+    # before = int(request.GET.get('before', 0))
+
+    # comments = get_comments(item_id, limit, before)
+    # data['objects'] = comment_objects_list(comments)
+
+    # data['meta']['next'] = get_next_url(url_name='api-6-comment-post',
+    #                                     before=before + limit,
+    #                                     url_args={"item_id": item_id}
+    #                                     )
     return return_json_data(data)
 
 
