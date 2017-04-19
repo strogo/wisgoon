@@ -52,10 +52,11 @@ def comment_post(request, item_id):
     # comments = get_comments(item_id, limit, before)
     # data['objects'] = comment_objects_list(comments)
 
-    # data['meta']['next'] = get_next_url(url_name='api-6-comment-post',
-    #                                     before=before + limit,
-    #                                     url_args={"item_id": item_id}
-    #                                     )
+    if data:
+        data['meta']['next'] = get_next_url(url_name='api-6-comment-post',
+                                            before=before + limit,
+                                            url_args={"item_id": item_id}
+                                            )
     return return_json_data(data)
 
 
