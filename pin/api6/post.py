@@ -4,7 +4,7 @@ from datetime import datetime
 # from datetime import timedelta
 # import requests
 # import json
-from haystack.query import SearchQuerySet
+# from haystack.query import SearchQuerySet
 
 from django.conf import settings
 from django.core.cache import cache
@@ -250,7 +250,7 @@ def friends(request):
 def category(request, category_id):
     hot_post = None
     cur_user = None
-    ad_post_json = None
+    # ad_post_json = None
     # posts_list = []
     data = {
         'meta': {
@@ -697,7 +697,7 @@ def user_post(request, user_id):
 
 def related_post(request, item_id):
     current_user = None
-    hot_post = None
+    # hot_post = None
 
     data = {
         'meta': {

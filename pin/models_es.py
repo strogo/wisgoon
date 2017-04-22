@@ -220,7 +220,7 @@ class ESPosts():
                             },
                             from_=offset,
                             filter_path=['hits.hits._source'],
-                            sort='timestamp:desc',
+                            # sort='timestamp:desc',
                             size=limit)
 
             for hit in res['hits']['hits']:
