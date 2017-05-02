@@ -44,4 +44,4 @@ DATABASES = {
     },
 }
 
-ALLOWED_HOSTS = ALLOWED_HOSTS + ["new.wisgoon.com"]
+ALLOWED_HOSTS = ALLOWED_HOSTS + ["new.wisgoon.com", "devel.wisgoon.com"]
