@@ -619,8 +619,6 @@ def tops(request, period):
     else:
         url = "http://test.wisgoon.com/v7/post/tops/{}/"
 
-    print url
-
     url = url.format(period)
 
     # Get choices post

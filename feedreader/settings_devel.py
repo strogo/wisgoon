@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from settings_production import *
 
-DEBUG = True
+DEBUG = False
 
 DEVEL_BRANCH = True
 
