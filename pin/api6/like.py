@@ -129,7 +129,7 @@ def post_likers(request, item_id):
     data['objects'] = []
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
     payload = {}
-    before = request.GET.get('before', False)
+    before = request.GET.get('before', 0)
     token = request.GET.get('token', False)
 
     if token:

@@ -606,7 +606,7 @@ def tops(request, period):
     data['objects'] = []
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
     payload = {}
-    offset = request.GET.get('offset', None)
+    offset = int(request.GET.get('offset', 0))
     token = request.GET.get('token', None)
 
     if token:
@@ -692,7 +692,7 @@ def user_post(request, user_id):
     data['objects'] = []
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
     payload = {}
-    before = request.GET.get('before', None)
+    before = int(request.GET.get('before', 0))
     token = request.GET.get('token', None)
 
     if token:
@@ -764,7 +764,7 @@ def friends(request):
     data['objects'] = []
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
     payload = {}
-    offset = request.GET.get('before', None)
+    offset = int(request.GET.get('before', 0))
     token = request.GET.get('token', None)
 
     if not token:
@@ -878,7 +878,7 @@ def category(request, category_id):
     data['objects'] = []
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
     payload = {}
-    offset = request.GET.get('before', None)
+    offset = int(request.GET.get('before', 0))
     token = request.GET.get('token', None)
 
     if token:
@@ -968,7 +968,7 @@ def choices(request):
     data['objects'] = []
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
     payload = {}
-    offset = request.GET.get('before', None)
+    offset = int(request.GET.get('before', 0))
     token = request.GET.get('token', None)
 
     if token:
@@ -1076,7 +1076,7 @@ def latest(request):
     data['objects'] = []
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
     payload = {}
-    before = request.GET.get('before', None)
+    before = int(request.GET.get('before', 0))
     token = request.GET.get('token', None)
 
     if token:
