@@ -12,6 +12,7 @@ redis_server = redis.Redis(settings.REDIS_DB_2)
 
 
 class CassandraModel():
+
     def __init__(self):
         global isConnected, session
         if not isConnected:
@@ -26,6 +27,7 @@ class CassandraModel():
 
 
 class Notification(CassandraModel):
+
     def __init__(self):
         CassandraModel.__init__(self)
 
@@ -80,7 +82,7 @@ class Notification(CassandraModel):
 
     def remove_notif(self, a_user_id, a_date):
         query = """
-                DELETE FROM Notification
+                DELETE FROM notification
                 where user_id={} and date={}
                 """.format(a_user_id, a_date)
         session.execute(query)
@@ -236,6 +238,7 @@ class CatStreams(CassandraModel):
 
 
 class UserStream(CassandraModel):
+
     def __init__(self):
         CassandraModel.__init__(self)
 

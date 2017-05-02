@@ -59,7 +59,7 @@ class PostView(object):
         if self.view != 0:
             return self.view
         return viewCon.get(self.KEY_PREFIX)
-        
+
         # try:
         #     return PostStats(post_id=self.post_id).get_cnt_view()
         # except:
