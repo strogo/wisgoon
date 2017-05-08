@@ -44,11 +44,11 @@ def comment_post(request, item_id):
         except:
             pass
 
-    if data:
-        data['meta']['next'] = get_next_url(url_name='api-6-comment-post',
-                                            before=before + limit,
-                                            url_args={"item_id": item_id}
-                                            )
+    # if data:
+    #     data['meta']['next'] = get_next_url(url_name='api-6-comment-post',
+    #                                         before=before + limit,
+    #                                         url_args={"item_id": item_id}
+    #                                         )
 
     # limit = 20
     # data = {}

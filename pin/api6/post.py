@@ -631,10 +631,10 @@ def tops(request, period):
         except:
             pass
 
-    data['meta']['next'] = get_next_url(url_name='api-6-post-tops',
-                                        token=token,
-                                        offset=offset + GLOBAL_LIMIT,
-                                        url_args={"period": period})
+    # data['meta']['next'] = get_next_url(url_name='api-6-post-tops',
+    #                                     token=token,
+    #                                     offset=offset + GLOBAL_LIMIT,
+    #                                     url_args={"period": period})
 
     # from pin.models_stream import RedisTopPostStream
 
@@ -717,11 +717,11 @@ def user_post(request, user_id):
         except:
             pass
 
-    data['meta']['next'] = get_next_url(url_name='api-6-post-user',
-                                        before=before + 20,
-                                        token=token,
-                                        url_args={"user_id": user_id}
-                                        )
+    # data['meta']['next'] = get_next_url(url_name='api-6-post-user',
+    #                                     before=before + 20,
+    #                                     token=token,
+    #                                     url_args={"user_id": user_id}
+    #                                     )
 
     # before = int(request.GET.get('before', 0))
     # token = request.GET.get('token', None)
@@ -789,10 +789,10 @@ def friends(request):
         except:
             pass
 
-    if data['objects']:
-        last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-6-post-friends',
-                                            token=token, before=last_item)
+    # if data['objects']:
+    #     last_item = data['objects'][-1]['id']
+    #     data['meta']['next'] = get_next_url(url_name='api-6-post-friends',
+    #                                         token=token, before=last_item)
     # cur_user = None
     # hot_post = None
     # ad_post_json = None
@@ -903,13 +903,13 @@ def category(request, category_id):
         except:
             pass
 
-    if data['objects']:
-        last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-6-post-category',
-                                            token=token, before=last_item,
-                                            url_args={
-                                                "category_id": category_id
-                                            })
+    # if data['objects']:
+    #     last_item = data['objects'][-1]['id']
+    #     data['meta']['next'] = get_next_url(url_name='api-6-post-category',
+    #                                         token=token, before=last_item,
+    #                                         url_args={
+    #                                             "category_id": category_id
+    #                                         })
     # hot_post = None
     # cur_user = None
     # data = {
@@ -991,10 +991,10 @@ def choices(request):
         except:
             pass
 
-    if data['objects']:
-        last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-6-post-choices',
-                                            token=token, before=last_item)
+    # if data['objects']:
+    #     last_item = data['objects'][-1]['id']
+    #     data['meta']['next'] = get_next_url(url_name='api-6-post-choices',
+    #                                         token=token, before=last_item)
 
     # cur_user = None
     # hot_post = None
@@ -1099,11 +1099,11 @@ def latest(request):
         except:
             pass
 
-    if data['objects']:
-        last_item = data['objects'][-1]['id']
-        data['meta']['next'] = get_next_url(url_name='api-6-post-latest',
-                                            token=token,
-                                            before=last_item)
+    # if data['objects']:
+    #     last_item = data['objects'][-1]['id']
+    #     data['meta']['next'] = get_next_url(url_name='api-6-post-latest',
+    #                                         token=token,
+    #                                         before=last_item)
 
     # cur_user = None
     # last_item = None
