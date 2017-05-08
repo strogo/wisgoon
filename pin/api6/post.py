@@ -612,7 +612,7 @@ def tops(request, period):
     if token:
         payload['token'] = token
     if offset:
-        payload['before'] = offset
+        payload['offset'] = offset
 
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/post/tops/{}/"
