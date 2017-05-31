@@ -518,6 +518,9 @@ def banned_imei(request):
     except:
         return return_not_found()
 
+    if imei == "na":
+        return return_not_found()
+
     if settings.DEBUG:
         from pin.tools import AuthCache
         token = request.GET.get('token', '')
@@ -552,9 +555,10 @@ def banned_imei(request):
                                   text=desc + description,
                                   ip_address=get_user_ip(request))
 
-                return return_json_data({'status': True,
-                                         'message': _("Successfully Unbanned Imei."),
-                                         'imei_status': True})
+                return return_json_data(
+                    {'status': True,
+                     'message': _("Successfully Unbanned Imei."),
+                     'imei_status': True})
 
             except:
                 return return_not_found()
@@ -601,9 +605,10 @@ def get_user_with_imei(request, imei):
                       'next': '',
                       'total_count': ''}
 
-    phone_data = PhoneData.objects.filter(imei=imei)
-    for data in phone_data:
-        users.append(get_simple_user_object(data.user.id))
+    if imei != "na":
+        phone_data = PhoneData.objects.filter(imei=imei)
+        for data in phone_data:
+            users.append(get_simple_user_object(data.user.id))
 
     result['objects'] = users
     return return_json_data(result)
