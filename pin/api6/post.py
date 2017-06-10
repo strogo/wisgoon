@@ -276,86 +276,6 @@ def send(request):
     return return_json_data({'status': status, 'message': msg, 'post': data})
 
 
-def related_post(request, item_id):
-    current_user = None
-    # hot_post = None
-
-    data = {
-        'meta': {
-            'limit': GLOBAL_LIMIT,
-            'next': "",
-            'total_count': 1000
-        },
-        'objects': [],
-    }
-
-    token = request.GET.get('token', False)
-    offset = int(request.GET.get('offset', 0))
-    last_id = int(request.GET.get('last_id', 0))
-
-    if offset > 100:
-        return return_json_data(data)
-
-    if token:
-        # current_user = AuthCache.user_from_token(token=token)
-        current_user = AuthCache.id_from_token(token=token)
-
-    cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
-    mltis = cache.get(cache_str)
-
-    if not mltis:
-        try:
-            post = Post.objects.get(id=int(item_id))
-        except Post.DoesNotExist:
-            return return_not_found()
-
-        # mlt = SearchQuerySet().models(Post)\
-        #     .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
-        ps = ESPosts()
-        mlt = ps.related_post(post.text,
-                              offset=offset,
-                              limit=Post.GLOBAL_LIMIT)
-
-        idis = []
-        for pmlt in mlt:
-            if post.id != int(pmlt.id):
-                idis.append(int(pmlt.id))
-
-        mltis = get_list_post(idis)
-
-        if not mltis:
-            post_ids = Post.latest(cat_id=post.category_id, pid=last_id)
-            for post_id in post_ids:
-                if post.id != post_id:
-                    last_id = post_id
-                    mltis.append(post_id)
-    if mltis:
-        last_id = mltis[-1]
-
-    cache.set(cache_str, mltis, 86400)
-
-    # if current_user:
-    #     viewer_id = str(current_user)
-    # else:
-    #     viewer_id = str(get_user_ip(request, to_int=True))
-
-    # ad = Ad.get_ad(user_id=viewer_id)
-    # if ad:
-    #     hot_post = int(ad.post_id)
-    # if hot_post:
-    #     mltis = list([hot_post]) + list(mltis)
-
-    data['objects'] = get_objects_list(mltis, current_user)
-    data['meta']['next'] = get_next_url(url_name='api-6-post-related',
-                                        token=token,
-                                        offset=offset + Post.GLOBAL_LIMIT,
-                                        last_id=last_id,
-                                        url_args={
-                                            "item_id": item_id}
-                                        )
-    return return_json_data(data)
-
-
 def promoted(request):
     data = {}
     objects = []
@@ -1289,3 +1209,121 @@ def hashtag(request, tag_name):
     #     return return_json_data(data)
     # else:
     #     return return_bad_request()
+
+
+def related_post(request, item_id):
+    token = request.GET.get('token', None)
+    offset = int(request.GET.get('offset', 0))
+    last_id = int(request.GET.get('last_id', 0))
+
+    data = {}
+    data['meta'] = {'limit': 20,
+                    'next': "",
+                    'total_count': 0}
+    data['objects'] = []
+
+    payload = {}
+    if token:
+        payload['token'] = token
+    if offset:
+        payload['offset'] = offset
+    if last_id:
+        payload['last_id'] = last_id
+
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/post/related/{}/"
+    else:
+        url = "http://test.wisgoon.com/v7/post/related/{}/"
+
+    url = url.format(item_id)
+
+    # Get choices post
+    s = requests.Session()
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+    if res.status_code == 200:
+        try:
+            data = json.loads(res.content)
+        except:
+            return return_not_found()
+    else:
+        return return_not_found()
+
+    return return_json_data(data)
+    # current_user = None
+    # # hot_post = None
+
+    # data = {
+    #     'meta': {
+    #         'limit': GLOBAL_LIMIT,
+    #         'next': "",
+    #         'total_count': 1000
+    #     },
+    #     'objects': [],
+    # }
+
+    # token = request.GET.get('token', False)
+    # offset = int(request.GET.get('offset', 0))
+    # last_id = int(request.GET.get('last_id', 0))
+
+    # if offset > 100:
+    #     return return_json_data(data)
+
+    # if token:
+    #     # current_user = AuthCache.user_from_token(token=token)
+    #     current_user = AuthCache.id_from_token(token=token)
+
+    # cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
+    # mltis = cache.get(cache_str)
+
+    # if not mltis:
+    #     try:
+    #         post = Post.objects.get(id=int(item_id))
+    #     except Post.DoesNotExist:
+    #         return return_not_found()
+
+    #     # mlt = SearchQuerySet().models(Post)\
+    #     #     .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
+    #     ps = ESPosts()
+    #     mlt = ps.related_post(post.text,
+    #                           offset=offset,
+    #                           limit=Post.GLOBAL_LIMIT)
+
+    #     idis = []
+    #     for pmlt in mlt:
+    #         if post.id != int(pmlt.id):
+    #             idis.append(int(pmlt.id))
+
+    #     mltis = get_list_post(idis)
+
+    #     if not mltis:
+    #         post_ids = Post.latest(cat_id=post.category_id, pid=last_id)
+    #         for post_id in post_ids:
+    #             if post.id != post_id:
+    #                 last_id = post_id
+    #                 mltis.append(post_id)
+    # if mltis:
+    #     last_id = mltis[-1]
+
+    # cache.set(cache_str, mltis, 86400)
+
+    # # if current_user:
+    # #     viewer_id = str(current_user)
+    # # else:
+    # #     viewer_id = str(get_user_ip(request, to_int=True))
+
+    # # ad = Ad.get_ad(user_id=viewer_id)
+    # # if ad:
+    # #     hot_post = int(ad.post_id)
+    # # if hot_post:
+    # #     mltis = list([hot_post]) + list(mltis)
+
+    # data['objects'] = get_objects_list(mltis, current_user)
+    # data['meta']['next'] = get_next_url(url_name='api-6-post-related',
+    #                                     token=token,
+    #                                     offset=offset + Post.GLOBAL_LIMIT,
+    #                                     last_id=last_id,
+    #                                     url_args={
+    #                                         "item_id": item_id}
+    #                                     )
+    # return return_json_data(data)
