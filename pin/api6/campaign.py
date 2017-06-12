@@ -90,8 +90,8 @@ def campaign_posts(request, camp_id):
     campaign_tags = campaign.tags
     tags = campaign_tags.split(',')
     tags.append(campaign.primary_tag)
-    start_date = campaign.start_date.strftime("%s")
-    end_date = campaign.end_date.strftime("%s")
+    start_date = int(campaign.start_date.strftime("%s"))
+    end_date = int(campaign.end_date.strftime("%s"))
 
     ps = ESPosts()
     if order_by == "timestamp":
