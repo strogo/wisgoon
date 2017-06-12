@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         limit = 100
-        offset = 19000000
+        offset = 19700000
         last_post = Post.objects.only('id').last()
 
         while offset < last_post.id:
