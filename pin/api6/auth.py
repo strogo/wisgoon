@@ -43,6 +43,8 @@ from pin.api6.tools import get_next_url, get_simple_user_object,\
     check_user_state, normalize_phone, validate_mobile, get_random_int,\
     code_is_valid, allow_reset, update_imei, update_score
 
+import requests
+
 
 def followers(request, user_id):
     offset = int(request.GET.get('offset', 0))
@@ -386,32 +388,60 @@ def profile_name(request, user_name):
 
 
 def profile(request, user_id):
+    data = {
+        'user': {},
+        'profile': {}
+    }
+    payload = {}
     token = request.GET.get('token', False)
-    current_user = None
-    current_user_id = None
-
-    if user_id:
-        try:
-            User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return return_not_found()
 
     if token:
-        current_user = AuthCache.user_from_token(token=token)
-        if current_user:
-            current_user_id = current_user.id
+        payload['token'] = token
 
-    try:
-        profile = Profile.objects\
-            .only('banned', 'user', 'score', 'cnt_post', 'cnt_like',
-                  'website', 'credit', 'level', 'bio').get(user_id=user_id)
-    except Profile.DoesNotExist:
-        profile = Profile.objects.create(user_id=user_id)
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/auth/user/{}/"
+    else:
+        url = "http://test.wisgoon.com/v7/auth/user/{}/"
+    url = url.format(user_id)
 
-    data = {
-        'user': get_simple_user_object(user_id, current_user_id, avatar=210),
-        'profile': get_profile_data(profile, user_id)
-    }
+    # Get choices post
+    s = requests.Session()
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+    if res.status_code == 200:
+        try:
+            data = json.loads(res.content)
+        except:
+            return return_not_found()
+    else:
+        return return_not_found()
+
+    # token = request.GET.get('token', False)
+    # current_user = None
+    # current_user_id = None
+
+    # if user_id:
+    #     try:
+    #         User.objects.get(id=user_id)
+    #     except User.DoesNotExist:
+    #         return return_not_found()
+
+    # if token:
+    #     current_user = AuthCache.user_from_token(token=token)
+    #     if current_user:
+    #         current_user_id = current_user.id
+
+    # try:
+    #     profile = Profile.objects\
+    #         .only('banned', 'user', 'score', 'cnt_post', 'cnt_like',
+    #               'website', 'credit', 'level', 'bio').get(user_id=user_id)
+    # except Profile.DoesNotExist:
+    #     profile = Profile.objects.create(user_id=user_id)
+
+    # data = {
+    #     'user': get_simple_user_object(user_id, current_user_id, avatar=210),
+    #     'profile': get_profile_data(profile, user_id)
+    # }
     return return_json_data(data)
 
 

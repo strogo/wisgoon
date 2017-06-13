@@ -3,7 +3,6 @@
 import re
 
 from django.conf import settings
-
 from elasticsearch import Elasticsearch
 from elasticsearch import exceptions
 
@@ -87,10 +86,11 @@ class ESPosts():
         return posts
 
     def save(self, post_obj):
+        timestamp = int(post_obj.create.strftime("%s"))
         doc = {
             'id': post_obj.id,
             'text': post_obj.text,
-            'timestamp': post_obj.timestamp,
+            'timestamp': timestamp,
             'status': post_obj.status,
             'category': post_obj.category_id,
             'cnt_like': post_obj.cnt_like,
@@ -117,10 +117,11 @@ class ESPosts():
             post_obj = None
 
         if post_obj:
+            timestamp = int(post_obj.create.strftime("%s"))
             doc = {
                 'id': post_obj.id,
                 'text': post_obj.text,
-                'timestamp': post_obj.timestamp,
+                'timestamp': timestamp,
                 'status': post_obj.status,
                 'category': post_obj.category_id,
                 'cnt_like': post_obj.cnt_like,

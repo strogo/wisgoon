@@ -26,8 +26,8 @@ class Command(BaseCommand):
         campaign_tags = camp.tags
         tags = campaign_tags.split(',')
         tags.append(camp.primary_tag)
-        start_date = camp.start_date.strftime("%s")
-        end_date = camp.end_date.strftime("%s")
+        start_date = int(camp.start_date.strftime("%s"))
+        end_date = int(camp.end_date.strftime("%s"))
         camp_limit = camp.limit
 
         # posts = SearchQuerySet().models(Post)\

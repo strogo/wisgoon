@@ -17,6 +17,7 @@ stream_limit = 500
 
 
 class RedisUserStream(object):
+
     def __init__(self):
         pass
 
@@ -132,6 +133,7 @@ class RedisUserStream(object):
 
 
 class RedisTopPostStream(object):
+
     def __init__(self):
         pass
 
@@ -153,7 +155,7 @@ class RedisTopPostStream(object):
         key = 'top_all'
         ss.zadd(key, post_id, cnt_like)
         if ss.zcard(key) > 1000:
-                self.trim_stream(key)
+            self.trim_stream(key)
 
     def trim_stream(self, key):
         ss.zremrangebyrank(key, 0, 0)

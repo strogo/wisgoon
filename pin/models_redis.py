@@ -49,6 +49,13 @@ class PostView(object):
         return viewCon.get(self.KEY_PREFIX)
 
 
+        # try:
+        #     return PostStats(post_id=self.post_id).get_cnt_view()
+        # except:
+        #     return 0
+
+
+
 class NotifStruct:
 
     def __init__(self, **entries):

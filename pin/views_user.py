@@ -192,48 +192,76 @@ def follow(request, following, action):
 @login_required
 @system_writable
 def like(request, item_id):
-    post = post_item_json(post_id=int(item_id))
-    if not post:
-        return HttpResponseRedirect('/')
 
-    import redis
-    cur_user = request.user
-    cur_user_id = request.user.id
+    from pin.api6.http import return_bad_request, return_json_data
+    try:
+        token = ApiKey.objects.get(user_id=request.user.id)
+    except UnreadablePostError:
+        return return_bad_request()
 
-    """ Check current user status """
-    status = check_user_state(user_id=post['user']['id'],
-                              current_user=cur_user)
-    allow_like = status['status']
-
-    if not allow_like:
-        return HttpResponseRedirect('/')
-
-    from models_redis import LikesRedis
-
-    like, dislike, current_like = LikesRedis(post_id=item_id)\
-        .like_or_dislike(user_id=cur_user_id,
-                         post_owner=post['user']['id'],
-                         user_ip=get_user_ip(request),
-                         category=post['category']['id'],
-                         date=post['timestamp'])
-
-    redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
-    key = "cnt_like:user:{}:{}".format(cur_user_id,
-                                       post['category']['id'])
-
-    if like:
-        user_act = 1
-        redis_server.incr(key, 1)
-
-    elif dislike:
-        user_act = -1
-        redis_server.incr(key, -1)
-
-    if request.is_ajax():
-        data = [{'likes': current_like, 'user_act': user_act}]
-        return HttpResponse(json.dumps(data), content_type="text/html")
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/like/item/?token={}"
     else:
-        return HttpResponseRedirect(reverse('pin-item', args=[post['id']]))
+        url = "http://test.wisgoon.com/v7/like/item/?token={}"
+
+    url = url.format(token.key)
+    payload = {}
+    payload['item_id'] = item_id
+
+    # Get choices post
+    s = requests.Session()
+    res = s.post(url, data=payload, headers={'Connection': 'close'})
+
+    if res.status_code != 200:
+        return return_bad_request(status=False)
+
+    try:
+        data = json.loads(res.content)
+    except:
+        return return_bad_request()
+    return return_json_data(data)
+    # post = post_item_json(post_id=int(item_id))
+    # if not post:
+    #     return HttpResponseRedirect('/')
+
+    # import redis
+    # cur_user = request.user
+    # cur_user_id = request.user.id
+
+    # """ Check current user status """
+    # status = check_user_state(user_id=post['user']['id'],
+    #                           current_user=cur_user)
+    # allow_like = status['status']
+
+    # if not allow_like:
+    #     return HttpResponseRedirect('/')
+
+    # from models_redis import LikesRedis
+
+    # like, dislike, current_like = LikesRedis(post_id=item_id)\
+    #     .like_or_dislike(user_id=cur_user_id,
+    #                      post_owner=post['user']['id'],
+    #                      user_ip=get_user_ip(request),
+    #                      category=post['category']['id'],
+    #                      date=post['timestamp'])
+
+    # redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
+    # key = "cnt_like:user:{}:{}".format(cur_user_id,
+    #                                    post['category']['id'])
+
+    # if like:
+    #     user_act = 1
+    #     redis_server.incr(key, 1)
+
+    # elif dislike:
+    #     user_act = -1
+    #     redis_server.incr(key, -1)
+
+    # if request.is_ajax():
+    #     data = [{'likes': current_like, 'user_act': user_act}]
+    #     return HttpResponse(json.dumps(data), content_type="text/html")
+    # else:
+    #     return HttpResponseRedirect(reverse('pin-item', args=[post['id']]))
 
 
 @login_required
