@@ -7,7 +7,7 @@ from datetime import datetime
 # from haystack.query import SearchQuerySet
 
 from django.conf import settings
-# from django.core.cache import cache
+from django.core.cache import cache
 from django.db.models import Q
 from django.http import UnreadablePostError
 from django.utils.translation import ugettext as _
@@ -22,7 +22,7 @@ from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json,\
-    post_item_json
+    post_item_json, check_user_state
 # ,retry_fetch_posts,category_get_json, check_user_state
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
@@ -451,117 +451,117 @@ def tops(request, period):
     data = {}
     data['objects'] = []
     data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
-    payload = {}
+    # payload = {}
     offset = int(request.GET.get('offset', 0))
     token = request.GET.get('token', None)
 
-    if token:
-        payload['token'] = token
-    if offset:
-        payload['offset'] = offset
+    # if token:
+    #     payload['token'] = token
+    # if offset:
+    #     payload['offset'] = offset
 
-    if settings.DEBUG:
-        url = "http://127.0.0.1:8801/v7/post/tops/{}/"
-    else:
-        url = "http://api.wisgoon.com/v7/post/tops/{}/"
+    # if settings.DEBUG:
+    #     url = "http://127.0.0.1:8801/v7/post/tops/{}/"
+    # else:
+    #     url = "http://api.wisgoon.com/v7/post/tops/{}/"
 
-    url = url.format(period)
+    # url = url.format(period)
 
-    # Get choices post
-    s = requests.Session()
-    res = s.get(url, params=payload, headers={'Connection': 'close'})
+    # # Get choices post
+    # s = requests.Session()
+    # res = s.get(url, params=payload, headers={'Connection': 'close'})
 
-    if res.status_code == 200:
-        try:
-            data = json.loads(res.content)
-        except:
-            pass
+    # if res.status_code == 200:
+    #     try:
+    #         data = json.loads(res.content)
+    #     except:
+    #         pass
 
     # data['meta']['next'] = get_next_url(url_name='api-6-post-tops',
     #                                     token=token,
     #                                     offset=offset + GLOBAL_LIMIT,
     #                                     url_args={"period": period})
 
-    # from pin.models_stream import RedisTopPostStream
+    from pin.models_stream import RedisTopPostStream
 
-    # cur_user = None
-    # data = {
-    #     'meta': {
-    #         'limit': GLOBAL_LIMIT,
-    #         'next': '',
-    #         'total_count': 1000
-    #     }
-    # }
+    cur_user = None
+    data = {
+        'meta': {
+            'limit': GLOBAL_LIMIT,
+            'next': '',
+            'total_count': 1000
+        }
+    }
 
-    # offset = int(request.GET.get('offset', 0))
-    # token = request.GET.get('token', '')
+    offset = int(request.GET.get('offset', 0))
+    token = request.GET.get('token', '')
 
-    # if token:
-    #     cur_user = AuthCache.id_from_token(token=token)
+    if token:
+        cur_user = AuthCache.id_from_token(token=token)
 
-    # if period and period in ['new', 'daily', 'week', 'month', 'all']:
-    #     if period == 'month':
-    #         redis_key = "top_last_month"
+    if period and period in ['new', 'daily', 'week', 'month', 'all']:
+        if period == 'month':
+            redis_key = "top_last_month"
 
-    #     elif period == 'daily':
-    #         redis_key = "top_last_day"
+        elif period == 'daily':
+            redis_key = "top_last_day"
 
-    #     elif period == 'week':
-    #         redis_key = "top_last_week"
+        elif period == 'week':
+            redis_key = "top_last_week"
 
-    #     elif period == 'new':
-    #         redis_key = "top_today"
-    #     else:
-    #         redis_key = "top_all"
+        elif period == 'new':
+            redis_key = "top_today"
+        else:
+            redis_key = "top_all"
 
-    #     top_post = RedisTopPostStream()
-    #     post_ids = top_post.get_posts(key=redis_key, offset=offset)
+        top_post = RedisTopPostStream()
+        post_ids = top_post.get_posts(key=redis_key, offset=offset)
 
-    #     posts = get_list_post(post_ids)
+        posts = get_list_post(post_ids)
 
-    #     data['objects'] = get_objects_list(posts,
-    #                                        cur_user_id=cur_user,
-    #                                        r=request)
-    #     data['meta']['next'] = get_next_url(url_name='api-6-post-tops',
-    #                                         token=token,
-    #                                         offset=offset + GLOBAL_LIMIT,
-    #                                         url_args={"period": period})
-    # else:
-    #     data['objects'] = []
+        data['objects'] = get_objects_list(posts,
+                                           cur_user_id=cur_user,
+                                           r=request)
+        data['meta']['next'] = get_next_url(url_name='api-6-post-tops',
+                                            token=token,
+                                            offset=offset + GLOBAL_LIMIT,
+                                            url_args={"period": period})
+    else:
+        data['objects'] = []
 
     return return_json_data(data)
 
 
 def user_post(request, user_id):
 
-    data = {}
-    data['objects'] = []
-    data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
-    payload = {}
-    before = int(request.GET.get('before', 0))
-    token = request.GET.get('token', None)
+    # data = {}
+    # data['objects'] = []
+    # data['meta'] = {'limit': 20, 'next': '', 'total_count': 1000}
+    # payload = {}
+    # before = int(request.GET.get('before', 0))
+    # token = request.GET.get('token', None)
 
-    if token:
-        payload['token'] = token
-    if before:
-        payload['before'] = before
+    # if token:
+    #     payload['token'] = token
+    # if before:
+    #     payload['before'] = before
 
-    if settings.DEBUG:
-        url = "http://127.0.0.1:8801/v7/post/user/{}/"
-    else:
-        url = "http://api.wisgoon.com/v7/post/user/{}/"
+    # if settings.DEBUG:
+    #     url = "http://127.0.0.1:8801/v7/post/user/{}/"
+    # else:
+    #     url = "http://api.wisgoon.com/v7/post/user/{}/"
 
-    url = url.format(user_id)
+    # url = url.format(user_id)
 
-    # Get choices post
-    s = requests.Session()
-    res = s.get(url, params=payload, headers={'Connection': 'close'})
+    # # Get choices post
+    # s = requests.Session()
+    # res = s.get(url, params=payload, headers={'Connection': 'close'})
 
-    if res.status_code == 200:
-        try:
-            data = json.loads(res.content)
-        except:
-            pass
+    # if res.status_code == 200:
+    #     try:
+    #         data = json.loads(res.content)
+    #     except:
+    #         pass
 
     # data['meta']['next'] = get_next_url(url_name='api-6-post-user',
     #                                     before=before + 20,
@@ -569,39 +569,39 @@ def user_post(request, user_id):
     #                                     url_args={"user_id": user_id}
     #                                     )
 
-    # before = int(request.GET.get('before', 0))
-    # token = request.GET.get('token', None)
-    # current_user_id = None
-    # limit = 20
-    # user_posts = []
-    # data = {
-    #     'meta': {
-    #         'next': '',
-    #         'limit': limit,
-    #         'total_count': 1000
-    #     },
-    #     'objects': []
-    # }
+    before = int(request.GET.get('before', 0))
+    token = request.GET.get('token', None)
+    current_user_id = None
+    limit = 20
+    user_posts = []
+    data = {
+        'meta': {
+            'next': '',
+            'limit': limit,
+            'total_count': 1000
+        },
+        'objects': []
+    }
 
-    # # Check user_id
-    # user_id = get_int(user_id)
-    # if user_id == 0:
-    #     return return_json_data(data)
+    # Check user_id
+    user_id = get_int(user_id)
+    if user_id == 0:
+        return return_json_data(data)
 
-    # status, current_user_id = check_user_state(user_id=user_id, token=token)
-    # if not status:
-    #     return return_json_data(data)
+    status, current_user_id = check_user_state(user_id=user_id, token=token)
+    if not status:
+        return return_json_data(data)
 
-    # user_posts = Post.objects.values_list('id', flat=True)\
-    #     .filter(user=user_id)\
-    #     .order_by('-id')[before:before + 20]
+    user_posts = Post.objects.values_list('id', flat=True)\
+        .filter(user=user_id)\
+        .order_by('-id')[before:before + 20]
 
-    # data['objects'] = get_objects_list(user_posts, current_user_id)
-    # data['meta']['next'] = get_next_url(url_name='api-6-post-user',
-    #                                     before=before + limit,
-    #                                     token=token,
-    #                                     url_args={"user_id": user_id}
-    #                                     )
+    data['objects'] = get_objects_list(user_posts, current_user_id)
+    data['meta']['next'] = get_next_url(url_name='api-6-post-user',
+                                        before=before + limit,
+                                        token=token,
+                                        url_args={"user_id": user_id}
+                                        )
     return return_json_data(data)
 
 
@@ -1213,118 +1213,118 @@ def hashtag(request, tag_name):
 
 
 def related_post(request, item_id):
-    token = request.GET.get('token', None)
-    offset = int(request.GET.get('offset', 0))
-    last_id = int(request.GET.get('last_id', 0))
-
-    data = {}
-    data['meta'] = {'limit': 20,
-                    'next': "",
-                    'total_count': 0}
-    data['objects'] = []
-
-    payload = {}
-    if token:
-        payload['token'] = token
-    if offset:
-        payload['offset'] = offset
-    if last_id:
-        payload['last_id'] = last_id
-
-    if settings.DEBUG:
-        url = "http://127.0.0.1:8801/v7/post/related/{}/"
-    else:
-        url = "http://api.wisgoon.com/v7/post/related/{}/"
-
-    url = url.format(item_id)
-
-    # Get choices post
-    s = requests.Session()
-    res = s.get(url, params=payload, headers={'Connection': 'close'})
-
-    if res.status_code == 200:
-        try:
-            data = json.loads(res.content)
-        except:
-            return return_not_found()
-    else:
-        return return_not_found()
-
-    return return_json_data(data)
-    # current_user = None
-    # # hot_post = None
-
-    # data = {
-    #     'meta': {
-    #         'limit': GLOBAL_LIMIT,
-    #         'next': "",
-    #         'total_count': 1000
-    #     },
-    #     'objects': [],
-    # }
-
-    # token = request.GET.get('token', False)
+    # token = request.GET.get('token', None)
     # offset = int(request.GET.get('offset', 0))
     # last_id = int(request.GET.get('last_id', 0))
 
-    # if offset > 100:
-    #     return return_json_data(data)
+    # data = {}
+    # data['meta'] = {'limit': 20,
+    #                 'next': "",
+    #                 'total_count': 0}
+    # data['objects'] = []
 
+    # payload = {}
     # if token:
-    #     # current_user = AuthCache.user_from_token(token=token)
-    #     current_user = AuthCache.id_from_token(token=token)
+    #     payload['token'] = token
+    # if offset:
+    #     payload['offset'] = offset
+    # if last_id:
+    #     payload['last_id'] = last_id
 
-    # cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
-    # mltis = cache.get(cache_str)
+    # if settings.DEBUG:
+    #     url = "http://127.0.0.1:8801/v7/post/related/{}/"
+    # else:
+    #     url = "http://api.wisgoon.com/v7/post/related/{}/"
 
-    # if not mltis:
+    # url = url.format(item_id)
+
+    # # Get choices post
+    # s = requests.Session()
+    # res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+    # if res.status_code == 200:
     #     try:
-    #         post = Post.objects.get(id=int(item_id))
-    #     except Post.DoesNotExist:
+    #         data = json.loads(res.content)
+    #     except:
     #         return return_not_found()
+    # else:
+    #     return return_not_found()
 
-    #     # mlt = SearchQuerySet().models(Post)\
-    #     #     .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
-    #     ps = ESPosts()
-    #     mlt = ps.related_post(post.text,
-    #                           offset=offset,
-    #                           limit=Post.GLOBAL_LIMIT)
-
-    #     idis = []
-    #     for pmlt in mlt:
-    #         if post.id != int(pmlt.id):
-    #             idis.append(int(pmlt.id))
-
-    #     mltis = get_list_post(idis)
-
-    #     if not mltis:
-    #         post_ids = Post.latest(cat_id=post.category_id, pid=last_id)
-    #         for post_id in post_ids:
-    #             if post.id != post_id:
-    #                 last_id = post_id
-    #                 mltis.append(post_id)
-    # if mltis:
-    #     last_id = mltis[-1]
-
-    # cache.set(cache_str, mltis, 86400)
-
-    # # if current_user:
-    # #     viewer_id = str(current_user)
-    # # else:
-    # #     viewer_id = str(get_user_ip(request, to_int=True))
-
-    # # ad = Ad.get_ad(user_id=viewer_id)
-    # # if ad:
-    # #     hot_post = int(ad.post_id)
-    # # if hot_post:
-    # #     mltis = list([hot_post]) + list(mltis)
-
-    # data['objects'] = get_objects_list(mltis, current_user)
-    # data['meta']['next'] = get_next_url(url_name='api-6-post-related',
-    #                                     token=token,
-    #                                     offset=offset + Post.GLOBAL_LIMIT,
-    #                                     last_id=last_id,
-    #                                     url_args={
-    #                                         "item_id": item_id}
-    #                                     )
     # return return_json_data(data)
+    current_user = None
+    # hot_post = None
+
+    data = {
+        'meta': {
+            'limit': GLOBAL_LIMIT,
+            'next': "",
+            'total_count': 1000
+        },
+        'objects': [],
+    }
+
+    token = request.GET.get('token', False)
+    offset = int(request.GET.get('offset', 0))
+    last_id = int(request.GET.get('last_id', 0))
+
+    if offset > 100:
+        return return_json_data(data)
+
+    if token:
+        # current_user = AuthCache.user_from_token(token=token)
+        current_user = AuthCache.id_from_token(token=token)
+
+    cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
+    mltis = cache.get(cache_str)
+
+    if not mltis:
+        try:
+            post = Post.objects.get(id=int(item_id))
+        except Post.DoesNotExist:
+            return return_not_found()
+
+        # mlt = SearchQuerySet().models(Post)\
+        #     .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
+        ps = ESPosts()
+        mlt = ps.related_post(post.text,
+                              offset=offset,
+                              limit=Post.GLOBAL_LIMIT)
+
+        idis = []
+        for pmlt in mlt:
+            if post.id != int(pmlt.id):
+                idis.append(int(pmlt.id))
+
+        mltis = get_list_post(idis)
+
+        if not mltis:
+            post_ids = Post.latest(cat_id=post.category_id, pid=last_id)
+            for post_id in post_ids:
+                if post.id != post_id:
+                    last_id = post_id
+                    mltis.append(post_id)
+    if mltis:
+        last_id = mltis[-1]
+
+    cache.set(cache_str, mltis, 86400)
+
+    # if current_user:
+    #     viewer_id = str(current_user)
+    # else:
+    #     viewer_id = str(get_user_ip(request, to_int=True))
+
+    # ad = Ad.get_ad(user_id=viewer_id)
+    # if ad:
+    #     hot_post = int(ad.post_id)
+    # if hot_post:
+    #     mltis = list([hot_post]) + list(mltis)
+
+    data['objects'] = get_objects_list(mltis, current_user)
+    data['meta']['next'] = get_next_url(url_name='api-6-post-related',
+                                        token=token,
+                                        offset=offset + Post.GLOBAL_LIMIT,
+                                        last_id=last_id,
+                                        url_args={
+                                            "item_id": item_id}
+                                        )
+    return return_json_data(data)
