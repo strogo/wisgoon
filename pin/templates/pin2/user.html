@@ -19,7 +19,53 @@
 // var next_pref = '?pid=';
 </script>
 
+{% if not latest_items %}
+<div class="container">
+    <div class="box pa10 tace col-md-12">
+    {% if is_private and not show_posts%}
+        <img src="{{STATIC_CDN}}img/Private_50.png" alt="">
+        <h3>این حساب کاربری خصوصی میباشد</h3>
+    {% else %}
+        <h3>موردی پیدا نشد</h3>
+    {% endif %}
+    </div>
+</div>
+{% endif %}
+
 <div class="pa20 pato0">
+    {% comment %}
+
+    <div class="paginationAlign">
+        {% if latest_items.has_other_pages %}
+
+          <ul class="pagination">
+            {% if latest_items.has_previous %}
+              <li><a href="?page={{ latest_items.previous_page_number }}">&laquo;</a></li>
+
+            {% else %}
+              <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+
+            {% for i in page_range %}
+
+              {% if latest_items.number == i %}
+                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+
+              {% else %}
+                <li><a href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+
+            {% if latest_items.has_next %}
+              <li><a href="?page={{ latest_items.next_page_number }}">&raquo;</a></li>
+            {% else %}
+              <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+          </ul>
+        {% endif %}
+    </div>
+    {% endcomment %}
+
     <div id="feed" class="masonry">
         {% include "pin2/_items_2_v6.html"%}
     </div>

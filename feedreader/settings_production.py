@@ -10,6 +10,8 @@ MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
 STATIC_DOMAIN = "http://static.wisgoon.com/"
 
+STATIC_MEDIA = STATIC_DOMAIN + "media/"
+
 IMAGE_CACHE_ROOT = os.path.join(MEDIA_ROOT, 'image_cache')
 COMPRESS_URL = MEDIA_URL
 COMPRESS_ROOT = MEDIA_ROOT
@@ -109,6 +111,8 @@ ES_HOST = "79.127.125.98"
 INFLUX_HOST = "79.127.125.104"
 
 
+REDIS_DB_104 = "79.127.125.104"
+
 REDIS_DB = '79.127.125.146'
 REDIS_DB_NUMBER = 11
 
@@ -126,3 +130,51 @@ STATIC_URL = 'http://static.wisgoon.com/static/'
 MONGO_DB_HOST = "79.127.125.99"
 
 ES_HOSTS = ['79.127.125.104']
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'standard': {
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'mail_admins'],
+            'propagate': True,
+            'level': 'WARN',
+        },
+        '': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': 'WARN',
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    }
+}

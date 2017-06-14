@@ -21,6 +21,7 @@
 /feedreader/*media*/packages/
 /feedreader/media/v2/test_data/
 /feedreader/*media*/product/
+/feedreader/*media*/removed_image/
 wenv/
 feedreader/*media*/cache2/
 /src/
@@ -31,3 +32,5 @@ feedreader/*media*/cache2/
 /reports/
 /mysql2pgsql.yml
 /api/main
+/feedreader/*media*/covers/
+/feedreader/*media*/neptune_cache/

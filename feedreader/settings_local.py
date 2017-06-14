@@ -11,7 +11,9 @@ THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DISPLAY_AD = False
 REPORT_TYPE = {'PIN': 1, 'COMMENT': 2, 'RSS': 3}
-STATIC_VERSION = '5.10.2'
+STATIC_VERSION = '5.10.8'
+
+STATIC_MEDIA = "media/"
 
 SITE_ROOT = os.path.dirname(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -47,6 +49,8 @@ NEO4J_DATABASE = "http://localhost:7474/db/data/"
 
 REDIS_DB = 'wisgoon.db'
 REDIS_DB_NUMBER = 11
+
+REDIS_DB_104 = "127.0.0.1"
 
 REDIS_DB_2 = 'wisgoon.db.2'
 REDIS_DB_NUMBER_2 = 10
@@ -142,6 +146,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'pin.context_processors.global_values',
     'pin.context_processors.static_version',
     'pin.context_processors.static_cdn',
+    'pin.context_processors.static_media',
     'pin.context_processors.system_writable',
 ]
 
@@ -259,7 +264,7 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'formatter': 'standard'
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -272,6 +277,11 @@ LOGGING = {
             'handlers': ['console', 'mail_admins'],
             'propagate': True,
             'level': 'WARN',
+        },
+        '': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': 'DEBUG',
         },
         'django.db.backends': {
             'handlers': ['console'],
@@ -312,7 +322,7 @@ APP_TOKEN_KEY = 'e622c330c77a17c8426e638d7a85da6c2ec9f455'
 # DECIMAL_SEPARATOR = ','
 # NUMBER_GROUPING = 3
 
-HAYSTACK_SIGNAL_PROCESSOR = 'pin.signals.MySignalProcessor'
+# HAYSTACK_SIGNAL_PROCESSOR = 'pin.signals.MySignalProcessor'
 
 COMPRESS_CSS_FILTERS = [
     'compressor.filters.css_default.CssAbsoluteFilter',
@@ -378,6 +388,9 @@ CELERY_ROUTES.update({
     },
     'wisgoon.gcm.send': {
         'queue': 'wisgoon.gcm.send'
+    },
+    'wisgoon.pin.ltrim_user_stream': {
+        'queue': 'wisgoon.pin.ltrim_user_stream'
     }
 })
 

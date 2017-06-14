@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from settings_production import *
 
-DEBUG = True
 
 DEVEL_BRANCH = True
 
@@ -44,4 +43,5 @@ DATABASES = {
     },
 }
 
-ALLOWED_HOSTS = ALLOWED_HOSTS + ["new.wisgoon.com"]
+DEBUG = False
+ALLOWED_HOSTS = ALLOWED_HOSTS + ["new.wisgoon.com", "devel.wisgoon.com"]

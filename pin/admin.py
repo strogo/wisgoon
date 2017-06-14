@@ -1,19 +1,43 @@
 # -*- coding: utf-8 -*-
-import time
+# import time
 
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
+
 from haystack.admin import SearchModelAdmin
 
-from user_profile.models import Profile, CreditLog
+from user_profile.models import Profile, CreditLog, Package, Subscription
 
+from pin.tools import revalidate_bazaar, get_user_ip
+from pin.tasks import update_camp_post, camp_scores_2
 from pin.models import Post, Category, App_data, Comments, InstaAccount,\
     Official, SubCategory, Packages, Bills2 as Bill, Ad, Log, PhoneData,\
     BannedImei, CommentClassification, CommentClassificationTags,\
     Results, Storages, Lable, UserActivitiesSample, UserLable,\
-    UserActivities, Campaign, SystemState, CampaignWinners
-from pin.actions import send_notif
-from pin.tools import revalidate_bazaar
-from pin.tasks import update_camp_post, camp_scores
+    UserActivities, Campaign, SystemState, CampaignWinners, RemoveImage,\
+    InviteLog
+# from pin.actions import send_notif
+
+
+class InviteLogAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'code']
+    raw_id_fields = ["user"]
+    search_fields = ["user", "code"]
+
+
+class RemoveImageAdmin(admin.ModelAdmin):
+    list_display = ['id', 'text', 'status']
+
+
+class PackageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'price', 'day')
+
+
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'end_date', 'user', 'package', 'create_at', 'expire')
+    raw_id_fields = ["user", "package"]
+    search_fields = ["user"]
+    exclude = ('end_date',)
 
 
 class StoragesAdmin(admin.ModelAdmin):
@@ -48,10 +72,11 @@ class PhoneDataAdmin(admin.ModelAdmin):
         'phone_model',
         'phone_serial',
         'android_version',
-        'app_version'
+        'app_version',
+        'logged_out'
     )
     raw_id_fields = ("user",)
-    search_fields = ["=imei", "=user__username"]
+    search_fields = ["=imei", "=user__username", "=phone_serial"]
 
 
 class CreditLogAdmin(admin.ModelAdmin):
@@ -68,7 +93,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 
 class LogAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'owner', 'user_id', 'action', 'object_id',
+    list_display = ('id', 'user', 'owner', 'action', 'object_id',
                     'content_type', '_get_thumbnail', 'create_time',
                     'ip_address', 'text')
 
@@ -84,12 +109,12 @@ class LogAdmin(admin.ModelAdmin):
         return u''
     _get_thumbnail.allow_tags = True
 
-    def user_id(self, instance):
-        return instance.user_id
+    # def user_id(self, instance):
+    #     return instance.user_id
 
 
 class AdAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user_id', 'ended', 'get_cnt_view',
+    list_display = ('id', 'user_id', 'ended', 'cnt_view',
                     'ads_type', 'start', 'end', 'get_owner', 'ip_address')
 
     raw_id_fields = ("post", "user")
@@ -238,11 +263,19 @@ class CategoryAdmin(admin.ModelAdmin):
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'website', 'cnt_post', 'cnt_like', 'score',
-                    'user', 'trusted')
+                    'user', 'trusted', 'invite_code')
     search_fields = ['=user__id', '=user__username', '=name']
     list_filter = ('trusted',)
 
     raw_id_fields = ("user", "trusted_by")
+
+    def save_model(self, request, obj, form, change):
+        obj.save()
+        Log.update_profile(actor=request.user,
+                           user_id=obj.user_id,
+                           text=_("update profile"),
+                           # image=obj.avatar,
+                           ip_address=get_user_ip(request=request))
 
 
 class AppAdmin(admin.ModelAdmin):
@@ -388,7 +421,7 @@ class CampaignAdmin(admin.ModelAdmin):
     search_fields = ['winners']
     raw_id_fields = ('owner',)
     list_display = ('id', 'description', 'primary_tag', 'tags', 'is_current',
-                    'start_date', 'end_date', 'expired', 'title')
+                    'start_date', 'end_date', 'expired', 'title', 'limit')
 
 
 class SystemStateAdmin(admin.ModelAdmin):
@@ -396,23 +429,34 @@ class SystemStateAdmin(admin.ModelAdmin):
 
 
 class CampaignWinnersAdmin(admin.ModelAdmin):
-    list_display = ('id', 'campaign_id', 'winners', 'status')
-    actions = ['winners_list']
+    list_display = ['id', 'get_campaign_id', 'winners', 'status']
+    actions = ['winners_list', 'winners_list_2']
     search_fields = ['campaign']
-    raw_id_fields = ('campaign',)
+    raw_id_fields = ("campaign",)
 
-    def campaign_id(self, obj):
-        return obj.campaign.id
+    def get_campaign_id(self, obj):
+        return obj.campaign.title
 
     def winners_list(self, request, queryset):
         for obj in queryset:
             camp_id = obj.campaign_id
             obj.status = 1
             obj.save()
-            update_camp_post.delay(camp_id=camp_id)
+            # update_camp_post.delay(camp_id=camp_id)
+            update_camp_post(camp_id=camp_id)
+
+    def winners_list_2(self, request, queryset):
+        for obj in queryset:
+            camp_id = obj.campaign_id
+            obj.status = 1
+            obj.save()
+            # update_camp_post.delay(camp_id=camp_id)
+            camp_scores_2(camp_id=camp_id)
 
     winners_list.short_description = 'محاسبه نفرات برتر'
-    campaign_id.admin_order_field = 'campaign_id'
+    winners_list_2.short_description = 'محاسبه نفرات برتر جدید'
+    get_campaign_id.admin_order_field = 'campaign'
+    get_campaign_id.short_description = 'Campaign'
 
 
 admin.site.register(SystemState, SystemStateAdmin)
@@ -442,3 +486,7 @@ admin.site.register(UserLable, UserLableAdmin)
 admin.site.register(UserActivities, UserActivitiesAdmin)
 admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(CampaignWinners, CampaignWinnersAdmin)
+admin.site.register(Subscription, SubscriptionAdmin)
+admin.site.register(Package, PackageAdmin)
+admin.site.register(RemoveImage, RemoveImageAdmin)
+admin.site.register(InviteLog, InviteLogAdmin)

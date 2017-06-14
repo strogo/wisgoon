@@ -9,18 +9,18 @@ from django.conf import settings
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-try:
-    graph = Graph(settings.NEO4J_DATABASE)
-except Exception as e:
-    pass
+# try:
+#     graph = Graph(settings.NEO4J_DATABASE)
+# except Exception as e:
+#     pass
     # print str(e), '1 models_graph'
 
-try:
-    indexes = graph.schema.get_indexes("Person")
-    if 'user_id' not in indexes:
-        graph.schema.create_index("Person", "user_id")
-except Exception, e:
-    pass
+# try:
+#     indexes = graph.schema.get_indexes("Person")
+#     if 'user_id' not in indexes:
+#         graph.schema.create_index("Person", "user_id")
+# except Exception, e:
+#     pass
     # print str(e), '2 models_graph'
 
 

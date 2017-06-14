@@ -5,6 +5,7 @@ import base64
 import json
 import datetime
 import urllib
+import requests
 from shutil import copyfile
 
 from django.db.models import Q
@@ -23,21 +24,23 @@ from django.http import HttpResponse, HttpResponseRedirect,\
 
 import pin_image
 from pin.decorators import system_writable
-from pin.api6.tools import post_item_json, notif_simple_json
+from pin.api6.tools import post_item_json, notif_simple_json,\
+    get_simple_user_object
 from pin.crawler import get_images
 from pin.forms import PinForm, PinUpdateForm
+from user_profile.models import Profile
 from pin.model_mongo import Notif
 from pin.models_redis import ActivityRedis, NotificationRedis
 from pin.notification_models import UserNotification, MyNotificationFeed
 from pin.tasks import porn_feedback
-from pin.api6.tools import get_simple_user_object
-from pin.models import Post, Stream, Follow, Ad, Block,\
+from pin.models import Post, Follow, Ad, Block,\
     Report, Comments, Comments_score, Category, Bills2 as Bills, ReportedPost,\
     FollowRequest
 from pin.tools import create_filename, get_user_ip, get_request_pid,\
-    check_block, post_after_delete, get_post_user_cache
-
+    check_block, post_after_delete, check_user_state
 from suds.client import Client
+from tastypie.models import ApiKey
+
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 MEDIA_URL = settings.MEDIA_URL
@@ -47,35 +50,68 @@ SITE_URL = settings.SITE_URL
 
 @login_required
 def following(request):
+    # pid = get_request_pid(request)
+    # pl = Post.user_stream_latest(pid=pid, user_id=request.user.id)
+
+    # arp = []
+    # for pll in pl:
+    #     pll_id = int(pll)
+    #     ob = post_item_json(pll_id, cur_user_id=request.user.id)
+    #     if ob:
+    #         is_block = check_block(user_id=ob['user']['id'],
+    #                                blocked_id=request.user.id)
+    #         if not is_block:
+    #             arp.append(ob)
+
+    # latest_items = arp
+
+    # sorted_objects = latest_items
+    # cur_user = request.user
+    # request_user_authenticated = request.user.is_authenticated()
+
     pid = get_request_pid(request)
-    pl = Post.user_stream_latest(pid=pid, user_id=request.user.id)
-
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/post/friends/"
+    else:
+        url = "http://api.wisgoon.com/v7/post/friends/"
+    payload = {}
     arp = []
-    for pll in pl:
-        pll_id = int(pll)
-        ob = post_item_json(pll_id, cur_user_id=request.user.id)
-        if ob:
-            is_block = check_block(user_id=ob['user']['id'],
-                                   blocked_id=request.user.id)
-            if not is_block:
-                arp.append(ob)
 
-    latest_items = arp
+    # Get request user token
+    try:
+        api_key = ApiKey.objects.only('key').get(user_id=request.user.id)
+    except:
+        api_key = None
 
-    sorted_objects = latest_items
+    if api_key:
+        token = api_key.key
+        payload['token'] = token
+
+    payload['before'] = pid
+
+    # Get following post
+    s = requests.Session()
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+    if res.status_code == 200:
+        try:
+            data = json.loads(res.content)
+            arp = data['objects']
+        except:
+            pass
 
     if request.is_ajax():
-        if latest_items:
+        if arp:
             return render(request,
                           'pin2/_items_2_v6.html',
-                          {'latest_items': sorted_objects})
+                          {'latest_items': arp})
         else:
             return HttpResponse(0)
     else:
         return render(request,
                       'pin2/following.html', {
                           'page': 'following',
-                          'latest_items': sorted_objects
+                          'latest_items': arp
                       })
 
 
@@ -152,42 +188,80 @@ def follow(request, following, action):
                             content_type='application/json')
     return HttpResponseRedirect(reverse('pin-user', args=[following.id]))
 
+
 @login_required
 @system_writable
 def like(request, item_id):
-    post = post_item_json(post_id=int(item_id))
-    if not post:
-        return HttpResponseRedirect('/')
 
-    # TODO samte ui moshkel dare
-    import redis
-    if check_block(user_id=post['user']['id'], blocked_id=request.user.id):
-        return HttpResponseRedirect('/')
+    from pin.api6.http import return_bad_request, return_json_data
+    try:
+        token = ApiKey.objects.get(user_id=request.user.id)
+    except UnreadablePostError:
+        return return_bad_request()
 
-    from models_redis import LikesRedis
-    like, dislike, current_like = LikesRedis(post_id=item_id)\
-        .like_or_dislike(user_id=request.user.id,
-                         post_owner=post['user']['id'],
-                         user_ip=get_user_ip(request),
-                         category=post['category']['id'])
-
-    redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
-    key = "cnt_like:user:{}:{}".format(request.user.id,
-                                       post['category']['id'])
-
-    if like:
-        user_act = 1
-        redis_server.incr(key, 1)
-
-    elif dislike:
-        user_act = -1
-        redis_server.incr(key, -1)
-
-    if request.is_ajax():
-        data = [{'likes': current_like, 'user_act': user_act}]
-        return HttpResponse(json.dumps(data), content_type="text/html")
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/like/item/?token={}"
     else:
-        return HttpResponseRedirect(reverse('pin-item', args=[post['id']]))
+        url = "http://test.wisgoon.com/v7/like/item/?token={}"
+
+    url = url.format(token.key)
+    payload = {}
+    payload['item_id'] = item_id
+
+    # Get choices post
+    s = requests.Session()
+    res = s.post(url, data=payload, headers={'Connection': 'close'})
+
+    if res.status_code != 200:
+        return return_bad_request(status=False)
+
+    try:
+        data = json.loads(res.content)
+    except:
+        return return_bad_request()
+    return return_json_data(data)
+    # post = post_item_json(post_id=int(item_id))
+    # if not post:
+    #     return HttpResponseRedirect('/')
+
+    # import redis
+    # cur_user = request.user
+    # cur_user_id = request.user.id
+
+    # """ Check current user status """
+    # status = check_user_state(user_id=post['user']['id'],
+    #                           current_user=cur_user)
+    # allow_like = status['status']
+
+    # if not allow_like:
+    #     return HttpResponseRedirect('/')
+
+    # from models_redis import LikesRedis
+
+    # like, dislike, current_like = LikesRedis(post_id=item_id)\
+    #     .like_or_dislike(user_id=cur_user_id,
+    #                      post_owner=post['user']['id'],
+    #                      user_ip=get_user_ip(request),
+    #                      category=post['category']['id'],
+    #                      date=post['timestamp'])
+
+    # redis_server = redis.Redis(settings.REDIS_DB_2, db=9)
+    # key = "cnt_like:user:{}:{}".format(cur_user_id,
+    #                                    post['category']['id'])
+
+    # if like:
+    #     user_act = 1
+    #     redis_server.incr(key, 1)
+
+    # elif dislike:
+    #     user_act = -1
+    #     redis_server.incr(key, -1)
+
+    # if request.is_ajax():
+    #     data = [{'likes': current_like, 'user_act': user_act}]
+    #     return HttpResponse(json.dumps(data), content_type="text/html")
+    # else:
+    #     return HttpResponseRedirect(reverse('pin-item', args=[post['id']]))
 
 
 @login_required
@@ -195,19 +269,26 @@ def like(request, item_id):
 def report(request, pin_id):
 
     try:
-        post = Post.objects.only('id', 'user_id').get(id=pin_id)
+        post = Post.objects.only('id', 'user_id', 'report').get(id=pin_id)
     except Post.DoesNotExist:
         return HttpResponseRedirect('/')
 
-    # TODO samte ui moshkel dare
-    if check_block(user_id=post.user_id, blocked_id=request.user.id):
+    cur_user = request.user
+    cur_user_id = request.user.id
+
+    """ Check current user status """
+    status = check_user_state(user_id=post.user_id,
+                              current_user=cur_user)
+    allow_report = status['status']
+
+    if not allow_report:
         return HttpResponseRedirect('/')
 
     try:
-        Report.objects.get(user=request.user, post_id=post.id)
+        Report.objects.get(user=cur_user, post_id=post.id)
         created = False
     except Report.DoesNotExist:
-        Report.objects.create(user=request.user, post_id=post.id)
+        Report.objects.create(user=cur_user, post_id=post.id)
         created = True
 
     if created:
@@ -223,7 +304,7 @@ def report(request, pin_id):
 
     # TODO: add new report here @hossein
     # ridi azizam :D
-    ReportedPost.post_report(post_id=post.id, reporter_id=request.user.id)
+    ReportedPost.post_report(post_id=post.id, reporter_id=cur_user_id)
     # End of hosseing work
 
     if request.is_ajax():
@@ -317,35 +398,55 @@ def nop(request, item_id):
 @system_writable
 @user_passes_test(lambda u: u.is_active, login_url='/pin/you_are_deactive/')
 def send_comment(request):
-
+    cur_user = request.user
+    from django.template.loader import render_to_string
+    from django.template import RequestContext
     if request.method == 'POST':
         try:
             text = request.POST.get('text', None)
             post = int(request.POST.get('post', None))
         except UnreadablePostError:
-            return HttpResponse(_('There is no post and text'))
+            data = {'status': False,
+                    'cnt_comments': 0,
+                    'message': "Invalid parameters"}
+            return JsonResponse(data)
 
         if text and post:
             post_json = post_item_json(post_id=post)
             if not post_json:
-                return HttpResponse(_('Post not found'))
+                data = {'status': False,
+                        'cnt_comments': 0,
+                        'message': "Post doest not exists"}
+                return JsonResponse(data)
 
-            # TODO samte ui moshkel dare
-            is_block = check_block(user_id=post_json['user']['id'],
-                                   blocked_id=request.user.id)
-            if is_block:
-                return HttpResponseRedirect('/')
+            """ Check current user status """
+            status = check_user_state(user_id=post_json['user']['id'],
+                                      current_user=cur_user)
+            allow_comment = status['status']
+
+            if not allow_comment:
+                data = {'status': False,
+                        'cnt_comments': post_json['cnt_comment'],
+                        'message': "You do not have access to this post"}
+                return JsonResponse(data)
 
             comment = Comments.objects\
                 .create(object_pk_id=post_json['id'],
                         comment=text,
-                        user=request.user,
+                        user=cur_user,
                         ip_address=get_user_ip(request))
-            return render(request, 'pin2/show_comment.html', {
-                'comment': comment
-            })
+            html = render_to_string('pin2/show_comment.html',
+                                    {'comment': comment},
+                                    context_instance=RequestContext(request))
+            data = {'status': True,
+                    'cnt_comments': post_json['cnt_comment'],
+                    'message': html}
+            return JsonResponse(data)
 
-    return HttpResponse('error')
+    data = {'status': False,
+            'cnt_comments': 0,
+            'message': "Post doest not exists"}
+    return JsonResponse(data)
 
 
 def you_are_deactive(request):
@@ -411,6 +512,8 @@ def send(request):
     fpath = None
     filename = None
     status = False
+    image_data = None
+    image_type = None
     if request.method == "POST":
         try:
             post_values = request.POST.copy()
@@ -432,8 +535,24 @@ def send(request):
         data_url_pattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
         image_data_post = post_values['image']
         if image_data_post:
-            image_data = data_url_pattern.match(image_data_post).group(2)
-            image_type = data_url_pattern.match(image_data_post).group(1)
+            is_match = data_url_pattern.match(image_data_post)
+            if is_match:
+                image_data = is_match.group(2)
+                image_type = is_match.group(1)
+            else:
+                if request.is_ajax():
+                    status = False
+                    next_url = reverse('pin-home')
+                    data = {
+                        "location": next_url,
+                        "status": status
+                    }
+                    return HttpResponse(json.dumps(data),
+                                        content_type="application/json")
+                else:
+                    msg = _("Error sending the image.")
+                    messages.add_message(request, messages.WARNING, msg)
+                    return HttpResponseRedirect('/')
         else:
             if request.is_ajax():
                 status = False
@@ -590,8 +709,10 @@ def upload(request):
             image_th = "{}pin/temp/t/{}".format(MEDIA_URL, filename)
             image_t = "{}/pin/temp/t/{}".format(MEDIA_ROOT, filename)
 
-            image_500_th = "{}pin/temp/t/{}".format(MEDIA_URL, filename.replace('.', '_500.'))
-            image_500_t = "{}/pin/temp/t/{}".format(MEDIA_ROOT, filename.replace('.', '_500.'))
+            image_500_th = "{}pin/temp/t/{}".format(
+                MEDIA_URL, filename.replace('.', '_500.'))
+            image_500_t = "{}/pin/temp/t/{}".format(
+                MEDIA_ROOT, filename.replace('.', '_500.'))
 
             pin_image.resize(image_o, image_t, 99)
             pin_image.resize(image_o, image_500_t, 500)
@@ -610,8 +731,9 @@ def upload(request):
 
 @login_required
 def show_notify(request):
-    NotificationRedis(user_id=request.user.id).clear_notif_count()
-    notif = NotificationRedis(user_id=request.user.id)\
+    user_id = request.user.id
+    NotificationRedis(user_id=user_id).clear_notif_count()
+    notif = NotificationRedis(user_id=user_id)\
         .get_notif()
 
     nl = []
@@ -621,8 +743,12 @@ def show_notify(request):
         if not anl['ob']:
             if n.type == 4:
                 anl['po'] = n.post_image
-            elif n.type == 10:
+            elif n.type in [10, 7]:
                 anl['po'] = n.last_actor
+                anl['pending'] = FollowRequest.objects\
+                    .filter(user_id=user_id,
+                            target_id=n.last_actor)\
+                    .exists()
             else:
                 continue
         # try:
@@ -651,11 +777,16 @@ def notif_user(request):
     for notif in notifications:
         anl = {}
         anl['ob'] = post_item_json(post_id=notif.post)
+        anl['pending'] = False
         if not anl['ob']:
             if notif.type == 4:
                 anl['po'] = notif.post_image
-            elif notif.type == 10:
+            elif notif.type in [10, 7]:
                 anl['po'] = notif.last_actor
+                anl['pending'] = FollowRequest.objects\
+                    .filter(user_id=user_id,
+                            target_id=notif.last_actor)\
+                    .exists()
             else:
                 continue
         # try:
@@ -673,11 +804,11 @@ def notif_user(request):
     if is_private:
         """ Get follow request """
         follow_requests = FollowRequest.objects\
-            .filter(target_id=user_id).order_by('-id')
+            .filter(target_id=user_id)
 
         cnt_requests = follow_requests.count()
         if cnt_requests > 0:
-            last_follow_req = follow_requests[0]
+            last_follow_req = follow_requests.order_by('-id')[0]
             user_obj = get_simple_user_object(last_follow_req.user.id)
 
             follow_requests = {'user': user_obj,
@@ -773,12 +904,24 @@ def accept_follow(request):
     accepted = bool(int(request.POST.get('accepted', 0)))
     target_user = request.user
 
+    if not user_id:
+        msg = _("Invalid parameters")
+        return HttpResponse(json.dumps({'message': msg,
+                                        'status': False}),
+                            status=404,
+                            content_type='application/json')
     is_req = FollowRequest.objects.filter(user_id=int(user_id),
                                           target=target_user)
     if is_req.exists():
         if accepted:
-            Follow.objects.create(follower_id=int(user_id),
-                                  following=target_user)
+            instance = Follow.objects.create(follower_id=int(user_id),
+                                             following=target_user)
+            # Send notification
+            from pin.actions import send_notif_bar
+            send_notif_bar(user=instance.follower_id,
+                           type=7,
+                           post=None,
+                           actor=instance.following_id)
             is_req.delete()
             status = True
             message = _('Your connection successfully established.')
@@ -837,7 +980,8 @@ def inc_credit(request):
             return HttpResponseRedirect(reverse('pin-inc-credit'))
 
         bill = Bills.objects.create(user=request.user, amount=amount)
-        call_back_url = '%s%s' % (SITE_URL, reverse('pin-verify-payment', args=[bill.id]))
+        call_back_url = '{}{}'.format(
+            SITE_URL, reverse('pin-verify-payment', args=[bill.id]))
 
         url = 'https://ir.zarinpal.com/pg/services/WebGate/wsdl'
         client = Client(url)
@@ -853,7 +997,8 @@ def inc_credit(request):
         result = client.service.PaymentRequest(**data)
 
         if result['Status'] == 100:
-            url = 'https://www.zarinpal.com/pg/StartPay/%s' % str(result['Authority'])
+            url = 'https://www.zarinpal.com/pg/StartPay/{}'\
+                .format(str(result['Authority']))
             return HttpResponseRedirect(url)
         else:
             msg = 'Error when connecting to the database server'
@@ -889,7 +1034,8 @@ def verify_payment(request, bill_id):
             # UserMeta.objects(user=bill.user).update(inc__credit=bill.amount)
             p = bill.user.profile
             p.inc_credit(amount=bill.amount)
-            message = "Payment was successful. Your tracking code %s" % str(result['RefID'])
+            message = "Payment was successful. Your tracking code {}"\
+                .format(str(result['RefID']))
             messages.success(request, _(message))
 
             from pin.model_mongo import MonthlyStats
@@ -914,6 +1060,28 @@ def save_as_ads(request, post_id):
     p = post_item_json(post_id=post_id)
     profile = request.user.profile
 
+    """ Check current user status """
+    # cur_user = request.user
+    # status = check_user_state(user_id=p['user']['id'],
+    #                           current_user=cur_user)
+    # allow_promote = status['status']
+
+    # if not allow_promote:
+    #     return HttpResponseRedirect('/')
+    cur_user_id = request.user.id
+
+    try:
+        post_owner_profile = Profile.objects.only('is_private')\
+            .get(user_id=p['user']['id'])
+        is_private = post_owner_profile.is_private
+    except:
+        is_private = False
+
+    if is_private:
+        msg = _('This profile is private')
+        messages.error(request, _(msg))
+        return HttpResponseRedirect('/')
+
     if request.method == "POST":
         mode = int(request.POST.get('mode'))
         mode_price = Ad.TYPE_PRICES[mode]
@@ -924,7 +1092,7 @@ def save_as_ads(request, post_id):
             except Exception, Ad.DoesNotExist:
                 profile.dec_credit(amount=int(mode_price))
 
-                Ad.objects.create(user_id=request.user.id,
+                Ad.objects.create(user_id=cur_user_id,
                                   post_id=int(post_id),
                                   ads_type=mode,
                                   start=datetime.datetime.now(),
@@ -996,11 +1164,12 @@ def blocked_list(request):
             })
         else:
             return HttpResponse(0)
-
+    profile = request.user.profile
     return render(request, 'pin2/profile/blocked_list.html', {
         'blocked_list': blocked_list,
-        'profile': request.user.profile,
-        'cur_user': request.user
+        'profile': profile,
+        'cur_user': request.user,
+        'is_private': profile.is_private
     })
 
 
@@ -1026,11 +1195,12 @@ def promotion_list(request):
             })
         else:
             return HttpResponse(0)
-
+    profile = request.user.profile
     return render(request, 'pin2/profile/promotion.html', {
         'promotion_list': promotion_list,
-        'profile': request.user.profile,
-        'cur_user': request.user
+        'profile': profile,
+        'cur_user': request.user,
+        'is_private': profile.is_private
     })
 
 

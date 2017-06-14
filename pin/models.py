@@ -34,11 +34,16 @@ from pin.tasks import delete_image
 from pin.classification_tools import normalize
 from pin.api6.cache_layer import PostCacheLayer
 from pin.models_graph import FollowUser
-from models_casper import UserStream, CatStreams
-from pin.analytics import comment_act, post_act
+from pin.models_stream import RedisUserStream
+from models_casper import CatStreams
+from pin.models_es import ESPosts
+
+# from pin.analytics import comment_act, post_act
+
 
 LIKE_TO_DEFAULT_PAGE = 10
-r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
+# r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
+r_server = redis.Redis(settings.REDIS_DB_2, db=settings.REDIS_DB_NUMBER)
 r_server4 = redis.Redis(settings.REDIS_DB_2, db=4)
 
 
@@ -336,7 +341,7 @@ class Post(models.Model):
         Post.objects.filter(pk=post_id).update(show_in_default=True)
         PostCacheLayer(post_id=post_id).show_in_default_change(status=True)
         post = PostCacheLayer(post_id=post_id).get()
-        print post
+
         if post:
             from pin.actions import send_notif_bar
             send_notif_bar(user=post['user']['id'], type=5, post=post_id,
@@ -546,6 +551,7 @@ class Post(models.Model):
         try:
             delete_image.delay(self.image)
             delete_image.delay(self.postmetadata.img_500)
+            self.move_file()
         except Exception, e:
             print str(e)
             pass
@@ -565,8 +571,51 @@ class Post(models.Model):
 
         post_id = self.id
         super(Post, self).delete(*args, **kwargs)
+
+        # Delete post from elastic
+        ps = ESPosts()
+        ps.delete(post_id=post_id)
+
+        # Delete post from cache
         if settings.TUNING_CACHE:
             PostCacheLayer(post_id=post_id).delete()
+
+    def move_file(self):
+        path = self.postmetadata.img_236
+
+        if path:
+            slices = path.split("/")
+            server_name = slices[1]
+            filename = slices[-1]
+            storage = None
+            try:
+                storage = Storages.objects.get(name=server_name)
+            except Exception, e:
+                str(e)
+
+            if storage:
+                src = "{}/{}".format(storage.path, path)
+                dest_folder = "{}/removed_image".format(storage.path)
+                dest = "{}/{}".format(dest_folder, filename)
+                if not os.path.exists(dest_folder):
+                    os.makedirs(dest_folder)
+                os.rename(src, dest)
+
+    def get_removed_image_path(self):
+        path = self.postmetadata.img_236
+        url = ""
+        if path:
+            slices = path.split("/")
+            filename = slices[-1]
+            server_name = slices[1]
+
+            folder_path = "/mnt/wisgoon/{}/removed_image/".format(server_name)
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+
+            url = "{}/media/removed/{}/{}"\
+                .format(settings.MEDIA_PREFIX, server_name, filename)
+        return url
 
     def date_lt(self, date, how_many_days=15):
         lt_date = datetime.now() - timedelta(days=how_many_days)
@@ -636,6 +685,9 @@ class Post(models.Model):
 
     @classmethod
     def add_to_user_stream(cls, post_id, user_id, post_owner):
+        from pin.models_stream import RedisUserStream
+        rus = RedisUserStream()
+        rus.add_post([user_id], post_id, post_owner)
         # user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
 
         # r_server.lrem(user_stream, post_id)
@@ -643,8 +695,23 @@ class Post(models.Model):
         # r_server.ltrim(user_stream, 0, 1000)
 
         # print "add to stream {}".format(user_id)
-        us = UserStream()
-        us.add_post(user_id, post_id, post_owner)
+        # us = UserStream()
+        # us.add_post(user_id, post_id, post_owner)
+
+    @classmethod
+    def add_to_users_stream(cls, post_id, user_ids, post_owner):
+        from pin.models_stream import RedisUserStream
+        rus = RedisUserStream()
+        rus.add_post(user_ids, post_id, post_owner)
+        # user_stream = "%s_%d" % (settings.USER_STREAM, int(user_id))
+
+        # r_server.lrem(user_stream, post_id)
+        # r_server.lpush(user_stream, post_id)
+        # r_server.ltrim(user_stream, 0, 1000)
+
+        # print "add to stream {}".format(user_id)
+        # us = UserStream()
+        # us.add_post_batch(user_ids, post_id, post_owner)
 
     @classmethod
     def remove_post_from_stream(cls, user_id, post_id):
@@ -898,9 +965,13 @@ class Post(models.Model):
 
     @classmethod
     def user_stream_latest(cls, user_id, pid=0):
-        us = UserStream()
-        pl = us.get_posts(user_id, pid)
+        rus = RedisUserStream()
+        pl = rus.get_stream_posts(user_id, pid)
         return pl
+
+        # us = UserStream()
+        # pl = us.get_posts(user_id, pid)
+        # return pl
 
         # row_per_page = 20
         # if not user_id:
@@ -991,19 +1062,24 @@ class Follow(models.Model):
         # from pin.tasks import remove_from_stream
         # remove_from_stream.delay(user_id=follower_id, owner_id=following_id)
 
-        from models_casper import UserStream, Notification
-        us = UserStream()
+        from models_casper import Notification
+        # us = UserStream()
         notif = Notification()
-        notif.set_notif(a_user_id=following_id, a_type=10,
-                        a_object_id=None, a_actor=follower_id,
-                        a_date=int(time.time()))
+        notif.update_notif(a_user_id=following_id,
+                           a_type=10,
+                           a_actor=follower_id,
+                           a_object_id=None)
 
         # decrement_cnt_notif on redis
         from models_redis import NotificationRedis
         NotificationRedis(user_id=following_id).decrement_cnt_notif()
 
-        us.unfollow(follower_id, following_id)
+        # us.unfollow(follower_id, following_id)
         # remove_from_stream(user_id=following_id, owner_id=follower_id)
+
+        from models_stream import RedisUserStream
+        rus = RedisUserStream()
+        rus.unfollow(follower_id, following_id)
 
     def save(self, *args, **kwargs):
         super(Follow, self).save(*args, **kwargs)
@@ -1028,7 +1104,9 @@ class Follow(models.Model):
 
             # Send notification
             from pin.actions import send_notif_bar
-            send_notif_bar(user=instance.following.id, type=10, post=None,
+            send_notif_bar(user=instance.following.id,
+                           type=10,
+                           post=None,
                            actor=instance.follower.id)
 
             # Monthly follow log
@@ -1040,14 +1118,18 @@ class Follow(models.Model):
                                      "follow")
 
             # Add following posts to follower stream
-            from models_casper import UserStream
-            us = UserStream()
+            # from models_casper import UserStream
+            # us = UserStream()
             pid_list = Post.objects.filter(user_id=following_id)\
                 .only("id")\
                 .values_list("id", flat=True)\
                 .order_by("-id")[:100]
 
-            us.follow(follower_id, pid_list, following_id)
+            # us.follow(follower_id, pid_list, following_id)
+
+            from models_stream import RedisUserStream
+            rus = RedisUserStream()
+            rus.follow(follower_id, pid_list, following_id)
 
 
 class Stream(models.Model):
@@ -1081,23 +1163,15 @@ class Stream(models.Model):
             Post.add_to_user_stream(post_id=post.id, user_id=user.id,
                                     post_owner=user.id)
 
-            from pin.actions import send_post_to_followers
-
-            send_post_to_followers(user_id=user.id, post_id=post.id)
+            from pin.tasks import post_to_followers
+            post_to_followers.delay(user_id=user.id, post_id=post.id)
 
             if post.status == Post.APPROVED and post.accept_for_stream():
                 Post.add_to_stream(post=post)
 
-            # try:
-            #     from models_casper import PostData
-            #     PostData(post_id=post.id,
-            #              creator_ip=post._user_ip,
-            #              create_time=datetime.now()).save()
-            #     post_act(post=post.id, actor=user.id,
-            #              category=post.category.title, user_ip=post._user_ip)
-
-            # except:
-            #     pass
+            # Add to elastic
+            ps = ESPosts()
+            ps.save(post_obj=instance)
 
 
 class Likes(models.Model):
@@ -1135,7 +1209,7 @@ class Likes(models.Model):
 
         like = instance
         post = like.post
-        sender = like.user
+        # sender = like.user
 
         Post.objects.filter(pk=post.id).update(cnt_like=F('cnt_like') + 1)
 
@@ -1313,15 +1387,20 @@ class Comments(models.Model):
         return timestamp < lt_timestamp
 
     def save(self, *args, **kwargs):
-        if Block.objects.filter(user_id=self.object_pk.user_id,
-                                blocked_id=self.user_id).exists():
-            return
+        # if Block.objects.filter(user_id=self.object_pk.user_id,
+        #                         blocked_id=self.user_id).exists():
+        #     return
 
         if not self.pk:
             Post.objects.filter(pk=self.object_pk_id)\
                 .update(cnt_comment=F('cnt_comment') + 1)
 
-        self.comment = emoji.demojize(self.comment)[:512]
+            # Elastic update
+            ps = ESPosts()
+            ps.inc_cnt_comment(post_id=self.object_pk_id)
+
+        # self.comment = emoji.demojize(self.comment)[:2048]
+        self.comment = emoji.demojize(self.comment[:2048])
 
         comment_cache_name = "com_{}".format(int(self.object_pk_id))
         cache.delete(comment_cache_name)
@@ -1354,13 +1433,13 @@ class Comments(models.Model):
         actors_list = []
 
         # Push notif for post owner
-        print comment.id, "models"
         if comment.user_id != post.user.id:
             send_notif_bar(user=post.user.id, type=Notif.COMMENT, post=post.id,
                            actor=comment.user.id, comment=comment)
 
             actors_list.append(post.user.id)
 
+        # Wisgoon account
         if post.user.id == 11253:
             return
 
@@ -1413,6 +1492,10 @@ class Comments(models.Model):
             post_id = self.object_pk_id
             PostCacheLayer(post_id=post_id)\
                 .delete_comment(self.object_pk.cnt_comment)
+
+        # Elastic update
+        ps = ESPosts()
+        ps.decr_cnt_comment(post_id=self.object_pk_id)
 
     @models.permalink
     def get_absolute_url(self):
@@ -1487,6 +1570,7 @@ class PhoneData(models.Model):
 
     logged_out = models.BooleanField(default=False)
     hash_data = models.CharField(max_length=32, default="")
+    extra_data = models.TextField(null=True, blank=True)
 
     def get_need_fields(self):
         fields = self._meta.get_all_field_names()
@@ -1572,6 +1656,7 @@ class Log(models.Model):
     BAN_PROFILE = 9
     UNBAN_PROFILE = 10
     UNBAN_IMEI = 11
+    UPDATE_PROFILE = 12
 
     ACTIONS = (
         (DELETE, _("delete")),
@@ -1583,7 +1668,8 @@ class Log(models.Model):
         (DEACTIVE_USER, _("Deactive user")),
         (ACTIVE_USER, _("activated")),
         (BAN_PROFILE, _("ban profile")),
-        (UNBAN_PROFILE, _("unban profile"))
+        (UNBAN_PROFILE, _("unban profile")),
+        (UPDATE_PROFILE, _("update profile"))
     )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -1602,7 +1688,8 @@ class Log(models.Model):
     @classmethod
     def post_delete(cls, post, actor, ip_address="127.0.0.1"):
         try:
-            img_url = post.get_image_236()["url"]
+            # img_url = post.get_image_236()["url"]
+            img_url = post.get_removed_image_path()
         except:
             img_url = ""
         Log.objects.create(user_id=actor.id,
@@ -1716,6 +1803,17 @@ class Log(models.Model):
                            post_image=post.get_image_236()["url"],
                            ip_address=ip_address,
                            )
+
+    @classmethod
+    def update_profile(cls, actor, user_id,
+                       text="", ip_address="127.0.0.1"):
+        Log.objects.create(user=actor,
+                           action=cls.UPDATE_PROFILE,
+                           object_id=user_id,
+                           content_type=cls.USER,
+                           text=text,
+                           # post_image=image,
+                           ip_address=ip_address)
 
 
 class ReportTypes(models.Model):
@@ -1914,6 +2012,7 @@ class Campaign(models.Model):
     logo = models.ImageField(default='', upload_to='pin/campaigns/')
     award = models.TextField(null=True, blank=True)
     help_text = models.TextField(null=True, blank=True)
+    limit = models.IntegerField(default=0)
 
 
 class WinnersList(models.Model):
@@ -1952,7 +2051,185 @@ class CampaignWinners(models.Model):
     winners = models.TextField(null=True, blank=True)
     status = models.IntegerField(default=NOT_CALCULATE, blank=True,
                                  verbose_name=_("Status"),
-                                 choices=STATUS_CHOICES)# class Acl(models.Model):
+                                 choices=STATUS_CHOICES)
+
+
+class VerifyCode(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    code = models.IntegerField(unique=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+
+
+class InviteLog(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    code = models.CharField(max_length=255, db_index=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+
+    @classmethod
+    def log(cls, user_id, code):
+        cls.objects.create(user_id=user_id, code=code)
+
+
+class RemoveImage(models.Model):
+    PENDING = 0
+    IN_PROGRESS = 1
+    COMPLETED = 2
+
+    STATUS_CHOICES = (
+        (COMPLETED, _("completed")),
+        (IN_PROGRESS, _("in progress")),
+        (PENDING, _("pending")),
+    )
+    text = models.TextField()
+    status = models.IntegerField(choices=STATUS_CHOICES, default=PENDING)
+
+    @classmethod
+    def remove_links(cls, sender, instance, created, *args, **kwargs):
+        if created:
+            links = instance.text.splitlines()
+            servers = {
+                'photos01': {'ip': '79.127.125.98',
+                             'user': 'root',
+                             'path': '/mnt/wisgoon/photos01/'},
+                'photos02': {'ip': '79.127.125.99',
+                             'user': 'root',
+                             'path': '/mnt/wisgoon/photos02/'},
+                'photos03': {'ip': '79.127.125.104',
+                             'user': 'wisgoon',
+                             'path': '/mnt/wisgoon/photos03/'},
+                # 'moon': {'ip': '127.0.0.1',
+                #          'user': 'amir',
+                #          'path': '/home/amir/work/projects/wisgoon/feedreader/media/'}
+            }
+
+            # Create image list [{'timestamp': '1234567890', 'image_name':}]
+            image_list = cls.get_image_list(links=links)
+
+            # Change status
+            instance.status = cls.IN_PROGRESS
+            instance.save()
+            link_list = []
+            # Remove image from server and db
+            for info in image_list:
+                server_name = info["server_name"]
+                image_path = info["image_path"]
+                filename = info["image_name"]
+                link = info["link"]
+                folder_path = servers[server_name]["path"] + image_path
+                link_list.append(link)
+                try:
+                    post = Post.objects.only('image')\
+                        .get(timestamp=info["timestamp"])
+                except:
+                    print "Post not found. error: ", info
+                    print "---------------------------------"
+                    # Remove file from server
+                    cls.delete_ssh(folder_path, filename,
+                                   servers, server_name)
+                    continue
+
+                # Remove file from server
+                cls.delete_ssh(folder_path, filename,
+                               servers, server_name)
+
+                # Remove post
+                post_id = post.id
+                post.delete()
+                print "delete post {}".format(post_id)
+
+            # Purge request for delete image linke
+            cls.purge_request(link_list)
+            print link_list
+
+            # Change status
+            instance.status = cls.COMPLETED
+            instance.save()
+
+    @classmethod
+    def connect_to_server(cls, ip, username):
+        import paramiko
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        try:
+            ssh.connect(ip, username=username)
+        except Exception, e:
+            print str(e)
+            time.sleep(3)
+            cls.connect_to_server(ip, username)
+        return ssh
+
+    @classmethod
+    def get_image_list(cls, links=[]):
+        image_list = []
+        for link in links:
+            data = {}
+            if len(link) > 0:
+                slices = link.strip().split("/")
+
+                if slices[-5] == 'avatars':
+
+                    if slices[-1].startswith("64"):
+                        timestamp = slices[-1][3:13]
+                        image_name = slices[-1][3:]
+                    else:
+                        timestamp = slices[-1][0:10]
+                        image_name = slices[-1]
+
+                else:
+                    if (slices[-1].startswith("500") or
+                            slices[-1].startswith("236")):
+                        timestamp = slices[-1][8:18]
+                        image_name = slices[-1][8:]
+                    else:
+                        timestamp = slices[-1][0:10]
+                        image_name = slices[-1]
+
+                server_name = slices[2].split(".")[0]
+                image_path = "/".join(slices[4:-1])
+
+                data['image_name'] = image_name
+                data['timestamp'] = int(timestamp)
+                data['server_name'] = server_name
+                data['image_path'] = image_path
+                data['link'] = link
+                image_list.append(data)
+        return image_list
+
+    @classmethod
+    def delete_ssh(cls, folder_path, filename,
+                   servers_info, server_name):
+        ssh = cls.connect_to_server(
+            ip=servers_info[server_name]["ip"],
+            username=servers_info[server_name]["user"])
+
+        # Create command an run
+        cmd = "cd {} && rm *{}".format(folder_path, filename)
+        try:
+            ssh.exec_command(cmd)
+            ssh.close()
+        except Exception as e:
+            print "error in run {}".format(cmd)
+            print str(e)
+            print "=================================="
+
+    @classmethod
+    def purge_request(cls, links=[]):
+        import requests
+        import json
+        payload = {"files": links}
+        headers = {'content-type': 'application/json',
+                   'X-Auth-Email': 'vchakoshy@gmail.com',
+                   'X-Auth-Key': '403fa50d139f603444f912ced5e2945064668'
+                   }
+        url = "https://api.cloudflare.com/client/v4/zones/06953b8ef5dce7efbac4e52797a9a908/purge_cache"
+        res = requests.request("DELETE",
+                               url,
+                               data=json.dumps(payload),
+                               headers=headers)
+        print res.text
+
+# class Acl(models.Model):
 #         USER_SELF_TOPIC_STR = "/waw/topic/notif/user/{}/"
 
 #         ALLOW_TYPE_DENY = 0
@@ -2013,3 +2290,4 @@ post_save.connect(Stream.add_post, sender=Post)
 post_save.connect(Likes.user_like_post, sender=Likes)
 post_save.connect(Comments.add_comment, sender=Comments)
 post_save.connect(Follow.new_follow, sender=Follow)
+post_save.connect(RemoveImage.remove_links, sender=RemoveImage)

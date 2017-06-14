@@ -30,7 +30,16 @@
 	{% include "pin2/_user_following.html"%}
 </div>
 {% else %}
-<h3>موردی پیدا نشد</h3>
+    <div class="container">
+        <div class="box pa10 tace col-md-12">
+            {% if is_private and not show_followeing%}
+                <img src="{{STATIC_CDN}}img/Private_50.png" alt="">
+                <h3>این حساب کاربری خصوصی میباشد</h3>
+            {% else %}
+                <h3>موردی پیدا نشد</h3>
+            {% endif %}
+        </div>
+    </div>
 {% endif %}
 
 {% if user_items|length > 15 %}

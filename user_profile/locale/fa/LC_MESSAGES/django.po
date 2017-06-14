@@ -7,93 +7,101 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-29 15:15+0330\n"
-"PO-Revision-Date: 2016-10-29 15:16+0330\n"
+"POT-Creation-Date: 2017-01-18 11:52+0330\n"
+"PO-Revision-Date: 2017-01-18 11:54+0330\n"
 "Last-Translator: amir <a.abbasghorbani@gmail.com>\n"
+"Language-Team: \n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"Language-Team: \n"
 "X-Generator: Poedit 1.8.7.1\n"
 
-#: models.py:55
+#: models.py:56
 msgid "Name"
 msgstr "نام"
 
-#: models.py:56
+#: models.py:58
 msgid "Location"
 msgstr "موقعیت"
 
-#: models.py:58
+#: models.py:60
 msgid "Website"
 msgstr "وب سایت"
 
-#: models.py:59
+#: models.py:61
 msgid "Biography"
 msgstr "بیوگرافی"
 
-#: models.py:72
+#: models.py:74
 msgid "Male"
 msgstr "مذکر"
 
-#: models.py:72
+#: models.py:74
 msgid "Female"
 msgstr "موتث"
 
-#: models.py:92
+#: models.py:95
 msgid "Private"
 msgstr "شخصی"
 
-#: models.py:127
+#: models.py:97
+msgid "Show ads"
+msgstr "نمایش أگهی"
+
+#: models.py:132
 msgid "Normal"
 msgstr "عادی"
 
-#: models.py:129
+#: models.py:134
 msgid "Cop"
 msgstr "پلیس"
 
-#: models.py:281
+#: models.py:287
 msgid "Increment"
 msgstr "افزایش"
 
-#: models.py:282
+#: models.py:288
 msgid "Decrement"
 msgstr "کاهش"
 
-#: views.py:24
+#: views.py:27
 msgid "Website update in progress."
 msgstr "وب سایت در حال به روز رسانی است"
 
-#: views.py:36 views.py:70
+#: views.py:44 views.py:84
 msgid "Error sending the image."
 msgstr "خطا در ارسال تصویر"
 
-#: views.py:55
+#: views.py:51
+msgid "update profile"
+msgstr "بروزرسانی پروفایل"
+
+#: views.py:69
 msgid "There is not token"
 msgstr "توکن وجود ندارد"
 
-#: views.py:60
+#: views.py:74
 msgid "error in user validation"
 msgstr "خطا در اعتبار سنجی کاربران"
 
-#: views.py:66
+#: views.py:80
 msgid "user is inactive"
 msgstr "کاربر غیر فعال است"
 
-#: views.py:74
+#: views.py:88
 msgid "profile has saved"
 msgstr "پروفایل ثبت شد"
 
-#: views.py:76
+#: views.py:90
 msgid "form not valid"
 msgstr "فرم معتبر نیست"
 
-#: views.py:78
+#: views.py:92
 msgid "request method is not POST"
 msgstr "متد شما POST نمی باشد"
 
-#: views.py:80
+#: views.py:94
 msgid "error in data"
 msgstr "خطا در داده ارسالی"

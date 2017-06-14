@@ -3,7 +3,7 @@
 
 {% if DISPLAY_AD and request.user_agent.is_mobile %}
 <div class="only_mobile_view">
-	{% include "pin2/tabliq/_468x60_2.html" %}
+	{% include "pin2/tabliq/_468x60.html" %}
 </div>
 {% endif %}
 
@@ -32,7 +32,6 @@
 	</div>
 	<div class="clear"></div>
 	{% if post.user.id != request.user.id and user.is_authenticated %}
-
 		{% if not follow_status%}
 			{% if pending %}
 				<a class="wis_btn gray w100 mabo10 mato10 ajax-follow" data-user-id="{{post.user.id}}" href='{% url "remove-follow-request" post.user.id%}'><i class="glyphicon glyphicon-user"></i> <i class="fa fa-clock-o"></i></a>
@@ -76,14 +75,6 @@
 {% endif %}
 
 {% comment %}
-
-{% if DISPLAY_AD %}
-{% include "pin2/tabliq/_300x100.html" %}
-{% endif %}
-
-{% endcomment %}
-
-{% comment %}
 <br />
 <div class="tabliq col-sm-12 hidden-xs hidden-sm">
 	<div class="row">
@@ -103,3 +94,4 @@
 <br />
 {% include "base/ad-290x100.html" %}
 {% endcomment %}
+

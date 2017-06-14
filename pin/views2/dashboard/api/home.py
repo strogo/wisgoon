@@ -10,7 +10,7 @@ from pin.views2.dashboard.api.tools import today_new_users, today_bills,\
 
 from pin.models import Post
 
-r_server = redis.Redis(settings.REDIS_DB, db=settings.REDIS_DB_NUMBER)
+r_server = redis.Redis(settings.REDIS_DB_2, db=settings.REDIS_DB_NUMBER)
 
 
 def dashboard_home(request):

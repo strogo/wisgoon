@@ -107,9 +107,12 @@ def user_details(request, user_id):
 
     details['profile']['ban_profile_desc'] = str(ban_profile_log[0].description)\
         if ban_profile_log else ''
-    details['profile']['ban_imei_desc'] = str(ban_imei_log[0].description) if ban_imei_log else ''
-    details['profile']['active_desc'] = str(active_log[0].description) if active_log else ''
-    details['profile']['inactive_desc'] = str(inactive_log[0].description) if inactive_log else ''
+    details['profile']['ban_imei_desc'] = str(
+        ban_imei_log[0].description) if ban_imei_log else ''
+    details['profile']['active_desc'] = str(
+        active_log[0].description) if active_log else ''
+    details['profile']['inactive_desc'] = str(
+        inactive_log[0].description) if inactive_log else ''
     details['user_id'] = int(user_id)
     details['cnt_post'] = user_profile.cnt_post
     details['cnt_admin_deleted'] = cnt_post_deleted_by_admin(user.id)
@@ -212,7 +215,8 @@ def user_post_permissions(request):
         if status == 'true':
 
             try:
-                user_permissions, create = UserPermissions.objects.get_or_create(user_id=user_id)
+                user_permissions, create = UserPermissions.objects.get_or_create(
+                    user_id=user_id)
             except Exception, e:
                 print str(e)
 
@@ -233,7 +237,8 @@ def user_post_permissions(request):
                                      'post_permissions': True})
         else:
             try:
-                user_permissions, create = UserPermissions.objects.get_or_create(user_id=user_id)
+                user_permissions, create = UserPermissions.objects.get_or_create(
+                    user_id=user_id)
             except Exception, e:
                 print str(e)
 
@@ -293,7 +298,8 @@ def user_comment_permissions(request):
         if status == 'true':
 
             try:
-                user_permissions, create = UserPermissions.objects.get_or_create(user_id=user_id)
+                user_permissions, create = UserPermissions.objects.get_or_create(
+                    user_id=user_id)
             except Exception, e:
                 print str(e)
 
@@ -313,7 +319,8 @@ def user_comment_permissions(request):
                                      'comment_permissions': True})
         else:
             try:
-                user_permissions, create = UserPermissions.objects.get_or_create(user_id=user_id)
+                user_permissions, create = UserPermissions.objects.get_or_create(
+                    user_id=user_id)
             except Exception, e:
                 print str(e)
 
@@ -374,7 +381,8 @@ def user_report_permissions(request):
         if status == 'true':
 
             try:
-                user_permissions, create = UserPermissions.objects.get_or_create(user_id=user_id)
+                user_permissions, create = UserPermissions.objects.get_or_create(
+                    user_id=user_id)
             except Exception, e:
                 print str(e)
 
@@ -394,7 +402,8 @@ def user_report_permissions(request):
                                      'comment_permissions': True})
         else:
             try:
-                user_permissions, create = UserPermissions.objects.get_or_create(user_id=user_id)
+                user_permissions, create = UserPermissions.objects.get_or_create(
+                    user_id=user_id)
             except Exception, e:
                 print str(e)
 
@@ -458,7 +467,8 @@ def banned_profile(request):
 
             Log.ban_profile(actor=current_user,
                             user_id=profile.user.id,
-                            text="{} || {}".format(profile.user.username, description),
+                            text="{} || {}".format(
+                                profile.user.username, description),
                             ip_address=get_user_ip(request))
 
             UserLog.objects.create(user_id=profile.user.id,
@@ -470,7 +480,8 @@ def banned_profile(request):
             profile.save()
             Log.unban_profile(user_id=profile.user.id,
                               actor=current_user,
-                              text="{} || {}".format(profile.user.username, description),
+                              text="{} || {}".format(
+                                  profile.user.username, description),
                               ip_address=get_user_ip(request))
 
             UserLog.objects.create(user_id=profile.user.id,
@@ -507,6 +518,9 @@ def banned_imei(request):
     except:
         return return_not_found()
 
+    if imei == "na":
+        return return_not_found()
+
     if settings.DEBUG:
         from pin.tools import AuthCache
         token = request.GET.get('token', '')
@@ -530,7 +544,7 @@ def banned_imei(request):
                     cur_user = data.user
                     user_id = cur_user.id
                     desc += cur_user.username + ' || '
-                    cur_user.is_active = True
+                    # cur_user.is_active = True
                     cur_user.save()
                     UserLog.objects.create(user_id=user_id,
                                            actor_id=current_user.id,
@@ -541,9 +555,10 @@ def banned_imei(request):
                                   text=desc + description,
                                   ip_address=get_user_ip(request))
 
-                return return_json_data({'status': True,
-                                         'message': _("Successfully Unbanned Imei."),
-                                         'imei_status': True})
+                return return_json_data(
+                    {'status': True,
+                     'message': _("Successfully Unbanned Imei."),
+                     'imei_status': True})
 
             except:
                 return return_not_found()
@@ -590,10 +605,10 @@ def get_user_with_imei(request, imei):
                       'next': '',
                       'total_count': ''}
 
-    phone_data = PhoneData.objects.filter(imei=imei)
-    for data in phone_data:
-        users.append(get_simple_user_object(data.user.id))
-        print users
+    if imei != "na":
+        phone_data = PhoneData.objects.filter(imei=imei)
+        for data in phone_data:
+            users.append(get_simple_user_object(data.user.id))
 
     result['objects'] = users
     return return_json_data(result)

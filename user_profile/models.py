@@ -1,10 +1,12 @@
 # coding: utf-8
 import os
 import time
+import string
+import random
 
 from PIL import Image, ImageOps
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.core.cache import cache
@@ -52,7 +54,9 @@ class Profile(models.Model):
     AVATAR_NEW_STYLE = 1
     AVATAT_MIGRATED = 2
 
-    name = models.CharField(max_length=250, verbose_name=_("Name"))
+    name = models.CharField(max_length=250,
+                            verbose_name=_("Name"),
+                            null=True, blank=True)
     location = models.CharField(max_length=250, verbose_name=_("Location"),
                                 blank=True)
     website = models.URLField(verbose_name=_('Website'), blank=True)
@@ -60,6 +64,7 @@ class Profile(models.Model):
     cnt_post = models.IntegerField(default=0)
     cnt_like = models.IntegerField(default=0)
     score = models.IntegerField(default=0, db_index=True)
+    rank = models.IntegerField(default=0, db_index=True)
     count_flag = models.IntegerField(default=0)
     trusted = models.IntegerField(default=0)
     trusted_by = models.ForeignKey(User, related_name='trusted_by',
@@ -88,10 +93,30 @@ class Profile(models.Model):
     level = models.IntegerField(default=1)
 
     banned = models.BooleanField(default=False)
+    phone = models.CharField(max_length=255, null=True, blank=True)
     is_private = models.BooleanField(default=False,
                                      verbose_name=_('Private'))
+    show_ads = models.BooleanField(default=True,
+                                   verbose_name=_('Show ads'))
 
     version = models.IntegerField(default=0, blank=False, null=True)
+    invite_code = models.CharField(
+        max_length=255, null=True, blank=True, db_index=True)
+
+    def create_invite_code(self):
+        str1 = str(self.user.id)
+        size = 16
+        status = True
+        code = None
+        while status:
+            chars = str1 + string.ascii_uppercase
+            code = ''.join(random.choice(chars) for _ in range(size))
+            exists_code = Profile.objects.filter(invite_code=code).exists()
+            if not exists_code:
+                self.invite_code = code
+                self.save()
+                status = False
+        return code
 
     def get_cnt_following(self):
         if self.cnt_following == -1 or self.cnt_following is None:
@@ -260,7 +285,8 @@ class Profile(models.Model):
 
             from pin.tasks import add_avatar_to_storage
             self.store_avatars(update_model=False)
-            add_avatar_to_storage.delay(self.id)
+            # add_avatar_to_storage.delay(self.id)
+            add_avatar_to_storage(self.id)
 
         user_id = int(self.user_id)
         user_str = "user_name_%d" % (user_id)
@@ -293,12 +319,50 @@ class CreditLog(models.Model):
         super(CreditLog, self).save(*args, **kwargs)
 
 
+class Package(models.Model):
+    title = models.CharField(max_length=255)
+    price = models.CharField(max_length=255)
+    day = models.IntegerField(default=0)
+
+    def __unicode__(self):
+        return self.title
+
+    def get_json(self):
+        data = {}
+        data['id'] = self.id
+        data['title'] = self.title
+        data['price'] = self.price
+        return data
+
+    @classmethod
+    def all_packages(cls):
+        packs = cls.objects.only('id').all()
+        pack_list = []
+        for pack in packs:
+            pack_list.append(pack.get_json())
+        return pack_list
+
+
+class Subscription(models.Model):
+
+    end_date = models.DateTimeField(null=True, blank=True)
+    expire = models.BooleanField(default=False)
+    user = models.ForeignKey(User)
+    package = models.ForeignKey(Package)
+    create_at = models.DateTimeField(auto_now_add=True)
+
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         MonthlyStats.log_hit(object_type=MonthlyStats.USER)
 
         profile, created = Profile.objects\
             .get_or_create(user=instance, name=instance.username)
+
+        # Create user invite code
+        if created:
+            profile.create_invite_code()
+
         try:
             UserGraph.get_or_create("Person", instance.username,
                                     instance.profile.name, instance.id)
@@ -315,4 +379,12 @@ def create_user_profile(sender, instance, created, **kwargs):
         u.save(instance)
 
 
+def claculate_end_date(sender, instance, created, **kwargs):
+    if created:
+        end_date = instance.create_at + timedelta(days=instance.package.day)
+        instance.end_date = end_date
+        instance.save()
+
+
 post_save.connect(create_user_profile, sender=User)
+post_save.connect(claculate_end_date, sender=Subscription)

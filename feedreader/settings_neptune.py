@@ -50,4 +50,7 @@ CELERY_ROUTES = {
     'wisgoon.pin.migrate_avatar_storage': {
         'queue': 'migrate_avatar_storage_%s' % INSTANCE_NAME,
     },
+    'wisgoon.pin.ltrim_user_stream': {
+        'queue': 'wisgoon.pin.ltrim_user_stream'
+    }
 }

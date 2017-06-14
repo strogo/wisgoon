@@ -1,7 +1,9 @@
 # coding: utf-8
+import logging
 from time import mktime, time
 import json
 import datetime
+import requests
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -12,19 +14,25 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.csrf import csrf_exempt
-from pin.models import Post, Follow, Likes, Category, Comments, Results,\
-    FollowRequest
-from pin.tools import get_request_timestamp, get_request_pid, check_block,\
-    get_user_ip, get_delta_timestamp, AuthCache
 
+
+from tastypie.models import ApiKey
+
+from pin.models_es import ESPosts
 from pin.model_mongo import Ads, MonthlyStats
 from pin.models_redis import LikesRedis
+from pin.models import Post, Follow, Likes, Category, Comments, Results
+from pin.tools import get_request_timestamp, get_request_pid, check_block,\
+    get_user_ip, get_delta_timestamp, AuthCache, check_user_state, user_state
 
 from pin.api6.tools import post_item_json
 
 from user_profile.models import Profile
 
 from haystack.query import SearchQuerySet
+
+# Standard instance of a logger with __name__
+stdlogger = logging.getLogger(__name__)
 
 User = get_user_model()
 MEDIA_ROOT = settings.MEDIA_ROOT
@@ -75,7 +83,9 @@ def home_queue(request):
         post_item = post_item_json(post_id=pid, cur_user_id=request.user.id)
         if post_item:
             if request.user.is_authenticated():
-                if not check_block(user_id=post_item['user']['id'], blocked_id=request.user.id):
+                is_block = check_block(user_id=post_item['user']['id'],
+                                       blocked_id=request.user.id)
+                if not is_block:
                     arp.append(post_item)
             else:
                 arp.append(post_item)
@@ -105,47 +115,88 @@ def home_queue(request):
 
 def home(request):
     pid = get_request_pid(request)
-    pl = Post.home_latest(pid=pid)
+
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/post/choices/"
+    else:
+        url = "http://api.wisgoon.com/v7/post/choices/"
+
+    payload = {}
     arp = []
-
-    last_id = None
     next_url = None
-
-    request_user_id = request.user.id
+    cur_user = request.user
     request_user_authenticated = request.user.is_authenticated()
 
-    for pll in pl:
-        pid = int(pll)
-        post_item = post_item_json(post_id=pid, cur_user_id=request_user_id)
-        if post_item:
+    # Get request user token
+    try:
+        api_key = ApiKey.objects.only('key').get(user_id=request.user.id)
+    except:
+        api_key = None
+
+    if api_key:
+        token = api_key.key
+        payload['token'] = token
+
+    payload['before'] = pid
+
+    # Get choices post
+    s = requests.Session()
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+    if res.status_code == 200:
+        try:
+            data = json.loads(res.content)
+        except:
+            data = {}
+    else:
+        data = {}
+
+    # pl = Post.home_latest(pid=pid)
+    # request_user_id = request.user.id
+    # for pll in pl:
+    #     pid = int(pll)
+    #     post_item = post_item_json(post_id=pid, cur_user_id=request_user_id)
+    #     if post_item:
+    #         if request_user_authenticated:
+    #             if not check_block(user_id=post_item['user']['id'],
+    #                                blocked_id=request_user_id):
+    #                 arp.append(post_item)
+    #         else:
+    #             arp.append(post_item)
+
+    #     last_id = pll
+    # if arp:
+        # next_url = reverse('home') + "?older=" + last_id
+        # next_url = data['meta']['next']
+    if data:
+        for post in data['objects']:
             if request_user_authenticated:
-                if not check_block(user_id=post_item['user']['id'],
-                                   blocked_id=request_user_id):
-                    arp.append(post_item)
+                status = user_state(data=post['user'], current_user=cur_user)
+                if not status['status']:
+                    continue
+                arp.append(post)
             else:
-                arp.append(post_item)
-
-        last_id = pll
-
-    if arp:
-        next_url = reverse('home') + "?older=" + last_id
+                arp.append(post)
 
     if request.is_ajax():
         if arp:
-            return render(request, 'pin2/_items_2_v6.html', {
-                'latest_items': arp,
-                'cls': 'new_items',
-                'next_url': next_url,
-            })
+            return render(request,
+                          'pin2/_items_2_v6.html',
+                          # 'pin2/_api7_items_2_v6.html',
+                          {'latest_items': arp,
+                           'cls': 'new_items',
+                           'next_url': next_url
+                           })
         else:
             return HttpResponse(0)
 
-    return render(request, 'pin2/home_v6.html', {
-        'latest_items': arp,
-        'cls': 'new_items',
-        'next_url': next_url,
-        'page': 'home'
-    })
+    return render(request,
+                  # 'pin2/api7_home_v6.html',
+                  'pin2/home_v6.html',
+                  {'latest_items': arp,
+                   'cls': 'new_items',
+                   'next_url': next_url,
+                   'page': 'home'})
 
 
 def leaderboard(request):
@@ -177,11 +228,16 @@ def search(request):
     ru_id = request.user.id
 
     if query:
-        post_queryset = SearchQuerySet().models(Post)\
-            .filter(content__contains=query)[offset:offset + 1 * row_per_page]
+        ps = ESPosts()
+        try:
+            post_queryset = ps.search(query, from_=offset)
+        except:
+            post_queryset = []
+    #     post_queryset = SearchQuerySet().models(Post)\
+    #         .filter(content__contains=query)[offset:offset + 1 * row_per_page]
 
         for post in post_queryset:
-            ob = post_item_json(post_id=post.pk, cur_user_id=ru_id)
+            ob = post_item_json(post_id=post.id, cur_user_id=ru_id)
             if ob:
                 if request_user_authenticated:
                     ob_user_id = ob['user']['id']
@@ -190,27 +246,35 @@ def search(request):
                 else:
                     posts.append(ob)
 
-    else:
-        today_stamp = get_delta_timestamp(days=0)
-        week_statmp = get_delta_timestamp(days=7)
-        month_statmp = get_delta_timestamp(days=30)
+    # else:
+    #     facets = cache.get("search_facet")
+    #     if not facets:
+    #         facets = {}
+    #         stdlogger.info("cache empty")
+    #         today_stamp = get_delta_timestamp(days=0)
+    #         week_statmp = get_delta_timestamp(days=7)
+    #         month_statmp = get_delta_timestamp(days=30)
 
-        cur_time = int(time())
+    #         cur_time = int(time())
 
-        facets['facet_all'] = SearchQuerySet().models(Post)\
-            .facet('tags', limit=6)
+    #         facets['facet_all'] = SearchQuerySet().models(Post)\
+    #             .facet('tags', limit=6)
 
-        facets['facet_today'] = SearchQuerySet().models(Post)\
-            .narrow("timestamp_i:[{} TO {}]".format(today_stamp, cur_time))\
-            .facet('tags', limit=6)
+    #         facets['facet_today'] = SearchQuerySet().models(Post)\
+    #             .narrow("timestamp_i:[{} TO {}]".format(today_stamp, cur_time))\
+    #             .facet('tags', limit=6)
 
-        facets['facet_week'] = SearchQuerySet().models(Post)\
-            .narrow("timestamp_i:[{} TO {}]".format(week_statmp, cur_time))\
-            .facet('tags', limit=6)
+    #         facets['facet_week'] = SearchQuerySet().models(Post)\
+    #             .narrow("timestamp_i:[{} TO {}]".format(week_statmp, cur_time))\
+    #             .facet('tags', limit=6)
 
-        facets['facet_month'] = SearchQuerySet().models(Post)\
-            .narrow("timestamp_i:[{} TO {}]".format(month_statmp, cur_time))\
-            .facet('tags', limit=6)
+    #         facets['facet_month'] = SearchQuerySet().models(Post)\
+    #             .narrow("timestamp_i:[{} TO {}]".format(month_statmp, cur_time))\
+    #             .facet('tags', limit=6)
+
+    #         cache.set("search_facet", facets, 3600)
+    #     else:
+    #         stdlogger.debug("get from cache")
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
@@ -284,9 +348,11 @@ def category_top(request, category_id):
     posts_list = []
     offset = int(request.GET.get('offset', 0))
 
-    posts = SearchQuerySet().models(Post)\
-        .filter(category_i=category_id)\
-        .order_by('-cnt_like_i')[offset:offset + 1 * row_per_page]
+    # posts = SearchQuerySet().models(Post)\
+    #     .filter(category_i=category_id)\
+    #     .order_by('-cnt_like_i')[offset:offset + 1 * row_per_page]
+
+    posts = []
 
     ru_id = request.user.id
     request_user_authenticated = request.user.is_authenticated()
@@ -355,26 +421,30 @@ def hashtag(request, tag_name):
     posts_list = []
     query = tag_name
     related_tags = []
+    # result = []
     total_count = 0
-    tags = ['کربلا']
+    # tags = ['کربلا']
+    offset = int(request.GET.get('offset', 0))
 
     if query in [u'عروس', u'عاشقانه'] and not request.user.is_authenticated():
         return render(request, 'pin2/samandehi.html')
 
-    offset = int(request.GET.get('offset', 0))
+    ps = ESPosts()
+    posts, total_count = ps.search_tags(text=query,
+                                        offset=offset,
+                                        limit=row_per_page)
+    # post_queryset = SearchQuerySet().models(Post)\
+    #     .filter(tags=tag_name).facet('tags', mincount=1)
 
-    post_queryset = SearchQuerySet().models(Post)\
-        .filter(tags=tag_name).facet('tags', mincount=1)
-
-    ''' select posts'''
-    posts = post_queryset\
-        .order_by('-timestamp_i')[offset:offset + row_per_page]
+    # ''' select posts'''
+    # posts = post_queryset\
+    #     .order_by('-timestamp_i')[offset:offset + row_per_page]
 
     ru_id = request.user.id
     request_user_authenticated = request.user.is_authenticated()
 
     for post in posts:
-        post_json = post_item_json(post_id=post.pk,
+        post_json = post_item_json(post_id=post.id,
                                    cur_user_id=ru_id)
         if post_json:
             if request_user_authenticated:
@@ -384,25 +454,23 @@ def hashtag(request, tag_name):
             else:
                 posts_list.append(post_json)
 
-    ''' related tags query '''
-    tags_facet = post_queryset.facet_counts()
+    # ''' related tags query '''
+    # try:
+    #     tags_facet = post_queryset.facet_counts()
+    #     result = tags_facet['fields']['tags']
+    # except:
+    #     pass
+    # for key, val in result[:10]:
+    #     if key != tag_name:
+    #         related_tags.append(key)
+    #     else:
+    #         total_count = val
 
-    result = tags_facet['fields']['tags']
-
-    if not result:
-        result = []
-
-    for key, val in result[:10]:
-        if key != tag_name:
-            related_tags.append(key)
-        else:
-            total_count = val
-
-    if not query:
-        return render(request, 'pin2/tags.html', {
-            'tags': tags,
-            'total_count': total_count
-        })
+    # if not query:
+    #     return render(request, 'pin2/tags.html', {
+    #         'tags': tags,
+    #         'total_count': total_count
+    #     })
 
     if request.is_ajax():
         return render(request, 'pin2/__search.html', {
@@ -474,24 +542,34 @@ def user_friends(request, user_id):
 def absuser_following(request, user_namefg):
     user = get_object_or_404(User, username=user_namefg)
     user_id = int(user.id)
-    profile, created = Profile.objects.get_or_create(user_id=user_id)
+
     older = request.POST.get('older', False)
+    is_authenticated = request.user.is_authenticated()
+    cur_user = request.user
+    cur_user_id = request.user.id
+
+    """ Check current user status """
+    status = check_user_state(user_id=user_id, current_user=cur_user)
+    show_followeing = status['status']
+    follow_status = status['follow_status']
+    profile = status['profile']
+    following_status = False
     following = None
 
-    if request.user.is_authenticated():
-        if not check_block(user_id=user.id, blocked_id=request.user.id):
-            if older:
-                following = Follow.objects\
-                    .filter(follower_id=user_id, id__lt=older).order_by('-id')[:16]
-            else:
-                following = Follow.objects.filter(follower_id=user_id)\
-                    .order_by('-id')[:16]
-    else:
+    """ Get following status """
+    if is_authenticated and cur_user_id != user_id:
+        following_status = Follow.objects\
+            .filter(following_id=cur_user_id,
+                    follower_id=user_id).exists()
+
+    if show_followeing:
         if older:
             following = Follow.objects\
-                .filter(follower_id=user_id, id__lt=older).order_by('-id')[:16]
+                .filter(follower_id=user_id,
+                        id__lt=older).order_by('-id')[:16]
         else:
-            following = Follow.objects.filter(follower_id=user_id)\
+            following = Follow.objects\
+                .filter(follower_id=user_id)\
                 .order_by('-id')[:16]
 
     if request.is_ajax():
@@ -503,14 +581,6 @@ def absuser_following(request, user_namefg):
         else:
             return HttpResponse(0)
     else:
-        if request.user.id:
-            follow_status = Follow.objects.filter(follower=request.user.id,
-                                                  following=user.id).exists()
-            following_status = Follow.objects.filter(following=request.user.id,
-                                                     follower=user.id).exists()
-        else:
-            follow_status = 0
-            following_status = 0
 
         return render(request, 'pin2/user_following.html', {
             'user_items': following,
@@ -519,7 +589,10 @@ def absuser_following(request, user_namefg):
             'follow_status': follow_status,
             'following_status': following_status,
             'user_id': user_id,
-            'user': user
+            'user': user,
+            'is_private': profile.is_private,
+            'show_followeing': show_followeing
+
 
         })
 
@@ -575,26 +648,30 @@ def user_followers(request, user_id):
 def absuser_followers(request, user_namefl):
     user = get_object_or_404(User, username=user_namefl)
     user_id = user.id
-    profile, created = Profile.objects.get_or_create(user_id=user_id)
+
     older = request.POST.get('older', False)
+    is_authenticated = request.user.is_authenticated()
+    cur_user_id = request.user.id
+    cur_user = request.user
+
+    """ Check current user status """
+    status = check_user_state(user_id=user_id, current_user=cur_user)
+    show_followers = status['status']
+    follow_status = status['follow_status']
+    profile = status['profile']
+    following_status = False
     friends = None
 
-    if request.user.is_authenticated():
+    """ Get following status """
+    if is_authenticated and cur_user_id != user_id:
+        following_status = Follow.objects\
+            .filter(following_id=cur_user_id,
+                    follower_id=user_id).exists()
 
-        if not check_block(user_id=user.id, blocked_id=request.user.id):
-            if older:
-                friends = Follow.objects\
-                    .filter(following_id=user_id, id__lt=older)\
-                    .order_by('-id')[:16]
-            else:
-                friends = Follow.objects\
-                    .filter(following_id=user_id)\
-                    .order_by('-id')[:16]
-    else:
+    if show_followers:
         if older:
             friends = Follow.objects\
-                .filter(following_id=user_id,
-                        id__lt=older)\
+                .filter(following_id=user_id, id__lt=older)\
                 .order_by('-id')[:16]
         else:
             friends = Follow.objects\
@@ -610,17 +687,6 @@ def absuser_followers(request, user_namefl):
         else:
             return HttpResponse(0)
     else:
-
-        if request.user.id:
-            follow_status = Follow.objects.filter(follower=request.user.id,
-                                                  following=user.id).exists()
-            following_status = Follow.objects.filter(following=request.user.id,
-                                                     follower=user.id).exists()
-
-        else:
-            follow_status = 0
-            following_status = 0
-
         return render(request, 'pin2/user_followers.html', {
             'user_items': friends,
             'user_id': int(user_id),
@@ -629,6 +695,8 @@ def absuser_followers(request, user_namefl):
             'follow_status': follow_status,
             'following_status': following_status,
             'user': user,
+            'is_private': profile.is_private,
+            'show_followers': show_followers
         })
 
 
@@ -673,29 +741,39 @@ def absuser_like(request, user_namel):
     except User.DoesNotExist:
         raise Http404
 
-    status = True
+    # Prameters
     user_id = user.id
+    cur_user = request.user
+    cur_user_id = request.user.id
+    is_authenticated = request.user.is_authenticated()
+    latest_items = []
 
-    profile, created = Profile.objects.get_or_create(user_id=user_id)
+    """ Check current user status """
+    status = check_user_state(user_id=user_id, current_user=cur_user)
+    show_likes = status['status']
+    follow_status = status['follow_status']
+    profile = status['profile']
+    following_status = False
+
     if profile.banned:
         return render(request, 'pin2/samandehi.html')
 
-    if request.user.is_authenticated():
-        if check_block(user_id=user.id, blocked_id=request.user.id):
-            status = False
-
     pid = get_request_pid(request)
-    pl = Likes.user_likes(user_id=user_id, pid=pid)
-    arp = []
 
-    r_user_id = request.user.id
-    if status:
-        for pll in pl:
-            ob = post_item_json(post_id=int(pll), cur_user_id=r_user_id)
-            if ob:
-                arp.append(ob)
+    """ Get following_status"""
+    if is_authenticated and cur_user_id != user_id:
+        following_status = Follow.objects\
+            .filter(following_id=cur_user_id,
+                    follower_id=user_id).exists()
 
-    latest_items = arp
+    if show_likes:
+        pl = Likes.user_likes(user_id=user_id, pid=pid)
+        r_user_id = request.user.id
+        if status:
+            for pll in pl:
+                ob = post_item_json(post_id=int(pll), cur_user_id=r_user_id)
+                if ob:
+                    latest_items.append(ob)
 
     if request.is_ajax():
         if latest_items:
@@ -705,60 +783,88 @@ def absuser_like(request, user_namel):
         else:
             return HttpResponse(0)
 
-    if request.user.id:
-        follow_status = Follow.objects.filter(follower=request.user.id,
-                                              following=user.id).exists()
-        following_status = Follow.objects.filter(following=request.user.id,
-                                                 follower=user.id).exists()
-    else:
-        follow_status = 0
-        following_status = 0
-
     return render(request, 'pin2/user__likes.html', {
         'latest_items': latest_items,
         'user_id': user_id,
         'follow_status': follow_status,
         'following_status': following_status,
         'profile': profile,
-        'page': 'profile'
+        'page': 'profile',
+        'is_private': profile.is_private,
+        'show_likes': show_likes
     })
 
 
 def latest(request):
     pid = get_request_pid(request)
 
-    pl = Post.latest(pid=pid)
-    arp = []
-    last_id = None
-    next_url = None
-
-    if request.user.id:
-        viewer_id = str(request.user.id)
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/post/latest/"
     else:
-        viewer_id = str(get_user_ip(request, to_int=True))
+        url = "http://api.wisgoon.com/v7/post/latest/"
 
-    ad = Ads.get_ad(user_id=viewer_id)
-    if ad:
+    payload = {}
+    arp = []
+    next_url = None
+    # cur_user = request.user
+    # request_user_authenticated = request.user.is_authenticated()
+
+    # Get request user token
+    try:
+        api_key = ApiKey.objects.only('key').get(user_id=request.user.id)
+    except:
+        api_key = None
+
+    if api_key:
+        token = api_key.key
+        payload['token'] = token
+
+    payload['before'] = pid
+
+    # Get choices post
+    s = requests.Session()
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+    if res.status_code == 200:
         try:
-            if ad.post not in pl:
-                pl.append(str(ad.post.id))
+            data = json.loads(res.content)
+            arp = data['objects']
         except:
             pass
 
-    for pll in pl:
-        pll_id = int(pll)
-        ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
-        if ob:
-            if request.user.is_authenticated():
-                if not check_block(user_id=ob['user']['id'], blocked_id=request.user.id):
-                    arp.append(ob)
-            else:
-                arp.append(ob)
+    # pl = Post.latest(pid=pid)
+    # last_id = None
+    # next_url = None
 
-        last_id = pll
+    # if request.user.id:
+    #     viewer_id = str(request.user.id)
+    # else:
+    #     viewer_id = str(get_user_ip(request, to_int=True))
 
-    if arp and last_id:
-        next_url = reverse('pin-latest') + "?pid=" + str(last_id)
+    # ad = Ads.get_ad(user_id=viewer_id)
+    # if ad:
+    #     try:
+    #         if ad.post not in pl:
+    #             pl.append(str(ad.post.id))
+    #     except:
+    #         pass
+
+    # for pll in pl:
+    #     pll_id = int(pll)
+    #     ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
+    #     if ob:
+    #         if request.user.is_authenticated():
+    #             is_block = check_block(user_id=ob['user']['id'],
+    #                                    blocked_id=request.user.id)
+    #             if not is_block:
+    #                 arp.append(ob)
+    #         else:
+    #             arp.append(ob)
+
+    #     last_id = pll
+
+    # if arp and last_id:
+    #     next_url = reverse('pin-latest') + "?pid=" + str(last_id)
 
     if request.is_ajax():
         if arp:
@@ -789,7 +895,9 @@ def category(request, cat_id):
         ob = post_item_json(post_id=pll_id, cur_user_id=request.user.id)
         if ob:
             if request.user.is_authenticated():
-                if not check_block(user_id=ob['user']['id'], blocked_id=request.user.id):
+                is_block = check_block(user_id=ob['user']['id'],
+                                       blocked_id=request.user.id)
+                if not is_block:
                     arp.append(ob)
             else:
                 arp.append(ob)
@@ -843,8 +951,62 @@ def popular(request, interval=""):
         post_json = post_item_json(post_id=post.pk)
         if post_json:
             if request.user.is_authenticated():
-                if not check_block(user_id=post_json['user']['id'], blocked_id=request.user.id):
+                is_block = check_block(user_id=post_json['user']['id'],
+                                       blocked_id=request.user.id)
+                if not is_block:
                     ps.append(post_json)
+            else:
+                ps.append(post_json)
+
+    if request.is_ajax():
+        return render(request, 'pin2/__search.html', {
+            'posts': ps,
+            'offset': offset + 20
+        })
+
+    return render(request, 'pin2/popular.html', {
+        'posts': ps,
+        'offset': offset + 20
+    })
+
+
+def popular_2(request, interval=""):
+    from pin.models_stream import RedisTopPostStream
+
+    try:
+        offset = int(request.GET.get('offset', 0))
+    except ValueError:
+        offset = 0
+    cur_user_id = request.user.id
+
+    top_post = RedisTopPostStream()
+    if interval and interval in ['month', 'lastday', 'lasteigth', 'lastweek']:
+        if interval == 'month':
+            redis_key = "top_last_month"
+
+        elif interval == 'lastday':
+            redis_key = "top_last_day"
+
+        elif interval == 'lastweek':
+            redis_key = "top_last_week"
+
+        elif interval == 'lasteigth':
+            redis_key = "top_today"
+
+        post_ids = top_post.get_posts(key=redis_key, offset=offset)
+    else:
+        post_ids = top_post.get_posts(key="top_all", offset=offset)
+
+    ps = []
+    for post_id in post_ids:
+        post_json = post_item_json(post_id=post_id, cur_user_id=cur_user_id)
+        if post_json:
+            if request.user.is_authenticated():
+                status = user_state(data=post_json['user'],
+                                    current_user=request.user)
+                if not status['status']:
+                    continue
+                ps.append(post_json)
             else:
                 ps.append(post_json)
 
@@ -892,82 +1054,78 @@ def user(request, user_id, user_name=None):
 
 
 def absuser(request, user_name=None):
+
     try:
         user = AuthCache.user_from_name(username=user_name)
     except User.DoesNotExist:
         raise Http404
-
+    # page = request.GET.get('page', 1)
+    # items = []
     user_id = user.id
     cur_user = request.user
     cur_user_id = request.user.id
-    follow_req = False
     is_authenticated = request.user.is_authenticated()
     latest_items = []
-    is_block = False
     ban_by_admin = False
-    follow_status = False
     following_status = False
-    show_posts = True
+    # page_range = []
 
-    try:
-        profile = Profile.objects.get(user_id=user_id)
-    except Profile.DoesNotExist:
-        profile = Profile.objects.create(user_id=user_id)
+    status = check_user_state(user_id=user_id, current_user=cur_user)
+    show_post = status['status']
+    follow_status = status['follow_status']
+    pending = status['pending']
+    profile = status['profile']
 
     if profile.banned and not is_authenticated:
         return render(request, 'pin2/samandehi.html')
 
+    """ Get ban by admin reason """
     if cur_user.is_superuser and not user.is_active:
         from pin.models import Log
         ban_by_admin = Log.objects\
             .filter(object_id=user_id,
                     content_type=Log.USER)\
+            .exclude(action=Log.UPDATE_PROFILE)\
             .order_by('-id')
         if ban_by_admin:
             ban_by_admin = ban_by_admin[0].text
 
-    timestamp = get_request_timestamp(request)
-    if timestamp == 0:
-        lt = Post.objects.only('id').filter(user=user_id)\
-            .order_by('-timestamp')[:20]
-    else:
-        lt = Post.objects.only('id').filter(user=user_id)\
-            .extra(where=['timestamp<%s'], params=[timestamp])\
-            .order_by('-timestamp')[:20]
+    """ Get following_status"""
+    if is_authenticated and cur_user_id != user_id:
+        following_status = Follow.objects\
+            .filter(following_id=cur_user_id,
+                    follower_id=user_id).exists()
 
-    # profile.cnt_follower = Follow.objects.filter(following_id=user.id).count()
-    # profile.cnt_following = Follow.objects.filter(follower_id=user.id).count()
-    if cur_user_id != user_id:
-        if is_authenticated:
-            # get_simple_user_object(user_id, cur_user_id)
-            # check follow status
-            follow_status = Follow.objects\
-                .filter(follower_id=cur_user_id,
-                        following_id=user_id).exists()
+    if show_post:
+        """ Get user posts """
+        timestamp = get_request_timestamp(request)
+        if timestamp == 0:
+            lt = Post.objects.only('id').filter(user=user_id)\
+                .order_by('-timestamp')[:20]
+        else:
+            lt = Post.objects.only('id').filter(user=user_id)\
+                .extra(where=['timestamp<%s'], params=[timestamp])\
+                .order_by('-timestamp')[:20]
 
-            following_status = Follow.objects\
-                .filter(following_id=cur_user_id,
-                        follower_id=user_id).exists()
+        # lt = Post.objects.only('id').filter(user=user_id)\
+        #     .order_by('-timestamp')
 
-            # check private profile
-            if profile.is_private and not follow_status:
-                follow_req = FollowRequest.objects\
-                    .filter(user_id=cur_user_id,
-                            target_id=user_id).exists()
-
-                show_posts = False
-
-            if check_block(user_id=profile.user_id, blocked_id=cur_user_id):
-                is_block = True
-
-    else:
-        follow_status = True
-
-    if not is_block and show_posts:
         for li in lt:
             pob = post_item_json(li.id, cur_user_id=cur_user_id)
             if pob:
                 latest_items.append(pob)
+
+        # paginator = Paginator(latest_items, 20)
+        # try:
+        #     items = paginator.page(page)
+        # except (PageNotAnInteger, EmptyPage):
+        #     items = paginator.page(1)
+
+        # index = items.number - 1
+        # max_index = len(paginator.page_range)
+        # start_index = index - 5 if index >= 5 else 0
+        # end_index = index + 5 if index <= max_index - 5 else max_index
+        # page_range = paginator.page_range[start_index:end_index]
 
     if request.is_ajax():
         if latest_items:
@@ -987,64 +1145,77 @@ def absuser(request, user_name=None):
         'user_id': int(user_id),
         'profile': profile,
         'page': "profile",
-        'follow_req': follow_req,
-        'is_private': profile.is_private
+        'follow_req': pending,
+        'is_private': profile.is_private,
+        'show_posts': show_post,
+        # 'page_range': page_range
     })
 
 
 def item(request, item_id):
-    MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
-    pending = False
-    follow_status = False
-    cur_user_id = request.user.id
+
+    # try:
+    #     post = post_item_json(post_id=item_id)
+    #     if not post:
+    #         raise Post.DoesNotExist
+    # except Post.DoesNotExist:
+    #     raise Http404("Post does not exist")
+    # Get user id
+    # user_id = post["user"]["id"]
+
+    # Check show_post
+    # status = check_user_state(user_id=user_id,
+    #                           current_user=current_user)
+
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/post/item/{}/".format(item_id)
+    else:
+        url = "http://api.wisgoon.com/v7/post/item/{}/".format(item_id)
+    payload = {}
 
     try:
-        # post = Post.objects.get(id=item_id)
-        post = post_item_json(post_id=item_id)
-        if not post:
-            raise Post.DoesNotExist
-    except Post.DoesNotExist:
+        api_key = ApiKey.objects.only('key').get(user_id=request.user.id)
+    except:
+        api_key = None
+
+    if api_key:
+        token = api_key.key
+        payload = {'token': token}
+
+    s = requests.Session()
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
+    MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
+    # current_user = request.user
+
+    if res.status_code == 200:
+        post = json.loads(res.content)
+    else:
         raise Http404("Post does not exist")
+
+    # status = user_state(data=post['user'], current_user=current_user)
+    # show_post = status['status']
+    # follow_status = status['follow_status']
+    # pending = status['pending']
+
+    # if not show_post:
+    #     raise Http404
+
+    follow_status = post['user']['follow_by_user']
+    pending = post['user']['request_follow']
+    if request.is_ajax():
+        return render(request, 'pin2/items_inner.html', {
+            'post': post,
+            'follow_status': follow_status,
+            'pending': pending
+        })
+        # return render(request, 'pin2/api7_items_inner.html', {
+        #     'post': post,
+        #     'follow_status': follow_status,
+        #     'pending': pending
+        # })
 
     comments_url = reverse('pin-get-comments', args=[post["id"]])
     related_url = reverse('pin-item-related', args=[post["id"]])
-
-    try:
-        profile = Profile.objects\
-            .only('is_private')\
-            .get(user_id=post["user"]["id"])
-    except Profile.DoesNotExist:
-        profile = Profile.objects.create(user_id=post["user"]["id"])
-
-    # check profile is_private
-    if profile.is_private:
-
-        # if login user
-        if request.user.is_authenticated():
-            is_block = check_block(user_id=post["user"]["id"],
-                                   blocked_id=cur_user_id)
-            if is_block:
-                return HttpResponseRedirect('/')
-
-            follow_status = Follow.objects\
-                .filter(follower=cur_user_id,
-                        following=post["user"]["id"])\
-                .exists()
-
-            # Check exist pending follow request
-            if not follow_status:
-                pending = FollowRequest.objects\
-                    .filter(user_id=cur_user_id,
-                            target_id=post["user"]["id"])\
-                    .exists()
-        else:
-            raise Http404
-
-    if request.is_ajax():
-        return render(request, 'pin2/items_inner.html', {
-            'post': post, 'follow_status': follow_status
-        })
-
     return render(request, 'pin2/item.html', {
         'post': post,
         'follow_status': follow_status,
@@ -1078,47 +1249,61 @@ def post_likers(request, post_id, offset=0):
 
 
 def item_related(request, item_id):
-    offset = int(request.GET.get('offset', 0))
+    offset = int(request.GET.get('older', 0))
+    last_id = int(request.GET.get('last_id', 0))
+    related_posts = []
 
     try:
         post = Post.objects.get(id=item_id)
     except Post.DoesNotExist:
         raise Http404
 
-    cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
-    mltis = cache.get(cache_str)
-    if not mltis:
-        mlt = SearchQuerySet().models(Post)\
-            .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
+    if offset < 100:
 
-        mltis = [int(pmlt.pk) for pmlt in mlt]
-        cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
+        cache_str = Post.MLT_CACHE_STR.format(item_id, offset)
+        mltis = cache.get(cache_str)
 
-    related_posts = []
-    for pmlt in mltis:
-        ob = post_item_json(post_id=pmlt, cur_user_id=request.user.id)
-        if ob:
-            related_posts.append(ob)
+        if not mltis:
+            # mlt = SearchQuerySet().models(Post)\
+            #     .more_like_this(post)[offset:offset + Post.GLOBAL_LIMIT]
 
-    ''' age related_posts khali bud az category miyarim'''
-    if not related_posts:
-        post_ids = Post.latest(cat_id=post.category_id)
-        for post_id in post_ids:
-            if post.id != post_id:
-                post_json = post_item_json(post_id=int(post_id), cur_user_id=request.user.id)
-                if post_json:
-                    related_posts.append(post_json)
-                    mltis.append(post_id)
+            ps = ESPosts()
+            mlt = ps.related_post(post.text,
+                                  offset=offset,
+                                  limit=Post.GLOBAL_LIMIT)
+            # mltis = [int(pmlt.id) for pmlt in mlt]
+            mltis = []
+            for pmlt in mlt:
+                if post.id != int(pmlt.id):
+                    mltis.append(int(pmlt.id))
+            cache.set(cache_str, mltis, Post.MLT_CACHE_TTL)
+
+        for pmlt in mltis:
+            ob = post_item_json(post_id=pmlt, cur_user_id=request.user.id)
+            if ob:
+                related_posts.append(ob)
+
+        ''' age related_posts khali bud az category miyarim'''
+        if not related_posts:
+            post_ids = Post.latest(cat_id=post.category_id, pid=last_id)
+            for post_id in post_ids:
+                if post.id != post_id:
+                    post_json = post_item_json(post_id=int(post_id),
+                                               cur_user_id=request.user.id)
+                    if post_json:
+                        related_posts.append(post_json)
 
     post.mlt = related_posts
 
     if request.is_ajax():
         return render(request, 'pin2/_items_related.html', {
-            'post': post
+            'post': post,
+            'offset': offset + 20
         })
 
     return render(request, 'pin2/item_related.html', {
         'post': post,
+        'offset': offset + 20,
     }, content_type="text/html")
 
 
@@ -1164,7 +1349,7 @@ def stats(request):
     for m in ms:
         if m.date.day not in op['dates']:
             op['dates'].append(m.date.day)
-    print op
+
     return render(request, 'pin2/stats.html', {'op': op})
 
 

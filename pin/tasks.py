@@ -67,8 +67,13 @@ def gcm_push(user_id, action_type, post_id, actor_id, timestamp, comment=None):
     timestamp = int(timestamp)
     try:
         up = PhoneData.objects.get(user_id=user_id)
+
+        if up.logged_out:
+            return
+
         if up.app_version < settings.GCM_VERSION:
             return
+
         if not up.google_token or up.google_token == 'NONE':
             return
     except PhoneData.DoesNotExist:
@@ -107,7 +112,10 @@ def activity(act_type, who, post_id):
 @app.task(name="wisgoon.pin.add_to_storage")
 def add_to_storage(post_id):
     from pin.models import Storages, Post
-    post = Post.objects.get(id=post_id)
+    try:
+        post = Post.objects.get(id=post_id)
+    except Exception as e:
+        return
     if not Storages.objects.exists():
         return
     storage = Storages.objects.order_by('num_files')[:1][0]
@@ -200,6 +208,7 @@ def check_porn(post_id):
     except Post.DoesNotExist:
         return "post does not exists"
     img_url = media_abs_url(post.get_image_500()['url'], check_photos=True)
+    print img_url
 
     try:
         r = requests.get(img_url, timeout=5)
@@ -207,6 +216,9 @@ def check_porn(post_id):
         print str(e)
         return
     except requests.exceptions.Timeout, e:
+        print str(e)
+        return
+    except Exception, e:
         print str(e)
         return
 
@@ -218,13 +230,16 @@ def check_porn(post_id):
                             auth=hba,
                             verify=False, data=r.content, timeout=10)
         if res.status_code != 200:
+            print res.status_code
             recheck_post(post_id)
             return
     except requests.ConnectionError, e:
         recheck_post(post_id)
+        print str(e)
         return
     except requests.exceptions.Timeout, e:
         recheck_post(post_id)
+        print str(e)
         return
 
     jdata = json.loads(res.content)
@@ -392,25 +407,20 @@ def delete_image(file_path):
             break
 
     if not exec_on_remote:
-        os.remove(file_path)
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            return str(e), file_path
     return "delete post", file_path
 
 
 @app.task(name="wisgoon.pin.post_to_followers")
 def post_to_followers(user_id, post_id):
-    from pin.models import Follow
+    from pin.models import Follow, Post
     followers = Follow.objects.filter(following_id=user_id)\
         .values_list('follower_id', flat=True)
 
-    for follower_id in followers:
-        if settings.DEBUG:
-            post_to_follower_single(post_id=post_id,
-                                    follower_id=follower_id,
-                                    post_owner=user_id)
-        else:
-            post_to_follower_single.delay(post_id=post_id,
-                                          follower_id=follower_id,
-                                          post_owner=user_id)
+    Post.add_to_users_stream(post_id, followers, user_id)
 
     return "this is post_to_followers"
 
@@ -446,3 +456,17 @@ def update_camp_post(camp_id):
 @app.task(name="tasks.camp_scores")
 def camp_scores(camp_id):
     call_command('campaign_scores', camp_id=camp_id)
+
+
+@app.task(name="tasks.camp_scores_2")
+def camp_scores_2(camp_id):
+    call_command('campaign_scores_2', camp_id=camp_id)
+
+
+@app.task(name="wisgoon.pin.ltrim_user_stream")
+def ltrim_user_stream(user_id):
+    from pin.models_casper import UserStream
+    print "start ltrim %s" % user_id
+    us = UserStream()
+    us.ltrim(user_id)
+    print "end ltrim %s" % user_id

@@ -1,14 +1,20 @@
 import ast
+import re
 import emoji
 import urllib
+import random
+import pytz
+
 from io import FileIO, BufferedWriter
 from time import time
+import datetime as dt
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext as _
-from django.utils.timezone import localtime
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
+from django.db.models import F
+from django.utils.timezone import localtime
+from django.utils.translation import ugettext as _
 
 from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
@@ -17,14 +23,13 @@ from pin.api6.http import return_bad_request
 from pin.cacheLayer import UserDataCache
 from pin.forms import PinDirectForm
 from pin.models import Post, Follow, Comments, Block, Category, SystemState,\
-    FollowRequest
+    FollowRequest, VerifyCode, BannedImei
 from pin.models_redis import LikesRedis, PostView
 from pin.tools import create_filename, fix_rotation, AuthCache
 
 from user_profile.models import Profile
 
 from cache_layer import PostCacheLayer
-
 import khayyam
 
 VERB = {
@@ -68,7 +73,7 @@ def category_get_json(cat_id):
 def get_int(number):
     try:
         post_id = int(number)
-    except ValueError:
+    except:
         post_id = 0
     return post_id
 
@@ -158,6 +163,7 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
     user_info['block_by_user'] = False
     user_info['user_blocked_me'] = False
     user_info['request_follow'] = False
+    user_info['is_private'] = False
 
     user_info['related']['posts'] = abs_url(reverse('api-6-post-user',
                                                     kwargs={
@@ -166,23 +172,26 @@ def get_simple_user_object(current_user, user_id_from_token=None, avatar=64):
     user_name = {"user_name": user_info['username']}
     user_info['permalink'] = abs_url(reverse("pin-absuser", kwargs=user_name))
 
+    try:
+        profile = Profile.objects.only('is_private')\
+            .get(user_id=current_user)
+
+        user_info['is_private'] = profile.is_private
+    except:
+        pass
+
     if user_id_from_token:
         user_info['follow_by_user'] = Follow.objects\
             .filter(follower_id=user_id_from_token,
                     following_id=current_user)\
             .exists()
-        try:
-            profile = Profile.objects.only('is_private')\
-                .get(user_id=current_user)
 
-            if not user_info['follow_by_user'] and profile.is_private:
-                follow_req = FollowRequest.objects\
-                    .filter(user_id=user_id_from_token,
-                            target_id=current_user).exists()
-                if follow_req:
-                    user_info['request_follow'] = True
-        except:
-            pass
+        if not user_info['follow_by_user'] and user_info['is_private']:
+            follow_req = FollowRequest.objects\
+                .filter(user_id=user_id_from_token,
+                        target_id=current_user).exists()
+            if follow_req:
+                user_info['request_follow'] = True
 
         user_info['block_by_user'] = Block.objects\
             .filter(user_id=user_id_from_token, blocked_id=current_user)\
@@ -238,7 +247,7 @@ def get_post_tags(post):
 
 
 def post_item_json(post_id, cur_user_id=None, r=None,
-                   fields=None, exclude=None):
+                   fields=None, exclude=None, is_truncate=False):
 
     if not post_id:
         return {}
@@ -271,28 +280,47 @@ def post_item_json(post_id, cur_user_id=None, r=None,
         cp = PostCacheLayer(post_id=post_id)
 
         cache_post = cp.get()
-        pi['cnt_view'] = PostView(post_id=post_id).get_cnt_view()
-        PostView(post_id=post_id).inc_view()
+
+        pi['cnt_view'] = PostView(post_id=post_id).inc_view()
+        # PostView(post_id=post_id).inc_view()
+        # pi['cnt_view'] = 56
+
         if cache_post:
+            cache_post['like_with_user'] = False
+            post_user_id = cache_post['user']['id']
             if cur_user_id:
                 cache_post['like_with_user'] = LikesRedis(post_id=post_id)\
                     .user_liked(user_id=cur_user_id)
+
+                cache_post['user'] = get_simple_user_object(
+                    current_user=post_user_id,
+                    user_id_from_token=cur_user_id
+                )
+            else:
+                cache_post['user'] = get_simple_user_object(
+                    current_user=post_user_id,
+                )
+
             cache_post['cnt_view'] = pi['cnt_view']
             cache_post['cache'] = "Hit"
-            cache_post['text'] = emoji.emojize(cache_post['text'])
-            post_user_id = cache_post['user']['id']
-            cache_post['user'] = get_simple_user_object(post_user_id)
+
+            if is_truncate:
+                cache_post['text'] = emoji.emojize(cache_post['text'][:2048])
+            else:
+                cache_post['text'] = emoji.emojize(cache_post['text'])
+
             cache_post = need_fields(cache_post)
             return cache_post
 
         try:
             post = Post.objects.get(id=post_id)
-        except Post.DoesNotExist:
+        except (AttributeError, Post.DoesNotExist):
             return None
+
         pi['cache'] = "Miss"
         pi['id'] = post.id
         pi['text'] = emoji.emojize(post.text).strip()
-        pi['cnt_comment'] = 0 if post.cnt_comment == -1 else post.cnt_comment
+        pi['cnt_comment'] = 0 if post.cnt_comment < 0 else post.cnt_comment
         pi['timestamp'] = post.timestamp
         pi['show_in_default'] = post.show_in_default
 
@@ -304,7 +332,6 @@ def post_item_json(post_id, cur_user_id=None, r=None,
         pi['url'] = post.url
 
         pi['cnt_like'] = post.cnt_like
-        pi['like_with_user'] = False
         pi['status'] = post.status
 
         pi['tags'] = get_post_tags(post)
@@ -314,10 +341,10 @@ def post_item_json(post_id, cur_user_id=None, r=None,
         pi['permalink'] = {}
 
         pi['permalink']['api'] = abs_url(reverse("api-6-post-item",
-                                         kwargs={"item_id": post.id}))
+                                                 kwargs={"item_id": post.id}))
 
         pi['permalink']['web'] = abs_url(reverse("pin-item",
-                                         kwargs={"item_id": post.id}),
+                                                 kwargs={"item_id": post.id}),
                                          api=False)
 
         if cur_user_id:
@@ -378,8 +405,12 @@ def get_objects_list(posts, cur_user_id=None, r=None):
         if not post:
             continue
 
-        post_item = post_item_json(post, cur_user_id, r)
+        post_item = post_item_json(
+            post_id=post, cur_user_id=cur_user_id, r=r, is_truncate=True)
+
         if post_item:
+            if post_item['user']['user_blocked_me']:
+                continue
             objects_list.append(post_item)
 
     return objects_list
@@ -403,7 +434,7 @@ def get_profile_data(profile, user_id):
     else:
         data['cover'] = ""
     data['score'] = profile.score
-    data['jens'] = profile.jens if profile.jens else '0'
+    data['jens'] = profile.jens if profile.jens else 'M'
     data['bio'] = profile.bio
     data['date_joined'] = khayyam.JalaliDate(profile.user.date_joined)\
         .strftime("%Y/%m/%d")
@@ -439,7 +470,8 @@ def comment_item_json(comment):
         return comment_dict
 
     comment_dict['id'] = comment.id
-    comment_dict['comment'] = emoji.emojize(comment.comment)[0:512]
+    # comment_dict['comment'] = emoji.emojize(comment.comment)[0:512]
+    comment_dict['comment'] = emoji.emojize(comment.comment)
 
     # TODO for stable
     try:
@@ -564,12 +596,13 @@ def check_user_state(user_id, token):
     else:
         current_user = AuthCache.user_from_token(token=token)
         if not current_user:
-            status = False
+            if profile.is_private:
+                status = False
             return status, current_user_id
         current_user_id = current_user.id
 
         """ Check current user is admin """
-        if not current_user.is_superuser or current_user.id != int(user_id):
+        if current_user.id != int(user_id):
 
             """ Check is block request user"""
             is_block = Block.objects.filter(user_id=user_id,
@@ -588,3 +621,106 @@ def check_user_state(user_id, token):
                     status = False
                     return status, current_user_id
     return status, current_user_id
+
+
+def normalize_phone(number):
+    """
+    convert   09195308965 -> 989195308965
+            +989195308965 -> 989195308965
+           00989195308965 -> 989195308965
+    """
+
+    if number.startswith("00"):
+        number = number.replace("0", "98")
+
+    elif number.startswith("0"):
+        number = number.replace("0", "98", 1)
+
+    elif number.startswith("+"):
+        number = number.replace("+", "")
+    else:
+        number = "0"
+    return str(int(float(number)))
+    # return number
+
+
+def validate_mobile(value):
+    status = False
+    rule = re.compile(r'^\+?(989)\d{9}$')
+    if rule.search(value):
+        status = True
+    return status
+
+
+def get_random_int():
+    return random.randint(1000, 9999)
+
+
+def code_is_valid(code, user_id):
+    status = False
+    verify_code = VerifyCode.objects.filter(user_id=user_id, code=code)
+
+    if verify_code.exists():
+        code = verify_code[0]
+        convert_date = code.create_at.replace(tzinfo=None)
+        date_diff = (dt.datetime.utcnow() - convert_date).seconds / 60
+        if date_diff > 2:
+            status = True
+    return status
+
+
+def allow_reset(user_id):
+    today_min = dt.datetime.combine(dt.date.today(), dt.time.min)
+    today_max = dt.datetime.combine(dt.date.today(), dt.time.max)
+    status = True
+
+    cnt_try = VerifyCode.objects\
+        .filter(user_id=user_id,
+                create_at__range=(today_min, today_max)).count()
+    if cnt_try > 5:
+        status = False
+    return status
+
+
+def timestamp_to_local_datetime(timestamp):
+
+    tz = pytz.timezone('Asia/Tehran')
+    converted = tz.localize(dt.datetime.fromtimestamp(int(timestamp)))
+    t1 = converted.astimezone(tz).replace(tzinfo=None)
+    return t1
+
+
+def update_imei(imei, new_imei):
+    BannedImei.objects.filter(imei=imei).update(imei=new_imei)
+    # PhoneData.objects.filter(imei=imei).update(imei=new_imei)
+
+
+def update_score(cur_user_id, code):
+
+    Profile.objects.filter(invite_code=code).update(
+        score=F('score') + 2000)
+    Profile.objects.filter(user_id=cur_user_id)\
+        .update(score=F('score') + 5000)
+
+
+def retry_fetch_posts(user_id, pid, hot_post_id, request):
+    status = True
+    idis = Post.user_stream_latest(user_id=user_id, pid=pid)
+    post_ids = get_list_post(idis, from_model=settings.STREAM_LATEST)
+    data = []
+
+    if len(post_ids) == 0:
+        status = False
+        return status, data
+
+    for post in list(post_ids):
+        post_item = post_item_json(post_id=post,
+                                   cur_user_id=user_id,
+                                   r=request)
+        if post_item and post_item['user']['user_blocked_me']:
+            continue
+
+        if post_item and int(post_item['id']) != hot_post_id:
+            data.append(post_item)
+            status = False
+    return status, data

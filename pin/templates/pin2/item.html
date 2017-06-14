@@ -17,10 +17,16 @@
 <script>
     var comments_url = "{{comments_url}}";
     var related_url = "{{related_url}}";
+    var start_loading=0;
+    var a_url="{{related_url}}";
+    {% comment %}
+
+    {% endcomment %}
 </script>
 <div id="main">
 	<div class="container">
         {% include "pin2/items_inner.html" %}
+        {# {% include "pin2/api7_items_inner.html" %} #}
     </div>
     <div class="pa20" id="related_posts">
         <div class="row">
@@ -29,12 +35,14 @@
             </div>
             <div class="col-md-9 col-sm-12 col-xs-12">
             {% if DISPLAY_AD %}
-                {% include "pin2/tabliq/_728x90.html" %}
+                <div class="mato10 mabo10 tab_300 tabliq" style="border-radius:8px;overflow:hidden;height:100px;">
+                    {% include "pin2/tabliq/_728x90.html" %}
+                </div>
             {%endif%}
             </div>
         </div>
         <div id="feed" class="masonry">
-            <a href="{{related_url}}"> مطالب مرتبط </a>
+            <a href="{{related_url}}">مطالب مرتبط </a>
         </div>
     </div>
     {% if DISPLAY_AD and request.user_agent.is_mobile %}
@@ -207,3 +215,4 @@
 </script>
 
 {% endblock footer_ex_js %}
+

@@ -62,7 +62,7 @@ $(function () {
         // feedobj.masonry('reload');
     });
 
-    
+
 
     var frm = $("#add-comment-form");
     frm.submit(function(e) {
@@ -75,11 +75,14 @@ $(function () {
             data: frm.serialize(),
         })
         .done(function(response) {
-            if (response == 'error'){
-                console.log('Method Not Allowed');
+            if (res.status == false){
+                alertify.error(res.message);
             }else{
-                $('#comments_box').prepend(response);
+                var cnt_comment;
+                $('#comments_box').prepend($.parseHTML(res.message));
                 $('#comments_box').find('.no-comment').hide('fast');
+                cnt_comment = document.getElementById('cnt_comment');
+                cnt_comment.innerHTML=pn(res.cnt_comments + 1);
                 alertify.success("دیدگاه شما با موفقیت ثبت شد");
             }
         })

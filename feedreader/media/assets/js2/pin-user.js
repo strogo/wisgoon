@@ -155,15 +155,8 @@ $('body').on('click', '.del-comment', function(){
         success: function(resp) {
             if (resp.status){
                 $('#main').css('height', h - bh);
-                // pp = $('#related_posts').offset().top;
-                // pr = pp - $('.post-sidebar').height();
-                // $(".post-page .post-sidebar").trigger('detach.ScrollToFixed');
-                // $(".post-page .post-sidebar").scrollToFixed({
-                //     marginTop:15,
-                //     limit:  pr
-                // });
-                // $(window).resize();
-                // sticky_sidebar(0);
+                cnt_comment = document.getElementById('cnt_comment');
+                cnt_comment.innerHTML=pn(resp.cnt_comments - 1);
                 $("#"+row_name).slideUp('fast');
                 alertify.success(resp.message);
             }else{

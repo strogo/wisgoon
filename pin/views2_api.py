@@ -473,18 +473,18 @@ def post2(request):
 
         posts = get_list_post2(pl, cur_user_id=cur_user)
 
-    if not user_id and not category_id:
-        hot_post = None
+    # if not user_id and not category_id:
+    #     hot_post = None
 
-        if cur_user:
-            viewer_id = str(cur_user)
-        else:
-            viewer_id = str(get_user_ip(request, to_int=True))
+    #     if cur_user:
+    #         viewer_id = str(cur_user)
+    #     else:
+    #         viewer_id = str(get_user_ip(request, to_int=True))
 
-        ad = Ad.get_ad(user_id=viewer_id)
-        if ad:
-            hot_post = int(ad.post_id)
-            posts.append(get_list_post2([hot_post], cur_user_id=cur_user))
+    #     ad = Ad.get_ad(user_id=viewer_id)
+    #     if ad:
+    #         hot_post = int(ad.post_id)
+    #         posts.append(get_list_post2([hot_post], cur_user_id=cur_user))
 
     thumb_size = int(request.GET.get('thumb_size', "236"))
 

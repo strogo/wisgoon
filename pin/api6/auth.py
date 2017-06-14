@@ -1,7 +1,9 @@
 # -*- coding:utf-8 -*-
+from __future__ import division
 import re
 import hashlib
 import urllib2
+import ast
 
 try:
     import simplejson as json
@@ -19,10 +21,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login as auth_login,\
     logout as auth_logout
 
-from user_profile.models import Profile
+from user_profile.models import Profile, Subscription, Package
 from user_profile.forms import ProfileForm2
 
-from daddy_avatar.templatetags.daddy_avatar import get_avatar
+# from daddy_avatar.templatetags.daddy_avatar import get_avatar
 
 from tastypie.models import ApiKey
 
@@ -31,14 +33,17 @@ from tastypie.models import ApiKey
 # from haystack.query import Raw
 from pin.decorators import system_writable
 from pin.models import Follow, Block, Likes, BannedImei, PhoneData, Bills2,\
-    FollowRequest
+    FollowRequest, VerifyCode, Log, InviteLog
 from pin.models_es import ESUsers
-from pin.tools import AuthCache, get_new_access_token2
+from pin.tools import AuthCache, get_new_access_token2, get_user_ip
 from pin.api6.http import return_bad_request, return_json_data,\
     return_un_auth, return_not_found
 from pin.api6.tools import get_next_url, get_simple_user_object,\
     get_int, get_profile_data, update_follower_following, post_item_json,\
-    check_user_state
+    check_user_state, normalize_phone, validate_mobile, get_random_int,\
+    code_is_valid, allow_reset, update_imei, update_score
+
+import requests
 
 
 def followers(request, user_id):
@@ -249,18 +254,15 @@ def login(request):
     if user:
         if user.is_active:
             auth_login(request, user)
-
             api_key, created = ApiKey.objects.get_or_create(user=user)
-
             data = {
                 'status': True,
                 'message': _('Login successfully'),
-                'user': {
-                    'token': api_key.key,
-                    'id': user.id,
-                    'avatar': get_avatar(user)
-                }
+                'profile': get_profile_data(user.profile, user.id)
             }
+            data['user'] = get_simple_user_object(current_user=user.id,
+                                                  avatar=210)
+            data['user']['token'] = api_key.key
             return return_json_data(data)
 
         else:
@@ -284,7 +286,11 @@ def register(request):
     password = request.POST.get("password", 'False')
     req_token = request.POST.get("token", '')
     email = request.POST.get("email", '')
+    imei = request.POST.get("imei", None)
+    gsf_id = request.POST.get("gsf_id", None)
+    code = request.POST.get("code", None)
     app_token = settings.APP_TOKEN_KEY
+    exists = True
 
     if req_token != app_token:
         data = {
@@ -323,7 +329,19 @@ def register(request):
         }
         return return_json_data(data)
 
+    if code:
+        exist_code = Profile.objects.filter(invite_code=code).exists()
+        if not exist_code:
+            data = {
+                'status': False,
+                'message': _('Invite code is wrong')
+            }
+            return return_json_data(data)
+
     try:
+        if imei and gsf_id and code:
+            exists = PhoneData.objects.filter(
+                Q(imei=imei) | Q(imei=gsf_id)).exists()
         user = User.objects.create_user(username=username,
                                         email=email,
                                         password=password)
@@ -337,19 +355,20 @@ def register(request):
     if user:
         api_key, created = ApiKey.objects.get_or_create(user=user)
 
+        # Update score
+        if not exists:
+            update_score(user.id, code)
+            InviteLog.log(user.id, code)
+
         data = {
             'status': True,
-            'message': _("User created successfully"),
-            'user': {
-                'token': api_key.key,
-                'id': user.id,
-                'avatar': get_avatar(user)
-            }
+            'message': _('User created successfully'),
+            'profile': get_profile_data(user.profile, user.id)
         }
-        # data = {
-        #     'status': True,
-        #     'message': _("User created successfully")
-        # }
+        data['user'] = get_simple_user_object(current_user=user.id,
+                                              avatar=210)
+        data['user']['token'] = api_key.key
+
         return return_json_data(data)
     else:
         data = {
@@ -361,7 +380,7 @@ def register(request):
 
 def profile_name(request, user_name):
     try:
-        user = User.objects.only('id').get(username=user_name)
+        user = User.objects.only('id').get(username=str(user_name))
     except User.DoesNotExist:
         return return_not_found()
 
@@ -369,32 +388,60 @@ def profile_name(request, user_name):
 
 
 def profile(request, user_id):
+    data = {
+        'user': {},
+        'profile': {}
+    }
+    payload = {}
     token = request.GET.get('token', False)
-    current_user = None
-    current_user_id = None
-
-    if user_id:
-        try:
-            User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return return_not_found()
 
     if token:
-        current_user = AuthCache.user_from_token(token=token)
-        if current_user:
-            current_user_id = current_user.id
+        payload['token'] = token
 
-    try:
-        profile = Profile.objects\
-            .only('banned', 'user', 'score', 'cnt_post', 'cnt_like',
-                  'website', 'credit', 'level', 'bio').get(user_id=user_id)
-    except Profile.DoesNotExist:
-        profile = Profile.objects.create(user_id=user_id)
+    if settings.DEBUG:
+        url = "http://127.0.0.1:8801/v7/auth/user/{}/"
+    else:
+        url = "http://test.wisgoon.com/v7/auth/user/{}/"
+    url = url.format(user_id)
 
-    data = {
-        'user': get_simple_user_object(user_id, current_user_id, avatar=210),
-        'profile': get_profile_data(profile, user_id)
-    }
+    # Get choices post
+    s = requests.Session()
+    res = s.get(url, params=payload, headers={'Connection': 'close'})
+
+    if res.status_code == 200:
+        try:
+            data = json.loads(res.content)
+        except:
+            return return_not_found()
+    else:
+        return return_not_found()
+
+    # token = request.GET.get('token', False)
+    # current_user = None
+    # current_user_id = None
+
+    # if user_id:
+    #     try:
+    #         User.objects.get(id=user_id)
+    #     except User.DoesNotExist:
+    #         return return_not_found()
+
+    # if token:
+    #     current_user = AuthCache.user_from_token(token=token)
+    #     if current_user:
+    #         current_user_id = current_user.id
+
+    # try:
+    #     profile = Profile.objects\
+    #         .only('banned', 'user', 'score', 'cnt_post', 'cnt_like',
+    #               'website', 'credit', 'level', 'bio').get(user_id=user_id)
+    # except Profile.DoesNotExist:
+    #     profile = Profile.objects.create(user_id=user_id)
+
+    # data = {
+    #     'user': get_simple_user_object(user_id, current_user_id, avatar=210),
+    #     'profile': get_profile_data(profile, user_id)
+    # }
     return return_json_data(data)
 
 
@@ -405,7 +452,7 @@ def users_top(request):
     current_user = None
 
     if token:
-        current_user = AuthCache.id_from_token(token=token)
+        current_user = AuthCache.user_from_token(token=token)
 
     ob = Profile.objects\
         .only('banned', 'user', 'score', 'cnt_post', 'cnt_like',
@@ -462,6 +509,11 @@ def update_profile(request):
     if form.is_valid():
         form.save()
         update_follower_following(profile, current_user.id)
+        Log.update_profile(actor=current_user,
+                           user_id=current_user.id,
+                           text=_("update profile"),
+                           # image=p.avatar,
+                           ip_address=get_user_ip(request=request))
         msg = _('Your Profile Was Updated')
         status = True
     else:
@@ -469,6 +521,32 @@ def update_profile(request):
     return return_json_data({
         'status': status, 'message': msg,
         'profile': get_profile_data(profile, current_user.id),
+        'user': get_simple_user_object(current_user=current_user.id,
+                                       avatar=210)
+    })
+
+
+def remove_avatar(request):
+    token = request.GET.get('token', False)
+
+    if token:
+        current_user = AuthCache.user_from_token(token=token)
+        if not current_user:
+            return return_un_auth()
+    else:
+        return return_bad_request()
+    try:
+        profile, create = Profile.objects.get_or_create(user=current_user)
+        if profile.avatar:
+            profile.avatar = None
+            profile.save()
+
+        profile.delete_avatar_cache()
+    except Exception as e:
+        print str(e), "remove avatar function error"
+        return return_bad_request(message=_("Please try again"))
+
+    return return_json_data({
         'user': get_simple_user_object(current_user.id)
     })
 
@@ -488,7 +566,10 @@ def user_search(request):
         new_from = before + row_per_page
 
         us = ESUsers()
-        res = us.search(query, from_=before)
+        try:
+            res = us.search(query, from_=before)
+        except:
+            res = []
 
         for user in res:
             o = {}
@@ -508,6 +589,16 @@ def user_search(request):
 
 
 def logout(request):
+    token = request.GET.get('token', None)
+    if token:
+        current_user = AuthCache.user_from_token(token=token)
+        if current_user:
+            try:
+                PhoneData.objects\
+                    .filter(user=current_user)\
+                    .update(logged_out=True)
+            except:
+                pass
     auth_logout(request)
     return return_json_data({'status': True,
                              'message': _('Successfully Logout')})
@@ -626,6 +717,7 @@ def get_phone_data(request, startup=None):
         return return_bad_request()
     try:
         os = request.POST.get("os", "")
+        extra_data = request.POST.get("extra_data", "")
         app_version = request.POST.get("app_version", "")
         google_token = request.POST.get("google_token", "")
         token = request.POST.get("user_wisgoon_token", None)
@@ -645,8 +737,22 @@ def get_phone_data(request, startup=None):
     if not user:
         return return_un_auth(message=_("user not found"))
 
+    try:
+        extra = ast.literal_eval(extra_data)
+        gsf_id = extra['gsf_id']
+    except Exception as e:
+        print str(e)
+        gsf_id = None
+
     if imei:
-        if BannedImei.objects.filter(imei=imei).exists():
+
+        if gsf_id:
+            banned = BannedImei.objects.filter(
+                Q(imei=imei) | Q(imei=gsf_id)).exists()
+        else:
+            banned = BannedImei.objects.filter(imei=imei).exists()
+
+        if banned:
             u = User.objects.get(pk=user.id)
             if u.is_active:
                 u.is_active = False
@@ -673,7 +779,10 @@ def get_phone_data(request, startup=None):
         pass
 
     upd, created = PhoneData.objects.get_or_create(user=user)
-    upd.imei = imei
+    if gsf_id:
+        upd.imei = gsf_id
+    else:
+        upd.imei = imei
     upd.os = os
     upd.phone_model = phone_model
     upd.phone_serial = phone_serial
@@ -681,7 +790,11 @@ def get_phone_data(request, startup=None):
     upd.app_version = app_version
     upd.google_token = google_token
     upd.logged_out = False
+    upd.extra_data = extra_data
     upd.save()
+
+    if gsf_id:
+        update_imei(imei=imei, new_imei=gsf_id)
 
     if startup:
         return True
@@ -714,114 +827,23 @@ PACKS = {
 
 @csrf_exempt
 @system_writable
-def inc_credit(request):
-
-    user = None
-    token = request.GET.get('token', '')
-    price = int(request.POST.get('price', 0))
-    baz_token = request.POST.get("baz_token", "")
-    package_name = request.POST.get("package", "")
-
-    if token:
-        user = AuthCache.user_from_token(token=token)
-
-    if not user or not token or not baz_token or not package_name:
-        message = "The parameters entered is incorrect"
-        return return_not_found(message=_(message))
-
-    if package_name not in PACKS:
-        return return_not_found(message=_("Select a package is not correct"))
-
-    if PACKS[package_name]['price'] != price:
-        return return_json_data({'status': False,
-                                 'message': _('Price is wrong')})
-
-    """ If user already use this trans_id """
-    if Bills2.objects.filter(trans_id=str(baz_token),
-                             status=Bills2.COMPLETED).count() > 0:
-        b = Bills2()
-        b.trans_id = str(baz_token)
-        b.user = user
-        b.amount = PACKS[package_name]['price']
-        b.status = Bills2.FAKERY
-        b.save()
-        return return_not_found(message=_("bazzar token not right"))
-    else:
-        access_token = get_new_access_token2()
-        url = "https://pardakht.cafebazaar.ir/api/validate/com.wisgoon.android/inapp/%s/purchases/%s/?access_token=%s" % (
-            package_name,
-            baz_token,
-            access_token)
-        try:
-            u = urllib2.urlopen(url).read()
-            j = json.loads(u)
-
-            if len(j) == 0:
-                b = Bills2()
-                b.trans_id = str(baz_token)
-                b.user = user
-                b.amount = PACKS[package_name]['price']
-                b.status = Bills2.NOT_VALID
-                b.save()
-                return return_json_data({'status': False,
-                                         'message': 'Not valid purchase data'})
-
-            purchase_state = j.get('purchaseState', None)
-            if purchase_state is None:
-                message = 'purchase state error request'
-                return return_json_data({'status': False,
-                                         'message': message})
-
-            if purchase_state == 0:
-                b = Bills2()
-                b.trans_id = str(baz_token)
-                b.user = user
-                b.amount = PACKS[package_name]['price']
-                b.status = Bills2.COMPLETED
-                b.save()
-
-                p = user.profile
-                p.inc_credit(amount=PACKS[package_name]['wis'])
-            else:
-                b = Bills2()
-                b.trans_id = str(baz_token)
-                b.user = user
-                b.amount = PACKS[package_name]['price']
-                b.status = Bills2.NOT_VALID
-                b.save()
-
-                return return_json_data({'status': False,
-                                        'message': 'not valid purchase state'})
-        except Exception:
-            b = Bills2()
-            b.trans_id = str(baz_token)
-            b.user = user
-            b.amount = PACKS[package_name]['price']
-            b.status = Bills2.VALIDATE_ERROR
-            b.save()
-
-            message = 'validation error, we correct it later'
-            return return_json_data({'status': False,
-                                    'message': message})
-        message = 'Increased Credit was Successful.'
-        return return_json_data({'status': True,
-                                'message': _(message)})
-
-    return return_json_data({'status': False, 'message': 'failed'})
-
-
-@csrf_exempt
-@system_writable
 def block_user(request, user_id):
-    user = None
+    cur_user = None
     token = request.POST.get('token', '')
     if token:
-        user = AuthCache.user_from_token(token=token)
+        cur_user = AuthCache.user_from_token(token=token)
 
-    if not user or not token:
+    if not cur_user or not token:
         return return_un_auth()
 
-    Block.block_user(user_id=user.id, blocked_id=user_id)
+    Block.block_user(user_id=cur_user.id, blocked_id=user_id)
+
+    FollowRequest.objects\
+        .filter(Q(user_id=user_id,
+                  target_id=cur_user.id) |
+                Q(user_id=cur_user.id,
+                  target_id=user_id)).delete()
+
     data = {
         'success': True,
         'message': _('User blocked')
@@ -880,6 +902,59 @@ def password_reset(request):
 
 @csrf_exempt
 @system_writable
+def password_reset_2(request):
+
+    if request.method == "POST":
+        user = None
+
+        """Validate email """
+        email = request.POST.get('email', None)
+        if not email:
+            return return_bad_request(message=_('Email is not correct'),
+                                      status=False)
+        text = email.strip()
+        if text.startswith('@'):
+            user = User.objects.only('email').get(username=text)
+
+        # mention = re.compile("(?:^|\s)[＠ @]{1}([^\s#<>[\]|{}]+)", re.UNICODE)
+        # mentions = mention.findall(text)
+        # if mentions:
+        #     for username in mentions:
+        #         try:
+        #             user = User.objects.only('email').get(username=username)
+        #         except User.DoesNotExist:
+        #             continue
+        #         break
+        if user:
+            form = PasswordResetForm(initial={'email': user.email})
+        else:
+            form = PasswordResetForm(request.POST)
+
+        if form.is_valid():
+            email_template = 'registration/password_reset_email_pin.html'
+            subject_template = 'registration/password_reset_subject.txt'
+            opts = {
+                'use_https': request.is_secure(),
+                'token_generator': default_token_generator,
+                'from_email': None,
+                'email_template_name': email_template,
+                'subject_template_name': subject_template,
+                'request': request,
+                'html_email_template_name': None
+            }
+            form.save(**opts)
+            data = {
+                'status': True,
+                'message': _('Email sent')
+            }
+            return return_json_data(data)
+
+    return return_bad_request(message=_('Method not allowed'),
+                              status=False)
+
+
+@csrf_exempt
+@system_writable
 def accept_follow(request):
 
     data = {}
@@ -898,16 +973,22 @@ def accept_follow(request):
                                           target=target_user)
     if is_req.exists():
         if accepted:
-            Follow.objects.create(follower_id=int(user_id),
-                                  following=target_user)
+            instance = Follow.objects.create(follower_id=int(user_id),
+                                             following=target_user)
+            # Send notification
+            from pin.actions import send_notif_bar
+            send_notif_bar(user=instance.follower_id,
+                           type=7,
+                           post=None,
+                           actor=instance.following_id)
             is_req.delete()
             status = True
-            message = 'Allow follow request'
+            message = _("User followed")
             accepted = 1
         else:
             is_req.delete()
             status = True
-            message = 'Decline follow request'
+            message = _('Decline follow request')
             accepted = 0
 
         data = {'status': status,
@@ -955,13 +1036,14 @@ def follow_requests(request):
     return return_json_data(data)
 
 
+@csrf_exempt
 def create_bill(request):
 
     # parameters
     token = request.GET.get('token', '')
     price = int(request.POST.get('price', 0))
     package_name = request.POST.get("package", "")
-
+    user = None
     if token:
         user = AuthCache.user_from_token(token=token)
 
@@ -978,11 +1060,154 @@ def create_bill(request):
 
     bill = Bills2.objects.create(user=user,
                                  amount=PACKS[package_name]['price'],
-                                 status=Bills2.UNCOMPLETED).exists()
+                                 status=Bills2.UNCOMPLETED)
 
     return return_json_data({'status': True,
-                             'message': 'Successfully created',
+                             'message': _('Successfully created'),
                              'id': bill.id})
+
+
+@csrf_exempt
+def create_subscription(request):
+
+    # parameters
+    token = request.GET.get('token', None)
+    package_id = request.POST.get("package_id", None)
+    user = None
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token or not package_id:
+        message = "The parameters entered is incorrect"
+        return return_bad_request(message=_(message))
+    try:
+        package = Package.objects.only('price').get(id=int(package_id))
+    except:
+        message = "The parameters entered is incorrect"
+        return return_bad_request(message=_(message))
+
+    if int(user.profile.credit) < int(package.price):
+        return return_bad_request(message=_('your credit is not enough'))
+
+    exists_sub = Subscription.objects.only('id')\
+        .filter(user=user, expire=False).exists()
+
+    if exists_sub:
+        return return_bad_request(
+            message=_('Your subscription is not finished')
+        )
+
+    try:
+        Subscription.objects.create(user=user,
+                                    package_id=int(package_id))
+        user.profile.dec_credit(package.price)
+    except Exception as e:
+        print str(e), "function create_subscription error"
+        message = "subscription creation error"
+        return return_bad_request(message=_(message))
+
+    return return_json_data({'status': True,
+                             'message': _('Successfully created')})
+
+
+@csrf_exempt
+@system_writable
+def inc_credit(request):
+
+    user = None
+    token = request.GET.get('token', '')
+    price = int(request.POST.get('price', 0))
+    baz_token = request.POST.get("baz_token", "")
+    package_name = request.POST.get("package", "")
+
+    if token:
+        user = AuthCache.user_from_token(token=token)
+
+    if not user or not token or not baz_token or not package_name:
+        message = "The parameters entered is incorrect"
+        return return_not_found(message=_(message))
+
+    if package_name not in PACKS:
+        return return_not_found(message=_("Select a package is not correct"))
+
+    if PACKS[package_name]['price'] != price:
+        return return_json_data({'status': False,
+                                 'message': _('Price is wrong')})
+
+    """ If user already use this trans_id """
+    if Bills2.objects.filter(trans_id=str(baz_token),
+                             status=Bills2.COMPLETED).count() > 0:
+        b = Bills2()
+        b.trans_id = str(baz_token)
+        b.user = user
+        b.amount = PACKS[package_name]['price']
+        b.status = Bills2.FAKERY
+        b.save()
+        return return_not_found(message=_("bazzar token not right"))
+    else:
+        access_token = get_new_access_token2()
+        url = "https://pardakht.cafebazaar.ir/api/validate/com.wisgoon.android/inapp/%s/purchases/%s/?access_token=%s" % (
+            package_name,
+            baz_token,
+            access_token)
+        try:
+            u = urllib2.urlopen(url).read()
+            j = json.loads(u)
+
+            if len(j) == 0:
+                b = Bills2()
+                b.trans_id = str(baz_token)
+                b.user = user
+                b.amount = PACKS[package_name]['price']
+                b.status = Bills2.NOT_VALID
+                b.save()
+                return return_json_data(
+                    {'status': False,
+                     'message': _('Not valid purchase data')})
+
+            purchase_state = j.get('purchaseState', None)
+            if purchase_state is None:
+                message = _('purchase state error request')
+                return return_json_data({'status': False,
+                                         'message': message})
+
+            if purchase_state == 0:
+                b = Bills2()
+                b.trans_id = str(baz_token)
+                b.user = user
+                b.amount = PACKS[package_name]['price']
+                b.status = Bills2.COMPLETED
+                b.save()
+
+                p = user.profile
+                p.inc_credit(amount=PACKS[package_name]['wis'])
+            else:
+                b = Bills2()
+                b.trans_id = str(baz_token)
+                b.user = user
+                b.amount = PACKS[package_name]['price']
+                b.status = Bills2.NOT_VALID
+                b.save()
+
+                return return_json_data(
+                    {'status': False,
+                     'message': _('not valid purchase state')})
+        except Exception:
+            b = Bills2()
+            b.trans_id = str(baz_token)
+            b.user = user
+            b.amount = PACKS[package_name]['price']
+            b.status = Bills2.VALIDATE_ERROR
+            b.save()
+
+            message = _('validation error, we correct it later')
+            return return_json_data({'status': False,
+                                     'message': message})
+        message = _('Increased Credit was Successful.')
+        return return_json_data({'status': True,
+                                 'message': _(message)})
+
+    return return_json_data({'status': False, 'message': _('failed')})
 
 
 @csrf_exempt
@@ -990,9 +1215,9 @@ def create_bill(request):
 def inc_credit_2(request):
 
     user = None
-    token = request.GET.get('token', '')
-    baz_token = request.POST.get("baz_token", "")
-    price = request.POST.get("price", "")
+    token = request.GET.get('token', None)
+    baz_token = request.POST.get("baz_token", None)
+    price = int(request.POST.get("price", 0))
     bill_id = request.POST.get("bill_id", None)
     package_name = request.POST.get("package", "")
     current_bill = None
@@ -1039,12 +1264,13 @@ def inc_credit_2(request):
                 current_bill.trans_id = str(baz_token)
                 current_bill.status = Bills2.NOT_VALID
                 current_bill.save()
-                return return_json_data({'status': False,
-                                         'message': 'Not valid purchase data'})
+                return return_json_data(
+                    {'status': False,
+                     'message': _('Not valid purchase data')})
 
             purchase_state = j.get('purchaseState', None)
             if purchase_state is None:
-                message = 'purchase state error request'
+                message = _('The requested purchase is not found')
                 return return_json_data({'status': False,
                                          'message': message})
 
@@ -1059,19 +1285,118 @@ def inc_credit_2(request):
                 current_bill.trans_id = str(baz_token)
                 current_bill.status = Bills2.NOT_VALID
                 current_bill.save()
-                return return_json_data({'status': False,
-                                        'message': 'not valid purchase state'})
-        except Exception:
+                return return_json_data(
+                    {'status': False,
+                     'message': _('Problem exists in your purchase')})
+        except Exception as e:
+            print str(e), "function inc_credit_2 error"
             current_bill.trans_id = str(baz_token)
             current_bill.status = Bills2.VALIDATE_ERROR
             current_bill.save()
-            message = 'validation error, we correct it later'
+            message = _('validation error, we correct it later')
             return return_json_data({'status': False,
-                                    'message': message})
+                                     'message': message})
 
-        message = 'Increased Credit was Successful.'
+        message = _('Increased Credit was Successful.')
 
         return return_json_data({'status': True,
-                                'message': _(message)})
+                                 'message': _(message)})
 
-    return return_json_data({'status': False, 'message': 'failed'})
+    return return_json_data({'status': False, 'message': _('Buy failed')})
+
+
+@csrf_exempt
+def send_code(request):
+    phone = request.POST.get('phone', None)
+    if not phone:
+        return return_bad_request(message=_("Invalid phone number"))
+
+    phone = phone.strip()
+    norm_phone = normalize_phone(phone)
+    if not validate_mobile(norm_phone):
+        return return_bad_request(message=_("Invalid phone number"))
+    try:
+        profile = Profile.objects.only('phone', 'user').get(phone=norm_phone)
+        user_id = profile.user_id
+    except:
+        return return_not_found(message="User does not exists")
+
+    if not allow_reset(user_id=user_id):
+        return return_bad_request(message=_('invalid'))
+
+    code = get_random_int()
+    VerifyCode.objects.create(user_id=user_id, code=code)
+    # send_sms
+    try:
+        api_key = ApiKey.objects.get(user_id=user_id)
+        token = api_key.key
+    except:
+        token = None
+
+    data = {
+        "message": _("Verification sms sent!"),
+        "status": True,
+        "token": token
+    }
+
+    return return_json_data(data)
+
+
+@csrf_exempt
+def verify_code(request):
+    code = request.POST.get('code', None)
+    token = request.POST.get('token', None)
+
+    if not code or not token:
+        return return_bad_request(message=_("Invalid parameters"))
+
+    user = AuthCache.user_from_token(token=token)
+    if not user:
+        return return_un_auth()
+
+    user_id = user.id
+    if not allow_reset(user_id=user_id):
+        return return_bad_request(message=_('invalid'))
+
+    if not code_is_valid(code=code, user_id=user_id):
+        return return_bad_request(message=_("Invalid code"))
+
+    message = _('Successfully verify code')
+    data = {'status': True,
+            'message': message,
+            'token': token,
+            'code': code}
+    return return_json_data(data)
+
+
+@csrf_exempt
+def reset_pass(request):
+    password = request.POST.get('password', None)
+    token = request.POST.get('token', None)
+    code = request.POST.get('code', None)
+
+    if not password or not token or not code:
+        return return_bad_request(message=_("Invalid parameters"))
+
+    user = AuthCache.user_from_token(token=token)
+    if not user:
+        return return_un_auth()
+
+    user_id = user.id
+    if not allow_reset(user_id=user_id):
+        return return_bad_request(message=_('invalid'))
+
+    if not code_is_valid(code=code, user_id=user_id):
+        return return_bad_request(message=_("Invalid code"))
+
+    try:
+        user = User.objects.only('password').get(id=user_id)
+        user.set_password(password)
+    except:
+        return return_not_found(message=_("User does not exists"))
+
+    message = _('Successfully reset password')
+    data = {'status': True,
+            'message': message,
+            'token': token}
+    return return_json_data(data)

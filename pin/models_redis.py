@@ -14,6 +14,7 @@ from khayyam import JalaliDate
 
 # from pin.analytics import like_act
 from pin.models_casper import PostStats, Notification
+from pin.models_es import ESPosts
 
 # redis set server
 rSetServer = redis.Redis(settings.REDIS_DB_2, db=9)
@@ -23,33 +24,29 @@ leaderBoardServer = redis.Redis(settings.REDIS_DB_2, db=0)
 activityServer = redis.Redis(settings.REDIS_DB_3)
 
 notificationRedis = redis.Redis(settings.REDIS_DB_4)
+viewCon = redis.Redis(settings.REDIS_DB_104)
 
 
 class PostView(object):
     post_id = None
-    KEY_PREFIX = "pv:1:{}"
+    KEY_PREFIX = "view:{}"
+    view = 0
 
     def __init__(self, post_id):
         self.post_id = int(post_id)
         self.KEY_PREFIX = self.KEY_PREFIX.format(post_id)
 
     def inc_view_test(self):
-        PostStats(post_id=self.post_id).inc_view()
+        viewCon.incr(self.KEY_PREFIX)
 
     def inc_view(self):
-        from pin.api6.tools import is_system_writable
-        if is_system_writable():
-            try:
-                PostStats(post_id=self.post_id).inc_view()
-            except Exception, e:
-                print str(e)
+        self.view = viewCon.incr(self.KEY_PREFIX)
+        return self.view
 
     def get_cnt_view(self):
-        try:
-            return PostStats(post_id=self.post_id).get_cnt_view()
-        except:
-            return 0
-
+        if self.view != 0:
+            return self.view
+        return viewCon.get(self.KEY_PREFIX)
 
 class NotifStruct:
     def __init__(self, **entries):
@@ -252,6 +249,10 @@ class LikesRedis(object):
         from pin.model_mongo import MonthlyStats
         MonthlyStats.log_hit(object_type=MonthlyStats.DISLIKE)
 
+        # inc like in elastic
+        ps = ESPosts()
+        ps.decr_cnt_like(post_id=self.postId)
+
         # Update notif on cassandra
         notif = Notification()
         notif.update_notif(a_user_id=post_owner,
@@ -283,6 +284,10 @@ class LikesRedis(object):
 
         # like_act(post=self.postId, actor=user_id, user_ip=user_ip)
 
+        # inc like in elastic
+        ps = ESPosts()
+        ps.inc_cnt_like(post_id=self.postId)
+
         if user_id != post_owner:
             from pin.actions import send_notif_bar
             send_notif_bar(user=post_owner,
@@ -291,7 +296,8 @@ class LikesRedis(object):
                            actor=user_id)
 
     def like_or_dislike(self, user_id, post_owner,
-                        user_ip="127.0.0.1", category=1):
+                        user_ip="127.0.0.1", category=1,
+                        date=None):
         leader_category = self.KEY_LEADERBORD_GROUPS.format(category)
         lbs = leaderBoardServer.pipeline()
         if self.user_liked(user_id=user_id):
@@ -318,6 +324,15 @@ class LikesRedis(object):
             disliked = False
 
         lbs.execute()
+        if date:
+            from pin.api6.tools import timestamp_to_local_datetime
+            from pin.models_stream import RedisTopPostStream
+
+            convert_date = timestamp_to_local_datetime(int(date))
+            top_stream = RedisTopPostStream()
+            top_stream.add_post(post_id=self.postId,
+                                cnt_like=self.cntlike(),
+                                date=convert_date)
 
         return liked, disliked, self.cntlike()
 

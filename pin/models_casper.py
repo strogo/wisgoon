@@ -1,7 +1,9 @@
+import redis
+
 from django.conf import settings
 from cassandra.cluster import Cluster
 from cassandra.query import BatchStatement, SimpleStatement
-import redis
+from pin.tasks import ltrim_user_stream
 
 isConnected = False
 session = None
@@ -10,20 +12,22 @@ redis_server = redis.Redis(settings.REDIS_DB_2)
 
 
 class CassandraModel():
+
     def __init__(self):
         global isConnected, session
         if not isConnected:
             if settings.DEVEL_BRANCH:
-                cluster = Cluster(['79.127.125.104', '79.127.125.99'])
+                cluster = Cluster(['79.127.125.99'])
             elif settings.DEBUG:
                 cluster = Cluster(['127.0.0.1'])
             else:
-                cluster = Cluster(['79.127.125.104', '79.127.125.99'])
+                cluster = Cluster(['79.127.125.99'])
             session = cluster.connect("wisgoon")
             isConnected = True
 
 
 class Notification(CassandraModel):
+
     def __init__(self):
         CassandraModel.__init__(self)
 
@@ -35,14 +39,12 @@ class Notification(CassandraModel):
             a_object_id = 0
 
         hash_str = "{}:{}:{}".format(a_actor, a_object_id, a_type)
-        print a_type, "type"
         # if notif was not comment
         if a_type != 2:
             query = """
             SELECT date FROM notification
             where user_id = {} AND hash = '{}'
             """.format(a_user_id, hash_str)
-
             res = session.execute(query)
 
             # if exists row, remove row
@@ -80,7 +82,7 @@ class Notification(CassandraModel):
 
     def remove_notif(self, a_user_id, a_date):
         query = """
-                DELETE FROM Notification
+                DELETE FROM notification
                 where user_id={} and date={}
                 """.format(a_user_id, a_date)
         session.execute(query)
@@ -236,8 +238,41 @@ class CatStreams(CassandraModel):
 
 
 class UserStream(CassandraModel):
+
     def __init__(self):
         CassandraModel.__init__(self)
+
+    def add_post_batch(self, user_ids, post_id, post_owner):
+        if not user_ids:
+            return
+
+        print "this is batch"
+        batch = BatchStatement()
+        count = 0
+        for u in user_ids:
+            query = """INSERT INTO user_stream
+            (user_id, post_id , post_owner )
+            VALUES ( %s, %s, %s);"""
+            batch.add(SimpleStatement(query), (u, post_id, post_owner))
+            count += 1
+            if count > 1000:
+                count = 0
+                session.execute(batch)
+                batch = BatchStatement()
+
+            self.ltrim_ltrim_command(u)
+
+        session.execute(batch)
+
+    def ltrim_ltrim_command(self, user_id):
+        key = "lt:u:{}".format(user_id)
+        get_key = redis_server.get(key)
+        if not get_key:
+            try:
+                ltrim_user_stream.delay(user_id=user_id)
+            except Exception as e:
+                print str(e)
+            redis_server.set(key, 1, 3600)
 
     def add_post(self, user_id, post_id, post_owner):
         query = """INSERT INTO user_stream
@@ -245,16 +280,13 @@ class UserStream(CassandraModel):
         VALUES ( {}, {}, {});""".format(user_id, post_id, post_owner)
         session.execute(query)
 
-        key = "ltrim:user:{}".format(user_id)
-        get_key = redis_server.get(key)
-        if not get_key:
-            # print "start ltrim user_id {}".format(user_id)
-            self.ltrim(user_id)
-            redis_server.set(key, 1, 3600)
+        # Ltrim user straem
+        self.ltrim_ltrim_command(user_id)
 
     def ltrim(self, user_id, limit=1000):
+        return
         query = """
-        select * from user_stream WHERE user_id = {} limit {};
+        SELECT * FROM user_stream WHERE user_id = {} LIMIT {};
         """.format(user_id, limit)
         rows = session.execute(query)
         last_post_id = None
@@ -264,22 +296,28 @@ class UserStream(CassandraModel):
         if not last_post_id:
             return
 
-        query = """
-        select post_id from user_stream WHERE user_id = {} and post_id < {};
-        """.format(user_id, last_post_id)
-        rows = session.execute(query)
-        cnt = 0
-        batch = BatchStatement()
-        for r in rows:
-            cnt += 1
-            q = "DELETE from user_stream WHERE user_id = %s AND post_id = %s;"
-            batch.add(SimpleStatement(q), (user_id, r.post_id))
-            if cnt == 1000:
-                session.execute(batch)
-                batch = BatchStatement()
-                cnt = 0
+        while True:
+            query = """
+            SELECT post_id FROM user_stream
+            WHERE user_id = {} and post_id < {} LIMIT 100;
+            """.format(user_id, last_post_id, limit)
 
-        session.execute(batch)
+            print "{}, {}".format(user_id, last_post_id)
+
+            rows = session.execute(query, timeout=120)
+            if len(rows.current_rows) != 0:
+                batch = BatchStatement()
+                for r in rows:
+                    q = """DELETE FROM user_stream
+                           WHERE user_id = %s AND post_id = %s;"""
+                    batch.add(SimpleStatement(q), (user_id, r.post_id))
+                    last_post_id = r.post_id
+
+                session.execute(batch)
+
+            elif len(rows.current_rows) == 0:
+                print "zero box"
+                return
 
     def follow(self, user_id, post_id_list, post_owner):
         batch = BatchStatement()
@@ -290,10 +328,21 @@ class UserStream(CassandraModel):
             batch.add(SimpleStatement(query), (user_id, pid, post_owner))
 
         session.execute(batch)
+        try:
+            ltrim_user_stream.delay(user_id=user_id)
+        except Exception as e:
+            print str(e)
+
+        # Ltrim user straem
+        key = "lt:u:{}".format(user_id)
+        get_key = redis_server.get(key)
+        if not get_key:
+            ltrim_user_stream.delay(user_id=user_id)
+            redis_server.set(key, 1, 3600)
 
     def unfollow(self, user_id, post_owner):
         query = """
-        select post_id from user_stream WHERE user_id = {} and post_owner = {};
+        SELECT post_id FROM user_stream WHERE user_id = {} and post_owner = {};
         """.format(user_id, post_owner)
         rows = session.execute(query)
         batch = BatchStatement()
@@ -302,20 +351,36 @@ class UserStream(CassandraModel):
             batch.add(SimpleStatement(q), (user_id, r.post_id))
         session.execute(batch)
 
-    def get_posts(self, user_id, pid):
+    def get_posts(self, user_id, pid, limit=20):
         if pid == 0:
             query = """
             SELECT post_id FROM user_stream
             WHERE user_id = {}
-            LIMIT 20;
-            """.format(user_id)
+            LIMIT {};
+            """.format(user_id, limit)
         else:
             query = """
             SELECT post_id FROM user_stream
             WHERE user_id = {} AND post_id < {}
-            LIMIT 20;
-            """.format(user_id, pid)
+            LIMIT {};
+            """.format(user_id, pid, limit)
         rows = session.execute(query)
         post_id_list = [int(p.post_id) for p in rows]
 
         return post_id_list
+
+    def get_post_data(self, user_id, pid, limit=20):
+        if pid == 0:
+            query = """
+            SELECT * FROM user_stream
+            WHERE user_id = {}
+            LIMIT {};
+            """.format(user_id, limit)
+        else:
+            query = """
+            SELECT * FROM user_stream
+            WHERE user_id = {} AND post_id < {}
+            LIMIT {};
+            """.format(user_id, pid, limit)
+        rows = session.execute(query)
+        return rows

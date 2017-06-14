@@ -191,9 +191,10 @@ class Notif(Document):
     LIKE = 1
     COMMENT = 2
     DELETE_POST = 4
-    FOLLOW = 10
     CHOICE = 5
     FOLLOW_REQUEST = 6
+    ACCEPT_FOLLOW_REQUEST = 7
+    FOLLOW = 10
 
     last_actor = IntField()
     date = DateTimeField()
