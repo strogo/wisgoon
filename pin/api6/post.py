@@ -477,10 +477,10 @@ def tops(request, period):
     #     except:
     #         pass
 
-    data['meta']['next'] = get_next_url(url_name='api-6-post-tops',
-                                        token=token,
-                                        offset=offset + GLOBAL_LIMIT,
-                                        url_args={"period": period})
+    # data['meta']['next'] = get_next_url(url_name='api-6-post-tops',
+    #                                     token=token,
+    #                                     offset=offset + GLOBAL_LIMIT,
+    #                                     url_args={"period": period})
 
     from pin.models_stream import RedisTopPostStream
 
