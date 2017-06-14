@@ -38,22 +38,10 @@ class PostView(object):
 
     def inc_view_test(self):
         viewCon.incr(self.KEY_PREFIX)
-        # PostStats(post_id=self.post_id).inc_view()
 
     def inc_view(self):
-        if not viewCon.exists(self.KEY_PREFIX):
-            vc = PostStats(post_id=self.post_id).get_cnt_view()
-            self.view = viewCon.incrby(self.KEY_PREFIX, vc)
-            return self.view
-        else:
-            self.view = viewCon.incr(self.KEY_PREFIX)
-            return self.view
-        # from pin.api6.tools import is_system_writable
-        # if is_system_writable():
-        #     try:
-        #         PostStats(post_id=self.post_id).inc_view()
-        #     except Exception, e:
-        #         print str(e)
+        self.view = viewCon.incr(self.KEY_PREFIX)
+        return self.view
 
     def get_cnt_view(self):
         if self.view != 0:
