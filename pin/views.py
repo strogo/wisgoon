@@ -38,6 +38,7 @@ User = get_user_model()
 MEDIA_ROOT = settings.MEDIA_ROOT
 REPORT_TYPE = settings.REPORT_TYPE
 
+rSession = requests.Session()
 
 def angular(request):
     return render(request, 'angular/home.html')
@@ -140,8 +141,8 @@ def home(request):
     payload['before'] = pid
 
     # Get choices post
-    s = requests.Session()
-    res = s.get(url, params=payload, headers={'Connection': 'close'})
+    
+    res = rSession.get(url, params=payload)
 
     if res.status_code == 200:
         try:
@@ -822,8 +823,7 @@ def latest(request):
     payload['before'] = pid
 
     # Get choices post
-    s = requests.Session()
-    res = s.get(url, params=payload, headers={'Connection': 'close'})
+    res = rSession.get(url, params=payload)
 
     if res.status_code == 200:
         try:
@@ -1182,8 +1182,8 @@ def item(request, item_id):
         token = api_key.key
         payload = {'token': token}
 
-    s = requests.Session()
-    res = s.get(url, params=payload, headers={'Connection': 'close'})
+    # s = requests.Session()
+    res = rSession.get(url, params=payload)
     MonthlyStats.log_hit(object_type=MonthlyStats.VIEW)
     # current_user = request.user
 
