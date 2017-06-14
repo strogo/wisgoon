@@ -7,7 +7,7 @@ from datetime import datetime
 # from haystack.query import SearchQuerySet
 
 from django.conf import settings
-from django.core.cache import cache
+# from django.core.cache import cache
 from django.db.models import Q
 from django.http import UnreadablePostError
 from django.utils.translation import ugettext as _
@@ -22,7 +22,8 @@ from pin.api6.http import return_json_data, return_bad_request,\
     return_not_found, return_un_auth
 from pin.api6.tools import get_next_url, get_int, save_post,\
     get_list_post, get_objects_list, ad_item_json,\
-    category_get_json, check_user_state, post_item_json, retry_fetch_posts
+    post_item_json
+# ,retry_fetch_posts,category_get_json, check_user_state
 from pin.tools import AuthCache, get_post_user_cache, get_user_ip,\
     post_after_delete
 
@@ -462,7 +463,7 @@ def tops(request, period):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/post/tops/{}/"
     else:
-        url = "http://test.wisgoon.com/v7/post/tops/{}/"
+        url = "http://api.wisgoon.com/v7/post/tops/{}/"
 
     url = url.format(period)
 
@@ -548,7 +549,7 @@ def user_post(request, user_id):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/post/user/{}/"
     else:
-        url = "http://test.wisgoon.com/v7/post/user/{}/"
+        url = "http://api.wisgoon.com/v7/post/user/{}/"
 
     url = url.format(user_id)
 
@@ -622,7 +623,7 @@ def friends(request):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/post/friends/"
     else:
-        url = "http://test.wisgoon.com/v7/post/friends/"
+        url = "http://api.wisgoon.com/v7/post/friends/"
 
     # Get choices post
     s = requests.Session()
@@ -734,7 +735,7 @@ def category(request, category_id):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/post/category/{}/"
     else:
-        url = "http://test.wisgoon.com/v7/post/category/{}/"
+        url = "http://api.wisgoon.com/v7/post/category/{}/"
 
     url = url.format(category_id)
 
@@ -824,7 +825,7 @@ def choices(request):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/post/choices/"
     else:
-        url = "http://test.wisgoon.com/v7/post/choices/"
+        url = "http://api.wisgoon.com/v7/post/choices/"
 
     # Get choices post
     s = requests.Session()
@@ -932,7 +933,7 @@ def latest(request):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/post/latest/"
     else:
-        url = "http://test.wisgoon.com/v7/post/latest/"
+        url = "http://api.wisgoon.com/v7/post/latest/"
 
     # Get choices post
     s = requests.Session()
@@ -1032,7 +1033,7 @@ def item_2(request, item_id):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/post/item/{}/"
     else:
-        url = "http://test.wisgoon.com/v7/post/item/{}/"
+        url = "http://api.wisgoon.com/v7/post/item/{}/"
 
     url = url.format(item_id)
 
@@ -1089,7 +1090,7 @@ def item(request, item_id):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/post/item/{}/"
     else:
-        url = "http://test.wisgoon.com/v7/post/item/{}/"
+        url = "http://api.wisgoon.com/v7/post/item/{}/"
 
     url = url.format(item_id)
 
@@ -1159,7 +1160,7 @@ def hashtag(request, tag_name):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/post/hashtag/{}/"
     else:
-        url = "http://test.wisgoon.com/v7/post/hashtag/{}/"
+        url = "http://api.wisgoon.com/v7/post/hashtag/{}/"
 
     url = url.format(tag_name)
 
@@ -1233,7 +1234,7 @@ def related_post(request, item_id):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/post/related/{}/"
     else:
-        url = "http://test.wisgoon.com/v7/post/related/{}/"
+        url = "http://api.wisgoon.com/v7/post/related/{}/"
 
     url = url.format(item_id)
 

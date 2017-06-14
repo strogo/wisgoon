@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from pin.api6.http import return_json_data, return_un_auth, return_bad_request
-from pin.api_tools import media_abs_url
-from pin.model_mongo import Notif
+# from pin.api_tools import media_abs_url
+# from pin.model_mongo import Notif
 from pin.models import FollowRequest
 from pin.models_redis import NotificationRedis
 from pin.tools import AuthCache
-from pin.api6.tools import get_simple_user_object,\
-    get_next_url, post_item_json
+# from pin.api6.tools import get_simple_user_object, get_next_url, post_item_json
 
 from django.conf import settings
 import requests
@@ -58,7 +57,7 @@ def notif(request):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/notif/"
     else:
-        url = "http://test.wisgoon.com/v7/notif/"
+        url = "http://api.wisgoon.com/v7/notif/"
 
     # Get choices post
     s = requests.Session()

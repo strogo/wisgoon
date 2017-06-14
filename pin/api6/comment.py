@@ -1,15 +1,16 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.translation import ugettext as _
-from django.http import UnreadablePostError
+# from django.http import UnreadablePostError
 
 from pin.tools import AuthCache
-from pin.models import Comments, Post, Follow
-from pin.api6.tools import get_int, get_next_url,\
-    get_comments, comment_objects_list, comment_item_json
-from pin.api6.http import return_json_data, return_not_found, return_un_auth,\
-    return_bad_request
-from pin.tools import check_block, get_post_user_cache
-from pin.toolkit import check_auth
+from pin.models import Comments
+# , Post, Follow
+# from pin.api6.tools import get_int, get_next_url, get_comments
+# ,comment_objects_list,comment_item_json
+from pin.api6.http import return_json_data, return_un_auth, return_bad_request
+# return_not_found
+# from pin.tools import check_block, get_post_user_cache
+# from pin.toolkit import check_auth
 from pin.decorators import system_writable
 
 from django.conf import settings
@@ -28,7 +29,7 @@ def comment_post(request, item_id):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/comment/post/{}/"
     else:
-        url = "http://test.wisgoon.com/v7/comment/post/{}/"
+        url = "http://api.wisgoon.com/v7/comment/post/{}/"
 
     url = url.format(item_id)
     payload = {}
@@ -84,7 +85,7 @@ def add_comment(request, item_id):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/comment/add/post/{}/?token={}"
     else:
-        url = "http://test.wisgoon.com/v7/comment/add/post/{}/?token={}"
+        url = "http://api.wisgoon.com/v7/comment/add/post/{}/?token={}"
 
     url = url.format(item_id, token)
     payload = {}
@@ -176,7 +177,7 @@ def delete_comment(request, comment_id):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/comment/delete/{}/?token={}"
     else:
-        url = "http://test.wisgoon.com/v7/comment/delete/{}/?token={}"
+        url = "http://api.wisgoon.com/v7/comment/delete/{}/?token={}"
 
     url = url.format(comment_id, token)
 
@@ -248,7 +249,7 @@ def delete_comments(request):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/comment/list/remove/?token={}"
     else:
-        url = "http://test.wisgoon.com/v7/comment/list/remove/?token={}"
+        url = "http://api.wisgoon.com/v7/comment/list/remove/?token={}"
 
     url = url.format(token)
     payload = {}
