@@ -202,7 +202,7 @@ def like(request, item_id):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/like/item/?token={}"
     else:
-        url = "http://test.wisgoon.com/v7/like/item/?token={}"
+        url = "http://api.wisgoon.com/v7/like/item/?token={}"
 
     url = url.format(token.key)
     payload = {}
