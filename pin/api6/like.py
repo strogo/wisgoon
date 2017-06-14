@@ -66,7 +66,7 @@ def like_item(request):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/like/item/?token={}"
     else:
-        url = "http://test.wisgoon.com/v7/like/item/?token={}"
+        url = "http://api.wisgoon.com/v7/like/item/?token={}"
 
     url = url.format(token)
     payload = {}
@@ -140,7 +140,7 @@ def post_likers(request, item_id):
     if settings.DEBUG:
         url = "http://127.0.0.1:8801/v7/like/likers/post/{}/"
     else:
-        url = "http://test.wisgoon.com/v7/like/likers/post/{}/"
+        url = "http://api.wisgoon.com/v7/like/likers/post/{}/"
     url = url.format(item_id)
 
     # Get choices post
